@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Util
                 builder.Append("\ud801\udc1cabc");
                 if ((i % 10) == 0)
                 {
-                    builder.Append(" ");
+                    builder.Append(' ');
                 }
             }
             // internal buffer size is 1024 make sure we have a surrogate pair right at the border
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Util
                 var builder = new StringBuilder();
                 for (int j = 0; j < 1 + i; j++)
                 {
-                    builder.Append("a");
+                    builder.Append('a');
                 }
                 builder.Append("\ud801\udc1cabc");
                 var tokenizer = new LowerCaseTokenizer(TEST_VERSION_CURRENT, new StringReader(builder.ToString()));
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Util
 
             for (var i = 0; i < 255; i++)
             {
-                builder.Append("A");
+                builder.Append('A');
             }
             var tokenizer = new LowerCaseTokenizer(TEST_VERSION_CURRENT, new StringReader(builder.ToString() + builder.ToString()));
             AssertTokenStreamContents(tokenizer, new[] { builder.ToString().ToLowerInvariant(), builder.ToString().ToLowerInvariant() });
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Util
 
             for (var i = 0; i < 254; i++)
             {
-                builder.Append("A");
+                builder.Append('A');
             }
             builder.Append("\ud801\udc1c");
             var tokenizer = new LowerCaseTokenizer(TEST_VERSION_CURRENT, new StringReader(builder.ToString() + builder.ToString()));

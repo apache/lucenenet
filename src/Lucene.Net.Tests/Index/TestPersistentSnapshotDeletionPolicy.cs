@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousClass : Failure
+        private sealed class FailureAnonymousClass : Failure
         {
             private readonly TestPersistentSnapshotDeletionPolicy outerInstance;
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
@@ -376,6 +377,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [DebuggerStepThrough]
         internal double randomGaussian()

@@ -259,7 +259,7 @@ namespace Lucene.Net.Search
         }
 
         // for some raw min similarity and input term length, the maximum # of edits
-        private int InitialMaxDistance(float minimumSimilarity, int termLen)
+        private static int InitialMaxDistance(float minimumSimilarity, int termLen) // LUCENENET: CA1822: Mark members as static
         {
             return (int)((1D - minimumSimilarity) * termLen);
         }

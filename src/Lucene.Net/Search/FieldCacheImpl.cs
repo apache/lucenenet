@@ -11,6 +11,7 @@ using Prism.Events;
 #endif
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
@@ -163,6 +164,7 @@ namespace Lucene.Net.Search
             return result.ToArray();
         }
 
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "False positive")]
         private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey
         {
             UninterruptableMonitor.Enter(cache.readerCache);
@@ -210,7 +212,7 @@ namespace Lucene.Net.Search
         // per-segment fieldcaches don't purge until the shared core closes.
         internal readonly SegmentReader.ICoreDisposedListener purgeCore;
 
-        private class CoreClosedListenerAnonymousClass : SegmentReader.ICoreDisposedListener
+        private sealed class CoreClosedListenerAnonymousClass : SegmentReader.ICoreDisposedListener
         {
             private readonly FieldCacheImpl outerInstance;
 
@@ -228,7 +230,7 @@ namespace Lucene.Net.Search
         // composite/SlowMultiReaderWrapper fieldcaches don't purge until composite reader is closed.
         internal readonly IndexReader.IReaderClosedListener purgeReader;
 
-        private class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
         {
             private readonly FieldCacheImpl outerInstance;
 
@@ -665,7 +667,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_BytesAnonymousClass : FieldCache.Bytes
+        private sealed class FieldCache_BytesAnonymousClass : FieldCache.Bytes
         {
             private readonly NumericDocValues valuesIn;
 
@@ -737,7 +739,7 @@ namespace Lucene.Net.Search
                 return new BytesFromArray(values);
             }
 
-            private class UninvertAnonymousClass : Uninvert
+            private sealed class UninvertAnonymousClass : Uninvert
             {
                 private readonly sbyte[] values;
 #pragma warning disable 612, 618
@@ -836,7 +838,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_Int16sAnonymousClass : FieldCache.Int16s
+        private sealed class FieldCache_Int16sAnonymousClass : FieldCache.Int16s
         {
             private readonly NumericDocValues valuesIn;
 
@@ -910,7 +912,7 @@ namespace Lucene.Net.Search
                 return new Int16sFromArray(values);
             }
 
-            private class UninvertAnonymousClass : Uninvert
+            private sealed class UninvertAnonymousClass : Uninvert
             {
                 private readonly short[] values;
 #pragma warning disable 612, 618
@@ -1008,7 +1010,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_Int32sAnonymousClass : FieldCache.Int32s
+        private sealed class FieldCache_Int32sAnonymousClass : FieldCache.Int32s
         {
             private readonly NumericDocValues valuesIn;
 
@@ -1122,7 +1124,7 @@ namespace Lucene.Net.Search
                 return new Int32sFromArray(values.Writer.Mutable, (int)values.MinValue);
             }
 
-            private class UninvertAnonymousClass : Uninvert
+            private sealed class UninvertAnonymousClass : Uninvert
             {
                 private readonly AtomicReader reader;
                 private readonly FieldCache.IInt32Parser parser;
@@ -1303,7 +1305,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_SinglesAnonymousClass : FieldCache.Singles
+        private sealed class FieldCache_SinglesAnonymousClass : FieldCache.Singles
         {
             private readonly NumericDocValues valuesIn;
 
@@ -1387,7 +1389,7 @@ namespace Lucene.Net.Search
                 return new SinglesFromArray(values);
             }
 
-            private class UninvertAnonymousClass : Uninvert
+            private sealed class UninvertAnonymousClass : Uninvert
             {
                 private readonly AtomicReader reader;
                 private readonly FieldCache.ISingleParser parser;
@@ -1469,7 +1471,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_Int64sAnonymousClass : FieldCache.Int64s
+        private sealed class FieldCache_Int64sAnonymousClass : FieldCache.Int64s
         {
             private readonly NumericDocValues valuesIn;
 
@@ -1554,7 +1556,7 @@ namespace Lucene.Net.Search
                 return new Int64sFromArray(values.Writer.Mutable, values.MinValue);
             }
 
-            private class UninvertAnonymousClass : Uninvert
+            private sealed class UninvertAnonymousClass : Uninvert
             {
                 private readonly AtomicReader reader;
                 private readonly FieldCache.IInt64Parser parser;
@@ -1647,7 +1649,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class FieldCache_DoublesAnonymousClass : FieldCache.Doubles
+        private sealed class FieldCache_DoublesAnonymousClass : FieldCache.Doubles
         {
             private readonly NumericDocValues valuesIn;
 
@@ -1724,7 +1726,7 @@ namespace Lucene.Net.Search
                 return new DoublesFromArray(values);
             }
 
-            private class UninvertAnonymousClass : Uninvert
+            private sealed class UninvertAnonymousClass : Uninvert
             {
                 private readonly AtomicReader reader;
                 private readonly FieldCache.IDoubleParser parser;
@@ -2099,7 +2101,7 @@ namespace Lucene.Net.Search
                 return new BinaryDocValuesImpl(bytes.Freeze(true), offsetReader);
             }
 
-            private class BitsAnonymousClass : IBits
+            private sealed class BitsAnonymousClass : IBits
             {
                 private readonly int maxDoc;
                 private readonly PackedInt32s.Reader offsetReader;
@@ -2110,12 +2112,12 @@ namespace Lucene.Net.Search
                     this.offsetReader = offsetReader;
                 }
 
-                public virtual bool Get(int index)
+                public bool Get(int index)
                 {
                     return offsetReader.Get(index) != 0;
                 }
 
-                public virtual int Length => maxDoc;
+                public int Length => maxDoc;
             }
         }
 

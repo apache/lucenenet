@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
             return new QueryRescorerAnonymousClass(query, weight).Rescore(searcher, topDocs, topN);
         }
 
-        private class QueryRescorerAnonymousClass : QueryRescorer
+        private sealed class QueryRescorerAnonymousClass : QueryRescorer
         {
             private readonly double weight;
 

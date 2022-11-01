@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.El
             return Rule22(s, len);
         }
 
-        private int Rule0(char[] s, int len)
+        private static int Rule0(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 9 && (StemmerUtil.EndsWith(s, len, "καθεστωτοσ") || 
                 StemmerUtil.EndsWith(s, len, "καθεστωτων")))
@@ -183,7 +183,7 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private int Rule1(char[] s, int len)
+        private static int Rule1(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 4 && (StemmerUtil.EndsWith(s, len, "αδεσ") || 
                 StemmerUtil.EndsWith(s, len, "αδων")))
@@ -206,7 +206,7 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private int Rule2(char[] s, int len)
+        private static int Rule2(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 4 && (StemmerUtil.EndsWith(s, len, "εδεσ") || 
                 StemmerUtil.EndsWith(s, len, "εδων")))
@@ -227,7 +227,7 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private int Rule3(char[] s, int len)
+        private static int Rule3(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 5 && (StemmerUtil.EndsWith(s, len, "ουδεσ") || 
                 StemmerUtil.EndsWith(s, len, "ουδων")))
@@ -259,7 +259,7 @@ namespace Lucene.Net.Analysis.El
         private static readonly CharArraySet exc4 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, new string[] { "θ", "δ", "ελ", "γαλ", "ν", "π", "ιδ", "παρ" }, false);
 #pragma warning restore 612, 618
 
-        private int Rule4(char[] s, int len)
+        private static int Rule4(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 3 && (StemmerUtil.EndsWith(s, len, "εωσ") || 
                 StemmerUtil.EndsWith(s, len, "εων")))
@@ -273,7 +273,7 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private int Rule5(char[] s, int len)
+        private static int Rule5(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 2 && StemmerUtil.EndsWith(s, len, "ια"))
             {
@@ -305,7 +305,7 @@ namespace Lucene.Net.Analysis.El
                 "πετσ", "πιτσ", "πικαντ", "πλιατσ", "ποστελν", "πρωτοδ", "σερτ",
                 "συναδ", "τσαμ", "υποδ", "φιλον", "φυλοδ", "χασ" }, false);
 
-        private int Rule6(char[] s, int len)
+        private static int Rule6(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             bool removed = false;
             if (len > 3 && (StemmerUtil.EndsWith(s, len, "ικα") || 
@@ -338,7 +338,7 @@ namespace Lucene.Net.Analysis.El
             new string[] { "αναπ", "αποθ", "αποκ", "αποστ", "βουβ", "ξεθ", "ουλ",
                 "πεθ", "πικρ", "ποτ", "σιχ", "χ" }, false);
 
-        private int Rule7(char[] s, int len)
+        private static int Rule7(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len == 5 && StemmerUtil.EndsWith(s, len, "αγαμε"))
             {
@@ -396,7 +396,7 @@ namespace Lucene.Net.Analysis.El
                 "ολογαλ", "πενταρφ", "περηφ", "περιτρ", "πλατ", "πολυδαπ", "πολυμηχ",
                 "στεφ", "ταβ", "τετ", "υπερηφ", "υποκοπ", "χαμηλοδαπ", "ψηλοταβ" }, false);
 
-        private int Rule8(char[] s, int len)
+        private static int Rule8(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             bool removed = false;
 
@@ -458,7 +458,7 @@ namespace Lucene.Net.Analysis.El
                 "βαρον", "ντρ", "σκ", "κοπ", "μπορ", "νιφ", "παγ", "παρακαλ", "σερπ",
                 "σκελ", "συρφ", "τοκ", "υ", "δ", "εμ", "θαρρ", "θ" }, false);
 
-        private int Rule9(char[] s, int len)
+        private static int Rule9(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 5 && StemmerUtil.EndsWith(s, len, "ησετε"))
             {
@@ -509,7 +509,7 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private int Rule10(char[] s, int len)
+        private static int Rule10(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 5 && (StemmerUtil.EndsWith(s, len, "οντασ") || StemmerUtil.EndsWith(s, len, "ωντασ")))
             {
@@ -529,7 +529,7 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private int Rule11(char[] s, int len)
+        private static int Rule11(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 6 && StemmerUtil.EndsWith(s, len, "ομαστε"))
             {
@@ -563,7 +563,7 @@ namespace Lucene.Net.Analysis.El
             new string[] { "αλ", "αρ", "εκτελ", "ζ", "μ", "ξ", "παρακαλ", "αρ", "προ", "νισ" }, false);
 #pragma warning restore 612, 618
 
-        private int Rule12(char[] s, int len)
+        private static int Rule12(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 5 && StemmerUtil.EndsWith(s, len, "ιεστε"))
             {
@@ -592,7 +592,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning restore 612, 618
             new string[] { "διαθ", "θ", "παρακαταθ", "προσθ", "συνθ" }, false);
 
-        private int Rule13(char[] s, int len)
+        private static int Rule13(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 6 && StemmerUtil.EndsWith(s, len, "ηθηκεσ"))
             {
@@ -638,7 +638,7 @@ namespace Lucene.Net.Analysis.El
                 "λεχ", "μ", "πατ", "ρ", "λ", "μεδ", "μεσαζ", "υποτειν", "αμ", "αιθ",
                 "ανηκ", "δεσποζ", "ενδιαφερ", "δε", "δευτερευ", "καθαρευ", "πλε", "τσα" }, false);
 
-        private int Rule14(char[] s, int len)
+        private static int Rule14(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             bool removed = false;
 
@@ -692,7 +692,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning restore 612, 618
             new string[] { "ψοφ", "ναυλοχ" }, false);
 
-        private int Rule15(char[] s, int len)
+        private static int Rule15(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             bool removed = false;
             if (len > 4 && StemmerUtil.EndsWith(s, len, "αγεσ"))
@@ -737,7 +737,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning restore 612, 618
             new string[] { "ν", "χερσον", "δωδεκαν", "ερημον", "μεγαλον", "επταν" }, false);
 
-        private int Rule16(char[] s, int len)
+        private static int Rule16(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             bool removed = false;
             if (len > 4 && StemmerUtil.EndsWith(s, len, "ησου"))
@@ -765,7 +765,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning restore 612, 618
             new string[] { "ασβ", "σβ", "αχρ", "χρ", "απλ", "αειμν", "δυσχρ", "ευχρ", "κοινοχρ", "παλιμψ" }, false);
 
-        private int Rule17(char[] s, int len)
+        private static int Rule17(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 4 && StemmerUtil.EndsWith(s, len, "ηστε"))
             {
@@ -785,7 +785,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning restore 612, 618
             new string[] { "ν", "ρ", "σπι", "στραβομουτσ", "κακομουτσ", "εξων" }, false);
 
-        private int Rule18(char[] s, int len)
+        private static int Rule18(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             bool removed = false;
 
@@ -816,7 +816,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning restore 612, 618
             new string[] { "παρασουσ", "φ", "χ", "ωριοπλ", "αζ", "αλλοσουσ", "ασουσ" }, false);
 
-        private int Rule19(char[] s, int len)
+        private static int Rule19(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             bool removed = false;
 
@@ -841,7 +841,7 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private int Rule20(char[] s, int len)
+        private static int Rule20(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 5 && (StemmerUtil.EndsWith(s, len, "ματων") || StemmerUtil.EndsWith(s, len, "ματοσ")))
             {
@@ -854,7 +854,7 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private int Rule21(char[] s, int len)
+        private static int Rule21(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 9 && StemmerUtil.EndsWith(s, len, "ιοντουσαν"))
             {
@@ -973,7 +973,7 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private int Rule22(char[] s, int len)
+        private static int Rule22(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (StemmerUtil.EndsWith(s, len, "εστερ") || 
                 StemmerUtil.EndsWith(s, len, "εστατ"))
@@ -1002,7 +1002,7 @@ namespace Lucene.Net.Analysis.El
         /// <param name="len"> The length of the char[] array. </param>
         /// <param name="suffix"> A <see cref="string"/> object to check if the word given ends with these characters. </param>
         /// <returns> True if the word ends with the suffix given , false otherwise. </returns>
-        private bool EndsWith(char[] s, int len, string suffix)
+        private static bool EndsWith(char[] s, int len, string suffix) // LUCENENET: CA1822: Mark members as static
         {
             int suffixLen = suffix.Length;
             if (suffixLen > len)
@@ -1028,7 +1028,7 @@ namespace Lucene.Net.Analysis.El
         /// <param name="len"> The length of the <see cref="T:char[]"/> array. </param>
         /// <returns> True if the word contained in the leading portion of <see cref="T:char[]"/> array , 
         /// ends with a vowel , false otherwise. </returns>
-        private bool EndsWithVowel(char[] s, int len)
+        private static bool EndsWithVowel(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len == 0)
             {
@@ -1057,7 +1057,7 @@ namespace Lucene.Net.Analysis.El
         /// <param name="len"> The length of the <see cref="T:char[]"/> array. </param>
         /// <returns> True if the word contained in the leading portion of <see cref="T:char[]"/> array , 
         /// ends with a vowel , false otherwise. </returns>
-        private bool EndsWithVowelNoY(char[] s, int len)
+        private static bool EndsWithVowelNoY(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len == 0)
             {

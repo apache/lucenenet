@@ -131,8 +131,6 @@ namespace Lucene.Net.Analysis
         /// Constructs a <see cref="Token"/> will null text. </summary>
         public Token()
         {
-            string s = "fooobar";
-            s.ToCharArray();
         }
 
         /// <summary>
@@ -628,7 +626,7 @@ namespace Lucene.Net.Analysis
             reflector.Reflect(typeof(ITypeAttribute), "type", type);
         }
 
-        private void CheckOffsets(int startOffset, int endOffset)
+        private static void CheckOffsets(int startOffset, int endOffset) // LUCENENET: CA1822: Mark members as static
         {
             if (startOffset < 0 || endOffset < startOffset)
             {

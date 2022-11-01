@@ -200,7 +200,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        private void DecodeTerm(DataInput @in, FieldInfo fieldInfo, Lucene41PostingsWriter.Int32BlockTermState termState)
+        private static void DecodeTerm(DataInput @in, FieldInfo fieldInfo, Lucene41PostingsWriter.Int32BlockTermState termState) // LUCENENET: CA1822: Mark members as static
         {
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
             bool fieldHasPositions = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;

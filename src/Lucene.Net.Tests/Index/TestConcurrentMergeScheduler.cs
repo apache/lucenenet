@@ -322,7 +322,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
+        private sealed class ConcurrentMergeSchedulerAnonymousClass : ConcurrentMergeScheduler
         {
             private readonly TestConcurrentMergeScheduler outerInstance;
 

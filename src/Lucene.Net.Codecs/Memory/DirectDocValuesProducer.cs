@@ -281,7 +281,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousClass : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass : NumericDocValues
         {
             private readonly sbyte[] values;
 
@@ -296,7 +296,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousClass2 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass2 : NumericDocValues
         {
             private readonly short[] values;
 
@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousClass3 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass3 : NumericDocValues
         {
             private readonly int[] values;
 
@@ -326,7 +326,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class NumericDocValuesAnonymousClass4 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass4 : NumericDocValues
         {
             private readonly long[] values;
 
@@ -379,7 +379,7 @@ namespace Lucene.Net.Codecs.Memory
             return new BinaryDocValuesAnonymousClass(bytes, address);
         }
 
-        private class BinaryDocValuesAnonymousClass : BinaryDocValues
+        private sealed class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             private readonly byte[] bytes;
             private readonly int[] address;
@@ -426,7 +426,7 @@ namespace Lucene.Net.Codecs.Memory
             return new SortedDocValuesAnonymousClass(entry, docToOrd, values);
         }
 
-        private class SortedDocValuesAnonymousClass : SortedDocValues
+        private sealed class SortedDocValuesAnonymousClass : SortedDocValues
         {
             private readonly SortedEntry entry;
             private readonly NumericDocValues docToOrd;
@@ -483,7 +483,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private class RandomAccessOrdsAnonymousClass : RandomAccessOrds
+        private sealed class RandomAccessOrdsAnonymousClass : RandomAccessOrds
         {
             private readonly SortedSetEntry entry;
             private readonly NumericDocValues docToOrdAddress;
@@ -654,12 +654,6 @@ namespace Lucene.Net.Codecs.Memory
             internal BinaryEntry values;
         }
 
-        internal class FSTEntry
-        {
-#pragma warning disable 649 // LUCENENET NOTE: Never assigned
-            internal long offset;
-            internal long numOrds;
-#pragma warning restore 649
-        }
+        // LUCENENET specific - removed FSTEntry because it is not in use.
     }
 }

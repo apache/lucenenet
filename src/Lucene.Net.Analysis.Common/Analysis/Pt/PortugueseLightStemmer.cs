@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.Pt
             return len;
         }
 
-        private int RemoveSuffix(char[] s, int len)
+        private static int RemoveSuffix(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 4 && StemmerUtil.EndsWith(s, len, "es"))
             {
@@ -202,7 +202,7 @@ namespace Lucene.Net.Analysis.Pt
             return len;
         }
 
-        private int NormFeminine(char[] s, int len)
+        private static int NormFeminine(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 7 && (StemmerUtil.EndsWith(s, len, "inha") || StemmerUtil.EndsWith(s, len, "iaca") || StemmerUtil.EndsWith(s, len, "eira")))
             {

@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly TestBooleanOr outerInstance;
 
@@ -230,21 +230,21 @@ namespace Lucene.Net.Search
                 this.end = end;
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 Assert.IsTrue(doc < end, "collected doc=" + doc + " beyond max=" + end);
                 hits.Set(doc);
             }
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => true;
+            public bool AcceptsDocsOutOfOrder => true;
         }
     }
 }

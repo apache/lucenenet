@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 {
                     if (sb.Length > 0)
                     {
-                        sb.Append("|");
+                        sb.Append('|');
                     }
                     sb.Append(ph.GetPhonemeText());
                 }
@@ -487,7 +487,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 StringBuilder result = new StringBuilder();
                 foreach (string word in words2)
                 {
-                    result.Append("-").Append(Encode(word));
+                    result.Append('-').Append(Encode(word));
                 }
                 // return the result without the leading "-"
                 return result.ToString(1, result.Length - 1);

@@ -263,7 +263,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.AllProject
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "websites", "websites\", "{8988CDA4-8420-4BEE-869A-66825055EED2}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6.2"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_59352"
 		Debug.AspNetCompiler.PhysicalPath = "websites\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59352\"

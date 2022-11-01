@@ -74,7 +74,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 this.body = body.ToString();
             }
 
-            private class DefaultHandlerAnonymousClass : DefaultHandler
+            private sealed class DefaultHandlerAnonymousClass : DefaultHandler
             {
                 private int inBODY = 0, inHEAD = 0, inTITLE = 0, suppressed = 0;
 

@@ -39,22 +39,22 @@ namespace Lucene.Net.Analysis.Ga
         /// File containing default Irish stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
 
-        private static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(new CharArraySet(
+        private static readonly CharArraySet DEFAULT_ARTICLES = new CharArraySet(
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            new string[] { "d", "m", "b" }, true));
+            new string[] { "d", "m", "b" }, true).AsReadOnly();
 
         /// <summary>
         /// When StandardTokenizer splits t‑athair into {t, athair}, we don't
         /// want to cause a position increment, otherwise there will be problems
         /// with phrase queries versus tAthair (which would not have a gap).
         /// </summary>
-        private static readonly CharArraySet HYPHENATIONS = CharArraySet.UnmodifiableSet(new CharArraySet(
+        private static readonly CharArraySet HYPHENATIONS = new CharArraySet(
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            new string[] { "h", "n", "t" }, true));
+            new string[] { "h", "n", "t" }, true).AsReadOnly();
 
         /// <summary>
         /// Returns an unmodifiable instance of the default stop words set. </summary>
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Ga
         /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Ga
             {
                 try
                 {
-                    return LoadStopwordSet(false, typeof(IrishAnalyzer), DEFAULT_STOPWORD_FILE, "#");
+                    return LoadStopwordSet(false, typeof(IrishAnalyzer), DEFAULT_STOPWORD_FILE, "#").AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.Ga
         public IrishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
               : base(matchVersion, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

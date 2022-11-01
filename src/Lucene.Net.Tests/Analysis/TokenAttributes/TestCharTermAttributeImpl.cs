@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.CopyBuffer(content, 0, content.Length);
                 Assert.AreEqual(buf.Length, t.Length);
                 Assert.AreEqual(buf.ToString(), t.ToString());
-                buf.Append(buf.ToString());
+                buf.Append(buf); // LUCENENET: CA1830: Prefer strongly-typed Append and Insert method overloads on StringBuilder
             }
             Assert.AreEqual(1048576, t.Length);
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.SetEmpty().Append(buf);
                 Assert.AreEqual(buf.Length, t.Length);
                 Assert.AreEqual(buf.ToString(), t.ToString());
-                buf.Append("a");
+                buf.Append('a');
             }
             Assert.AreEqual(20000, t.Length);
         }
@@ -343,7 +343,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             Assert.AreEqual("4567890123456" + longTestString, t.ToString());
         }
 
-        private class CharSequenceAnonymousClass : ICharSequence
+        private sealed class CharSequenceAnonymousClass : ICharSequence
         {
             private readonly TestCharTermAttributeImpl outerInstance;
 

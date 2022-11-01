@@ -107,14 +107,14 @@ namespace Lucene.Net.Index.Memory
 
                 public override IEnumerator<string> GetEnumerator()
                 {
-                    return new IteratorAnonymousClass(this);
+                    return new EnumeratorAnonymousClass(this);
                 }
 
-                private class IteratorAnonymousClass : IEnumerator<string>
+                private sealed class EnumeratorAnonymousClass : IEnumerator<string>
                 {
                     private readonly MemoryFields outerInstance;
 
-                    public IteratorAnonymousClass(MemoryFields outerInstance)
+                    public EnumeratorAnonymousClass(MemoryFields outerInstance)
                     {
                         this.outerInstance = outerInstance;
                         upto = -1;
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index.Memory
                     }
                 }
 
-                private class TermsAnonymousClass : Terms
+                private sealed class TermsAnonymousClass : Terms
                 {
                     private readonly MemoryFields outerInstance;
 
@@ -231,7 +231,7 @@ namespace Lucene.Net.Index.Memory
                     info.SortTerms();
                 }
 
-                internal int BinarySearch(BytesRef b, BytesRef bytesRef, int low, int high, BytesRefHash hash, int[] ords, IComparer<BytesRef> comparer)
+                internal static int BinarySearch(BytesRef b, BytesRef bytesRef, int low, int high, BytesRefHash hash, int[] ords, IComparer<BytesRef> comparer) // LUCENENET: CA1822: Mark members as static
                 {
                     int mid; // LUCENENET: IDE0059: Remove unnecessary value assignment
                     while (low <= high)

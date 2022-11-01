@@ -141,7 +141,7 @@ namespace Lucene.Net.Store
             writer.Dispose();
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestRAMDirectory outerInstance;
 

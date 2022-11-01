@@ -180,7 +180,7 @@ namespace Lucene.Net.Queries
             return MinNrShouldMatch(m_highFreqMinNrShouldMatch, numOptional);
         }
 
-        private int MinNrShouldMatch(float minNrShouldMatch, int numOptional)
+        private static int MinNrShouldMatch(float minNrShouldMatch, int numOptional) // LUCENENET: CA1822: Mark members as static
         {
             if (minNrShouldMatch >= 1.0f || minNrShouldMatch == 0.0f)
             {
@@ -361,7 +361,7 @@ namespace Lucene.Net.Queries
             bool needParens = (Boost != 1.0) || (LowFreqMinimumNumberShouldMatch > 0);
             if (needParens)
             {
-                buffer.Append("(");
+                buffer.Append('(');
             }
             for (int i = 0; i < m_terms.Count; i++)
             {
@@ -375,15 +375,15 @@ namespace Lucene.Net.Queries
             }
             if (needParens)
             {
-                buffer.Append(")");
+                buffer.Append(')');
             }
             if (LowFreqMinimumNumberShouldMatch > 0 || HighFreqMinimumNumberShouldMatch > 0)
             {
                 buffer.Append('~');
-                buffer.Append("(");
+                buffer.Append('(');
                 buffer.AppendFormat(CultureInfo.InvariantCulture, "{0:0.0#######}", LowFreqMinimumNumberShouldMatch);
                 buffer.AppendFormat(CultureInfo.InvariantCulture, "{0:0.0#######}", HighFreqMinimumNumberShouldMatch);
-                buffer.Append(")");
+                buffer.Append(')');
             }
             if (Boost != 1.0f)
             {

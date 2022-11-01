@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Ja.Util
 
             if (result.IndexOf('\"') >= 0)
             {
-                result.Replace("\"", ESCAPED_QUOTE);
+                result = result.Replace("\"", ESCAPED_QUOTE); // LUCENENET 4.8.0: Applied SOLR-9413 (was fixed in Lucene 6.2/7.0)
             }
             if (result.IndexOf(COMMA) >= 0)
             {

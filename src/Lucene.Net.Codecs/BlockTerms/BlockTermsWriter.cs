@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-        private void WriteHeader(IndexOutput output)
+        private static void WriteHeader(IndexOutput output) // LUCENENET: CA1822: Mark members as static
         {
             CodecUtil.WriteHeader(output, CODEC_NAME, VERSION_CURRENT);
         }

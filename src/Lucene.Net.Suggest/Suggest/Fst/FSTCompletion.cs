@@ -343,7 +343,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// Returns <c>true</c> if and only if <paramref name="list"/> contained
         /// <paramref name="key"/>.
         /// </returns>
-        private bool CheckExistingAndReorder(IList<Completion> list, BytesRef key)
+        private static bool CheckExistingAndReorder(IList<Completion> list, BytesRef key) // LUCENENET: CA1822: Mark members as static
         {
             // We assume list does not have duplicates (because of how the FST is created).
             for (int i = list.Count; --i >= 0; )

@@ -780,7 +780,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto replab2;
                     end_of_outer_loop: { }
                 }
-                replab2:;
+                replab2: {/* LUCENENET: intentionally blank */}
             } while (false);
             //lab1: // not referenced
             m_cursor = v_2;
@@ -1035,7 +1035,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto replab24;
                     end_of_outer_loop_2: { }
                 }
-                replab24:;
+                replab24: {/* LUCENENET: intentionally blank */}
             } while (false);
             lab23:
             m_cursor = v_18;

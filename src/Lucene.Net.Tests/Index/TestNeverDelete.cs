@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
             System.IO.Directory.Delete(tmpDir.FullName, true);
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly Func<string, string, Field.Store, Field> newStringField;
             private readonly Func<string, string, Field.Store, Field> newTextField;

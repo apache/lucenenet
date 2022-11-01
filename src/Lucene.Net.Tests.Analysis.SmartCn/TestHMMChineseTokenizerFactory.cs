@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -28,9 +29,10 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// </summary>
     public class TestHMMChineseTokenizerFactory : BaseTokenStreamTestCase
     {
-        [Test]
-        public void TestHHMMSegmenter()
+        [Test, LuceneNetSpecific]
+        public void TestHHMMSegmenterInitialization()
         {
+            // Smoke test to ensure we can parse the resources.
             var x = new Hhmm.HHMMSegmenter();
         }
 

@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
             return threads;
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
@@ -421,7 +421,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
@@ -520,7 +520,7 @@ namespace Lucene.Net.Index
                                         //if (VERBOSE) {
                                         //System.out.println(Thread.currentThread().getName() + " now search body:" + term.Utf8ToString());
                                         //}
-                                        totHits.AddAndGet(outerInstance.RunQuery(s, new TermQuery(new Term("body", termsEnum.Term))));
+                                        totHits.AddAndGet(RunQuery(s, new TermQuery(new Term("body", termsEnum.Term))));
                                     }
                                 }
                                 //if (VERBOSE) {
@@ -796,7 +796,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class IndexReaderWarmerAnonymousClass : IndexWriter.IndexReaderWarmer
+        private sealed class IndexReaderWarmerAnonymousClass : IndexWriter.IndexReaderWarmer
         {
             private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
@@ -847,7 +847,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class PrintStreamInfoStreamAnonymousClass : TextWriterInfoStream
+        private sealed class PrintStreamInfoStreamAnonymousClass : TextWriterInfoStream
         {
             public PrintStreamInfoStreamAnonymousClass(TextWriter @out)
                 : base(@out)
@@ -906,7 +906,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private int RunQuery(IndexSearcher s, Query q)
+        private static int RunQuery(IndexSearcher s, Query q) // LUCENENET: CA1822: Mark members as static
         {
             s.Search(q, 10);
             int hitCount = s.Search(q, null, 10, new Sort(new SortField("title", SortFieldType.STRING))).TotalHits;

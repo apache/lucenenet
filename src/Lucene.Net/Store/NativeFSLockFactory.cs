@@ -463,7 +463,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Return true if the <see cref="IOException"/> is the result of a share violation
         /// </summary>
-        private bool IsShareViolation(IOException e)
+        private static bool IsShareViolation(IOException e) // LUCENENET: CA1822: Mark members as static
         {
             return e.HResult == NativeFSLockFactory.HRESULT_FILE_SHARE_VIOLATION;
         }
@@ -645,7 +645,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Return true if the <see cref="IOException"/> is the result of a lock violation
         /// </summary>
-        private bool IsLockViolation(IOException e)
+        private static bool IsLockViolation(IOException e) // LUCENENET: CA1822: Mark members as static
         {
             return e.HResult == NativeFSLockFactory.HRESULT_FILE_LOCK_VIOLATION;
         }

@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class SerialMergeSchedulerAnonymousClass : SerialMergeScheduler
+        private sealed class SerialMergeSchedulerAnonymousClass : SerialMergeScheduler
         {
             private readonly AtomicBoolean mayMerge;
 

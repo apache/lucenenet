@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Bg
         /// <param name="s"> input buffer </param>
         /// <param name="len"> length of input buffer </param>
         /// <returns> new stemmed length </returns>
-        private int RemoveArticle(char[] s, int len)
+        private static int RemoveArticle(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 6 && StemmerUtil.EndsWith(s, len, "ият"))
             {
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Bg
             return len;
         }
 
-        private int RemovePlural(char[] s, int len)
+        private static int RemovePlural(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 6)
             {

@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.Lucene41
         private readonly StoredFieldsFormat fieldsFormat = new Lucene41StoredFieldsFormat();
         private readonly FieldInfosFormat fieldInfos = new Lucene40FieldInfosFormatAnonymousClass();
 
-        private class Lucene40FieldInfosFormatAnonymousClass : Lucene40FieldInfosFormat
+        private sealed class Lucene40FieldInfosFormatAnonymousClass : Lucene40FieldInfosFormat
         {
             public override FieldInfosWriter FieldInfosWriter
             {

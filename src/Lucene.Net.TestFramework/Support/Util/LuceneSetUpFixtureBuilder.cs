@@ -2,6 +2,7 @@
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -31,6 +32,7 @@ namespace Lucene.Net.Util
     /// </summary>
     internal class LuceneSetUpFixtureBuilder
     {
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         public TestSuite BuildFrom(ITypeInfo typeInfo)
         {
             var setUpFixtureType = new DefaultNamespaceTypeWrapper(typeof(LuceneTestCase.SetUpFixture));

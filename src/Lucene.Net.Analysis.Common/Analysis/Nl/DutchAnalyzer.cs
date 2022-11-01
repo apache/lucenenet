@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Nl
         /// <returns> an unmodifiable instance of the default stop-words set. </returns>
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
             internal static readonly CharArrayMap<string> DEFAULT_STEM_DICT = LoadDefaultStemDict();
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Nl
                     return WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
-                        LuceneVersion.LUCENE_CURRENT);
+                        LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
 #pragma warning restore 612, 618
                 }
                 catch (Exception ex) when (ex.IsIOException())
@@ -155,14 +155,14 @@ namespace Lucene.Net.Analysis.Nl
         public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable, CharArrayMap<string> stemOverrideDict)
         {
             this.matchVersion = matchVersion;
-            this.stoptable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stopwords));
-            this.excltable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionTable));
+            this.stoptable = CharArraySet.Copy(matchVersion, stopwords).AsReadOnly();
+            this.excltable = CharArraySet.Copy(matchVersion, stemExclusionTable).AsReadOnly();
 #pragma warning disable 612, 618
             if (stemOverrideDict.Count == 0 || !matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
 #pragma warning restore 612, 618
             {
                 this.stemdict = null;
-                this.origStemdict = CharArrayMap.UnmodifiableMap(CharArrayMap.Copy(matchVersion, stemOverrideDict));
+                this.origStemdict = CharArrayMap.Copy(matchVersion, stemOverrideDict).AsReadOnly();
             }
             else
             {
@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis.Nl
                     {
                         char[] nextKey = iter.NextKey();
                         spare.CopyChars(nextKey, 0, nextKey.Length);
-                        builder.Add(new string(spare.Chars), iter.CurrentValue);
+                        builder.Add(spare.Chars, iter.CurrentValue);
                     }
                 }
                 try

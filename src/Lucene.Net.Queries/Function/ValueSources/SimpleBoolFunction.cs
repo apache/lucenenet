@@ -49,7 +49,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new BoolDocValuesAnonymousClass(this, this, vals);
         }
 
-        private class BoolDocValuesAnonymousClass : BoolDocValues
+        private sealed class BoolDocValuesAnonymousClass : BoolDocValues
         {
             private readonly SimpleBoolFunction outerInstance;
 

@@ -50,7 +50,7 @@ namespace Lucene.Net.Codecs.Lucene41
         // TODO: slightly evil
         private readonly StoredFieldsFormat fieldsFormat = new CompressingStoredFieldsFormatAnonymousClass("Lucene41StoredFields", CompressionMode.FAST, 1 << 14);
 
-        private class CompressingStoredFieldsFormatAnonymousClass : CompressingStoredFieldsFormat
+        private sealed class CompressingStoredFieldsFormatAnonymousClass : CompressingStoredFieldsFormat
         {
             public CompressingStoredFieldsFormatAnonymousClass(string formatName, CompressionMode compressionMode, int chunkSize)
                 : base(formatName, compressionMode, chunkSize)
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         private readonly PostingsFormat postingsFormat;
 
-        private class PerFieldPostingsFormatAnonymousClass : PerFieldPostingsFormat
+        private sealed class PerFieldPostingsFormatAnonymousClass : PerFieldPostingsFormat
         {
             private readonly Lucene41Codec outerInstance;
 

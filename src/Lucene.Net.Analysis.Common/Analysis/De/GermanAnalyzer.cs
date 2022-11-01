@@ -83,11 +83,11 @@ namespace Lucene.Net.Analysis.De
         /// <returns> a set of default German-stopwords  </returns>
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_SET;
 
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             /// @deprecated in 3.1, remove in Lucene 5.0 (index bw compat) 
             [Obsolete("in 3.1, remove in Lucene 5.0 (index bw compat)")]
-            internal static readonly CharArraySet DEFAULT_SET_30 = CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT, GERMAN_STOP_WORDS, false));
+            internal static readonly CharArraySet DEFAULT_SET_30 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, GERMAN_STOP_WORDS, false).AsReadOnly();
             internal static readonly CharArraySet DEFAULT_SET = LoadDefaultSet();
             private static CharArraySet LoadDefaultSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.De
                     return WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
-                        LuceneVersion.LUCENE_CURRENT);
+                        LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
 #pragma warning restore 612, 618
                 }
                 catch (Exception ex) when (ex.IsIOException())
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.De
         public GermanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
               : base(matchVersion, stopwords)
         {
-            exclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+            exclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

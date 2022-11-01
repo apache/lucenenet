@@ -61,7 +61,7 @@ namespace Lucene.Net.Queries
         {
         }
 
-        private class FieldAndTermEnumAnonymousClass : FieldAndTermEnum
+        private sealed class FieldAndTermEnumAnonymousClass : FieldAndTermEnum
         {            
             public FieldAndTermEnumAnonymousClass(IList<Term> terms)
             {
@@ -103,7 +103,7 @@ namespace Lucene.Net.Queries
         {
         }
 
-        private class FieldAndTermEnumAnonymousClass2 : FieldAndTermEnum
+        private sealed class FieldAndTermEnumAnonymousClass2 : FieldAndTermEnum
         {
             public FieldAndTermEnumAnonymousClass2(string field, IList<BytesRef> terms)
                 : base(field)

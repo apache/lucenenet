@@ -18,6 +18,7 @@
 
 using Sax;
 using Sax.Ext;
+using System;
 using System.IO;
 
 namespace TagSoup
@@ -34,82 +35,102 @@ namespace TagSoup
 
         // ScanHandler implementation
 
-        public void Adup(char[] buff, int offset, int length)
+        public virtual void Adup(char[] buffer, int startIndex, int length)
         {
             theWriter.WriteLine(attrName);
             attrName = null;
         }
 
-        public void Aname(char[] buff, int offset, int length)
+        public virtual void Aname(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             theWriter.Write('A');
-            theWriter.Write(buff, offset, length);
+            theWriter.Write(buffer, startIndex, length);
             theWriter.Write(' ');
-            attrName = new string(buff, offset, length);
+            attrName = new string(buffer, startIndex, length);
         }
 
-        public void Aval(char[] buff, int offset, int length)
+        public virtual void Aval(char[] buffer, int startIndex, int length)
         {
-            theWriter.Write(buff, offset, length);
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            theWriter.Write(buffer, startIndex, length);
             theWriter.WriteLine();
             attrName = null;
         }
 
-        public void Cmnt(char[] buff, int offset, int length)
+        public virtual void Cmnt(char[] buffer, int startIndex, int length)
         {
             //		theWriter.Write('!');
-            //		theWriter.Write(buff, offset, length);
+            //		theWriter.Write(buffer, startIndex, length);
             //		theWriter.WriteLine();
         }
 
-        public void Entity(char[] buff, int offset, int length)
+        public virtual void Entity(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public int GetEntity()
+        public virtual int GetEntity()
         {
             return 0;
         }
 
-        public void EOF(char[] buff, int offset, int length)
+        public virtual void EOF(char[] buffer, int startIndex, int length)
         {
             theWriter.Dispose();
         }
 
-        public void ETag(char[] buff, int offset, int length)
+        public virtual void ETag(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             theWriter.Write(')');
-            theWriter.Write(buff, offset, length);
+            theWriter.Write(buffer, startIndex, length);
             theWriter.WriteLine();
         }
 
-        public void Decl(char[] buff, int offset, int length)
+        public virtual void Decl(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void GI(char[] buff, int offset, int length)
+        public virtual void GI(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             theWriter.Write('(');
-            theWriter.Write(buff, offset, length);
+            theWriter.Write(buffer, startIndex, length);
             theWriter.WriteLine();
         }
 
-        public void CDSect(char[] buff, int offset, int length)
+        public virtual void CDSect(char[] buffer, int startIndex, int length)
         {
-            PCDATA(buff, offset, length);
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            PCDATA(buffer, startIndex, length);
         }
 
-        public void PCDATA(char[] buff, int offset, int length)
+        public virtual void PCDATA(char[] buffer, int startIndex, int length)
         {
             if (length == 0)
             {
                 return; // nothing to do
             }
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             bool inProgress = false;
-            length += offset;
-            for (int i = offset; i < length; i++)
+            length += startIndex;
+            for (int i = startIndex; i < length; i++)
             {
-                if (buff[i] == '\n')
+                if (buffer[i] == '\n')
                 {
                     if (inProgress)
                     {
@@ -124,7 +145,7 @@ namespace TagSoup
                     {
                         theWriter.Write('-');
                     }
-                    switch (buff[i])
+                    switch (buffer[i])
                     {
                         case '\t':
                             theWriter.Write("\\t");
@@ -133,7 +154,7 @@ namespace TagSoup
                             theWriter.Write("\\\\");
                             break;
                         default:
-                            theWriter.Write(buff[i]);
+                            theWriter.Write(buffer[i]);
                             break;
                     }
                     inProgress = true;
@@ -145,42 +166,51 @@ namespace TagSoup
             }
         }
 
-        public void PITarget(char[] buff, int offset, int length)
+        public virtual void PITarget(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             theWriter.Write('?');
-            theWriter.Write(buff, offset, length);
+            theWriter.Write(buffer, startIndex, length);
             theWriter.Write(' ');
         }
 
-        public void PI(char[] buff, int offset, int length)
+        public virtual void PI(char[] buffer, int startIndex, int length)
         {
-            theWriter.Write(buff, offset, length);
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            theWriter.Write(buffer, startIndex, length);
             theWriter.WriteLine();
         }
 
-        public void STagC(char[] buff, int offset, int length)
+        public virtual void STagC(char[] buffer, int startIndex, int length)
         {
             //		theWriter.WriteLine("!");			// FIXME
         }
 
-        public void STagE(char[] buff, int offset, int length)
+        public virtual void STagE(char[] buffer, int startIndex, int length)
         {
             theWriter.WriteLine("!"); // FIXME
         }
 
         // SAX ContentHandler implementation
 
-        public void Characters(char[] buff, int offset, int length)
+        public virtual void Characters(char[] buffer, int startIndex, int length)
         {
-            PCDATA(buff, offset, length);
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            PCDATA(buffer, startIndex, length);
         }
 
-        public void EndDocument()
+        public virtual void EndDocument()
         {
             theWriter.Dispose();
         }
 
-        public void EndElement(string uri, string localname, string qname)
+        public virtual void EndElement(string uri, string localname, string qname)
         {
             if (qname.Length == 0)
             {
@@ -190,16 +220,20 @@ namespace TagSoup
             theWriter.WriteLine(qname);
         }
 
-        public void EndPrefixMapping(string prefix)
+        public virtual void EndPrefixMapping(string prefix)
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void IgnorableWhitespace(char[] buff, int offset, int length)
+        public virtual void IgnorableWhitespace(char[] buffer, int startIndex, int length)
         {
-            Characters(buff, offset, length);
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            Characters(buffer, startIndex, length);
         }
 
-        public void ProcessingInstruction(string target, string data)
+        public virtual void ProcessingInstruction(string target, string data)
         {
             theWriter.Write('?');
             theWriter.Write(target);
@@ -207,24 +241,34 @@ namespace TagSoup
             theWriter.WriteLine(data);
         }
 
-        public void SetDocumentLocator(ILocator locator)
+        public virtual void SetDocumentLocator(ILocator locator)
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void SkippedEntity(string name)
+        public virtual void SkippedEntity(string name)
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void StartDocument()
+        public virtual void StartDocument()
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void StartElement(string uri, string localname, string qname, IAttributes atts)
+        public virtual void StartElement(string uri, string localname, string qname, IAttributes atts)
         {
+            // LUCENENET: Added guard clauses
+            if (qname is null)
+                throw new ArgumentNullException(nameof(qname));
+            if (atts is null)
+                throw new ArgumentNullException(nameof(atts));
+
             if (qname.Length == 0)
             {
                 qname = localname;
             }
+
             theWriter.Write('(');
             theWriter.WriteLine(qname);
             int length = atts.Length;
@@ -243,44 +287,51 @@ namespace TagSoup
             }
         }
 
-        public void StartPrefixMapping(string prefix, string uri)
+        public virtual void StartPrefixMapping(string prefix, string uri)
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void Comment(char[] ch, int start, int length)
+        public virtual void Comment(char[] ch, int start, int length)
         {
             Cmnt(ch, start, length);
         }
 
-        public void EndCDATA()
+        public virtual void EndCDATA()
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void EndDTD()
+        public virtual void EndDTD()
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void EndEntity(string name)
+        public virtual void EndEntity(string name)
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void StartCDATA()
+        public virtual void StartCDATA()
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void StartDTD(string name, string publicId, string systemId)
+        public virtual void StartDTD(string name, string publicId, string systemId)
         {
+            // LUCENENET: Intentionally blank
         }
 
-        public void StartEntity(string name)
+        public virtual void StartEntity(string name)
         {
+            // LUCENENET: Intentionally blank
         }
 
         // Constructor
 
-        public PYXWriter(TextWriter w)
+        public PYXWriter(TextWriter writer)
         {
-            theWriter = w;
+            theWriter = writer ?? throw new ArgumentNullException(nameof(writer));
         }
     }
 }

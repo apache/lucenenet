@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using Lucene.Net.Analysis.Core;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Th
 
             // reinit CharacterIterator
             charIterator.SetText(clonedTermAtt.Buffer, 0, clonedTermAtt.Length);
-            breaker.SetText(new string(charIterator.Text, charIterator.Start, charIterator.Length));
+            breaker.SetText(charIterator);
             int end2 = breaker.Next();
             if (end2 != BreakIterator.Done)
             {

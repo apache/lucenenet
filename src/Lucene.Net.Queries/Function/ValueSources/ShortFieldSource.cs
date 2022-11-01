@@ -58,7 +58,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new FunctionValuesAnonymousClass(this, arr);
         }
 
-        private class FunctionValuesAnonymousClass : FunctionValues
+        private sealed class FunctionValuesAnonymousClass : FunctionValues
         {
             private readonly Int16FieldSource outerInstance;
             private readonly FieldCache.Int16s arr;

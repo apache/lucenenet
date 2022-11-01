@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private readonly PostingsFormat postingsFormat;
 
-        private class PerFieldPostingsFormatAnonymousClass : PerFieldPostingsFormat
+        private sealed class PerFieldPostingsFormatAnonymousClass : PerFieldPostingsFormat
         {
             private readonly Lucene45Codec outerInstance;
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private readonly DocValuesFormat docValuesFormat;
 
-        private class PerFieldDocValuesFormatAnonymousClass : PerFieldDocValuesFormat
+        private sealed class PerFieldDocValuesFormatAnonymousClass : PerFieldDocValuesFormat
         {
             private readonly Lucene45Codec outerInstance;
 

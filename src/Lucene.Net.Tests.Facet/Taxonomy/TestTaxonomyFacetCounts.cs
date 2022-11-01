@@ -299,7 +299,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(writer, taxoWriter, dir, taxoDir);
         }
 
-        private class PerFieldSimilarityWrapperAnonymousClass : PerFieldSimilarityWrapper
+        private sealed class PerFieldSimilarityWrapperAnonymousClass : PerFieldSimilarityWrapper
         {
             private readonly TestTaxonomyFacetCounts outerInstance;
 

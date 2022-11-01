@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System.IO;
 using System.IO.Compression;
 
@@ -78,7 +78,7 @@ namespace Lucene.Net.Documents
         public static byte[] CompressString(string value, CompressionLevel compressionLevel)
         {
             var result = new BytesRef();
-            UnicodeUtil.UTF16toUTF8(value.ToCharArray(), 0, value.Length, result);
+            UnicodeUtil.UTF16toUTF8(value, 0, value.Length, result);
             return Compress(result.Bytes, 0, result.Length, compressionLevel);
         }
 

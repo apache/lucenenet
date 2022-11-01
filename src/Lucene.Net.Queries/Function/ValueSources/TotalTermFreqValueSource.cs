@@ -79,7 +79,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             context[this] = new Int64DocValuesAnonymousClass(this, ttf);
         }
 
-        private class Int64DocValuesAnonymousClass : Int64DocValues
+        private sealed class Int64DocValuesAnonymousClass : Int64DocValues
         {
             private readonly long ttf;
 

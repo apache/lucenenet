@@ -274,7 +274,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
+        private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             private readonly TestBoolean2 outerInstance;
 

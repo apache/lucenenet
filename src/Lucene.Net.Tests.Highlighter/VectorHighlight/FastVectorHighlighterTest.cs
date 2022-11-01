@@ -642,7 +642,7 @@ namespace Lucene.Net.Search.VectorHighlight
             dir.Dispose();
         }
 
-        private class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
+        private sealed class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             IDictionary<String, Analyzer> fieldAnalyzers = new JCG.SortedDictionary<String, Analyzer>(StringComparer.Ordinal);
 

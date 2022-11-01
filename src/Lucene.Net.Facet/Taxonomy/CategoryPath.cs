@@ -170,7 +170,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void NoDelimiter(char[] buf, int offset, int len, char delimiter)
+        private static void NoDelimiter(char[] buf, int offset, int len, char delimiter) // LUCENENET: CA1822: Mark members as static
         {
             for (int idx = 0; idx < len; idx++)
             {

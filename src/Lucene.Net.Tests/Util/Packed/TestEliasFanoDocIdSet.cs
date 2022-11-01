@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.Packed
             return set;
         }
 
-        private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
+        private sealed class DocIdSetIteratorAnonymousClass : DocIdSetIterator
         {
             private readonly BitSet bs;
             private readonly int numBits;

@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
             return new WeightAnonymousClass(this, weight);
         }
 
-        private class WeightAnonymousClass : Weight
+        private sealed class WeightAnonymousClass : Weight
         {
             private readonly FilteredQuery outerInstance;
 

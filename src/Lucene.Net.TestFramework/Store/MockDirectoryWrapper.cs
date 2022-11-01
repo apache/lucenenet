@@ -1375,7 +1375,7 @@ namespace Lucene.Net.Store
             return handle;
         }
 
-        private class IndexInputSlicerAnonymousClass : IndexInputSlicer
+        private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly MockDirectoryWrapper outerInstance;
 

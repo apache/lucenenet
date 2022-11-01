@@ -55,12 +55,12 @@ namespace Lucene.Net.Analysis.Core
             {
                 if (i % 3 != 0)
                 {
-                    sb.Append(i).Append(" ");
+                    sb.Append(i).Append(' ');
                 }
                 else
                 {
                     string w = English.Int32ToEnglish(i).Trim();
-                    sb.Append(w).Append(" ");
+                    sb.Append(w).Append(' ');
                 }
             }
             log(sb.ToString());

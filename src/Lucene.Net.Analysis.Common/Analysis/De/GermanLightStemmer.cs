@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.De
             return Step2(s, len);
         }
 
-        private bool StEnding(char ch)
+        private static bool StEnding(char ch) // LUCENENET: CA1822: Mark members as static
         {
             switch (ch)
             {
@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis.De
             }
         }
 
-        private int Step1(char[] s, int len)
+        private static int Step1(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 5 && s[len - 3] == 'e' && s[len - 2] == 'r' && s[len - 1] == 'n')
             {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.De
             return len;
         }
 
-        private int Step2(char[] s, int len)
+        private static int Step2(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (len > 5 && s[len - 3] == 'e' && s[len - 2] == 's' && s[len - 1] == 't')
             {

@@ -121,6 +121,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public void SetMergeThreadPriority(int priority)
         {
+            // LUCENENET: Intentionally blank
         }
 
         /// <summary>

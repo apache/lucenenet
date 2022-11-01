@@ -815,7 +815,7 @@ namespace Lucene.Net.Util.Fst
             }
         }*/
 
-        private class VisitTermsAnonymousClass : VisitTerms<Pair>
+        private sealed class VisitTermsAnonymousClass : VisitTerms<Pair>
         {
             private readonly PairOutputs<Int64, Int64> outputs;
 
@@ -836,7 +836,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private class VisitTermsAnonymousClass2 : VisitTerms<Int64>
+        private sealed class VisitTermsAnonymousClass2 : VisitTerms<Int64>
         {
             public VisitTermsAnonymousClass2(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveInt32Outputs outputs, bool doPack, bool noArcArrays)
                 : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
@@ -849,7 +849,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private class VisitTermsAnonymousClass3 : VisitTerms<Int64>
+        private sealed class VisitTermsAnonymousClass3 : VisitTerms<Int64>
         {
             public VisitTermsAnonymousClass3(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveInt32Outputs outputs, bool doPack, bool noArcArrays)
                 : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
@@ -867,7 +867,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private class VisitTermsAnonymousClass4 : VisitTerms<object>
+        private sealed class VisitTermsAnonymousClass4 : VisitTerms<object>
         {
             private readonly object NO_OUTPUT;
 
@@ -1514,7 +1514,7 @@ namespace Lucene.Net.Util.Fst
             Assert.IsFalse(res.IsComplete); // rejected(4) + topN(2) > maxQueueSize(5)
         }
 
-        private class TopNSearcherAnonymousClass : Util.TopNSearcher<Int64>
+        private sealed class TopNSearcherAnonymousClass : Util.TopNSearcher<Int64>
         {
             private readonly AtomicInt32 rejectCount;
 
@@ -1535,7 +1535,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private class TopNSearcherAnonymousClass2 : Util.TopNSearcher<Int64>
+        private sealed class TopNSearcherAnonymousClass2 : Util.TopNSearcher<Int64>
         {
             private readonly AtomicInt32 rejectCount;
 

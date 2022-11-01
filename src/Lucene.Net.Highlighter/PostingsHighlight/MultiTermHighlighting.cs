@@ -137,7 +137,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             return list.ToArray(/*new CharacterRunAutomaton[list.size()]*/);
         }
 
-        private class CharacterRunAutomatonToStringAnonymousClass : CharacterRunAutomaton
+        private sealed class CharacterRunAutomatonToStringAnonymousClass : CharacterRunAutomaton
         {
             private readonly Func<string> toStringMethod;
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        private class SimpleCharacterRunAutomatonAnonymousClass : CharacterRunAutomaton
+        private sealed class SimpleCharacterRunAutomatonAnonymousClass : CharacterRunAutomaton
         {
             private readonly CharsRef lowerBound;
             private readonly CharsRef upperBound;
@@ -234,7 +234,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             return new DocsAndPositionsEnumAnonymousClass(ts, matchers, charTermAtt, offsetAtt);
         }
 
-        private class DocsAndPositionsEnumAnonymousClass : DocsAndPositionsEnum
+        private sealed class DocsAndPositionsEnumAnonymousClass : DocsAndPositionsEnum
         {
             private readonly CharacterRunAutomaton[] matchers;
             private readonly ICharTermAttribute charTermAtt;

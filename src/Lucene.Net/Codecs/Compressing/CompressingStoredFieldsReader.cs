@@ -380,7 +380,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        private class DataInputAnonymousClass : DataInput
+        private sealed class DataInputAnonymousClass : DataInput
         {
             private readonly CompressingStoredFieldsReader outerInstance;
 
@@ -395,7 +395,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             internal int decompressed;
 
-            internal virtual void FillBuffer()
+            internal void FillBuffer()
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(decompressed <= length);
                 if (decompressed == length)

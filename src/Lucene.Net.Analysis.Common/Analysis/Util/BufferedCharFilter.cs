@@ -312,8 +312,8 @@ namespace Lucene.Net.Analysis.Util
                 // LUCENENET specific - Added guard clause for null
                 if (buffer is null)
                     throw new ArgumentNullException(nameof(buffer));
-                if (offset > buffer.Length - length)
-                    throw new ArgumentOutOfRangeException(nameof(offset) + " + " + nameof(length), $"offset + length may not be greater than the size of {nameof(buffer)}");
+                if (offset > buffer.Length - length) // LUCENENET: Checks for int overflow
+                    throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(offset)} + {nameof(length)} may not be greater than the size of {nameof(buffer)}");
                 if (length < 0)
                     throw new ArgumentOutOfRangeException(nameof(length), length, $"{nameof(length)} must not be negative.");
 

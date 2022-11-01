@@ -1241,7 +1241,7 @@ namespace Lucene.Net.Codecs
                                             return;
                                         }
                                     }
-                                    continue;
+                                    //continue; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                                 }
                                 else if (cmp == 0)
                                 {
@@ -1444,7 +1444,7 @@ namespace Lucene.Net.Codecs
                         {
                             //System.out.println("    no s=" + state);
                         }
-                    nextTermContinue:;
+                    nextTermContinue: {/* LUCENENET: intentionally blank */}
                     }
                     //nextTermBreak:;
                 }
@@ -3223,7 +3223,7 @@ namespace Lucene.Net.Codecs
                                     return SeekStatus.FOUND;
                                 }
                             }
-                        nextTermContinue: ;
+                        nextTermContinue: {/* LUCENENET: intentionally blank */}
                         }
                     nextTermBreak:
 
@@ -3379,7 +3379,7 @@ namespace Lucene.Net.Codecs
                                     return SeekStatus.FOUND;
                                 }
                             }
-                        nextTermContinue: ;
+                        nextTermContinue: {/* LUCENENET: intentionally blank */}
                         }
                     nextTermBreak:
 

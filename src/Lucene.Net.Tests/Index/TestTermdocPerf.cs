@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
         }
 
-        private class AnalyzerAnonymousClass : Analyzer
+        private sealed class AnalyzerAnonymousClass : Analyzer
         {
             private readonly Random random;
             private readonly string val;

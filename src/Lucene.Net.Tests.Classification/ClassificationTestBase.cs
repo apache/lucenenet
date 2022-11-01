@@ -260,7 +260,7 @@ namespace Lucene.Net.Classification
             for (int i = 0; i < 20; i++)
             {
                 builder.Append(TestUtil.RandomSimpleString(random, 5));
-                builder.Append(" ");
+                builder.Append(' ');
             }
             return builder.ToString();
         }

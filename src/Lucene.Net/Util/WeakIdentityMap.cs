@@ -1,4 +1,4 @@
-// LUCENENET specific - factored out this class and replaced it with ConditionalWeakTable<TKey, TValue>.
+﻿// LUCENENET specific - factored out this class and replaced it with ConditionalWeakTable<TKey, TValue>.
 // ConditionalWeakTable<TKey, TValue> is thread-safe and internally uses RuntimeHelpers.GetHashCode()
 // to lookup the key, so it can be used as a direct replacement for WeakIdentityMap<TKey, TValue>
 // in most cases.
@@ -192,7 +192,7 @@
 //            public IEnumerator<TKey> GetEnumerator()
 //            {
 //                outerInstance.Reap();
-//                return new IteratorAnonymousClass(outerInstance);
+//                return new EnumeratorAnonymousClass(outerInstance);
 //            }
 
 //            IEnumerator IEnumerable.GetEnumerator()
@@ -259,12 +259,12 @@
 //            }
 //        }
 
-//        private class IteratorAnonymousClass : IEnumerator<TKey>
+//        private sealed class EnumeratorAnonymousClass : IEnumerator<TKey>
 //        {
 //            private readonly WeakIdentityMap<TKey, TValue> outerInstance;
 //            private readonly IEnumerator<KeyValuePair<IdentityWeakReference, TValue>> enumerator;
 
-//            public IteratorAnonymousClass(WeakIdentityMap<TKey, TValue> outerInstance)
+//            public EnumeratorAnonymousClass(WeakIdentityMap<TKey, TValue> outerInstance)
 //            {
 //                this.outerInstance = outerInstance;
 //                enumerator = outerInstance.backingStore.GetEnumerator();

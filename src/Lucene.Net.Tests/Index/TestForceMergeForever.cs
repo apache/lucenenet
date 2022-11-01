@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
             docs.Dispose();
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestForceMergeForever outerInstance;
 

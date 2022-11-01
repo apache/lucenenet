@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
                 return new DocMapAnonymousClass(maxDoc, liveDocs, docMap, numDeletedDocs);
             }
 
-            private class DocMapAnonymousClass : DocMap
+            private sealed class DocMapAnonymousClass : DocMap
             {
                 private readonly int maxDoc;
                 private readonly IBits liveDocs;
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly CheckAbort NONE = new CheckAbortAnonymousClass();
 
-        private class CheckAbortAnonymousClass : CheckAbort
+        private sealed class CheckAbortAnonymousClass : CheckAbort
         {
             public CheckAbortAnonymousClass()
                 : base(null, null)

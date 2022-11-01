@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 throw new ArgumentOutOfRangeException(nameof(fragCharSize), "fragCharSize(" + fragCharSize + ") is too small. It must be " + minFragCharSize + " or higher."); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
 
             JCG.List<WeightedPhraseInfo> wpil = new JCG.List<WeightedPhraseInfo>();
-            using (IteratorQueue<WeightedPhraseInfo> queue = new IteratorQueue<WeightedPhraseInfo>(fieldPhraseList.PhraseList.GetEnumerator()))
+            using (EnumeratorQueue<WeightedPhraseInfo> queue = new EnumeratorQueue<WeightedPhraseInfo>(fieldPhraseList.PhraseList.GetEnumerator()))
             {
                 WeightedPhraseInfo phraseInfo = null;
                 int startOffset = 0;
@@ -142,12 +142,12 @@ namespace Lucene.Net.Search.VectorHighlight
             return info.TermsOffsets.Count <= 1 || matchLength <= fragCharSize;
         }
 
-        private sealed class IteratorQueue<T> : IDisposable // LUCENENET specific - implemented IDisposable to dispose the IEnumerator<T>
+        private sealed class EnumeratorQueue<T> : IDisposable // LUCENENET specific - implemented IDisposable to dispose the IEnumerator<T>
         {
             private readonly IEnumerator<T> iter;
             private T top;
 
-            public IteratorQueue(IEnumerator<T> iter)
+            public EnumeratorQueue(IEnumerator<T> iter)
             {
                 this.iter = iter;
                 T removeTop = RemoveTop();

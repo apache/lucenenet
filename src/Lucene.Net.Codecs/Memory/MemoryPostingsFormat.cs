@@ -338,7 +338,7 @@ namespace Lucene.Net.Codecs.Memory
             return new FieldsConsumerAnonymousClass(this, @out);
         }
 
-        private class FieldsConsumerAnonymousClass : FieldsConsumer
+        private sealed class FieldsConsumerAnonymousClass : FieldsConsumer
         {
             private readonly MemoryPostingsFormat outerInstance;
 
@@ -979,7 +979,7 @@ namespace Lucene.Net.Codecs.Memory
             return new FieldsProducerAnonymousClass(fields);
         }
 
-        private class FieldsProducerAnonymousClass : FieldsProducer
+        private sealed class FieldsProducerAnonymousClass : FieldsProducer
         {
             private readonly IDictionary<string, TermsReader> _fields;
 

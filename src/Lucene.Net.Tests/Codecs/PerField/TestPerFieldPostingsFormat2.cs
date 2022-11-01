@@ -288,7 +288,7 @@ namespace Lucene.Net.Codecs.PerField
             DoTestMixedPostings(codec);
         }
 
-        private class Lucene46CodecAnonymousClass : Lucene46Codec
+        private sealed class Lucene46CodecAnonymousClass : Lucene46Codec
         {
             private readonly TestPerFieldPostingsFormat2 outerInstance;
 
@@ -321,7 +321,7 @@ namespace Lucene.Net.Codecs.PerField
           DoTestMixedPostings(codec);
         }
 
-        private class Lucene46CodecAnonymousClass2 : Lucene46Codec
+        private sealed class Lucene46CodecAnonymousClass2 : Lucene46Codec
         {
             private readonly TestPerFieldPostingsFormat2 outerInstance;
 

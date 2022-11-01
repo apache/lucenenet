@@ -502,7 +502,7 @@ namespace Lucene.Net.Search
             Assert.IsFalse(failed);
         }
 
-        private class RunnableAnonymousClass //: IThreadRunnable
+        private sealed class RunnableAnonymousClass //: IThreadRunnable
         {
             private readonly TestFieldCache outerInstance;
 
@@ -523,7 +523,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestFieldCache outerInstance;
 

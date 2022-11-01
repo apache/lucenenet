@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.NGram
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        private class PositionIncrementAttributeAnonymousClass : PositionIncrementAttribute
+        private sealed class PositionIncrementAttributeAnonymousClass : PositionIncrementAttribute
         {
             public override int PositionIncrement
             {
@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.NGram
             }
         }
 
-        private class PositionLengthAttributeAnonymousClass : PositionLengthAttribute
+        private sealed class PositionLengthAttributeAnonymousClass : PositionLengthAttribute
         {
             public override int PositionLength
             {

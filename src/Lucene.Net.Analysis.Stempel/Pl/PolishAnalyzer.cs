@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Pl
         /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
-        private class DefaultsHolder
+        private static class DefaultsHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
             internal static readonly Trie DEFAULT_TABLE = LoadDefaultTable();
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Pl
                     return WordlistLoader.GetWordSet(IOUtils.GetDecodingReader(typeof(PolishAnalyzer),
                         DEFAULT_STOPWORD_FILE, Encoding.UTF8), "#",
 #pragma warning disable 612, 618
-                        LuceneVersion.LUCENE_CURRENT);
+                        LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
 #pragma warning restore 612, 618
                 }
                 catch (Exception ex) when (ex.IsIOException())
@@ -131,8 +131,8 @@ namespace Lucene.Net.Analysis.Pl
             : base(matchVersion, stopwords)
         {
             this.stemTable = DefaultsHolder.DEFAULT_TABLE;
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(
-                matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.Copy(
+                matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

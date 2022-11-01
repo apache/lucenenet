@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
         /// An empty <see cref="DocIdSet"/> instance </summary>
         protected static readonly DocIdSet EMPTY_DOCIDSET = new DocIdSetAnonymousClass();
 
-        private class DocIdSetAnonymousClass : DocIdSet
+        private sealed class DocIdSetAnonymousClass : DocIdSet
         {
             public override DocIdSetIterator GetIterator()
             {

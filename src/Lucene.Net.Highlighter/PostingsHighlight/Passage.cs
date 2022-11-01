@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             numMatches++;
         }
 
-        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
+        private sealed class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly int[] starts;
             private readonly int[] ends;

@@ -61,7 +61,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         // LUCENENET specific: DateFormatInfo not used
 
-        private DateTime? ParseDate(string dateStr)
+        private static DateTime? ParseDate(string dateStr) // LUCENENET: CA1822: Mark members as static
         {
             if (DateTime.TryParseExact(dateStr, "dd-MMM-yyyy hh:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime temp))
             {

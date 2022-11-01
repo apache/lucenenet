@@ -565,7 +565,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            private class ThreadAnonymousClass : ThreadJob
+            private sealed class ThreadAnonymousClass : ThreadJob
             {
                 private readonly AddDirectoriesThreads outerInstance;
 
@@ -949,7 +949,7 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly IndexWriter writer;
             private readonly Directory[] dirs;
@@ -1055,7 +1055,7 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly IndexWriter writer;
             private readonly long endTime;
@@ -1189,7 +1189,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(didWarm);
         }
 
-        private class IndexReaderWarmerAnonymousClass : IndexWriter.IndexReaderWarmer
+        private sealed class IndexReaderWarmerAnonymousClass : IndexWriter.IndexReaderWarmer
         {
             private readonly AtomicBoolean didWarm;
 
@@ -1227,7 +1227,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(didWarm);
         }
 
-        private class InfoStreamAnonymousClass : InfoStream
+        private sealed class InfoStreamAnonymousClass : InfoStream
         {
             private readonly AtomicBoolean didWarm;
 
@@ -1380,7 +1380,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousClass : Failure
+        private sealed class FailureAnonymousClass : Failure
         {
             private readonly AtomicBoolean shouldFail;
 

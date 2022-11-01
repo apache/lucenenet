@@ -5043,7 +5043,7 @@ namespace Lucene.Net.Index
                     {
                         builder.Append(info.Info.Name).Append(", ");
                     }
-                    builder.Append("]");
+                    builder.Append(']');
                     // don't call mergingSegments.toString() could lead to ConcurrentModException
                     // since merge updates the segments FieldInfos
                     if (infoStream.IsEnabled("IW"))

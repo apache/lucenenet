@@ -1,3 +1,5 @@
+﻿using static Lucene.Net.Search.Similarities.SimilarityBase;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -34,7 +36,7 @@ namespace Lucene.Net.Search.Similarities
         {
             long N = stats.NumberOfDocuments;
             long n = stats.DocFreq;
-            return tfn * (float)(SimilarityBase.Log2((N + 1) / (n + 0.5)));
+            return tfn * (float)(Log2((N + 1) / (n + 0.5)));
         }
 
         public override sealed Explanation Explain(BasicStats stats, float tfn)

@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
             Assert.IsFalse(q.Equals(null));
         }
 
-        private class QueryAnonymousClass : Query
+        private sealed class QueryAnonymousClass : Query
         {
             public QueryAnonymousClass()
             {
@@ -288,7 +288,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly Query q;
             private readonly IndexSearcher s;
@@ -318,12 +318,12 @@ namespace Lucene.Net.Search
             private Scorer scorer;
             private int leafPtr;
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
                 this.sc = scorer;
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 float score = sc.GetScore();
                 lastDoc[0] = doc;
@@ -361,7 +361,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
                 // confirm that skipping beyond the last doc, on the
                 // previous reader, hits NO_MORE_DOCS
@@ -386,7 +386,7 @@ namespace Lucene.Net.Search
                 lastDoc[0] = -1;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => false;
+            public bool AcceptsDocsOutOfOrder => false;
         }
 
         /// <summary>
@@ -417,7 +417,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousClass2 : ICollector
+        private sealed class CollectorAnonymousClass2 : ICollector
         {
             private readonly Query q;
             private readonly IndexSearcher s;
@@ -440,12 +440,12 @@ namespace Lucene.Net.Search
             private int leafPtr;
             private IBits liveDocs;
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 float score = scorer.GetScore();
                 try
@@ -476,7 +476,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
                 // confirm that skipping beyond the last doc, on the
                 // previous reader, hits NO_MORE_DOCS
@@ -500,7 +500,7 @@ namespace Lucene.Net.Search
                 liveDocs = ((AtomicReader)context.Reader).LiveDocs;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => false;
+            public bool AcceptsDocsOutOfOrder => false;
         }
     }
 }

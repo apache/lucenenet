@@ -81,7 +81,7 @@ namespace Lucene.Net.Spatial.Util
             return new DoubleDocValuesAnonymousClass(this, shapeValues);
         }
 
-        private class DoubleDocValuesAnonymousClass : DoubleDocValues
+        private sealed class DoubleDocValuesAnonymousClass : DoubleDocValues
         {
             private readonly DistanceToShapeValueSource outerInstance;
             private readonly FunctionValues shapeValues;

@@ -305,7 +305,7 @@ namespace Lucene.Net.Codecs.Memory
             AddBinaryFieldValues(field, values);
         }
 
-        private class EnumerableAnonymousClass : IEnumerable<long?>
+        private sealed class EnumerableAnonymousClass : IEnumerable<long?>
         {
             private readonly IEnumerable<long?> _docToOrdCount;
 
@@ -317,7 +317,7 @@ namespace Lucene.Net.Codecs.Memory
             // Just aggregates the count values so they become
             // "addresses", and adds one more value in the end
             // (the final sum):
-            public virtual IEnumerator<long?> GetEnumerator()
+            public IEnumerator<long?> GetEnumerator()
             {
                 return new Enumerator( _docToOrdCount);
             }

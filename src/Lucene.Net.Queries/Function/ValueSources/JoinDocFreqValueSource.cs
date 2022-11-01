@@ -58,7 +58,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new Int32DocValuesAnonymousClass(this, this, terms, termsEnum);
         }
 
-        private class Int32DocValuesAnonymousClass : Int32DocValues
+        private sealed class Int32DocValuesAnonymousClass : Int32DocValues
         {
             private readonly JoinDocFreqValueSource outerInstance;
 

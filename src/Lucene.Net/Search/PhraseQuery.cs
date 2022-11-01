@@ -400,7 +400,7 @@ namespace Lucene.Net.Search
             }
 
             // only called from assert
-            private bool TermNotInReader(AtomicReader reader, Term term)
+            private static bool TermNotInReader(AtomicReader reader, Term term) // LUCENENET: CA1822: Mark members as static
             {
                 return reader.DocFreq(term) == 0;
             }
@@ -448,7 +448,7 @@ namespace Lucene.Net.Search
             if (field != null && !field.Equals(f, StringComparison.Ordinal))
             {
                 buffer.Append(field);
-                buffer.Append(":");
+                buffer.Append(':');
             }
 
             buffer.Append("\"");
@@ -487,7 +487,7 @@ namespace Lucene.Net.Search
 
             if (slop != 0)
             {
-                buffer.Append("~");
+                buffer.Append('~');
                 buffer.Append(slop);
             }
 

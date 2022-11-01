@@ -253,7 +253,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            private class NumericDocValuesAnonymousClass : NumericDocValues
+            private sealed class NumericDocValuesAnonymousClass : NumericDocValues
             {
                 private readonly byte[] bytes;
 

@@ -415,7 +415,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 if (AddSynonym) // inject our synonym
                 {
                     ClearAttributes();
-                    TermAtt.SetEmpty().Append("國");
+                    TermAtt.SetEmpty().Append('國');
                     PosIncAtt.PositionIncrement = 0;
                     AddSynonym = false;
                     return true;

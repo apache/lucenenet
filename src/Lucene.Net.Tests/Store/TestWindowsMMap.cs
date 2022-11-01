@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
             for (int fx = 0; fx < fl; fx++)
             {
                 fb.Append(RandomToken());
-                fb.Append(" ");
+                fb.Append(' ');
             }
             return fb.ToString();
         }

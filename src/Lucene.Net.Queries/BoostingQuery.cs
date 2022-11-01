@@ -61,7 +61,7 @@ namespace Lucene.Net.Queries
             };
         }
 
-        private class BooleanQueryAnonymousClass : BooleanQuery
+        private sealed class BooleanQueryAnonymousClass : BooleanQuery
         {
             private readonly BoostingQuery outerInstance;
 
@@ -75,7 +75,7 @@ namespace Lucene.Net.Queries
                 return new BooleanWeightAnonymousClass(this, searcher);
             }
 
-            private class BooleanWeightAnonymousClass : BooleanWeight
+            private sealed class BooleanWeightAnonymousClass : BooleanWeight
             {
                 private readonly BooleanQueryAnonymousClass outerInstance;
 

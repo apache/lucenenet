@@ -527,9 +527,9 @@ namespace Lucene.Net.Expressions.JS
                                     goto loop2_break;
                                 }
                         }
-                    //loop2_continue: ; // LUCENENET NOTE: Not used
+                    //loop2_continue: // LUCENENET NOTE: Not used
                     }
-                loop2_break: ;
+                loop2_break: {/* LUCENENET: intentionally blank */}
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root_0);
@@ -597,9 +597,9 @@ namespace Lucene.Net.Expressions.JS
                                     goto loop3_break;
                                 }
                         }
-                    //loop3_continue: ; // LUCENENET NOTE: Not used
+                    //loop3_continue: // LUCENENET NOTE: Not used
                     }
-                loop3_break: ;
+                loop3_break: {/* LUCENENET: intentionally blank */}
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
@@ -662,9 +662,9 @@ namespace Lucene.Net.Expressions.JS
                                     goto loop4_break;
                                 }
                         }
-                        //loop4_continue: ; // LUCENENET NOTE: Not used
+                        //loop4_continue: // LUCENENET NOTE: Not used
                     }
-                    loop4_break: ;
+                    loop4_break: {/* LUCENENET: intentionally blank */}
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
@@ -727,9 +727,9 @@ namespace Lucene.Net.Expressions.JS
                                     goto loop5_break;
                                 }
                         }
-                        //loop5_continue: ; // LUCENENET NOTE: Not used
+                        //loop5_continue: // LUCENENET NOTE: Not used
                     }
-                    loop5_break: ;
+                    loop5_break: {/* LUCENENET: intentionally blank */}
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
@@ -794,9 +794,9 @@ namespace Lucene.Net.Expressions.JS
                                     goto loop6_break;
                                 }
                         }
-                        //loop6_continue: ; // LUCENENET NOTE: Not used
+                        //loop6_continue: // LUCENENET NOTE: Not used
                     }
-                    loop6_break: ;
+                    loop6_break: {/* LUCENENET: intentionally blank */}
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
@@ -870,9 +870,9 @@ namespace Lucene.Net.Expressions.JS
                                     goto loop7_break;
                                 }
                         }
-                        //loop7_continue: ; // LUCENENET NOTE: Not used
+                        //loop7_continue: // LUCENENET NOTE: Not used
                     }
-                    loop7_break: ;
+                    loop7_break: {/* LUCENENET: intentionally blank */}
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
@@ -948,9 +948,9 @@ namespace Lucene.Net.Expressions.JS
                                     goto loop8_break;
                                 }
                         }
-                        //loop8_continue: ; // LUCENENET NOTE: Not used
+                        //loop8_continue: // LUCENENET NOTE: Not used
                     }
-                    loop8_break: ;
+                    loop8_break: {/* LUCENENET: intentionally blank */}
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
@@ -1026,9 +1026,9 @@ namespace Lucene.Net.Expressions.JS
                                     goto loop9_break;
                                 }
                         }
-                        //loop9_continue: ; // LUCENENET NOTE: Not used
+                        //loop9_continue: // LUCENENET NOTE: Not used
                     }
-                    loop9_break: ;
+                    loop9_break: {/* LUCENENET: intentionally blank */}
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
@@ -1104,9 +1104,9 @@ namespace Lucene.Net.Expressions.JS
                                     goto loop10_break;
                                 }
                         }
-                        //loop10_continue: ; // LUCENENET NOTE: Not used
+                        //loop10_continue: // LUCENENET NOTE: Not used
                     }
-                    loop10_break: ;
+                    loop10_break: {/* LUCENENET: intentionally blank */}
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
@@ -1182,9 +1182,9 @@ namespace Lucene.Net.Expressions.JS
                                     goto loop11_break;
                                 }
                         }
-                        //loop11_continue: ; // LUCENENET NOTE: Not used
+                        //loop11_continue: // LUCENENET NOTE: Not used
                     }
-                    loop11_break: ;
+                    loop11_break: {/* LUCENENET: intentionally blank */}
                 }
                 retval.Stop = input.LT(-1);
                 retval.Tree = (CommonTree)m_adaptor.RulePostProcessing(root);
@@ -1351,12 +1351,12 @@ namespace Lucene.Net.Expressions.JS
                                 );
                             stream_AT_SUBTRACT.Add(AT_SUBTRACT43);
                             // AST REWRITE
-                            // elements: 
-                            // token labels: 
+                            // elements:
+                            // token labels:
                             // rule labels: retval
-                            // token list labels: 
-                            // rule list labels: 
-                            // wildcard labels: 
+                            // token list labels:
+                            // rule list labels:
+                            // wildcard labels:
                             retval.Tree = root;
                             RewriteRuleSubtreeStream stream_retval = new RewriteRuleSubtreeStream(m_adaptor, "rule retval"
                                 , retval != null ? ((CommonTree)retval.Tree) : null);
@@ -1491,11 +1491,11 @@ namespace Lucene.Net.Expressions.JS
                             streamArguments.Add(arguments48.Tree);
                             // AST REWRITE
                             // elements: NAMESPACE_ID, arguments
-                            // token labels: 
+                            // token labels:
                             // rule labels: retval
-                            // token list labels: 
-                            // rule list labels: 
-                            // wildcard labels: 
+                            // token list labels:
+                            // rule list labels:
+                            // wildcard labels:
                             retval.Tree = root;
                             RewriteRuleSubtreeStream stream_retval = new RewriteRuleSubtreeStream(m_adaptor, "rule retval"
                                 , retval != null ? ((CommonTree)retval.Tree) : null);
@@ -1698,9 +1698,9 @@ namespace Lucene.Net.Expressions.JS
                                                 goto loop16_break;
                                             }
                                     }
-                                    //loop16_continue: ; // LUCENENET NOTE: Not used
+                                    //loop16_continue: // LUCENENET NOTE: Not used
                                 }
-                                loop16_break: ;
+                                loop16_break:
                                 break;
                             }
                     }

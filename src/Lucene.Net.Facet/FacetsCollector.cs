@@ -133,7 +133,7 @@ namespace Lucene.Net.Facet
             return new DocsAnonymousClass(maxDoc);
         }
 
-        private class DocsAnonymousClass : Docs
+        private sealed class DocsAnonymousClass : Docs
         {
             public DocsAnonymousClass(int maxDoc)
             {

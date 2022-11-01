@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestStressNRT outerInstance;
 
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestStressNRT outerInstance;
 

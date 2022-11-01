@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
             return new Iterator(size, values, docsWithField, docs);
         }
 
-        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
+        private sealed class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly PagedMutable docs;
             private readonly PagedGrowableWriter values;

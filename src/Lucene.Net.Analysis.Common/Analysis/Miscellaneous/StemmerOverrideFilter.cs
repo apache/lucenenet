@@ -1,8 +1,10 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N;
+using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -185,23 +187,46 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// <param name="input"> the input char sequence </param>
             /// <param name="output"> the stemmer override output char sequence </param>
             /// <returns> <c>false</c> if the input has already been added to this builder otherwise <c>true</c>. </returns>
+            /// <exception cref="ArgumentNullException"><paramref name="input"/> or <paramref name="output"/> is <c>null</c>.</exception>
+            // LUCENENET specific overload of ICharSequence
             public virtual bool Add(string input, string output)
             {
+                // LUCENENET: Added guard clauses
+                if (input is null)
+                    throw new ArgumentNullException(nameof(input));
+                if (output is null)
+                    throw new ArgumentNullException(nameof(output));
+
                 int length = input.Length;
                 if (ignoreCase)
                 {
                     // convert on the fly to lowercase
-                    charsSpare.Grow(length);
-                    char[] buffer = charsSpare.Chars;
-                    for (int i = 0; i < length;)
+
+                    // LUCENENET: Reduce allocations/improve throughput by using stack and spans
+                    var source = input.AsSpan();
+                    if (length * sizeof(char) <= Constants.MaxStackByteLimit)
                     {
-                        i += Character.ToChars(Character.ToLower(Character.CodePointAt(input, i), CultureInfo.InvariantCulture), buffer, i);
+                        // Fast path - use the stack
+                        Span<char> buffer = stackalloc char[length];
+                        source.ToLowerInvariant(buffer);
+
+                        UnicodeUtil.UTF16toUTF8(buffer, spare);
                     }
-                    UnicodeUtil.UTF16toUTF8(buffer, 0, length, spare);
+                    else
+                    {
+                        // Slow path - use the heap
+                        charsSpare.Grow(length);
+                        char[] buffer = charsSpare.Chars;
+
+                        var destination = buffer.AsSpan(0, length);
+                        source.ToLowerInvariant(destination);
+
+                        UnicodeUtil.UTF16toUTF8(buffer, 0, length, spare);
+                    }
                 }
                 else
                 {
-                    UnicodeUtil.UTF16toUTF8(input.ToCharArray(), 0, length, spare);
+                    UnicodeUtil.UTF16toUTF8(input, 0, length, spare);
                 }
                 if (hash.Add(spare) >= 0)
                 {
@@ -209,6 +234,85 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     return true;
                 }
                 return false;
+            }
+
+            /// <summary>
+            /// Adds an input string and it's stemmer override output to this builder.
+            /// </summary>
+            /// <param name="input"> the input char sequence </param>
+            /// <param name="output"> the stemmer override output char sequence </param>
+            /// <returns> <c>false</c> if the input has already been added to this builder otherwise <c>true</c>. </returns>
+            /// <exception cref="ArgumentNullException"><paramref name="input"/> or <paramref name="output"/> is <c>null</c>.</exception>
+            // LUCENENET specific overload of ICharSequence
+            public virtual bool Add(char[] input, string output)
+            {
+                // LUCENENET: Added guard clauses
+                if (input is null)
+                    throw new ArgumentNullException(nameof(input));
+                if (output is null)
+                    throw new ArgumentNullException(nameof(output));
+
+                int length = input.Length;
+                if (ignoreCase)
+                {
+                    // convert on the fly to lowercase
+
+                    // LUCENENET: Reduce allocations/improve throughput by using stack and spans
+                    var source = new ReadOnlySpan<char>(input);
+                    if (length * sizeof(char) <= Constants.MaxStackByteLimit)
+                    {
+                        // Fast path - use the stack
+                        Span<char> buffer = stackalloc char[length];
+                        source.ToLowerInvariant(buffer);
+
+                        UnicodeUtil.UTF16toUTF8(buffer, spare);
+                    }
+                    else
+                    {
+                        // Slow path - use the heap
+                        charsSpare.Grow(length);
+                        char[] buffer = charsSpare.Chars;
+
+                        var destination = buffer.AsSpan(0, length);
+                        source.ToLowerInvariant(destination);
+
+                        UnicodeUtil.UTF16toUTF8(buffer, 0, length, spare);
+                    }
+                }
+                else
+                {
+                    UnicodeUtil.UTF16toUTF8(input, 0, length, spare);
+                }
+                if (hash.Add(spare) >= 0)
+                {
+                    outputValues.Add(output);
+                    return true;
+                }
+                return false;
+            }
+
+            /// <summary>
+            /// Adds an input string and it's stemmer override output to this builder.
+            /// </summary>
+            /// <param name="input"> the input char sequence </param>
+            /// <param name="output"> the stemmer override output char sequence </param>
+            /// <returns> <c>false</c> if the input has already been added to this builder otherwise <c>true</c>. </returns>
+            /// <exception cref="ArgumentNullException"><paramref name="input"/> or <paramref name="output"/> is <c>null</c>.</exception>
+            // LUCENENET specific overload of ICharSequence
+            public virtual bool Add(ICharSequence input, string output)
+            {
+                // LUCENENET: Added guard clauses
+                if (input is null)
+                    throw new ArgumentNullException(nameof(input));
+                if (output is null)
+                    throw new ArgumentNullException(nameof(output));
+
+                if (input is CharArrayCharSequence charArrayCharSequence && charArrayCharSequence.HasValue)
+                    return Add(charArrayCharSequence.Value, output);
+
+                // LUCENENET: In .NET, the indexer for StringBuilder is slow, so we are better off
+                // converting to a string in all other cases.
+                return Add(input.ToString(), output);
             }
 
             /// <summary>

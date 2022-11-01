@@ -90,7 +90,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new Int64DocValuesAnonymousClass(this, this, arr, valid);
         }
 
-        private class Int64DocValuesAnonymousClass : Int64DocValues
+        private sealed class Int64DocValuesAnonymousClass : Int64DocValues
         {
             private readonly Int64FieldSource outerInstance;
 

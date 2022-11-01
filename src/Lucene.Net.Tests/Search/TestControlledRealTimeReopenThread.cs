@@ -299,7 +299,7 @@ namespace Lucene.Net.Search
             nrtNoDeletesThread.Start();
         }
 
-        private class SearcherFactoryAnonymousClass : SearcherFactory
+        private sealed class SearcherFactoryAnonymousClass : SearcherFactory
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
@@ -449,7 +449,7 @@ namespace Lucene.Net.Search
             IOUtils.Dispose(manager, _writer, d);
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
@@ -487,7 +487,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
@@ -576,7 +576,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class SearcherFactoryAnonymousClass2 : SearcherFactory
+        private sealed class SearcherFactoryAnonymousClass2 : SearcherFactory
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
@@ -612,7 +612,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class RefreshListenerAnonymousClass : ReferenceManager.IRefreshListener
+        private sealed class RefreshListenerAnonymousClass : ReferenceManager.IRefreshListener
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
@@ -708,7 +708,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class RunnableAnonymousClass : ThreadJob
+        private sealed class RunnableAnonymousClass : ThreadJob
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 

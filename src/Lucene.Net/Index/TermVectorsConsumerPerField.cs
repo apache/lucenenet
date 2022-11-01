@@ -140,10 +140,7 @@ namespace Lucene.Net.Index
             return doVectors;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public void Abort()
-        {
-        }
+        // LUCENENET: Removed Abort() method because it is not in use.
 
         /// <summary>
         /// Called once per field per document if term vectors

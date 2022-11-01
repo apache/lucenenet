@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs
                 {
                     if (!LoadNextSkip(level))
                     {
-                        continue;
+                        // continue; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                     }
                 }
                 else

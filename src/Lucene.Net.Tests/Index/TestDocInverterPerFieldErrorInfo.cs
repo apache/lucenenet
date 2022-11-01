@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            private class TokenFilterAnonymousClass : TokenFilter
+            private sealed class TokenFilterAnonymousClass : TokenFilter
             {
                 private readonly ThrowingAnalyzer outerInstance;
 

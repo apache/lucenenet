@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class QueryRescorerAnonymousClass : QueryRescorer
+        private sealed class QueryRescorerAnonymousClass : QueryRescorer
         {
             private readonly TestQueryRescorer outerInstance;
 
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class QueryRescorerAnonymousClass2 : QueryRescorer
+        private sealed class QueryRescorerAnonymousClass2 : QueryRescorer
         {
             private readonly TestQueryRescorer outerInstance;
 
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class QueryRescorerAnonymousClass3 : QueryRescorer
+        private sealed class QueryRescorerAnonymousClass3 : QueryRescorer
         {
             private readonly TestQueryRescorer outerInstance;
 
@@ -452,7 +452,7 @@ namespace Lucene.Net.Search
                 return new WeightAnonymousClass(this);
             }
 
-            private class WeightAnonymousClass : Weight
+            private sealed class WeightAnonymousClass : Weight
             {
                 private readonly FixedScoreQuery outerInstance;
 
@@ -477,7 +477,7 @@ namespace Lucene.Net.Search
                     return new ScorerAnonymousClass(this, context);
                 }
 
-                private class ScorerAnonymousClass : Scorer
+                private sealed class ScorerAnonymousClass : Scorer
                 {
                     private readonly WeightAnonymousClass outerInstance;
 

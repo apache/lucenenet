@@ -33,9 +33,9 @@ namespace Lucene.Net.Search.Spell
     ///   Spell Checker class  (Main class) <br/>
     ///  (initially inspired by the David Spencer code).
     /// </para>
-    /// 
+    ///
     /// <para>Example Usage (C#):
-    /// 
+    ///
     /// <code>
     ///  SpellChecker spellchecker = new SpellChecker(spellIndexDirectory);
     ///  // To index a field of a user index:
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Spell
     ///  spellchecker.IndexDictionary(new PlainTextDictionary(new FileInfo("myfile.txt")));
     ///  string[] suggestions = spellchecker.SuggestSimilar("misspelt", 5);
     /// </code>
-    /// 
+    ///
     /// </para>
     /// </summary>
     public class SpellChecker : IDisposable
@@ -186,8 +186,8 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Gets or sets the accuracy (minimum score) to be used, unless overridden in 
-        /// <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>, 
+        /// Gets or sets the accuracy (minimum score) to be used, unless overridden in
+        /// <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>,
         /// to decide whether a suggestion is included or not.
         /// Sets the accuracy 0 &lt; minScore &lt; 1; default <see cref="DEFAULT_ACCURACY"/>
         /// </summary>
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Calls <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
         ///       SuggestSimilar(word, numSug, ir, suggestMode, field, this.accuracy)
-        /// 
+        ///
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string[] SuggestSimilar(string word, int numSug, IndexReader ir, string field, SuggestMode suggestMode)
@@ -282,7 +282,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="ir"> the indexReader of the user index (can be null see field param) </param>
         /// <param name="field"> the field of the user index: if field is not null, the suggested
         /// words are restricted to the words present in this field. </param>
-        /// <param name="suggestMode"> 
+        /// <param name="suggestMode">
         /// (NOTE: if indexReader==null and/or field==null, then this is overridden with SuggestMode.SUGGEST_ALWAYS) </param>
         /// <param name="accuracy"> The minimum score a suggestion must have in order to qualify for inclusion in the results </param>
         /// <exception cref="IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
@@ -551,8 +551,7 @@ namespace Lucene.Net.Search.Spell
                             // ok index the word
                             var doc = CreateDocument(word, GetMin(len), GetMax(len));
                             writer.AddDocument(doc);
-                        termsContinue:
-                            ;
+                        termsContinue: {/* LUCENENET: intentionally blank */}
                         }
                     }
                     finally
@@ -667,7 +666,7 @@ namespace Lucene.Net.Search.Spell
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ReleaseSearcher(IndexSearcher aSearcher) // LUCENENET: CA1822: Mark members as static
         {
-            // don't check if open - always decRef 
+            // don't check if open - always decRef
             // don't decrement the private searcher - could have been swapped
             aSearcher.IndexReader.DecRef();
         }

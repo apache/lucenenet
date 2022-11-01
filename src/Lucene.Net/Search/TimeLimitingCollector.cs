@@ -250,7 +250,7 @@ namespace Lucene.Net.Search
         /// <returns> the global <see cref="TimerThread"/> </returns>
         public static TimerThread GlobalTimerThread => TimerThreadHolder.THREAD;
 
-        private sealed class TimerThreadHolder
+        private static class TimerThreadHolder
         {
             internal static readonly TimerThread THREAD = LoadTimerThread(); // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
 

@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
             return (DirectoryReader)new FindSegmentsFileAnonymousClass(directory, termInfosIndexDivisor).Run(commit);
         }
 
-        private class FindSegmentsFileAnonymousClass : SegmentInfos.FindSegmentsFile
+        private sealed class FindSegmentsFileAnonymousClass : SegmentInfos.FindSegmentsFile
         {
             private readonly int termInfosIndexDivisor;
 
@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
             string segmentsFile = segmentInfos.GetSegmentsFileName();
             if (segmentsFile != null)
             {
-                buffer.Append(segmentsFile).Append(":").Append(segmentInfos.Version);
+                buffer.Append(segmentsFile).Append(':').Append(segmentInfos.Version);
             }
             if (writer != null)
             {
@@ -402,7 +402,7 @@ namespace Lucene.Net.Index
             return (DirectoryReader)new FindSegmentsFileAnonymousClass2(this, m_directory).Run(commit);
         }
 
-        private class FindSegmentsFileAnonymousClass2 : SegmentInfos.FindSegmentsFile
+        private sealed class FindSegmentsFileAnonymousClass2 : SegmentInfos.FindSegmentsFile
         {
             private readonly StandardDirectoryReader outerInstance;
 

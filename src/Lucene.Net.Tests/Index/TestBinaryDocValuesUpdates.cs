@@ -701,7 +701,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class Lucene46CodecAnonymousClass : Lucene46Codec
+        private sealed class Lucene46CodecAnonymousClass : Lucene46Codec
         {
             private readonly TestBinaryDocValuesUpdates outerInstance;
 
@@ -1280,7 +1280,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestBinaryDocValuesUpdates outerInstance;
 
@@ -1488,7 +1488,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class Lucene46CodecAnonymousClass2 : Lucene46Codec
+        private sealed class Lucene46CodecAnonymousClass2 : Lucene46Codec
         {
             private readonly TestBinaryDocValuesUpdates outerInstance;
 
@@ -1503,7 +1503,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class Lucene46CodecAnonymousClass3 : Lucene46Codec
+        private sealed class Lucene46CodecAnonymousClass3 : Lucene46Codec
         {
             private readonly TestBinaryDocValuesUpdates outerInstance;
 

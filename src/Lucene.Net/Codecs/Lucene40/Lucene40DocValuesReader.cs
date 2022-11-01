@@ -178,7 +178,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class NumericDocValuesAnonymousClass : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass : NumericDocValues
         {
             private readonly long[] values;
 
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class NumericDocValuesAnonymousClass2 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass2 : NumericDocValues
         {
             private readonly long minValue;
             private readonly long defaultValue;
@@ -237,7 +237,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return new NumericDocValuesAnonymousClass3(values);
         }
 
-        private class NumericDocValuesAnonymousClass3 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass3 : NumericDocValues
         {
             private readonly byte[] values;
 
@@ -274,7 +274,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return new NumericDocValuesAnonymousClass4(values);
         }
 
-        private class NumericDocValuesAnonymousClass4 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass4 : NumericDocValues
         {
             private readonly short[] values;
 
@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return new NumericDocValuesAnonymousClass5(values);
         }
 
-        private class NumericDocValuesAnonymousClass5 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass5 : NumericDocValues
         {
             private readonly int[] values;
 
@@ -348,7 +348,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return new NumericDocValuesAnonymousClass6(values);
         }
 
-        private class NumericDocValuesAnonymousClass6 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass6 : NumericDocValues
         {
             private readonly long[] values;
 
@@ -385,7 +385,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return new NumericDocValuesAnonymousClass7(values);
         }
 
-        private class NumericDocValuesAnonymousClass7 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass7 : NumericDocValues
         {
             private readonly int[] values;
 
@@ -419,7 +419,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return new NumericDocValuesAnonymousClass8(values);
         }
 
-        private class NumericDocValuesAnonymousClass8 : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass8 : NumericDocValues
         {
             private readonly long[] values;
 
@@ -504,7 +504,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class BinaryDocValuesAnonymousClass : BinaryDocValues
+        private sealed class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             private readonly int fixedLength;
             private readonly PagedBytes.Reader bytesReader;
@@ -559,7 +559,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class BinaryDocValuesAnonymousClass2 : BinaryDocValues
+        private sealed class BinaryDocValuesAnonymousClass2 : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
             private readonly PackedInt32s.Reader reader;
@@ -618,7 +618,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class BinaryDocValuesAnonymousClass3 : BinaryDocValues
+        private sealed class BinaryDocValuesAnonymousClass3 : BinaryDocValues
         {
             private readonly int fixedLength;
             private readonly PagedBytes.Reader bytesReader;
@@ -677,7 +677,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class BinaryDocValuesAnonymousClass4 : BinaryDocValues
+        private sealed class BinaryDocValuesAnonymousClass4 : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
             private readonly PackedInt32s.Reader reader;
@@ -782,7 +782,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return CorrectBuggyOrds(new SortedDocValuesAnonymousClass(fixedLength, valueCount, bytesReader, reader));
         }
 
-        private class SortedDocValuesAnonymousClass : SortedDocValues
+        private sealed class SortedDocValuesAnonymousClass : SortedDocValues
         {
             private readonly int fixedLength;
             private readonly int valueCount;
@@ -830,7 +830,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return CorrectBuggyOrds(new SortedDocValuesAnonymousClass2(bytesReader, addressReader, ordsReader, valueCount));
         }
 
-        private class SortedDocValuesAnonymousClass2 : SortedDocValues
+        private sealed class SortedDocValuesAnonymousClass2 : SortedDocValues
         {
             private readonly PagedBytes.Reader bytesReader;
             private readonly PackedInt32s.Reader addressReader;
@@ -878,7 +878,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return new SortedDocValuesAnonymousClass3(@in);
         }
 
-        private class SortedDocValuesAnonymousClass3 : SortedDocValues
+        private sealed class SortedDocValuesAnonymousClass3 : SortedDocValues
         {
             private readonly SortedDocValues @in;
 

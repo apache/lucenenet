@@ -48,7 +48,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new StrDocValuesAnonymousClass(this, this);
         }
 
-        private class StrDocValuesAnonymousClass : StrDocValues
+        private sealed class StrDocValuesAnonymousClass : StrDocValues
         {
             private readonly LiteralValueSource outerInstance;
 

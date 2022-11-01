@@ -84,7 +84,7 @@ namespace Lucene.Net.Benchmarks.Utils
             contents.Append(title);
             contents.Append("\n\n");
             contents.Append(body);
-            contents.Append("\n");
+            contents.Append('\n');
 
             try
             {

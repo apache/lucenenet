@@ -488,7 +488,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private void ProcessSSDVFacetFields(IDictionary<string, IList<SortedSetDocValuesFacetField>> byField, Document doc)
+        private static void ProcessSSDVFacetFields(IDictionary<string, IList<SortedSetDocValuesFacetField>> byField, Document doc) // LUCENENET: CA1822: Mark members as static
         {
             //System.out.println("process SSDV: " + byField);
             foreach (KeyValuePair<string, IList<SortedSetDocValuesFacetField>> ent in byField)
@@ -513,7 +513,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private void ProcessAssocFacetFields(ITaxonomyWriter taxoWriter, IDictionary<string, IList<AssociationFacetField>> byField, Document doc)
+        private static void ProcessAssocFacetFields(ITaxonomyWriter taxoWriter, IDictionary<string, IList<AssociationFacetField>> byField, Document doc) // LUCENENET: CA1822: Mark members as static
         {
             foreach (KeyValuePair<string, IList<AssociationFacetField>> ent in byField)
             {

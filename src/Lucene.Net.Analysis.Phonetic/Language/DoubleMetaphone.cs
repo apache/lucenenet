@@ -251,7 +251,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// Handles 'A', 'E', 'I', 'O', 'U', and 'Y' cases.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int HandleAEIOUY(DoubleMetaphoneResult result, int index)
+        private static int HandleAEIOUY(DoubleMetaphoneResult result, int index) // LUCENENET: CA1822: Mark members as static
         {
             if (index == 0)
             {
@@ -415,7 +415,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Handles 'D' cases.
         /// </summary>
-        private int HandleD(string value, DoubleMetaphoneResult result, int index)
+        private static int HandleD(string value, DoubleMetaphoneResult result, int index) // LUCENENET: CA1822: Mark members as static
         {
             if (Contains(value, index, 2, "DG"))
             {
@@ -830,7 +830,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Handles 'T' cases.
         /// </summary>
-        private int HandleT(string value, DoubleMetaphoneResult result, int index)
+        private static int HandleT(string value, DoubleMetaphoneResult result, int index) // LUCENENET: CA1822: Mark members as static
         {
             if (Contains(value, index, 4, "TION"))
             {
@@ -918,7 +918,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Handles 'X' cases.
         /// </summary>
-        private int HandleX(string value, DoubleMetaphoneResult result, int index)
+        private static int HandleX(string value, DoubleMetaphoneResult result, int index) // LUCENENET: CA1822: Mark members as static
         {
             if (index == 0)
             {
@@ -1076,7 +1076,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// of slavo-germanic origin if it contians any of 'W', 'K', 'CZ', or 'WITZ'.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool IsSlavoGermanic(string value)
+        private static bool IsSlavoGermanic(string value) // LUCENENET: CA1822: Mark members as static
         {
             return value.IndexOf('W') > -1 || value.IndexOf('K') > -1 ||
                 value.IndexOf("CZ", StringComparison.Ordinal) > -1 || value.IndexOf("WITZ", StringComparison.Ordinal) > -1;
@@ -1096,7 +1096,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// return <c>true</c> if the value starts with any of 'GN', 'KN',
         /// 'PN', 'WR' or 'PS'.
         /// </summary>
-        private bool IsSilentStart(string value)
+        private static bool IsSilentStart(string value) // LUCENENET: CA1822: Mark members as static
         {
             bool result = false;
             foreach (string element in SILENT_START)
@@ -1115,7 +1115,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Cleans the input.
         /// </summary>
-        private string CleanInput(string input)
+        private static string CleanInput(string input) // LUCENENET: CA1822: Mark members as static
         {
             if (input is null)
             {
@@ -1240,7 +1240,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
                 else
                 {
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+                    this.primary.Append(value.AsSpan(0, addChars - 0));
+#else
                     this.primary.Append(value.Substring(0, addChars - 0));
+#endif
                 }
             }
 
@@ -1253,7 +1257,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
                 else
                 {
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+                    this.alternate.Append(value.AsSpan(0, addChars - 0));
+#else
                     this.alternate.Append(value.Substring(0, addChars - 0));
+#endif
                 }
             }
 

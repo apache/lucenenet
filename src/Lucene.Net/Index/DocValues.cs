@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly BinaryDocValues EMPTY_BINARY = new BinaryDocValuesAnonymousClass();
 
-        private class BinaryDocValuesAnonymousClass : BinaryDocValues
+        private sealed class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             public BinaryDocValuesAnonymousClass()
             {
@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly NumericDocValues EMPTY_NUMERIC = new NumericDocValuesAnonymousClass();
 
-        private class NumericDocValuesAnonymousClass : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass : NumericDocValues
         {
             public NumericDocValuesAnonymousClass()
             {
@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly SortedDocValues EMPTY_SORTED = new SortedDocValuesAnonymousClass();
 
-        private class SortedDocValuesAnonymousClass : SortedDocValues
+        private sealed class SortedDocValuesAnonymousClass : SortedDocValues
         {
             public SortedDocValuesAnonymousClass()
             {
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly SortedSetDocValues EMPTY_SORTED_SET = new RandomAccessOrdsAnonymousClass();
 
-        private class RandomAccessOrdsAnonymousClass : RandomAccessOrds
+        private sealed class RandomAccessOrdsAnonymousClass : RandomAccessOrds
         {
             public RandomAccessOrdsAnonymousClass()
             {
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
             return new BitsAnonymousClass(dv, maxDoc);
         }
 
-        private class BitsAnonymousClass : IBits
+        private sealed class BitsAnonymousClass : IBits
         {
             private readonly SortedDocValues dv;
             private readonly int maxDoc;
@@ -173,12 +173,12 @@ namespace Lucene.Net.Index
                 this.maxDoc = maxDoc;
             }
 
-            public virtual bool Get(int index)
+            public bool Get(int index)
             {
                 return dv.GetOrd(index) >= 0;
             }
 
-            public virtual int Length => maxDoc;
+            public int Length => maxDoc;
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
             return new BitsAnonymousClass2(dv, maxDoc);
         }
 
-        private class BitsAnonymousClass2 : IBits
+        private sealed class BitsAnonymousClass2 : IBits
         {
             private readonly SortedSetDocValues dv;
             private readonly int maxDoc;
@@ -200,13 +200,13 @@ namespace Lucene.Net.Index
                 this.maxDoc = maxDoc;
             }
 
-            public virtual bool Get(int index)
+            public bool Get(int index)
             {
                 dv.SetDocument(index);
                 return dv.NextOrd() != SortedSetDocValues.NO_MORE_ORDS;
             }
 
-            public virtual int Length => maxDoc;
+            public int Length => maxDoc;
         }
     }
 }

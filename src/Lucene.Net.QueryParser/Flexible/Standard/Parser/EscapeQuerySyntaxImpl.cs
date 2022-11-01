@@ -74,7 +74,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             return buffer;
         }
 
-        private ICharSequence EscapeQuoted(ICharSequence str, CultureInfo locale)
+        private static ICharSequence EscapeQuoted(ICharSequence str, CultureInfo locale) // LUCENENET: CA1822: Mark members as static
         {
             if (str is null || str.Length == 0)
                 return str;
@@ -170,10 +170,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 if (found)
                 {
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+                    result.Append(@string.ToString().AsSpan(copyStart, firstIndex - copyStart));
+                    result.Append(escapeChar);
+                    result.Append(@string.ToString().AsSpan(firstIndex,
+                        (firstIndex + sequence1Length) - firstIndex));
+#else
                     result.Append(@string.ToString().Substring(copyStart, firstIndex - copyStart));
                     result.Append(escapeChar);
                     result.Append(@string.ToString().Substring(firstIndex,
                         (firstIndex + sequence1Length) - firstIndex));
+#endif
                     copyStart = start = firstIndex + sequence1Length;
                 }
                 else
@@ -184,7 +191,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             
             if (result.Length == 0 && copyStart == 0)
                 return @string;
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+            result.Append(@string.ToString().AsSpan(copyStart));
+#else
             result.Append(@string.ToString().Substring(copyStart));
+#endif
             return result.ToString().AsCharSequence();
         }
 

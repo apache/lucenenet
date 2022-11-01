@@ -250,7 +250,7 @@ namespace Lucene.Net.Store
             return new IndexInputSlicerAnonymousClass(OpenInput(name, context));
         }
 
-        private class IndexInputSlicerAnonymousClass : IndexInputSlicer
+        private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly IndexInput @base;
 

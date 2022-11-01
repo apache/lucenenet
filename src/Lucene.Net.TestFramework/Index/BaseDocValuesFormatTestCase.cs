@@ -1262,12 +1262,12 @@ namespace Lucene.Net.Index
             internal abstract long Next();
         }
 
-        private void DoTestNumericsVsStoredFields(long minValue, long maxValue)
+        private static void DoTestNumericsVsStoredFields(long minValue, long maxValue) // LUCENENET: CA1822: Mark members as static
         {
             DoTestNumericsVsStoredFields(new Int64ProducerAnonymousClass(minValue, maxValue));
         }
 
-        private class Int64ProducerAnonymousClass : Int64Producer
+        private sealed class Int64ProducerAnonymousClass : Int64Producer
         {
             private readonly long minValue;
             private readonly long maxValue;
@@ -1344,12 +1344,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoTestMissingVsFieldCache(long minValue, long maxValue)
+        private static void DoTestMissingVsFieldCache(long minValue, long maxValue) // LUCENENET: CA1822: Mark members as static
         {
             DoTestMissingVsFieldCache(new Int64ProducerAnonymousClass2(minValue, maxValue));
         }
 
-        private class Int64ProducerAnonymousClass2 : Int64Producer
+        private sealed class Int64ProducerAnonymousClass2 : Int64Producer
         {
             private readonly long minValue;
             private readonly long maxValue;
@@ -1518,7 +1518,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoTestBinaryVsStoredFields(int minLength, int maxLength)
+        private static void DoTestBinaryVsStoredFields(int minLength, int maxLength) // LUCENENET: CA1822: Mark members as static
         {
             using Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
@@ -1604,7 +1604,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoTestSortedVsStoredFields(int minLength, int maxLength)
+        private static void DoTestSortedVsStoredFields(int minLength, int maxLength) // LUCENENET: CA1822: Mark members as static
         {
             using Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
@@ -1669,7 +1669,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoTestSortedVsFieldCache(int minLength, int maxLength)
+        private static void DoTestSortedVsFieldCache(int minLength, int maxLength) // LUCENENET: CA1822: Mark members as static
         {
             using Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
@@ -2316,7 +2316,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoTestSortedSetVsStoredFields(int minLength, int maxLength, int maxValuesPerDoc)
+        private static void DoTestSortedSetVsStoredFields(int minLength, int maxLength, int maxValuesPerDoc) // LUCENENET: CA1822: Mark members as static
         {
             using Directory dir = NewDirectory();
             IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
@@ -2575,7 +2575,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoTestSortedSetVsUninvertedField(int minLength, int maxLength)
+        private static void DoTestSortedSetVsUninvertedField(int minLength, int maxLength) // LUCENENET: CA1822: Mark members as static
         {
             using Directory dir = NewDirectory();
             IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
@@ -2696,7 +2696,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class Int64ProducerAnonymousClass3 : Int64Producer
+        private sealed class Int64ProducerAnonymousClass3 : Int64Producer
         {
             private readonly long min;
             private readonly long mul;
@@ -2732,7 +2732,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class Int64ProducerAnonymousClass4 : Int64Producer
+        private sealed class Int64ProducerAnonymousClass4 : Int64Producer
         {
             internal override long Next()
             {
@@ -3256,7 +3256,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly DirectoryReader ir;
             private readonly CountdownEvent startingGun;
@@ -3392,7 +3392,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly DirectoryReader ir;
             private readonly CountdownEvent startingGun;

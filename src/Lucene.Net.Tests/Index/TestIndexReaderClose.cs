@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class FilterAtomicReaderAnonymousClass : FilterAtomicReader
+        private sealed class FilterAtomicReaderAnonymousClass : FilterAtomicReader
         {
             private readonly TestIndexReaderClose outerInstance;
 

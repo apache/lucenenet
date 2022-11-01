@@ -475,7 +475,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Converts the string to upper case and replaces germanic characters as defined in <see cref="PREPROCESS_MAP"/>.
         /// </summary>
-        private string Preprocess(string text)
+        private static string Preprocess(string text) // LUCENENET: CA1822: Mark members as static
         {
             text = LOCALE_GERMAN.TextInfo.ToUpper(text);
 

@@ -114,18 +114,29 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
             }
 
-            internal string Time(string original)
+            internal static string Time(string original) // LUCENENET: CA1822: Mark members as static
             {
-                StringBuilder buffer = new StringBuilder();
+                StringBuilder buffer = new StringBuilder(24); // LUCENENET: We always have 24 chars, so allocate it up front
 
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+                buffer.Append(original.AsSpan(8, 10 - 8));
+                buffer.Append('-');
+                buffer.Append(months[int.Parse(original.AsSpan(5, 7 - 5), NumberStyles.Integer, CultureInfo.InvariantCulture) - 1]);
+                buffer.Append('-');
+                buffer.Append(original.AsSpan(0, 4 - 0));
+                buffer.Append(' ');
+                buffer.Append(original.AsSpan(11, 19 - 11));
+                buffer.Append(".000");
+#else
                 buffer.Append(original.Substring(8, 10 - 8));
                 buffer.Append('-');
-                buffer.Append(months[Convert.ToInt32(original.Substring(5, 7 - 5), CultureInfo.InvariantCulture) - 1]);
+                buffer.Append(months[int.Parse(original.Substring(5, 7 - 5), NumberStyles.Integer, CultureInfo.InvariantCulture) - 1]);
                 buffer.Append('-');
                 buffer.Append(original.Substring(0, 4 - 0));
                 buffer.Append(' ');
                 buffer.Append(original.Substring(11, 19 - 11));
                 buffer.Append(".000");
+#endif
 
                 return buffer.ToString();
             }

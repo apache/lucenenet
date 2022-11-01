@@ -66,11 +66,11 @@ namespace Lucene.Net.Analysis.Ru
         /// File containing default Russian stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "russian_stop.txt";
 
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             /// @deprecated (3.1) remove this for Lucene 5.0 
             [Obsolete("(3.1) remove this for Lucene 5.0")]
-            internal static readonly CharArraySet DEFAULT_STOP_SET_30 = CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT, RUSSIAN_STOP_WORDS_30, false));
+            internal static readonly CharArraySet DEFAULT_STOP_SET_30 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, RUSSIAN_STOP_WORDS_30, false).AsReadOnly();
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
 
             private static CharArraySet LoadDefaultStopSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Ru
                     return WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
-                        LuceneVersion.LUCENE_CURRENT);
+                        LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
 #pragma warning restore 612, 618
                 }
                 catch (Exception ex) when (ex.IsIOException())
@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Ru
         public RussianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(matchVersion, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

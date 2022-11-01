@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
             store.Dispose();
         }
 
-        private class AnalyzerAnonymousClass : Analyzer
+        private sealed class AnalyzerAnonymousClass : Analyzer
         {
             private readonly TestPositionIncrement outerInstance;
 
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search
                 return new TokenStreamComponents(new TokenizerAnonymousClass(reader));
             }
 
-            private class TokenizerAnonymousClass : Tokenizer
+            private sealed class TokenizerAnonymousClass : Tokenizer
             {
                 public TokenizerAnonymousClass(TextReader reader)
                     : base(reader)

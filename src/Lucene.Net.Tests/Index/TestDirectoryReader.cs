@@ -1108,7 +1108,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
         {
             private readonly TestDirectoryReader outerInstance;
 

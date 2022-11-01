@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -82,10 +82,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual OpenStringBuilder Append(ICharSequence csq, int startIndex, int count) // LUCENENET specific: changed to startIndex/length to match .NET
         {
             EnsureCapacity(count);
-            for (int i = startIndex; i < startIndex + count; i++)
-            {
-                UnsafeWrite(csq[i]);
-            }
+            UnsafeWrite(csq, startIndex, count);
             return this;
         }
 
@@ -99,10 +96,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual OpenStringBuilder Append(string csq, int startIndex, int count) // LUCENENET specific: changed to startIndex/length to match .NET
         {
             EnsureCapacity(count);
-            for (int i = startIndex; i < startIndex + count; i++)
-            {
-                UnsafeWrite(csq[i]);
-            }
+            UnsafeWrite(csq, startIndex, count);
             return this;
         }
 
@@ -116,10 +110,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual OpenStringBuilder Append(StringBuilder csq, int startIndex, int count) // LUCENENET specific: changed to startIndex/length to match .NET
         {
             EnsureCapacity(count);
-            for (int i = startIndex; i < startIndex + count; i++)
-            {
-                UnsafeWrite(csq[i]);
-            }
+            UnsafeWrite(csq, startIndex, count);
             return this;
         }
 
@@ -134,10 +125,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual OpenStringBuilder Append(char[] value, int startIndex, int count)
         {
             EnsureCapacity(count);
-            for (int i = startIndex; i < startIndex + count; i++)
-            {
-                UnsafeWrite(value[i]);
-            }
+            UnsafeWrite(value, startIndex, count);
             return this;
         }
 
@@ -176,9 +164,9 @@ namespace Lucene.Net.Analysis.Util
             if (startIndex < 0)
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
             if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
-            if (startIndex + length > m_buf.Length)
-                throw new ArgumentOutOfRangeException("", $"{nameof(startIndex)} + {nameof(length)} > {nameof(Length)}");
+                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} may not be negative.");
+            if (startIndex > m_buf.Length - length) // LUCENENET: Checks for int overflow
+                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
 
             char[] result = new char[length];
             for (int i = 0, j = startIndex; i < length; i++, j++)
@@ -208,6 +196,40 @@ namespace Lucene.Net.Analysis.Util
         {
             b.CopyTo(off, m_buf, this.m_len, len);
             this.m_len += len;
+        }
+
+        // LUCENENET specific overload for string
+        public virtual void UnsafeWrite(string b, int off, int len)
+        {
+            b.CopyTo(off, m_buf, this.m_len, len);
+            this.m_len += len;
+        }
+
+        // LUCENENET specific overload for ICharSequence
+        public virtual void UnsafeWrite(ICharSequence b, int off, int len)
+        {
+            if (!b.HasValue) return;
+
+            if (b is StringBuilderCharSequence sb)
+            {
+                UnsafeWrite(sb.Value, off, len);
+                return;
+            }
+            if (b is StringCharSequence str)
+            {
+                UnsafeWrite(str.Value, off, len);
+                return;
+            }
+            if (b is CharArrayCharSequence chars)
+            {
+                UnsafeWrite(chars.Value, off, len);
+                return;
+            }
+
+            for (int i = off; i < off + len; i++)
+            {
+                UnsafeWrite(b[i]);
+            }
         }
 
         protected virtual void Resize(int len)

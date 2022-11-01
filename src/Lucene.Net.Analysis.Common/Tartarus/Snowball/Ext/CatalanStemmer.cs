@@ -1120,7 +1120,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         goto lab2;
                     }
                 } while (false);
-                lab3:;
+                lab3: {/* LUCENENET: intentionally blank */}
             } while (false);
             lab2:
             m_cursor = m_limit - v_3;

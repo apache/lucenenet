@@ -482,7 +482,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         }
                         m_cursor++;
                     }
-                    golab4:;
+                    golab4: {/* LUCENENET: intentionally blank */}
                 } while (false);
                 lab1:
                 // setmark pV, line 67
@@ -775,7 +775,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                             // <-, line 100
                             SliceFrom("iqU");
                         } while (false);
-                        lab1:;
+                        lab1: {/* LUCENENET: intentionally blank */};
                     } while (false);
                     lab0:
                     break;
@@ -1095,7 +1095,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                             // <-, line 142
                             SliceFrom("iqU");
                         } while (false);
-                        lab12:;
+                        lab12: {/* LUCENENET: intentionally blank */}
                     } while (false);
                     lab11:
                     break;
@@ -1704,7 +1704,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                                 // <-, line 235
                                 SliceFrom("c");
                             } while (false);
-                            lab9:;
+                            lab9: {/* LUCENENET: intentionally blank */}
                         } while (false);
                         lab8:
                         goto lab3;
@@ -1717,7 +1717,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         goto lab2;
                     }
                 } while (false);
-                lab3:;
+                lab3: {/* LUCENENET: intentionally blank */}
             } while (false);
             lab2:
             m_cursor = m_limit - v_3;

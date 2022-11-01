@@ -37,13 +37,13 @@ namespace TagSoup
         /// <summary>
         /// Reset the embedded locator.
         /// </summary>
-        /// <param name="publicid">
-        /// The publicid of the source
+        /// <param name="publicId">
+        /// The publicId of the source
         /// </param>
-        /// <param name="systemid">
-        /// The systemid of the source
+        /// <param name="systemId">
+        /// The systemId of the source
         /// </param>
-        void ResetDocumentLocator(string publicid, string systemid);
+        void ResetDocumentLocator(string publicId, string systemId);
 
         /// <summary>
         /// Signal to the scanner to start CDATA content mode.

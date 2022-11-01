@@ -51,6 +51,7 @@ namespace Lucene.Net.Queries.Function
 
         public override void ExtractTerms(ISet<Term> terms)
         {
+            // LUCENENET: Intentionally blank
         }
 
         protected internal class FunctionWeight : Weight

@@ -594,7 +594,7 @@ namespace Sax.Helpers
         /// </summary>
         /// <param name="index">The index to report.</param>
         /// <exception cref="IndexOutOfRangeException">Always.</exception>
-        private void BadIndex(int index)
+        private static void BadIndex(int index) // LUCENENET: CA1822: Mark members as static
         {
             string msg =
                 "Attempt to modify attribute at illegal index: " + index;

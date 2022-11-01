@@ -126,13 +126,13 @@ namespace Lucene.Net.Search
             if (!m_term.Field.Equals(field, StringComparison.Ordinal))
             {
                 buffer.Append(m_term.Field);
-                buffer.Append(":");
+                buffer.Append(':');
             }
             buffer.Append(this.GetType().Name);
             buffer.Append(" {");
             buffer.Append('\n');
             buffer.Append(m_automaton.ToString());
-            buffer.Append("}");
+            buffer.Append('}');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }

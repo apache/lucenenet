@@ -140,7 +140,7 @@ namespace Lucene.Net.Index.Sorter
                 return new DocMapAnonymousClass(this, mergeState, deletes);
             }
 
-            private class DocMapAnonymousClass : MergePolicy.DocMap
+            private sealed class DocMapAnonymousClass : MergePolicy.DocMap
             {
                 private readonly SortingOneMerge outerInstance;
 

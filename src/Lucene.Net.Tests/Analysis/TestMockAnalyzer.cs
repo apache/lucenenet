@@ -279,7 +279,7 @@ namespace Lucene.Net.Analysis
             CheckOneTerm(a, "abc", "aabc");
         }
 
-        private class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
+        private sealed class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             private readonly TestMockAnalyzer outerInstance;
 
@@ -349,7 +349,7 @@ namespace Lucene.Net.Analysis
             writer.IndexWriter.Directory.Dispose();
         }
 
-        private class AnalyzerWrapperAnonymousClass2 : AnalyzerWrapper
+        private sealed class AnalyzerWrapperAnonymousClass2 : AnalyzerWrapper
         {
             private readonly TestMockAnalyzer outerInstance;
 

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Cjk;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Analysis.Cjk;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Analysis.Util;
@@ -50,15 +51,15 @@ namespace Lucene.Net.Analysis.Ja
             this.stoptags = stoptags;
         }
 
-        public static CharArraySet GetDefaultStopSet()
-        {
-            return DefaultSetHolder.DEFAULT_STOP_SET;
-        }
+        [Obsolete("Use DefaultStopSet instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public static CharArraySet GetDefaultStopSet() => DefaultSetHolder.DEFAULT_STOP_SET;
 
-        public static ISet<string> GetDefaultStopTags()
-        {
-            return DefaultSetHolder.DEFAULT_STOP_TAGS;
-        }
+        [Obsolete("Use DefaultStopTags instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public static ISet<string> GetDefaultStopTags() => DefaultSetHolder.DEFAULT_STOP_TAGS;
+
+        public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
+
+        public static ISet<string> DefaultStopTags => DefaultSetHolder.DEFAULT_STOP_TAGS;
 
         /// <summary>
         /// Atomically loads DEFAULT_STOP_SET, DEFAULT_STOP_TAGS in a lazy fashion once the 
@@ -73,7 +74,7 @@ namespace Lucene.Net.Analysis.Ja
             {
                 try
                 {
-                    return LoadStopwordSet(true, typeof(JapaneseAnalyzer), "stopwords.txt", "#");  // ignore case
+                    return LoadStopwordSet(true, typeof(JapaneseAnalyzer), "stopwords.txt", "#").AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866  // ignore case
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
@@ -92,7 +93,7 @@ namespace Lucene.Net.Analysis.Ja
                     {
                         DEFAULT_STOP_TAGS.Add(element);
                     }
-                    return DEFAULT_STOP_TAGS;
+                    return DEFAULT_STOP_TAGS.AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {

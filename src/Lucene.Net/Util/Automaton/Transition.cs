@@ -178,7 +178,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else if (c < 0x10000000)
                 {
-                    b.Append("0").Append(s);
+                    b.Append('0').Append(s);
                 }
                 else
                 {
@@ -197,7 +197,7 @@ namespace Lucene.Net.Util.Automaton
             AppendCharString(min, b);
             if (min != max)
             {
-                b.Append("-");
+                b.Append('-');
                 AppendCharString(max, b);
             }
             b.Append(" -> ").Append(to.number);
@@ -211,7 +211,7 @@ namespace Lucene.Net.Util.Automaton
             AppendCharString(min, b);
             if (min != max)
             {
-                b.Append("-");
+                b.Append('-');
                 AppendCharString(max, b);
             }
             b.Append("\"]\n");

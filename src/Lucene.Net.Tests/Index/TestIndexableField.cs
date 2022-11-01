@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
                 fieldType = new IndexableFieldTypeAnonymousClass(this);
             }
 
-            private class IndexableFieldTypeAnonymousClass : IIndexableFieldType
+            private sealed class IndexableFieldTypeAnonymousClass : IIndexableFieldType
             {
                 private MyField outerInstance;
 
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                 int finalBaseCount = baseCount;
                 baseCount += fieldCount - 1;
 
-                w.AddDocument(new IterableAnonymousClass(this, fieldCount, finalDocCount, finalBaseCount));
+                w.AddDocument(new EnumerableAnonymousClass(this, fieldCount, finalDocCount, finalBaseCount));
             }
 
             IndexReader r = w.GetReader();
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class IterableAnonymousClass : IEnumerable<IIndexableField>
+        private sealed class EnumerableAnonymousClass : IEnumerable<IIndexableField>
         {
             private readonly TestIndexableField outerInstance;
 
@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
             private int finalDocCount;
             private int finalBaseCount;
 
-            public IterableAnonymousClass(TestIndexableField outerInstance, int fieldCount, int finalDocCount, int finalBaseCount)
+            public EnumerableAnonymousClass(TestIndexableField outerInstance, int fieldCount, int finalDocCount, int finalBaseCount)
             {
                 this.outerInstance = outerInstance;
                 this.fieldCount = fieldCount;
@@ -391,9 +391,9 @@ namespace Lucene.Net.Index
                 this.finalBaseCount = finalBaseCount;
             }
 
-            public virtual IEnumerator<IIndexableField> GetEnumerator()
+            public IEnumerator<IIndexableField> GetEnumerator()
             {
-                return new IteratorAnonymousClass(this, outerInstance);
+                return new EnumeratorAnonymousClass(this, outerInstance);
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -401,12 +401,12 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousClass : IEnumerator<IIndexableField>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<IIndexableField>
             {
-                private readonly IterableAnonymousClass outerInstance;
+                private readonly EnumerableAnonymousClass outerInstance;
                 private readonly TestIndexableField outerTextIndexableField;
 
-                public IteratorAnonymousClass(IterableAnonymousClass outerInstance, TestIndexableField outerTextIndexableField)
+                public EnumeratorAnonymousClass(EnumerableAnonymousClass outerInstance, TestIndexableField outerTextIndexableField)
                 {
                     this.outerInstance = outerInstance;
                     this.outerTextIndexableField = outerTextIndexableField;

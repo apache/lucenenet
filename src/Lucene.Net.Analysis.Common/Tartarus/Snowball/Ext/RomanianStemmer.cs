@@ -480,7 +480,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                                 }
                                 m_cursor++;
                             }
-                            golab7:;
+                            golab7: {/* LUCENENET: intentionally blank */}
                         } while (false);
                         lab3:
                         goto lab1;
@@ -538,7 +538,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         }
                         m_cursor++;
                     } while (false);
-                    lab9:;
+                    lab9: {/* LUCENENET: intentionally blank */}
                 } while (false);
                 lab1:
                 // setmark pV, line 48
@@ -1144,7 +1144,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         goto lab4;
                     }
                 } while (false);
-                lab5:;
+                lab5: {/* LUCENENET: intentionally blank */}
             } while (false);
             lab4:
             m_cursor = m_limit - v_5;

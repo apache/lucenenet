@@ -356,7 +356,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             }
         }
 
-        private string[] InitTasksPackages(Config config)
+        private static string[] InitTasksPackages(Config config) // LUCENENET: CA1822: Mark members as static
         {
             // LUCENENET specific - changing the logic a bit
             // to add all referenced assemblies by default.

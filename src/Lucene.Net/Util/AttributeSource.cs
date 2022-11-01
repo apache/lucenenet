@@ -85,7 +85,7 @@ namespace Lucene.Net.Util
                 }
 
                 // LUCENENET: optimize known creation of built-in types
-                private Attribute CreateInstance(Type attributeType)
+                private static Attribute CreateInstance(Type attributeType) // LUCENENET: CA1822: Mark members as static
                 {
                     if (ReferenceEquals(typeof(CharTermAttribute), attributeType))
                         return new CharTermAttribute();
@@ -152,16 +152,29 @@ namespace Lucene.Net.Util
                     int lastPlus = attributeInterfaceType.FullName.LastIndexOf('+');
                     if (lastPlus == -1)
                     {
+#if FEATURE_STRING_CONCAT_READONLYSPAN
+                        return string.Concat(
+                            attributeInterfaceType.Namespace,
+                            ".",
+                            attributeInterfaceType.Name.AsSpan(1));
+#else
                         return string.Concat(
                             attributeInterfaceType.Namespace,
                             ".",
                             attributeInterfaceType.Name.Substring(1));
+#endif
                     }
                     else
                     {
+#if FEATURE_STRING_CONCAT_READONLYSPAN
+                        return string.Concat(
+                            attributeInterfaceType.FullName.AsSpan(0, lastPlus + 1),
+                            attributeInterfaceType.Name.AsSpan(1));
+#else
                         return string.Concat(
                             attributeInterfaceType.FullName.Substring(0, lastPlus + 1),
                             attributeInterfaceType.Name.Substring(1));
+#endif
                     }
                 }
             }
@@ -260,7 +273,7 @@ namespace Lucene.Net.Util
             State initState = GetCurrentState();
             if (initState != null)
             {
-                return new IteratorAnonymousClass(initState);
+                return new EnumeratorAnonymousClass(initState);
             }
             else
             {
@@ -268,9 +281,9 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class IteratorAnonymousClass : IEnumerator<Attribute>
+        private sealed class EnumeratorAnonymousClass : IEnumerator<Attribute>
         {
-            public IteratorAnonymousClass(AttributeSource.State initState)
+            public EnumeratorAnonymousClass(AttributeSource.State initState)
             {
                 state = initState;
             }
@@ -285,6 +298,7 @@ namespace Lucene.Net.Util
 
             public void Dispose()
             {
+                // LUCENENET: Intentionally blank
             }
 
             public bool MoveNext()
@@ -590,7 +604,7 @@ namespace Lucene.Net.Util
             return buffer.ToString();
         }
 
-        private class AttributeReflectorAnonymousClass : IAttributeReflector
+        private sealed class AttributeReflectorAnonymousClass : IAttributeReflector
         {
             private readonly bool prependAttClass;
             private readonly StringBuilder buffer;

@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
             return new DefaultSimilarityAnonymousClass();
         }
 
-        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
+        private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             public DefaultSimilarityAnonymousClass()
             {
