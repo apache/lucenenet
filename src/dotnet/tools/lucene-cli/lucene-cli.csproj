@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net6.0;net5.0</TargetFrameworks>
 
     <IsPublishable>true</IsPublishable>
     <IsPublishable Condition="$(TargetFramework.StartsWith('net4'))">false</IsPublishable>
