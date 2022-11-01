@@ -23,6 +23,7 @@ namespace Lucene.Net.Cli
      * limitations under the License.
      */
 
+
     public abstract class ConfigurationBase : CommandLineApplication
     {
         private static readonly Assembly thisAssembly = typeof(ConfigurationBase).Assembly;
