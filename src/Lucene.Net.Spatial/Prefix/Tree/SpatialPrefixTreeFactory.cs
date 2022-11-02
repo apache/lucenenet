@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
@@ -36,15 +37,18 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public const string PREFIX_TREE = "prefixTree";
         public const string MAX_LEVELS = "maxLevels";
         public const string MAX_DIST_ERR = "maxDistErr";
+        public const string VERSION = "version";
 
         protected IDictionary<string, string>? m_args;
         protected SpatialContext? m_ctx;
         protected int? m_maxLevels;
+        private LuceneVersion m_version;
 
         /// <summary>The factory is looked up via "prefixTree" in <paramref name="args"/>, expecting "geohash" or "quad".</summary>
         /// <remarks>
         /// The factory is looked up via "prefixTree" in <paramref name="args"/>, expecting "geohash" or "quad".
         /// If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
+        /// The "version" arg, if present, is parsed with Version and the prefix tree might be sensitive to it.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="args"/> or <paramref name="ctx"/> is <c>null</c>.</exception>
         public static SpatialPrefixTree MakeSPT(IDictionary<string, string> args, SpatialContext ctx) // LUCENENET specific overload for convenience.
@@ -102,7 +106,21 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             // LUCENENET specific - added guard clauses
             this.m_args = args ?? throw new ArgumentNullException(nameof(args));
             this.m_ctx = ctx ?? throw new ArgumentNullException(nameof(ctx));
+            InitVersion();
             InitMaxLevels();
+        }
+
+        protected internal virtual void InitVersion()
+        {
+            m_args.TryGetValue(VERSION, out string? versionStr);
+            try
+            {
+                setVersion(versionStr == null ? LuceneVersion.LUCENE_CURRENT : LuceneVersionExtensions.ParseLeniently(versionStr));
+            }
+            catch (Exception e) when (e.IsException())
+            {
+                throw RuntimeException.Create(e);
+            }
         }
 
         protected internal virtual void InitMaxLevels()
@@ -130,6 +148,18 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 degrees = double.Parse(maxDetailDistStr, CultureInfo.InvariantCulture);
             }
             m_maxLevels = GetLevelForDistance(degrees);
+        }
+
+        //Set the version of Lucene.Net this tree should mimic the behavior for for analysis
+        public void setVersion(LuceneVersion v)
+        {
+            m_version = v;
+        }
+
+        //Return the version of Lucene.Net this tree will mimic the behavior of for analysis
+        public LuceneVersion getVersion()
+        {
+            return m_version;
         }
 
         /// <summary>
