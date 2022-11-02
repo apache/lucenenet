@@ -25,7 +25,7 @@
 
   <PropertyGroup>
     <!-- Allow specific target framework to flow in from TestTargetFrameworks.props -->
-    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net6.0;net5.0</TargetFrameworks>
     <!-- If .NET Frameowrk is specified, just target the latest version -->
     <TargetFramework Condition=" $(TargetFramework.StartsWith('net4')) ">net6.0</TargetFramework>
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>

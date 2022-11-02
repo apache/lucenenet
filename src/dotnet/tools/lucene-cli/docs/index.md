@@ -1,10 +1,10 @@
-# Lucene.NET command line interface (CLI) tools
+﻿# Lucene.NET command line interface (CLI) tools
 
 The Lucene.NET command line interface (CLI) is a new cross-platform toolchain with utilities for maintaining Lucene.NET and demos for learning basic Lucene.NET functionality.
 
 ## Prerequisites
 
-- [.NET Core 3.1 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
+- [.NET 5.0 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
 
 ## Installation
 

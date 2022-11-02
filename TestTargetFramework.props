@@ -28,14 +28,13 @@
     this setting only affects the test projects. -->
     <!--<TargetFramework>net461</TargetFramework>-->
     <!--<TargetFramework>net48</TargetFramework>-->
-    <!--<TargetFramework>netcoreapp3.1</TargetFramework>-->
     <TargetFramework>net5.0</TargetFramework>
     <!--<TargetFramework>net6.0</TargetFramework>-->
 
     <!-- Allow the build script to pass in the test frameworks to build for.
       This overrides the above TargetFramework setting. 
       LUCENENET TODO: Due to a parsing bug, we cannot pass a string with a ; to dotnet msbuild, so passing true as a workaround -->
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net6.0;net5.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48;net461</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
   </PropertyGroup>
