@@ -714,7 +714,7 @@ namespace Lucene.Net.Search
         internal readonly bool includeLower;
         internal readonly bool includeUpper;
 
-        protected internal FieldCacheRangeFilter(string field, FieldCache.IParser parser, T lowerVal, T upperVal, bool includeLower, bool includeUpper)
+        private protected FieldCacheRangeFilter(string field, FieldCache.IParser parser, T lowerVal, T upperVal, bool includeLower, bool includeUpper)
         {
             this.field = field;
             this.parser = parser;
