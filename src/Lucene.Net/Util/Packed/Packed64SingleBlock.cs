@@ -51,7 +51,7 @@ namespace Lucene.Net.Util.Packed
 
         internal readonly long[] blocks;
 
-        internal Packed64SingleBlock(int valueCount, int bitsPerValue)
+        private protected Packed64SingleBlock(int valueCount, int bitsPerValue) // LUCENENET: Changed from internal to private protected
             : base(valueCount, bitsPerValue)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(IsSupported(bitsPerValue));

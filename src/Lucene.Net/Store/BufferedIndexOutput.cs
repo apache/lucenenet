@@ -54,7 +54,7 @@ namespace Lucene.Net.Store
 
         // LUCENENET specific - added constructor overload so FSDirectory can still subclass BufferedIndexOutput, but
         // utilize its own buffer, since FileStream is already buffered in .NET.
-        internal BufferedIndexOutput(int bufferSize, CRC32 crc)
+        private protected BufferedIndexOutput(int bufferSize, CRC32 crc)
         {
             if (bufferSize <= 0)
             {

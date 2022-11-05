@@ -283,7 +283,7 @@ namespace Lucene.Net.Search
         /// Expert: Internal cache. </summary>
         internal abstract class Cache<TKey, TValue> where TKey : CacheKey
         {
-            internal Cache(FieldCacheImpl wrapper)
+            private protected Cache(FieldCacheImpl wrapper) // LUCENENET: Changed from internal to private protected
             {
                 this.wrapper = wrapper;
             }

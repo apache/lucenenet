@@ -302,7 +302,7 @@ namespace Lucene.Net.Codecs.Memory
                 private readonly int[] docFreq; // LUCENENET: marked readonly
                 private readonly long[] totalTermFreq; // LUCENENET: marked readonly
 
-                internal BaseTermsEnum(TermsReader outerInstance)
+                private protected BaseTermsEnum(TermsReader outerInstance) // LUCENENET: Changed from internal to private protected
                 {
                     this.outerInstance = outerInstance;
                     this.state = outerInstance.outerInstance.postingsReader.NewTermState();

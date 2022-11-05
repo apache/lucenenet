@@ -578,7 +578,7 @@ namespace Lucene.Net.Util.Fst
     /// </summary>
     public abstract class Builder
     {
-        internal Builder() { } // Disallow external creation
+        private protected Builder() { } // Disallow external creation
 
         /// <summary>
         /// Expert: this is invoked by Builder whenever a suffix

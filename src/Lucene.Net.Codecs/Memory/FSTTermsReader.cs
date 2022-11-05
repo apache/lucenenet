@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.Memory
                 /// Decodes metadata into customized term state. </summary>
                 internal abstract void DecodeMetaData();
 
-                internal BaseTermsEnum(FSTTermsReader.TermsReader outerInstance)
+                private protected BaseTermsEnum(FSTTermsReader.TermsReader outerInstance) // LUCENENET: Changed from internal to private protected
                 {
                     this.outerInstance = outerInstance;
                     this.state = outerInstance.outerInstance.postingsReader.NewTermState();

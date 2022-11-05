@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public abstract class DocMap
         {
-            internal DocMap()
+            private protected DocMap() // LUCENENET: Changed from internal to private protected
             {
             }
 
