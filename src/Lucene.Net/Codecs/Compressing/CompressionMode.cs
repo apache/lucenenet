@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.CompilerServices;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         /// <summary>
         /// Sole constructor. </summary>
-        protected internal CompressionMode()
+        protected CompressionMode()
         {
         }
 

@@ -46,7 +46,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Sole constructor. </summary>
-        protected internal BaseDirectory()
+        protected BaseDirectory()
             : base()
         {
         }

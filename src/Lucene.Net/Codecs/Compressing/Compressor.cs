@@ -1,4 +1,4 @@
-namespace Lucene.Net.Codecs.Compressing
+﻿namespace Lucene.Net.Codecs.Compressing
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Compressing
     {
         /// <summary>
         /// Sole constructor, typically called from sub-classes. </summary>
-        protected internal Compressor()
+        protected Compressor()
         {
         }
 

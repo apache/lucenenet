@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Codecs
 {
@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal FieldsProducer()
+        protected FieldsProducer()
         {
         }
 

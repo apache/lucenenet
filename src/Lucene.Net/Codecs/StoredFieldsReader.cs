@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal StoredFieldsReader()
+        protected StoredFieldsReader()
         {
         }
 
