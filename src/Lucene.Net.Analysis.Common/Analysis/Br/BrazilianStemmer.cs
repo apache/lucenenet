@@ -167,6 +167,7 @@ namespace Lucene.Net.Analysis.Br
             }
 //Masa
 //Bobar
+//IT21-2019
             if (j >= i)
             {
                 return null;
