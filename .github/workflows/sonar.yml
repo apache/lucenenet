@@ -17,11 +17,12 @@
 
 name: SonarCloud
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
-  pull_request:
-    types: [opened, synchronize, reopened]
+  schedule:
+    - cron: '36 12 * * *' # 12:36 PM UTC, daily (picked an odd start time to try to avoid competing for agents with other projects)
 jobs:
   build:
     name: Build and analyze
