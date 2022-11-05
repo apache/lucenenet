@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis
         /// the wrapped <see cref="Analyzer"/>s are unknown, <see cref="Analyzer.PER_FIELD_REUSE_STRATEGY"/> is assumed.
         /// </summary>
         [Obsolete("Use AnalyzerWrapper(Analyzer.ReuseStrategy) and specify a valid Analyzer.ReuseStrategy, probably retrieved from the wrapped analyzer using Analyzer.Strategy.")]
-        protected internal AnalyzerWrapper()
+        protected AnalyzerWrapper()
             : this(PER_FIELD_REUSE_STRATEGY)
         {
         }
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis
         /// <see cref="Analyzer.PER_FIELD_REUSE_STRATEGY"/>.
         /// </summary>
         /// <seealso cref="Analyzer.Strategy"/>
-        protected internal AnalyzerWrapper(ReuseStrategy reuseStrategy)
+        protected AnalyzerWrapper(ReuseStrategy reuseStrategy)
             : base(reuseStrategy)
         {
         }

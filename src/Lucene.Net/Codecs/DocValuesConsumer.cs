@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Codecs
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal DocValuesConsumer()
+        protected DocValuesConsumer()
         {
         }
 

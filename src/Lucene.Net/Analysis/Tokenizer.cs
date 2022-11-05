@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Construct a token stream processing the given input. </summary>
-        protected internal Tokenizer(TextReader input)
+        protected Tokenizer(TextReader input)
         {
             this.inputPending = input ?? throw new ArgumentNullException(nameof(input), "input must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Construct a token stream processing the given input using the given <see cref="Util.AttributeSource.AttributeFactory"/>.
         /// </summary>
-        protected internal Tokenizer(AttributeFactory factory, TextReader input)
+        protected Tokenizer(AttributeFactory factory, TextReader input)
             : base(factory)
         {
             this.inputPending = input ?? throw new ArgumentNullException(nameof(input), "input must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
