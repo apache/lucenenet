@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
         private bool closedByChild = false;
         private readonly AtomicInt32 refCount = new AtomicInt32(1);
 
-        internal IndexReader()
+        private protected IndexReader() // LUCENENET: Changed from internal to private protected
         {
             if (!(this is CompositeReader || this is AtomicReader))
             {

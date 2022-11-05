@@ -320,7 +320,7 @@ namespace Lucene.Net.Codecs.Lucene40
             protected bool m_skipped;
             protected internal readonly IBits m_liveDocs;
 
-            internal SegmentDocsEnumBase(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, IBits liveDocs)
+            private protected SegmentDocsEnumBase(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, IBits liveDocs) // LUCENENET: Changed from internal to private protected
             {
                 this.outerInstance = outerInstance;
                 this.startFreqIn = startFreqIn;

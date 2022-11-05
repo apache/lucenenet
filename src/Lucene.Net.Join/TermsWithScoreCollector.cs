@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Join
         private Scorer _scorer;
         private float[] _scoreSums = new float[INITIAL_ARRAY_SIZE];
 
-        internal TermsWithScoreCollector(string field, ScoreMode scoreMode)
+        private protected TermsWithScoreCollector(string field, ScoreMode scoreMode) // LUCENENET: Changed from internal to private protected
         {
             this._field = field;
             this._scoreMode = scoreMode;

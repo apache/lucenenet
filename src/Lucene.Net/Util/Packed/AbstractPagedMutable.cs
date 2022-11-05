@@ -38,7 +38,7 @@ namespace Lucene.Net.Util.Packed
         internal readonly PackedInt32s.Mutable[] subMutables;
         internal readonly int bitsPerValue;
 
-        internal AbstractPagedMutable(int bitsPerValue, long size, int pageSize)
+        private protected AbstractPagedMutable(int bitsPerValue, long size, int pageSize) // LUCENENET: Changed from internal to private protected
         {
             this.bitsPerValue = bitsPerValue;
             this.size = size;

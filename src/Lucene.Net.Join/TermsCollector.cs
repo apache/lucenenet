@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Join
         private readonly string _field;
         private readonly BytesRefHash _collectorTerms = new BytesRefHash();
 
-        internal TermsCollector(string field)
+        private protected TermsCollector(string field) // LUCENENET: Changed from internal to private protected
         {
             _field = field;
         }

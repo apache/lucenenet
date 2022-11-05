@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
         where T : FieldValueHitQueue.Entry
     {
         // prevent instantiation and extension.
-        internal FieldValueHitQueue(SortField[] fields, int size)
+        private protected FieldValueHitQueue(SortField[] fields, int size) // LUCENENET: Changed from private to private protected
             : base(size)
         {
             // When we get here, fields.length is guaranteed to be > 0, therefore no
