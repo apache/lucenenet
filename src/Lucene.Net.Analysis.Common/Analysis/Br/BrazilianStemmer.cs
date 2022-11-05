@@ -166,7 +166,8 @@ namespace Lucene.Net.Analysis.Br
                 }
             }
 //Masa
-            if (!(j < i))
+//Bobar
+            if (j >= i)
             {
                 return null;
             }
