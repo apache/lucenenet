@@ -398,11 +398,11 @@ namespace Lucene.Net.Queries
 
             public abstract bool MoveNext();
 
-            public FieldAndTermEnum()
+            protected FieldAndTermEnum() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
             }
 
-            public FieldAndTermEnum(string field)
+            protected FieldAndTermEnum(string field) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.Field = field;
             }

@@ -338,7 +338,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             private readonly Analyzer analyzer;
 
-            public Parser(bool dedup, Analyzer analyzer) 
+            protected Parser(bool dedup, Analyzer analyzer) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
                 : base(dedup)
             {
                 this.analyzer = analyzer;

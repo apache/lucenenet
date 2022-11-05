@@ -1,4 +1,4 @@
-using Lucene.Net.Queries.Function;
+﻿using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System.Diagnostics.CodeAnalysis;
@@ -63,6 +63,8 @@ namespace Lucene.Net.Expressions
         /// <param name="variables">
         /// Names of external variables referred to by the expression
         /// </param>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S3442:\"abstract\" classes should not have \"public\" constructors", Justification = "Public is required for Relection")]
         public Expression(string sourceText, string[] variables) // LUCENENET NOTE: This must be public for the Reflection code to work right.
         {
             // javadocs

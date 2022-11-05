@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Util
         ///          Lucene version to match </param>
         /// <param name="input">
         ///          the input to split up into tokens </param>
-        public CharTokenizer(LuceneVersion matchVersion, TextReader input)
+        protected CharTokenizer(LuceneVersion matchVersion, TextReader input) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(input)
         {
             Init(matchVersion);
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Util
         ///          the attribute factory to use for this <see cref="Tokenizer"/> </param>
         /// <param name="input">
         ///          the input to split up into tokens </param>
-        public CharTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
+        protected CharTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(factory, input)
         {
             Init(matchVersion);

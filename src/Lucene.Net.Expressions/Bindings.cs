@@ -1,4 +1,5 @@
-using Lucene.Net.Queries.Function;
+﻿using Lucene.Net.Queries.Function;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Expressions
 {
@@ -35,6 +36,8 @@ namespace Lucene.Net.Expressions
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </remarks>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S3442:\"abstract\" classes should not have \"public\" constructors", Justification = "Public is required for Relection")]
         public Bindings() // LUCENENET NOTE: This must be public for the Reflection code to work right.
         {
         }

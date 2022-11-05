@@ -193,13 +193,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
             protected int m_length = 0;
 
-            public CologneBuffer(char[] data)
+            protected CologneBuffer(char[] data) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.m_data = data;
                 this.m_length = data.Length;
             }
 
-            public CologneBuffer(int buffSize)
+            protected CologneBuffer(int buffSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.m_data = new char[buffSize];
                 this.m_length = 0;
