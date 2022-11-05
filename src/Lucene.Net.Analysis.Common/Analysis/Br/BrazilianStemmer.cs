@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.Br
                 }
             }
 
-            if (!(j < i))
+            if (j >= i)
             {
                 return null;
             }
