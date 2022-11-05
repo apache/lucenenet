@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Globalization;
 
@@ -165,7 +165,7 @@ namespace Lucene.Net.Analysis.Br
                     break;
                 }
             }
-
+//Masa
             if (!(j < i))
             {
                 return null;
