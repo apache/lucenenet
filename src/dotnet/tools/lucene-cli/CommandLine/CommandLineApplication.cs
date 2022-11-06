@@ -534,7 +534,7 @@ namespace Lucene.Net.Cli.CommandLine
             }
         }
 
-        private class CommandArgumentEnumerator : IEnumerator<CommandArgument>
+        private sealed class CommandArgumentEnumerator : IEnumerator<CommandArgument>
         {
             private readonly IEnumerator<CommandArgument> _enumerator;
 

@@ -367,7 +367,7 @@ namespace Lucene.Net.Spatial.Prefix
         /// <summary>
         /// Used for <see cref="VNode.children"/>.
         /// </summary>
-        private class VNodeCellEnumerator : IEnumerator<VNode>
+        private sealed class VNodeCellEnumerator : IEnumerator<VNode>
         {
             internal readonly IEnumerator<Cell> cellIter;
             private readonly VNode vNode;

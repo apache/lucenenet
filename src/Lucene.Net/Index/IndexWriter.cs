@@ -594,7 +594,16 @@ namespace Lucene.Net.Index
 
             public void Dispose()
             {
-                DropAll(false);
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    DropAll(false);
+                }
             }
 
             /// <summary>

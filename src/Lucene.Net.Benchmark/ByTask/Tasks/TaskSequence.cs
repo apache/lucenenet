@@ -76,6 +76,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 RunData.DocMaker.Dispose();
             }
+            base.Dispose(disposing);
         }
 
         private void InitTasksArray()

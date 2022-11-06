@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 
@@ -182,6 +182,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 prefix.Dispose();
                 suffix.Dispose();
             }
+            base.Dispose(disposing);
         }
 
         public override void Reset()

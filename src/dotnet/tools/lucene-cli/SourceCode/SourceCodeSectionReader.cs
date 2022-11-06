@@ -150,6 +150,7 @@ namespace Lucene.Net.Cli.SourceCode
             {
                 this.reader?.Dispose();
             }
+            base.Dispose(disposing);
         }
     }
 }

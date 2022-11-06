@@ -562,6 +562,7 @@ namespace Lucene.Net.Store
                         }
                     }
                 }
+                //base.Dispose(disposing); // Causes object to be disposed in some tests
             }
 
             /// <summary>

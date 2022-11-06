@@ -1179,7 +1179,7 @@ namespace Lucene.Net.Analysis.Util
             /// <summary>
             /// LUCENENET specific class to iterate the values in the <see cref="KeyCollection"/>.
             /// </summary>
-            private class KeyEnumerator : IEnumerator<string>
+            private sealed class KeyEnumerator : IEnumerator<string>
             {
                 private readonly EntryIterator entryIterator;
 
@@ -1290,7 +1290,7 @@ namespace Lucene.Net.Analysis.Util
             /// <summary>
             /// LUCENENET specific class to enumerate the values in the <see cref="ValueCollection"/>.
             /// </summary>
-            private class ValueEnumerator : IEnumerator<TValue>
+            private sealed class ValueEnumerator : IEnumerator<TValue>
             {
                 private readonly EntryIterator entryIterator;
 

@@ -123,6 +123,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 Console.WriteLine();
             }
+            base.Dispose(disposing);
         }
 
         public override bool SupportsParams => true;

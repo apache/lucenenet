@@ -138,6 +138,7 @@ namespace Lucene.Net.Analysis.Util
                 this.isDisposing = false;
 #endif
             }
+            base.Dispose(disposing);
         }
 
         /// <summary>
