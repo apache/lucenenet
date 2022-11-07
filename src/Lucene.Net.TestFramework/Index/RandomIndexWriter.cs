@@ -443,7 +443,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Dispose this writer. </summary>
-        /// <seealso cref="IndexWriter.Dispose(bool)"/>
+        /// <seealso cref="IndexWriter.Dispose()"/>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
