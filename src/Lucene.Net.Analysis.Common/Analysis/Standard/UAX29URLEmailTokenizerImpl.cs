@@ -9063,7 +9063,7 @@ namespace Lucene.Net.Analysis.Standard
         private TextReader zzReader;
 
         /// <summary>the current state of the DFA</summary>
-        private int zzState;
+        
 
         /// <summary>the current lexical state</summary>
         private int zzLexicalState = YYINITIAL;
@@ -9386,6 +9386,7 @@ namespace Lucene.Net.Analysis.Standard
         /// <exception cref="IOException">if any I/O-Error occurs</exception>
         public int GetNextToken()
         {
+            int zzState;
             int zzInput;
             int zzAction;
 
