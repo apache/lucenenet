@@ -2018,7 +2018,7 @@ namespace Lucene.Net.Util
                     {
                         Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
                     }
-                    r.AddReaderClosedListener(new ReaderClosedListenerAnonymousClass(ex));
+                    r.AddReaderDisposedListener(new ReaderClosedListenerAnonymousClass(ex));
                 }
                 IndexSearcher ret;
                 if (wrapWithAssertions)
@@ -3171,7 +3171,7 @@ namespace Lucene.Net.Util
             return Random.NextGaussian();
         }
 
-        private sealed class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass : IReaderDisposedListener
         {
             private readonly LimitedConcurrencyLevelTaskScheduler ex;
 
@@ -3180,7 +3180,7 @@ namespace Lucene.Net.Util
                 this.ex = ex;
             }
 
-            public void OnClose(IndexReader reader)
+            public void OnDispose(IndexReader reader)
             {
                 ex?.Shutdown();
                 //TestUtil.ShutdownExecutorService(ex);

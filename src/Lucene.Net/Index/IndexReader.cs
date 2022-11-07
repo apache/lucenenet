@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
     /// <see cref="IndexReader"/> instance; use your own
     /// (non-Lucene) objects instead.
     /// </summary>
-    public abstract class IndexReader : IDisposable
+    public abstract partial class IndexReader : IDisposable
     {
         private bool closed = false;
         private bool closedByChild = false;
@@ -94,20 +94,9 @@ namespace Lucene.Net.Index
         private readonly IEventAggregator eventAggregator = new EventAggregator();
 #endif
 
-        /// <summary>
-        /// A custom listener that's invoked when the <see cref="IndexReader"/>
-        /// is closed.
-        /// <para/>
-        /// @lucene.experimental
-        /// </summary>
-        public interface IReaderClosedListener
-        {
-            /// <summary>
-            /// Invoked when the <see cref="IndexReader"/> is closed. </summary>
-            void OnClose(IndexReader reader);
-        }
+        // LUCENENET specific - de-nested IReaderClosedListener and renamed to IReaderDisposedListener
 
-        private readonly ISet<IReaderClosedListener> readerClosedListeners = new JCG.LinkedHashSet<IReaderClosedListener>().AsConcurrent();
+        private readonly ISet<IReaderDisposedListener> readerDisposedListeners = new JCG.LinkedHashSet<IReaderDisposedListener>().AsConcurrent();
 
         private readonly ConditionalWeakTable<IndexReader, object> parentReaders = new ConditionalWeakTable<IndexReader, object>();
 
@@ -116,26 +105,30 @@ namespace Lucene.Net.Index
         private readonly object parentReadersLock = new object();
 
         /// <summary>
-        /// Expert: adds a <see cref="IReaderClosedListener"/>.  The
-        /// provided listener will be invoked when this reader is closed.
+        /// Expert: adds a <see cref="IReaderDisposedListener"/>.  The
+        /// provided listener will be invoked when this reader is disposed.
+        /// <para/>
+        /// <b>NOTE:</b> This was addReaderClosedListener() in Lucene.
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public void AddReaderClosedListener(IReaderClosedListener listener)
+        public void AddReaderDisposedListener(IReaderDisposedListener listener)
         {
             EnsureOpen();
-            readerClosedListeners.Add(listener);
+            readerDisposedListeners.Add(listener);
         }
 
         /// <summary>
-        /// Expert: remove a previously added <see cref="IReaderClosedListener"/>.
+        /// Expert: remove a previously added <see cref="IReaderDisposedListener"/>.
+        /// <para/>
+        /// <b>NOTE:</b> This was removeReaderClosedListener() in Lucene.
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public void RemoveReaderClosedListener(IReaderClosedListener listener)
+        public void RemoveReaderDisposedListener(IReaderDisposedListener listener)
         {
             EnsureOpen();
-            readerClosedListeners.Remove(listener);
+            readerDisposedListeners.Remove(listener);
         }
 
         /// <summary>
@@ -174,17 +167,17 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void NotifyReaderClosedListeners(Exception th)
+        private void NotifyReaderDisposedListeners(Exception th) // LUCENENET: Renamed from notifyReaderClosedListeners()
         {
-            object syncRoot = ((ICollection)readerClosedListeners).SyncRoot;
+            object syncRoot = ((ICollection)readerDisposedListeners).SyncRoot;
             UninterruptableMonitor.Enter(syncRoot); // LUCENENET: Ensure we sync on the SyncRoot of ConcurrentSet<T>
             try
             {
-                foreach (IReaderClosedListener listener in readerClosedListeners)
+                foreach (IReaderDisposedListener listener in readerDisposedListeners)
                 {
                     try
                     {
-                        listener.OnClose(this);
+                        listener.OnDispose(this);
                     }
                     catch (Exception t) when (t.IsThrowable())
                     {
@@ -206,7 +199,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void ReportCloseToParentReaders()
+        private void ReportDisposeToParentReaders() // LUCENENET: Renamed from reportCloseToParentReaders()
         {
             // LUCENENET specific - since ConditionalWeakTable doesn't synchronize
             // on the enumerator, we need to do external synchronization to make them threadsafe.
@@ -231,7 +224,7 @@ namespace Lucene.Net.Index
                         // cross memory barrier by a fake write:
                         target.refCount.AddAndGet(0);
                         // recurse:
-                        target.ReportCloseToParentReaders();
+                        target.ReportDisposeToParentReaders();
                     }
                 }
             }
@@ -341,11 +334,11 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-                        ReportCloseToParentReaders();
+                        ReportDisposeToParentReaders();
                     }
                     finally
                     {
-                        NotifyReaderClosedListeners(throwable);
+                        NotifyReaderDisposedListeners(throwable);
                     }
                 }
             }
@@ -772,5 +765,20 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <seealso cref="Terms.SumTotalTermFreq"/>
         public abstract long GetSumTotalTermFreq(string field);
+    }
+
+    /// <summary>
+    /// A custom listener that's invoked when the <see cref="IndexReader"/>
+    /// is disposed.
+    /// <para/>
+    /// <b>NOTE:</b> This was IndexReader.ReaderClosedListener in Lucene.
+    /// <para/>
+    /// @lucene.experimental
+    /// </summary>
+    public interface IReaderDisposedListener
+    {
+        /// <summary>
+        /// Invoked when the <see cref="IndexReader"/> is disposed. </summary>
+        void OnDispose(IndexReader reader);
     }
 }
