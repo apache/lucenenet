@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.Cjk
                     {
                         if (length > 0)
                         {
-                            if (preIsTokened == true)
+                            if (preIsTokened)
                             {
                                 length = 0;
                                 preIsTokened = false;
