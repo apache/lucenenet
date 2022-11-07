@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -687,7 +687,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// <summary>
             /// traverse the tree to find next key
             /// </summary>
-            private int Run()
+            private void Run()
             {
                 if (cur == -1)
                 {
