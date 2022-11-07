@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Cjk
     /// In all cases, all non-CJK input is passed thru unmodified.
     /// </para>
     /// </summary>
-    public sealed class CJKBigramFilter : TokenFilter
+    public sealed class CjkBigramFilter : TokenFilter
     {
         // configuration
 
