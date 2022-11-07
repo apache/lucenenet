@@ -2004,7 +2004,6 @@ namespace Lucene.Net.Analysis.En
                     break;
                 }
                 NceEndings();
-                bool foo = IsMatched;
                 break;
             }
 
