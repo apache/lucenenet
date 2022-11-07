@@ -228,9 +228,9 @@ namespace Lucene.Net.Search
         }
 
         // composite/SlowMultiReaderWrapper fieldcaches don't purge until composite reader is closed.
-        internal readonly IndexReader.IReaderClosedListener purgeReader;
+        internal readonly IReaderDisposedListener purgeReader;
 
-        private sealed class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass : IReaderDisposedListener
         {
             private readonly FieldCacheImpl outerInstance;
 
@@ -239,7 +239,7 @@ namespace Lucene.Net.Search
                 this.outerInstance = outerInstance;
             }
 
-            public void OnClose(IndexReader owner)
+            public void OnDispose(IndexReader owner)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(owner is AtomicReader);
                 outerInstance.PurgeByCacheKey(((AtomicReader)owner).CoreCacheKey);
@@ -259,12 +259,12 @@ namespace Lucene.Net.Search
                 object key = reader.CoreCacheKey;
                 if (key is AtomicReader atomicReader)
                 {
-                    atomicReader.AddReaderClosedListener(purgeReader);
+                    atomicReader.AddReaderDisposedListener(purgeReader);
                 }
                 else
                 {
                     // last chance
-                    reader.AddReaderClosedListener(purgeReader);
+                    reader.AddReaderDisposedListener(purgeReader);
                 }
             }
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
