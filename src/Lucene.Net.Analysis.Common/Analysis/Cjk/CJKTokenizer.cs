@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Cjk
     /// </summary>
     /// @deprecated Use StandardTokenizer, CJKWidthFilter, CJKBigramFilter, and LowerCaseFilter instead. 
     [Obsolete("Use StandardTokenizer, CJKWidthFilter, CJKBigramFilter, and LowerCaseFilter instead.")]
-    public sealed class CJKTokenizer : Tokenizer
+    public sealed class CjkTokenizer : Tokenizer
     {
         //~ Static fields/initializers ---------------------------------------------
         /// <summary>
