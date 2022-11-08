@@ -328,7 +328,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             int[] result = new int[14873];
             int offset = 0;
-            offset = ZzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
+            
             return result;
         }
 
