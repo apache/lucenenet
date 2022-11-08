@@ -1,5 +1,4 @@
-using Lucene.Net.Support;
-using System;
+﻿using Lucene.Net.Support;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 

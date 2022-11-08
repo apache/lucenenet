@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
