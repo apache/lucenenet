@@ -473,10 +473,7 @@ namespace Lucene.Net.Index
 
         private static void Msg(TextWriter @out, string msg)
         {
-            if (@out != null)
-            {
-                @out.WriteLine(msg);
-            }
+            @out?.WriteLine(msg);
         }
 
         /// <summary>
@@ -522,14 +519,13 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR: could not read any segments file in directory");
                 result.MissingSegments = true;
-                if (infoStream != null)
-                {
-                    // LUCENENET NOTE: Some tests rely on the error type being in
-                    // the message. We can't get the error type with StackTrace, we
-                    // need ToString() for that.
-                    infoStream.WriteLine(t.ToString());
-                    //infoStream.WriteLine(t.StackTrace);
-                }
+                
+                // LUCENENET NOTE: Some tests rely on the error type being in
+                // the message. We can't get the error type with StackTrace, we
+                // need ToString() for that.
+                infoStream?.WriteLine(t.ToString());
+                //infoStream.WriteLine(t.StackTrace);
+                
                 return result;
             }
 
@@ -571,14 +567,13 @@ namespace Lucene.Net.Index
             catch (Exception t) when (t.IsThrowable())
             {
                 Msg(infoStream, "ERROR: could not open segments file in directory");
-                if (infoStream != null)
-                {
-                    // LUCENENET NOTE: Some tests rely on the error type being in
-                    // the message. We can't get the error type with StackTrace, we
-                    // need ToString() for that.
-                    infoStream.WriteLine(t.ToString());
-                    //infoStream.WriteLine(t.StackTrace);
-                }
+                
+                // LUCENENET NOTE: Some tests rely on the error type being in
+                // the message. We can't get the error type with StackTrace, we
+                // need ToString() for that.
+                infoStream?.WriteLine(t.ToString());
+                //infoStream.WriteLine(t.StackTrace);
+                
                 result.CantOpenSegments = true;
                 return result;
             }
@@ -590,23 +585,19 @@ namespace Lucene.Net.Index
             catch (Exception t) when (t.IsThrowable())
             {
                 Msg(infoStream, "ERROR: could not read segment file version in directory");
-                if (infoStream != null)
-                {
-                    // LUCENENET NOTE: Some tests rely on the error type being in
-                    // the message. We can't get the error type with StackTrace, we
-                    // need ToString() for that.
-                    infoStream.WriteLine(t.ToString());
-                    //infoStream.WriteLine(t.StackTrace);
-                }
+                
+                // LUCENENET NOTE: Some tests rely on the error type being in
+                // the message. We can't get the error type with StackTrace, we
+                // need ToString() for that.
+                infoStream?.WriteLine(t.ToString());
+                //infoStream.WriteLine(t.StackTrace);
+                
                 result.MissingSegmentVersion = true;
                 return result;
             }
             finally
             {
-                if (input != null)
-                {
-                    input.Dispose();
-                }
+                input?.Dispose();
             }
 
             string sFormat = "";
@@ -745,26 +736,21 @@ namespace Lucene.Net.Index
                         segInfoStat.HasDeletions = true;
                         segInfoStat.DeletionsGen = info.DelGen;
                     }
-                    if (infoStream != null)
-                    {
-                        infoStream.Write("    test: open reader.........");
-                    }
+
+                    infoStream?.Write("    test: open reader.........");
+
                     reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, IOContext.DEFAULT);
                     Msg(infoStream, "OK");
 
                     segInfoStat.OpenReaderPassed = true;
 
-                    if (infoStream != null)
-                    {
-                        infoStream.Write("    test: check integrity.....");
-                    }
+                    infoStream?.Write("    test: check integrity.....");
+                    
                     reader.CheckIntegrity();
                     Msg(infoStream, "OK");
 
-                    if (infoStream != null)
-                    {
-                        infoStream.Write("    test: check live docs.....");
-                    }
+                    infoStream?.Write("    test: check live docs.....");
+                    
                     int numDocs = reader.NumDocs;
                     toLoseDocCount = numDocs;
                     if (reader.HasDeletions)
@@ -831,10 +817,8 @@ namespace Lucene.Net.Index
                     }
 
                     // Test getFieldInfos()
-                    if (infoStream != null)
-                    {
-                        infoStream.Write("    test: fields..............");
-                    }
+                    infoStream?.Write("    test: fields..............");
+                    
                     FieldInfos fieldInfos = reader.FieldInfos;
                     Msg(infoStream, "OK [" + fieldInfos.Count + " fields]");
                     segInfoStat.NumFields = fieldInfos.Count;
@@ -884,13 +868,12 @@ namespace Lucene.Net.Index
                     string comment;
                     comment = "fixIndex() would remove reference to this segment";
                     Msg(infoStream, "    WARNING: " + comment + "; full exception:");
-                    if (infoStream != null)
-                    {
-                        // LUCENENET NOTE: Some tests rely on the error type being in
-                        // the message. We can't get the error type with StackTrace, we
-                        // need ToString() for that.
-                        infoStream.WriteLine(t.ToString());
-                    }
+
+                    // LUCENENET NOTE: Some tests rely on the error type being in
+                    // the message. We can't get the error type with StackTrace, we
+                    // need ToString() for that.
+                    infoStream?.WriteLine(t.ToString());
+                    
                     Msg(infoStream, "");
                     result.TotLoseDocCount += toLoseDocCount;
                     result.NumBadSegments++;
@@ -898,10 +881,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    if (reader != null)
-                    {
-                        reader.Dispose();
-                    }
+                    reader?.Dispose();
                 }
 
                 // Keeper
@@ -944,10 +924,8 @@ namespace Lucene.Net.Index
             try
             {
                 // Test Field Norms
-                if (infoStream != null)
-                {
-                    infoStream.Write("    test: field norms.........");
-                }
+                infoStream?.Write("    test: field norms.........");
+
                 foreach (FieldInfo info in reader.FieldInfos)
                 {
                     if (info.HasNorms)
@@ -976,14 +954,12 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
-                if (infoStream != null)
-                {
-                    // LUCENENET NOTE: Some tests rely on the error type being in
-                    // the message. We can't get the error type with StackTrace, we
-                    // need ToString() for that.
-                    infoStream.WriteLine(e.ToString());
-                    //infoStream.WriteLine(e.StackTrace);
-                }
+             
+                // LUCENENET NOTE: Some tests rely on the error type being in
+                // the message. We can't get the error type with StackTrace, we
+                // need ToString() for that.
+                infoStream?.WriteLine(e.ToString());
+                //infoStream.WriteLine(e.StackTrace);      
             }
 
             return status;
@@ -1668,20 +1644,14 @@ namespace Lucene.Net.Index
 
             try
             {
-                if (infoStream != null)
-                {
-                    infoStream.Write("    test: terms, freq, prox...");
-                }
-
+                infoStream?.Write("    test: terms, freq, prox...");
+                
                 Fields fields = reader.Fields;
                 FieldInfos fieldInfos = reader.FieldInfos;
                 status = CheckFields(fields, liveDocs, maxDoc, fieldInfos, true, false, infoStream, verbose);
                 if (liveDocs != null)
                 {
-                    if (infoStream != null)
-                    {
-                        infoStream.Write("    test (ignoring deletes): terms, freq, prox...");
-                    }
+                    infoStream?.Write("    test (ignoring deletes): terms, freq, prox...");
                     CheckFields(fields, null, maxDoc, fieldInfos, true, false, infoStream, verbose);
                 }
             }
@@ -1690,14 +1660,12 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR: " + e);
                 status = new Status.TermIndexStatus();
                 status.Error = e;
-                if (infoStream != null)
-                {
-                    // LUCENENET NOTE: Some tests rely on the error type being in
-                    // the message. We can't get the error type with StackTrace, we
-                    // need ToString() for that.
-                    infoStream.WriteLine(e.ToString());
-                    //infoStream.WriteLine(e.StackTrace);
-                }
+                
+                // LUCENENET NOTE: Some tests rely on the error type being in
+                // the message. We can't get the error type with StackTrace, we
+                // need ToString() for that.
+                infoStream?.WriteLine(e.ToString());
+                //infoStream.WriteLine(e.StackTrace);                
             }
 
             return status;
@@ -1714,10 +1682,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                if (infoStream != null)
-                {
-                    infoStream.Write("    test: stored fields.......");
-                }
+                infoStream?.Write("    test: stored fields.......");
 
                 // Scan stored fields for all documents
                 IBits liveDocs = reader.LiveDocs;
@@ -1745,14 +1710,12 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
-                if (infoStream != null)
-                {
-                    // LUCENENET NOTE: Some tests rely on the error type being in
-                    // the message. We can't get the error type with StackTrace, we
-                    // need ToString() for that.
-                    infoStream.WriteLine(e.ToString());
-                    //infoStream.WriteLine(e.StackTrace);
-                }
+               
+                // LUCENENET NOTE: Some tests rely on the error type being in
+                // the message. We can't get the error type with StackTrace, we
+                // need ToString() for that.
+                infoStream?.WriteLine(e.ToString());
+                //infoStream.WriteLine(e.StackTrace);                
             }
 
             return status;
@@ -1768,10 +1731,8 @@ namespace Lucene.Net.Index
             Status.DocValuesStatus status = new Status.DocValuesStatus();
             try
             {
-                if (infoStream != null)
-                {
-                    infoStream.Write("    test: docvalues...........");
-                }
+                infoStream?.Write("    test: docvalues...........");
+                
                 foreach (FieldInfo fieldInfo in reader.FieldInfos)
                 {
                     if (fieldInfo.HasDocValues)
@@ -1794,14 +1755,12 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
-                if (infoStream != null)
-                {
-                    // LUCENENET NOTE: Some tests rely on the error type being in
-                    // the message. We can't get the error type with StackTrace, we
-                    // need ToString() for that.
-                    infoStream.WriteLine(e.ToString());
-                    //infoStream.WriteLine(e.StackTrace);
-                }
+                
+                // LUCENENET NOTE: Some tests rely on the error type being in
+                // the message. We can't get the error type with StackTrace, we
+                // need ToString() for that.
+                infoStream?.WriteLine(e.ToString());
+                //infoStream.WriteLine(e.StackTrace);                
             }
             return status;
         }
@@ -2069,10 +2028,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                if (infoStream != null)
-                {
-                    infoStream.Write("    test: term vectors........");
-                }
+                infoStream?.Write("    test: term vectors........");
 
                 DocsEnum docs = null;
                 DocsAndPositionsEnum postings = null;
@@ -2322,14 +2278,12 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
-                if (infoStream != null)
-                {
-                    // LUCENENET NOTE: Some tests rely on the error type being in
-                    // the message. We can't get the error type with StackTrace, we
-                    // need ToString() for that.
-                    infoStream.WriteLine(e.ToString());
-                    //infoStream.WriteLine(e.StackTrace);
-                }
+               
+                // LUCENENET NOTE: Some tests rely on the error type being in
+                // the message. We can't get the error type with StackTrace, we
+                // need ToString() for that.
+                infoStream?.WriteLine(e.ToString());
+                //infoStream.WriteLine(e.StackTrace);
             }
 
             return status;
