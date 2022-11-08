@@ -186,7 +186,7 @@ Here is an example project file for .NET 5 for testing a project named `MyCodecs
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
