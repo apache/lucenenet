@@ -175,10 +175,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (@object != null)
-                    {
-                        @object.Dispose();
-                    }
+                    @object?.Dispose();
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
@@ -212,10 +209,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (@object != null)
-                    {
-                        @object.Dispose();
-                    }
+                    @object?.Dispose();
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
@@ -255,10 +249,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (@object != null)
-                    {
-                        @object.Dispose();
-                    }
+                    @object?.Dispose();
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
@@ -285,10 +276,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (@object != null)
-                    {
-                        @object.Dispose();
-                    }
+                    @object?.Dispose();
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
@@ -316,10 +304,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (o != null)
-                    {
-                        o.Dispose();
-                    }
+                    o?.Dispose();
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
@@ -338,10 +323,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (@object != null)
-                    {
-                        @object.Dispose();
-                    }
+                    @object?.Dispose();
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {

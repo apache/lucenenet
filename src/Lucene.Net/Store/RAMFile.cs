@@ -90,10 +90,7 @@ namespace Lucene.Net.Store
                 UninterruptableMonitor.Exit(this);
             }
 
-            if (directory != null)
-            {
-                directory.m_sizeInBytes.AddAndGet(size);
-            }
+            directory?.m_sizeInBytes.AddAndGet(size);
             return buffer;
         }
 
