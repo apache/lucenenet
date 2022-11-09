@@ -1,4 +1,6 @@
 ﻿using Lucene.Net.Util;
+using System;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis.Ja.TokenAttributes
 {
@@ -43,12 +45,20 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            IBaseFormAttribute t = (IBaseFormAttribute)target;
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not IBaseFormAttribute t)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IBaseFormAttribute)}", nameof(target));
             t.SetToken(token);
         }
 
         public override void ReflectWith(IAttributeReflector reflector)
         {
+            // LUCENENET: Added guard clause
+            if (reflector is null)
+                throw new ArgumentNullException(nameof(reflector));
+
             reflector.Reflect(typeof(BaseFormAttribute), "baseForm", GetBaseForm());
         }
     }

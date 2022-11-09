@@ -53,7 +53,11 @@ namespace Lucene.Net.Search
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            IMaxNonCompetitiveBoostAttribute t = (IMaxNonCompetitiveBoostAttribute)target;
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not IMaxNonCompetitiveBoostAttribute t)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IMaxNonCompetitiveBoostAttribute)}", nameof(target));
             t.MaxNonCompetitiveBoost = maxNonCompetitiveBoost;
             t.CompetitiveTerm = competitiveTerm;
         }

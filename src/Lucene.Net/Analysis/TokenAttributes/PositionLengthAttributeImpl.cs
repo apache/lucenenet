@@ -74,7 +74,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            IPositionLengthAttribute t = (IPositionLengthAttribute)target;
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not IPositionLengthAttribute t)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IPositionLengthAttribute)}", nameof(target));
             t.PositionLength = positionLength;
         }
     }
