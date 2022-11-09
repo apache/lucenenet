@@ -141,28 +141,19 @@ namespace Lucene.Net.Analysis.Ja
         /// Returns <c>true</c> if this token is known word.
         /// </summary>
         /// <returns><c>true</c> if this token is in standard dictionary. <c>false</c> if not.</returns>
-        public virtual bool IsKnown()
-        {
-            return type == JapaneseTokenizerType.KNOWN;
-        }
+        public virtual bool IsKnown => type == JapaneseTokenizerType.KNOWN;
 
         /// <summary>
         /// Returns <c>true</c> if this token is unknown word.
         /// </summary>
         /// <returns><c>true</c> if this token is unknown word. <c>false</c> if not.</returns>
-        public virtual bool IsUnknown()
-        {
-            return type == JapaneseTokenizerType.UNKNOWN;
-        }
+        public virtual bool IsUnknown => type == JapaneseTokenizerType.UNKNOWN;
 
         /// <summary>
         /// Returns <c>true</c> if this token is defined in user dictionary.
         /// </summary>
         /// <returns><c>true</c> if this token is in user dictionary. <c>false</c> if not.</returns>
-        public virtual bool IsUser()
-        {
-            return type == JapaneseTokenizerType.USER;
-        }
+        public virtual bool IsUser => type == JapaneseTokenizerType.USER;
 
         /// <summary>
         /// Get index of this token in input text. Returns position of token.
