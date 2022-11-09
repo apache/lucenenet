@@ -216,6 +216,10 @@ namespace Lucene.Net.Analysis
 
             public override void ReflectWith(IAttributeReflector reflector)
             {
+                // LUCENENET: Added guard clause
+                if (reflector is null)
+                    throw new ArgumentNullException(nameof(reflector));
+
                 FillBytesRef();
                 reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(_bytes));
                 reflector.Reflect(typeof(INumericTermAttribute), "shift", Shift);
@@ -225,7 +229,11 @@ namespace Lucene.Net.Analysis
 
             public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
             {
-                var a = (INumericTermAttribute)target;
+                // LUCENENET: Added guard clauses
+                if (target is null)
+                    throw new ArgumentNullException(nameof(target));
+                if (target is not INumericTermAttribute a)
+                    throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(INumericTermAttribute)}", nameof(target));
                 a.Init(_value, ValueSize, _precisionStep, Shift);
             }
         }

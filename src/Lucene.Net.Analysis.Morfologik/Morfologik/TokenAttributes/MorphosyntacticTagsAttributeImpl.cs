@@ -1,7 +1,9 @@
 ﻿// Lucene version compatibility level 8.2.0
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using Attribute = Lucene.Net.Util.Attribute;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
@@ -77,6 +79,12 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not IMorphosyntacticTagsAttribute other)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IMorphosyntacticTagsAttribute)}", nameof(target));
+
             IList<StringBuilder> cloned = null;
             if (tags != null)
             {
@@ -86,7 +94,7 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
                     cloned.Add(new StringBuilder(b.ToString()));
                 }
             }
-            ((IMorphosyntacticTagsAttribute)target).Tags = cloned;
+            other.Tags = cloned;
         }
 
         public override object Clone()
@@ -98,6 +106,10 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
 
         public override void ReflectWith(IAttributeReflector reflector)
         {
+            // LUCENENET: Added guard clause
+            if (reflector is null)
+                throw new ArgumentNullException(nameof(reflector));
+
             reflector.Reflect(typeof(IMorphosyntacticTagsAttribute), "tags", tags);
         }
     }

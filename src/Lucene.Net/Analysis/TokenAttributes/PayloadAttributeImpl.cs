@@ -1,4 +1,6 @@
 ﻿using Lucene.Net.Util;
+using System;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -88,7 +90,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            IPayloadAttribute t = (IPayloadAttribute)target;
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not IPayloadAttribute t)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IPayloadAttribute)}", nameof(target));
             t.Payload = (payload is null) ? null : (BytesRef)payload.Clone();
         }
     }

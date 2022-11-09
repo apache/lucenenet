@@ -88,7 +88,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            IOffsetAttribute t = (IOffsetAttribute)target;
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not IOffsetAttribute t)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IOffsetAttribute)}", nameof(target));
             t.SetOffset(startOffset, endOffset);
         }
     }

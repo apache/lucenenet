@@ -1,4 +1,6 @@
 ﻿using Lucene.Net.Util;
+using System;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Search
 {
@@ -44,7 +46,12 @@ namespace Lucene.Net.Search
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            ((IBoostAttribute)target).Boost = boost;
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not IBoostAttribute t)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IBoostAttribute)}", nameof(target));
+            t.Boost = boost;
         }
     }
 }

@@ -92,7 +92,11 @@ namespace Lucene.Net.Analysis
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            IBinaryTermAttribute other = (IBinaryTermAttribute)target;
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not IBinaryTermAttribute other)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IBinaryTermAttribute)}", nameof(target));
             other.BytesRef.CopyBytes(bytes);
         }
 

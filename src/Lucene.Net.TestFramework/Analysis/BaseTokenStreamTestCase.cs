@@ -81,7 +81,12 @@ namespace Lucene.Net.Analysis
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            ((CheckClearAttributesAttribute)target).Clear();
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not CheckClearAttributesAttribute other)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must subclass {nameof(CheckClearAttributesAttribute)}", nameof(target));
+            other.Clear();
         }
     }
 

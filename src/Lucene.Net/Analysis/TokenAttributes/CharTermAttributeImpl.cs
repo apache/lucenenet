@@ -51,6 +51,18 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public void CopyBuffer(char[] buffer, int offset, int length)
         {
+            // LUCENENET: Added guard clauses.
+            // Note that this is the order the Apache Harmony tests expect it to be checked in.
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), offset, $"{nameof(offset)} must not be negative.");
+            // LUCENENET specific - Added guard clause for null
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+            if (offset > buffer.Length - length) // LUCENENET: Checks for int overflow
+                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(offset)} + {nameof(length)} may not be greater than the size of {nameof(buffer)}");
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), length, $"{nameof(length)} must not be negative.");
+
             GrowTermBuffer(length);
             Array.Copy(buffer, offset, termBuffer, 0, length);
             termLength = length;
@@ -64,6 +76,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public char[] ResizeBuffer(int newSize)
         {
+            // LUCENENET: added guard clause
+            if (newSize < 0)
+                throw new ArgumentOutOfRangeException(nameof(newSize), newSize, $"{nameof(newSize)} must not be negative.");
+
             if (termBuffer.Length < newSize)
             {
                 // Not big enough; create a new array with slight
@@ -77,6 +93,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         private void GrowTermBuffer(int newSize)
         {
+            // LUCENENET: added guard clause
+            if (newSize < 0)
+                throw new ArgumentOutOfRangeException(nameof(newSize), newSize, $"{nameof(newSize)} must not be negative.");
+
             if (termBuffer.Length < newSize)
             {
                 // Not big enough; create a new array with slight
@@ -97,10 +117,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public CharTermAttribute SetLength(int length)
         {
+            // LUCENENET: added guard clause
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), length, $"{nameof(length)} must not be negative.");
             if (length > termBuffer.Length)
-            {
-                throw new ArgumentException("length " + length + " exceeds the size of the termBuffer (" + termBuffer.Length + ")");
-            }
+                throw new ArgumentOutOfRangeException(nameof(length), length, "length " + length + " exceeds the size of the termBuffer (" + termBuffer.Length + ")");
+
             termLength = length;
             return this;
         }
@@ -160,9 +182,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return new CharArrayCharSequence(termBuffer);
             }
             if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
             if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
+                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
             if (startIndex > Length - length) // Checks for int overflow
                 throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
 
@@ -180,9 +202,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
             // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
             if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
             if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount));
+                throw new ArgumentOutOfRangeException(nameof(charCount), $"{nameof(charCount)} must not be negative.");
 
             if (value is null)
             {
@@ -193,7 +215,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (charCount == 0)
                 return this;
             if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
             value.CopyTo(startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
             Length += charCount;
@@ -224,9 +246,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
             // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
             if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
             if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount));
+                throw new ArgumentOutOfRangeException(nameof(charCount), $"{nameof(charCount)} must not be negative.");
 
             if (value is null)
             {
@@ -237,7 +259,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (charCount == 0)
                 return this;
             if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
             Array.Copy(value, startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
             Length += charCount;
@@ -247,7 +269,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public CharTermAttribute Append(string value)
         {
-            return Append(value, 0, value is null ? 0 : value.Length);
+            return Append(value, 0, value?.Length ?? 0);
         }
 
         public CharTermAttribute Append(StringBuilder value)
@@ -265,9 +287,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
             // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
             if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
             if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount));
+                throw new ArgumentOutOfRangeException(nameof(charCount), $"{nameof(charCount)} must not be negative.");
 
             if (value is null)
             {
@@ -278,7 +300,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (charCount == 0)
                 return this;
             if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
             return Append(value.ToString(startIndex, charCount));
         }
@@ -309,9 +331,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
             // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
             if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"{nameof(startIndex)} must not be negative.");
             if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount));
+                throw new ArgumentOutOfRangeException(nameof(charCount), $"{nameof(charCount)} must not be negative.");
 
             if (value is null)
             {
@@ -322,7 +344,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (charCount == 0)
                 return this;
             if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
+                throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
             ResizeBuffer(termLength + charCount);
 
@@ -387,9 +409,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public override bool Equals(object other)
         {
             if (other == this)
-            {
                 return true;
-            }
+            if (other is null) // LUCENENET: Added null check for better performance
+                return false;
 
             if (other is CharTermAttribute o)
             {
@@ -418,7 +440,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// before it returned a String representation of the whole
         /// term with all attributes.
         /// this affects especially the
-        /// <see cref="Lucene.Net.Analysis.Token"/> subclass.
+        /// <see cref="Token"/> subclass.
         /// </summary>
         public override string ToString()
         {
@@ -427,6 +449,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public override void ReflectWith(IAttributeReflector reflector)
         {
+            // LUCENENET: Added guard clause
+            if (reflector is null)
+                throw new ArgumentNullException(nameof(reflector));
+
             reflector.Reflect(typeof(ICharTermAttribute), "term", ToString());
             FillBytesRef();
             reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(bytes));
@@ -434,7 +460,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            ICharTermAttribute t = (ICharTermAttribute)target;
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not ICharTermAttribute t)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(ICharTermAttribute)}", nameof(target));
             t.CopyBuffer(termBuffer, 0, termLength);
         }
 
