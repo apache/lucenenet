@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis
             return 76137213 ^ clearCalled.GetHashCode();
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
             ((CheckClearAttributesAttribute)target).Clear();
         }
@@ -125,42 +125,42 @@ namespace Lucene.Net.Analysis
                 ICharTermAttribute termAtt = null;
                 if (output.Length > 0)
                 {
-                    Assert.IsTrue(ts.HasAttribute<ICharTermAttribute>(), "has no CharTermAttribute");
+                    Assert.IsTrue(ts.HasAttribute<ICharTermAttribute>(), "has no ICharTermAttribute");
                     termAtt = ts.GetAttribute<ICharTermAttribute>();
                 }
 
                 IOffsetAttribute offsetAtt = null;
                 if (startOffsets != null || endOffsets != null || finalOffset != null)
                 {
-                    Assert.IsTrue(ts.HasAttribute<IOffsetAttribute>(), "has no OffsetAttribute");
+                    Assert.IsTrue(ts.HasAttribute<IOffsetAttribute>(), "has no IOffsetAttribute");
                     offsetAtt = ts.GetAttribute<IOffsetAttribute>();
                 }
 
                 ITypeAttribute typeAtt = null;
                 if (types != null)
                 {
-                    Assert.IsTrue(ts.HasAttribute<ITypeAttribute>(), "has no TypeAttribute");
+                    Assert.IsTrue(ts.HasAttribute<ITypeAttribute>(), "has no ITypeAttribute");
                     typeAtt = ts.GetAttribute<ITypeAttribute>();
                 }
 
                 IPositionIncrementAttribute posIncrAtt = null;
                 if (posIncrements != null || finalPosInc != null)
                 {
-                    Assert.IsTrue(ts.HasAttribute<IPositionIncrementAttribute>(), "has no PositionIncrementAttribute");
+                    Assert.IsTrue(ts.HasAttribute<IPositionIncrementAttribute>(), "has no IPositionIncrementAttribute");
                     posIncrAtt = ts.GetAttribute<IPositionIncrementAttribute>();
                 }
 
                 IPositionLengthAttribute posLengthAtt = null;
                 if (posLengths != null)
                 {
-                    Assert.IsTrue(ts.HasAttribute<IPositionLengthAttribute>(), "has no PositionLengthAttribute");
+                    Assert.IsTrue(ts.HasAttribute<IPositionLengthAttribute>(), "has no IPositionLengthAttribute");
                     posLengthAtt = ts.GetAttribute<IPositionLengthAttribute>();
                 }
 
                 IKeywordAttribute keywordAtt = null;
                 if (keywordAtts != null)
                 {
-                    Assert.IsTrue(ts.HasAttribute<IKeywordAttribute>(), "has no KeywordAttribute");
+                    Assert.IsTrue(ts.HasAttribute<IKeywordAttribute>(), "has no IKeywordAttribute");
                     keywordAtt = ts.GetAttribute<IKeywordAttribute>();
                 }
 
@@ -169,7 +169,7 @@ namespace Lucene.Net.Analysis
                 IPayloadAttribute payloadAtt = null;
                 if (payloads != null)
                 {
-                    Assert.IsTrue(ts.HasAttribute<IPayloadAttribute>(), "has no PayloadAttribute");
+                    Assert.IsTrue(ts.HasAttribute<IPayloadAttribute>(), "has no IPayloadAttribute");
                     payloadAtt = ts.GetAttribute<IPayloadAttribute>();
                 }
 

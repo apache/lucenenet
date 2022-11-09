@@ -195,7 +195,7 @@ namespace Lucene.Net.Util
         /// <paramref name="target"/> attribute. The <paramref name="target"/> implementation must support all the
         /// <see cref="IAttribute"/>s this implementation supports.
         /// </summary>
-        public abstract void CopyTo(IAttribute target);
+        public abstract void CopyTo(IAttribute target); // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
 
         /// <summary> Shallow clone. Subclasses must override this if they
         /// need to clone any members deeply,

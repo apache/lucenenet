@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.TokenAttributes;
+using System;
 
 namespace Lucene.Net.Util
 {
@@ -33,8 +34,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// This method gets called for every property in an <see cref="Attribute"/>/<see cref="AttributeSource"/>
         /// passing the <see cref="Type"/> of the <see cref="IAttribute"/>, a <paramref name="key"/> and the actual <paramref name="value"/>.
-        /// E.g., an invocation of <see cref="Analysis.TokenAttributes.CharTermAttribute.ReflectWith(IAttributeReflector)"/>
-        /// would call this method once using <see cref="T:typeof(Analysis.TokenAttributes.ICharTermAttribute)"/>
+        /// E.g., an invocation of <see cref="CharTermAttribute.ReflectWith(IAttributeReflector)"/>
+        /// would call this method once using <c>typeof(ICharTermAttribute)</c>
         /// as attribute type, <c>"term"</c> as <paramref name="key"/> and the actual <paramref name="value"/> as a <see cref="string"/>.
         /// </summary>
         void Reflect(Type type, string key, object value);

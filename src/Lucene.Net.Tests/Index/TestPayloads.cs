@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
     using Field = Field;
     using IBits = Lucene.Net.Util.IBits;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using PayloadAttribute = Lucene.Net.Analysis.TokenAttributes.PayloadAttribute;
+    using IPayloadAttribute = Lucene.Net.Analysis.TokenAttributes.IPayloadAttribute;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
 
@@ -695,7 +695,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             Field field = new TextField("field", "", Field.Store.NO);
             TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
-            Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+            Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
             field.SetTokenStream(ts);
             doc.Add(field);
             writer.AddDocument(doc);
@@ -706,7 +706,7 @@ namespace Lucene.Net.Index
             field.SetTokenStream(ts);
             writer.AddDocument(doc);
             ts = new MockTokenizer(new StringReader("another"), MockTokenizer.WHITESPACE, true);
-            Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+            Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
             field.SetTokenStream(ts);
             writer.AddDocument(doc);
             DirectoryReader reader = writer.GetReader();
@@ -730,7 +730,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             Field field = new TextField("field", "", Field.Store.NO);
             TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
-            Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+            Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
             field.SetTokenStream(ts);
             doc.Add(field);
             Field field2 = new TextField("field", "", Field.Store.NO);
@@ -742,7 +742,7 @@ namespace Lucene.Net.Index
             doc.Add(field2);
             Field field3 = new TextField("field", "", Field.Store.NO);
             ts = new MockTokenizer(new StringReader("nopayload"), MockTokenizer.WHITESPACE, true);
-            Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+            Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
             field3.SetTokenStream(ts);
             doc.Add(field3);
             writer.AddDocument(doc);

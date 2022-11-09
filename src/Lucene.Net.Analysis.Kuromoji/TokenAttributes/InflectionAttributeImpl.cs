@@ -47,9 +47,9 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
             token = null;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            InflectionAttribute t = (InflectionAttribute)target;
+            IInflectionAttribute t = (IInflectionAttribute)target;
             t.SetToken(token);
         }
 

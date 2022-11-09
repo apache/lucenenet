@@ -51,9 +51,9 @@ namespace Lucene.Net.Search
             competitiveTerm = null;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            MaxNonCompetitiveBoostAttribute t = (MaxNonCompetitiveBoostAttribute)target;
+            IMaxNonCompetitiveBoostAttribute t = (IMaxNonCompetitiveBoostAttribute)target;
             t.MaxNonCompetitiveBoost = maxNonCompetitiveBoost;
             t.CompetitiveTerm = competitiveTerm;
         }

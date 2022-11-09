@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Synonym
             b.Add(inputCharsRef, outputCharsRef, keepOrig);
         }
 
-        private void AssertEquals(CharTermAttribute term, string expected)
+        private void AssertEquals(ICharTermAttribute term, string expected)
         {
             assertEquals(expected.Length, term.Length);
             char[] buffer = term.Buffer;

@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -22,8 +22,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
     /// <summary>
     /// This TokenFilter emits each incoming token twice once as keyword and once non-keyword, in other words once with
-    /// <see cref="KeywordAttribute.IsKeyword"/> set to <c>true</c> and once set to <c>false</c>.
-    /// This is useful if used with a stem filter that respects the <see cref="KeywordAttribute"/> to index the stemmed and the
+    /// <see cref="IKeywordAttribute.IsKeyword"/> set to <c>true</c> and once set to <c>false</c>.
+    /// This is useful if used with a stem filter that respects the <see cref="IKeywordAttribute"/> to index the stemmed and the
     /// un-stemmed version of a term into the same field.
     /// </summary>
     public sealed class KeywordRepeatFilter : TokenFilter

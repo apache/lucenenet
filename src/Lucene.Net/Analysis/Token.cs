@@ -593,7 +593,7 @@ namespace Lucene.Net.Analysis
             payload = prototype.payload;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
             if (target is Token to)
             {

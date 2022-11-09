@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
 using System.Runtime.CompilerServices;
@@ -90,10 +90,10 @@ namespace Lucene.Net.Analysis
             return RuntimeHelpers.GetHashCode(this);
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            BinaryTermAttribute other = (BinaryTermAttribute)target;
-            other.bytes.CopyBytes(bytes);
+            IBinaryTermAttribute other = (IBinaryTermAttribute)target;
+            other.BytesRef.CopyBytes(bytes);
         }
 
         public override object Clone()

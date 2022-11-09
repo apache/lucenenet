@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Util
@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Increments the <see cref="TokenStream"/> with a <see cref="CharTermAttribute"/> without elisioned start
+        /// Increments the <see cref="TokenStream"/> with a <see cref="ICharTermAttribute"/> without elisioned start
         /// </summary>
         public override sealed bool IncrementToken()
         {

@@ -72,9 +72,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return positionLength;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            PositionLengthAttribute t = (PositionLengthAttribute)target;
+            IPositionLengthAttribute t = (IPositionLengthAttribute)target;
             t.PositionLength = positionLength;
         }
     }

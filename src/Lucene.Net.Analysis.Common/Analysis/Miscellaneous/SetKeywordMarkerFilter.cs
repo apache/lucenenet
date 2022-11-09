@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 
@@ -22,9 +22,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Marks terms as keywords via the <see cref="KeywordAttribute"/>. Each token
+    /// Marks terms as keywords via the <see cref="IKeywordAttribute"/>. Each token
     /// contained in the provided set is marked as a keyword by setting
-    /// <see cref="KeywordAttribute.IsKeyword"/> to <c>true</c>.
+    /// <see cref="IKeywordAttribute.IsKeyword"/> to <c>true</c>.
     /// </summary>
     public sealed class SetKeywordMarkerFilter : KeywordMarkerFilter
     {
@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Create a new <see cref="SetKeywordMarkerFilter"/>, that marks the current token as a
         /// keyword if the tokens term buffer is contained in the given set via the
-        /// <see cref="KeywordAttribute"/>.
+        /// <see cref="IKeywordAttribute"/>.
         /// </summary>
         /// <param name="in">
         ///          <see cref="TokenStream"/> to filter </param>

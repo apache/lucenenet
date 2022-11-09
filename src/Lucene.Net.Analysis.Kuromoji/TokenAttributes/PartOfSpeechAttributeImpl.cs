@@ -42,9 +42,9 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
             token = null;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            PartOfSpeechAttribute t = (PartOfSpeechAttribute)target;
+            IPartOfSpeechAttribute t = (IPartOfSpeechAttribute)target;
             t.SetToken(token);
         }
 

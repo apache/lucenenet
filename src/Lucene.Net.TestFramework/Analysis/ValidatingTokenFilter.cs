@@ -44,16 +44,16 @@ namespace Lucene.Net.Analysis
 
         private readonly IDictionary<int, int> posToEndOffset = new Dictionary<int, int>();
 
-        private readonly PositionIncrementAttribute posIncAtt;
-        private readonly PositionLengthAttribute posLenAtt;
-        private readonly OffsetAttribute offsetAtt;
-        private readonly CharTermAttribute termAtt;
+        private readonly IPositionIncrementAttribute posIncAtt;
+        private readonly IPositionLengthAttribute posLenAtt;
+        private readonly IOffsetAttribute offsetAtt;
+        private readonly ICharTermAttribute termAtt;
         private readonly bool offsetsAreCorrect;
 
         private readonly string name;
 
         // Returns null if the attr wasn't already added
-        private A GetAttrIfExists<A>() where A : Lucene.Net.Util.Attribute
+        private A GetAttrIfExists<A>() where A : Lucene.Net.Util.IAttribute
         {
             if (HasAttribute<A>())
             {
@@ -73,10 +73,10 @@ namespace Lucene.Net.Analysis
         public ValidatingTokenFilter(TokenStream @in, string name, bool offsetsAreCorrect)
             : base(@in)
         {
-            posIncAtt = GetAttrIfExists<PositionIncrementAttribute>();
-            posLenAtt = GetAttrIfExists<PositionLengthAttribute>();
-            offsetAtt = GetAttrIfExists<OffsetAttribute>();
-            termAtt = GetAttrIfExists<CharTermAttribute>();
+            posIncAtt = GetAttrIfExists<IPositionIncrementAttribute>();
+            posLenAtt = GetAttrIfExists<IPositionLengthAttribute>();
+            offsetAtt = GetAttrIfExists<IOffsetAttribute>();
+            termAtt = GetAttrIfExists<ICharTermAttribute>();
             this.name = name;
             this.offsetsAreCorrect = offsetsAreCorrect;
         }

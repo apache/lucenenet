@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Provides the ability to override any <see cref="KeywordAttribute"/> aware stemmer
+    /// Provides the ability to override any <see cref="IKeywordAttribute"/> aware stemmer
     /// with custom dictionary-based stemming.
     /// </summary>
     public sealed class StemmerOverrideFilter : TokenFilter
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Create a new <see cref="StemmerOverrideFilter"/>, performing dictionary-based stemming
         /// with the provided dictionary (<paramref name="stemmerOverrideMap"/>).
         /// <para>
-        /// Any dictionary-stemmed terms will be marked with <see cref="KeywordAttribute"/>
+        /// Any dictionary-stemmed terms will be marked with <see cref="IKeywordAttribute"/>
         /// so that they will not be stemmed with stemmers down the chain.
         /// </para>
         /// </summary>
