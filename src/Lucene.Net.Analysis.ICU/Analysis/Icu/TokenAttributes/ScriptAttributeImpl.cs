@@ -56,9 +56,9 @@ namespace Lucene.Net.Analysis.Icu.TokenAttributes
             code = UScript.Common;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            ScriptAttribute t = (ScriptAttribute)target;
+            IScriptAttribute t = (IScriptAttribute)target;
             t.Code = code;
         }
 

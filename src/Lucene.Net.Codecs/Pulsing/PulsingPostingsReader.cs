@@ -701,7 +701,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 // and is calling clearAttributes(), so they don't nuke the reuse information!
             }
 
-            public override void CopyTo(Util.IAttribute target)
+            public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
             {
                 // this makes no sense for us, because our state is per-docsenum.
                 // we don't want to copy any stuff over to another docsenum ever!

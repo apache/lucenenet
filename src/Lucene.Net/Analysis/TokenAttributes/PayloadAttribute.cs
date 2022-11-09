@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Analysis.TokenAttributes
+﻿using Lucene.Net.Util;
+
+namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -16,10 +18,6 @@
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
-    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
     /// Default implementation of <see cref="IPayloadAttribute"/>. </summary>
@@ -88,9 +86,9 @@
             return (payload is null) ? 0 : payload.GetHashCode();
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            PayloadAttribute t = (PayloadAttribute)target;
+            IPayloadAttribute t = (IPayloadAttribute)target;
             t.Payload = (payload is null) ? null : (BytesRef)payload.Clone();
         }
     }

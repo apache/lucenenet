@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -18,9 +20,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
     /// Default implementation of <see cref="ITypeAttribute"/>. </summary>
@@ -73,10 +72,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return (type is null) ? 0 : type.GetHashCode();
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            TypeAttribute t = (TypeAttribute)target;
-            t.type = type;
+            ITypeAttribute t = (ITypeAttribute)target;
+            t.Type = type;
         }
     }
 }

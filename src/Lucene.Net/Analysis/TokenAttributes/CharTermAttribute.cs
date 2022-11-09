@@ -432,9 +432,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(bytes));
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            CharTermAttribute t = (CharTermAttribute)target;
+            ICharTermAttribute t = (ICharTermAttribute)target;
             t.CopyBuffer(termBuffer, 0, termLength);
         }
 

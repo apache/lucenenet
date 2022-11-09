@@ -1,3 +1,5 @@
+﻿using Lucene.Net.Util;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -16,9 +18,6 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
     /// Implementation class for <see cref="IBoostAttribute"/>.
@@ -43,9 +42,9 @@ namespace Lucene.Net.Search
             boost = 1.0f;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            ((BoostAttribute)target).Boost = boost;
+            ((IBoostAttribute)target).Boost = boost;
         }
     }
 }

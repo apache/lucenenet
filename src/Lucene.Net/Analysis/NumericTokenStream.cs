@@ -148,7 +148,7 @@ namespace Lucene.Net.Analysis
                 var attClass = typeof(T);
                 if (typeof(ICharTermAttribute).IsAssignableFrom(attClass))
                 {
-                    throw new ArgumentException("NumericTokenStream does not support CharTermAttribute.");
+                    throw new ArgumentException("NumericTokenStream does not support ICharTermAttribute.");
                 }
                 return @delegate.CreateAttributeInstance<T>();
             }
@@ -223,9 +223,9 @@ namespace Lucene.Net.Analysis
                 reflector.Reflect(typeof(INumericTermAttribute), "valueSize", ValueSize);
             }
 
-            public override void CopyTo(Util.IAttribute target)
+            public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
             {
-                var a = (NumericTermAttribute)target;
+                var a = (INumericTermAttribute)target;
                 a.Init(_value, ValueSize, _precisionStep, Shift);
             }
         }

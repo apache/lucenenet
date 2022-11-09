@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
             return this.tags is null ? 0 : tags.GetHashCode();
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
             IList<StringBuilder> cloned = null;
             if (tags != null)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
 
         public override void ReflectWith(IAttributeReflector reflector)
         {
-            reflector.Reflect(typeof(MorphosyntacticTagsAttribute), "tags", tags);
+            reflector.Reflect(typeof(IMorphosyntacticTagsAttribute), "tags", tags);
         }
     }
 }

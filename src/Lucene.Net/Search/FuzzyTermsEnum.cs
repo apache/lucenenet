@@ -494,9 +494,9 @@ namespace Lucene.Net.Search
                 return automata.Equals(((LevenshteinAutomataAttribute)other).automata);
             }
 
-            public override void CopyTo(IAttribute target)
+            public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
             {
-                IList<CompiledAutomaton> targetAutomata = ((LevenshteinAutomataAttribute)target).Automata;
+                IList<CompiledAutomaton> targetAutomata = ((ILevenshteinAutomataAttribute)target).Automata;
                 targetAutomata.Clear();
                 targetAutomata.AddRange(automata);
             }

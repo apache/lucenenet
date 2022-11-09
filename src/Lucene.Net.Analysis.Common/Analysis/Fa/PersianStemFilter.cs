@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Fa
     /// <para/>
     /// To prevent terms from being stemmed use an instance of
     /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
-    /// the <see cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// the <see cref="IKeywordAttribute"/> before this <seealso cref="TokenStream"/>.
     /// </summary>
     /// <seealso cref="Miscellaneous.SetKeywordMarkerFilter"/>
     public sealed class PersianStemFilter : TokenFilter

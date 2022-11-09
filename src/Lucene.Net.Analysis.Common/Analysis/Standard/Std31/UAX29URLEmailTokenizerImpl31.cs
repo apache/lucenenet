@@ -3285,7 +3285,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
 
         public int YyChar => yychar;
 
-        /// <summary>Fills CharTermAttribute with the current token text.</summary>
+        /// <summary>Fills <see cref="ICharTermAttribute"/> with the current token text.</summary>
         public void GetText(ICharTermAttribute t)
         {
             t.CopyBuffer(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
@@ -3294,7 +3294,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /// <summary>
         /// Creates a new scanner
         /// </summary>
-        /// <param name="in">the TextReader to read input from.</param>
+        /// <param name="in">the <see cref="TextReader"/> to read input from.</param>
         public UAX29URLEmailTokenizerImpl31(TextReader @in)
         {
             this.zzReader = @in;

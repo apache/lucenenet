@@ -1,3 +1,5 @@
+﻿using Lucene.Net.Util;
+
 namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
@@ -17,9 +19,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
      * limitations under the License.
      */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
-
     /// <summary>
     /// Default implementation of <see cref="IKeywordAttribute"/>. </summary>
     public sealed class KeywordAttribute : Attribute, IKeywordAttribute
@@ -37,9 +36,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             keyword = false;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            KeywordAttribute attr = (KeywordAttribute)target;
+            IKeywordAttribute attr = (IKeywordAttribute)target;
             attr.IsKeyword = keyword;
         }
 

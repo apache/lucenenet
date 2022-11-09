@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -21,9 +21,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Marks terms as keywords via the <see cref="KeywordAttribute"/>.
+    /// Marks terms as keywords via the <see cref="IKeywordAttribute"/>.
     /// </summary>
-    /// <seealso cref="KeywordAttribute"/>
+    /// <seealso cref="IKeywordAttribute"/>
     public abstract class KeywordMarkerFilter : TokenFilter
     {
         private readonly IKeywordAttribute keywordAttr;

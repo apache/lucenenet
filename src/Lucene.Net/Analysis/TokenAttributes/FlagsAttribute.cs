@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -18,9 +18,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
     /// Default implementation of <see cref="IFlagsAttribute"/>. </summary>
@@ -65,9 +62,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return flags;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            FlagsAttribute t = (FlagsAttribute)target;
+            IFlagsAttribute t = (IFlagsAttribute)target;
             t.Flags = flags;
         }
     }

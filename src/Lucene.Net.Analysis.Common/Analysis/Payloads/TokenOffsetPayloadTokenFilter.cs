@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 
@@ -22,8 +22,8 @@ namespace Lucene.Net.Analysis.Payloads
      */
 
     /// <summary>
-    /// Adds the <see cref="OffsetAttribute.StartOffset"/>
-    /// and <see cref="OffsetAttribute.EndOffset"/>
+    /// Adds the <see cref="IOffsetAttribute.StartOffset"/>
+    /// and <see cref="IOffsetAttribute.EndOffset"/>
     /// First 4 bytes are the start
     /// </summary>
     public class TokenOffsetPayloadTokenFilter : TokenFilter

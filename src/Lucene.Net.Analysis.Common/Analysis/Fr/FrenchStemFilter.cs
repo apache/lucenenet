@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Fr
     /// <para>
     /// To prevent terms from being stemmed use an instance of
     /// <see cref="Miscellaneous.KeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
-    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
+    /// the <see cref="IKeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para> </summary>
     /// <seealso cref="Miscellaneous.KeywordMarkerFilter"/>
     /// @deprecated (3.1) Use <see cref="Snowball.SnowballFilter"/> with 

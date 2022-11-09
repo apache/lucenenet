@@ -41,9 +41,9 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
             token = null;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            BaseFormAttribute t = (BaseFormAttribute)target;
+            IBaseFormAttribute t = (IBaseFormAttribute)target;
             t.SetToken(token);
         }
 
