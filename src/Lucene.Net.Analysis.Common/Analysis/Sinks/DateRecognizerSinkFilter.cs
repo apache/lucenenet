@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Sinks
      */
 
     /// <summary>
-    /// Attempts to parse the <see cref="CharTermAttribute.ToString()"/> as a Date using either the 
+    /// Attempts to parse the <see cref="ICharTermAttribute.Buffer"/> as a Date using either the 
     /// <see cref="DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"/> or 
     /// <see cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/> methods.
     /// If a format is passed, <see cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/> 
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/> using the current culture and <see cref="DateTimeStyles.None"/>.
         /// Strictly matches the supplied DateTime formats using <see cref="DateTime.TryParseExact(string, string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
         /// </summary>
-        /// <param name="format">The allowable format of the <see cref="CharTermAttribute.ToString()"/>.
+        /// <param name="format">The allowable format of the <see cref="ICharTermAttribute.Buffer"/>.
         /// If supplied, it must match the format of the date exactly to get a match.</param>
         public DateRecognizerSinkFilter(string format)
            : this(new string[] { format }, DateTimeFormatInfo.CurrentInfo, DateTimeStyles.None)
@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/>  using the current culture and <see cref="DateTimeStyles.None"/>.
         /// Strictly matches the supplied DateTime formats using <see cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/>.
         /// </summary>
-        /// <param name="formats">An array of allowable formats of the <see cref="CharTermAttribute.ToString()"/>.
+        /// <param name="formats">An array of allowable formats of the <see cref="ICharTermAttribute.Buffer"/>.
         /// If supplied, one of them must match the format of the date exactly to get a match.</param>
         public DateRecognizerSinkFilter(string[] formats)
             : this(formats, DateTimeFormatInfo.CurrentInfo, DateTimeStyles.None)
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/>  using the supplied format, culture and <see cref="DateTimeStyles.None"/>.
         /// Strictly matches the supplied DateTime formats using <see cref="DateTime.TryParseExact(string, string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
         /// </summary>
-        /// <param name="format">The allowable format of the <see cref="CharTermAttribute.ToString()"/>.
+        /// <param name="format">The allowable format of the <see cref="ICharTermAttribute.Buffer"/>.
         /// If supplied, it must match the format of the date exactly to get a match.</param>
         /// <param name="culture">An object that supplies culture-specific format information</param>
         public DateRecognizerSinkFilter(string format, IFormatProvider culture)
@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/>  using the supplied formats, culture and <see cref="DateTimeStyles.None"/>.
         /// Strictly matches the supplied DateTime formats using <see cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/>.
         /// </summary>
-        /// <param name="formats">An array of allowable formats of the <see cref="CharTermAttribute.ToString()"/>.
+        /// <param name="formats">An array of allowable formats of the <see cref="ICharTermAttribute.Buffer"/>.
         /// If supplied, one of them must match the format of the date exactly to get a match.</param>
         /// <param name="culture">An object that supplies culture-specific format information</param>
         public DateRecognizerSinkFilter(string[] formats, IFormatProvider culture)
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/> using the supplied format, culture and <see cref="DateTimeStyles"/>.
         /// Strictly matches the supplied DateTime formats using <see cref="DateTime.TryParseExact(string, string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
         /// </summary>
-        /// <param name="format">The allowable format of the <see cref="CharTermAttribute.ToString()"/>.
+        /// <param name="format">The allowable format of the <see cref="ICharTermAttribute.Buffer"/>.
         /// If supplied, it must match the format of the date exactly to get a match.</param>
         /// <param name="culture">An object that supplies culture-specific format information</param>
         /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s. 
@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// Creates a new instance of <see cref="DateRecognizerSinkFilter"/> using the supplied formats, culture and <see cref="DateTimeStyles"/>.
         /// Strictly matches the supplied DateTime formats using <see cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/>.
         /// </summary>
-        /// <param name="formats">An array of allowable formats of the <see cref="CharTermAttribute.ToString()"/>.
+        /// <param name="formats">An array of allowable formats of the <see cref="ICharTermAttribute.Buffer"/>.
         /// If supplied, one of them must match the format of the date exactly to get a match.</param>
         /// <param name="culture">An object that supplies culture-specific format information</param>
         /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s. 
@@ -145,6 +145,16 @@ namespace Lucene.Net.Analysis.Sinks
             }
 
             //We don't care about the date, just that we can parse it as a date
+#if FEATURE_NUMBER_PARSE_READONLYSPAN
+            if (m_formats is null)
+            {
+                return DateTime.TryParse(new ReadOnlySpan<char>(m_termAtt.Buffer, 0, m_termAtt.Length), m_culture, m_style, out _);
+            }
+            else
+            {
+                return DateTime.TryParseExact(new ReadOnlySpan<char>(m_termAtt.Buffer, 0, m_termAtt.Length), m_formats, m_culture, m_style, out _);
+            }
+#else
             if (m_formats is null)
             {
                 return DateTime.TryParse(m_termAtt.ToString(), m_culture, m_style, out _);
@@ -153,6 +163,7 @@ namespace Lucene.Net.Analysis.Sinks
             {
                 return DateTime.TryParseExact(m_termAtt.ToString(), m_formats, m_culture, m_style, out _);
             }
+#endif
         }
     }
 }
