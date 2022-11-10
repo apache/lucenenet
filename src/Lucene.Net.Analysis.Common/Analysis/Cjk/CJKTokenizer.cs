@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Cjk
                                 offset--;
                                 bufferIndex--;
 
-                                if (preIsTokened == true)
+                                if (preIsTokened)
                                 {
                                     // there is only one non-ASCII has been stored
                                     length = 0;

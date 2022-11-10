@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Cjk
 
     /// <summary>
     /// An <see cref="Analyzer"/> that tokenizes text with <see cref="StandardTokenizer"/>,
-    /// normalizes content with <see cref="CJKWidthFilter"/>, folds case with
+    /// normalizes content with <see cref="CjkWidthFilter"/>, folds case with
     /// <see cref="LowerCaseFilter"/>, forms bigrams of CJK with <see cref="CJKBigramFilter"/>,
     /// and filters stopwords with <see cref="StopFilter"/>
     /// </summary>
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Cjk
             {
                 Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
                 // run the widthfilter first before bigramming, it sometimes combines characters.
-                TokenStream result = new CJKWidthFilter(source);
+                TokenStream result = new CjkWidthFilter(source);
                 result = new LowerCaseFilter(m_matchVersion, result);
                 result = new CJKBigramFilter(result);
                 return new TokenStreamComponents(source, new StopFilter(m_matchVersion, result, m_stopwords));

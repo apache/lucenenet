@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -35,14 +35,14 @@ namespace Lucene.Net.Analysis.CharFilters
     /// &lt;/fieldType&gt;
     /// </code>
     /// </summary>
-    public class HTMLStripCharFilterFactory : CharFilterFactory
+    public class HtmlStripCharFilterFactory : CharFilterFactory
     {
         private readonly ICollection<string> escapedTags;
         //private static readonly Regex TAG_NAME_PATTERN = new Regex(@"[^\\s,]+", RegexOptions.Compiled); // LUCENENET: Never read
 
         /// <summary>
         /// Creates a new <see cref="HTMLStripCharFilterFactory"/> </summary>
-        public HTMLStripCharFilterFactory(IDictionary<string, string> args) : base(args)
+        public HtmlStripCharFilterFactory(IDictionary<string, string> args) : base(args)
         {
             escapedTags = GetSet(args, "escapedTags");
             if (args.Count > 0)

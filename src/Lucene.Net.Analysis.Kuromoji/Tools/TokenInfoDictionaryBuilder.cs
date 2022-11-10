@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         private readonly bool normalizeEntries = false; // LUCENENET: marked readonly
         //private Normalizer2 normalizer;
 
-        private readonly DictionaryBuilder.DictionaryFormat format = DictionaryBuilder.DictionaryFormat.IPADIC; // LUCENENET: marked readonly
+        private readonly DictionaryBuilder.DictionaryFormat format; // LUCENENET: marked readonly
 
         public TokenInfoDictionaryBuilder(DictionaryBuilder.DictionaryFormat format, string encoding, bool normalizeEntries)
         {
