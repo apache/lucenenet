@@ -30791,7 +30791,7 @@ namespace Lucene.Net.Analysis.CharFilters
         private static readonly char STYLE_REPLACEMENT = '\n';
         private static readonly char REPLACEMENT_CHARACTER = '\uFFFD';
 
-        private CharArraySet escapedTags = null;
+        private  readonly CharArraySet escapedTags = null;
         private int inputStart;
         private int cumulativeDiff;
         private bool escapeBR = false;
@@ -32028,7 +32028,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             int highSurrogate = '\u0000'; // LUCENENET: Use int to allow out parameters to use without casting.
 
                             // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
-                            // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                          
                             int startIndex = zzStartRead + 1;
                             int length = 5; // (6 - 1)
 

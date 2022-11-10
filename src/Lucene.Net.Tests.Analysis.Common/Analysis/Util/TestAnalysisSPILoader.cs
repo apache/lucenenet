@@ -195,9 +195,9 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestLookupCharFilter()
         {
-            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.ForName("HTMLStrip", VersionArgOnly()).GetType());
-            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.ForName("HTMLSTRIP", VersionArgOnly()).GetType());
-            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.ForName("htmlstrip", VersionArgOnly()).GetType());
+            assertSame(typeof(HtmlStripCharFilterFactory), CharFilterFactory.ForName("HTMLStrip", VersionArgOnly()).GetType());
+            assertSame(typeof(HtmlStripCharFilterFactory), CharFilterFactory.ForName("HTMLSTRIP", VersionArgOnly()).GetType());
+            assertSame(typeof(HtmlStripCharFilterFactory), CharFilterFactory.ForName("htmlstrip", VersionArgOnly()).GetType());
         }
 
         [Test]
@@ -227,9 +227,9 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestLookupCharFilterClass()
         {
-            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.LookupClass("HTMLStrip"));
-            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.LookupClass("HTMLSTRIP"));
-            assertSame(typeof(HTMLStripCharFilterFactory), CharFilterFactory.LookupClass("htmlstrip"));
+            assertSame(typeof(HtmlStripCharFilterFactory), CharFilterFactory.LookupClass("HTMLStrip"));
+            assertSame(typeof(HtmlStripCharFilterFactory), CharFilterFactory.LookupClass("HTMLSTRIP"));
+            assertSame(typeof(HtmlStripCharFilterFactory), CharFilterFactory.LookupClass("htmlstrip"));
         }
 
         [Test]
