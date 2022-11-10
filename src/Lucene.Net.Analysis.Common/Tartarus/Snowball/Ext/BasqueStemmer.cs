@@ -751,7 +751,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
 
         private bool r_RV()
         {
-            if (!(I_pV <= m_cursor))
+            if(I_pV > m_cursor)
             {
                 return false;
             }
@@ -760,7 +760,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
 
         private bool r_R2()
         {
-            if (!(I_p2 <= m_cursor))
+            if (I_p2 > m_cursor)
             {
                 return false;
             }

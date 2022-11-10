@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Br
         /// <summary>
         /// Contains words that should be indexed but not stemmed.
         /// </summary>
-        private CharArraySet excltable = CharArraySet.EMPTY_SET;
+        private readonly CharArraySet excltable = CharArraySet.EMPTY_SET;
 
         /// <summary>
         /// Builds an analyzer with the default stop words (<see cref="DefaultStopSet"/>).

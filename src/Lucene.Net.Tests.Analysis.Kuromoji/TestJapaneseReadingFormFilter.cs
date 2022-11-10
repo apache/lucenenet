@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Ja
             Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new JapaneseTokenizer(reader, null, true, JapaneseTokenizerMode.SEARCH);
-                TokenStream stream = new CJKWidthFilter(tokenizer);
+                TokenStream stream = new CjkWidthFilter(tokenizer);
                 return new TokenStreamComponents(tokenizer, new JapaneseReadingFormFilter(stream, false));
             });
 
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Ja
             Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new JapaneseTokenizer(reader, null, true, JapaneseTokenizerMode.SEARCH);
-                TokenStream stream = new CJKWidthFilter(tokenizer);
+                TokenStream stream = new CjkWidthFilter(tokenizer);
                 return new TokenStreamComponents(tokenizer, new JapaneseReadingFormFilter(stream, true));
             });
 

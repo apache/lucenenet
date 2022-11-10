@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Cjk
      */
 
     /// <summary>
-    /// Factory for <see cref="CJKWidthFilter"/>.
+    /// Factory for <see cref="CjkWidthFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_cjk" class="solr.TextField"&gt;
     ///   &lt;analyzer&gt;
@@ -35,11 +35,11 @@ namespace Lucene.Net.Analysis.Cjk
     /// &lt;/fieldType&gt;
     /// </code>
     /// </summary>
-    public class CJKWidthFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
+    public class CjkWidthFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
         /// <summary>
-        /// Creates a new <see cref="CJKWidthFilterFactory"/> </summary>
-        public CJKWidthFilterFactory(IDictionary<string, string> args) : base(args)
+        /// Creates a new <see cref="CjkWidthFilterFactory"/> </summary>
+        public CjkWidthFilterFactory(IDictionary<string, string> args) : base(args)
         {
             if (args.Count > 0)
             {
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Cjk
 
         public override TokenStream Create(TokenStream input)
         {
-            return new CJKWidthFilter(input);
+            return new CjkWidthFilter(input);
         }
 
         public virtual AbstractAnalysisFactory GetMultiTermComponent()

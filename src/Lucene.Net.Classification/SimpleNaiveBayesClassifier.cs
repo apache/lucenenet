@@ -139,9 +139,9 @@ namespace Lucene.Net.Classification
         /// <summary>
         /// Assign a class (with score) to the given text string
         /// </summary>
-        /// <param name="inputDocument">a string containing text to be classified</param>
+        /// <param name="text">a string containing text to be classified</param>
         /// <returns>a <see cref="ClassificationResult{BytesRef}"/> holding assigned class of type <see cref="BytesRef"/> and score</returns>
-        public virtual ClassificationResult<BytesRef> AssignClass(string inputDocument) 
+        public virtual ClassificationResult<BytesRef> AssignClass(string text) 
         {
             if (atomicReader is null) 
             {

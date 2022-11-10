@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Cjk
     /// for full normalization.
     /// </para>
     /// </summary>
-    public sealed class CJKWidthFilter : TokenFilter
+    public sealed class CjkWidthFilter : TokenFilter
     {
         private ICharTermAttribute termAtt;
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Cjk
             (char)0x30ed, (char)0x30ef, (char)0x30f3, (char)0x3099, (char)0x309A
         };
 
-        public CJKWidthFilter(TokenStream input)
+        public CjkWidthFilter(TokenStream input)
               : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();

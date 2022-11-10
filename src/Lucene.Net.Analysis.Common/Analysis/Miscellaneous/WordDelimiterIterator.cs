@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using System.Globalization;
 
@@ -78,8 +78,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// if true, need to skip over a possessive found in the last call to next() </summary>
         private bool skipPossessive = false;
 
-        // TODO: should there be a WORD_DELIM category for chars that only separate words (no catenation of subwords will be
-        // done if separated by these chars?) "," would be an obvious candidate...
+          
         private static byte[] LoadDefaultWordDelimTable() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             var tab = new byte[256];
