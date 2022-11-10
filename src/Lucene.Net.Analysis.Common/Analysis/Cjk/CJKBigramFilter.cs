@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Cjk
     /// In all cases, all non-CJK input is passed thru unmodified.
     /// </para>
     /// </summary>
-    public sealed class CJKBigramFilter : TokenFilter
+    public sealed class CjkBigramFilter : TokenFilter
     {
         // configuration
 
@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// </summary>
         /// <param name="in">
         ///          Input <see cref="TokenStream"/> </param>
-        public CJKBigramFilter(TokenStream @in)
+        public CjkBigramFilter(TokenStream @in)
               : this(@in, CJKScript.HAN | CJKScript.HIRAGANA | CJKScript.KATAKANA | CJKScript.HANGUL)
         {
         }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Cjk
         ///          Input <see cref="TokenStream"/> </param>
         /// <param name="flags"> OR'ed set from <see cref="CJKScript.HAN"/>, <see cref="CJKScript.HIRAGANA"/>, 
         ///        <see cref="CJKScript.KATAKANA"/>, <see cref="CJKScript.HANGUL"/> </param>
-        public CJKBigramFilter(TokenStream @in, CJKScript flags)
+        public CjkBigramFilter(TokenStream @in, CJKScript flags)
               : this(@in, flags, false)
         {
         }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// <param name="outputUnigrams"> true if unigrams for the selected writing systems should also be output.
         ///        when this is false, this is only done when there are no adjacent characters to form
         ///        a bigram. </param>
-        public CJKBigramFilter(TokenStream @in, CJKScript flags, bool outputUnigrams)
+        public CjkBigramFilter(TokenStream @in, CJKScript flags, bool outputUnigrams)
               : base(@in)
         {
             doHan = (flags & CJKScript.HAN) == 0 ? NO : HAN_TYPE;

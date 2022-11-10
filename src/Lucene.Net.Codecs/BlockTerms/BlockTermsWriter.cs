@@ -134,10 +134,9 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && m_output != null)
             {
-                if (m_output != null)
-                {
+                
                     try
                     {
                         long dirStart = m_output.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
@@ -167,7 +166,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         IOUtils.Dispose(m_output, postingsWriter, termsIndexWriter);
                         m_output = null;
                     }
-                }
+                
             }
         }
 

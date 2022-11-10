@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.CharFilters
         private int[] diffs;
         private int size = 0;
 
-        public BaseCharFilter(TextReader @in)
+        protected BaseCharFilter(TextReader @in)
             : base(@in)
         {
         }

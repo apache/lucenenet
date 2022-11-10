@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Util
                 // to determine what assembly a class is in (which makes this function pretty much
                 // pointless). Need to evaluate whether it makes sense to pass a "relative" type here
                 // to identify the correct assembly, since we can just pass a string to do the same.
-                if (cname.Contains(","))
+                if (cname.Contains(','))
                 {
                     // Assume we have an assembly qualified name
                     return Type.GetType(cname);

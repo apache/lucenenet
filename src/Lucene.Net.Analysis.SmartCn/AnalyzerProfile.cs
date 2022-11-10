@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// <summary>
         /// Global indicating the configured analysis data directory
         /// </summary>
-        public static string ANALYSIS_DATA_DIR = "";
+        public static readonly string ANALYSIS_DATA_DIR = "";
 
         static AnalyzerProfile()
         {

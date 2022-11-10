@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Appending
     internal class AppendingPostingsFormat : PostingsFormat
     {
         //// LUCENENET specific - removed this static variable because our name is determined by the PostingsFormatNameAttribute
-        //public static string CODEC_NAME = "Appending";
+        
 
         public AppendingPostingsFormat() 
             : base()

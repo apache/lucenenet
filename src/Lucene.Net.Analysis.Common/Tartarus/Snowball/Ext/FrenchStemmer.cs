@@ -775,7 +775,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                             // <-, line 100
                             SliceFrom("iqU");
                         } while (false);
-                        lab1: {/* LUCENENET: intentionally blank */};
+                        lab1: {/* LUCENENET: intentionally blank */}
                     } while (false);
                     lab0:
                     break;
