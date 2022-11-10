@@ -165,7 +165,7 @@ namespace Lucene.Net.Analysis.Br
                     break;
                 }
             }
-            //probaaaaaaaa12321
+            //probaaaaaaaa123217777
             if (j >= i)
             {
                 return null;
