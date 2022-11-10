@@ -302,7 +302,7 @@ namespace Lucene.Net.Codecs.Memory
                 private readonly int[] docFreq; // LUCENENET: marked readonly
                 private readonly long[] totalTermFreq; // LUCENENET: marked readonly
 
-                internal BaseTermsEnum(TermsReader outerInstance)
+                private protected BaseTermsEnum(TermsReader outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     this.state = outerInstance.outerInstance.postingsReader.NewTermState();
@@ -735,7 +735,15 @@ namespace Lucene.Net.Codecs.Memory
                     if (frame != null) // got larger term('s prefix)
                     {
                         PushFrame(frame);
-                        return IsAccept(frame) ? term : (MoveNext() ? term : null);
+                        
+
+                        if(IsAccept(frame))
+                        {
+                            return term;
+                        }
+                        MoveNext() ? term : null;
+
+
                     }
                     while (level > 0) // got target's prefix, advance to larger term
                     {

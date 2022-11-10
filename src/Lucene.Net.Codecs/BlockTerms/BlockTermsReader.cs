@@ -166,14 +166,14 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private int ReadHeader(DataInput input)
         {
-            int version = CodecUtil.CheckHeader(input, BlockTermsWriter.CODEC_NAME,
+            int version1 = CodecUtil.CheckHeader(input, BlockTermsWriter.CODEC_NAME,
                           BlockTermsWriter.VERSION_START,
                           BlockTermsWriter.VERSION_CURRENT);
-            if (version < BlockTermsWriter.VERSION_APPEND_ONLY)
+            if (version1 < BlockTermsWriter.VERSION_APPEND_ONLY)
             {
                 dirOffset = input.ReadInt64();
             }
-            return version;
+            return version1;
         }
 
         private void SeekDir(IndexInput input, long dirOffset)
