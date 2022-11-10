@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Cjk
                                 offset--;
                                 bufferIndex--;
 
-                                if (preIsTokened == true)
+                                if (preIsTokened)
                                 {
                                     // there is only one non-ASCII has been stored
                                     length = 0;
