@@ -31371,10 +31371,8 @@ namespace Lucene.Net.Analysis.CharFilters
                             { // 0x10FFFF = 1114111: max 7 decimal chars
                                 // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
                                 // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
-                                if (!Integer.TryParse(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead, radix: 10, out int codePoint))
-                                {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing code point '{0}'", new CharArrayFormatter(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead));
-                                }
+                                if (!Integer.TryParse(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead, radix: 10, out int codePoint) && Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing code point '{0}'", new CharArrayFormatter(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead));
+                                
                                 if (codePoint <= 0x10FFFF)
                                 {
                                     outputSegment = entitySegment;
