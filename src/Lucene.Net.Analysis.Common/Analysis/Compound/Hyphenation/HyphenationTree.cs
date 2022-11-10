@@ -469,7 +469,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     object o = hw[i] as String;
                     // j = index(sw) = letterindex(word)?
                     // result[k] = corresponding index(w)
-                    if (o != null)
+                    if (o !=null)
                     {
                         j += ((string)o).Length;
                         if (j >= remainCharCount && j < (len - pushCharCount))

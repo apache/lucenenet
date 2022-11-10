@@ -2004,6 +2004,7 @@ namespace Lucene.Net.Analysis.En
                     break;
                 }
                 NceEndings();
+
                 break;
             }
 

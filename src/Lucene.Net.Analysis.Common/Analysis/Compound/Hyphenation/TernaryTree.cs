@@ -689,10 +689,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// </summary>
             private void Run()
             {
-                if (cur == -1)
-                {
-                    return -1;
-                }
 
                 bool leaf = false;
                 while (true)
@@ -719,10 +715,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     }
                     // nothing found, go up one node and try again
                     cur = Up();
-                    if (cur == -1)
-                    {
-                        return -1;
-                    }
+                   
                 }
                 // The current node should be a data node and
                 // the key should be in the key stack (at least partially)
@@ -736,7 +729,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     }
                 }
                 curkey = buf.ToString();
-                return 0;
+                
             }
 
             #region Added for better .NET support
