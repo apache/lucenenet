@@ -22,14 +22,14 @@ namespace Lucene.Net.Analysis.Cjk
      */
 
     /// <summary>
-    /// Tests for <seealso cref="CJKWidthFilter"/>
+    /// Tests for <seealso cref="CjkWidthFilter"/>
     /// </summary>
     public class TestCJKWidthFilter : BaseTokenStreamTestCase
     {
         private static readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
             Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-            return new TokenStreamComponents(source, new CJKWidthFilter(source));
+            return new TokenStreamComponents(source, new CjkWidthFilter(source));
         });
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Cjk
             Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new CJKWidthFilter(tokenizer));
+                return new TokenStreamComponents(tokenizer, new CjkWidthFilter(tokenizer));
             });
             CheckOneTerm(a, "", "");
         }

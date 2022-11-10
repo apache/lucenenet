@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 Term = BytesRef.DeepCopyOf(other.Term);
             }
 
-            public override bool Equals(object other)
+            public override bool Equals(object obj)
             {
                 var o = (FieldAndTerm)other;
                 return o.Field.Equals(Field, StringComparison.Ordinal) && Term.BytesEquals(o.Term);
@@ -166,14 +166,14 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private int ReadHeader(DataInput input)
         {
-            int version = CodecUtil.CheckHeader(input, BlockTermsWriter.CODEC_NAME,
+            int version1 = CodecUtil.CheckHeader(input, BlockTermsWriter.CODEC_NAME,
                           BlockTermsWriter.VERSION_START,
                           BlockTermsWriter.VERSION_CURRENT);
-            if (version < BlockTermsWriter.VERSION_APPEND_ONLY)
+            if (version1 < BlockTermsWriter.VERSION_APPEND_ONLY)
             {
                 dirOffset = input.ReadInt64();
             }
-            return version;
+            return version1;
         }
 
         private void SeekDir(IndexInput input, long dirOffset)
@@ -381,18 +381,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         throw IllegalStateException.Create("terms index was not loaded");
                     }
 
-                    //System.out.println("BTR.seek seg=" + segment + " target=" + fieldInfo.name + ":" + target.utf8ToString() + " " + target + " current=" + term().utf8ToString() + " " + term() + " indexIsCurrent=" + indexIsCurrent + " didIndexNext=" + didIndexNext + " seekPending=" + seekPending + " divisor=" + indexReader.getDivisor() + " this="  + this);
-                    if (didIndexNext)
-                    {
-                        if (nextIndexTerm is null)
-                        {
-                            //System.out.println("  nextIndexTerm=null");
-                        }
-                        else
-                        {
-                            //System.out.println("  nextIndexTerm=" + nextIndexTerm.utf8ToString());
-                        }
-                    }
+                  
 
                     bool doSeek = true;
 

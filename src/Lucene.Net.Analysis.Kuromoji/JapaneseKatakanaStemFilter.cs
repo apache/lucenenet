@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Ja
     /// </summary>
     /// <remarks>
     /// Note that only full-width katakana characters are supported.  Please use a
-    /// <see cref="Cjk.CJKWidthFilter"/> to convert half-width
+    /// <see cref="Cjk.CjkWidthFilter"/> to convert half-width
     /// katakana to full-width before using this filter.
     /// <para/>
     /// In order to prevent terms from being stemmed, use an instance of

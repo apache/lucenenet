@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Ja
             Tokenizer tokenizer = new JapaneseTokenizer(reader, userDict, true, mode);
             TokenStream stream = new JapaneseBaseFormFilter(tokenizer);
             stream = new JapanesePartOfSpeechStopFilter(m_matchVersion, stream, stoptags);
-            stream = new CJKWidthFilter(stream);
+            stream = new CjkWidthFilter(stream);
             stream = new StopFilter(m_matchVersion, stream, m_stopwords);
             stream = new JapaneseKatakanaStemFilter(stream);
             stream = new LowerCaseFilter(m_matchVersion, stream);

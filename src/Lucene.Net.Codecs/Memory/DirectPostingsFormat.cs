@@ -1317,9 +1317,10 @@ namespace Lucene.Net.Codecs.Memory
                                 // if (DEBUG) {
                                 //   System.out.println("  beyond end; no terms will match");
                                 // }
-                                return;
+                                
                                 nextLabelContinue: {/* LUCENENET: intentionally blank */}
                             }
+                            return;
                             //nextLabelBreak: ; // LUCENENET NOTE: Not used
                         }
 
@@ -1442,7 +1443,7 @@ namespace Lucene.Net.Codecs.Memory
                                     skipUpto = 0;
                                     stateUpto--;
                                 }
-                                goto nextTermContinue;
+                                 nextTermContinue;
                             }
                             if (Debugging.AssertsEnabled) Debugging.Assert(state.transitionUpto < state.transitions.Length,
                                 " state.transitionUpto={0} vs {1}", state.transitionUpto, state.transitions.Length);
