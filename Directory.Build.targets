@@ -80,9 +80,11 @@
 
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x (No .NET 6.x support) -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' ">
+  <!-- Features in .NET Framework 4.5+ and .NET Standard 2.x only (No .NET Core support) -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) ">
 
+    <!-- NOTE: The API for this exists in .NET Core, but it throws a PlatformNotSupportedException.
+         We simply don't override this to get the same behavior. -->
     <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE</DefineConstants>
 
   </PropertyGroup>
