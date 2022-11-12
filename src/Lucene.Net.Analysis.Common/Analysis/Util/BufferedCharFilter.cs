@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Util
                 this.isDisposing = false;
 #endif
             }
-            base.Dispose(disposing);
+            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
 
         /// <summary>

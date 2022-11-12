@@ -90,7 +90,7 @@ namespace Lucene.Net.Util
             {
                 m_stream.Dispose();
             }
-            base.Dispose(disposing);
+            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
 
         public virtual bool IsSystemStream => isSystemStream;

@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis
                 inputPending = ILLEGAL_STATE_READER;
                 m_input = ILLEGAL_STATE_READER;
             }
-            base.Dispose(disposing);
+            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
 
         /// <summary>

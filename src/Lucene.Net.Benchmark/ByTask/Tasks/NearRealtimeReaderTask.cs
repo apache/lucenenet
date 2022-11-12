@@ -123,7 +123,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 Console.WriteLine();
             }
-            base.Dispose(disposing);
+            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
 
         public override bool SupportsParams => true;
