@@ -7,6 +7,7 @@ using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.Analysis.Util
@@ -608,50 +609,154 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-#region LUCENENET Specific Methods
+        #region LUCENENET Specific Methods
 
+        /// <summary>
+        /// Reads a single character from this reader and returns it with the two
+        /// higher-order bytes set to 0. If possible, <see cref="BufferedCharFilter"/> returns a
+        /// character from the buffer. If there are no characters available in the
+        /// buffer, it fills the buffer and then returns a character. It returns -1
+        /// if there are no more characters in the source reader. Unlike <see cref="Read()"/>,
+        /// this method does not advance the current position.
+        /// </summary>
+        /// <returns>The character read or -1 if the end of the source reader has been reached.</returns>
+        /// <exception cref="IOException">If this reader is disposed or some other I/O error occurs.</exception>
         public override int Peek()
         {
-            throw new NotImplementedException();
+            UninterruptableMonitor.Enter(m_lock);
+            try
+            {
+                EnsureOpen();
+                /* Are there buffered characters available? */
+                if (pos < end || FillBuf() != -1)
+                {
+                    return buf[pos];
+                }
+                return -1;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_lock);
+            }
         }
 
+        /// <inheritdoc/>
+        public override bool Equals(object obj) => @in.Equals(obj);
+
+        /// <inheritdoc/>
+        public override int GetHashCode() => @in.GetHashCode();
+
+        /// <inheritdoc/>
+        public override string ToString() => @in.ToString();
+
+#if FEATURE_STREAM_READ_SPAN
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
+        public override int Read(Span<char> buffer)
+        {
+            throw UnsupportedOperationException.Create();
+        }
+
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
+        public override ValueTask<int> ReadAsync(Memory<char> buffer, CancellationToken cancellationToken = default)
+        {
+            throw UnsupportedOperationException.Create();
+        }
+
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
+        public override int ReadBlock(Span<char> buffer)
+        {
+            throw UnsupportedOperationException.Create();
+        }
+
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
+        public override ValueTask<int> ReadBlockAsync(Memory<char> buffer, CancellationToken cancellationToken = default)
+        {
+            throw UnsupportedOperationException.Create();
+        }
+#endif
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
         public override Task<int> ReadAsync(char[] buffer, int index, int count)
         {
-            throw new NotImplementedException();
+            throw UnsupportedOperationException.Create();
         }
 
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
         public override int ReadBlock(char[] buffer, int index, int count)
         {
-            throw new NotImplementedException();
+            throw UnsupportedOperationException.Create();
         }
 
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
         public override Task<int> ReadBlockAsync(char[] buffer, int index, int count)
         {
-            throw new NotImplementedException();
+            throw UnsupportedOperationException.Create();
         }
 
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
         public override Task<string> ReadLineAsync()
         {
-            throw new NotImplementedException();
+            throw UnsupportedOperationException.Create();
         }
 
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
         public override string ReadToEnd()
         {
-            throw new NotImplementedException();
+            throw UnsupportedOperationException.Create();
         }
 
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
         public override Task<string> ReadToEndAsync()
         {
-            throw new NotImplementedException();
+            throw UnsupportedOperationException.Create();
         }
 #if FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">In all cases.</exception>
+        // LUCENENET: We don't override this on .NET Core, it throws a
+        // PlatformNotSupportedException, which is the behavior we want.
         public override object InitializeLifetimeService()
         {
-            throw new NotImplementedException();
+            throw UnsupportedOperationException.Create();
         }
 #endif
 
 #if FEATURE_TEXTWRITER_CLOSE
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">The call didn't originate from within <see cref="Dispose(bool)"/>.</exception>
         public override void Close()
         {
             if (!isDisposing)
@@ -660,6 +765,6 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 #endif
-        #endregion
+        #endregion LUCENENET Specific Methods
     }
 }
