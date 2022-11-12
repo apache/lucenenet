@@ -120,7 +120,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a set from a collection of <see cref="T:char[]"/>s. 
+        /// Creates a set from a collection of <see cref="T:char[]"/>s.
+        /// <para/>
+        /// <b>NOTE:</b> If <paramref name="ignoreCase"/> is <c>true</c>, the text arrays will be directly modified.
+        /// The user should never modify these text arrays after calling this method.
         /// </summary>
         /// <param name="matchVersion">
         ///          Compatibility match version see <see cref="CharArraySet"/> for details. </param>
@@ -270,7 +273,8 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Add this <see cref="T:char[]"/> directly to the set.
-        /// If <c>ignoreCase</c> is true for this <see cref="CharArraySet"/>, the text array will be directly modified.
+        /// <para/>
+        /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArraySet"/>, the text array will be directly modified.
         /// The user should never modify this text array after calling this method.
         /// </summary>
         /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
@@ -760,6 +764,9 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
         /// in itself, the specified collection, or both.
+        /// <para/>
+        /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArraySet"/>, the text arrays will be directly modified.
+        /// The user should never modify these text arrays after calling this method.
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
@@ -936,6 +943,70 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
+        public virtual bool IsSubsetOf(IEnumerable<char[]> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (this.Count == 0)
+            {
+                return true;
+            }
+            CharArraySet set = other as CharArraySet;
+            if (set != null)
+            {
+                if (this.Count > set.Count)
+                {
+                    return false;
+                }
+                return this.IsSubsetOfCharArraySet(set);
+            }
+            // we just need to return true if the other set
+            // contains all of the elements of the this set,
+            // but we need to use the comparison rules of the current set.
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int _);
+            return foundCount == this.Count;
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="CharArraySet"/> object is a subset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
+        public virtual bool IsSubsetOf(IEnumerable<ICharSequence> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (this.Count == 0)
+            {
+                return true;
+            }
+            CharArraySet set = other as CharArraySet;
+            if (set != null)
+            {
+                if (this.Count > set.Count)
+                {
+                    return false;
+                }
+                return this.IsSubsetOfCharArraySet(set);
+            }
+            // we just need to return true if the other set
+            // contains all of the elements of the this set,
+            // but we need to use the comparison rules of the current set.
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int _);
+            return foundCount == this.Count;
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="CharArraySet"/> object is a subset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsSubsetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
@@ -965,6 +1036,62 @@ namespace Lucene.Net.Analysis.Util
                 throw new ArgumentNullException(nameof(other));
 
             ICollection<string> is2 = other as ICollection<string>;
+            if (is2 != null)
+            {
+                if (is2.Count == 0)
+                {
+                    return true;
+                }
+                CharArraySet set = other as CharArraySet;
+                if ((set != null) && (set.Count > this.Count))
+                {
+                    return false;
+                }
+            }
+            return this.ContainsAllElements(other);
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="CharArraySet"/> object is a superset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
+        public virtual bool IsSupersetOf(IEnumerable<char[]> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            ICollection<char[]> is2 = other as ICollection<char[]>;
+            if (is2 != null)
+            {
+                if (is2.Count == 0)
+                {
+                    return true;
+                }
+                CharArraySet set = other as CharArraySet;
+                if ((set != null) && (set.Count > this.Count))
+                {
+                    return false;
+                }
+            }
+            return this.ContainsAllElements(other);
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="CharArraySet"/> object is a superset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
+        public virtual bool IsSupersetOf(IEnumerable<ICharSequence> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            ICollection<ICharSequence> is2 = other as ICollection<ICharSequence>;
             if (is2 != null)
             {
                 if (is2.Count == 0)
@@ -1043,6 +1170,78 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
+        public virtual bool IsProperSubsetOf(IEnumerable<char[]> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            ICollection<char[]> is2 = other as ICollection<char[]>;
+            if (is2 != null)
+            {
+                if (this.Count == 0)
+                {
+                    return (is2.Count > 0);
+                }
+                CharArraySet set = other as CharArraySet;
+                if (set != null)
+                {
+                    if (this.Count >= set.Count)
+                    {
+                        return false;
+                    }
+                    return this.IsSubsetOfCharArraySet(set);
+                }
+            }
+            // we just need to return true if the other set
+            // contains all of the elements of the this set plus at least one more,
+            // but we need to use the comparison rules of the current set.
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
+            return foundCount == this.Count && unfoundCount > 0;
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="CharArraySet"/> object is a proper subset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
+        public virtual bool IsProperSubsetOf(IEnumerable<ICharSequence> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            ICollection<ICharSequence> is2 = other as ICollection<ICharSequence>;
+            if (is2 != null)
+            {
+                if (this.Count == 0)
+                {
+                    return (is2.Count > 0);
+                }
+                CharArraySet set = other as CharArraySet;
+                if (set != null)
+                {
+                    if (this.Count >= set.Count)
+                    {
+                        return false;
+                    }
+                    return this.IsSubsetOfCharArraySet(set);
+                }
+            }
+            // we just need to return true if the other set
+            // contains all of the elements of the this set plus at least one more,
+            // but we need to use the comparison rules of the current set.
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
+            return foundCount == this.Count && unfoundCount > 0;
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="CharArraySet"/> object is a proper subset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsProperSubsetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
@@ -1077,6 +1276,80 @@ namespace Lucene.Net.Analysis.Util
                 return false;
             }
             ICollection<string> is2 = other as ICollection<string>;
+            if (is2 != null)
+            {
+                if (is2.Count == 0)
+                {
+                    return true;
+                }
+                CharArraySet set = other as CharArraySet;
+                if (set != null)
+                {
+                    if (set.Count >= this.Count)
+                    {
+                        return false;
+                    }
+                    return this.ContainsAllElements(set);
+                }
+            }
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
+            return foundCount < this.Count && unfoundCount == 0;
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="CharArraySet"/> object is a proper superset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
+        public virtual bool IsProperSupersetOf(IEnumerable<char[]> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (this.Count == 0)
+            {
+                return false;
+            }
+            ICollection<char[]> is2 = other as ICollection<char[]>;
+            if (is2 != null)
+            {
+                if (is2.Count == 0)
+                {
+                    return true;
+                }
+                CharArraySet set = other as CharArraySet;
+                if (set != null)
+                {
+                    if (set.Count >= this.Count)
+                    {
+                        return false;
+                    }
+                    return this.ContainsAllElements(set);
+                }
+            }
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
+            return foundCount < this.Count && unfoundCount == 0;
+        }
+
+        /// <summary>
+        /// Determines whether a <see cref="CharArraySet"/> object is a proper superset of the specified collection.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
+        public virtual bool IsProperSupersetOf(IEnumerable<ICharSequence> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (this.Count == 0)
+            {
+                return false;
+            }
+            ICollection<ICharSequence> is2 = other as ICollection<ICharSequence>;
             if (is2 != null)
             {
                 if (is2.Count == 0)
@@ -1292,7 +1565,7 @@ namespace Lucene.Net.Analysis.Util
             return true;
         }
 
-        private void GetFoundAndUnfoundCounts<T>(IEnumerable<T> other, out int foundCount, out int unfoundCount)
+        private void GetFoundAndUnfoundCounts(IEnumerable<string> other, out int foundCount, out int unfoundCount)
         {
             foundCount = 0;
             unfoundCount = 0;
@@ -1309,7 +1582,41 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        private void GetFoundAndUnfoundCounts(IEnumerable<string> other, out int foundCount, out int unfoundCount)
+        private void GetFoundAndUnfoundCounts(IEnumerable<char[]> other, out int foundCount, out int unfoundCount)
+        {
+            foundCount = 0;
+            unfoundCount = 0;
+            foreach (var item in other)
+            {
+                if (this.Contains(item))
+                {
+                    foundCount++;
+                }
+                else
+                {
+                    unfoundCount++;
+                }
+            }
+        }
+
+        private void GetFoundAndUnfoundCounts(IEnumerable<ICharSequence> other, out int foundCount, out int unfoundCount)
+        {
+            foundCount = 0;
+            unfoundCount = 0;
+            foreach (var item in other)
+            {
+                if (this.Contains(item))
+                {
+                    foundCount++;
+                }
+                else
+                {
+                    unfoundCount++;
+                }
+            }
+        }
+
+        private void GetFoundAndUnfoundCounts<T>(IEnumerable<T> other, out int foundCount, out int unfoundCount)
         {
             foundCount = 0;
             unfoundCount = 0;

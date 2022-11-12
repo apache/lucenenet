@@ -1084,6 +1084,33 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Test, LuceneNetSpecific]
+        public virtual void TestIsSubsetOfCharArray()
+        {
+            var originalValues = new JCG.List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var originalValuesCopy = originalValues.Select(x => (char[])x.Clone()).ToList();
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var superset = new JCG.List<char[]> { "introducing".ToCharArray(), "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), "and".ToCharArray(), "more".ToCharArray() };
+
+            assertFalse(target.IsSubsetOf(subset));
+            assertTrue(target.IsSubsetOf(superset));
+            assertTrue(target.IsSubsetOf(originalValuesCopy));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsSubsetOfCharSequence()
+        {
+            var originalValues = new JCG.List<ICharSequence> { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<ICharSequence> { "seashells".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            var superset = new JCG.List<ICharSequence> { "introducing".AsCharSequence(), "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), "and".AsCharSequence(), "more".AsCharSequence() };
+
+            assertFalse(target.IsSubsetOf(subset));
+            assertTrue(target.IsSubsetOf(superset));
+            assertTrue(target.IsSubsetOf(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
         public virtual void TestIsSubsetOfObject()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -1103,6 +1130,33 @@ namespace Lucene.Net.Analysis.Util
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
             var subset = new JCG.List<string> { "seashells", "sea", "shore" };
             var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertFalse(target.IsProperSubsetOf(subset));
+            assertTrue(target.IsProperSubsetOf(superset));
+            assertFalse(target.IsProperSubsetOf(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsProperSubsetOfCharArray()
+        {
+            var originalValues = new JCG.List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var originalValuesCopy = originalValues.Select(x => (char[])x.Clone()).ToList();
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var superset = new JCG.List<char[]> { "introducing".ToCharArray(), "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), "and".ToCharArray(), "more".ToCharArray() };
+
+            assertFalse(target.IsProperSubsetOf(subset));
+            assertTrue(target.IsProperSubsetOf(superset));
+            assertFalse(target.IsProperSubsetOf(originalValuesCopy));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsProperSubsetOfCharSequence()
+        {
+            var originalValues = new JCG.List<ICharSequence> { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<ICharSequence> { "seashells".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            var superset = new JCG.List<ICharSequence> { "introducing".AsCharSequence(), "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), "and".AsCharSequence(), "more".AsCharSequence() };
 
             assertFalse(target.IsProperSubsetOf(subset));
             assertTrue(target.IsProperSubsetOf(superset));
@@ -1136,6 +1190,33 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Test, LuceneNetSpecific]
+        public virtual void TestIsSupersetOfCharArray()
+        {
+            var originalValues = new JCG.List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var originalValuesCopy = originalValues.Select(x => (char[])x.Clone()).ToList();
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var superset = new JCG.List<char[]> { "introducing".ToCharArray(), "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), "and".ToCharArray(), "more".ToCharArray() };
+
+            assertTrue(target.IsSupersetOf(subset));
+            assertFalse(target.IsSupersetOf(superset));
+            assertTrue(target.IsSupersetOf(originalValuesCopy));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsSupersetOfCharSequence()
+        {
+            var originalValues = new JCG.List<ICharSequence> { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<ICharSequence> { "seashells".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            var superset = new JCG.List<ICharSequence> { "introducing".AsCharSequence(), "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), "and".AsCharSequence(), "more".AsCharSequence() };
+
+            assertTrue(target.IsSupersetOf(subset));
+            assertFalse(target.IsSupersetOf(superset));
+            assertTrue(target.IsSupersetOf(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
         public virtual void TestIsSupersetOfObject()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -1155,6 +1236,33 @@ namespace Lucene.Net.Analysis.Util
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
             var subset = new JCG.List<string> { "seashells", "sea", "shore" };
             var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+
+            assertTrue(target.IsProperSupersetOf(subset));
+            assertFalse(target.IsProperSupersetOf(superset));
+            assertFalse(target.IsProperSupersetOf(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsProperSupersetOfCharArray()
+        {
+            var originalValues = new JCG.List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var originalValuesCopy = originalValues.Select(x => (char[])x.Clone()).ToList();
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var superset = new JCG.List<char[]> { "introducing".ToCharArray(), "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), "and".ToCharArray(), "more".ToCharArray() };
+
+            assertTrue(target.IsProperSupersetOf(subset));
+            assertFalse(target.IsProperSupersetOf(superset));
+            assertFalse(target.IsProperSupersetOf(originalValuesCopy));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsProperSupersetOfCharSequence()
+        {
+            var originalValues = new JCG.List<ICharSequence> { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<ICharSequence> { "seashells".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            var superset = new JCG.List<ICharSequence> { "introducing".AsCharSequence(), "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), "and".AsCharSequence(), "more".AsCharSequence() };
 
             assertTrue(target.IsProperSupersetOf(subset));
             assertFalse(target.IsProperSupersetOf(superset));
