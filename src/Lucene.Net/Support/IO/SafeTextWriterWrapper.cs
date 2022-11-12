@@ -358,6 +358,7 @@ namespace Lucene.Net.Support.IO
             {
                 textWriter.Dispose();
             }
+            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
     }
 }

@@ -213,7 +213,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return memoryUsage;
         }
 
-        private class EntryEnumerator : IEnumerator<Entry>
+        private sealed class EntryEnumerator : IEnumerator<Entry> // LUCENENET: Marked sealed
         {
             internal Entry next; // next entry to return
             internal int index; // current slot

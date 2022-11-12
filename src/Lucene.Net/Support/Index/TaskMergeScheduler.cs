@@ -621,14 +621,23 @@ namespace Lucene.Net.Index
 
             public void Dispose()
             {
-                if (_isDisposed)
-                {
-                    return;
-                }
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
 
-                _isDisposed = true;
-                _lock.Dispose();
-                _cancellationTokenSource.Dispose();
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    if (_isDisposed)
+                    {
+                        return;
+                    }
+
+                    _isDisposed = true;
+                    _lock.Dispose();
+                    _cancellationTokenSource.Dispose();
+                }
             }
 
             public override string ToString()

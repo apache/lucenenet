@@ -499,8 +499,17 @@ namespace Lucene.Net.Codecs.Memory
 
             public void Dispose()
             {
-                this.counts.Dispose();
-                this.ords.Dispose();
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    this.counts.Dispose();
+                    this.ords.Dispose();
+                }
             }
 
             // LUCENENET: Remove() not supported in .NET

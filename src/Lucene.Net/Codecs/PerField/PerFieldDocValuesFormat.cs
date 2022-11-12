@@ -1,4 +1,4 @@
-using J2N.Runtime.CompilerServices;
+﻿using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -94,7 +94,16 @@ namespace Lucene.Net.Codecs.PerField
 
             public void Dispose()
             {
-                Consumer.Dispose();
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    Consumer.Dispose();
+                }
             }
         }
 
