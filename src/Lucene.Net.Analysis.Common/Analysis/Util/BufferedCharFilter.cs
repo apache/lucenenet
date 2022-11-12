@@ -302,7 +302,8 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="IOException">if this reader is disposed or some other I/O error occurs.</exception>
         public override int Read(char[] buffer, int offset, int length)
         {
-            lock(m_lock)
+            UninterruptableMonitor.Enter(m_lock);
+            try
             {
                 EnsureOpen();
                 // LUCENENT specific - refactored guard clauses to throw individual messages.
@@ -378,6 +379,10 @@ namespace Lucene.Net.Analysis.Util
                 int count = length - outstanding;
                 return (count > 0 || count == length) ? count : 0 /*-1*/;
             }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_lock);
+            }
         }
 
         /// <summary>
@@ -391,7 +396,8 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="IOException">if this reader is disposed or some other I/O error occurs.</exception>
         public override string ReadLine()
         {
-            lock(m_lock)
+            UninterruptableMonitor.Enter(m_lock);
+            try
             {
                 EnsureOpen();
                 /* has the underlying stream been exhausted? */
@@ -485,6 +491,10 @@ namespace Lucene.Net.Analysis.Util
                         result.Append(buf, pos, end - pos - 1);
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_lock);
             }
         }
 
