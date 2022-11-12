@@ -1382,15 +1382,32 @@ namespace Lucene.Net.Analysis.Util
             if (this.Count != other.Count)
                 return false;
 
-            using (var iter = other.GetEnumerator())
+            if (obj is CharArrayDictionary<TValue> charArrayDictionary)
             {
-                while (iter.MoveNext())
+                using (var iter = charArrayDictionary.GetEnumerator())
                 {
-                    if (!this.TryGetValue(iter.Current.Key, out TValue value))
-                        return false;
+                    while (iter.MoveNext())
+                    {
+                        if (!this.TryGetValue(iter.CurrentKey, out TValue value))
+                            return false;
 
-                    if (!JCG.EqualityComparer<TValue>.Default.Equals(value, iter.Current.Value))
-                        return false;
+                        if (!JCG.EqualityComparer<TValue>.Default.Equals(value, iter.Current.Value))
+                            return false;
+                    }
+                }
+            }
+            else
+            {
+                using (var iter = other.GetEnumerator())
+                {
+                    while (iter.MoveNext())
+                    {
+                        if (!this.TryGetValue(iter.Current.Key, out TValue value))
+                            return false;
+
+                        if (!JCG.EqualityComparer<TValue>.Default.Equals(value, iter.Current.Value))
+                            return false;
+                    }
                 }
             }
 

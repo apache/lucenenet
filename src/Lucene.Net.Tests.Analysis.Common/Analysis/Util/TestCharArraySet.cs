@@ -1,9 +1,11 @@
 ﻿// Lucene version compatibility level 4.8.1
+using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -676,6 +678,291 @@ namespace Lucene.Net.Analysis.Util
             equatableSetReverse.Remove("sells");
             assertTrue(charArraySet.GetHashCode().Equals(equatableSetReverse.GetHashCode()));
             assertTrue(charArraySet.Equals(equatableSetReverse));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestSetEqualsObject()
+        {
+            var originalValues = new object[] { "sally".ToCharArray(), "sells".AsCharSequence(), "seashells".ToCharArray(), "by", "the".AsCharSequence(), "sea".ToCharArray(), "shore" };
+            var unequalValues = new object[] { "sally", "sells", "seashells", "by", "the", "sea", "sometimes" };
+            var unequalCaseValues = new object[] { "Sally".AsCharSequence(), "Sells".ToCharArray(), "Seashells", "by".ToCharArray(), "the", "Sea".ToCharArray(), "Shore".AsCharSequence() };
+            var unequalValueCount = new object[] { "sally".ToCharArray(), "sells".AsCharSequence(), "seashells".ToCharArray(), "by".AsCharSequence(), "the", "strange".AsCharSequence(), "sea", "shore".ToCharArray() };
+
+            TestSetEqualsObject(ignoreCase: false, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+            TestSetEqualsObject(ignoreCase: true, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestSetEqualsCharArray()
+        {
+            var originalValues = new List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var unequalValues = new List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "sometimes".ToCharArray() };
+            var unequalCaseValues = new List<char[]> { "Sally".ToCharArray(), "Sells".ToCharArray(), "Seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "Sea".ToCharArray(), "Shore".ToCharArray() };
+            var unequalValueCount = new List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "strange".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+
+            // LUCENENET NOTE: We must test the ignoreCase false case first here, because the true
+            // case will actually lowercase our input char arrays.
+            TestSetEqualsCharArray(ignoreCase: false, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+            TestSetEqualsCharArray(ignoreCase: true, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestSetEqualsString()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            var unequalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "sometimes" };
+            var unequalCaseValues = new string[] { "Sally", "Sells", "Seashells", "by", "the", "Sea", "Shore" };
+            var unequalValueCount = new string[] { "sally", "sells", "seashells", "by", "the", "strange", "sea", "shore" };
+
+            TestSetEqualsString(ignoreCase: false, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+            TestSetEqualsString(ignoreCase: true, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestSetEqualsCharSequence()
+        {
+            var originalValues = new ICharSequence[] { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            var unequalValues = new ICharSequence[] { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "sometimes".AsCharSequence() };
+            var unequalCaseValues = new ICharSequence[] { "Sally".AsCharSequence(), "Sells".AsCharSequence(), "Seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "Sea".AsCharSequence(), "Shore".AsCharSequence() };
+            var unequalValueCount = new ICharSequence[] { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "strange".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+
+            TestSetEqualsCharSequence(ignoreCase: false, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+            TestSetEqualsCharSequence(ignoreCase: true, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+        }
+
+        /// <summary>
+        /// Class that only implements <see cref="IEnumerable{T}"/>, so we can bypass the optimized
+        /// paths that cast to <see cref="ICollection{T}"/>.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private class TestEnumerable<T> : IEnumerable<T>
+        {
+            private readonly IEnumerable<T> source;
+            public TestEnumerable(IEnumerable<T> source)
+            {
+                this.source = source ?? throw new ArgumentNullException(nameof(source));
+            }
+
+            public IEnumerator<T> GetEnumerator() => source.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        private static CharArraySet CreateCharArraySet<T>(Version matchVersion, IList<T> values, bool ignoreCase)
+        {
+            var type = typeof(T);
+            if (type.Equals(typeof(string)))
+            {
+                return new CharArraySet(TEST_VERSION_CURRENT, (IList<string>)(object)values, ignoreCase);
+            }
+            else if (type.Equals(typeof(char[])))
+            {
+                return new CharArraySet(TEST_VERSION_CURRENT, (IList<char[]>)(object)values, ignoreCase);
+            }
+            else if (type.Equals(typeof(ICharSequence)))
+            {
+                return new CharArraySet(TEST_VERSION_CURRENT, (IList<ICharSequence>)(object)values, ignoreCase);
+            }
+
+            var result = new CharArraySet(TEST_VERSION_CURRENT, values.Count, ignoreCase);
+
+            foreach (var value in values)
+            {
+                result.Add(value);
+            }
+
+            return result;
+        }
+
+        public virtual void TestSetEqualsString(bool ignoreCase, IList<string> originalValues, IList<string> unequalValues, IList<string> unequalCaseValues, IList<string> unequalValueCount)
+        {
+            var originalValuesShuffled = originalValues.ToArray();
+            originalValuesShuffled.Shuffle(Random);
+
+            CharArraySet target = CreateCharArraySet(TEST_VERSION_CURRENT, originalValues, ignoreCase);
+
+            var charArraySet_Equal = CreateCharArraySet(TEST_VERSION_CURRENT, originalValuesShuffled, ignoreCase);
+            var charArraySet_Unequal = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValues, ignoreCase);
+            var charArraySet_UnequalCase = CreateCharArraySet(TEST_VERSION_CURRENT, unequalCaseValues, ignoreCase);
+            var charArraySet_UnequalValueCount = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValueCount, ignoreCase);
+
+            assertTrue(target.SetEquals(charArraySet_Equal));
+            assertFalse(target.SetEquals(charArraySet_Unequal));
+            assertEquals(target.SetEquals(charArraySet_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(charArraySet_UnequalValueCount));
+
+            var set_Equal = new HashSet<string>(originalValuesShuffled);
+            var set_Unequal = new HashSet<string>(unequalValues);
+            var set_UnequalCase = new HashSet<string>(unequalCaseValues);
+            var set_UnequalValueCount = new HashSet<string>(unequalValueCount);
+
+            assertTrue(target.SetEquals(set_Equal));
+            assertFalse(target.SetEquals(set_Unequal));
+            assertEquals(target.SetEquals(set_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(set_UnequalValueCount));
+
+            var list_Equal = new List<string>(originalValuesShuffled);
+            var list_Unequal = new List<string>(unequalValues);
+            var list_UnequalCase = new List<string>(unequalCaseValues);
+            var list_UnequalValueCount = new List<string>(unequalValueCount);
+
+            assertTrue(target.SetEquals(list_Equal));
+            assertFalse(target.SetEquals(list_Unequal));
+            assertEquals(target.SetEquals(list_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(list_UnequalValueCount));
+
+            var enumerable_Equal = new TestEnumerable<string>(list_Equal);
+            var enumerable_Unequal = new TestEnumerable<string>(list_Unequal);
+            var enumerable_UnequalCase = new TestEnumerable<string>(list_UnequalCase);
+            var enumerable_UnequalValueCount = new TestEnumerable<string>(unequalValueCount);
+
+            assertTrue(target.SetEquals(enumerable_Equal));
+            assertFalse(target.SetEquals(enumerable_Unequal));
+            assertEquals(target.SetEquals(enumerable_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(enumerable_UnequalValueCount));
+        }
+
+        public virtual void TestSetEqualsCharArray(bool ignoreCase, IList<char[]> originalValues, IList<char[]> unequalValues, IList<char[]> unequalCaseValues, IList<char[]> unequalValueCount)
+        {
+            var originalValuesShuffled = originalValues.ToArray();
+            originalValuesShuffled.Shuffle(Random);
+
+            CharArraySet target = CreateCharArraySet(TEST_VERSION_CURRENT, originalValues, ignoreCase);
+
+            var charArraySet_Equal = CreateCharArraySet(TEST_VERSION_CURRENT, originalValuesShuffled, ignoreCase);
+            var charArraySet_Unequal = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValues, ignoreCase);
+            var charArraySet_UnequalCase = CreateCharArraySet(TEST_VERSION_CURRENT, unequalCaseValues, ignoreCase);
+            var charArraySet_UnequalValueCount = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValueCount, ignoreCase);
+
+            assertTrue(target.SetEquals(charArraySet_Equal));
+            assertFalse(target.SetEquals(charArraySet_Unequal));
+            assertEquals(target.SetEquals(charArraySet_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(charArraySet_UnequalValueCount));
+
+            var set_Equal = new HashSet<char[]>(originalValuesShuffled);
+            var set_Unequal = new HashSet<char[]>(unequalValues);
+            var set_UnequalCase = new HashSet<char[]>(unequalCaseValues);
+            var set_UnequalValueCount = new HashSet<char[]>(unequalValueCount);
+
+            assertTrue(target.SetEquals(set_Equal));
+            assertFalse(target.SetEquals(set_Unequal));
+            assertEquals(target.SetEquals(set_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(set_UnequalValueCount));
+
+            var list_Equal = new List<char[]>(originalValuesShuffled);
+            var list_Unequal = new List<char[]>(unequalValues);
+            var list_UnequalCase = new List<char[]>(unequalCaseValues);
+            var list_UnequalValueCount = new List<char[]>(unequalValueCount);
+
+            assertTrue(target.SetEquals(list_Equal));
+            assertFalse(target.SetEquals(list_Unequal));
+            assertEquals(target.SetEquals(list_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(list_UnequalValueCount));
+
+            var enumerable_Equal = new TestEnumerable<char[]>(list_Equal);
+            var enumerable_Unequal = new TestEnumerable<char[]>(list_Unequal);
+            var enumerable_UnequalCase = new TestEnumerable<char[]>(list_UnequalCase);
+            var enumerable_UnequalValueCount = new TestEnumerable<char[]>(unequalValueCount);
+
+            assertTrue(target.SetEquals(enumerable_Equal));
+            assertFalse(target.SetEquals(enumerable_Unequal));
+            assertEquals(target.SetEquals(enumerable_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(enumerable_UnequalValueCount));
+        }
+
+        public virtual void TestSetEqualsCharSequence(bool ignoreCase, IList<ICharSequence> originalValues, IList<ICharSequence> unequalValues, IList<ICharSequence> unequalCaseValues, IList<ICharSequence> unequalValueCount)
+        {
+            var originalValuesShuffled = originalValues.ToArray();
+            originalValuesShuffled.Shuffle(Random);
+
+            CharArraySet target = CreateCharArraySet(TEST_VERSION_CURRENT, originalValues, ignoreCase);
+
+            var charArraySet_Equal = CreateCharArraySet(TEST_VERSION_CURRENT, originalValuesShuffled, ignoreCase);
+            var charArraySet_Unequal = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValues, ignoreCase);
+            var charArraySet_UnequalCase = CreateCharArraySet(TEST_VERSION_CURRENT, unequalCaseValues, ignoreCase);
+            var charArraySet_UnequalValueCount = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValueCount, ignoreCase);
+
+            assertTrue(target.SetEquals(charArraySet_Equal));
+            assertFalse(target.SetEquals(charArraySet_Unequal));
+            assertEquals(target.SetEquals(charArraySet_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(charArraySet_UnequalValueCount));
+
+            var set_Equal = new HashSet<ICharSequence>(originalValuesShuffled);
+            var set_Unequal = new HashSet<ICharSequence>(unequalValues);
+            var set_UnequalCase = new HashSet<ICharSequence>(unequalCaseValues);
+            var set_UnequalValueCount = new HashSet<ICharSequence>(unequalValueCount);
+
+            assertTrue(target.SetEquals(set_Equal));
+            assertFalse(target.SetEquals(set_Unequal));
+            assertEquals(target.SetEquals(set_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(set_UnequalValueCount));
+
+            var list_Equal = new List<ICharSequence>(originalValuesShuffled);
+            var list_Unequal = new List<ICharSequence>(unequalValues);
+            var list_UnequalCase = new List<ICharSequence>(unequalCaseValues);
+            var list_UnequalValueCount = new List<ICharSequence>(unequalValueCount);
+
+            assertTrue(target.SetEquals(list_Equal));
+            assertFalse(target.SetEquals(list_Unequal));
+            assertEquals(target.SetEquals(list_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(list_UnequalValueCount));
+
+            var enumerable_Equal = new TestEnumerable<ICharSequence>(list_Equal);
+            var enumerable_Unequal = new TestEnumerable<ICharSequence>(list_Unequal);
+            var enumerable_UnequalCase = new TestEnumerable<ICharSequence>(list_UnequalCase);
+            var enumerable_UnequalValueCount = new TestEnumerable<ICharSequence>(unequalValueCount);
+
+            assertTrue(target.SetEquals(enumerable_Equal));
+            assertFalse(target.SetEquals(enumerable_Unequal));
+            assertEquals(target.SetEquals(enumerable_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(enumerable_UnequalValueCount));
+        }
+
+        public virtual void TestSetEqualsObject(bool ignoreCase, IList<object> originalValues, IList<object> unequalValues, IList<object> unequalCaseValues, IList<object> unequalValueCount)
+        {
+            var originalValuesShuffled = originalValues.ToArray();
+            originalValuesShuffled.Shuffle(Random);
+
+            CharArraySet target = CreateCharArraySet(TEST_VERSION_CURRENT, originalValues, ignoreCase);
+
+            var charArraySet_Equal = CreateCharArraySet(TEST_VERSION_CURRENT, originalValuesShuffled, ignoreCase);
+            var charArraySet_Unequal = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValues, ignoreCase);
+            var charArraySet_UnequalCase = CreateCharArraySet(TEST_VERSION_CURRENT, unequalCaseValues, ignoreCase);
+            var charArraySet_UnequalValueCount = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValueCount, ignoreCase);
+
+            assertTrue(target.SetEquals(charArraySet_Equal));
+            assertFalse(target.SetEquals(charArraySet_Unequal));
+            assertEquals(target.SetEquals(charArraySet_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(charArraySet_UnequalValueCount));
+
+            var set_Equal = new HashSet<object>(originalValuesShuffled);
+            var set_Unequal = new HashSet<object>(unequalValues);
+            var set_UnequalCase = new HashSet<object>(unequalCaseValues);
+            var set_UnequalValueCount = new HashSet<object>(unequalValueCount);
+
+            assertTrue(target.SetEquals(set_Equal));
+            assertFalse(target.SetEquals(set_Unequal));
+            assertEquals(target.SetEquals(set_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(set_UnequalValueCount));
+
+            var list_Equal = new List<object>(originalValuesShuffled);
+            var list_Unequal = new List<object>(unequalValues);
+            var list_UnequalCase = new List<object>(unequalCaseValues);
+            var list_UnequalValueCount = new List<object>(unequalValueCount);
+
+            assertTrue(target.SetEquals(list_Equal));
+            assertFalse(target.SetEquals(list_Unequal));
+            assertEquals(target.SetEquals(list_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(list_UnequalValueCount));
+
+            var enumerable_Equal = new TestEnumerable<object>(list_Equal);
+            var enumerable_Unequal = new TestEnumerable<object>(list_Unequal);
+            var enumerable_UnequalCase = new TestEnumerable<object>(list_UnequalCase);
+            var enumerable_UnequalValueCount = new TestEnumerable<object>(unequalValueCount);
+
+            assertTrue(target.SetEquals(enumerable_Equal));
+            assertFalse(target.SetEquals(enumerable_Unequal));
+            assertEquals(target.SetEquals(enumerable_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(enumerable_UnequalValueCount));
         }
 
         [Test, LuceneNetSpecific]

@@ -627,16 +627,140 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            // LUCENENET TODO: Fix implementation so it can compare sets
-            // that are not CharArraySet and add overloads for char[], ICharSequence, and T
+            if (other is CharArraySet charArraySet)
+                return this.map.Equals(charArraySet.map);
 
-            if (!(other is CharArraySet otherSet))
-                return false;
+            if (other is ICollection<string> otherAsCollection)
+            {
+                if (this.Count != otherAsCollection.Count)
+                    return false;
 
-            // Invoke the implementation on CharArrayDictionary that
-            // tests the dictionaries to ensure they contain
-            // the same keys and values.
-            return this.map.Equals(otherSet.map);
+                // already confirmed that the sets have the same number of distinct elements, so if
+                // one is a superset of the other then they must be equal
+                return ContainsAllElements(otherAsCollection);
+            }
+
+            int otherCount = 0;
+            foreach (var local in other)
+            {
+                if (!this.Contains(local))
+                {
+                    return false;
+                }
+                otherCount++;
+            }
+            return this.Count == otherCount;
+        }
+
+        // LUCENENET - Added to ensure equality checking works in tests
+        /// <summary>
+        /// Determines whether the current set and the specified collection contain the same elements.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current set.</param>
+        /// <returns><c>true</c> if the current set is equal to other; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        public virtual bool SetEquals(IEnumerable<char[]> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (other is CharArraySet charArraySet)
+                return this.map.Equals(charArraySet.map);
+
+            if (other is ICollection<char[]> otherAsCollection)
+            {
+                if (this.Count != otherAsCollection.Count)
+                    return false;
+
+                // already confirmed that the sets have the same number of distinct elements, so if
+                // one is a superset of the other then they must be equal
+                return ContainsAllElements(otherAsCollection);
+            }
+
+            int otherCount = 0;
+            foreach (var local in other)
+            {
+                if (!this.Contains(local))
+                {
+                    return false;
+                }
+                otherCount++;
+            }
+            return this.Count == otherCount;
+        }
+
+        // LUCENENET - Added to ensure equality checking works in tests
+        /// <summary>
+        /// Determines whether the current set and the specified collection contain the same elements.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current set.</param>
+        /// <returns><c>true</c> if the current set is equal to other; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        public virtual bool SetEquals(IEnumerable<ICharSequence> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (other is CharArraySet charArraySet)
+                return this.map.Equals(charArraySet.map);
+
+            if (other is ICollection<ICharSequence> otherAsCollection)
+            {
+                if (this.Count != otherAsCollection.Count)
+                    return false;
+
+                // already confirmed that the sets have the same number of distinct elements, so if
+                // one is a superset of the other then they must be equal
+                return ContainsAllElements(otherAsCollection);
+            }
+
+            int otherCount = 0;
+            foreach (var local in other)
+            {
+                if (!this.Contains(local))
+                {
+                    return false;
+                }
+                otherCount++;
+            }
+            return this.Count == otherCount;
+        }
+
+        // LUCENENET - Added to ensure equality checking works in tests
+        /// <summary>
+        /// Determines whether the current set and the specified collection contain the same elements.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current set.</param>
+        /// <returns><c>true</c> if the current set is equal to other; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        public virtual bool SetEquals<T>(IEnumerable<T> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (other is CharArraySet charArraySet)
+                return this.map.Equals(charArraySet.map);
+
+            if (other is ICollection<T> otherAsCollection)
+            {
+                if (this.Count != otherAsCollection.Count)
+                    return false;
+
+                // already confirmed that the sets have the same number of distinct elements, so if
+                // one is a superset of the other then they must be equal
+                return ContainsAllElements(otherAsCollection);
+            }
+
+            int otherCount = 0;
+            foreach (var local in other)
+            {
+                if (!this.Contains(local))
+                {
+                    return false;
+                }
+                otherCount++;
+            }
+            return this.Count == otherCount;
         }
 
         /// <summary>
@@ -785,6 +909,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsSubsetOf(IEnumerable<string> other)
         {
             if (other is null)
@@ -816,6 +941,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsSubsetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
@@ -838,6 +964,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsSupersetOf(IEnumerable<string> other)
         {
             if (other is null)
@@ -856,7 +983,7 @@ namespace Lucene.Net.Analysis.Util
                     return false;
                 }
             }
-            return this.ContainsAllImpl(other);
+            return this.ContainsAllElements(other);
         }
 
         /// <summary>
@@ -865,6 +992,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsSupersetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
@@ -875,7 +1003,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return true;
             }
-            return this.ContainsAllImpl(other);
+            return this.ContainsAllElements(other);
         }
 
         /// <summary>
@@ -884,6 +1012,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsProperSubsetOf(IEnumerable<string> other)
         {
             if (other is null)
@@ -919,6 +1048,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsProperSubsetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
@@ -942,6 +1072,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsProperSupersetOf(IEnumerable<string> other)
         {
             if (other is null)
@@ -965,7 +1096,7 @@ namespace Lucene.Net.Analysis.Util
                     {
                         return false;
                     }
-                    return this.ContainsAllImpl(set);
+                    return this.ContainsAllElements(set);
                 }
             }
             this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
@@ -978,6 +1109,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsProperSupersetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
@@ -1088,7 +1220,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">collection to be checked for containment in this collection</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
-        private bool ContainsAllImpl(IEnumerable<string> other)
+        private bool ContainsAllElements(IEnumerable<string> other)
         {
             foreach (var local in other)
             {
@@ -1106,7 +1238,43 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">collection to be checked for containment in this collection</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
-        private bool ContainsAllImpl<T>(IEnumerable<T> other)
+        private bool ContainsAllElements(IEnumerable<char[]> other)
+        {
+            foreach (var local in other)
+            {
+                if (!this.Contains(local))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Returns <c>true</c> if this collection contains all of the elements
+        /// in the specified collection.
+        /// </summary>
+        /// <param name="other">collection to be checked for containment in this collection</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
+        private bool ContainsAllElements(IEnumerable<ICharSequence> other)
+        {
+            foreach (var local in other)
+            {
+                if (!this.Contains(local))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Returns <c>true</c> if this collection contains all of the elements
+        /// in the specified collection.
+        /// </summary>
+        /// <param name="other">collection to be checked for containment in this collection</param>
+        /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
+        private bool ContainsAllElements<T>(IEnumerable<T> other)
         {
             foreach (var local in other)
             {
@@ -1131,6 +1299,23 @@ namespace Lucene.Net.Analysis.Util
         }
 
         private void GetFoundAndUnfoundCounts<T>(IEnumerable<T> other, out int foundCount, out int unfoundCount)
+        {
+            foundCount = 0;
+            unfoundCount = 0;
+            foreach (var item in other)
+            {
+                if (this.Contains(item))
+                {
+                    foundCount++;
+                }
+                else
+                {
+                    unfoundCount++;
+                }
+            }
+        }
+
+        private void GetFoundAndUnfoundCounts(IEnumerable<string> other, out int foundCount, out int unfoundCount)
         {
             foundCount = 0;
             unfoundCount = 0;
