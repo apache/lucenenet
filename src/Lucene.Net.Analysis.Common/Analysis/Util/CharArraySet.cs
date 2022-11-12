@@ -207,6 +207,9 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Contains(char[] text)
         {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             return map.ContainsKey(text, 0, text.Length);
         }
 
@@ -586,6 +589,20 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentException">The number of elements in the source is greater
+        /// than the available space in the destination array.</exception>
+        public void CopyTo(string[] array)
+        {
+            CopyTo(array, 0, map.Count);
+        }
+
+        /// <summary>
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:string[]"/> array, 
+        /// starting at the specified index of the target array.
+        /// </summary>
+        /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
+        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
@@ -593,17 +610,171 @@ namespace Lucene.Net.Analysis.Util
         /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
         public void CopyTo(string[] array, int arrayIndex)
         {
+            CopyTo(array, arrayIndex, map.Count);
+        }
+
+        /// <summary>
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:string[]"/> array, 
+        /// starting at the specified index of the target array.
+        /// </summary>
+        /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
+        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> or <paramref name="count"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="arrayIndex"/> is greater than the length of the destination <paramref name="array"/>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="count"/> is greater than the available space from the <paramref name="arrayIndex"/>
+        /// to the end of the destination <paramref name="array"/>.
+        /// </exception>
+        internal void CopyTo(string[] array, int arrayIndex, int count)
+        {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
             if (arrayIndex < 0)
                 throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
-            if (map.Count > array.Length - arrayIndex)
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), count, "Non-negative number required.");
+            if (arrayIndex > array.Length || count > array.Length - arrayIndex)
                 throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
 
             using var iter = GetEnumerator();
-            for (int i = arrayIndex; iter.MoveNext(); i++)
+            for (int i = arrayIndex, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
             {
                 array[i] = iter.Current;
+            }
+        }
+
+        /// <summary>
+        /// Copies the entire <see cref="CharArraySet"/> to a jagged <see cref="T:char[][]"/> array or <see cref="IList{T}"/> of type char[],
+        /// starting at the specified index of the target array.
+        /// </summary>
+        /// <param name="array">The jagged <see cref="T:char[][]"/> array or <see cref="IList{T}"/> of type char[] that is the destination of the
+        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentException">The number of elements in the source is greater
+        /// than the available space in the destination array.</exception>
+        public void CopyTo(IList<char[]> array)
+        {
+            CopyTo(array, 0, map.Count);
+        }
+
+        /// <summary>
+        /// Copies the entire <see cref="CharArraySet"/> to a jagged <see cref="T:char[][]"/> array or <see cref="IList{T}"/> of type char[]
+        /// starting at the specified index of the target array.
+        /// </summary>
+        /// <param name="array">The jagged <see cref="T:char[][]"/> array or <see cref="IList{T}"/> of type char[] that is the destination of the
+        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException">The number of elements in the source is greater
+        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
+        public void CopyTo(IList<char[]> array, int arrayIndex)
+        {
+            CopyTo(array, arrayIndex, map.Count);
+        }
+
+        /// <summary>
+        /// Copies the entire <see cref="CharArraySet"/> to a jagged <see cref="T:char[][]"/> array or <see cref="IList{T}"/> of type char[]
+        /// starting at the specified index of the target array.
+        /// </summary>
+        /// <param name="array">The jagged <see cref="T:char[][]"/> array or <see cref="IList{T}"/> of type char[] that is the destination of the
+        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> or <paramref name="count"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="arrayIndex"/> is greater than the length of the destination <paramref name="array"/>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="count"/> is greater than the available space from the <paramref name="arrayIndex"/>
+        /// to the end of the destination <paramref name="array"/>.
+        /// </exception>
+        internal void CopyTo(IList<char[]> array, int arrayIndex, int count)
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), count, "Non-negative number required.");
+            if (arrayIndex > array.Count || count > array.Count - arrayIndex)
+                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+
+            using var iter = GetEnumerator();
+            for (int i = arrayIndex, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
+            {
+                array[i] = (char[])iter.CurrentValue.Clone();
+            }
+        }
+
+        /// <summary>
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array, 
+        /// starting at the specified index of the target array.
+        /// </summary>
+        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the 
+        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentException">The number of elements in the source is greater
+        /// than the available space in the destination array.</exception>
+        public void CopyTo(ICharSequence[] array)
+        {
+            CopyTo(array, 0, map.Count);
+        }
+
+        /// <summary>
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array, 
+        /// starting at the specified index of the target array.
+        /// </summary>
+        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the 
+        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException">The number of elements in the source is greater
+        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
+        public void CopyTo(ICharSequence[] array, int arrayIndex)
+        {
+            CopyTo(array, arrayIndex, map.Count);
+        }
+
+        /// <summary>
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array, 
+        /// starting at the specified index of the target array.
+        /// </summary>
+        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the 
+        /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> or <paramref name="count"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="arrayIndex"/> is greater than the length of the destination <paramref name="array"/>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="count"/> is greater than the available space from the <paramref name="arrayIndex"/>
+        /// to the end of the destination <paramref name="array"/>.
+        /// </exception>
+        internal void CopyTo(ICharSequence[] array, int arrayIndex, int count)
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), count, "Non-negative number required.");
+            if (arrayIndex > array.Length || count > array.Length - arrayIndex)
+                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+
+            using var iter = GetEnumerator();
+            for (int i = arrayIndex, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
+            {
+                array[i] = ((char[])iter.CurrentValue.Clone()).AsCharSequence();
             }
         }
 
@@ -782,8 +953,7 @@ namespace Lucene.Net.Analysis.Util
             bool modified = false;
             foreach (var item in other)
             {
-                if (Add(item))
-                    modified = true;
+                modified |= Add(item);
             }
             return modified;
         }
@@ -806,8 +976,7 @@ namespace Lucene.Net.Analysis.Util
             bool modified = false;
             foreach (var item in other)
             {
-                if (Add(item))
-                    modified = true;
+                modified |= Add(item);
             }
             return modified;
         }
@@ -830,8 +999,7 @@ namespace Lucene.Net.Analysis.Util
             bool modified = false;
             foreach (var item in other)
             {
-                if (Add(item))
-                    modified = true;
+                modified |= Add(item);
             }
             return modified;
         }
@@ -861,10 +1029,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (item is char[] charArray)
                 {
-                    if (Add(charArray))
-                    {
-                        modified = true;
-                    }
+                    modified |= Add(charArray);
                     continue;
                 }
 
@@ -875,10 +1040,7 @@ namespace Lucene.Net.Analysis.Util
                     stringItem = item.ToString();
                 }
 
-                if (Add(stringItem))
-                {
-                    modified = true;
-                }
+                modified |= Add(stringItem);
             }
             return modified;
         }
@@ -1410,7 +1572,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 foreach (var local in other)
                 {
-                    if (this.Contains(local))
+                    if (local is not null && this.Contains(local))
                     {
                         return true;
                     }
@@ -1434,7 +1596,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 foreach (var local in other)
                 {
-                    if (this.Contains(local))
+                    if (local is not null && this.Contains(local))
                     {
                         return true;
                     }
@@ -1491,7 +1653,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var local in other)
             {
-                if (!this.Contains(local))
+                if (local is null || !this.Contains(local))
                 {
                     return false;
                 }
@@ -1509,7 +1671,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var local in other)
             {
-                if (!this.Contains(local))
+                if (local is null || !this.Contains(local))
                 {
                     return false;
                 }
@@ -1527,7 +1689,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var local in other)
             {
-                if (!this.Contains(local))
+                if (local is null || !this.Contains(local))
                 {
                     return false;
                 }
@@ -1545,7 +1707,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var local in other)
             {
-                if (!this.Contains(local))
+                if (local is null || !this.Contains(local))
                 {
                     return false;
                 }
@@ -1557,7 +1719,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var local in this)
             {
-                if (!other.Contains(local))
+                if (local is null || !other.Contains(local))
                 {
                     return false;
                 }
@@ -1571,7 +1733,7 @@ namespace Lucene.Net.Analysis.Util
             unfoundCount = 0;
             foreach (var item in other)
             {
-                if (this.Contains(item))
+                if (item is not null && this.Contains(item))
                 {
                     foundCount++;
                 }
@@ -1588,7 +1750,7 @@ namespace Lucene.Net.Analysis.Util
             unfoundCount = 0;
             foreach (var item in other)
             {
-                if (this.Contains(item))
+                if (item is not null && this.Contains(item))
                 {
                     foundCount++;
                 }
@@ -1605,7 +1767,7 @@ namespace Lucene.Net.Analysis.Util
             unfoundCount = 0;
             foreach (var item in other)
             {
-                if (this.Contains(item))
+                if (item is not null && this.Contains(item))
                 {
                     foundCount++;
                 }
@@ -1622,7 +1784,7 @@ namespace Lucene.Net.Analysis.Util
             unfoundCount = 0;
             foreach (var item in other)
             {
-                if (this.Contains(item))
+                if (item is not null && this.Contains(item))
                 {
                     foundCount++;
                 }

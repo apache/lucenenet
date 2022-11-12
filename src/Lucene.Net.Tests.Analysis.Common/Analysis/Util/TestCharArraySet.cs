@@ -1,7 +1,9 @@
 ﻿// Lucene version compatibility level 4.8.1
+using J2N.Collections;
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -1579,6 +1581,114 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestToCharArraySetEmptySet()
         {
             assertSame(CharArraySet.Empty, CharArraySet.Empty.ToCharArraySet(TEST_VERSION_CURRENT));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestCopyToStringArray()
+        {
+            var stopwords = new HashSet<string>(TEST_STOP_WORDS, StringComparer.OrdinalIgnoreCase);
+            var target = new CharArraySet(TEST_VERSION_CURRENT, stopwords, ignoreCase: false);
+
+            // Full array
+            var array1 = new string[target.Count];
+            target.CopyTo(array1);
+            assertTrue(stopwords.SetEquals(array1));
+
+            // Bounded to lower start index
+            int startIndex = 3;
+            var array2 = new string[target.Count + startIndex];
+            target.CopyTo(array2, startIndex);
+
+            assertNull(array2[0]);
+            assertNull(array2[1]);
+            assertNull(array2[2]);
+            assertTrue(stopwords.IsProperSubsetOf(array2));
+            assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
+
+            // Constrianed both start index and count
+            startIndex = 5;
+            int count = 7;
+            var array3 = new string[count + startIndex];
+            target.CopyTo(array3, startIndex, count);
+
+            assertNull(array3[0]);
+            assertNull(array3[1]);
+            assertNull(array3[2]);
+            assertNull(array3[3]);
+            assertNull(array3[4]);
+            assertTrue(stopwords.IsProperSupersetOf(array3.Skip(startIndex).Take(count).ToArray()));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestCopyToStringCharArray()
+        {
+            var stopwords = new JCG.HashSet<char[]>(TEST_STOP_WORDS.Select(x => x.ToCharArray()));
+            var target = new CharArraySet(TEST_VERSION_CURRENT, stopwords, ignoreCase: false);
+
+            // Full array
+            var array1 = new char[target.Count][];
+            target.CopyTo(array1);
+            assertTrue(target.SetEquals(array1));
+
+            // Bounded to lower start index
+            int startIndex = 3;
+            var array2 = new char[target.Count + startIndex][];
+            target.CopyTo(array2, startIndex);
+
+            assertNull(array2[0]);
+            assertNull(array2[1]);
+            assertNull(array2[2]);
+            assertTrue(target.IsProperSubsetOf(array2));
+            assertTrue(target.SetEquals(array2.Skip(startIndex).ToArray()));
+
+            // Constrianed both start index and count
+            startIndex = 5;
+            int count = 7;
+            var array3 = new char[count + startIndex][];
+            target.CopyTo(array3, startIndex, count);
+
+            assertNull(array3[0]);
+            assertNull(array3[1]);
+            assertNull(array3[2]);
+            assertNull(array3[3]);
+            assertNull(array3[4]);
+            assertTrue(target.IsProperSupersetOf(array3.Skip(startIndex).Take(count).ToArray()));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestCopyToCharSequence()
+        {
+            var stopwords = new HashSet<ICharSequence>(TEST_STOP_WORDS.Select(x => x.AsCharSequence()));
+            var target = new CharArraySet(TEST_VERSION_CURRENT, stopwords, ignoreCase: false);
+
+            // Full array
+            var array1 = new ICharSequence[target.Count];
+            target.CopyTo(array1);
+            assertTrue(stopwords.SetEquals(array1));
+
+            // Bounded to lower start index
+            int startIndex = 3;
+            var array2 = new ICharSequence[target.Count + startIndex];
+            target.CopyTo(array2, startIndex);
+
+            assertNull(array2[0]);
+            assertNull(array2[1]);
+            assertNull(array2[2]);
+            assertTrue(stopwords.IsProperSubsetOf(array2));
+            assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
+
+            // Constrianed both start index and count
+            startIndex = 5;
+            int count = 7;
+            var array3 = new ICharSequence[count + startIndex];
+            target.CopyTo(array3, startIndex, count);
+
+            assertNull(array3[0]);
+            assertNull(array3[1]);
+            assertNull(array3[2]);
+            assertNull(array3[3]);
+            assertNull(array3[4]);
+            assertTrue(stopwords.IsProperSupersetOf(array3.Skip(startIndex).Take(count).ToArray()));
         }
 
         #endregion
