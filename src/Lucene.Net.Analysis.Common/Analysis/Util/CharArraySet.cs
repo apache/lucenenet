@@ -812,7 +812,7 @@ namespace Lucene.Net.Analysis.Util
             int otherCount = 0;
             foreach (var local in other)
             {
-                if (!this.Contains(local))
+                if (local is not null && !this.Contains(local))
                 {
                     return false;
                 }
@@ -849,7 +849,7 @@ namespace Lucene.Net.Analysis.Util
             int otherCount = 0;
             foreach (var local in other)
             {
-                if (!this.Contains(local))
+                if (local is not null && !this.Contains(local))
                 {
                     return false;
                 }
@@ -886,7 +886,7 @@ namespace Lucene.Net.Analysis.Util
             int otherCount = 0;
             foreach (var local in other)
             {
-                if (!this.Contains(local))
+                if (local is not null && !this.Contains(local))
                 {
                     return false;
                 }
@@ -923,7 +923,7 @@ namespace Lucene.Net.Analysis.Util
             int otherCount = 0;
             foreach (var local in other)
             {
-                if (!this.Contains(local))
+                if (local is not null && !this.Contains(local))
                 {
                     return false;
                 }
@@ -1564,6 +1564,54 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the <see cref="CharArraySet"/> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
         public virtual bool Overlaps(IEnumerable<string> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (this.Count != 0)
+            {
+                foreach (var local in other)
+                {
+                    if (local is not null && this.Contains(local))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether the current <see cref="CharArraySet"/> object and a specified collection share common elements.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
+        /// <returns><c>true</c> if the <see cref="CharArraySet"/> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        public virtual bool Overlaps(IEnumerable<char[]> other)
+        {
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (this.Count != 0)
+            {
+                foreach (var local in other)
+                {
+                    if (local is not null && this.Contains(local))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether the current <see cref="CharArraySet"/> object and a specified collection share common elements.
+        /// </summary>
+        /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
+        /// <returns><c>true</c> if the <see cref="CharArraySet"/> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        public virtual bool Overlaps(IEnumerable<ICharSequence> other)
         {
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
