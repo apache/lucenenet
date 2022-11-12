@@ -466,12 +466,6 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Public enumerator class so efficient properties are exposed to users. LUCENENET specific.
-        /// <para/>
-        /// <b>Note:</b> This enumerator has no checks to ensure the collection has
-        /// not been modified during enumeration. The behavior after calling a method
-        /// that mutates state such as
-        /// <see cref="Clear()"/> or an overload of <see cref="Add(string)"/> or
-        /// <see cref="UnionWith(IEnumerable{string})"/> is undefined.
         /// </summary>
         public sealed class Enumerator : IEnumerator<string>
         {
@@ -483,14 +477,14 @@ namespace Lucene.Net.Analysis.Util
             }
 
             /// <summary>
-            /// Gets the current key as a <see cref="CharArrayCharSequence"/>... do not modify the returned char[]
+            /// Gets the current key as a <see cref="CharArrayCharSequence"/>.
             /// </summary>
             // LUCENENET specific - quick access to ICharSequence interface
             public ICharSequence CurrentValueCharSequence
                 => enumerator.CurrentKeyCharSequence;
 
             /// <summary>
-            /// Gets the current value... do not modify the returned char[]
+            /// Gets the current value... do not modify the returned char[].
             /// </summary>
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             [WritableArray]

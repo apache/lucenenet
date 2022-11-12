@@ -355,5 +355,205 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(readOnlyTarget.IsReadOnly);
             assertTrue(readOnlyTarget.Keys.IsReadOnly);
         }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestEnumeratorExceptions()
+        {
+            CharArrayDictionary<int?> map = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, 3, ignoreCase: false)
+            {
+                ["foo"] = 0,
+                ["bar"] = 0,
+                ["baz"] = 0,
+            };
+
+            // Checks to ensure our Current property throws when outside of the enumeration
+            using (var iter = map.GetEnumerator())
+            {
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKey; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyString; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
+
+                while (iter.MoveNext())
+                {
+                    Assert.DoesNotThrow(() => { var _ = iter.Current; });
+                    Assert.DoesNotThrow(() => { var _ = iter.CurrentKey; });
+                    Assert.DoesNotThrow(() => { var _ = iter.CurrentKeyCharSequence; });
+                    Assert.DoesNotThrow(() => { var _ = iter.CurrentKeyString; });
+                    Assert.DoesNotThrow(() => { var _ = iter.CurrentValue; });
+                }
+
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKey; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentKeyString; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
+            }
+
+            using (var ours = map.GetEnumerator())
+            {
+                using var theirs = map.GetEnumerator();
+
+                assertTrue(ours.MoveNext());
+                Assert.DoesNotThrow(() => theirs.MoveNext());
+
+                assertTrue(ours.MoveNext());
+                ours.SetValue(1);
+                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+
+                Assert.DoesNotThrow(() => ours.MoveNext());
+                Assert.DoesNotThrow(() => ours.SetValue(1));
+                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+            }
+
+            using (var ours = map.GetEnumerator())
+            {
+                using var theirs = map.GetEnumerator();
+
+                assertTrue(ours.MoveNext());
+                ours.SetValue(1);
+                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+
+                Assert.DoesNotThrow(() => ours.MoveNext());
+                Assert.DoesNotThrow(() => { map["baz"] = 2; });
+                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+                Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
+            }
+
+            using (var ours = map.GetEnumerator())
+            {
+                using var theirs = map.GetEnumerator();
+
+                assertTrue(ours.MoveNext());
+                ours.SetValue(1);
+                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+
+                Assert.DoesNotThrow(() => ours.MoveNext());
+                Assert.DoesNotThrow(() => { map.Clear(); });
+                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+                Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
+
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.Current; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentKey; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentKeyCharSequence; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentKeyString; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentValue; });
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestKeyCollectionEnumeratorExceptions()
+        {
+            var map = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, 3, ignoreCase: false)
+            {
+                ["foo"] = 0,
+                ["bar"] = 0,
+                ["baz"] = 0,
+            };
+
+
+            // Checks to ensure our Current property throws when outside of the enumeration
+            using (var iter = map.Keys.GetEnumerator())
+            {
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValueCharSequence; });
+
+                while (iter.MoveNext())
+                {
+                    Assert.DoesNotThrow(() => { var _ = iter.Current; });
+                    Assert.DoesNotThrow(() => { var _ = iter.CurrentValue; });
+                    Assert.DoesNotThrow(() => { var _ = iter.CurrentValueCharSequence; });
+                }
+
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValue; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.CurrentValueCharSequence; });
+            }
+
+            using (var ours = map.Keys.GetEnumerator())
+            {
+                using var theirs = map.Keys.GetEnumerator();
+
+                assertTrue(ours.MoveNext());
+                Assert.DoesNotThrow(() => theirs.MoveNext());
+
+                Assert.DoesNotThrow(() => ours.MoveNext());
+                Assert.DoesNotThrow(() => { map["baz"] = 2; });
+                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+                Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
+            }
+
+            using (var ours = map.Keys.GetEnumerator())
+            {
+                using var theirs = map.Keys.GetEnumerator();
+
+                assertTrue(ours.MoveNext());
+                Assert.DoesNotThrow(() => theirs.MoveNext());
+
+                Assert.DoesNotThrow(() => ours.MoveNext());
+                Assert.DoesNotThrow(() => { map.Clear(); });
+                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+                Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
+
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.Current; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentValue; });
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.CurrentValueCharSequence; });
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestValueCollectionEnumeratorExceptions()
+        {
+            var map = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, 3, ignoreCase: false)
+            {
+                ["foo"] = 0,
+                ["bar"] = 0,
+                ["baz"] = 0,
+            };
+
+
+            // Checks to ensure our Current property throws when outside of the enumeration
+            using (var iter = map.Values.GetEnumerator())
+            {
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
+
+                while (iter.MoveNext())
+                {
+                    Assert.DoesNotThrow(() => { var _ = iter.Current; });
+                }
+
+                Assert.Throws<InvalidOperationException>(() => { var _ = iter.Current; });
+            }
+
+            using (var ours = map.Values.GetEnumerator())
+            {
+                using var theirs = map.Values.GetEnumerator();
+
+                assertTrue(ours.MoveNext());
+                Assert.DoesNotThrow(() => theirs.MoveNext());
+
+                Assert.DoesNotThrow(() => ours.MoveNext());
+                Assert.DoesNotThrow(() => { map["baz"] = 2; });
+                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+                Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
+            }
+
+            using (var ours = map.Values.GetEnumerator())
+            {
+                using var theirs = map.Values.GetEnumerator();
+
+                assertTrue(ours.MoveNext());
+                Assert.DoesNotThrow(() => theirs.MoveNext());
+
+                Assert.DoesNotThrow(() => ours.MoveNext());
+                Assert.DoesNotThrow(() => { map.Clear(); });
+                Assert.Throws<InvalidOperationException>(() => theirs.MoveNext());
+                Assert.Throws<InvalidOperationException>(() => ours.MoveNext());
+
+                Assert.Throws<InvalidOperationException>(() => { var _ = ours.Current; });
+            }
+        }
     }
 }

@@ -72,6 +72,8 @@ namespace Lucene.Net.Analysis.Util
         internal char[][] keys; // package private because used in CharArraySet's non Set-conform CharArraySetIterator
         internal MapValue[] values; // package private because used in CharArraySet's non Set-conform CharArraySetIterator
 
+        private int version; // LUCENENET specific - protection so mutating the state of the collection causes enumerators to throw exceptions.
+
         /// <summary>
         /// LUCENENET: Moved this from CharArraySet so it doesn't need to know the generic type of CharArrayDictionary
         /// </summary>
@@ -229,6 +231,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual void Clear()
         {
+            version++;
             count = 0;
             keys.Fill(null);
             values.Fill(null);
@@ -723,6 +726,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return PutImpl(text.ToCharArray(), value);
             }
+            version++;
             int slot = GetSlot(text);
             if (keys[slot] != null)
             {
@@ -755,6 +759,8 @@ namespace Lucene.Net.Analysis.Util
             // LUCENENET: Added guard clause
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
+
+            version++;
 
             if (ignoreCase)
             {
@@ -1042,6 +1048,7 @@ namespace Lucene.Net.Analysis.Util
                 SetImpl(text.ToCharArray(), value);
                 return;
             }
+            version++;
             int slot = GetSlot(text);
             if (keys[slot] != null)
             {
@@ -1083,6 +1090,7 @@ namespace Lucene.Net.Analysis.Util
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
+            version++;
             if (ignoreCase)
             {
                 charUtils.ToLower(text, offset, length);
@@ -2079,13 +2087,6 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Public enumerator class so efficient properties are exposed to users.
-        /// <para/>
-        /// <b>Note:</b> This enumerator has no checks to ensure the collection has
-        /// not been modified during enumeration. The behavior after calling a method
-        /// that mutates state such as
-        /// <see cref="Clear()"/> or an overload of <see cref="Add(string, TValue)"/>,
-        /// <see cref="Put(string)"/>, <see cref="PutAll(IDictionary{string, TValue})"/>
-        /// or <see cref="this[string]"/> is undefined.
         /// </summary>
         public class Enumerator : IEnumerator<KeyValuePair<string, TValue>>, ICharArrayDictionaryEnumerator
         {
@@ -2095,10 +2096,15 @@ namespace Lucene.Net.Analysis.Util
             internal int lastPos;
             internal readonly bool allowModify;
 
+            private int version; // LUCENENET specific - track when the enumerator is broken by mutating the state of the original collection
+            private bool notStartedOrEnded; // LUCENENET specific
+
             internal Enumerator(CharArrayDictionary<TValue> outerInstance, bool allowModify)
             {
                 this.outerInstance = outerInstance;
+                this.version = outerInstance.version;
                 this.allowModify = allowModify;
+                this.notStartedOrEnded = true;
                 GoNext();
             }
 
@@ -2115,11 +2121,22 @@ namespace Lucene.Net.Analysis.Util
             internal bool HasNext => pos < outerInstance.keys.Length;
 
             /// <summary>
-            /// Gets the current key as a <see cref="CharArrayCharSequence"/>... do not modify the returned char[]
+            /// Gets the current key as a <see cref="CharArrayCharSequence"/>.
             /// </summary>
             // LUCENENET specific - quick access to ICharSequence interface
             public virtual ICharSequence CurrentKeyCharSequence
-                => outerInstance.keys[lastPos].AsCharSequence();
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException("Enumeration has either not started or has already finished.");
+
+                    char[] key = outerInstance.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+                    return key.AsCharSequence();
+                }
+            }
 
             /// <summary>
             /// Gets the current key... do not modify the returned char[]
@@ -2127,38 +2144,75 @@ namespace Lucene.Net.Analysis.Util
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             [WritableArray]
             public virtual char[] CurrentKey
-                => outerInstance.keys[lastPos];
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException("Enumeration has either not started or has already finished.");
+
+                    char[] key = outerInstance.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+                    return key;
+                }
+            }
 
             /// <summary>
             /// Gets the current key as a newly created <see cref="string"/> object.
             /// </summary>
             public virtual string CurrentKeyString
-                => new string(outerInstance.keys[lastPos]);
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException("Enumeration has either not started or has already finished.");
+
+                    char[] key = outerInstance.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+                    return new string(key);
+                }
+            }
 
             /// <summary>
-            /// returns the value associated with the current key
+            /// Gets the value associated with the current key.
             /// </summary>
             public virtual TValue CurrentValue
             {
                 get
                 {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException("Enumeration has either not started or has already finished.");
+                    char[] key = outerInstance.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+
                     var val = outerInstance.values[lastPos];
                     return val != null ? val.Value : default;
                 }
             }
 
             /// <summary>
-            /// Sets the value associated with the current key
+            /// Sets the value associated with the current key.
             /// </summary>
             /// <returns>Returns the value prior to the update.</returns>
             public virtual TValue SetValue(TValue value)
             {
+                if (notStartedOrEnded)
+                    throw new InvalidOperationException("Enumeration has either not started or has already finished.");
                 if (!allowModify)
-                {
                     throw UnsupportedOperationException.Create();
-                }
-                TValue old = outerInstance.values[lastPos].Value;
-                outerInstance.values[lastPos].Value = value;
+
+                MapValue current = outerInstance.values[lastPos];
+                if (current is null)
+                    throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+
+                TValue old = current.Value;
+                // LUCENENET specific - increment the versions of both this enumerator
+                // and the original collection so only this enumerator instance isn't broken.
+                outerInstance.version++;
+                version++;
+                current.Value = value;
                 return old;
             }
 
@@ -2178,7 +2232,15 @@ namespace Lucene.Net.Analysis.Util
 
             public virtual bool MoveNext()
             {
-                if (!HasNext) return false;
+                if (version != outerInstance.version)
+                    throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+
+                if (!HasNext)
+                {
+                    notStartedOrEnded = true;
+                    return false;
+                }
+                notStartedOrEnded = false;
                 GoNext();
                 return true;
             }
@@ -2186,11 +2248,24 @@ namespace Lucene.Net.Analysis.Util
             public virtual void Reset()
             {
                 pos = -1;
+                notStartedOrEnded = true;
                 GoNext();
             }
 
             public virtual KeyValuePair<string, TValue> Current
-                => new KeyValuePair<string, TValue>(CurrentKeyString, CurrentValue);
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException("Enumeration has either not started or has already finished.");
+
+                    char[] key = outerInstance.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+                    MapValue value = outerInstance.values[lastPos];
+                    return new KeyValuePair<string, TValue>(new string(key), value.Value);
+                }
+            }
 
             object IEnumerator.Current => Current;
 
