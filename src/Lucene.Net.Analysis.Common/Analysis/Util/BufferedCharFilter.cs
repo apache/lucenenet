@@ -343,8 +343,7 @@ namespace Lucene.Net.Analysis.Util
                      * underlying stream would block.
                      */
                     // LUCENENET specific: only CharFilter derived types support IsReady
-                    var charFilter = @in as CharFilter;
-                    if (outstanding == 0 || (outstanding < length) && charFilter != null && !charFilter.IsReady)
+                    if (outstanding == 0 || (outstanding < length) && @in is CharFilter charFilter && !charFilter.IsReady)
                     {
                         break;
                     }
@@ -515,8 +514,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     EnsureOpen();
                     // LUCENENET specific: only CharFilter derived types support IsReady
-                    var charFilter = @in as CharFilter;
-                    return ((end - pos) > 0) || (charFilter != null && charFilter.IsReady);
+                    return ((end - pos) > 0) || (@in is CharFilter charFilter && charFilter.IsReady);
                 }
                 finally
                 {
