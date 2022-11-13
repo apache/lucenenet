@@ -409,25 +409,25 @@ namespace Lucene.Net.Analysis.Util
         /// <b>Note:</b> If you intend to create a copy of another <see cref="CharArraySet"/> where
         /// the <see cref="LuceneVersion"/> of the source set differs from its copy
         /// <see cref="CharArraySet.CharArraySet(LuceneVersion, IEnumerable{string}, bool)"/> should be used instead.
-        /// The <see cref="Copy{T}(LuceneVersion, ICollection{T})"/> method will preserve the <see cref="LuceneVersion"/> of the
+        /// The <see cref="Copy{T}(LuceneVersion, IEnumerable{T})"/> method will preserve the <see cref="LuceneVersion"/> of the
         /// source set it is an instance of <see cref="CharArraySet"/>.
         /// </para>
         /// </summary>
         /// <param name="matchVersion">
         ///          compatibility match version. This argument will be ignored if the
         ///          given set is a <see cref="CharArraySet"/>. </param>
-        /// <param name="set">
+        /// <param name="collection">
         ///          a set to copy </param>
         /// <returns> A copy of the given set as a <see cref="CharArraySet"/>. If the given set
         ///         is a <see cref="CharArraySet"/> the <see cref="CharArrayDictionary{TValue}.ignoreCase"/> field as well as the
         ///         <see cref="CharArrayDictionary{TValue}.MatchVersion"/> will be preserved. </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        public static CharArraySet Copy<T>(LuceneVersion matchVersion, ICollection<T> set)
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public static CharArraySet Copy<T>(LuceneVersion matchVersion, IEnumerable<T> collection)
         {
-            if (set is null)
-                throw new ArgumentNullException(nameof(set));
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
 
-            if (set == Empty)
+            if (collection == Empty)
             {
                 return Empty;
             }
@@ -435,24 +435,24 @@ namespace Lucene.Net.Analysis.Util
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
-            if (set is CharArraySet source)
+            if (collection is CharArraySet source)
             {
                 return new CharArraySet(CharArrayDictionary.Copy<object>(source.map.MatchVersion, source.map));
             }
 
-            return CopySet(matchVersion, set, ignoreCase: false);
+            return CopySet(matchVersion, collection, ignoreCase: false);
         }
 
-        internal static CharArraySet CopySet<T>(LuceneVersion matchVersion, ICollection<T> set, bool ignoreCase)
+        internal static CharArraySet CopySet<T>(LuceneVersion matchVersion, IEnumerable<T> collection, bool ignoreCase)
         {
-            if (set is null)
-                throw new ArgumentNullException(nameof(set));
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
 
             // Convert the elements in the collection to string in the invariant context.
             string[] stringSet;
             using (var context = new CultureContext(CultureInfo.InvariantCulture))
             {
-                stringSet = set.Select(x => x.ToString()).ToArray(); // LUCENENET TODO: Performance - this approach can probably be improved
+                stringSet = collection.Select(x => x.ToString()).ToArray(); // LUCENENET TODO: Performance - this approach can probably be improved
             }
 
             return new CharArraySet(matchVersion, stringSet, ignoreCase);
