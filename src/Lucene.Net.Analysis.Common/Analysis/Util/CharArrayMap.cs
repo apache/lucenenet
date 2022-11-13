@@ -13,6 +13,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Util
@@ -164,7 +165,7 @@ namespace Lucene.Net.Analysis.Util
             foreach (var v in collection)
             {
                 // LUCENENET: S1699: Don't call call protected members in the constructor
-                if (ContainsKey(v.Key))
+                if (keys[GetSlot(v.Key)] != null) // ContainsKey
                 {
                     throw new ArgumentException("The key " + v.Key + " already exists in the dictionary");
                 }
