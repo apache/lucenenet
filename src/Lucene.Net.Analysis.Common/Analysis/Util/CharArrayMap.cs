@@ -300,20 +300,29 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Copies all items in the current <see cref="CharArrayDictionary{TValue}"/> to the passed in
-        /// <see cref="CharArrayDictionary{TValue}"/>.
+        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="arrayIndex"/>.
+        /// The array is assumed to already be dimensioned to fit the elements in this dictionary; otherwise a <see cref="ArgumentOutOfRangeException"/>
+        /// will be thrown.
         /// </summary>
-        /// <param name="map">The destination <see cref="CharArrayDictionary{TValue}"/> to copy the elements to.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is null.</exception>
-        public virtual void CopyTo(CharArrayDictionary<TValue> map)
+        /// <param name="array">The array to copy the items into.</param>
+        /// <param name="arrayIndex">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException">The number of elements in the source is greater
+        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
+        public virtual void CopyTo(KeyValuePair<ICharSequence, TValue>[] array, int arrayIndex)
         {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
+            if (count > array.Length - arrayIndex)
+                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
 
             using var iter = GetEnumerator();
-            while (iter.MoveNext())
+            for (int i = arrayIndex; iter.MoveNext(); i++)
             {
-                map.Put((char[])iter.CurrentKey.Clone(), iter.CurrentValue);
+                array[i] = new KeyValuePair<ICharSequence, TValue>(((char[])iter.CurrentKey.Clone()).AsCharSequence(), iter.CurrentValue);
             }
         }
 

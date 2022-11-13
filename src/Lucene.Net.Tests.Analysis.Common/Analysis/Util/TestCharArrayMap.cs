@@ -1,4 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
+using J2N.Collections;
+using J2N.Text;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
@@ -6,6 +8,8 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -554,6 +558,129 @@ namespace Lucene.Net.Analysis.Util
 
                 Assert.Throws<InvalidOperationException>(() => { var _ = ours.Current; });
             }
+        }
+
+        private class KvpStringEqualityComparer : IEqualityComparer<KeyValuePair<string, int?>>
+        {
+            public static readonly KvpStringEqualityComparer Instance = new KvpStringEqualityComparer();
+
+            public bool Equals(KeyValuePair<string, int?> x, KeyValuePair<string, int?> y)
+            {
+                return StringComparer.OrdinalIgnoreCase.Equals(x.Key, y.Key);
+            }
+            public int GetHashCode([DisallowNull] KeyValuePair<string, int?> obj)
+            {
+                return obj.Key is null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Key);
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestCopyTo_String_Int32()
+        {
+            var stopwords = new JCG.HashSet<KeyValuePair<string, int?>>(
+                TestCharArraySet.TEST_STOP_WORDS.Select(x => new KeyValuePair<string, int?>(key: x, value: 0)),
+                KvpStringEqualityComparer.Instance);
+            var target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, stopwords.Count, ignoreCase: false);
+            foreach (var kvp in stopwords)
+                target.Put(kvp.Key, kvp.Value);
+
+            // Full array
+            var array1 = new KeyValuePair<string, int?>[target.Count];
+            target.CopyTo(array1, 0);
+            assertTrue(stopwords.SetEquals(array1));
+
+            // Bounded to lower start index
+            int startIndex = 3;
+            var array2 = new KeyValuePair<string, int?>[target.Count + startIndex];
+            target.CopyTo(array2, startIndex);
+
+            assertEquals(default, array2[0]);
+            assertEquals(default, array2[1]);
+            assertEquals(default, array2[2]);
+            assertTrue(stopwords.IsProperSubsetOf(array2));
+            assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
+        }
+
+        private class KvpCharArrayEqualityComparer : IEqualityComparer<KeyValuePair<char[], int?>>
+        {
+            public static readonly KvpCharArrayEqualityComparer Instance = new KvpCharArrayEqualityComparer();
+
+            public bool Equals(KeyValuePair<char[], int?> x, KeyValuePair<char[], int?> y)
+            {
+                return ArrayEqualityComparer<char>.OneDimensional.Equals(x.Key, y.Key);
+            }
+            public int GetHashCode([DisallowNull] KeyValuePair<char[], int?> obj)
+            {
+                return ArrayEqualityComparer<char>.OneDimensional.GetHashCode(obj.Key);
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestCopyTo_CharArray_Int32()
+        {
+            var stopwords = new JCG.HashSet<KeyValuePair<char[], int?>>(
+                TestCharArraySet.TEST_STOP_WORDS.Select(x => new KeyValuePair<char[], int?>(key: x.ToCharArray(), value: 0)),
+                KvpCharArrayEqualityComparer.Instance);
+            var target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, stopwords.Count, ignoreCase: false);
+            foreach (var kvp in stopwords)
+                target.Put(kvp.Key, kvp.Value);
+
+            // Full array
+            var array1 = new KeyValuePair<char[], int?>[target.Count];
+            target.CopyTo(array1, 0);
+            assertTrue(stopwords.SetEquals(array1));
+
+            // Bounded to lower start index
+            int startIndex = 3;
+            var array2 = new KeyValuePair<char[], int?>[target.Count + startIndex];
+            target.CopyTo(array2, startIndex);
+
+            assertEquals(default, array2[0]);
+            assertEquals(default, array2[1]);
+            assertEquals(default, array2[2]);
+            assertTrue(stopwords.IsProperSubsetOf(array2));
+            assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
+        }
+
+        private class KvpCharSequenceEqualityComparer : IEqualityComparer<KeyValuePair<ICharSequence, int?>>
+        {
+            public static readonly KvpCharSequenceEqualityComparer Instance = new KvpCharSequenceEqualityComparer();
+
+            public bool Equals(KeyValuePair<ICharSequence, int?> x, KeyValuePair<ICharSequence, int?> y)
+            {
+                return StringComparer.OrdinalIgnoreCase.Equals(x.Key.ToString(), y.Key.ToString());
+            }
+            public int GetHashCode([DisallowNull] KeyValuePair<ICharSequence, int?> obj)
+            {
+                return obj.Key is null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Key.ToString());
+            }
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestCopyTo_ICharSequence_Int32()
+        {
+            var stopwords = new JCG.HashSet<KeyValuePair<ICharSequence, int?>>(
+                TestCharArraySet.TEST_STOP_WORDS.Select(x => new KeyValuePair<ICharSequence, int?>(key: new StringCharSequence(x), value: 0)),
+                KvpCharSequenceEqualityComparer.Instance);
+            var target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, stopwords.Count, ignoreCase: false);
+            foreach (var kvp in stopwords)
+                target.Put(kvp.Key, kvp.Value);
+
+            // Full array
+            var array1 = new KeyValuePair<ICharSequence, int?>[target.Count];
+            target.CopyTo(array1, 0);
+            assertTrue(stopwords.SetEquals(array1));
+
+            // Bounded to lower start index
+            int startIndex = 3;
+            var array2 = new KeyValuePair<ICharSequence, int?>[target.Count + startIndex];
+            target.CopyTo(array2, startIndex);
+
+            assertEquals(default, array2[0]);
+            assertEquals(default, array2[1]);
+            assertEquals(default, array2[2]);
+            assertTrue(stopwords.IsProperSubsetOf(array2));
+            assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
         }
     }
 }
