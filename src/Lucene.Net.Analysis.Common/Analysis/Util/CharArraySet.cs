@@ -78,19 +78,21 @@ namespace Lucene.Net.Analysis.Util
 
         internal readonly ICharArrayDictionary map;
 
+        private const int DefaultSetSize = 8; // LUCENENET specific
+
         /// <summary>
-        /// Create set with enough capacity to hold <paramref name="startSize"/> terms
+        /// Create set with enough capacity to hold <paramref name="capacity"/> terms
         /// </summary>
         /// <param name="matchVersion">
         ///          compatibility match version see <see cref="CharArraySet"/> for details. </param>
-        /// <param name="startSize">
+        /// <param name="capacity">
         ///          the initial capacity </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startSize"/> is less than zero.</exception>
-        public CharArraySet(LuceneVersion matchVersion, int startSize, bool ignoreCase)
-            : this(new CharArrayDictionary<object>(matchVersion, startSize, ignoreCase))
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="capacity"/> is less than zero.</exception>
+        public CharArraySet(LuceneVersion matchVersion, int capacity, bool ignoreCase)
+            : this(new CharArrayDictionary<object>(matchVersion, capacity, ignoreCase))
         {
         }
 
@@ -105,8 +107,8 @@ namespace Lucene.Net.Analysis.Util
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
-        public CharArraySet(LuceneVersion matchVersion, ICollection<string> collection, bool ignoreCase)
-            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
+        public CharArraySet(LuceneVersion matchVersion, IEnumerable<string> collection, bool ignoreCase)
+            : this(matchVersion, collection is ICollection<string> c ? c.Count : DefaultSetSize, ignoreCase)
         {
             // LUCENENET: Added guard clause
             if (collection is null)
@@ -133,8 +135,8 @@ namespace Lucene.Net.Analysis.Util
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
-        public CharArraySet(LuceneVersion matchVersion, ICollection<char[]> collection, bool ignoreCase)
-            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
+        public CharArraySet(LuceneVersion matchVersion, IEnumerable<char[]> collection, bool ignoreCase)
+            : this(matchVersion, collection is ICollection<char[]> c ? c.Count : DefaultSetSize, ignoreCase)
         {
             // LUCENENET: Added guard clause
             if (collection is null)
@@ -158,8 +160,8 @@ namespace Lucene.Net.Analysis.Util
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
-        public CharArraySet(LuceneVersion matchVersion, ICollection<ICharSequence> collection, bool ignoreCase)
-            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
+        public CharArraySet(LuceneVersion matchVersion, IEnumerable<ICharSequence> collection, bool ignoreCase)
+            : this(matchVersion, collection is ICollection<ICharSequence> c ? c.Count : DefaultSetSize, ignoreCase)
         {
             // LUCENENET: Added guard clause
             if (collection is null)
@@ -406,7 +408,7 @@ namespace Lucene.Net.Analysis.Util
         /// <para>
         /// <b>Note:</b> If you intend to create a copy of another <see cref="CharArraySet"/> where
         /// the <see cref="LuceneVersion"/> of the source set differs from its copy
-        /// <see cref="CharArraySet.CharArraySet(LuceneVersion, ICollection{string}, bool)"/> should be used instead.
+        /// <see cref="CharArraySet.CharArraySet(LuceneVersion, IEnumerable{string}, bool)"/> should be used instead.
         /// The <see cref="Copy{T}(LuceneVersion, ICollection{T})"/> method will preserve the <see cref="LuceneVersion"/> of the
         /// source set it is an instance of <see cref="CharArraySet"/>.
         /// </para>

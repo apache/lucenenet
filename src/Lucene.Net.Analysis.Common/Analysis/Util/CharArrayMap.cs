@@ -114,25 +114,25 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Create map with enough capacity to hold <paramref name="startSize"/> terms
+        /// Create map with enough capacity to hold <paramref name="capacity"/> terms
         /// </summary>
         /// <param name="matchVersion">
         ///          lucene compatibility version - see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
-        /// <param name="startSize">
+        /// <param name="capacity">
         ///          the initial capacity </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startSize"/> is less than zero.</exception>
-        public CharArrayDictionary(LuceneVersion matchVersion, int startSize, bool ignoreCase)
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="capacity"/> is less than zero.</exception>
+        public CharArrayDictionary(LuceneVersion matchVersion, int capacity, bool ignoreCase)
         {
             // LUCENENET: Added guard clause
-            if (startSize < 0)
-                throw new ArgumentOutOfRangeException(nameof(startSize), "Non-negative number required.");
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), "Non-negative number required.");
 
             this.ignoreCase = ignoreCase;
             var size = INIT_SIZE;
-            while (startSize + (startSize >> 2) > size)
+            while (capacity + (capacity >> 2) > size)
             {
                 size <<= 1;
             }
@@ -148,20 +148,20 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="matchVersion">
         ///          compatibility match version see <a href="#version">Version
         ///          note</a> above for details. </param>
-        /// <param name="c">
+        /// <param name="collection">
         ///          a map (<see cref="T:IDictionary{string, V}"/>) whose mappings to be copied </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
-        /// <exception cref="ArgumentNullException"><paramref name="c"/> is <c>null</c>.</exception>
-        public CharArrayDictionary(LuceneVersion matchVersion, IDictionary<string, TValue> c, bool ignoreCase)
-            : this(matchVersion, c?.Count ?? 0, ignoreCase)
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public CharArrayDictionary(LuceneVersion matchVersion, IDictionary<string, TValue> collection, bool ignoreCase)
+            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
         {
             // LUCENENET: Added guard clause
-            if (c is null)
-                throw new ArgumentNullException(nameof(c));
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
 
-            foreach (var v in c)
+            foreach (var v in collection)
             {
                 // LUCENENET: S1699: Don't call call protected members in the constructor
                 if (ContainsKey(v.Key))
