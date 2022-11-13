@@ -2026,7 +2026,10 @@ namespace Lucene.Net.Analysis.Util
                     }
                     sb.Append(iter1.CurrentKey);
                     sb.Append('=');
-                    sb.Append(iter1.CurrentValue);
+                    if (iter1.CurrentValue is not null)
+                        sb.Append(iter1.CurrentValue);
+                    else
+                        sb.Append("null");
                 }
             }
 
