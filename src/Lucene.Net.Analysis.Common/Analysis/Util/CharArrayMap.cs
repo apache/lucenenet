@@ -9,11 +9,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Util
@@ -58,7 +58,8 @@ namespace Lucene.Net.Analysis.Util
     /// 3.1 pass a <see cref="LuceneVersion"/> &lt; 3.1 to the constructors.
     /// </para>
     /// </summary>
-    public class CharArrayDictionary<TValue> : ICharArrayDictionary, IDictionary<string, TValue>
+    [DebuggerDisplay("Count = {Count}, Values = {ToString()}")]
+    public class CharArrayDictionary<TValue> : ICharArrayDictionary, IDictionary<string, TValue>, IDictionary, IReadOnlyDictionary<string, TValue>
     {
         // LUCENENET: Made public, renamed Empty
         /// <summary>
@@ -129,7 +130,7 @@ namespace Lucene.Net.Analysis.Util
         {
             // LUCENENET: Added guard clause
             if (capacity < 0)
-                throw new ArgumentOutOfRangeException(nameof(capacity), "Non-negative number required.");
+                throw new ArgumentOutOfRangeException(nameof(capacity), SR.ArgumentOutOfRange_NeedNonNegNum);
 
             this.ignoreCase = ignoreCase;
             var size = INIT_SIZE;
@@ -167,9 +168,9 @@ namespace Lucene.Net.Analysis.Util
                 // LUCENENET: S1699: Don't call call protected members in the constructor
                 if (keys[GetSlot(v.Key)] != null) // ContainsKey
                 {
-                    throw new ArgumentException("The key " + v.Key + " already exists in the dictionary");
+                    throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, v.Key));
                 }
-                PutImpl(v.Key, new MapValue(v.Value));
+                SetImpl(v.Key, new MapValue(v.Value));
             }
         }
 
@@ -208,9 +209,57 @@ namespace Lucene.Net.Analysis.Util
         {
             if (ContainsKey(key))
             {
-                throw new ArgumentException("The key " + key + " already exists in the dictionary");
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, key), nameof(key));
             }
-            Put(key, value);
+            Set(key, value);
+        }
+
+        /// <summary>
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="key"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">An element with <paramref name="key"/> already exists in the dictionary.</exception>
+        public virtual void Add(char[] key, TValue value)
+        {
+            if (ContainsKey(key))
+            {
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, key), nameof(key));
+            }
+            Set(key, value);
+        }
+
+        /// <summary>
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="key"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">An element with <paramref name="key"/> already exists in the dictionary.</exception>
+        public virtual void Add(ICharSequence key, TValue value)
+        {
+            if (ContainsKey(key))
+            {
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, key), nameof(key));
+            }
+            Set(key, value);
+        }
+
+        /// <summary>
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="key"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">An element with <paramref name="key"/> already exists in the dictionary.</exception>
+        public virtual void Add(object key, TValue value)
+        {
+            if (ContainsKey(key))
+            {
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, key), nameof(key));
+            }
+            Set(key, value);
         }
 
         /// <summary>
@@ -239,7 +288,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Not supported. 
+        /// Not supported.
         /// </summary>
         bool ICollection<KeyValuePair<string, TValue>>.Contains(KeyValuePair<string, TValue> item)
         {
@@ -247,81 +296,81 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="arrayIndex"/>.
+        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="index"/>.
         /// The array is assumed to already be dimensioned to fit the elements in this dictionary; otherwise a <see cref="ArgumentOutOfRangeException"/>
         /// will be thrown.
         /// </summary>
         /// <param name="array">The array to copy the items into.</param>
-        /// <param name="arrayIndex">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
+        /// <param name="index">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
-        public virtual void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
+        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
+        public virtual void CopyTo(KeyValuePair<string, TValue>[] array, int index)
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
-            if (count > array.Length - arrayIndex)
-                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (count > array.Length - index)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             using var iter = GetEnumerator();
-            for (int i = arrayIndex; iter.MoveNext(); i++)
+            for (int i = index; iter.MoveNext(); i++)
             {
                 array[i] = new KeyValuePair<string, TValue>(iter.CurrentKeyString, iter.CurrentValue);
             }
         }
 
         /// <summary>
-        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="arrayIndex"/>.
+        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="index"/>.
         /// The array is assumed to already be dimensioned to fit the elements in this dictionary; otherwise a <see cref="ArgumentOutOfRangeException"/>
         /// will be thrown.
         /// </summary>
         /// <param name="array">The array to copy the items into.</param>
-        /// <param name="arrayIndex">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
+        /// <param name="index">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
-        public virtual void CopyTo(KeyValuePair<char[], TValue>[] array, int arrayIndex)
+        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
+        public virtual void CopyTo(KeyValuePair<char[], TValue>[] array, int index)
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
-            if (count > array.Length - arrayIndex)
-                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (count > array.Length - index)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             using var iter = GetEnumerator();
-            for (int i = arrayIndex; iter.MoveNext(); i++)
+            for (int i = index; iter.MoveNext(); i++)
             {
                 array[i] = new KeyValuePair<char[], TValue>((char[])iter.CurrentKey.Clone(), iter.CurrentValue);
             }
         }
 
         /// <summary>
-        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="arrayIndex"/>.
+        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="index"/>.
         /// The array is assumed to already be dimensioned to fit the elements in this dictionary; otherwise a <see cref="ArgumentOutOfRangeException"/>
         /// will be thrown.
         /// </summary>
         /// <param name="array">The array to copy the items into.</param>
-        /// <param name="arrayIndex">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
+        /// <param name="index">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
-        public virtual void CopyTo(KeyValuePair<ICharSequence, TValue>[] array, int arrayIndex)
+        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
+        public virtual void CopyTo(KeyValuePair<ICharSequence, TValue>[] array, int index)
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
-            if (count > array.Length - arrayIndex)
-                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (count > array.Length - index)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             using var iter = GetEnumerator();
-            for (int i = arrayIndex; iter.MoveNext(); i++)
+            for (int i = index; iter.MoveNext(); i++)
             {
                 array[i] = new KeyValuePair<ICharSequence, TValue>(((char[])iter.CurrentKey.Clone()).AsCharSequence(), iter.CurrentValue);
             }
@@ -375,41 +424,29 @@ namespace Lucene.Net.Analysis.Util
 
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="o"/> <see cref="object.ToString()"/> is in the <see cref="Keys"/>; 
-        /// otherwise <c>false</c>
+        /// <c>true</c> if the <paramref name="text"/> <see cref="object.ToString()"/> (in the invariant culture)
+        /// is in the <see cref="Keys"/>;  otherwise <c>false</c>
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
-        public virtual bool ContainsKey(object o)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool ContainsKey(object text)
         {
-            if (o is null)
-                throw new ArgumentNullException(nameof(o), "o can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            if (text is null)
+                throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
 
-            if (o is string str)
+            if (text is string str)
                 return ContainsKey(str);
-            if (o is char[] charArray)
+            if (text is char[] charArray)
                 return ContainsKey(charArray, 0, charArray.Length);
-            if (o is StringCharSequence strCs)
+            if (text is StringCharSequence strCs)
                 return ContainsKey(strCs.Value ?? string.Empty);
-            if (o is CharArrayCharSequence charArrayCs)
+            if (text is CharArrayCharSequence charArrayCs)
                 return ContainsKey(charArrayCs.Value ?? Arrays.Empty<char>());
-            if (o is StringBuilderCharSequence stringBuilderCs)
+            if (text is StringBuilderCharSequence stringBuilderCs)
                 return ContainsKey(stringBuilderCs.Value?.ToString() ?? string.Empty);
-            if (o is ICharSequence cs)
+            if (text is ICharSequence cs)
                 return ContainsKey(cs.ToString());
 
-            // LUCENENET: We need value types to be represented using the invariant
-            // culture, so it is consistent regardless of the current culture. 
-            // It's easy to work out if this is a value type, but difficult
-            // to get to the ToString(IFormatProvider) overload of the type without
-            // a lot of special cases. It's easier just to change the culture of the 
-            // thread before calling ToString(), but we don't want that behavior to
-            // bleed into ContainsKey.
-            string s;
-            using (var context = new CultureContext(CultureInfo.InvariantCulture))
-            {
-                s = o.ToString();
-            }
-            return ContainsKey(s);
+            return ContainsKey(CharArrayDictionary.ConvertObjectToChars(text));
         }
 
         #region Get
@@ -463,41 +500,29 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Returns the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
-        public virtual TValue Get(object o)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual TValue Get(object text)
         {
-            if (o is null)
-                throw new ArgumentNullException(nameof(o));
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
-            if (o is string str)
+            if (text is string str)
                 return Get(str);
-            if (o is char[] charArray)
+            if (text is char[] charArray)
                 return Get(charArray, 0, charArray.Length);
-            if (o is StringCharSequence strCs)
+            if (text is StringCharSequence strCs)
                 return Get(strCs.Value ?? string.Empty);
-            if (o is CharArrayCharSequence charArrayCs)
+            if (text is CharArrayCharSequence charArrayCs)
                 return Get(charArrayCs.Value ?? Arrays.Empty<char>());
-            if (o is StringBuilderCharSequence stringBuilderCs)
+            if (text is StringBuilderCharSequence stringBuilderCs)
                 return Get(stringBuilderCs.Value?.ToString() ?? string.Empty);
-            if (o is ICharSequence cs)
+            if (text is ICharSequence cs)
                 return Get(cs.ToString());
 
-            // LUCENENET: We need value types to be represented using the invariant
-            // culture, so it is consistent regardless of the current culture. 
-            // It's easy to work out if this is a value type, but difficult
-            // to get to the ToString(IFormatProvider) overload of the type without
-            // a lot of special cases. It's easier just to change the culture of the 
-            // thread before calling ToString(), but we don't want that behavior to
-            // bleed into Get.
-            string s;
-            using (var context = new CultureContext(CultureInfo.InvariantCulture))
-            {
-                s = o.ToString();
-            }
-            return Get(s);
+            return Get(CharArrayDictionary.ConvertObjectToChars(text));
         }
 
         #endregion Get
@@ -593,23 +618,23 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Add the given mapping using the <see cref="object.ToString()"/> representation
-        /// of <paramref name="o"/> in the <see cref="CultureInfo.InvariantCulture"/>.
+        /// of <paramref name="text"/> in the <see cref="CultureInfo.InvariantCulture"/>.
         /// <para/>
         /// <b>Note:</b> The <see cref="this[object]"/> setter is more efficient than this method if
         /// the return value is not required.
         /// </summary>
-        /// <param name="o">A key with which the specified <paramref name="value"/> is associated.</param>
-        /// <param name="value">The value to be associated with the specified object <paramref name="o"/>.</param>
+        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified object <paramref name="text"/>.</param>
         /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
-        /// parameter if there was no mapping for <paramref name="o"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
-        public virtual TValue Put(object o, TValue value)
+        /// parameter if there was no mapping for <paramref name="text"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual TValue Put(object text, TValue value)
         {
             // LUCENENET: Added guard clause
-            if (o is null)
-                throw new ArgumentNullException(nameof(o));
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
-            MapValue oldValue = PutImpl(o, new MapValue(value));
+            MapValue oldValue = PutImpl(text, new MapValue(value));
             return (oldValue != null) ? oldValue.Value : default;
         }
 
@@ -681,43 +706,31 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private MapValue PutImpl(object o, MapValue value)
+        private MapValue PutImpl(object text, MapValue value)
         {
             // LUCENENET: Added guard clause
-            if (o is null)
-                throw new ArgumentNullException(nameof(o));
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087 
-            if (o is string str)
+            if (text is string str)
                 return PutImpl(str, value);
-            if (o is char[] charArray)
+            if (text is char[] charArray)
                 return PutImpl(charArray, value);
-            if (o is StringCharSequence strCs)
+            if (text is StringCharSequence strCs)
                 return PutImpl(strCs.Value ?? string.Empty, value);
-            if (o is CharArrayCharSequence charArrayCs)
+            if (text is CharArrayCharSequence charArrayCs)
                 return PutImpl(charArrayCs.Value ?? Arrays.Empty<char>(), value);
-            if (o is StringBuilderCharSequence stringBuilderCs)
+            if (text is StringBuilderCharSequence stringBuilderCs)
                 return PutImpl(stringBuilderCs.Value?.ToString() ?? string.Empty, value);
-            if (o is ICharSequence cs)
+            if (text is ICharSequence cs)
                 return PutImpl(cs.ToString(), value);
 
-            // LUCENENET: We need value types to be represented using the invariant
-            // culture, so it is consistent regardless of the current culture. 
-            // It's easy to work out if this is a value type, but difficult
-            // to get to the ToString(IFormatProvider) overload of the type without
-            // a lot of special cases. It's easier just to change the culture of the 
-            // thread before calling ToString(), but we don't want that behavior to
-            // bleed into PutImpl.
-            string s;
-            using (var context = new CultureContext(CultureInfo.InvariantCulture))
-            {
-                s = o.ToString();
-            }
-            return PutImpl(s, value);
+            return PutImpl(CharArrayDictionary.ConvertObjectToChars(text), value);
         }
 
         /// <summary>
@@ -841,64 +854,52 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Sets the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
-        private void Set(object o)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        private void Set(object text)
         {
-            if (o is null)
-                throw new ArgumentNullException(nameof(o));
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
-            if (o is string str)
+            if (text is string str)
             {
                 Set(str);
                 return;
             }
-            if (o is char[] charArray)
+            if (text is char[] charArray)
             {
                 Set(charArray);
                 return;
             }
-            if (o is StringCharSequence strCs)
+            if (text is StringCharSequence strCs)
             {
                 Set(strCs.Value ?? string.Empty);
                 return;
             }
-            if (o is CharArrayCharSequence charArrayCs)
+            if (text is CharArrayCharSequence charArrayCs)
             {
                 Set(charArrayCs.Value ?? Arrays.Empty<char>());
                 return;
             }
-            if (o is StringBuilderCharSequence stringBuilderCs)
+            if (text is StringBuilderCharSequence stringBuilderCs)
             {
                 Set(stringBuilderCs.Value?.ToString() ?? string.Empty);
                 return;
             }
-            if (o is ICharSequence cs)
+            if (text is ICharSequence cs)
             {
                 Set(cs.ToString());
                 return;
             }
 
-            // LUCENENET: We need value types to be represented using the invariant
-            // culture, so it is consistent regardless of the current culture. 
-            // It's easy to work out if this is a value type, but difficult
-            // to get to the ToString(IFormatProvider) overload of the type without
-            // a lot of special cases. It's easier just to change the culture of the 
-            // thread before calling ToString(), but we don't want that behavior to
-            // bleed into Get.
-            string s;
-            using (var context = new CultureContext(CultureInfo.InvariantCulture))
-            {
-                s = o.ToString();
-            }
-            Set(s);
+            Set(CharArrayDictionary.ConvertObjectToChars(text));
         }
 
         void ICharArrayDictionary.Set(char[] text) => Set(text);
         void ICharArrayDictionary.Set(ICharSequence text) => Set(text);
-        void ICharArrayDictionary.Set(object o) => Set(o);
+        void ICharArrayDictionary.Set(object text) => Set(text);
         void ICharArrayDictionary.Set(string text) => Set(text);
 
         #endregion Set
@@ -963,60 +964,48 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Sets the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(object o, TValue value)
+        private void Set(object text, TValue value)
         {
-            if (o is null)
-                throw new ArgumentNullException(nameof(o));
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
-            if (o is string str)
+            if (text is string str)
             {
                 Set(str, value);
                 return;
             }
-            if (o is char[] charArray)
+            if (text is char[] charArray)
             {
                 Set(charArray, 0, charArray.Length, value);
                 return;
             }
-            if (o is StringCharSequence strCs)
+            if (text is StringCharSequence strCs)
             {
                 Set(strCs.Value ?? string.Empty, value);
                 return;
             }
-            if (o is CharArrayCharSequence charArrayCs)
+            if (text is CharArrayCharSequence charArrayCs)
             {
                 Set(charArrayCs.Value ?? Arrays.Empty<char>(), value);
                 return;
             }
-            if (o is StringBuilderCharSequence stringBuilderCs)
+            if (text is StringBuilderCharSequence stringBuilderCs)
             {
                 Set(stringBuilderCs.Value?.ToString() ?? string.Empty, value);
                 return;
             }
-            if (o is ICharSequence cs)
+            if (text is ICharSequence cs)
             {
                 Set(cs.ToString(), value);
                 return;
             }
 
-            // LUCENENET: We need value types to be represented using the invariant
-            // culture, so it is consistent regardless of the current culture. 
-            // It's easy to work out if this is a value type, but difficult
-            // to get to the ToString(IFormatProvider) overload of the type without
-            // a lot of special cases. It's easier just to change the culture of the 
-            // thread before calling ToString(), but we don't want that behavior to
-            // bleed into Get.
-            string s;
-            using (var context = new CultureContext(CultureInfo.InvariantCulture))
-            {
-                s = o.ToString();
-            }
-            Set(s, value);
+            Set(CharArrayDictionary.ConvertObjectToChars(text), value);
         }
 
         #endregion Set (value)
@@ -1456,13 +1445,13 @@ namespace Lucene.Net.Analysis.Util
         private int GetHashCode(char[] text, int offset, int length)
         {
             if (text is null)
-                throw new ArgumentNullException(nameof(text), "text can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             if (offset < 0)
-                throw new ArgumentOutOfRangeException(nameof(offset), "Non-negative number required.");
+                throw new ArgumentOutOfRangeException(nameof(offset), SR.ArgumentOutOfRange_NeedNonNegNum);
             if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length), "Non-negative number required.");
+                throw new ArgumentOutOfRangeException(nameof(length), SR.ArgumentOutOfRange_NeedNonNegNum);
             if (offset > text.Length - length) // Checks for int overflow
-                throw new ArgumentException("Offset and length must refer to a location within the text.");
+                throw new ArgumentException(SR.ArgumentOutOfRange_IndexLength);
 
             int code = 0;
             int stop = offset + length;
@@ -1489,7 +1478,7 @@ namespace Lucene.Net.Analysis.Util
         private int GetHashCode(ICharSequence text)
         {
             if (text is null)
-                throw new ArgumentNullException(nameof(text), "text can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
 
             int code = 0;
             int length = text.Length;
@@ -1516,7 +1505,7 @@ namespace Lucene.Net.Analysis.Util
         private int GetHashCode(string text)
         {
             if (text is null)
-                throw new ArgumentNullException(nameof(text), "text can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
 
             int code = 0;
             int length = text.Length;
@@ -1595,7 +1584,7 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
         public virtual CharArrayDictionary<TValue> ToCharArrayDictionary()
         {
-            return new CharArrayDictionary<TValue>(this.matchVersion, this.Count, ignoreCase: true);
+            return CharArrayDictionary.Copy<TValue>(this.matchVersion, this as IDictionary<string, TValue>);
         }
 
         /// <summary>
@@ -1609,7 +1598,7 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
         public virtual CharArrayDictionary<TValue> ToCharArrayDictionary(LuceneVersion matchVersion)
         {
-            return new CharArrayDictionary<TValue>(matchVersion, this.Count, ignoreCase: true);
+            return CharArrayDictionary.Copy<TValue>(matchVersion, this as IDictionary<string, TValue>);
         }
 
         /// <summary>
@@ -1624,7 +1613,7 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
         public virtual CharArrayDictionary<TValue> ToCharArrayDictionary(LuceneVersion matchVersion, bool ignoreCase)
         {
-            return new CharArrayDictionary<TValue>(matchVersion, this.Count, ignoreCase);
+            return new CharArrayDictionary<TValue>(matchVersion, this, ignoreCase);
         }
 
         /// <summary>
@@ -1640,7 +1629,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
         /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="key"/>.</exception>
-        public virtual bool TryGetValue(char[] key, int offset, int length, out TValue value)
+        public virtual bool TryGetValue(char[] key, int offset, int length, [MaybeNullWhen(false)] out TValue value)
         {
             var val = values[GetSlot(key, offset, length)];
             if (val != null)
@@ -1661,7 +1650,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(char[] key, out TValue value)
+        public virtual bool TryGetValue(char[] key, [MaybeNullWhen(false)] out TValue value)
         {
             if (key is null)
                 throw new ArgumentNullException(nameof(key));
@@ -1685,7 +1674,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(ICharSequence key, out TValue value)
+        public virtual bool TryGetValue(ICharSequence key, [MaybeNullWhen(false)] out TValue value)
         {
             var val = values[GetSlot(key)];
             if (val != null)
@@ -1706,7 +1695,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(string key, out TValue value)
+        public virtual bool TryGetValue(string key, [MaybeNullWhen(false)] out TValue value)
         {
             var val = values[GetSlot(key)];
             if (val != null)
@@ -1727,7 +1716,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(object key, out TValue value)
+        public virtual bool TryGetValue(object key, [MaybeNullWhen(false)] out TValue value)
         {
             if (key is null)
                 throw new ArgumentNullException(nameof(key));
@@ -1748,19 +1737,7 @@ namespace Lucene.Net.Analysis.Util
             if (key is ICharSequence cs)
                 return TryGetValue(cs.ToString(), out value);
 
-            // LUCENENET: We need value types to be represented using the invariant
-            // culture, so it is consistent regardless of the current culture. 
-            // It's easy to work out if this is a value type, but difficult
-            // to get to the ToString(IFormatProvider) overload of the type without
-            // a lot of special cases. It's easier just to change the culture of the 
-            // thread before calling ToString(), but we don't want that behavior to
-            // bleed into ContainsKey.
-            string s;
-            using (var context = new CultureContext(CultureInfo.InvariantCulture))
-            {
-                s = key.ToString();
-            }
-            return TryGetValue(s, out value);
+            return TryGetValue(CharArrayDictionary.ConvertObjectToChars(key), out value);
         }
 
         /// <summary>
@@ -1829,8 +1806,10 @@ namespace Lucene.Net.Analysis.Util
 
         ICollection<string> IDictionary<string, TValue>.Keys => KeySet;
 
+        IEnumerable<string> IReadOnlyDictionary<string, TValue>.Keys => KeySet;
 
-        private volatile ICollection<TValue> valueSet;
+
+        private volatile ValueCollection valueSet;
 
         /// <summary>
         /// Gets a collection containing the values in the <see cref="CharArrayDictionary{TValue}"/>.
@@ -1838,7 +1817,7 @@ namespace Lucene.Net.Analysis.Util
         /// overrides <see cref="object.ToString()"/> in order to display a string 
         /// representation of the values.
         /// </summary>
-        public ICollection<TValue> Values
+        public ValueCollection Values
         {
             get
             {
@@ -1850,58 +1829,107 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
+        ICollection<TValue> IDictionary<string, TValue>.Values => Values;
+
+        IEnumerable<TValue> IReadOnlyDictionary<string, TValue>.Values => Values;
+
         #region Nested Class: ValueCollection
 
         /// <summary>
-        /// LUCENENET specific class that represents the values in the <see cref="CharArrayDictionary{TValue}"/>.
+        /// Class that represents the values in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
-        private sealed class ValueCollection : ICollection<TValue>
+        // LUCENENET specific
+        [DebuggerDisplay("Count = {Count}, Values = {ToString()}")]
+        public sealed class ValueCollection : ICollection<TValue>, ICollection, IReadOnlyCollection<TValue>
         {
-            private readonly CharArrayDictionary<TValue> outerInstance;
+            private readonly CharArrayDictionary<TValue> dictionary;
 
-            public ValueCollection(CharArrayDictionary<TValue> outerInstance)
+            public ValueCollection(CharArrayDictionary<TValue> dictionary)
             {
-                this.outerInstance = outerInstance;
+                this.dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
             }
 
-            public int Count => outerInstance.Count;
+            public int Count => dictionary.Count;
 
             bool ICollection<TValue>.IsReadOnly => true;
 
+            bool ICollection.IsSynchronized => false;
+
+            object ICollection.SyncRoot => ((ICollection)dictionary).SyncRoot;
+
             void ICollection<TValue>.Add(TValue item)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ValueCollectionSet);
             }
 
             void ICollection<TValue>.Clear()
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ValueCollectionSet);
             }
 
             [SuppressMessage("Style", "IDE0002:Name can be simplified", Justification = "This is a false warning.")]
             public bool Contains(TValue item)
             {
-                for (int i = 0; i < outerInstance.values.Length; i++)
+                for (int i = 0; i < dictionary.values.Length; i++)
                 {
-                    var value = outerInstance.values[i];
+                    var value = dictionary.values[i];
                     if (JCG.EqualityComparer<TValue>.Equals(value, item))
                         return true;
                 }
                 return false;
             }
-
-            public void CopyTo(TValue[] array, int arrayIndex)
+#nullable enable
+            public void CopyTo(TValue[] array, int index)
             {
-                using var iter = GetEnumerator();
-                for (int i = arrayIndex; iter.MoveNext(); i++)
+                if (array is null)
+                    throw new ArgumentNullException(nameof(array));
+                if (index < 0)
+                    throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+                if (index > array.Length || dictionary.Count > array.Length - index)
+                    throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+
+                foreach (var entry in this)
+                    array[index++] = entry;
+            }
+
+
+            void ICollection.CopyTo(Array array, int index)
+            {
+                if (array is null)
+                    throw new ArgumentNullException(nameof(array));
+                if (array.Rank != 1)
+                    throw new ArgumentException(SR.Arg_RankMultiDimNotSupported, nameof(array));
+                if (array.GetLowerBound(0) != 0)
+                    throw new ArgumentException(SR.Arg_NonZeroLowerBound, nameof(array));
+                if (index < 0)
+                    throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+                if (array.Length - index < dictionary.Count)
+                    throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+
+                if (array is TValue[] values)
                 {
-                    array[i] = iter.Current;
+                    CopyTo(values, index);
+                }
+                else
+                {
+                    try
+                    {
+                        object?[] objects = (object?[])array;
+                        foreach (var entry in this)
+                            objects[index++] = entry;
+                    }
+                    catch (ArrayTypeMismatchException)
+                    {
+                        throw new ArgumentException(SR.Argument_InvalidArrayType, nameof(array));
+                    }
                 }
             }
 
+#nullable restore
+
             public Enumerator GetEnumerator()
             {
-                return new Enumerator(outerInstance);
+                return new Enumerator(dictionary);
             }
 
             IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() => GetEnumerator();
@@ -1910,7 +1938,7 @@ namespace Lucene.Net.Analysis.Util
 
             bool ICollection<TValue>.Remove(TValue item)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ValueCollectionSet);
             }
 
             public override string ToString()
@@ -1928,27 +1956,33 @@ namespace Lucene.Net.Analysis.Util
                     {
                         sb.Append(',').Append(' ');
                     }
-                    sb.Append(value.ToString());
+                    if (value is not null)
+                        sb.Append(value.ToString());
+                    else
+                        sb.Append("null");
                 }
 
                 return sb.Append(']').ToString();
             }
 
+            #region Nested Struct: Enumerator
+
             /// <summary>
-            /// LUCENENET specific class to enumerate the values in the <see cref="ValueCollection"/>.
+            /// Struct to enumerate the values in the <see cref="ValueCollection"/>.
             /// </summary>
-            public sealed class Enumerator : IEnumerator<TValue>
+            // LUCENENET specific
+            public struct Enumerator : IEnumerator<TValue>, IEnumerator
             {
                 private readonly CharArrayDictionary<TValue>.Enumerator entryIterator;
 
-                public Enumerator(CharArrayDictionary<TValue> outerInstance)
+                internal Enumerator(CharArrayDictionary<TValue> dictionary) // LUCENENET specific - marked internal to match .NET collections
                 {
-                    this.entryIterator = new CharArrayDictionary<TValue>.Enumerator(outerInstance, !outerInstance.IsReadOnly);
+                    this.entryIterator = dictionary.GetEnumerator();
                 }
 
                 public TValue Current => entryIterator.CurrentValue;
 
-                object IEnumerator.Current => Current;
+                object IEnumerator.Current => entryIterator.CurrentValue;
 
                 public void Dispose()
                 {
@@ -1960,13 +1994,17 @@ namespace Lucene.Net.Analysis.Util
                     return entryIterator.MoveNext();
                 }
 
-                public void Reset()
+                private void Reset()
                 {
-                    entryIterator.Reset();
+                    ((IEnumerator)entryIterator).Reset();
                 }
 
-                public bool HasNext => entryIterator.HasNext;
+                void IEnumerator.Reset() => Reset();
+
+                internal bool HasNext => entryIterator.HasNext;
             }
+
+            #endregion
         }
 
         #endregion Nested Class: ValueCollection
@@ -1978,12 +2016,14 @@ namespace Lucene.Net.Analysis.Util
 
         #endregion For .NET Support LUCENENET
 
+#nullable enable
+
         /// <summary>
         /// Returns an enumerator that iterates through the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
-        public virtual Enumerator GetEnumerator()
+        public Enumerator GetEnumerator()
         {
-            return new Enumerator(this, !IsReadOnly);
+            return new Enumerator(this, Enumerator.KeyValuePair);
         }
 
         IEnumerator<KeyValuePair<string, TValue>> IEnumerable<KeyValuePair<string, TValue>>.GetEnumerator() => GetEnumerator();
@@ -1991,6 +2031,16 @@ namespace Lucene.Net.Analysis.Util
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         ICharArrayDictionaryEnumerator ICharArrayDictionary.GetEnumerator() => GetEnumerator();
+
+        IDictionaryEnumerator IDictionary.GetEnumerator()
+        {
+            return new Enumerator(this, Enumerator.DictEntry);
+        }
+
+        void IDictionary.Remove(object key)
+        {
+            throw UnsupportedOperationException.Create();
+        }
 
         bool IDictionary<string, TValue>.Remove(string key)
         {
@@ -2001,6 +2051,110 @@ namespace Lucene.Net.Analysis.Util
         {
             throw UnsupportedOperationException.Create();
         }
+
+        void ICollection.CopyTo(Array array, int index)
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+            if (array.Rank != 1)
+                throw new ArgumentException(SR.Arg_RankMultiDimNotSupported);
+            if (array.GetLowerBound(0) != 0)
+                throw new ArgumentException(SR.Arg_NonZeroLowerBound);
+            if (index < 0 || index > array.Length)
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (array.Length - index < Count)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+
+            if (array is KeyValuePair<string, TValue>[] strings)
+            {
+                CopyTo(strings, index);
+            }
+            else if (array is KeyValuePair<char[], TValue>[] chars)
+            {
+                CopyTo(chars, index);
+            }
+            else if (array is KeyValuePair<ICharSequence, TValue>[] charSequences)
+            {
+                CopyTo(charSequences, index);
+            }
+            else if (array is DictionaryEntry[] dictEntryArray)
+            {
+                foreach (var item in this)
+                    dictEntryArray[index++] = new DictionaryEntry(item.Key, item.Value);
+            }
+            else
+            {
+                if (!(array is object[] objects))
+                {
+                    throw new ArgumentException(SR.Argument_InvalidArrayType);
+                }
+                try
+                {
+                    foreach (var item in this)
+                        objects[index++] = item;
+                }
+                catch (ArrayTypeMismatchException)
+                {
+                    throw new ArgumentException(SR.Argument_InvalidArrayType);
+                }
+            }
+        }
+
+        bool IDictionary.IsFixedSize => false;
+
+        bool IDictionary.IsReadOnly => IsReadOnly;
+
+        ICollection IDictionary.Keys => Keys;
+
+        ICollection IDictionary.Values => Values;
+
+        bool ICollection.IsSynchronized => false;
+
+        object ICollection.SyncRoot => this;
+
+        object? IDictionary.this[object key]
+        {
+            get => Get(key);
+            set
+            {
+                if (key is null)
+                    throw new ArgumentNullException(nameof(key));
+
+                if (value is null && default(TValue) != null)
+                    throw new ArgumentNullException(nameof(value));
+
+                char[] tempKey = CharArrayDictionary.ConvertObjectToChars(key);
+                try
+                {
+                    this[tempKey] = (TValue)value!;
+                }
+                catch (InvalidCastException)
+                {
+                    throw new ArgumentException(string.Format(SR.Arg_WrongType, value, typeof(TValue)), nameof(value));
+                }
+            }
+        }
+
+        void IDictionary.Add(object key, object? value)
+        {
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
+            char[] tempKey = CharArrayDictionary.ConvertObjectToChars(key);
+
+            try
+            {
+                Add(tempKey, (TValue)value!);
+            }
+            catch (InvalidCastException)
+            {
+                throw new ArgumentException(string.Format(SR.Arg_WrongType, value, typeof(TValue)), nameof(value));
+            }
+        }
+
+        bool IDictionary.Contains(object key) => ContainsKey(key);
+
+#nullable restore
 
         /// <summary>
         /// Gets the number of key/value pairs contained in the <see cref="CharArrayDictionary{TValue}"/>.
@@ -2064,9 +2218,10 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        #region Nested Class: KeyCollection
+#region Nested Class: KeyCollection
 
         // LUCENENET: This was an anonymous class in Java
+        [DebuggerDisplay("Count = {Count}, Values = {ToString()}")]
         private sealed class KeyCollection : CharArraySet
         {
             internal KeyCollection(CharArrayDictionary<TValue> map)
@@ -2078,32 +2233,37 @@ namespace Lucene.Net.Analysis.Util
 
             public override bool Add(object o)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
             }
             public override bool Add(ICharSequence text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
             }
             public override bool Add(string text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
             }
             public override bool Add(char[] text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
             }
         }
 
-        #endregion Nested Class: KeyCollection
+#endregion Nested Class: KeyCollection
 
-        #region Nested Class: Enumerator
+#region Nested Class: Enumerator
 
         /// <summary>
         /// Public enumerator class so efficient properties are exposed to users.
         /// </summary>
-        public class Enumerator : IEnumerator<KeyValuePair<string, TValue>>, ICharArrayDictionaryEnumerator
+        // LUCENENET: An attempt was made to make this into a struct, but since it has mutable state that didn't work. So, this should remain a class.
+        public sealed class Enumerator : IEnumerator<KeyValuePair<string, TValue>>, IDictionaryEnumerator, ICharArrayDictionaryEnumerator
         {
-            private readonly CharArrayDictionary<TValue> outerInstance;
+            private readonly CharArrayDictionary<TValue> dictionary;
+            private readonly int getEnumeratorRetType;  // What should Enumerator.Current return?
+
+            internal const int KeyValuePair = 1;
+            internal const int DictEntry = 2;
 
             internal int pos = -1;
             internal int lastPos;
@@ -2112,41 +2272,42 @@ namespace Lucene.Net.Analysis.Util
             private int version; // LUCENENET specific - track when the enumerator is broken by mutating the state of the original collection
             private bool notStartedOrEnded; // LUCENENET specific
 
-            internal Enumerator(CharArrayDictionary<TValue> outerInstance, bool allowModify)
+            internal Enumerator(CharArrayDictionary<TValue> dictionary, int getEnumeratorRetType)
             {
-                this.outerInstance = outerInstance;
-                this.version = outerInstance.version;
-                this.allowModify = allowModify;
+                this.dictionary = dictionary;
+                this.getEnumeratorRetType = getEnumeratorRetType;
+                this.version = dictionary.version;
+                this.allowModify = !dictionary.IsReadOnly;
                 this.notStartedOrEnded = true;
                 GoNext();
             }
 
-            private void GoNext() // LUCENENET: Changed accessibility from internal to private
+            private void GoNext()
             {
                 lastPos = pos;
                 pos++;
-                while (pos < outerInstance.keys.Length && outerInstance.keys[pos] is null)
+                while (pos < dictionary.keys.Length && dictionary.keys[pos] is null)
                 {
                     pos++;
                 }
             }
 
-            internal bool HasNext => pos < outerInstance.keys.Length;
+            internal bool HasNext => pos < dictionary.keys.Length;
 
             /// <summary>
             /// Gets the current key as a <see cref="CharArrayCharSequence"/>.
             /// </summary>
             // LUCENENET specific - quick access to ICharSequence interface
-            public virtual ICharSequence CurrentKeyCharSequence
+            public ICharSequence CurrentKeyCharSequence
             {
                 get
                 {
                     if (notStartedOrEnded)
-                        throw new InvalidOperationException("Enumeration has either not started or has already finished.");
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
 
-                    char[] key = outerInstance.keys[lastPos];
+                    char[] key = dictionary.keys[lastPos];
                     if (key is null)
-                        throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
                     return key.AsCharSequence();
                 }
             }
@@ -2156,16 +2317,16 @@ namespace Lucene.Net.Analysis.Util
             /// </summary>
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             [WritableArray]
-            public virtual char[] CurrentKey
+            public char[] CurrentKey
             {
                 get
                 {
                     if (notStartedOrEnded)
-                        throw new InvalidOperationException("Enumeration has either not started or has already finished.");
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
 
-                    char[] key = outerInstance.keys[lastPos];
+                    char[] key = dictionary.keys[lastPos];
                     if (key is null)
-                        throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
                     return key;
                 }
             }
@@ -2173,16 +2334,16 @@ namespace Lucene.Net.Analysis.Util
             /// <summary>
             /// Gets the current key as a newly created <see cref="string"/> object.
             /// </summary>
-            public virtual string CurrentKeyString
+            public string CurrentKeyString
             {
                 get
                 {
                     if (notStartedOrEnded)
-                        throw new InvalidOperationException("Enumeration has either not started or has already finished.");
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
 
-                    char[] key = outerInstance.keys[lastPos];
+                    char[] key = dictionary.keys[lastPos];
                     if (key is null)
-                        throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
                     return new string(key);
                 }
             }
@@ -2190,17 +2351,17 @@ namespace Lucene.Net.Analysis.Util
             /// <summary>
             /// Gets the value associated with the current key.
             /// </summary>
-            public virtual TValue CurrentValue
+            public TValue CurrentValue
             {
                 get
                 {
                     if (notStartedOrEnded)
-                        throw new InvalidOperationException("Enumeration has either not started or has already finished.");
-                    char[] key = outerInstance.keys[lastPos];
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+                    char[] key = dictionary.keys[lastPos];
                     if (key is null)
-                        throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
 
-                    var val = outerInstance.values[lastPos];
+                    var val = dictionary.values[lastPos];
                     return val != null ? val.Value : default;
                 }
             }
@@ -2209,21 +2370,21 @@ namespace Lucene.Net.Analysis.Util
             /// Sets the value associated with the current key.
             /// </summary>
             /// <returns>Returns the value prior to the update.</returns>
-            public virtual TValue SetValue(TValue value)
+            public TValue SetValue(TValue value)
             {
                 if (notStartedOrEnded)
-                    throw new InvalidOperationException("Enumeration has either not started or has already finished.");
+                    throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
                 if (!allowModify)
-                    throw UnsupportedOperationException.Create();
+                    throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
-                MapValue current = outerInstance.values[lastPos];
+                MapValue current = dictionary.values[lastPos];
                 if (current is null)
-                    throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+                    throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
 
                 TValue old = current.Value;
                 // LUCENENET specific - increment the versions of both this enumerator
                 // and the original collection so only this enumerator instance isn't broken.
-                outerInstance.version++;
+                dictionary.version++;
                 version++;
                 current.Value = value;
                 return old;
@@ -2231,22 +2392,16 @@ namespace Lucene.Net.Analysis.Util
 
             // LUCENENET: Next() and Remove() methods eliminated here
 
-            #region Added for better .NET support LUCENENET
+#region Added for better .NET support LUCENENET
             public void Dispose()
-            {
-                Dispose(true);
-                GC.SuppressFinalize(this);
-            }
-
-            protected virtual void Dispose(bool disposing)
             {
                 // nothing to do
             }
 
-            public virtual bool MoveNext()
+            public bool MoveNext()
             {
-                if (version != outerInstance.version)
-                    throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
+                if (version != dictionary.version)
+                    throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
 
                 if (!HasNext)
                 {
@@ -2258,34 +2413,97 @@ namespace Lucene.Net.Analysis.Util
                 return true;
             }
 
-            public virtual void Reset()
+            private void Reset()
             {
+                if (version != dictionary.version)
+                    throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+
                 pos = -1;
                 notStartedOrEnded = true;
                 GoNext();
             }
 
-            public virtual KeyValuePair<string, TValue> Current
+            void IEnumerator.Reset() => Reset();
+
+            void ICharArrayDictionaryEnumerator.Reset() => Reset();
+
+            public KeyValuePair<string, TValue> Current
             {
                 get
                 {
                     if (notStartedOrEnded)
-                        throw new InvalidOperationException("Enumeration has either not started or has already finished.");
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
 
-                    char[] key = outerInstance.keys[lastPos];
+                    char[] key = dictionary.keys[lastPos];
                     if (key is null)
-                        throw new InvalidOperationException("Collection was modified after the enumerator was instantiated.");
-                    MapValue value = outerInstance.values[lastPos];
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+                    MapValue value = dictionary.values[lastPos];
                     return new KeyValuePair<string, TValue>(new string(key), value.Value);
                 }
             }
 
-            object IEnumerator.Current => Current;
+            object IEnumerator.Current
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
 
-            #endregion
+                    char[] key = dictionary.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+                    MapValue value = dictionary.values[lastPos];
+
+                    if (getEnumeratorRetType == DictEntry)
+                    {
+                        return new DictionaryEntry(new string(key), value.Value);
+                    }
+                    else
+                    {
+                        return new KeyValuePair<string, TValue>(new string(key), value.Value);
+                    }
+                }
+            }
+
+            object IDictionaryEnumerator.Key
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    return Current.Key;
+                }
+            }
+
+            object IDictionaryEnumerator.Value
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    return Current.Value;
+                }
+            }
+
+            DictionaryEntry IDictionaryEnumerator.Entry
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    return new DictionaryEntry(Current.Key, Current.Value);
+                }
+            }
+
+            bool ICharArrayDictionaryEnumerator.NotStartedOrEnded => notStartedOrEnded;
+
+#endregion
         }
 
-        #endregion Nested Class: Enumerator
+#endregion Nested Class: Enumerator
 
         // LUCENENET NOTE: The Java Lucene type MapEntry was removed here because it is not possible 
         // to inherit the value type KeyValuePair{TKey, TValue} in .NET.
@@ -2338,6 +2556,7 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     internal interface ICharArrayDictionaryEnumerator : IDisposable
     {
+        bool NotStartedOrEnded { get; }
         bool MoveNext();
         ICharSequence CurrentKeyCharSequence { get; }
         string CurrentKeyString { get; }
@@ -2411,7 +2630,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (map is null)
             {
-                throw new ArgumentNullException(nameof(map), "Given map is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(map)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (map == CharArrayDictionary<TValue>.Empty || map.Count == 0)
             {
@@ -2432,7 +2651,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (map is null)
             {
-                throw new ArgumentNullException(nameof(map), "Given map is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(map)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (map == CharArrayDictionary<TValue>.Empty || map.Count == 0)
             {
@@ -2444,6 +2663,8 @@ namespace Lucene.Net.Analysis.Util
             }
             return new CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>(map);
         }
+
+        #region Nested Class: UnmodifiableCharArrayDictionary<TValue>
 
         // package private CharArraySet instanceof check in CharArraySet
         internal class UnmodifiableCharArrayDictionary<TValue> : CharArrayDictionary<TValue>
@@ -2458,47 +2679,47 @@ namespace Lucene.Net.Analysis.Util
 
             public override void Clear()
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
             public override TValue Put(char[] text, TValue val)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
             public override TValue Put(ICharSequence text, TValue val)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
             public override TValue Put(string text, TValue val)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
             public override TValue Put(object o, TValue val)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
             public override bool Put(char[] text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
             public override bool Put(ICharSequence text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
             public override bool Put(string text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
             public override bool Put(object o)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
             // LUCENENET: Removed CreateEntrySet() method - we use IsReadOnly to control whether it can be written to
@@ -2509,40 +2730,84 @@ namespace Lucene.Net.Analysis.Util
 
             public override void Add(string key, TValue value)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
             public override void Add(KeyValuePair<string, TValue> item)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
             public override TValue this[char[] key, int offset, int length]
             {
                 get => base[key, offset, length];
-                set => throw UnsupportedOperationException.Create();
+                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
             public override TValue this[char[] key]
             {
                 get => base[key];
-                set => throw UnsupportedOperationException.Create();
+                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
             public override TValue this[ICharSequence key]
             {
                 get => base[key];
-                set => throw UnsupportedOperationException.Create();
+                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
             public override TValue this[string key]
             {
                 get => base[key];
-                set => throw UnsupportedOperationException.Create();
+                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
             public override TValue this[object key]
             {
                 get => base[key];
-                set => throw UnsupportedOperationException.Create();
+                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IDictionary<string, TValue> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IDictionary<char[], TValue> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IDictionary<ICharSequence, TValue> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IDictionary<object, TValue> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IEnumerable<KeyValuePair<string, TValue>> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IEnumerable<KeyValuePair<char[], TValue>> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IEnumerable<KeyValuePair<ICharSequence, TValue>> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IEnumerable<KeyValuePair<object, TValue>> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
             #endregion
         }
+
+        #endregion
+
+        #region Nested Class: EmptyCharArrayDictionary<V>
 
         /// <summary>
         /// Empty <see cref="UnmodifiableCharArrayDictionary{V}"/> optimized for speed.
@@ -2621,6 +2886,25 @@ namespace Lucene.Net.Analysis.Util
 
                 return default;
             }
+        }
+
+        #endregion
+
+        internal static char[] ConvertObjectToChars<T>(T key)
+        {
+            if (key is null)
+                return Arrays.Empty<char>();
+
+            // LUCENENET: We need value types to be represented using the invariant
+            // culture, so it is consistent regardless of the current culture. 
+            // It's easy to work out if this is a value type, but difficult
+            // to get to the ToString(IFormatProvider) overload of the type without
+            // a lot of special cases. It's easier just to change the culture of the 
+            // thread before calling ToString(), but we don't want that behavior to
+            // bleed into other methods in case they are culture sensitive.
+
+            using var context = new CultureContext(CultureInfo.InvariantCulture);
+            return key.ToString().ToCharArray();
         }
     }
 
@@ -3968,7 +4252,7 @@ namespace Lucene.Net.Analysis.Util
             if (dictionary is null)
                 throw new ArgumentNullException(nameof(dictionary));
 
-            return new CharArrayDictionary<TValue>(matchVersion, dictionary.Count, ignoreCase: true);
+            return CharArrayDictionary.Copy<TValue>(matchVersion, dictionary);
         }
 
         /// <summary>
@@ -3991,5 +4275,32 @@ namespace Lucene.Net.Analysis.Util
 
             return new CharArrayDictionary<TValue>(matchVersion, dictionary.Count, ignoreCase);
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific. Just a class to make error messages easier to manage in one place.
+    /// Ideally, these would be in resources so they can be localized (eventually), but at least
+    /// this half-measure will make that somewhat easier to do and is guaranteed not to cause
+    /// performance issues.
+    /// </summary>
+    internal static class SR
+    {
+        public const string Arg_ArrayPlusOffTooSmall = "Destination array is not long enough to copy all the items in the collection. Check array index and length.";
+        public const string Arg_NonZeroLowerBound = "The lower bound of target array must be zero.";
+        public const string Arg_RankMultiDimNotSupported = "Only single dimensional arrays are supported for the requested action.";
+        public const string Arg_WrongType = "The value '{0}' is not of type '{1}' and cannot be used in this generic collection.";
+
+        public const string Argument_AddingDuplicate = "An item with the same key has already been added. Key: {0}";
+        public const string Argument_InvalidArrayType = "Target array type is not compatible with the type of items in the collection.";
+
+        public const string ArgumentOutOfRange_IndexLength = "Index and length must refer to a location within the string.";
+        public const string ArgumentOutOfRange_NeedNonNegNum = "Non-negative number required.";
+
+        public const string InvalidOperation_EnumFailedVersion = "Collection was modified after the enumerator was instantiated.";
+        public const string InvalidOperation_EnumOpCantHappen = "Enumeration has either not started or has already finished.";
+
+        public const string NotSupported_KeyCollectionSet = "Mutating a key collection derived from a dictionary is not allowed.";
+        public const string NotSupported_ReadOnlyCollection = "Collection is read-only.";
+        public const string NotSupported_ValueCollectionSet = "Mutating a value collection derived from a dictionary is not allowed.";
     }
 }

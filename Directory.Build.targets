@@ -26,6 +26,7 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ASPNETCORE_ENDPOINT_CONFIG</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_READONLYSET</DefineConstants>
 
   </PropertyGroup>
   

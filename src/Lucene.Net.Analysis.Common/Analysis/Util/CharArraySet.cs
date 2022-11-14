@@ -1,5 +1,4 @@
 ﻿// Lucene version compatibility level 4.8.1
-using J2N.Globalization;
 using J2N.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -7,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -64,14 +64,18 @@ namespace Lucene.Net.Analysis.Util
     /// The <see cref="GetEnumerator()"/> returns an <see cref="T:IEnumerator{char[]}"/>
     /// </para>
     /// </summary>
-    public class CharArraySet : ISet<string>
+    [DebuggerDisplay("Count = {Count}, Values = {ToString()}")]
+    public class CharArraySet : ISet<string>, ICollection<string>, ICollection, IReadOnlyCollection<string>
+#if FEATURE_READONLYSET
+        , IReadOnlySet<string>
+#endif
     {
         [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
         public static readonly CharArraySet Empty = new CharArraySet(CharArrayDictionary<string>.Empty);
 
-        [Obsolete("Use Empty instead. This field will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        [Obsolete("Use Empty instead. This field will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
         public static CharArraySet EMPTY_SET => Empty;
 
         // LUCENENET: PLACEHOLDER moved to CharArrayDictionary
@@ -304,6 +308,12 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public virtual bool IsReadOnly => map.IsReadOnly;
 
+        bool ICollection<string>.IsReadOnly => map.IsReadOnly;
+
+        bool ICollection.IsSynchronized => false;
+
+        object ICollection.SyncRoot => this;
+
         /// <summary>
         /// Returns an unmodifiable <see cref="CharArraySet"/>. This allows to provide
         /// unmodifiable views of internal sets for "read-only" use.
@@ -318,7 +328,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (set is null)
             {
-                throw new ArgumentNullException(nameof(set), "Given set is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(set)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (set == Empty)
             {
@@ -448,20 +458,26 @@ namespace Lucene.Net.Analysis.Util
             if (collection is null)
                 throw new ArgumentNullException(nameof(collection));
 
-            // Convert the elements in the collection to string in the invariant context.
-            string[] stringSet;
-            using (var context = new CultureContext(CultureInfo.InvariantCulture))
+            if (collection is IEnumerable<string> stringCollection)
             {
-                stringSet = collection.Select(x => x.ToString()).ToArray(); // LUCENENET TODO: Performance - this approach can probably be improved
+                return new CharArraySet(matchVersion, stringCollection, ignoreCase);
+            }
+            else if (collection is IEnumerable<char[]> charArrayCollection)
+            {
+                return new CharArraySet(matchVersion, charArrayCollection, ignoreCase);
+            }
+            else if (collection is IEnumerable<ICharSequence> charSequenceCollection)
+            {
+                return new CharArraySet(matchVersion, charSequenceCollection, ignoreCase);
             }
 
-            return new CharArraySet(matchVersion, stringSet, ignoreCase);
+            return new CharArraySet(matchVersion, collection.Select(x => CharArrayDictionary.ConvertObjectToChars(x)), ignoreCase);
         }
 
         /// <summary>
         /// Returns an <see cref="IEnumerator"/> for newly created <see cref="string"/> or existing <see cref="T:char[]"/> instances in this set.
         /// </summary>
-        public virtual Enumerator GetEnumerator()
+        public Enumerator GetEnumerator()
         {
             // LUCENENET specific - Use custom Enumerator to prevent endless recursion
             return new Enumerator(map);
@@ -471,12 +487,12 @@ namespace Lucene.Net.Analysis.Util
 
         IEnumerator<string> IEnumerable<string>.GetEnumerator() => GetEnumerator();
 
-        #region Nested Class: Enumerator
+        #region Nested Struct: Enumerator
 
         /// <summary>
-        /// Public enumerator class so efficient properties are exposed to users. LUCENENET specific.
+        /// Public enumerator struct so efficient properties are exposed to users. LUCENENET specific.
         /// </summary>
-        public sealed class Enumerator : IEnumerator<string>
+        public readonly struct Enumerator : IEnumerator<string>, IEnumerator
         {
             private readonly ICharArrayDictionaryEnumerator enumerator;
 
@@ -504,7 +520,16 @@ namespace Lucene.Net.Analysis.Util
             /// </summary>
             public string Current => enumerator.CurrentKeyString;
 
-            object IEnumerator.Current => Current;
+            object IEnumerator.Current
+            {
+                get
+                {
+                    if (enumerator.NotStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    return Current;
+                }
+            }
 
             public void Dispose()
             {
@@ -516,13 +541,10 @@ namespace Lucene.Net.Analysis.Util
                 return enumerator.MoveNext();
             }
 
-            public void Reset()
-            {
-                enumerator.Reset();
-            }
+            void IEnumerator.Reset() => enumerator.Reset();
         }
 
-        #endregion Nested Class: Enumerator
+        #endregion Nested Struct: Enumerator
 
         /// <summary>
         /// Returns a string that represents the current object. (Inherited from <see cref="object"/>.)
@@ -540,7 +562,11 @@ namespace Lucene.Net.Analysis.Util
                 {
                     sb.Append(", ");
                 }
-                sb.Append(iter.CurrentValue); // LUCENENET specific - avoid string allocations by using iter.CurrentValue instead of iter.Current
+                var currentValue = iter.CurrentValue; // LUCENENET specific - avoid string allocations by using iter.CurrentValue instead of iter.Current
+                if (currentValue is not null)
+                    sb.Append(currentValue);
+                else
+                    sb.Append("null");
             }
             return sb.Append(']').ToString();
         }
@@ -605,14 +631,14 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <param name="index">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
-        public void CopyTo(string[] array, int arrayIndex)
+        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
+        public void CopyTo(string[] array, int index)
         {
-            CopyTo(array, arrayIndex, map.Count);
+            CopyTo(array, index, map.Count);
         }
 
         /// <summary>
@@ -621,30 +647,30 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <param name="index">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> or <paramref name="count"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> or <paramref name="count"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="arrayIndex"/> is greater than the length of the destination <paramref name="array"/>.
+        /// <paramref name="index"/> is greater than the length of the destination <paramref name="array"/>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// <paramref name="count"/> is greater than the available space from the <paramref name="arrayIndex"/>
+        /// <paramref name="count"/> is greater than the available space from the <paramref name="index"/>
         /// to the end of the destination <paramref name="array"/>.
         /// </exception>
-        internal void CopyTo(string[] array, int arrayIndex, int count)
+        internal void CopyTo(string[] array, int index, int count)
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
             if (count < 0)
-                throw new ArgumentOutOfRangeException(nameof(count), count, "Non-negative number required.");
-            if (arrayIndex > array.Length || count > array.Length - arrayIndex)
-                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+                throw new ArgumentOutOfRangeException(nameof(count), count, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (index > array.Length || count > array.Length - index)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             using var iter = GetEnumerator();
-            for (int i = arrayIndex, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
+            for (int i = index, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
             {
                 array[i] = iter.Current;
             }
@@ -670,14 +696,14 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The jagged <see cref="T:char[][]"/> array or <see cref="IList{T}"/> of type char[] that is the destination of the
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <param name="index">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
-        public void CopyTo(IList<char[]> array, int arrayIndex)
+        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
+        public void CopyTo(IList<char[]> array, int index)
         {
-            CopyTo(array, arrayIndex, map.Count);
+            CopyTo(array, index, map.Count);
         }
 
         /// <summary>
@@ -686,30 +712,30 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The jagged <see cref="T:char[][]"/> array or <see cref="IList{T}"/> of type char[] that is the destination of the
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <param name="index">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> or <paramref name="count"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> or <paramref name="count"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="arrayIndex"/> is greater than the length of the destination <paramref name="array"/>.
+        /// <paramref name="index"/> is greater than the length of the destination <paramref name="array"/>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// <paramref name="count"/> is greater than the available space from the <paramref name="arrayIndex"/>
+        /// <paramref name="count"/> is greater than the available space from the <paramref name="index"/>
         /// to the end of the destination <paramref name="array"/>.
         /// </exception>
-        internal void CopyTo(IList<char[]> array, int arrayIndex, int count)
+        internal void CopyTo(IList<char[]> array, int index, int count)
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
             if (count < 0)
-                throw new ArgumentOutOfRangeException(nameof(count), count, "Non-negative number required.");
-            if (arrayIndex > array.Count || count > array.Count - arrayIndex)
-                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+                throw new ArgumentOutOfRangeException(nameof(count), count, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (index > array.Count || count > array.Count - index)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             using var iter = GetEnumerator();
-            for (int i = arrayIndex, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
+            for (int i = index, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
             {
                 array[i] = (char[])iter.CurrentValue.Clone();
             }
@@ -735,14 +761,14 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <param name="index">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
-        public void CopyTo(ICharSequence[] array, int arrayIndex)
+        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
+        public void CopyTo(ICharSequence[] array, int index)
         {
-            CopyTo(array, arrayIndex, map.Count);
+            CopyTo(array, index, map.Count);
         }
 
         /// <summary>
@@ -751,34 +777,93 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <param name="index">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> or <paramref name="count"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> or <paramref name="count"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="arrayIndex"/> is greater than the length of the destination <paramref name="array"/>.
+        /// <paramref name="index"/> is greater than the length of the destination <paramref name="array"/>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// <paramref name="count"/> is greater than the available space from the <paramref name="arrayIndex"/>
+        /// <paramref name="count"/> is greater than the available space from the <paramref name="index"/>
         /// to the end of the destination <paramref name="array"/>.
         /// </exception>
-        internal void CopyTo(ICharSequence[] array, int arrayIndex, int count)
+        internal void CopyTo(ICharSequence[] array, int index, int count)
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "Non-negative number required.");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
             if (count < 0)
-                throw new ArgumentOutOfRangeException(nameof(count), count, "Non-negative number required.");
-            if (arrayIndex > array.Length || count > array.Length - arrayIndex)
-                throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
+                throw new ArgumentOutOfRangeException(nameof(count), count, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (index > array.Length || count > array.Length - index)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             using var iter = GetEnumerator();
-            for (int i = arrayIndex, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
+            for (int i = index, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
             {
                 array[i] = ((char[])iter.CurrentValue.Clone()).AsCharSequence();
             }
         }
+
+#nullable enable
+        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
+        void ICollection.CopyTo(Array array, int index)
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+            if (array.Rank != 1)
+                throw new ArgumentException(SR.Arg_RankMultiDimNotSupported, nameof(array));
+
+            if (array.GetLowerBound(0) != 0)
+            {
+                throw new ArgumentException(SR.Arg_NonZeroLowerBound, nameof(array));
+            }
+
+            if (index < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            }
+
+            if (array.Length - index < Count)
+            {
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+            }
+
+            if (array is string[] strings)
+            {
+                CopyTo(strings, index);
+            }
+            else if (array is IList<char[]> chars)
+            {
+                CopyTo(chars, index);
+            }
+            else if (array is ICharSequence[] charSequences)
+            {
+                CopyTo(charSequences, index);
+            }
+            else
+            {
+                object?[]? objects = array as object[];
+                if (objects == null)
+                {
+                    throw new ArgumentException(SR.Argument_InvalidArrayType, nameof(array));
+                }
+
+                try
+                {
+
+                    foreach (var entry in this)
+                        objects[index++] = entry;
+                }
+                catch (ArrayTypeMismatchException)
+                {
+                    throw new ArgumentException(SR.Argument_InvalidArrayType, nameof(array));
+                }
+            }
+        }
+
+#nullable restore
 
         bool ICollection<string>.Remove(string item)
         {
@@ -950,7 +1035,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -973,7 +1058,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -996,7 +1081,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -1024,7 +1109,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -1035,14 +1120,8 @@ namespace Lucene.Net.Analysis.Util
                     continue;
                 }
 
-                // Convert the item to a string in the invariant culture
-                string stringItem;
-                using (var context = new CultureContext(CultureInfo.InvariantCulture))
-                {
-                    stringItem = item.ToString();
-                }
-
-                modified |= Add(stringItem);
+                // Convert the item to chars in the invariant culture
+                modified |= Add(CharArrayDictionary.ConvertObjectToChars(item));
             }
             return modified;
         }
@@ -1051,21 +1130,21 @@ namespace Lucene.Net.Analysis.Util
         // Java implmentation's methods.
         void ISet<string>.IntersectWith(IEnumerable<string> other)
         {
-            throw UnsupportedOperationException.Create();
+            throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
         }
 
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
         void ISet<string>.ExceptWith(IEnumerable<string> other)
         {
-            throw UnsupportedOperationException.Create();
+            throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
         }
 
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
         void ISet<string>.SymmetricExceptWith(IEnumerable<string> other)
         {
-            throw UnsupportedOperationException.Create();
+            throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
         }
 
         /// <summary>
@@ -1170,7 +1249,6 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection to compare to the current <see cref="CharArraySet"/> object.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
-        [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         public virtual bool IsSubsetOf<T>(IEnumerable<T> other)
         {
             if (other is null)
@@ -2213,7 +2291,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (set.IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -2243,12 +2321,12 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (set.IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
             {
-                if (set.Add("" + item))
+                if (set.Add(item.ToString(CultureInfo.InvariantCulture)))
                 {
                     modified = true;
                 }
@@ -2273,7 +2351,7 @@ namespace Lucene.Net.Analysis.Util
         //    if (other is null)
         //        throw new ArgumentNullException(nameof(other));
         //    if (set.IsReadOnly)
-        //        throw UnsupportedOperationException.Create("CharArraySet is readonly");
+        //        throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
         //    bool modified = false;
         //    foreach (var item in other)
@@ -2303,7 +2381,7 @@ namespace Lucene.Net.Analysis.Util
         //    if (other is null)
         //        throw new ArgumentNullException(nameof(other));
         //    if (set.IsReadOnly)
-        //        throw UnsupportedOperationException.Create("CharArraySet is readonly");
+        //        throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
         //    bool modified = false;
         //    foreach (var item in other)
@@ -2333,7 +2411,7 @@ namespace Lucene.Net.Analysis.Util
         //    if (other is null)
         //        throw new ArgumentNullException(nameof(other));
         //    if (set.IsReadOnly)
-        //        throw UnsupportedOperationException.Create("CharArraySet is readonly");
+        //        throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
         //    bool modified = false;
         //    foreach (var item in other)
@@ -2363,7 +2441,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (set.IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -2393,7 +2471,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (set.IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -2424,7 +2502,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (set.IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -2454,7 +2532,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (set.IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -2485,7 +2563,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (set.IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -2516,7 +2594,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (set.IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -2547,7 +2625,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
             if (set.IsReadOnly)
-                throw UnsupportedOperationException.Create("CharArraySet is readonly");
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
             bool modified = false;
             foreach (var item in other)
@@ -2560,7 +2638,7 @@ namespace Lucene.Net.Analysis.Util
             return modified;
         }
 
-#endregion
+        #endregion
     }
 
     /// <summary>
