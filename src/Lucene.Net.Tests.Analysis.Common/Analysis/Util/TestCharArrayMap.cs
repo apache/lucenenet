@@ -61,9 +61,9 @@ namespace Lucene.Net.Analysis.Util
                 // add it again with the string method
                 assertEquals(val, map.Put(keyStr, val));
 
-                assertEquals(val, map.Get(key, 0, key.Length));
-                assertEquals(val, map.Get(key));
-                assertEquals(val, map.Get(keyStr));
+                assertEquals(val, map[key, 0, key.Length]); // LUCENENET: Changed Get() to this[]
+                assertEquals(val, map[key]); // LUCENENET: Changed Get() to this[]
+                assertEquals(val, map[keyStr]); // LUCENENET: Changed Get() to this[]
 
                 assertEquals(hmap.Count, map.size());
             }
@@ -127,9 +127,9 @@ namespace Lucene.Net.Analysis.Util
                 KeyValuePair<string, int?> entry = iter1.Current;
                 object key = entry.Key;
                 int? val = entry.Value;
-                assertEquals(cm.Get(key), val);
+                assertEquals(cm[key], val); // LUCENENET: Changed Get() to this[]
                 iter1.SetValue(val * 100);
-                assertEquals(val * 100, (int)cm.Get(key));
+                assertEquals(val * 100, (int)cm[key]); // LUCENENET: Changed Get() to this[]
                 n++;
             }
             assertEquals(hm.Count, n);
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Util
                 int? val = iter2.Current.Value;
                 assertEquals(hm[keyc], val);
                 iter2.SetValue(val * 100);
-                assertEquals(val * 100, (int)cm.Get(keyc));
+                assertEquals(val * 100, (int)cm[keyc]); // LUCENENET: Changed Get() to this[]
                 n++;
             }
             assertEquals(hm.Count, n);
@@ -166,15 +166,15 @@ namespace Lucene.Net.Analysis.Util
             int size = map.Count;
             assertEquals(2, size);
             assertTrue(map.ContainsKey("foo"));
-            assertEquals(1, map.Get("foo"));
+            assertEquals(1, map["foo"]); // LUCENENET: Changed Get() to this[]
             assertTrue(map.ContainsKey("bar"));
-            assertEquals(2, map.Get("bar"));
+            assertEquals(2, map["bar"]); // LUCENENET: Changed Get() to this[]
 
             map = map.AsReadOnly();
             assertEquals("Map size changed due to unmodifiableMap call", size, map.Count);
             var NOT_IN_MAP = "SirGallahad";
             assertFalse("Test String already exists in map", map.ContainsKey(NOT_IN_MAP));
-            assertNull("Test String already exists in map", map.Get(NOT_IN_MAP));
+            assertFalse("Test String already exists in map", map.TryGetValue(NOT_IN_MAP, out int? _)); // LUCENENET: Changed Get() to TryGetValue()
 
             try
             {
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
-                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertFalse("Test String has been added to unmodifiable map", map.TryGetValue(NOT_IN_MAP, out int? _)); // LUCENENET: Changed Get() to TryGetValue()
                 assertEquals("Size of unmodifiable map has changed", size, map.Count);
             }
 
@@ -198,7 +198,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
-                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertFalse("Test String has been added to unmodifiable map", map.TryGetValue(NOT_IN_MAP, out int? _)); // LUCENENET: Changed Get() to TryGetValue()
                 assertEquals("Size of unmodifiable map has changed", size, map.Count);
             }
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
-                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertFalse("Test String has been added to unmodifiable map", map.TryGetValue(NOT_IN_MAP, out int? _)); // LUCENENET: Changed Get() to TryGetValue()
                 assertEquals("Size of unmodifiable map has changed", size, map.Count);
             }
 
@@ -225,7 +225,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
-                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertFalse("Test String has been added to unmodifiable map", map.TryGetValue(NOT_IN_MAP, out int? _)); // LUCENENET: Changed Get() to TryGetValue()
                 assertEquals("Size of unmodifiable map has changed", size, map.Count);
             }
 
@@ -238,7 +238,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
-                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertFalse("Test String has been added to unmodifiable map", map.TryGetValue(NOT_IN_MAP, out int? _)); // LUCENENET: Changed Get() to TryGetValue()
                 assertEquals("Size of unmodifiable map has changed", size, map.Count);
             }
 
@@ -251,7 +251,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
-                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertFalse("Test String has been added to unmodifiable map", map.TryGetValue(NOT_IN_MAP, out int? _)); // LUCENENET: Changed Get() to TryGetValue()
                 assertEquals("Size of unmodifiable map has changed", size, map.Count);
             }
 
@@ -310,7 +310,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
-                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertFalse("Test String has been added to unmodifiable map", map.TryGetValue(NOT_IN_MAP, out int? _)); // LUCENENET: Changed Get() to TryGetValue()
                 assertEquals("Size of unmodifiable map has changed", size, map.size());
             }
 
@@ -323,14 +323,14 @@ namespace Lucene.Net.Analysis.Util
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable map", map.ContainsKey(NOT_IN_MAP));
-                assertNull("Test String has been added to unmodifiable map", map.Get(NOT_IN_MAP));
+                assertFalse("Test String has been added to unmodifiable map", map.TryGetValue(NOT_IN_MAP, out int? _)); // LUCENENET: Changed Get() to TryGetValue()
                 assertEquals("Size of unmodifiable map has changed", size, map.size());
             }
 
             assertTrue(map.ContainsKey("foo"));
-            assertEquals(1, map.Get("foo"));
+            assertEquals(1, map["foo"]); // LUCENENET: Changed Get() to this[]
             assertTrue(map.ContainsKey("bar"));
-            assertEquals(2, map.Get("bar"));
+            assertEquals(2, map["bar"]); // LUCENENET: Changed Get() to this[]
         }
 
         [Test]

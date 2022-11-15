@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -99,17 +100,20 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         internal class MapValue
         {
+            [AllowNull]
             private TValue value = default;
+
+            [AllowNull]
             public TValue Value
             {
-                get => value;
+                get => value!; // We are lying here - if this is a reference type, it could be null. But we don't care because IDictionary<TKey, TValue> doesn't care.
                 set => this.value = value;
             }
 
             public MapValue()
             { }
 
-            public MapValue(TValue value)
+            public MapValue([AllowNull] TValue value)
             {
                 this.value = value;
             }
@@ -318,7 +322,7 @@ namespace Lucene.Net.Analysis.Util
             using var iter = GetEnumerator();
             for (int i = index; iter.MoveNext(); i++)
             {
-                array[i] = new KeyValuePair<string, TValue>(iter.CurrentKeyString, iter.CurrentValue);
+                array[i] = new KeyValuePair<string, TValue>(iter.CurrentKeyString, iter.CurrentValue!);
             }
         }
 
@@ -345,7 +349,7 @@ namespace Lucene.Net.Analysis.Util
             using var iter = GetEnumerator();
             for (int i = index; iter.MoveNext(); i++)
             {
-                array[i] = new KeyValuePair<char[], TValue>((char[])iter.CurrentKey.Clone(), iter.CurrentValue);
+                array[i] = new KeyValuePair<char[], TValue>((char[])iter.CurrentKey.Clone(), iter.CurrentValue!);
             }
         }
 
@@ -372,7 +376,7 @@ namespace Lucene.Net.Analysis.Util
             using var iter = GetEnumerator();
             for (int i = index; iter.MoveNext(); i++)
             {
-                array[i] = new KeyValuePair<ICharSequence, TValue>(((char[])iter.CurrentKey.Clone()).AsCharSequence(), iter.CurrentValue);
+                array[i] = new KeyValuePair<ICharSequence, TValue>(((char[])iter.CurrentKey.Clone()).AsCharSequence(), iter.CurrentValue!);
             }
         }
 
@@ -458,50 +462,79 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
         /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
-        public virtual TValue Get(char[] text, int offset, int length)
+        /// <exception cref="KeyNotFoundException">The effective key is not found in the dictionary.</exception>
+        internal virtual TValue Get(char[] text, int offset, int length, bool throwIfNotFound = true)
         {
-            var value = values[GetSlot(text, offset, length)];
-            return (value != null) ? value.Value : default;
+            MapValue? value = values[GetSlot(text, offset, length)];
+            if (value is not null)
+            {
+                return value.Value;
+            }
+            if (throwIfNotFound)
+                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text, offset, length)));
+            return default!;
         }
 
         /// <summary>
         /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        public virtual TValue Get(char[] text)
+        /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
+        internal virtual TValue Get(char[] text, bool throwIfNotFound = true)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            var value = values[GetSlot(text, 0, text.Length)];
-            return (value != null) ? value.Value : default;
+            MapValue? value = values[GetSlot(text, 0, text.Length)];
+            if (value is not null)
+            {
+                return value.Value;
+            }
+            if (throwIfNotFound)
+                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text)));
+            return default!;
         }
 
         /// <summary>
         /// Returns the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        public virtual TValue Get(ICharSequence text)
+        /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
+        internal virtual TValue Get(ICharSequence text, bool throwIfNotFound = true)
         {
             var value = values[GetSlot(text)];
-            return (value != null) ? value.Value : default;
+            if (value is not null)
+            {
+                return value.Value;
+            }
+            if (throwIfNotFound)
+                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
+            return default!;
         }
 
         /// <summary>
         /// Returns the value of the mapping of the chars inside this <see cref="string"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        public virtual TValue Get(string text)
+        /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
+        internal virtual TValue Get(string text, bool throwIfNotFound)
         {
             var value = values[GetSlot(text)];
-            return (value != null) ? value.Value : default;
+            if (value is not null)
+            {
+                return value.Value;
+            }
+            if (throwIfNotFound)
+                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
+            return default!;
         }
 
         /// <summary>
         /// Returns the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        public virtual TValue Get(object text)
+        /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
+        internal virtual TValue Get(object text, bool throwIfNotFound = true)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -510,19 +543,19 @@ namespace Lucene.Net.Analysis.Util
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
             if (text is string str)
-                return Get(str);
+                return Get(str, throwIfNotFound);
             if (text is char[] charArray)
-                return Get(charArray, 0, charArray.Length);
+                return Get(charArray, 0, charArray.Length, throwIfNotFound);
             if (text is StringCharSequence strCs)
-                return Get(strCs.Value ?? string.Empty);
+                return Get(strCs.Value ?? string.Empty, throwIfNotFound);
             if (text is CharArrayCharSequence charArrayCs)
-                return Get(charArrayCs.Value ?? Arrays.Empty<char>());
+                return Get(charArrayCs.Value ?? Arrays.Empty<char>(), throwIfNotFound);
             if (text is StringBuilderCharSequence stringBuilderCs)
-                return Get(stringBuilderCs.Value?.ToString() ?? string.Empty);
+                return Get(stringBuilderCs.Value?.ToString() ?? string.Empty, throwIfNotFound);
             if (text is ICharSequence cs)
-                return Get(cs.ToString());
+                return Get(cs.ToString(), throwIfNotFound);
 
-            return Get(CharArrayDictionary.ConvertObjectToChars(text));
+            return Get(CharArrayDictionary.ConvertObjectToChars(text), throwIfNotFound);
         }
 
         #endregion Get
@@ -606,13 +639,14 @@ namespace Lucene.Net.Analysis.Util
         /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
         /// parameter if there was no mapping for <paramref name="text"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [return: MaybeNull]
         public virtual TValue Put(ICharSequence text, TValue value)
         {
             // LUCENENET: Added guard clause
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            MapValue oldValue = PutImpl(text, new MapValue(value)); // could be more efficient
+            MapValue? oldValue = PutImpl(text, new MapValue(value)); // could be more efficient
             return (oldValue != null) ? oldValue.Value : default;
         }
 
@@ -628,13 +662,14 @@ namespace Lucene.Net.Analysis.Util
         /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
         /// parameter if there was no mapping for <paramref name="text"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [return: MaybeNull]
         public virtual TValue Put(object text, TValue value)
         {
             // LUCENENET: Added guard clause
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            MapValue oldValue = PutImpl(text, new MapValue(value));
+            MapValue? oldValue = PutImpl(text, new MapValue(value));
             return (oldValue != null) ? oldValue.Value : default;
         }
 
@@ -649,13 +684,14 @@ namespace Lucene.Net.Analysis.Util
         /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
         /// parameter if there was no mapping for <paramref name="text"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [return: MaybeNull]
         public virtual TValue Put(string text, TValue value)
         {
             // LUCENENET: Added guard clause
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            MapValue oldValue = PutImpl(text, new MapValue(value));
+            MapValue? oldValue = PutImpl(text, new MapValue(value));
             return (oldValue != null) ? oldValue.Value : default;
         }
 
@@ -672,13 +708,14 @@ namespace Lucene.Net.Analysis.Util
         /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
         /// parameter if there was no mapping for <paramref name="text"/>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [return: MaybeNull]
         public virtual TValue Put(char[] text, TValue value)
         {
             // LUCENENET: Added guard clause
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            MapValue oldValue = PutImpl(text, new MapValue(value));
+            MapValue? oldValue = PutImpl(text, new MapValue(value));
             return (oldValue != null) ? oldValue.Value : default;
         }
 
@@ -691,7 +728,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private MapValue PutImpl(ICharSequence text, MapValue value)
+        private MapValue? PutImpl(ICharSequence text, MapValue value)
         {
             // LUCENENET: Added guard clause
             if (text is null)
@@ -708,7 +745,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private MapValue PutImpl(object text, MapValue value)
+        private MapValue? PutImpl(object text, MapValue value)
         {
             // LUCENENET: Added guard clause
             if (text is null)
@@ -738,7 +775,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private MapValue PutImpl(string text, MapValue value)
+        private MapValue? PutImpl(string text, MapValue value)
         {
             // LUCENENET: Added guard clause
             if (text is null)
@@ -777,7 +814,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private MapValue PutImpl(char[] text, MapValue value)
+        private MapValue? PutImpl(char[] text, MapValue value)
         {
             // LUCENENET: Added guard clause
             if (text is null)
@@ -914,7 +951,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
         /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(char[] text, int offset, int length, TValue value)
+        private void Set(char[] text, int offset, int length, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -927,7 +964,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(char[] text, TValue value)
+        private void Set(char[] text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -940,7 +977,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(ICharSequence text, TValue value)
+        private void Set(ICharSequence text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -953,7 +990,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(string text, TValue value)
+        private void Set(string text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -966,7 +1003,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(object text, TValue value)
+        private void Set(object text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -1380,7 +1417,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="obj">Another dictionary to test the values of</param>
         /// <returns><c>true</c> if the given object is an <see cref="T:IDictionary{object, V}"/> that contains
         /// the same key value pairs as the current map</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null)
                 return false;
@@ -1391,30 +1428,26 @@ namespace Lucene.Net.Analysis.Util
 
             if (obj is CharArrayDictionary<TValue> charArrayDictionary)
             {
-                using (var iter = charArrayDictionary.GetEnumerator())
+                using var iter = charArrayDictionary.GetEnumerator();
+                while (iter.MoveNext())
                 {
-                    while (iter.MoveNext())
-                    {
-                        if (!this.TryGetValue(iter.CurrentKey, out TValue value))
-                            return false;
+                    if (!this.TryGetValue(iter.CurrentKey, out TValue? value))
+                        return false;
 
-                        if (!JCG.EqualityComparer<TValue>.Default.Equals(value, iter.Current.Value))
-                            return false;
-                    }
+                    if (!JCG.EqualityComparer<TValue>.Default.Equals(value!, iter.Current.Value))
+                        return false;
                 }
             }
             else
             {
-                using (var iter = other.GetEnumerator())
+                using var iter = other.GetEnumerator();
+                while (iter.MoveNext())
                 {
-                    while (iter.MoveNext())
-                    {
-                        if (!this.TryGetValue(iter.Current.Key, out TValue value))
-                            return false;
+                    if (!this.TryGetValue(iter.Current.Key, out TValue? value))
+                        return false;
 
-                        if (!JCG.EqualityComparer<TValue>.Default.Equals(value, iter.Current.Value))
-                            return false;
-                    }
+                    if (!JCG.EqualityComparer<TValue>.Default.Equals(value!, iter.Current.Value))
+                        return false;
                 }
             }
 
@@ -1435,7 +1468,8 @@ namespace Lucene.Net.Analysis.Util
                 while (iter.MoveNext())
                 {
                     hash = (hash * PRIME) ^ iter.CurrentKeyString.GetHashCode();
-                    hash = (hash * PRIME) ^ JCG.EqualityComparer<TValue>.Default.GetHashCode(iter.CurrentValue);
+                    TValue? value = iter.CurrentValue;
+                    hash = (hash * PRIME) ^ (value is null ? 0 : JCG.EqualityComparer<TValue>.Default.GetHashCode(value));
                 }
             }
             return hash;
@@ -1584,7 +1618,7 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
         public virtual CharArrayDictionary<TValue> ToCharArrayDictionary()
         {
-            return CharArrayDictionary.Copy<TValue>(this.matchVersion, this as IDictionary<string, TValue>);
+            return CharArrayDictionary.Copy(this.matchVersion, (IDictionary<string, TValue>)this);
         }
 
         /// <summary>
@@ -1598,7 +1632,7 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
         public virtual CharArrayDictionary<TValue> ToCharArrayDictionary(LuceneVersion matchVersion)
         {
-            return CharArrayDictionary.Copy<TValue>(matchVersion, this as IDictionary<string, TValue>);
+            return CharArrayDictionary.Copy(matchVersion, (IDictionary<string, TValue>)this);
         }
 
         /// <summary>
@@ -1629,7 +1663,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
         /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="key"/>.</exception>
-        public virtual bool TryGetValue(char[] key, int offset, int length, [MaybeNullWhen(false)] out TValue value)
+        public virtual bool TryGetValue(char[] key, int offset, int length, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             var val = values[GetSlot(key, offset, length)];
             if (val != null)
@@ -1650,7 +1684,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(char[] key, [MaybeNullWhen(false)] out TValue value)
+        public virtual bool TryGetValue(char[] key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (key is null)
                 throw new ArgumentNullException(nameof(key));
@@ -1674,7 +1708,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(ICharSequence key, [MaybeNullWhen(false)] out TValue value)
+        public virtual bool TryGetValue(ICharSequence key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             var val = values[GetSlot(key)];
             if (val != null)
@@ -1695,15 +1729,15 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(string key, [MaybeNullWhen(false)] out TValue value)
+        public virtual bool TryGetValue(string key, [NotNullWhen(returnValue: false)] out TValue value)
         {
             var val = values[GetSlot(key)];
             if (val != null)
             {
-                value = val.Value;
+                value = val.Value!;
                 return true;
             }
-            value = default;
+            value = default!;
             return false;
         }
 
@@ -1716,7 +1750,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(object key, [MaybeNullWhen(false)] out TValue value)
+        public virtual bool TryGetValue(object key, [NotNullWhen(returnValue: false)] out TValue value)
         {
             if (key is null)
                 throw new ArgumentNullException(nameof(key));
@@ -1809,7 +1843,7 @@ namespace Lucene.Net.Analysis.Util
         IEnumerable<string> IReadOnlyDictionary<string, TValue>.Keys => KeySet;
 
 
-        private volatile ValueCollection valueSet;
+        private volatile ValueCollection? valueSet;
 
         /// <summary>
         /// Gets a collection containing the values in the <see cref="CharArrayDictionary{TValue}"/>.
@@ -1878,7 +1912,7 @@ namespace Lucene.Net.Analysis.Util
                 }
                 return false;
             }
-#nullable enable
+
             public void CopyTo(TValue[] array, int index)
             {
                 if (array is null)
@@ -1889,9 +1923,8 @@ namespace Lucene.Net.Analysis.Util
                     throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
                 foreach (var entry in this)
-                    array[index++] = entry;
+                    array[index++] = entry!;
             }
-
 
             void ICollection.CopyTo(Array array, int index)
             {
@@ -1925,8 +1958,6 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
 
-#nullable restore
-
             public Enumerator GetEnumerator()
             {
                 return new Enumerator(dictionary);
@@ -1951,7 +1982,7 @@ namespace Lucene.Net.Analysis.Util
                 sb.Append('[');
                 while (i.MoveNext())
                 {
-                    TValue value = i.Current;
+                    TValue? value = i.Current;
                     if (sb.Length > 1)
                     {
                         sb.Append(',').Append(' ');
@@ -1971,7 +2002,7 @@ namespace Lucene.Net.Analysis.Util
             /// Struct to enumerate the values in the <see cref="ValueCollection"/>.
             /// </summary>
             // LUCENENET specific
-            public struct Enumerator : IEnumerator<TValue>, IEnumerator
+            public readonly struct Enumerator : IEnumerator<TValue>, IEnumerator
             {
                 private readonly CharArrayDictionary<TValue>.Enumerator entryIterator;
 
@@ -1980,9 +2011,9 @@ namespace Lucene.Net.Analysis.Util
                     this.entryIterator = dictionary.GetEnumerator();
                 }
 
-                public TValue Current => entryIterator.CurrentValue;
+                public TValue Current => entryIterator.CurrentValue!;
 
-                object IEnumerator.Current => entryIterator.CurrentValue;
+                object IEnumerator.Current => entryIterator.CurrentValue!;
 
                 public void Dispose()
                 {
@@ -2015,8 +2046,6 @@ namespace Lucene.Net.Analysis.Util
         public virtual bool IsReadOnly => false;
 
         #endregion For .NET Support LUCENENET
-
-#nullable enable
 
         /// <summary>
         /// Returns an enumerator that iterates through the <see cref="CharArrayDictionary{TValue}"/>.
@@ -2114,7 +2143,7 @@ namespace Lucene.Net.Analysis.Util
 
         object? IDictionary.this[object key]
         {
-            get => Get(key);
+            get => Get(key, throwIfNotFound: false);
             set
             {
                 if (key is null)
@@ -2154,8 +2183,6 @@ namespace Lucene.Net.Analysis.Util
 
         bool IDictionary.Contains(object key) => ContainsKey(key);
 
-#nullable restore
-
         /// <summary>
         /// Gets the number of key/value pairs contained in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
@@ -2194,7 +2221,7 @@ namespace Lucene.Net.Analysis.Util
    
 
         // LUCENENET: Removed entrySet because in .NET we use the collection itself as the IEnumerable
-        private CharArraySet keySet = null;
+        private CharArraySet? keySet = null;
 
         // LUCENENET: Removed entrySet(), createEntrySet() because in .NET we use the collection itself as the IEnumerable
 
@@ -2218,7 +2245,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-#region Nested Class: KeyCollection
+        #region Nested Class: KeyCollection
 
         // LUCENENET: This was an anonymous class in Java
         [DebuggerDisplay("Count = {Count}, Values = {ToString()}")]
@@ -2249,9 +2276,9 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-#endregion Nested Class: KeyCollection
+        #endregion Nested Class: KeyCollection
 
-#region Nested Class: Enumerator
+        #region Nested Class: Enumerator
 
         /// <summary>
         /// Public enumerator class so efficient properties are exposed to users.
@@ -2362,7 +2389,7 @@ namespace Lucene.Net.Analysis.Util
                         throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
 
                     var val = dictionary.values[lastPos];
-                    return val != null ? val.Value : default;
+                    return val != null ? val.Value : default!;
                 }
             }
 
@@ -2370,6 +2397,7 @@ namespace Lucene.Net.Analysis.Util
             /// Sets the value associated with the current key.
             /// </summary>
             /// <returns>Returns the value prior to the update.</returns>
+            [return: MaybeNull]
             public TValue SetValue(TValue value)
             {
                 if (notStartedOrEnded)
@@ -2381,7 +2409,7 @@ namespace Lucene.Net.Analysis.Util
                 if (current is null)
                     throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
 
-                TValue old = current.Value;
+                TValue? old = current.Value;
                 // LUCENENET specific - increment the versions of both this enumerator
                 // and the original collection so only this enumerator instance isn't broken.
                 dictionary.version++;
@@ -2392,7 +2420,7 @@ namespace Lucene.Net.Analysis.Util
 
             // LUCENENET: Next() and Remove() methods eliminated here
 
-#region Added for better .NET support LUCENENET
+            #region Added for better .NET support LUCENENET
             public void Dispose()
             {
                 // nothing to do
@@ -2438,7 +2466,7 @@ namespace Lucene.Net.Analysis.Util
                     if (key is null)
                         throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
                     MapValue value = dictionary.values[lastPos];
-                    return new KeyValuePair<string, TValue>(new string(key), value.Value);
+                    return new KeyValuePair<string, TValue>(new string(key), value.Value!);
                 }
             }
 
@@ -2460,7 +2488,7 @@ namespace Lucene.Net.Analysis.Util
                     }
                     else
                     {
-                        return new KeyValuePair<string, TValue>(new string(key), value.Value);
+                        return new KeyValuePair<string, TValue>(new string(key), value.Value!);
                     }
                 }
             }
@@ -2476,7 +2504,7 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
 
-            object IDictionaryEnumerator.Value
+            object? IDictionaryEnumerator.Value
             {
                 get
                 {
@@ -2500,10 +2528,10 @@ namespace Lucene.Net.Analysis.Util
 
             bool ICharArrayDictionaryEnumerator.NotStartedOrEnded => notStartedOrEnded;
 
-#endregion
+            #endregion
         }
 
-#endregion Nested Class: Enumerator
+        #endregion Nested Class: Enumerator
 
         // LUCENENET NOTE: The Java Lucene type MapEntry was removed here because it is not possible 
         // to inherit the value type KeyValuePair{TKey, TValue} in .NET.
@@ -2611,9 +2639,9 @@ namespace Lucene.Net.Analysis.Util
         /// Used by <see cref="CharArraySet"/> to copy <see cref="CharArrayDictionary{TValue}"/> without knowing 
         /// its generic type.
         /// </summary>
-        internal static CharArrayDictionary<TValue> Copy<TValue>(LuceneVersion matchVersion, ICharArrayDictionary map)
+        internal static CharArrayDictionary<TValue> Copy<TValue>(LuceneVersion matchVersion, [DisallowNull] ICharArrayDictionary map)
         {
-            return Copy(matchVersion, map as IDictionary<string, TValue>);
+            return Copy(matchVersion, (IDictionary<string, TValue>)map);
         }
 
         /// <summary>
@@ -2669,12 +2697,12 @@ namespace Lucene.Net.Analysis.Util
         // package private CharArraySet instanceof check in CharArraySet
         internal class UnmodifiableCharArrayDictionary<TValue> : CharArrayDictionary<TValue>
         {
-            public UnmodifiableCharArrayDictionary(CharArrayDictionary<TValue> map)
+            public UnmodifiableCharArrayDictionary([DisallowNull] CharArrayDictionary<TValue> map)
                 : base(map)
             { }
 
-            public UnmodifiableCharArrayDictionary(ICharArrayDictionary map)
-                : base(map as CharArrayDictionary<TValue>)
+            public UnmodifiableCharArrayDictionary([DisallowNull] ICharArrayDictionary map)
+                : base((CharArrayDictionary<TValue>)map)
             { }
 
             public override void Clear()
@@ -2736,26 +2764,31 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
+
             public override TValue this[char[] key, int offset, int length]
             {
                 get => base[key, offset, length];
                 set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
+
             public override TValue this[char[] key]
             {
                 get => base[key];
                 set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
+
             public override TValue this[ICharSequence key]
             {
                 get => base[key];
                 set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
+
             public override TValue this[string key]
             {
                 get => base[key];
                 set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
+
             public override TValue this[object key]
             {
                 get => base[key];
@@ -2855,36 +2888,44 @@ namespace Lucene.Net.Analysis.Util
                 return false;
             }
 
-            public override V Get(char[] text, int offset, int length)
+            internal override V Get(char[] text, int offset, int length, bool throwIfNotfound = true)
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));
 
-                return default;
+                if (throwIfNotfound)
+                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text, offset, length)));
+                return default!;
             }
 
-            public override V Get(char[] text)
+            internal override V Get(char[] text, bool throwIfNotfound = true)
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));
 
-                return default;
+                if (throwIfNotfound)
+                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text)));
+                return default!;
             }
 
-            public override V Get(ICharSequence text)
+            internal override V Get(ICharSequence text, bool throwIfNotfound = true)
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));
 
-                return default;
+                if (throwIfNotfound)
+                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
+                return default!;
             }
 
-            public override V Get(object o)
+            internal override V Get(object text, bool throwIfNotfound = true)
             {
-                if (o is null)
-                    throw new ArgumentNullException(nameof(o));
+                if (text is null)
+                    throw new ArgumentNullException(nameof(text));
 
-                return default;
+                if (throwIfNotfound)
+                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
+                return default!;
             }
         }
 
@@ -2904,7 +2945,7 @@ namespace Lucene.Net.Analysis.Util
             // bleed into other methods in case they are culture sensitive.
 
             using var context = new CultureContext(CultureInfo.InvariantCulture);
-            return key.ToString().ToCharArray();
+            return key.ToString()?.ToCharArray() ?? Arrays.Empty<char>();
         }
     }
 
@@ -3090,181 +3131,181 @@ namespace Lucene.Net.Analysis.Util
 
         #endregion
 
-        #region Get
+        //#region Get
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, bool text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, bool text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString());
-        }
+        //    return map.Get(text.ToString());
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, byte text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, byte text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, char text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, char text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, decimal text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, decimal text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, double text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, double text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, float text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, float text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, int text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, int text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, long text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, long text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, sbyte text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[CLSCompliant(false)]
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, sbyte text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, short text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, short text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, uint text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[CLSCompliant(false)]
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, uint text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, ulong text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[CLSCompliant(false)]
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, ulong text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        /// <summary>
-        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
-        /// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, ushort text)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        ///// <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[CLSCompliant(false)]
+        //public static TValue Get<TValue>(this CharArrayDictionary<TValue> map, ushort text)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
+        //    return map.Get(text.ToString(CultureInfo.InvariantCulture));
+        //}
 
-        #endregion
+        //#endregion
 
         #region Put
 
@@ -3272,6 +3313,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        [return: MaybeNull]
         public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, bool text, TValue value)
         {
             if (map is null)
@@ -3284,6 +3326,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        [return: MaybeNull]
         public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, byte text, TValue value)
         {
             if (map is null)
@@ -3296,6 +3339,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        [return: MaybeNull]
         public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, char text, TValue value)
         {
             if (map is null)
@@ -3308,6 +3352,7 @@ namespace Lucene.Net.Analysis.Util
         ///// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[return: MaybeNull]
         //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, decimal text, TValue value)
         //{
         //    if (map is null)
@@ -3320,6 +3365,7 @@ namespace Lucene.Net.Analysis.Util
         ///// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[return: MaybeNull]
         //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, double text, TValue value)
         //{
         //    if (map is null)
@@ -3332,6 +3378,7 @@ namespace Lucene.Net.Analysis.Util
         ///// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[return: MaybeNull]
         //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, float text, TValue value)
         //{
         //    if (map is null)
@@ -3344,6 +3391,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        [return: MaybeNull]
         public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, int text, TValue value)
         {
             if (map is null)
@@ -3356,6 +3404,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        [return: MaybeNull]
         public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, long text, TValue value)
         {
             if (map is null)
@@ -3369,6 +3418,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
+        [return: MaybeNull]
         public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, sbyte text, TValue value)
         {
             if (map is null)
@@ -3381,6 +3431,7 @@ namespace Lucene.Net.Analysis.Util
         /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        [return: MaybeNull]
         public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, short text, TValue value)
         {
             if (map is null)
@@ -3394,6 +3445,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
+        [return: MaybeNull]
         public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, uint text, TValue value)
         {
             if (map is null)
@@ -3407,6 +3459,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
+        [return: MaybeNull]
         public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, ulong text, TValue value)
         {
             if (map is null)
@@ -3420,6 +3473,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
+        [return: MaybeNull]
         public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, ushort text, TValue value)
         {
             if (map is null)
@@ -3998,7 +4052,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, bool key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, bool key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (map is null)
                 throw new ArgumentNullException(nameof(map));
@@ -4016,7 +4070,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, byte key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, byte key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (map is null)
                 throw new ArgumentNullException(nameof(map));
@@ -4034,7 +4088,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, char key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, char key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (map is null)
                 throw new ArgumentNullException(nameof(map));
@@ -4052,7 +4106,7 @@ namespace Lucene.Net.Analysis.Util
         ///// This parameter is passed uninitialized.</param>
         ///// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        //public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, decimal key, out TValue value)
+        //public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, decimal key, [MaybeNullWhen(returnValue: false)] out TValue value)
         //{
         //    if (map is null)
         //        throw new ArgumentNullException(nameof(map));
@@ -4070,7 +4124,7 @@ namespace Lucene.Net.Analysis.Util
         ///// This parameter is passed uninitialized.</param>
         ///// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        //public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, double key, out TValue value)
+        //public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, double key, [MaybeNullWhen(returnValue: false)] out TValue value)
         //{
         //    if (map is null)
         //        throw new ArgumentNullException(nameof(map));
@@ -4088,7 +4142,7 @@ namespace Lucene.Net.Analysis.Util
         ///// This parameter is passed uninitialized.</param>
         ///// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        //public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, float key, out TValue value)
+        //public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, float key, [MaybeNullWhen(returnValue: false)] out TValue value)
         //{
         //    if (map is null)
         //        throw new ArgumentNullException(nameof(map));
@@ -4106,7 +4160,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, int key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, int key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (map is null)
                 throw new ArgumentNullException(nameof(map));
@@ -4124,44 +4178,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, long key, out TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
-
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified key. <paramref name="key"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, sbyte key, out TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
-
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified key. <paramref name="key"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, short key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, long key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (map is null)
                 throw new ArgumentNullException(nameof(map));
@@ -4180,7 +4197,25 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, uint key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, sbyte key, [MaybeNullWhen(returnValue: false)] out TValue value)
+        {
+            if (map is null)
+                throw new ArgumentNullException(nameof(map));
+
+            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
+        }
+
+        /// <summary>
+        /// Gets the value associated with the specified key. <paramref name="key"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        /// </summary>
+        /// <param name="map">this map</param>
+        /// <param name="key">The key of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified key, 
+        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// This parameter is passed uninitialized.</param>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, short key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (map is null)
                 throw new ArgumentNullException(nameof(map));
@@ -4199,7 +4234,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, ulong key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, uint key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (map is null)
                 throw new ArgumentNullException(nameof(map));
@@ -4218,7 +4253,26 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
         [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, ushort key, out TValue value)
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, ulong key, [MaybeNullWhen(returnValue: false)] out TValue value)
+        {
+            if (map is null)
+                throw new ArgumentNullException(nameof(map));
+
+            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
+        }
+
+        /// <summary>
+        /// Gets the value associated with the specified key. <paramref name="key"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        /// </summary>
+        /// <param name="map">this map</param>
+        /// <param name="key">The key of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified key, 
+        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// This parameter is passed uninitialized.</param>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        [CLSCompliant(false)]
+        public static bool TryGetValue<TValue>(this CharArrayDictionary<TValue> map, ushort key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (map is null)
                 throw new ArgumentNullException(nameof(map));
@@ -4286,6 +4340,7 @@ namespace Lucene.Net.Analysis.Util
     internal static class SR
     {
         public const string Arg_ArrayPlusOffTooSmall = "Destination array is not long enough to copy all the items in the collection. Check array index and length.";
+        public const string Arg_KeyNotFoundWithKey = "The given key '{0}' was not present in the dictionary.";
         public const string Arg_NonZeroLowerBound = "The lower bound of target array must be zero.";
         public const string Arg_RankMultiDimNotSupported = "Only single dimensional arrays are supported for the requested action.";
         public const string Arg_WrongType = "The value '{0}' is not of type '{1}' and cannot be used in this generic collection.";

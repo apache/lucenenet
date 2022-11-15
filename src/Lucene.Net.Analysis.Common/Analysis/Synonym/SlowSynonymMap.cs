@@ -91,8 +91,7 @@ namespace Lucene.Net.Analysis.Synonym
                     currMap.submap = new CharArrayDictionary<SlowSynonymMap>(LuceneVersion.LUCENE_CURRENT, 1, IgnoreCase);
                 }
 
-                var map = currMap.submap.Get(str);
-                if (map is null)
+                if (!currMap.submap.TryGetValue(str, out SlowSynonymMap map) || map is null)
                 {
                     map = new SlowSynonymMap();
                     map.flags |= flags & IGNORE_CASE;

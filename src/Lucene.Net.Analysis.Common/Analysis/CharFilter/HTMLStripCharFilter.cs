@@ -31611,7 +31611,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             int length = YyLength;
                             inputSegment.Write(zzBuffer, zzStartRead, length);
                             entitySegment.Clear();
-                            char ch = entityValues.Get(zzBuffer, zzStartRead, length);
+                            char ch = entityValues[zzBuffer, zzStartRead, length];
                             entitySegment.Append(ch);
                             outputSegment = entitySegment;
                             YyBegin(CHARACTER_REFERENCE_TAIL);

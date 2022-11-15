@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -393,7 +394,7 @@ namespace Lucene.Net.Analysis.Util
                 return Empty;
             }
 
-            return new CharArraySet(new CharArrayDictionary<object>(matchVersion, this.map as IDictionary<string, object>, this.map.IgnoreCase));
+            return new CharArraySet(new CharArrayDictionary<object>(matchVersion, (IDictionary<string, object>)this.map, this.map.IgnoreCase));
         }
 
         /// <summary>
@@ -409,7 +410,7 @@ namespace Lucene.Net.Analysis.Util
                 return Empty;
             }
 
-            return new CharArraySet(new CharArrayDictionary<object>(matchVersion, this.map as IDictionary<string, object>, ignoreCase));
+            return new CharArraySet(new CharArrayDictionary<object>(matchVersion, (IDictionary<string, object>)this.map, ignoreCase));
         }
 
         /// <summary>
@@ -587,7 +588,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="obj">object to be compared for equality with this set</param>
         /// <returns><c>true</c> if the specified object is equal to this set</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null)
                 return false;
@@ -806,7 +807,6 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-#nullable enable
         [SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "Following Microsoft's coding style")]
         void ICollection.CopyTo(Array array, int index)
         {
@@ -862,8 +862,6 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
         }
-
-#nullable restore
 
         bool ICollection<string>.Remove(string item)
         {
@@ -1163,7 +1161,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return true;
             }
-            CharArraySet set = other as CharArraySet;
+            CharArraySet? set = other as CharArraySet;
             if (set != null)
             {
                 if (this.Count > set.Count)
@@ -1195,7 +1193,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return true;
             }
-            CharArraySet set = other as CharArraySet;
+            CharArraySet? set = other as CharArraySet;
             if (set != null)
             {
                 if (this.Count > set.Count)
@@ -1227,7 +1225,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return true;
             }
-            CharArraySet set = other as CharArraySet;
+            CharArraySet? set = other as CharArraySet;
             if (set != null)
             {
                 if (this.Count > set.Count)
@@ -1277,14 +1275,14 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            ICollection<string> is2 = other as ICollection<string>;
+            ICollection<string>? is2 = other as ICollection<string>;
             if (is2 != null)
             {
                 if (is2.Count == 0)
                 {
                     return true;
                 }
-                CharArraySet set = other as CharArraySet;
+                CharArraySet? set = other as CharArraySet;
                 if ((set != null) && (set.Count > this.Count))
                 {
                     return false;
@@ -1305,14 +1303,14 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            ICollection<char[]> is2 = other as ICollection<char[]>;
+            ICollection<char[]>? is2 = other as ICollection<char[]>;
             if (is2 != null)
             {
                 if (is2.Count == 0)
                 {
                     return true;
                 }
-                CharArraySet set = other as CharArraySet;
+                CharArraySet? set = other as CharArraySet;
                 if ((set != null) && (set.Count > this.Count))
                 {
                     return false;
@@ -1333,14 +1331,14 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            ICollection<ICharSequence> is2 = other as ICollection<ICharSequence>;
+            ICollection<ICharSequence>? is2 = other as ICollection<ICharSequence>;
             if (is2 != null)
             {
                 if (is2.Count == 0)
                 {
                     return true;
                 }
-                CharArraySet set = other as CharArraySet;
+                CharArraySet? set = other as CharArraySet;
                 if ((set != null) && (set.Count > this.Count))
                 {
                     return false;
@@ -1361,7 +1359,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            ICollection<T> is2 = other as ICollection<T>;
+            ICollection<T>? is2 = other as ICollection<T>;
             if (is2 != null && is2.Count == 0)
             {
                 return true;
@@ -1381,14 +1379,14 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            ICollection<string> is2 = other as ICollection<string>;
+            ICollection<string>? is2 = other as ICollection<string>;
             if (is2 != null)
             {
                 if (this.Count == 0)
                 {
                     return (is2.Count > 0);
                 }
-                CharArraySet set = other as CharArraySet;
+                CharArraySet? set = other as CharArraySet;
                 if (set != null)
                 {
                     if (this.Count >= set.Count)
@@ -1417,14 +1415,14 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            ICollection<char[]> is2 = other as ICollection<char[]>;
+            ICollection<char[]>? is2 = other as ICollection<char[]>;
             if (is2 != null)
             {
                 if (this.Count == 0)
                 {
                     return (is2.Count > 0);
                 }
-                CharArraySet set = other as CharArraySet;
+                CharArraySet? set = other as CharArraySet;
                 if (set != null)
                 {
                     if (this.Count >= set.Count)
@@ -1453,14 +1451,14 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            ICollection<ICharSequence> is2 = other as ICollection<ICharSequence>;
+            ICollection<ICharSequence>? is2 = other as ICollection<ICharSequence>;
             if (is2 != null)
             {
                 if (this.Count == 0)
                 {
                     return (is2.Count > 0);
                 }
-                CharArraySet set = other as CharArraySet;
+                CharArraySet? set = other as CharArraySet;
                 if (set != null)
                 {
                     if (this.Count >= set.Count)
@@ -1489,7 +1487,7 @@ namespace Lucene.Net.Analysis.Util
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            ICollection<T> is2 = other as ICollection<T>;
+            ICollection<T>? is2 = other as ICollection<T>;
             if (is2 != null && this.Count == 0)
             {
                 return (is2.Count > 0);
@@ -1517,14 +1515,14 @@ namespace Lucene.Net.Analysis.Util
             {
                 return false;
             }
-            ICollection<string> is2 = other as ICollection<string>;
+            ICollection<string>? is2 = other as ICollection<string>;
             if (is2 != null)
             {
                 if (is2.Count == 0)
                 {
                     return true;
                 }
-                CharArraySet set = other as CharArraySet;
+                CharArraySet? set = other as CharArraySet;
                 if (set != null)
                 {
                     if (set.Count >= this.Count)
@@ -1554,14 +1552,14 @@ namespace Lucene.Net.Analysis.Util
             {
                 return false;
             }
-            ICollection<char[]> is2 = other as ICollection<char[]>;
+            ICollection<char[]>? is2 = other as ICollection<char[]>;
             if (is2 != null)
             {
                 if (is2.Count == 0)
                 {
                     return true;
                 }
-                CharArraySet set = other as CharArraySet;
+                CharArraySet? set = other as CharArraySet;
                 if (set != null)
                 {
                     if (set.Count >= this.Count)
@@ -1591,14 +1589,14 @@ namespace Lucene.Net.Analysis.Util
             {
                 return false;
             }
-            ICollection<ICharSequence> is2 = other as ICollection<ICharSequence>;
+            ICollection<ICharSequence>? is2 = other as ICollection<ICharSequence>;
             if (is2 != null)
             {
                 if (is2.Count == 0)
                 {
                     return true;
                 }
-                CharArraySet set = other as CharArraySet;
+                CharArraySet? set = other as CharArraySet;
                 if (set != null)
                 {
                     if (set.Count >= this.Count)
@@ -1628,7 +1626,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return false;
             }
-            ICollection<T> is2 = other as ICollection<T>;
+            ICollection<T>? is2 = other as ICollection<T>;
             if (is2 != null && is2.Count == 0)
             {
                 return true;
@@ -1744,7 +1742,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var local in other)
             {
-                if (!this.Contains(local))
+                if (local is null || !this.Contains(local))
                 {
                     return false;
                 }
@@ -1763,7 +1761,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var local in other)
             {
-                if (!this.Contains(local))
+                if (local is null || !this.Contains(local))
                 {
                     return false;
                 }
