@@ -257,7 +257,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="value">The corresponding value for the given <paramref name="key"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">An element with <paramref name="key"/> already exists in the dictionary.</exception>
-        public virtual void Add(object key, TValue value)
+        public virtual void Add<T>(T key, TValue value)
         {
             if (ContainsKey(key))
             {
@@ -432,7 +432,7 @@ namespace Lucene.Net.Analysis.Util
         /// is in the <see cref="Keys"/>;  otherwise <c>false</c>
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        public virtual bool ContainsKey(object text)
+        public virtual bool ContainsKey<T>(T text)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
@@ -534,7 +534,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
-        internal virtual TValue Get(object text, bool throwIfNotFound = true)
+        internal virtual TValue Get<T>(T text, bool throwIfNotFound = true)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -731,7 +731,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the mapping was added, <c>false</c> if the key already existed. The <paramref name="previousValue"/>
         /// will be populated if the result is <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        public virtual bool Put(object text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
+        public virtual bool Put<T>(T text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
         {
             // LUCENENET: Added guard clause
             if (text is null)
@@ -773,7 +773,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private MapValue? PutImpl(object text, MapValue value)
+        private MapValue? PutImpl<T>(T text, MapValue value)
         {
             // LUCENENET: Added guard clause
             if (text is null)
@@ -882,7 +882,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(char[] text)
+        internal virtual void Set(char[] text)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -895,7 +895,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(ICharSequence text)
+        internal virtual void Set(ICharSequence text)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -908,7 +908,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(string text)
+        internal virtual void Set(string text)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -920,7 +920,7 @@ namespace Lucene.Net.Analysis.Util
         /// Sets the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        private void Set(object text)
+        internal virtual void Set<T>(T text)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -964,7 +964,7 @@ namespace Lucene.Net.Analysis.Util
 
         void ICharArrayDictionary.Set(char[] text) => Set(text);
         void ICharArrayDictionary.Set(ICharSequence text) => Set(text);
-        void ICharArrayDictionary.Set(object text) => Set(text);
+        void ICharArrayDictionary.Set<T>(T text) => Set(text);
         void ICharArrayDictionary.Set(string text) => Set(text);
 
         #endregion Set
@@ -979,7 +979,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
         /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Set(char[] text, int offset, int length, TValue? value)
+        internal virtual void Set(char[] text, int offset, int length, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -992,7 +992,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Set(char[] text, TValue? value)
+        internal virtual void Set(char[] text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -1005,7 +1005,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Set(ICharSequence text, TValue? value)
+        internal virtual void Set(ICharSequence text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -1018,7 +1018,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Set(string text, TValue? value)
+        internal virtual void Set(string text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -1031,7 +1031,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Set(object text, TValue? value)
+        internal virtual void Set<T>(T text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -1181,7 +1181,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{char[],TValue}"/>'s
-        /// entries, and calls this map's <see cref="Set(char[], TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(char[], TValue?)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1198,7 +1198,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{string,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Set(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(string, TValue?)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1215,7 +1215,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{ICharSequence,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Set(ICharSequence, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(ICharSequence, TValue?)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1231,12 +1231,12 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// This implementation enumerates over the specified <see cref="T:IDictionary{object,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Set(object, TValue)"/> operation once for each entry.
+        /// This implementation enumerates over the specified <see cref="T:IDictionary{T,TValue}"/>'s
+        /// entries, and calls this map's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
-        public virtual void PutAll(IDictionary<object, TValue> collection)
+        public virtual void PutAll<T>(IDictionary<T, TValue> collection)
         {
             if (collection is null)
                 throw new ArgumentNullException(nameof(collection));
@@ -1249,7 +1249,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{char[],TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Set(char[], TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(char[], TValue?)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1299,12 +1299,12 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{object,TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Set(object, TValue)"/> operation once for each entry.
+        /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{TKey,TValue}}"/>'s
+        /// entries, and calls this map's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
-        public virtual void PutAll(IEnumerable<KeyValuePair<object, TValue>> collection)
+        public virtual void PutAll<T>(IEnumerable<KeyValuePair<T, TValue>> collection)
         {
             if (collection is null)
                 throw new ArgumentNullException(nameof(collection));
@@ -1632,14 +1632,14 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Adds a placeholder with the given <paramref name="o"/> as the key.
+        /// Adds a placeholder with the given <paramref name="text"/> as the key.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
         /// <returns><c>true</c> if the key was added, <c>false</c> if the key already existed.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
-        public virtual bool Put(object o)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Put<T>(T text)
         {
-            return PutImpl(o, PLACEHOLDER) is null;
+            return PutImpl(text, PLACEHOLDER) is null;
         }
 
         /// <summary>
@@ -1782,7 +1782,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(object key, [MaybeNullWhen(returnValue: false)] out TValue value)
+        public virtual bool TryGetValue<T>(T key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (key is null)
                 throw new ArgumentNullException(nameof(key));
@@ -2290,7 +2290,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override bool IsReadOnly => true;
 
-            public override bool Add(object o)
+            public override bool Add<T>(T text)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
             }
@@ -2591,7 +2591,7 @@ namespace Lucene.Net.Analysis.Util
         void Clear();
         bool ContainsKey(char[] text, int offset, int length);
         bool ContainsKey(char[] text);
-        bool ContainsKey(object o);
+        bool ContainsKey<T>(T text);
         bool ContainsKey(string text);
         bool ContainsKey(ICharSequence text);
         int Count { get; }
@@ -2600,11 +2600,11 @@ namespace Lucene.Net.Analysis.Util
         LuceneVersion MatchVersion { get; }
         bool Put(char[] text);
         bool Put(ICharSequence text);
-        bool Put(object o);
+        bool Put<T>(T text);
         bool Put(string text);
         void Set(char[] text);
         void Set(ICharSequence text);
-        void Set(object o);
+        void Set<T>(T text);
         void Set(string text);
         ICharArrayDictionaryEnumerator GetEnumerator();
     }
@@ -2757,7 +2757,7 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(object o, TValue val, [MaybeNullWhen(true)] out TValue previousValue)
+            public override bool Put<T>(T text, TValue val, [MaybeNullWhen(true)] out TValue previousValue)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -2777,7 +2777,7 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(object o)
+            public override bool Put<T>(T text)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -2842,7 +2842,7 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override void PutAll(IDictionary<object, TValue> collection)
+            public override void PutAll<T>(IDictionary<T, TValue> collection)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -2862,7 +2862,52 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override void PutAll(IEnumerable<KeyValuePair<object, TValue>> collection)
+            public override void PutAll<T>(IEnumerable<KeyValuePair<T, TValue>> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(char[] text)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(char[] text, int offset, int length, TValue? value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(char[] text, TValue? value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(ICharSequence text)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(ICharSequence text, TValue? value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(string text)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(string text, TValue? value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set<T>(T text)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set<T>(T text, TValue? value)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -2912,10 +2957,10 @@ namespace Lucene.Net.Analysis.Util
                 return false;
             }
 
-            public override bool ContainsKey(object o)
+            public override bool ContainsKey<T>(T text)
             {
-                if (o is null)
-                    throw new ArgumentNullException(nameof(o));
+                if (text is null)
+                    throw new ArgumentNullException(nameof(text));
 
                 return false;
             }
@@ -2950,7 +2995,7 @@ namespace Lucene.Net.Analysis.Util
                 return default!;
             }
 
-            internal override V Get(object text, bool throwIfNotfound = true)
+            internal override V Get<T>(T text, bool throwIfNotfound = true)
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));

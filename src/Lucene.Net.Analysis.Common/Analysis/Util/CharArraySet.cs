@@ -223,42 +223,42 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// <c>true</c> if the <see cref="ICharSequence"/> is in the set
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="cs"/> is <c>null</c>.</exception>
-        public virtual bool Contains(ICharSequence cs)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Contains(ICharSequence text)
         {
-            return map.ContainsKey(cs);
+            return map.ContainsKey(text);
         }
 
         /// <summary>
         /// <c>true</c> if the <see cref="string"/> is in the set
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="cs"/> is <c>null</c>.</exception>
-        public virtual bool Contains(string cs)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Contains(string text)
         {
-            return map.ContainsKey(cs);
+            return map.ContainsKey(text);
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="object.ToString()"/> representation of <paramref name="o"/> is in the set
+        /// <c>true</c> if the <see cref="object.ToString()"/> representation of <paramref name="text"/> is in the set
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
-        public virtual bool Contains(object o)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Contains<T>(T text)
         {
-            return map.ContainsKey(o);
+            return map.ContainsKey(text);
         }
 
         /// <summary>
-        /// Add the <see cref="object.ToString()"/> representation of <paramref name="o"/> into the set.
+        /// Add the <see cref="object.ToString()"/> representation of <paramref name="text"/> into the set.
         /// The <see cref="object.ToString()"/> method is called after setting the thread to <see cref="CultureInfo.InvariantCulture"/>.
-        /// If the type of <paramref name="o"/> is a value type, it will be converted using the 
+        /// If the type of <paramref name="text"/> is a value type, it will be converted using the 
         /// <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <param name="o">A string-able object</param>
-        /// <returns><c>true</c> if <paramref name="o"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
-        public virtual bool Add(object o)
+        /// <param name="text">A string-able object</param>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Add<T>(T text)
         {
-            return map.Put(o);
+            return map.Put(text);
         }
 
         /// <summary>
