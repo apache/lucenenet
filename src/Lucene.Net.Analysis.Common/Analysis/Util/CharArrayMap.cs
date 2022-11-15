@@ -630,24 +630,91 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Add the given mapping.
+        /// If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
+        /// The user should never modify this text array after calling this method.
         /// <para/>
-        /// <b>Note:</b> The <see cref="this[ICharSequence]"/> setter is more efficient than this method if
-        /// the return value is not required.
+        /// <b>Note:</b> The <see cref="this[char[]]"/> setter is more efficient than this method if
+        /// the <paramref name="previousValue"/> is not required.
         /// </summary>
-        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
-        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
-        /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
-        /// parameter if there was no mapping for <paramref name="text"/>.</returns>
+        /// <param name="text"></param>
+        /// <param name="value"></param>
+        /// <param name="previousValue">The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the key already existed. The <paramref name="previousValue"/>
+        /// will be populated if the result is <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        [return: MaybeNull]
-        public virtual TValue Put(ICharSequence text, TValue value)
+        public virtual bool Put(char[] text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
         {
             // LUCENENET: Added guard clause
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            MapValue? oldValue = PutImpl(text, new MapValue(value)); // could be more efficient
-            return (oldValue != null) ? oldValue.Value : default;
+            MapValue? oldValue = PutImpl(text, new MapValue(value));
+            if (oldValue is not null)
+            {
+                previousValue = oldValue.Value;
+                return false;
+            }
+            previousValue = default;
+            return true;
+        }
+
+        /// <summary>
+        /// Add the given mapping.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[string]"/> setter is more efficient than this method if
+        /// the <paramref name="previousValue"/> is not required.
+        /// </summary>
+        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <param name="previousValue">The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the key already existed. The <paramref name="previousValue"/>
+        /// will be populated if the result is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Put(string text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
+        {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            MapValue? oldValue = PutImpl(text, new MapValue(value));
+            if (oldValue is not null)
+            {
+                previousValue = oldValue.Value;
+                return false;
+            }
+            previousValue = default;
+            return true;
+        }
+
+        /// <summary>
+        /// Add the given mapping.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[ICharSequence]"/> setter is more efficient than this method if
+        /// the <paramref name="previousValue"/> is not required.
+        /// </summary>
+        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <param name="previousValue">The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the key already existed. The <paramref name="previousValue"/>
+        /// will be populated if the result is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Put(ICharSequence text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
+        {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            MapValue? oldValue = PutImpl(text, new MapValue(value));
+            if (oldValue is not null)
+            {
+                previousValue = oldValue.Value;
+                return false;
+            }
+            previousValue = default;
+            return true;
         }
 
         /// <summary>
@@ -655,68 +722,29 @@ namespace Lucene.Net.Analysis.Util
         /// of <paramref name="text"/> in the <see cref="CultureInfo.InvariantCulture"/>.
         /// <para/>
         /// <b>Note:</b> The <see cref="this[object]"/> setter is more efficient than this method if
-        /// the return value is not required.
-        /// </summary>
-        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
-        /// <param name="value">The value to be associated with the specified object <paramref name="text"/>.</param>
-        /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
-        /// parameter if there was no mapping for <paramref name="text"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        [return: MaybeNull]
-        public virtual TValue Put(object text, TValue value)
-        {
-            // LUCENENET: Added guard clause
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
-
-            MapValue? oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default;
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// <para/>
-        /// <b>Note:</b> The <see cref="this[string]"/> setter is more efficient than this method if
-        /// the return value is not required.
+        /// the <paramref name="previousValue"/> is not required.
         /// </summary>
         /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
         /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
-        /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
-        /// parameter if there was no mapping for <paramref name="text"/>.</returns>
+        /// <param name="previousValue">The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the key already existed. The <paramref name="previousValue"/>
+        /// will be populated if the result is <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        [return: MaybeNull]
-        public virtual TValue Put(string text, TValue value)
+        public virtual bool Put(object text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
         {
             // LUCENENET: Added guard clause
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             MapValue? oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default;
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// If ignoreCase is true for this dictionary, the text array will be directly modified.
-        /// The user should never modify this text array after calling this method.
-        /// <para/>
-        /// <b>Note:</b> The <see cref="this[char[]]"/> setter is more efficient than this method if
-        /// the return value is not required.
-        /// </summary>
-        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
-        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
-        /// <returns>The previous value associated with the key, or the default for the type of <paramref name="value"/>
-        /// parameter if there was no mapping for <paramref name="text"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        [return: MaybeNull]
-        public virtual TValue Put(char[] text, TValue value)
-        {
-            // LUCENENET: Added guard clause
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
-
-            MapValue? oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default;
+            if (oldValue is not null)
+            {
+                previousValue = oldValue.Value;
+                return false;
+            }
+            previousValue = default;
+            return true;
         }
 
         #endregion Put (value)
@@ -951,7 +979,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
         /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(char[] text, int offset, int length, TValue? value)
+        internal void Set(char[] text, int offset, int length, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -964,7 +992,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(char[] text, TValue? value)
+        internal void Set(char[] text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -977,7 +1005,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(ICharSequence text, TValue? value)
+        internal void Set(ICharSequence text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -990,7 +1018,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(string text, TValue? value)
+        internal void Set(string text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -1003,7 +1031,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Set(object text, TValue? value)
+        internal void Set(object text, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -1153,7 +1181,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{char[],TValue}"/>'s
-        /// entries, and calls this map's <see cref="Put(char[], TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(char[], TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1164,13 +1192,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{string,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1181,13 +1209,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{ICharSequence,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Put(ICharSequence, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(ICharSequence, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1198,13 +1226,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{object,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Put(object, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(object, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1215,13 +1243,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{char[],TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Put(char[], TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(char[], TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1232,13 +1260,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{string,TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1249,13 +1277,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{ICharSequence,TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Put(ICharSequence, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(ICharSequence, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1266,13 +1294,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{object,TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Put(object, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="Set(object, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="collection">The values to add/update in the current map.</param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
@@ -1283,7 +1311,7 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
@@ -1574,6 +1602,7 @@ namespace Lucene.Net.Analysis.Util
         /// Adds a placeholder with the given <paramref name="text"/> as the key.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
+        /// <returns><c>true</c> if the key was added, <c>false</c> if the key already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Put(char[] text)
         {
@@ -1584,6 +1613,7 @@ namespace Lucene.Net.Analysis.Util
         /// Adds a placeholder with the given <paramref name="text"/> as the key.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
+        /// <returns><c>true</c> if the key was added, <c>false</c> if the key already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Put(ICharSequence text)
         {
@@ -1594,6 +1624,7 @@ namespace Lucene.Net.Analysis.Util
         /// Adds a placeholder with the given <paramref name="text"/> as the key.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
+        /// <returns><c>true</c> if the key was added, <c>false</c> if the key already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Put(string text)
         {
@@ -1604,6 +1635,7 @@ namespace Lucene.Net.Analysis.Util
         /// Adds a placeholder with the given <paramref name="o"/> as the key.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
+        /// <returns><c>true</c> if the key was added, <c>false</c> if the key already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="o"/> is <c>null</c>.</exception>
         public virtual bool Put(object o)
         {
@@ -1750,7 +1782,7 @@ namespace Lucene.Net.Analysis.Util
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(object key, [NotNullWhen(returnValue: false)] out TValue value)
+        public virtual bool TryGetValue(object key, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
             if (key is null)
                 throw new ArgumentNullException(nameof(key));
@@ -2710,22 +2742,22 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue Put(char[] text, TValue val)
+            public override bool Put(char[] text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue Put(ICharSequence text, TValue val)
+            public override bool Put(ICharSequence text, TValue val, [MaybeNullWhen(true)] out TValue previousValue)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue Put(string text, TValue val)
+            public override bool Put(string text, TValue val, [MaybeNullWhen(true)] out TValue previousValue)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue Put(object o, TValue val)
+            public override bool Put(object o, TValue val, [MaybeNullWhen(true)] out TValue previousValue)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -3309,51 +3341,25 @@ namespace Lucene.Net.Analysis.Util
 
         #region Put
 
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [return: MaybeNull]
-        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, bool text, TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Add the given mapping.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[return: MaybeNull]
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, bool text, TValue value)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Put(text.ToString(), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [return: MaybeNull]
-        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, byte text, TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
-
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [return: MaybeNull]
-        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, char text, TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
-
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
+        //    return map.Put(text.ToString(), value);
+        //}
 
         ///// <summary>
         ///// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
         //[return: MaybeNull]
-        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, decimal text, TValue value)
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, byte text, TValue value)
         //{
         //    if (map is null)
         //        throw new ArgumentNullException(nameof(map));
@@ -3366,7 +3372,59 @@ namespace Lucene.Net.Analysis.Util
         ///// </summary>
         ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
         //[return: MaybeNull]
-        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, double text, TValue value)
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, char text, TValue value)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
+
+        //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        //}
+
+        /////// <summary>
+        /////// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        /////// </summary>
+        /////// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        ////[return: MaybeNull]
+        ////public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, decimal text, TValue value)
+        ////{
+        ////    if (map is null)
+        ////        throw new ArgumentNullException(nameof(map));
+
+        ////    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        ////}
+
+        /////// <summary>
+        /////// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        /////// </summary>
+        /////// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        ////[return: MaybeNull]
+        ////public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, double text, TValue value)
+        ////{
+        ////    if (map is null)
+        ////        throw new ArgumentNullException(nameof(map));
+
+        ////    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        ////}
+
+        /////// <summary>
+        /////// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        /////// </summary>
+        /////// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        ////[return: MaybeNull]
+        ////public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, float text, TValue value)
+        ////{
+        ////    if (map is null)
+        ////        throw new ArgumentNullException(nameof(map));
+
+        ////    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        ////}
+
+        ///// <summary>
+        ///// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[return: MaybeNull]
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, int text, TValue value)
         //{
         //    if (map is null)
         //        throw new ArgumentNullException(nameof(map));
@@ -3379,7 +3437,7 @@ namespace Lucene.Net.Analysis.Util
         ///// </summary>
         ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
         //[return: MaybeNull]
-        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, float text, TValue value)
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, long text, TValue value)
         //{
         //    if (map is null)
         //        throw new ArgumentNullException(nameof(map));
@@ -3387,100 +3445,74 @@ namespace Lucene.Net.Analysis.Util
         //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
         //}
 
-        /// <summary>
-        /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [return: MaybeNull]
-        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, int text, TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[CLSCompliant(false)]
+        //[return: MaybeNull]
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, sbyte text, TValue value)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
+        //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        //}
 
-        /// <summary>
-        /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [return: MaybeNull]
-        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, long text, TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[return: MaybeNull]
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, short text, TValue value)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
+        //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        //}
 
-        /// <summary>
-        /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [CLSCompliant(false)]
-        [return: MaybeNull]
-        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, sbyte text, TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[CLSCompliant(false)]
+        //[return: MaybeNull]
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, uint text, TValue value)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
+        //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        //}
 
-        /// <summary>
-        /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [return: MaybeNull]
-        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, short text, TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[CLSCompliant(false)]
+        //[return: MaybeNull]
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, ulong text, TValue value)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
+        //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        //}
 
-        /// <summary>
-        /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [CLSCompliant(false)]
-        [return: MaybeNull]
-        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, uint text, TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
+        ///// <summary>
+        ///// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
+        ///// </summary>
+        ///// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
+        //[CLSCompliant(false)]
+        //[return: MaybeNull]
+        //public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, ushort text, TValue value)
+        //{
+        //    if (map is null)
+        //        throw new ArgumentNullException(nameof(map));
 
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [CLSCompliant(false)]
-        [return: MaybeNull]
-        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, ulong text, TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
-
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping. <paramref name="text"/> is converted using <see cref="CultureInfo.InvariantCulture"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="map"/> is <c>null</c>.</exception>
-        [CLSCompliant(false)]
-        [return: MaybeNull]
-        public static TValue Put<TValue>(this CharArrayDictionary<TValue> map, ushort text, TValue value)
-        {
-            if (map is null)
-                throw new ArgumentNullException(nameof(map));
-
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
+        //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
+        //}
 
         #endregion
 
@@ -3488,7 +3520,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
@@ -3502,13 +3534,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in dictionary)
             {
-                map.Put(kvp.Key.ToString(), kvp.Value);
+                map.Set(kvp.Key.ToString(), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="byte"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3523,13 +3555,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in dictionary)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="char"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3544,13 +3576,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in dictionary)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         ///// <see cref="decimal"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <param name="map">this map</param>
@@ -3565,13 +3597,13 @@ namespace Lucene.Net.Analysis.Util
 
         //    foreach (var kvp in dictionary)
         //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+        //        map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
         //    }
         //}
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         ///// <see cref="double"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <param name="map">this map</param>
@@ -3586,13 +3618,13 @@ namespace Lucene.Net.Analysis.Util
 
         //    foreach (var kvp in dictionary)
         //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+        //        map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
         //    }
         //}
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         ///// <see cref="float"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <param name="map">this map</param>
@@ -3607,13 +3639,13 @@ namespace Lucene.Net.Analysis.Util
 
         //    foreach (var kvp in dictionary)
         //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+        //        map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
         //    }
         //}
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="int"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3628,13 +3660,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in dictionary)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="long"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3649,13 +3681,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in dictionary)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="sbyte"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3671,13 +3703,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in dictionary)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="short"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3692,13 +3724,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in dictionary)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="uint"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3714,13 +3746,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in dictionary)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="ulong"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3736,13 +3768,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in dictionary)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="ushort"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3758,14 +3790,14 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in dictionary)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
@@ -3779,13 +3811,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(), kvp.Value);
+                map.Set(kvp.Key.ToString(), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="byte"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3800,13 +3832,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// </summary>
         /// <param name="map">this map</param>
         /// <param name="collection">The values to add/update in the current map.</param>
@@ -3820,13 +3852,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                map.Put("" + kvp.Key, kvp.Value);
+                map.Set("" + kvp.Key, kvp.Value);
             }
         }
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="collection"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         ///// <see cref="decimal"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <param name="map">this map</param>
@@ -3841,13 +3873,13 @@ namespace Lucene.Net.Analysis.Util
 
         //    foreach (var kvp in collection)
         //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+        //        map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
         //    }
         //}
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="collection"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         ///// <see cref="double"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <param name="map">this map</param>
@@ -3862,13 +3894,13 @@ namespace Lucene.Net.Analysis.Util
 
         //    foreach (var kvp in collection)
         //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+        //        map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
         //    }
         //}
 
         ///// <summary>
         ///// This implementation enumerates over the specified <paramref name="collection"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        ///// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         ///// <see cref="float"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         ///// </summary>
         ///// <param name="map">this map</param>
@@ -3883,13 +3915,13 @@ namespace Lucene.Net.Analysis.Util
 
         //    foreach (var kvp in collection)
         //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+        //        map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
         //    }
         //}
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="int"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3904,13 +3936,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="long"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3925,13 +3957,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="sbyte"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3947,13 +3979,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="short"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3968,13 +4000,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="uint"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -3990,13 +4022,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="ulong"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -4012,13 +4044,13 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this map's <see cref="CharArrayDictionary{TValue}.Set(string, TValue)"/> operation once for each entry.
         /// <see cref="ushort"/> values are converted using <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="map">this map</param>
@@ -4034,7 +4066,7 @@ namespace Lucene.Net.Analysis.Util
 
             foreach (var kvp in collection)
             {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
+                map.Set(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
             }
         }
 

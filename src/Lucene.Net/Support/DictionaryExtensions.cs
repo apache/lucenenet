@@ -33,7 +33,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        public static TValue Put<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
+        public static TValue Put<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value) // LUCENENET TODO: Refactor to account for value types. See CharArrayDictionary<TValue> implementation.
         {
             if (dict is null)
                 throw new ArgumentNullException(nameof(dict));

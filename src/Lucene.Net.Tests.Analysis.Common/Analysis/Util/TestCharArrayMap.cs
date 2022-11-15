@@ -54,12 +54,12 @@ namespace Lucene.Net.Analysis.Util
 
                 int val = Random.Next();
 
-                object o1 = map.Put(key, val);
-                object o2 = hmap.Put(hmapKey, val);
+                map.Put(key, val, out int? o1);
+                var o2 = hmap.Put(hmapKey, val);
                 assertEquals(o1, o2);
 
                 // add it again with the string method
-                assertEquals(val, map.Put(keyStr, val));
+                assertEquals(val, map.Put(keyStr, val, out int? previousValue) ? null : previousValue);
 
                 assertEquals(val, map[key, 0, key.Length]); // LUCENENET: Changed Get() to this[]
                 assertEquals(val, map[key]); // LUCENENET: Changed Get() to this[]
@@ -161,8 +161,8 @@ namespace Lucene.Net.Analysis.Util
         public void TestModifyOnUnmodifiable()
         {
             CharArrayDictionary<int?> map = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, 2, false);
-            map.Put("foo", 1);
-            map.Put("bar", 2);
+            map.Put("foo", 1, out _);
+            map.Put("bar", 2, out _);
             int size = map.Count;
             assertEquals(2, size);
             assertTrue(map.ContainsKey("foo"));
@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                map.Put(NOT_IN_MAP.ToCharArray(), 3);
+                map.Put(NOT_IN_MAP.ToCharArray(), 3, out _);
                 fail("Modified unmodifiable map");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -191,7 +191,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                map.Put(NOT_IN_MAP, 3);
+                map.Put(NOT_IN_MAP, 3, out _);
                 fail("Modified unmodifiable map");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -204,7 +204,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                map.Put(new StringBuilder(NOT_IN_MAP), 3);
+                map.Put(new StringBuilder(NOT_IN_MAP), 3, out _);
                 fail("Modified unmodifiable map");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -303,7 +303,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                map.Put((object)NOT_IN_MAP, 3);
+                map.Put((object)NOT_IN_MAP, 3, out _);
                 fail("Modified unmodifiable map");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -341,7 +341,7 @@ namespace Lucene.Net.Analysis.Util
             assertEquals("[1]", cm.Values.ToString());
             //assertEquals("[test=1]", cm.EntrySet().ToString()); // LUCENENET: Removed EntrySet() method because .NET uses the dictionary instance
             assertEquals("{test=1}", cm.ToString());
-            cm.Put("test2", 2);
+            cm["test2"] = 2; // LUCENENET: Changed Put() to this[]
             assertTrue(cm.Keys.ToString().Contains(", "));
             assertTrue(cm.Values.ToString().Contains(", "));
             //assertTrue(cm.EntrySet().ToString().Contains(", ")); // LUCENENET: Removed EntrySet() method because .NET uses the dictionary instance
@@ -582,7 +582,7 @@ namespace Lucene.Net.Analysis.Util
                 KvpStringEqualityComparer.Instance);
             var target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, stopwords.Count, ignoreCase: false);
             foreach (var kvp in stopwords)
-                target.Put(kvp.Key, kvp.Value);
+                target.Put(kvp.Key, kvp.Value, out _);
 
             // Full array
             var array1 = new KeyValuePair<string, int?>[target.Count];
@@ -623,7 +623,7 @@ namespace Lucene.Net.Analysis.Util
                 KvpCharArrayEqualityComparer.Instance);
             var target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, stopwords.Count, ignoreCase: false);
             foreach (var kvp in stopwords)
-                target.Put(kvp.Key, kvp.Value);
+                target.Put(kvp.Key, kvp.Value, out _);
 
             // Full array
             var array1 = new KeyValuePair<char[], int?>[target.Count];
@@ -664,7 +664,7 @@ namespace Lucene.Net.Analysis.Util
                 KvpCharSequenceEqualityComparer.Instance);
             var target = new CharArrayDictionary<int?>(TEST_VERSION_CURRENT, stopwords.Count, ignoreCase: false);
             foreach (var kvp in stopwords)
-                target.Put(kvp.Key, kvp.Value);
+                target.Put(kvp.Key, kvp.Value, out _);
 
             // Full array
             var array1 = new KeyValuePair<ICharSequence, int?>[target.Count];
