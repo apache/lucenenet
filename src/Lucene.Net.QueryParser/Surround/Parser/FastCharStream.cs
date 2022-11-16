@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -72,14 +73,14 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 {
                     // grow buffer
                     char[] newBuffer = new char[buffer.Length * 2];
-                    Array.Copy(buffer, 0, newBuffer, 0, bufferLength);
+                    Arrays.Copy(buffer, 0, newBuffer, 0, bufferLength);
                     buffer = newBuffer;
                 }
             }
             else
             {
                 // shift token to front
-                Array.Copy(buffer, tokenStart, buffer, 0, newPosition);
+                Arrays.Copy(buffer, tokenStart, buffer, 0, newPosition);
             }
 
             bufferLength = newPosition; // update state
@@ -110,7 +111,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         public char[] GetSuffix(int len)
         {
             char[] value = new char[len];
-            Array.Copy(buffer, bufferPosition - len, value, 0, len);
+            Arrays.Copy(buffer, bufferPosition - len, value, 0, len);
             return value;
         }
 

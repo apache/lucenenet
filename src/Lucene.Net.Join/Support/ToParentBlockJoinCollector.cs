@@ -329,7 +329,7 @@ namespace Lucene.Net.Join
                 joinQueryID[query] = joinScorers.Length;
                 //System.out.println("found JQ: " + query + " slot=" + joinScorers.length);
                 ToParentBlockJoinQuery.BlockJoinScorer[] newArray = new ToParentBlockJoinQuery.BlockJoinScorer[1 + joinScorers.Length];
-                Array.Copy(joinScorers, 0, newArray, 0, joinScorers.Length);
+                Arrays.Copy(joinScorers, 0, newArray, 0, joinScorers.Length);
                 joinScorers = newArray;
                 joinScorers[joinScorers.Length - 1] = scorer;
             }

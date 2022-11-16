@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util.Fst;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -405,7 +406,7 @@ namespace Lucene.Net.Codecs.Memory
                 _lastBlockStatsFp = _statsOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 _lastBlockMetaLongsFp = _metaLongsOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 _lastBlockMetaBytesFp = _metaBytesOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
-                Array.Copy(_lastLongs, 0, _lastBlockLongs, 0, _longsSize);
+                Arrays.Copy(_lastLongs, 0, _lastBlockLongs, 0, _longsSize);
             }
         }
     }

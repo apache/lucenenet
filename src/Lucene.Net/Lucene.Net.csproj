@@ -32,6 +32,8 @@
     <!--<PackageReadmeFile>readme.md</PackageReadmeFile>-->
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   

@@ -205,7 +205,7 @@ namespace Lucene.Net.Util
                 longs = new long[other.Length];
                 Offset = 0;
             }
-            Array.Copy(other.longs, other.Offset, longs, Offset, other.Length);
+            Arrays.Copy(other.longs, other.Offset, longs, Offset, other.Length);
             Length = other.Length;
         }
 

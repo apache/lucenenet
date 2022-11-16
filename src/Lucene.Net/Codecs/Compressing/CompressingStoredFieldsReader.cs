@@ -421,12 +421,12 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 while (len > outerInstance.bytes.Length)
                 {
-                    Array.Copy(outerInstance.bytes.Bytes, outerInstance.bytes.Offset, b, offset, outerInstance.bytes.Length);
+                    Arrays.Copy(outerInstance.bytes.Bytes, outerInstance.bytes.Offset, b, offset, outerInstance.bytes.Length);
                     len -= outerInstance.bytes.Length;
                     offset += outerInstance.bytes.Length;
                     FillBuffer();
                 }
-                Array.Copy(outerInstance.bytes.Bytes, outerInstance.bytes.Offset, b, offset, len);
+                Arrays.Copy(outerInstance.bytes.Bytes, outerInstance.bytes.Offset, b, offset, len);
                 outerInstance.bytes.Offset += len;
                 outerInstance.bytes.Length -= len;
             }
@@ -574,7 +574,7 @@ namespace Lucene.Net.Codecs.Compressing
                         int toDecompress = Math.Min(chunkSize - decompressed, outerInstance.chunkSize);
                         outerInstance.decompressor.Decompress(fieldsStream, toDecompress, 0, toDecompress, spare);
                         bytes.Bytes = ArrayUtil.Grow(bytes.Bytes, bytes.Length + spare.Length);
-                        Array.Copy(spare.Bytes, spare.Offset, bytes.Bytes, bytes.Length, spare.Length);
+                        Arrays.Copy(spare.Bytes, spare.Offset, bytes.Bytes, bytes.Length, spare.Length);
                         bytes.Length += spare.Length;
                         decompressed += toDecompress;
                     }

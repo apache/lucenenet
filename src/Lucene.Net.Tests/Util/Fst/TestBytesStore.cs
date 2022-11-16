@@ -85,7 +85,7 @@ namespace Lucene.Net.Util.Fst
                                 {
                                     Console.WriteLine("    writeBytes len=" + len + " bytes=" + Arrays.ToString(temp));
                                 }
-                                Array.Copy(temp, 0, expected, pos, temp.Length);
+                                Arrays.Copy(temp, 0, expected, pos, temp.Length);
                                 bytes.WriteBytes(temp, 0, temp.Length);
                                 pos += len;
                             }
@@ -158,7 +158,7 @@ namespace Lucene.Net.Util.Fst
                                     {
                                         Console.WriteLine("    abs writeBytes pos=" + randomPos + " len=" + len + " bytes=" + Arrays.ToString(temp));
                                     }
-                                    Array.Copy(temp, 0, expected, randomPos, temp.Length);
+                                    Arrays.Copy(temp, 0, expected, randomPos, temp.Length);
                                     bytes.WriteBytes(randomPos, temp, 0, temp.Length);
                                 }
                             }
@@ -176,7 +176,7 @@ namespace Lucene.Net.Util.Fst
                                     {
                                         Console.WriteLine("    copyBytes src=" + src + " dest=" + dest + " len=" + len);
                                     }
-                                    Array.Copy(expected, src, expected, dest, len);
+                                    Arrays.Copy(expected, src, expected, dest, len);
                                     bytes.CopyBytes(src, dest, len);
                                 }
                             }

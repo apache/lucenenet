@@ -322,7 +322,7 @@ namespace Lucene.Net.Search.Spell
         private static SuggestWord[] NewPrefix(SuggestWord[] oldPrefix, SuggestWord append)
         {
             SuggestWord[] newPrefix = new SuggestWord[oldPrefix.Length + 1];
-            Array.Copy(oldPrefix, 0, newPrefix, 0, oldPrefix.Length);
+            Arrays.Copy(oldPrefix, 0, newPrefix, 0, oldPrefix.Length);
             newPrefix[newPrefix.Length - 1] = append;
             return newPrefix;
         }

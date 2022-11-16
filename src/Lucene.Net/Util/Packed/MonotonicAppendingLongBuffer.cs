@@ -103,7 +103,7 @@ namespace Lucene.Net.Util.Packed
             if (block == valuesOff)
             {
                 int sysCopyToRead = Math.Min(len, pendingOff - element);
-                Array.Copy(pending, element, arr, off, sysCopyToRead);
+                Arrays.Copy(pending, element, arr, off, sysCopyToRead);
                 return sysCopyToRead;
             }
             else

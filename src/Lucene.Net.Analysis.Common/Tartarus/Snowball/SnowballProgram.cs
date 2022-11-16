@@ -418,14 +418,14 @@ namespace Lucene.Net.Tartarus.Snowball
             if (newLength > m_current.Length)
             {
                 char[] newBuffer = new char[ArrayUtil.Oversize(newLength, RamUsageEstimator.NUM_BYTES_CHAR)];
-                System.Array.Copy(m_current, 0, newBuffer, 0, m_limit);
+                Arrays.Copy(m_current, 0, newBuffer, 0, m_limit);
                 m_current = newBuffer;
             }
             // if the substring being replaced is longer or shorter than the
             // replacement, need to shift things around
             if (adjustment != 0 && c_ket < m_limit)
             {
-                System.Array.Copy(m_current, c_ket, m_current, c_bra + s.Length,
+                Arrays.Copy(m_current, c_ket, m_current, c_bra + s.Length,
                     m_limit - c_ket);
             }
             // insert the replacement text

@@ -209,7 +209,7 @@ namespace Lucene.Net.Queries
                 {
                     serializedTerms = ArrayUtil.Grow(serializedTerms, lastEndOffset + currentTerm.Length);
                 }
-                Array.Copy(currentTerm.Bytes, currentTerm.Offset, serializedTerms, lastEndOffset, currentTerm.Length);
+                Arrays.Copy(currentTerm.Bytes, currentTerm.Offset, serializedTerms, lastEndOffset, currentTerm.Length);
                 offsets[index] = lastEndOffset;
                 lastEndOffset += currentTerm.Length;
                 index++;

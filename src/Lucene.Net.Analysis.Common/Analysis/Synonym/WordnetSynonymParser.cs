@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -67,7 +68,7 @@ namespace Lucene.Net.Analysis.Synonym
                     if (synset.Length <= synsetSize + 1)
                     {
                         CharsRef[] larger = new CharsRef[synset.Length * 2];
-                        Array.Copy(synset, 0, larger, 0, synsetSize);
+                        Arrays.Copy(synset, 0, larger, 0, synsetSize);
                         synset = larger;
                     }
 

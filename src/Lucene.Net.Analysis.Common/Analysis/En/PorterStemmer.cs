@@ -752,7 +752,7 @@ namespace Lucene.Net.Analysis.En
             {
                 b = new char[ArrayUtil.Oversize(wordLen, RamUsageEstimator.NUM_BYTES_CHAR)];
             }
-            Array.Copy(wordBuffer, offset, b, 0, wordLen);
+            Arrays.Copy(wordBuffer, offset, b, 0, wordLen);
             i = wordLen;
             return Stem(0);
         }

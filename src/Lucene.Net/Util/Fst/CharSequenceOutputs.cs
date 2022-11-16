@@ -1,4 +1,5 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -134,8 +135,8 @@ namespace Lucene.Net.Util.Fst
                     Debugging.Assert(output.Length > 0);
                 }
                 var result = new CharsRef(prefix.Length + output.Length);
-                Array.Copy(prefix.Chars, prefix.Offset, result.Chars, 0, prefix.Length);
-                Array.Copy(output.Chars, output.Offset, result.Chars, prefix.Length, output.Length);
+                Arrays.Copy(prefix.Chars, prefix.Offset, result.Chars, 0, prefix.Length);
+                Arrays.Copy(output.Chars, output.Offset, result.Chars, prefix.Length, output.Length);
                 result.Length = prefix.Length + output.Length;
                 return result;
             }

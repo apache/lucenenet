@@ -604,9 +604,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         int payloadOffset = input.Position + surface.Length;
                         int payloadLength = scratch.Length - payloadOffset;
                         BytesRef br = new BytesRef(surface.Length + 1 + payloadLength);
-                        Array.Copy(surface.Bytes, surface.Offset, br.Bytes, 0, surface.Length);
+                        Arrays.Copy(surface.Bytes, surface.Offset, br.Bytes, 0, surface.Length);
                         br.Bytes[surface.Length] = PAYLOAD_SEP;
-                        Array.Copy(scratch.Bytes, payloadOffset, br.Bytes, surface.Length + 1, payloadLength);
+                        Arrays.Copy(scratch.Bytes, payloadOffset, br.Bytes, surface.Length + 1, payloadLength);
                         br.Length = br.Bytes.Length;
                         builder.Add(scratchInts, outputs.NewPair(cost, br));
                     }
@@ -676,7 +676,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 int payloadLen = output2.Length - sepIndex - 1;
                 UnicodeUtil.UTF8toUTF16(output2.Bytes, output2.Offset, sepIndex, spare);
                 BytesRef payload = new BytesRef(payloadLen);
-                Array.Copy(output2.Bytes, sepIndex + 1, payload.Bytes, 0, payloadLen);
+                Arrays.Copy(output2.Bytes, sepIndex + 1, payload.Bytes, 0, payloadLen);
                 payload.Length = payloadLen;
                 result = new LookupResult(spare.ToString(), DecodeWeight(output1.GetValueOrDefault()), payload);
             }

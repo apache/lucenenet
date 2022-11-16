@@ -165,7 +165,7 @@ namespace Sax.Helpers
             if (contextPos >= max)
             {
                 var newContexts = new Context[max * 2];
-                Array.Copy(contexts, 0, newContexts, 0, max);
+                Arrays.Copy(contexts, 0, newContexts, 0, max);
                 //max *= 2; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 contexts = newContexts;
             }

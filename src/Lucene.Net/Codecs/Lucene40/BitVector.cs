@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public object Clone()
         {
             byte[] copyBits = new byte[bits.Length];
-            Array.Copy(bits, 0, copyBits, 0, bits.Length);
+            Arrays.Copy(bits, 0, copyBits, 0, bits.Length);
             BitVector clone = new BitVector(copyBits, size);
             clone.count = count;
             return clone;

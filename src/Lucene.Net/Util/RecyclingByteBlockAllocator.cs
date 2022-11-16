@@ -1,4 +1,5 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Util
@@ -95,7 +96,7 @@ namespace Lucene.Net.Util
             if (size >= freeByteBlocks.Length)
             {
                 var newBlocks = new byte[ArrayUtil.Oversize(size, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
-                Array.Copy(freeByteBlocks, 0, newBlocks, 0, freeBlocks);
+                Arrays.Copy(freeByteBlocks, 0, newBlocks, 0, freeBlocks);
                 freeByteBlocks = newBlocks;
             }
             int stop = start + numBlocks;

@@ -2,6 +2,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -259,7 +260,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 if (pendingTerms.Length == pendingCount)
                 {
                     TermEntry[] newArray = new TermEntry[ArrayUtil.Oversize(pendingCount + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    System.Array.Copy(pendingTerms, 0, newArray, 0, pendingCount);
+                    Arrays.Copy(pendingTerms, 0, newArray, 0, pendingCount);
                     for (int i = pendingCount; i < newArray.Length; i++)
                     {
                         newArray[i] = new TermEntry();

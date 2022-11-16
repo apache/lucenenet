@@ -3,6 +3,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -336,7 +337,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                         current.payloads = new byte[current.positions.Length][];
                     }
                     var bytes = current.payloads[posUpto] = new byte[payload.Length];
-                    Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
+                    Arrays.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
                 }
                 posUpto++;
             }

@@ -92,7 +92,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             Components = new string[1 + path.Length];
             Components[0] = dim;
-            Array.Copy(path, 0, Components, 1, path.Length);
+            Arrays.Copy(path, 0, Components, 1, path.Length);
             Length = Components.Length;
             CheckComponents();
         }
@@ -228,7 +228,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return "FacetLabel: []";
             }
             string[] parts = new string[Length];
-            Array.Copy(Components, 0, parts, 0, Length);
+            Arrays.Copy(Components, 0, parts, 0, Length);
             return "FacetLabel: " + Arrays.ToString(parts);
         }
 

@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Numerics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -284,7 +285,7 @@ namespace Lucene.Net.Facet
             string[] childPath = new string[res.Path.Length + 2];
             childPath[0] = res.Dim;
 
-            Array.Copy(res.Path, 0, childPath, 1, res.Path.Length); // reuse
+            Arrays.Copy(res.Path, 0, childPath, 1, res.Path.Length); // reuse
 
             for (int i = 0; i < res.LabelValues.Length; i++)
             {

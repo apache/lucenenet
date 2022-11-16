@@ -120,8 +120,8 @@ namespace Lucene.Net.Util
                     // Split
                     b.Bytes = new byte[length];
                     b.Offset = 0;
-                    Array.Copy(blocks[index], offset, b.Bytes, 0, blockSize - offset);
-                    Array.Copy(blocks[1 + index], 0, b.Bytes, blockSize - offset, length - (blockSize - offset));
+                    Arrays.Copy(blocks[index], offset, b.Bytes, 0, blockSize - offset);
+                    Arrays.Copy(blocks[1 + index], 0, b.Bytes, blockSize - offset, length - (blockSize - offset));
                 }
             }
 
@@ -235,7 +235,7 @@ namespace Lucene.Net.Util
             @out.Offset = upto;
             @out.Length = bytes.Length;
 
-            Array.Copy(bytes.Bytes, bytes.Offset, currentBlock, upto, bytes.Length);
+            Arrays.Copy(bytes.Bytes, bytes.Offset, currentBlock, upto, bytes.Length);
             upto += bytes.Length;
         }
 
@@ -254,7 +254,7 @@ namespace Lucene.Net.Util
             if (trim && upto < blockSize)
             {
                 var newBlock = new byte[upto];
-                Array.Copy(currentBlock, 0, newBlock, 0, upto);
+                Arrays.Copy(currentBlock, 0, newBlock, 0, upto);
                 currentBlock = newBlock;
             }
             if (currentBlock is null)
@@ -330,7 +330,7 @@ namespace Lucene.Net.Util
                 currentBlock[upto++] = unchecked((byte)(0x80 | (bytes.Length >> 8)));
                 currentBlock[upto++] = unchecked((byte)(bytes.Length & 0xff));
             }
-            Array.Copy(bytes.Bytes, bytes.Offset, currentBlock, upto, bytes.Length);
+            Arrays.Copy(bytes.Bytes, bytes.Offset, currentBlock, upto, bytes.Length);
             upto += bytes.Length;
 
             return pointer;
@@ -395,14 +395,14 @@ namespace Lucene.Net.Util
                     int left = offsetEnd - offset;
                     if (blockLeft < left)
                     {
-                        System.Buffer.BlockCopy(currentBlock, currentBlockUpto, b, offset, blockLeft);
+                        Arrays.Copy(currentBlock, currentBlockUpto, b, offset, blockLeft);
                         NextBlock();
                         offset += blockLeft;
                     }
                     else
                     {
                         // Last block
-                        System.Buffer.BlockCopy(currentBlock, currentBlockUpto, b, offset, left);
+                        Arrays.Copy(currentBlock, currentBlockUpto, b, offset, left);
                         currentBlockUpto += left;
                         break;
                     }
@@ -468,7 +468,7 @@ namespace Lucene.Net.Util
                     int blockLeft = outerInstance.blockSize - outerInstance.upto;
                     if (blockLeft < left)
                     {
-                        System.Buffer.BlockCopy(b, offset, outerInstance.currentBlock, outerInstance.upto, blockLeft);
+                        Arrays.Copy(b, offset, outerInstance.currentBlock, outerInstance.upto, blockLeft);
                         outerInstance.blocks.Add(outerInstance.currentBlock);
                         outerInstance.blockEnd.Add(outerInstance.blockSize);
                         outerInstance.currentBlock = new byte[outerInstance.blockSize];
@@ -478,7 +478,7 @@ namespace Lucene.Net.Util
                     else
                     {
                         // Last block
-                        System.Buffer.BlockCopy(b, offset, outerInstance.currentBlock, outerInstance.upto, left);
+                        Arrays.Copy(b, offset, outerInstance.currentBlock, outerInstance.upto, left);
                         outerInstance.upto += left;
                         break;
                     }

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -277,7 +278,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 short[] newArray = new short[Oversize(minSize, RamUsageEstimator.NUM_BYTES_INT16)];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -298,7 +299,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 float[] newArray = new float[Oversize(minSize, RamUsageEstimator.NUM_BYTES_SINGLE)];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -319,7 +320,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 double[] newArray = new double[Oversize(minSize, RamUsageEstimator.NUM_BYTES_DOUBLE)];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -341,7 +342,7 @@ namespace Lucene.Net.Util
             if (newSize != array.Length)
             {
                 short[] newArray = new short[newSize];
-                Array.Copy(array, 0, newArray, 0, newSize);
+                Arrays.Copy(array, 0, newArray, 0, newSize);
                 return newArray;
             }
             else
@@ -356,7 +357,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 int[] newArray = new int[Oversize(minSize, RamUsageEstimator.NUM_BYTES_INT32)];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -378,7 +379,7 @@ namespace Lucene.Net.Util
             if (newSize != array.Length)
             {
                 int[] newArray = new int[newSize];
-                Array.Copy(array, 0, newArray, 0, newSize);
+                Arrays.Copy(array, 0, newArray, 0, newSize);
                 return newArray;
             }
             else
@@ -393,7 +394,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 long[] newArray = new long[Oversize(minSize, RamUsageEstimator.NUM_BYTES_INT64)];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -415,7 +416,7 @@ namespace Lucene.Net.Util
             if (newSize != array.Length)
             {
                 long[] newArray = new long[newSize];
-                Array.Copy(array, 0, newArray, 0, newSize);
+                Arrays.Copy(array, 0, newArray, 0, newSize);
                 return newArray;
             }
             else
@@ -431,7 +432,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 var newArray = new sbyte[Oversize(minSize, 1)];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -446,7 +447,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 byte[] newArray = new byte[Oversize(minSize, 1)];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -468,7 +469,7 @@ namespace Lucene.Net.Util
             if (newSize != array.Length)
             {
                 var newArray = new byte[newSize];
-                Array.Copy(array, 0, newArray, 0, newSize);
+                Arrays.Copy(array, 0, newArray, 0, newSize);
                 return newArray;
             }
             else
@@ -483,7 +484,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 bool[] newArray = new bool[Oversize(minSize, 1)];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -505,7 +506,7 @@ namespace Lucene.Net.Util
             if (newSize != array.Length)
             {
                 bool[] newArray = new bool[newSize];
-                Array.Copy(array, 0, newArray, 0, newSize);
+                Arrays.Copy(array, 0, newArray, 0, newSize);
                 return newArray;
             }
             else
@@ -520,7 +521,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 char[] newArray = new char[Oversize(minSize, RamUsageEstimator.NUM_BYTES_CHAR)];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -542,7 +543,7 @@ namespace Lucene.Net.Util
             if (newSize != array.Length)
             {
                 char[] newArray = new char[newSize];
-                Array.Copy(array, 0, newArray, 0, newSize);
+                Arrays.Copy(array, 0, newArray, 0, newSize);
                 return newArray;
             }
             else
@@ -558,7 +559,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 var newArray = new int[Oversize(minSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -582,7 +583,7 @@ namespace Lucene.Net.Util
             if (newSize != array.Length)
             {
                 int[][] newArray = new int[newSize][];
-                Array.Copy(array, 0, newArray, 0, newSize);
+                Arrays.Copy(array, 0, newArray, 0, newSize);
                 return newArray;
             }
             else
@@ -598,7 +599,7 @@ namespace Lucene.Net.Util
             if (array.Length < minSize)
             {
                 float[][] newArray = new float[Oversize(minSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
-                Array.Copy(array, 0, newArray, 0, array.Length);
+                Arrays.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
             else
@@ -622,7 +623,7 @@ namespace Lucene.Net.Util
             if (newSize != array.Length)
             {
                 float[][] newArray = new float[newSize][];
-                Array.Copy(array, 0, newArray, 0, newSize);
+                Arrays.Copy(array, 0, newArray, 0, newSize);
                 return newArray;
             }
             else

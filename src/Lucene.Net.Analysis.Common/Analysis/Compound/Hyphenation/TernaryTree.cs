@@ -1,4 +1,5 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -386,16 +387,16 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             int len = newsize < m_lo.Length ? newsize : m_lo.Length;
             char[] na = new char[newsize];
-            Array.Copy(m_lo, 0, na, 0, len);
+            Arrays.Copy(m_lo, 0, na, 0, len);
             m_lo = na;
             na = new char[newsize];
-            Array.Copy(m_hi, 0, na, 0, len);
+            Arrays.Copy(m_hi, 0, na, 0, len);
             m_hi = na;
             na = new char[newsize];
-            Array.Copy(m_eq, 0, na, 0, len);
+            Arrays.Copy(m_eq, 0, na, 0, len);
             m_eq = na;
             na = new char[newsize];
-            Array.Copy(m_sc, 0, na, 0, len);
+            Arrays.Copy(m_sc, 0, na, 0, len);
             m_sc = na;
         }
 

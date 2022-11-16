@@ -1,5 +1,6 @@
 ﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -568,13 +569,13 @@ namespace Lucene.Net.Util.Fst
             if (m_arcs.Length <= m_upto)
             {
                 FST.Arc<T>[] newArcs = new FST.Arc<T>[ArrayUtil.Oversize(1 + m_upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                Array.Copy(m_arcs, 0, newArcs, 0, m_arcs.Length);
+                Arrays.Copy(m_arcs, 0, newArcs, 0, m_arcs.Length);
                 m_arcs = newArcs;
             }
             if (m_output.Length <= m_upto)
             {
                 T[] newOutput = new T[ArrayUtil.Oversize(1 + m_upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                Array.Copy(m_output, 0, newOutput, 0, m_output.Length);
+                Arrays.Copy(m_output, 0, newOutput, 0, m_output.Length);
                 m_output = newOutput;
             }
         }

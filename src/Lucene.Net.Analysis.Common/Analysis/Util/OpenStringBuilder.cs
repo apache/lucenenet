@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -187,7 +188,7 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual void UnsafeWrite(char[] b, int off, int len)
         {
-            System.Array.Copy(b, off, m_buf, this.m_len, len);
+            Arrays.Copy(b, off, m_buf, this.m_len, len);
             this.m_len += len;
         }
 
@@ -235,7 +236,7 @@ namespace Lucene.Net.Analysis.Util
         protected virtual void Resize(int len)
         {
             char[] newbuf = new char[Math.Max(m_buf.Length << 1, len)];
-            System.Array.Copy(m_buf, 0, newbuf, 0, Length);
+            Arrays.Copy(m_buf, 0, newbuf, 0, Length);
             m_buf = newbuf;
         }
 
@@ -303,7 +304,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual char[] ToCharArray()
         {
             char[] newbuf = new char[Length];
-            System.Array.Copy(m_buf, 0, newbuf, 0, Length);
+            Arrays.Copy(m_buf, 0, newbuf, 0, Length);
             return newbuf;
         }
 

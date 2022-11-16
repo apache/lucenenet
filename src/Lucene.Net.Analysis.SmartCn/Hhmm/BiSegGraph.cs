@@ -95,9 +95,9 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         foreach (SegToken t2 in nextTokens)
                         {
                             idBuffer = new char[t1.CharArray.Length + t2.CharArray.Length + 1];
-                            System.Array.Copy(t1.CharArray, 0, idBuffer, 0, t1.CharArray.Length);
+                            Arrays.Copy(t1.CharArray, 0, idBuffer, 0, t1.CharArray.Length);
                             idBuffer[t1.CharArray.Length] = BigramDictionary.WORD_SEGMENT_CHAR;
-                            System.Array.Copy(t2.CharArray, 0, idBuffer,
+                            Arrays.Copy(t2.CharArray, 0, idBuffer,
                                 t1.CharArray.Length + 1, t2.CharArray.Length);
 
                             // Two linked Words frequency

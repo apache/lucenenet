@@ -4,6 +4,7 @@ using J2N.Numerics;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -199,19 +200,19 @@ namespace Lucene.Net.Analysis.Synonym
                 if (count == outputs.Length)
                 {
                     CharsRef[] next = new CharsRef[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(outputs, 0, next, 0, count);
+                    Arrays.Copy(outputs, 0, next, 0, count);
                     outputs = next;
                 }
                 if (count == endOffsets.Length)
                 {
                     int[] next = new int[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_INT32)];
-                    Array.Copy(endOffsets, 0, next, 0, count);
+                    Arrays.Copy(endOffsets, 0, next, 0, count);
                     endOffsets = next;
                 }
                 if (count == posLengths.Length)
                 {
                     int[] next = new int[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_INT32)];
-                    Array.Copy(posLengths, 0, next, 0, count);
+                    Arrays.Copy(posLengths, 0, next, 0, count);
                     posLengths = next;
                 }
                 if (outputs[count] is null)

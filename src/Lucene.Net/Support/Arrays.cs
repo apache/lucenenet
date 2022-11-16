@@ -1,7 +1,10 @@
 ﻿using J2N.Collections;
+using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Lucene.Net.Support
@@ -115,6 +118,425 @@ namespace Lucene.Net.Support
                 a[i] = val;
             }
         }
+
+        /// <summary>
+        /// Copies a range of elements from an Array starting at the first element and pastes them
+        /// into another Array starting at the first element. The length is specified as a 32-bit integer.
+        /// <para/>
+        /// <b>Usage Note:</b> This implementation uses the most efficient (known) method for copying the
+        /// array based on the data type and platform.
+        /// </summary>
+        /// <typeparam name="T">The array type.</typeparam>
+        /// <param name="sourceArray">The Array that contains the data to copy.</param>
+        /// <param name="destinationArray">The Array that receives the data.</param>
+        /// <param name="length">A 32-bit integer that represents the number of elements to copy.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Copy<T>(T[] sourceArray, T[] destinationArray, int length)
+        {
+            if (length == 0)
+                return;
+
+            if (Debugging.AssertsEnabled) // LUCENENET: Since this is internal, we are relying on Debugging.Assert to ensure the values passed in are correct.
+            {
+                Debugging.Assert(sourceArray is not null);
+                Debugging.Assert(destinationArray is not null);
+                Debugging.Assert(length >= 0 || length <= sourceArray.Length || length <= destinationArray.Length);
+            }
+
+            ArrayCopier<T>.Default.Copy(sourceArray, sourceIndex: 0, destinationArray, destinationIndex: 0, length);
+        }
+
+        /// <summary>
+        /// Copies a range of elements from an Array starting at the specified source index and pastes them
+        /// to another Array starting at the specified destination index. The length and the indexes are
+        /// specified as 32-bit integers.
+        /// <para/>
+        /// <b>Usage Note:</b> This implementation uses the most efficient (known) method for copying the
+        /// array based on the data type and platform.
+        /// </summary>
+        /// <typeparam name="T">The array type.</typeparam>
+        /// <param name="sourceArray">The Array that contains the data to copy.</param>
+        /// <param name="sourceIndex">A 32-bit integer that represents the index in the
+        /// <paramref name="sourceArray"/> at which copying begins.</param>
+        /// <param name="destinationArray">The Array that receives the data.</param>
+        /// <param name="destinationIndex">A 32-bit integer that represents the index in the
+        /// <paramref name="destinationArray"/> at which storing begins.</param>
+        /// <param name="length">A 32-bit integer that represents the number of elements to copy.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Copy<T>(T[] sourceArray, int sourceIndex, T[] destinationArray, int destinationIndex, int length)
+        {
+            if (length == 0)
+                return;
+
+            if (Debugging.AssertsEnabled) // LUCENENET: Since this is internal, we are relying on Debugging.Assert to ensure the values passed in are correct.
+            {
+                Debugging.Assert(sourceArray is not null);
+                Debugging.Assert(destinationArray is not null);
+                Debugging.Assert(sourceIndex >= 0 || sourceIndex <= sourceArray.Length - length);
+                Debugging.Assert(destinationIndex >= 0 || destinationIndex <= destinationArray.Length - length);
+                Debugging.Assert(length >= 0 || length < sourceArray.Length || length < destinationArray.Length);
+            }
+
+            ArrayCopier<T>.Default.Copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length);
+        }
+
+        private class PlatformDetection
+        {
+            // We put this in its own class so every type doesn't have to reload it. But, at the same time,
+            // we don't want to have to load this just to use the Arrays class.
+            public static readonly bool IsFullFramework = LoadIsFullFramework();
+            //public static readonly bool IsNetNative = RuntimeInformation.FrameworkDescription.StartsWith(".NET Native", StringComparison.OrdinalIgnoreCase);
+            public static readonly bool IsNetCore = LoadIsNetCore();
+
+            private static bool LoadIsFullFramework()
+            {
+#if NETSTANDARD2_0
+                return RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase);
+#elif NET40_OR_GREATER
+                return true;
+#else
+                return false;
+#endif
+            }
+
+            private static bool LoadIsNetCore()
+            {
+#if NETSTANDARD2_0_OR_GREATER
+                return RuntimeInformation.FrameworkDescription.StartsWith(".NET Core", StringComparison.OrdinalIgnoreCase);
+#elif NET5_0_OR_GREATER || NETCOREAPP1_0_OR_GREATER
+                return true;
+#else
+                return false;
+#endif
+            }
+        }
+
+        #region ArrayCopier<T>
+
+        private class ArrayCopier<T>
+        {
+            public static readonly IArrayCopier<T> Default = LoadArrayCopier();
+
+            private static IArrayCopier<T> LoadArrayCopier()
+            {
+                // Default to Array.Copy() for unknown platforms (Span<T>.Copy() is slow on Mono)
+                if (!PlatformDetection.IsFullFramework && !PlatformDetection.IsNetCore)
+                    return new SystemArrayCopyArrayCopier<T>();
+
+                var type = typeof(T);
+
+                if (!type.IsValueType) // Reference types
+                {
+                    // Span<T> and Memory<T> are horribly slow on.NET Framework for
+                    // copying arrays of reference types.
+                    if (PlatformDetection.IsFullFramework)
+                        return new SystemArrayCopyArrayCopier<T>();
+
+                    return new SpanArrayCopier<T>();
+                }
+
+                // Value types are generally tied with or faster than Buffer.MemoryCopy() using
+                // Span<T>.Copy() on Linux and macOS.
+                if (!Constants.WINDOWS && !PlatformDetection.IsFullFramework)
+                    return new SpanArrayCopier<T>();
+
+                if (type == typeof(byte))
+                {
+                    // On Windows, copying bytes with Buffer.MemoryCopy() is fastest.
+                    return (IArrayCopier<T>)(object)new ByteBufferMemoryCopyArrayCopier();
+                }
+                else if (type == typeof(sbyte))
+                {
+                    return (IArrayCopier<T>)(object)new SByteBufferMemoryCopyArrayCopier();
+                }
+                else if (PlatformDetection.IsFullFramework)
+                {
+                    // .NET Framework is 2-3x faster to use Buffer.MemoryCopy() than any other method for primitive types.
+                    if (type == typeof(short))
+                        return (IArrayCopier<T>)(object)new Int16BufferMemoryCopyArrayCopier();
+                    if (type == typeof(ushort))
+                        return (IArrayCopier<T>)(object)new UInt16BufferMemoryCopyArrayCopier();
+                    if (type == typeof(int))
+                        return (IArrayCopier<T>)(object)new Int32BufferMemoryCopyArrayCopier();
+                    if (type == typeof(uint))
+                        return (IArrayCopier<T>)(object)new UInt32BufferMemoryCopyArrayCopier();
+                    if (type == typeof(long))
+                        return (IArrayCopier<T>)(object)new Int64BufferMemoryCopyArrayCopier();
+                    if (type == typeof(ulong))
+                        return (IArrayCopier<T>)(object)new UInt64BufferMemoryCopyArrayCopier();
+                    if (type == typeof(float))
+                        return (IArrayCopier<T>)(object)new SingleBufferMemoryCopyArrayCopier();
+                    if (type == typeof(double))
+                        return (IArrayCopier<T>)(object)new DoubleBufferMemoryCopyArrayCopier();
+                    if (type == typeof(char))
+                        return (IArrayCopier<T>)(object)new CharBufferMemoryCopyArrayCopier();
+                    if (type == typeof(bool))
+                        return (IArrayCopier<T>)(object)new BooleanBufferMemoryCopyArrayCopier();
+
+                    return new SystemArrayCopyArrayCopier<T>();
+                }
+                else
+                {
+                    return new SpanArrayCopier<T>();
+                }
+            }
+        }
+
+        private interface IArrayCopier<T>
+        {
+            void Copy(T[] sourceArray, int sourceIndex, T[] destinationArray, int destinationIndex, int length);
+        }
+
+        private class SpanArrayCopier<T> : IArrayCopier<T>
+        {
+            public void Copy(T[] sourceArray, int sourceIndex, T[] destinationArray, int destinationIndex, int length)
+            {
+                sourceArray.AsSpan(sourceIndex, length).CopyTo(destinationArray.AsSpan(destinationIndex, length));
+            }
+        }
+
+        private class SystemArrayCopyArrayCopier<T> : IArrayCopier<T>
+        {
+            public void Copy(T[] sourceArray, int sourceIndex, T[] destinationArray, int destinationIndex, int length)
+            {
+                Array.Copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length);
+            }
+        }
+
+        #region Primitive Type Buffer.MemoryCopy() Array Copiers
+        // We save some arithmetic by having a specialized type for byte, since we know it is measured in bytes.
+        private class ByteBufferMemoryCopyArrayCopier : IArrayCopier<byte>
+        {
+            public void Copy(byte[] sourceArray, int sourceIndex, byte[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (byte* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationArray.Length - destinationIndex, length);
+                    }
+                }
+            }
+        }
+
+        // We save some arithmetic by having a specialized type for byte, since we know it is measured in bytes.
+        private class SByteBufferMemoryCopyArrayCopier : IArrayCopier<sbyte>
+        {
+            public void Copy(sbyte[] sourceArray, int sourceIndex, sbyte[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (sbyte* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationArray.Length - destinationIndex, length);
+                    }
+                }
+            }
+        }
+
+        // LUCENENET NOTE: Tried to make the following types one generic type, but SDKs prior to .NET 7 won't compile it.
+        // See: https://github.com/dotnet/runtime/issues/76255
+
+        private class Int16BufferMemoryCopyArrayCopier : IArrayCopier<short>
+        {
+            public void Copy(short[] sourceArray, int sourceIndex, short[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (short* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        int size = sizeof(short);
+                        long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
+                        long sourceBytesToCopy = length * size;
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationSizeInBytes, sourceBytesToCopy);
+                    }
+                }
+            }
+        }
+
+        private class UInt16BufferMemoryCopyArrayCopier : IArrayCopier<ushort>
+        {
+            public void Copy(ushort[] sourceArray, int sourceIndex, ushort[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (ushort* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        int size = sizeof(ushort);
+                        long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
+                        long sourceBytesToCopy = length * size;
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationSizeInBytes, sourceBytesToCopy);
+                    }
+                }
+            }
+        }
+
+        private class Int32BufferMemoryCopyArrayCopier : IArrayCopier<int>
+        {
+            public void Copy(int[] sourceArray, int sourceIndex, int[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (int* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        int size = sizeof(int);
+                        long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
+                        long sourceBytesToCopy = length * size;
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationSizeInBytes, sourceBytesToCopy);
+                    }
+                }
+            }
+        }
+
+        private class UInt32BufferMemoryCopyArrayCopier : IArrayCopier<uint>
+        {
+            public void Copy(uint[] sourceArray, int sourceIndex, uint[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (uint* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        int size = sizeof(uint);
+                        long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
+                        long sourceBytesToCopy = length * size;
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationSizeInBytes, sourceBytesToCopy);
+                    }
+                }
+            }
+        }
+
+        private class Int64BufferMemoryCopyArrayCopier : IArrayCopier<long>
+        {
+            public void Copy(long[] sourceArray, int sourceIndex, long[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (long* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        int size = sizeof(long);
+                        long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
+                        long sourceBytesToCopy = length * size;
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationSizeInBytes, sourceBytesToCopy);
+                    }
+                }
+            }
+        }
+
+        private class UInt64BufferMemoryCopyArrayCopier : IArrayCopier<ulong>
+        {
+            public void Copy(ulong[] sourceArray, int sourceIndex, ulong[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (ulong* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        int size = sizeof(ulong);
+                        long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
+                        long sourceBytesToCopy = length * size;
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationSizeInBytes, sourceBytesToCopy);
+                    }
+                }
+            }
+        }
+
+        private class SingleBufferMemoryCopyArrayCopier : IArrayCopier<float>
+        {
+            public void Copy(float[] sourceArray, int sourceIndex, float[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (float* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        int size = sizeof(float);
+                        long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
+                        long sourceBytesToCopy = length * size;
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationSizeInBytes, sourceBytesToCopy);
+                    }
+                }
+            }
+        }
+
+        private class DoubleBufferMemoryCopyArrayCopier : IArrayCopier<double>
+        {
+            public void Copy(double[] sourceArray, int sourceIndex, double[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (double* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        int size = sizeof(double);
+                        long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
+                        long sourceBytesToCopy = length * size;
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationSizeInBytes, sourceBytesToCopy);
+                    }
+                }
+            }
+        }
+
+        private class CharBufferMemoryCopyArrayCopier : IArrayCopier<char>
+        {
+            public void Copy(char[] sourceArray, int sourceIndex, char[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (char* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        int size = sizeof(char);
+                        long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
+                        long sourceBytesToCopy = length * size;
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationSizeInBytes, sourceBytesToCopy);
+                    }
+                }
+            }
+        }
+
+        private class BooleanBufferMemoryCopyArrayCopier : IArrayCopier<bool>
+        {
+            public void Copy(bool[] sourceArray, int sourceIndex, bool[] destinationArray, int destinationIndex, int length)
+            {
+                unsafe
+                {
+                    fixed (bool* sourcePointer = &sourceArray[sourceIndex], destinationPointer = &destinationArray[destinationIndex])
+                    {
+                        int size = sizeof(bool);
+                        long destinationSizeInBytes = (destinationArray.Length - destinationIndex) * size;
+                        long sourceBytesToCopy = length * size;
+                        // NOTE: We are relying on the fact that passing the pointers into this method is creating copies of them
+                        // that are not fixed.
+                        Buffer.MemoryCopy(sourcePointer, destinationPointer, destinationSizeInBytes, sourceBytesToCopy);
+                    }
+                }
+            }
+        }
+
+        // Intentionally not adding support for IntPtr and UIntPtr
+
+        #endregion Primitive Type Buffer.MemoryCopy() Array Copiers
+
+        #endregion ArrayCopier<T>
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T[] CopyOf<T>(T[] original, int newLength)

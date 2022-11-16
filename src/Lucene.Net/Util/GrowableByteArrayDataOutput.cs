@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
         {
             int newLength = Length + len;
             bytes = ArrayUtil.Grow(bytes, newLength);
-            System.Buffer.BlockCopy(b, off, bytes, Length, len);
+            Arrays.Copy(b, off, bytes, Length, len);
             Length = newLength;
         }
     }

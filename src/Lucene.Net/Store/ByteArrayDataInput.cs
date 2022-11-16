@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Store
 {
@@ -227,7 +228,7 @@ namespace Lucene.Net.Store
         // NOTE: AIOOBE not EOF if you read too much
         public override void ReadBytes(byte[] b, int offset, int len)
         {
-            Buffer.BlockCopy(bytes, pos, b, offset, len);
+            Arrays.Copy(bytes, pos, b, offset, len);
             pos += len;
         }
     }

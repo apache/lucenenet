@@ -4,6 +4,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -254,7 +255,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     {
                         // term, but ensure a non-zero offset
                         var newbytes = new byte[term.Length + 5];
-                        Array.Copy(term.Bytes, term.Offset, newbytes, 5, term.Length);
+                        Arrays.Copy(term.Bytes, term.Offset, newbytes, 5, term.Length);
                         tests.Add(new BytesRef(newbytes, 5, term.Length));
                     }
                 }

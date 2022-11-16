@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.Compressing
                 else
                 {
                     // no overlap -> arraycopy
-                    Array.Copy(dest, dOff - matchDec, dest, dOff, fastLen);
+                    Arrays.Copy(dest, dOff - matchDec, dest, dOff, fastLen);
                     dOff += matchLen;
                 }
             } while (dOff < decompressedLen);

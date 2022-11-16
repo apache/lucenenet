@@ -415,11 +415,11 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // Make our own copies because we sort in-place:
             int[] docids = new int[docidsIn.Length];
-            System.Array.Copy(docidsIn, 0, docids, 0, docidsIn.Length);
+            Arrays.Copy(docidsIn, 0, docids, 0, docidsIn.Length);
             string[] fields = new string[fieldsIn.Length];
-            System.Array.Copy(fieldsIn, 0, fields, 0, fieldsIn.Length);
+            Arrays.Copy(fieldsIn, 0, fields, 0, fieldsIn.Length);
             int[] maxPassages = new int[maxPassagesIn.Length];
-            System.Array.Copy(maxPassagesIn, 0, maxPassages, 0, maxPassagesIn.Length);
+            Arrays.Copy(maxPassagesIn, 0, maxPassages, 0, maxPassagesIn.Length);
 
             // sort for sequential io
             ArrayUtil.TimSort(docids);
@@ -535,7 +535,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             if (automata.Length > 0)
             {
                 BytesRef[] newTerms = new BytesRef[terms.Length + 1];
-                System.Array.Copy(terms, 0, newTerms, 0, terms.Length);
+                Arrays.Copy(terms, 0, newTerms, 0, terms.Length);
                 terms = newTerms;
             }
 

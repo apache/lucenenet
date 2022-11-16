@@ -3,6 +3,7 @@ using J2N.IO;
 using J2N.Numerics;
 using Lucene.Net.Codecs;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -239,7 +240,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                 int prefix = data.TripleShift(4);
                 int suffix = data & 0xF;
                 char[] text = new char[prefix + suffix];
-                System.Array.Copy(surfaceForm, off, text, 0, prefix);
+                Arrays.Copy(surfaceForm, off, text, 0, prefix);
                 for (int i = 0; i < suffix; i++)
                 {
                     text[prefix + i] = buffer.GetChar(offset + (i << 1));

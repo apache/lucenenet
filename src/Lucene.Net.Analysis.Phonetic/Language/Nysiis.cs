@@ -1,4 +1,5 @@
 ﻿// commons-codec version compatibility level: 1.9
+using Lucene.Net.Support;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -299,7 +300,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 char next = i < len - 1 ? chars[i + 1] : SPACE;
                 char aNext = i < len - 2 ? chars[i + 2] : SPACE;
                 char[] transcoded = TranscodeRemaining(chars[i - 1], chars[i], next, aNext);
-                System.Array.Copy(transcoded, 0, chars, i, transcoded.Length);
+                Arrays.Copy(transcoded, 0, chars, i, transcoded.Length);
 
                 // only append the current char to the key if it is different from the last one
                 if (chars[i] != chars[i - 1])

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -371,7 +372,7 @@ namespace Lucene.Net.Codecs
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void ReadBytes(byte[] b, int offset, int len)
             {
-                Array.Copy(data, pos, b, offset, len);
+                Arrays.Copy(data, pos, b, offset, len);
                 pos += len;
             }
 

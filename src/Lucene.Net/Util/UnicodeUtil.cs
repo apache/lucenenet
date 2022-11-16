@@ -1,6 +1,7 @@
 ﻿using J2N;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -902,7 +903,7 @@ namespace Lucene.Net.Util
             }
 
             var result = new char[w];
-            Array.Copy(chars, result, w);
+            Arrays.Copy(chars, result, w);
             return result;
         }
 

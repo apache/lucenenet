@@ -1,6 +1,7 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
 using System;
 using System.Globalization;
 
@@ -137,7 +138,7 @@ namespace Lucene.Net.Analysis.Tr
         private static int Delete(char[] s, int pos, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (pos < len)
-                Array.Copy(s, pos + 1, s, pos, len - pos - 1);
+                Arrays.Copy(s, pos + 1, s, pos, len - pos - 1);
 
             return len - 1;
         }

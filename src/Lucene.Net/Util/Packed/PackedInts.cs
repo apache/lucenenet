@@ -1421,7 +1421,7 @@ namespace Lucene.Net.Util.Packed
                 destPos += written;
                 if (written < remaining)
                 {
-                    Array.Copy(buf, written, buf, 0, remaining - written);
+                    Arrays.Copy(buf, written, buf, 0, remaining - written);
                 }
                 remaining -= written;
             }
@@ -1430,7 +1430,7 @@ namespace Lucene.Net.Util.Packed
                 int written = dest.Set(destPos, buf, 0, remaining);
                 destPos += written;
                 remaining -= written;
-                Array.Copy(buf, written, buf, 0, remaining);
+                Arrays.Copy(buf, written, buf, 0, remaining);
             }
         }
 

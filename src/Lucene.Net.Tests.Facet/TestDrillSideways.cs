@@ -985,7 +985,7 @@ namespace Lucene.Net.Facet
             }
 
             int[] topNIDs = new int[numSet];
-            Array.Copy(ids, 0, topNIDs, 0, topNIDs.Length);
+            Arrays.Copy(ids, 0, topNIDs, 0, topNIDs.Length);
             return topNIDs;
         }
 

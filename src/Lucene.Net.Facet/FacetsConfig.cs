@@ -539,7 +539,7 @@ namespace Lucene.Net.Facet
                     {
                         bytes = ArrayUtil.Grow(bytes, upto + field.Assoc.Length);
                     }
-                    Array.Copy(field.Assoc.Bytes, field.Assoc.Offset, bytes, upto, field.Assoc.Length);
+                    Arrays.Copy(field.Assoc.Bytes, field.Assoc.Offset, bytes, upto, field.Assoc.Length);
                     upto += field.Assoc.Length;
 
                     // Drill down:
@@ -641,7 +641,7 @@ namespace Lucene.Net.Facet
         {
             string[] fullPath = new string[1 + path.Length];
             fullPath[0] = dim;
-            Array.Copy(path, 0, fullPath, 1, path.Length);
+            Arrays.Copy(path, 0, fullPath, 1, path.Length);
             return PathToString(fullPath, fullPath.Length);
         }
 

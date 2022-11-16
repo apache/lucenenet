@@ -2511,7 +2511,7 @@ namespace Lucene.Net.Util
                     {
                         // term, but ensure a non-zero offset
                         var newbytes = new byte[term.Length + 5];
-                        Array.Copy(term.Bytes, term.Offset, newbytes, 5, term.Length);
+                        Arrays.Copy(term.Bytes, term.Offset, newbytes, 5, term.Length);
                         tests.Add(new BytesRef(newbytes, 5, term.Length));
                     }
                     else if (code == 3)

@@ -1,6 +1,7 @@
 ﻿using J2N;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -308,7 +309,7 @@ namespace Lucene.Net.Util.Automaton
             if (count < states.Length)
             {
                 State[] newArray = new State[count];
-                Array.Copy(states, 0, newArray, 0, count);
+                Arrays.Copy(states, 0, newArray, 0, count);
                 numberedStates = newArray;
             }
             else

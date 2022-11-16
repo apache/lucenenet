@@ -373,7 +373,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
             lastTerm.Offset = 0;
             lastTerm.Length = term.Length;
-            Array.Copy(term.Bytes, term.Offset, lastTerm.Bytes, 0, term.Length);
+            Arrays.Copy(term.Bytes, term.Offset, lastTerm.Bytes, 0, term.Length);
         }
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
