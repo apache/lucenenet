@@ -111,7 +111,13 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
-        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// A given element within the <paramref name="collection"/> is <c>null</c>.
+        /// </exception>
         public CharArraySet(LuceneVersion matchVersion, IEnumerable<string> collection, bool ignoreCase)
             : this(matchVersion, collection is ICollection<string> c ? c.Count : DefaultSetSize, ignoreCase)
         {
@@ -139,7 +145,13 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
-        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// A given element within the <paramref name="collection"/> is <c>null</c>.
+        /// </exception>
         public CharArraySet(LuceneVersion matchVersion, IEnumerable<char[]> collection, bool ignoreCase)
             : this(matchVersion, collection is ICollection<char[]> c ? c.Count : DefaultSetSize, ignoreCase)
         {
@@ -164,7 +176,17 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive
         ///          otherwise <c>true</c>. </param>
-        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// A given element within the <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <see cref="ICharSequence.HasValue"/> property for a given element in the <paramref name="collection"/> returns <c>false</c>.
+        /// </exception>
         public CharArraySet(LuceneVersion matchVersion, IEnumerable<ICharSequence> collection, bool ignoreCase)
             : this(matchVersion, collection is ICollection<ICharSequence> c ? c.Count : DefaultSetSize, ignoreCase)
         {
@@ -197,7 +219,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// <c>true</c> if the <paramref name="length"/> chars of <paramref name="text"/> starting at <paramref name="offset"/>
-        /// are in the set 
+        /// are in the set.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
@@ -221,16 +243,22 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="ICharSequence"/> is in the set
+        /// <c>true</c> if the <see cref="ICharSequence"/> is in the set.
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// </exception>
         public virtual bool Contains(ICharSequence text)
         {
             return map.ContainsKey(text);
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="string"/> is in the set
+        /// <c>true</c> if the <see cref="string"/> is in the set.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Contains(string text)
@@ -239,7 +267,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="object.ToString()"/> representation of <paramref name="text"/> is in the set
+        /// <c>true</c> if the <see cref="object.ToString()"/> representation of <paramref name="text"/> is in the set.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Contains<T>(T text)
@@ -254,7 +282,7 @@ namespace Lucene.Net.Analysis.Util
         /// <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="text">A string-able object</param>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add<T>(T text)
         {
@@ -264,7 +292,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="ICharSequence"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(ICharSequence text)
         {
@@ -274,7 +302,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add this <see cref="string"/> into the set
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(string text)
         {
@@ -287,7 +315,7 @@ namespace Lucene.Net.Analysis.Util
         /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArraySet"/>, the text array will be directly modified.
         /// The user should never modify this text array after calling this method.
         /// </summary>
-        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call</returns>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(char[] text)
         {
@@ -432,7 +460,17 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> A copy of the given set as a <see cref="CharArraySet"/>. If the given set
         ///         is a <see cref="CharArraySet"/> the <see cref="CharArrayDictionary{TValue}.ignoreCase"/> field as well as the
         ///         <see cref="CharArrayDictionary{TValue}.MatchVersion"/> will be preserved. </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// A given element within the <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <see cref="ICharSequence.HasValue"/> property for a given element in the <paramref name="collection"/> returns <c>false</c>.
+        /// </exception>
         public static CharArraySet Copy<T>(LuceneVersion matchVersion, IEnumerable<T> collection)
         {
             if (collection is null)
@@ -472,7 +510,16 @@ namespace Lucene.Net.Analysis.Util
                 return new CharArraySet(matchVersion, charSequenceCollection, ignoreCase);
             }
 
-            return new CharArraySet(matchVersion, collection.Select(x => CharArrayDictionary.ConvertObjectToChars(x)), ignoreCase);
+            return new CharArraySet(matchVersion, collection.Select(text =>
+            {
+                // We cannot capture Span<T> from outside of the lambda, so we just re-alocate the
+                // stack on every loop.
+                var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
+                if (returnType == CharArrayDictionary.CharReturnType.String)
+                    return s.ToCharArray();
+                else
+                    return chars;
+            }), ignoreCase);
         }
 
         /// <summary>
@@ -971,7 +1018,7 @@ namespace Lucene.Net.Analysis.Util
             int otherCount = 0;
             foreach (var local in other)
             {
-                if (local is not null && !this.Contains(local))
+                if (local is null || !local.HasValue || !this.Contains(local))
                 {
                     return false;
                 }
@@ -1008,7 +1055,7 @@ namespace Lucene.Net.Analysis.Util
             int otherCount = 0;
             foreach (var local in other)
             {
-                if (local is not null && !this.Contains(local))
+                if (local is null || (local is ICharSequence charSequence && !charSequence.HasValue) || !this.Contains(local))
                 {
                     return false;
                 }
@@ -1049,7 +1096,17 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="other"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="other"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// A given element within the collection is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <see cref="ICharSequence.HasValue"/> property for a given element in the collection returns <c>false</c>.
+        /// </exception>
         /// <exception cref="NotSupportedException">This set instance is read-only.</exception>
         public virtual bool UnionWith(IEnumerable<ICharSequence> other)
         {
@@ -1109,6 +1166,12 @@ namespace Lucene.Net.Analysis.Util
             if (IsReadOnly)
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
 
+#if FEATURE_SPANFORMATTABLE
+            Span<char> buffer = stackalloc char[256];
+#else
+            Span<char> buffer = stackalloc char[1];
+#endif
+
             bool modified = false;
             foreach (var item in other)
             {
@@ -1119,7 +1182,11 @@ namespace Lucene.Net.Analysis.Util
                 }
 
                 // Convert the item to chars in the invariant culture
-                modified |= Add(CharArrayDictionary.ConvertObjectToChars(item));
+                var returnType = CharArrayDictionary.ConvertObjectToChars(item, out char[] chars, out string s, buffer);
+                if (returnType == CharArrayDictionary.CharReturnType.String)
+                    modified |= Add(s);
+                else
+                    modified |= Add(chars);
             }
             return modified;
         }
@@ -1698,7 +1765,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 foreach (var local in other)
                 {
-                    if (local is not null && this.Contains(local))
+                    if (local is not null && local.HasValue && this.Contains(local))
                     {
                         return true;
                     }
@@ -1815,7 +1882,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var local in other)
             {
-                if (local is null || !this.Contains(local))
+                if (local is null || !local.HasValue || !this.Contains(local))
                 {
                     return false;
                 }
@@ -1833,7 +1900,7 @@ namespace Lucene.Net.Analysis.Util
         {
             foreach (var local in other)
             {
-                if (local is null || !this.Contains(local))
+                if (local is null || (local is ICharSequence charSequence && !charSequence.HasValue) || !this.Contains(local))
                 {
                     return false;
                 }
@@ -1893,7 +1960,7 @@ namespace Lucene.Net.Analysis.Util
             unfoundCount = 0;
             foreach (var item in other)
             {
-                if (item is not null && this.Contains(item))
+                if (item is not null && item.HasValue && this.Contains(item))
                 {
                     foundCount++;
                 }
@@ -1921,7 +1988,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        #endregion
+#endregion
     }
 
     /// <summary>
@@ -1929,7 +1996,7 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public static class CharArraySetExtensions
     {
-        #region Add
+#region Add
 
         /// <summary>
         /// Add this <see cref="bool"/> into the set.
@@ -2104,9 +2171,9 @@ namespace Lucene.Net.Analysis.Util
             return set.map.Put(text.ToString(CultureInfo.InvariantCulture));
         }
 
-        #endregion
+#endregion
 
-        #region Contains
+#region Contains
 
         /// <summary>
         /// <c>true</c> if the <see cref="bool"/> is in the set.
@@ -2268,9 +2335,9 @@ namespace Lucene.Net.Analysis.Util
             return set.map.ContainsKey(text.ToString(CultureInfo.InvariantCulture));
         }
 
-        #endregion
+#endregion
 
-        #region UnionWith
+#region UnionWith
 
         /// <summary>
         /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
@@ -2636,7 +2703,7 @@ namespace Lucene.Net.Analysis.Util
             return modified;
         }
 
-        #endregion
+#endregion
     }
 
     /// <summary>
