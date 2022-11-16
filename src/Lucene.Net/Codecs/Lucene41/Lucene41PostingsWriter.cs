@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -377,7 +378,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     {
                         payloadBytes = ArrayUtil.Grow(payloadBytes, payloadByteUpto + payload.Length);
                     }
-                    Array.Copy(payload.Bytes, payload.Offset, payloadBytes, payloadByteUpto, payload.Length);
+                    Arrays.Copy(payload.Bytes, payload.Offset, payloadBytes, payloadByteUpto, payload.Length);
                     payloadByteUpto += payload.Length;
                 }
             }

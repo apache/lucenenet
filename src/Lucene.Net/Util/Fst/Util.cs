@@ -2,6 +2,7 @@
 using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
@@ -428,7 +429,7 @@ namespace Lucene.Net.Util.Fst
                 // copy over the current input to the new input
                 // and add the arc.label to the end
                 Int32sRef newInput = new Int32sRef(path.Input.Length + 1);
-                Array.Copy(path.Input.Int32s, 0, newInput.Int32s, 0, path.Input.Length);
+                Arrays.Copy(path.Input.Int32s, 0, newInput.Int32s, 0, path.Input.Length);
                 newInput.Int32s[path.Input.Length] = path.Arc.Label;
                 newInput.Length = path.Input.Length + 1;
                 FSTPath<T> newPath = new FSTPath<T>(cost, path.Arc, newInput);

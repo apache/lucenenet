@@ -1,5 +1,6 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
@@ -83,8 +84,8 @@ namespace Lucene.Net.Analysis.Util
                     // Grow
                     var newBuffer = new char[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_CHAR)];
                     //System.out.println(Thread.currentThread().getName() + ": cb grow " + newBuffer.length);
-                    Array.Copy(buffer, nextWrite, newBuffer, 0, buffer.Length - nextWrite);
-                    Array.Copy(buffer, 0, newBuffer, buffer.Length - nextWrite, nextWrite);
+                    Arrays.Copy(buffer, nextWrite, newBuffer, 0, buffer.Length - nextWrite);
+                    Arrays.Copy(buffer, 0, newBuffer, buffer.Length - nextWrite, nextWrite);
                     nextWrite = buffer.Length;
                     buffer = newBuffer;
                 }
@@ -155,14 +156,14 @@ namespace Lucene.Net.Analysis.Util
             var result = new char[length];
             if (endIndex >= startIndex && length < buffer.Length)
             {
-                Array.Copy(buffer, startIndex, result, 0, endIndex - startIndex);
+                Arrays.Copy(buffer, startIndex, result, 0, endIndex - startIndex);
             }
             else
             {
                 // Wrapped:
                 int part1 = buffer.Length - startIndex;
-                Array.Copy(buffer, startIndex, result, 0, part1);
-                Array.Copy(buffer, 0, result, buffer.Length - startIndex, length - part1);
+                Arrays.Copy(buffer, startIndex, result, 0, part1);
+                Arrays.Copy(buffer, 0, result, buffer.Length - startIndex, length - part1);
             }
             return result;
         }

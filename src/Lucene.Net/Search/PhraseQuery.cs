@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
                     else
                     {
                         Term[] terms2 = new Term[terms.Length];
-                        Array.Copy(terms, 0, terms2, 0, terms.Length);
+                        Arrays.Copy(terms, 0, terms2, 0, terms.Length);
                         Array.Sort(terms2);
                         this.terms = terms2;
                     }

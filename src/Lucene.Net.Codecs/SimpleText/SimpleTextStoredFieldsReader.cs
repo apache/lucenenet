@@ -1,5 +1,6 @@
 ﻿using J2N.Globalization;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Globalization;
 using System.Text;
@@ -193,7 +194,7 @@ namespace Lucene.Net.Codecs.SimpleText
             else if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_BINARY))
             {
                 var copy = new byte[_scratch.Length - SimpleTextStoredFieldsWriter.VALUE.Length];
-                Array.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length, copy, 0, copy.Length);
+                Arrays.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextStoredFieldsWriter.VALUE.Length, copy, 0, copy.Length);
                 visitor.BinaryField(fieldInfo, copy);
             }
             else if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_INT))

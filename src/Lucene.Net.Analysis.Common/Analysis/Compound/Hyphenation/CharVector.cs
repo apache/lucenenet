@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             if (n + size >= len)
             {
                 char[] aux = new char[len + blockSize];
-                System.Array.Copy(array, 0, aux, 0, len);
+                Arrays.Copy(array, 0, aux, 0, len);
                 array = aux;
             }
             n += size;
@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             if (n < array.Length)
             {
                 char[] aux = new char[n];
-                System.Array.Copy(array, 0, aux, 0, n);
+                Arrays.Copy(array, 0, aux, 0, n);
                 array = aux;
             }
         }

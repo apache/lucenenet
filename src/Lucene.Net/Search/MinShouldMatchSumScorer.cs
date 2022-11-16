@@ -1,6 +1,7 @@
 ﻿using J2N;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -219,7 +220,7 @@ namespace Lucene.Net.Search
                     if (mm - 2 - i > 0)
                     {
                         // shift RHS of array left
-                        Array.Copy(mmStack, i + 1, mmStack, i, mm - 2 - i);
+                        Arrays.Copy(mmStack, i + 1, mmStack, i, mm - 2 - i);
                     }
                     // find next most costly subScorer within heap TODO can this be done better?
                     while (!MinheapRemove(sortedSubScorers[sortedSubScorersIdx++]))

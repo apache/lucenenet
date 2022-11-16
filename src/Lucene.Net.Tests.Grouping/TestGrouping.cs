@@ -907,7 +907,7 @@ namespace Lucene.Net.Search.Grouping
                 }
 
                 GroupDoc[] groupDocsByID = new GroupDoc[groupDocs.Length];
-                System.Array.Copy(groupDocs, 0, groupDocsByID, 0, groupDocs.Length);
+                Arrays.Copy(groupDocs, 0, groupDocsByID, 0, groupDocs.Length);
 
                 DirectoryReader r = w.GetReader();
                 w.Dispose();

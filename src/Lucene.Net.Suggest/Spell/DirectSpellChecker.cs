@@ -400,7 +400,7 @@ namespace Lucene.Net.Search.Spell
             if (numSug < suggestions.Length)
             {
                 SuggestWord[] trimmed = new SuggestWord[numSug];
-                Array.Copy(suggestions, 0, trimmed, 0, numSug);
+                Arrays.Copy(suggestions, 0, trimmed, 0, numSug);
                 suggestions = trimmed;
             }
             return suggestions;

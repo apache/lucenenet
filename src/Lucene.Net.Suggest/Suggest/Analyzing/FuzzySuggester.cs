@@ -1,5 +1,6 @@
 ﻿using J2N;
 using Lucene.Net.Analysis;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
@@ -235,7 +236,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     Automaton prefix = BasicAutomata.MakeString(path.Int32s, path.Offset, nonFuzzyPrefix);
                     int[] ints = new int[path.Length - nonFuzzyPrefix];
-                    Array.Copy(path.Int32s, path.Offset + nonFuzzyPrefix, ints, 0, ints.Length);
+                    Arrays.Copy(path.Int32s, path.Offset + nonFuzzyPrefix, ints, 0, ints.Length);
                     // TODO: maybe add alphaMin to LevenshteinAutomata,
                     // and pass 1 instead of 0?  We probably don't want
                     // to allow the trailing dedup bytes to be

@@ -1,8 +1,9 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using System;
 using System.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -290,7 +291,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 savedBuffer = new char[ArrayUtil.Oversize(termAttribute.Length, RamUsageEstimator.NUM_BYTES_CHAR)];
             }
 
-            Array.Copy(termAttribute.Buffer, 0, savedBuffer, 0, termAttribute.Length);
+            Arrays.Copy(termAttribute.Buffer, 0, savedBuffer, 0, termAttribute.Length);
             iterator.text = savedBuffer;
 
             hasSavedState = true;

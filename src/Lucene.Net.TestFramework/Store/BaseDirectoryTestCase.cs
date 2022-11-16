@@ -861,7 +861,7 @@ namespace Lucene.Net.Store
             {
                 using IndexInput copiedData = d.OpenInput("copy" + i, IOContext.DEFAULT);
                 byte[] dataCopy = new byte[data.Length];
-                System.Array.Copy(data, 0, dataCopy, 0, 100);
+                Arrays.Copy(data, 0, dataCopy, 0, 100);
                 copiedData.ReadBytes(dataCopy, 100, data.Length - 100);
                 Assert.AreEqual(data, dataCopy);
             }
@@ -1207,7 +1207,7 @@ namespace Lucene.Net.Store
         //                    assertEquals(0, slice2.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
         //                    assertEquals(num - i - j, slice2.Length);
         //                    byte[] data = new byte[num];
-        //                    System.Array.Copy(bytes, 0, data, 0, i + j);
+        //                    Arrays.Copy(bytes, 0, data, 0, i + j);
         //                    if (Random.nextBoolean())
         //                    {
         //                        // read the bytes for this slice-of-slice

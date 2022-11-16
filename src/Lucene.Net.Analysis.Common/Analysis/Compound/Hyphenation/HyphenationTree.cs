@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Numerics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -508,7 +509,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 // trim result array
                 int[] res = new int[k + 2];
-                Array.Copy(result, 0, res, 1, k);
+                Arrays.Copy(result, 0, res, 1, k);
                 // We add the synthetical hyphenation points
                 // at the beginning and end of the word
                 res[0] = 0;

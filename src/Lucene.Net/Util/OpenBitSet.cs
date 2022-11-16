@@ -929,7 +929,7 @@ namespace Lucene.Net.Util
             }
             if (oldLen < newLen)
             {
-                Array.Copy(otherArr, oldLen, thisArr, oldLen, newLen - oldLen);
+                Arrays.Copy(otherArr, oldLen, thisArr, oldLen, newLen - oldLen);
             }
         }
 
@@ -969,7 +969,7 @@ namespace Lucene.Net.Util
             }
             if (oldLen < newLen)
             {
-                Array.Copy(otherArr, oldLen, thisArr, oldLen, newLen - oldLen);
+                Arrays.Copy(otherArr, oldLen, thisArr, oldLen, newLen - oldLen);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using J2N;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -382,7 +383,7 @@ namespace Lucene.Net.Util.Automaton
             if (utf8StateCount == utf8States.Length)
             {
                 State[] newArray = new State[ArrayUtil.Oversize(1 + utf8StateCount, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                Array.Copy(utf8States, 0, newArray, 0, utf8StateCount);
+                Arrays.Copy(utf8States, 0, newArray, 0, utf8StateCount);
                 utf8States = newArray;
             }
             utf8States[utf8StateCount] = s;

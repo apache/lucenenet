@@ -14,6 +14,7 @@
 // 
 
 using Lucene;
+using Lucene.Net.Support;
 using Sax;
 using System;
 using System.IO;
@@ -713,7 +714,7 @@ namespace TagSoup
                 {
                     // Grow the buffer size
                     char[] newOutputBuffer = new char[theOutputBuffer.Length * 2];
-                    Array.Copy(theOutputBuffer, 0, newOutputBuffer, 0, theSize + 1);
+                    Arrays.Copy(theOutputBuffer, 0, newOutputBuffer, 0, theSize + 1);
                     theOutputBuffer = newOutputBuffer;
                 }
             }

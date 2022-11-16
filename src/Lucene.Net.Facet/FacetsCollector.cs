@@ -186,7 +186,7 @@ namespace Lucene.Net.Facet
                 if (totalHits >= scores.Length)
                 {
                     float[] newScores = new float[ArrayUtil.Oversize(totalHits + 1, 4)];
-                    Array.Copy(scores, 0, newScores, 0, totalHits);
+                    Arrays.Copy(scores, 0, newScores, 0, totalHits);
                     scores = newScores;
                 }
                 scores[totalHits] = scorer.GetScore();

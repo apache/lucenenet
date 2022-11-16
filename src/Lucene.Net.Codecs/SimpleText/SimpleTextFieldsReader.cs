@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
@@ -508,7 +509,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         scratch2.Grow(len);
                     }
-                    System.Array.Copy(scratch.Bytes, SimpleTextFieldsWriter.PAYLOAD.Length, scratch2.Bytes, 0, len);
+                    Arrays.Copy(scratch.Bytes, SimpleTextFieldsWriter.PAYLOAD.Length, scratch2.Bytes, 0, len);
                     scratch2.Length = len;
                     payload = scratch2;
                 }
@@ -620,7 +621,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         {
                             lastTerm.Grow(len);
                         }
-                        System.Array.Copy(scratch.Bytes, SimpleTextFieldsWriter.TERM.Length, lastTerm.Bytes, 0, len);
+                        Arrays.Copy(scratch.Bytes, SimpleTextFieldsWriter.TERM.Length, lastTerm.Bytes, 0, len);
                         lastTerm.Length = len;
                         docFreq = 0;
                         sumTotalTermFreq += totalTermFreq;

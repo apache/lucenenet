@@ -369,10 +369,10 @@ namespace Lucene.Net.Index.Sorter
 
                 protected override void Save(int i, int len)
                 {
-                    Array.Copy(docs, i, tmpDocs, 0, len);
+                    Arrays.Copy(docs, i, tmpDocs, 0, len);
                     if (freqs != null)
                     {
-                        Array.Copy(freqs, i, tmpFreqs, 0, len);
+                        Arrays.Copy(freqs, i, tmpFreqs, 0, len);
                     }
                 }
 
@@ -548,8 +548,8 @@ namespace Lucene.Net.Index.Sorter
 
                 protected override void Save(int i, int len)
                 {
-                    Array.Copy(docs, i, tmpDocs, 0, len);
-                    Array.Copy(offsets, i, tmpOffsets, 0, len);
+                    Arrays.Copy(docs, i, tmpDocs, 0, len);
+                    Arrays.Copy(offsets, i, tmpOffsets, 0, len);
                 }
 
                 protected override void Restore(int i, int j)

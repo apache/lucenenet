@@ -2,6 +2,7 @@
 using J2N;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using System;
@@ -30994,7 +30995,7 @@ namespace Lucene.Net.Analysis.CharFilters
             /* first: make room (if you can) */
             if (zzStartRead > 0)
             {
-                Array.Copy(zzBuffer, zzStartRead,
+                Arrays.Copy(zzBuffer, zzStartRead,
                                  zzBuffer, 0,
                                  zzEndRead - zzStartRead);
 
@@ -31010,7 +31011,7 @@ namespace Lucene.Net.Analysis.CharFilters
             {
                 /* if not: blow it up */
                 char[] newBuffer = new char[zzCurrentPos * 2];
-                Array.Copy(zzBuffer, 0, newBuffer, 0, zzBuffer.Length);
+                Arrays.Copy(zzBuffer, 0, newBuffer, 0, zzBuffer.Length);
                 zzBuffer = newBuffer;
             }
 

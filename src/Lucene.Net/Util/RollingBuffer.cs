@@ -1,4 +1,5 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -122,8 +123,8 @@ namespace Lucene.Net.Util
                 if (count == buffer.Length)
                 {
                     var newBuffer = new T[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(buffer, nextWrite, newBuffer, 0, buffer.Length - nextWrite);
-                    Array.Copy(buffer, 0, newBuffer, buffer.Length - nextWrite, nextWrite);
+                    Arrays.Copy(buffer, nextWrite, newBuffer, 0, buffer.Length - nextWrite);
+                    Arrays.Copy(buffer, 0, newBuffer, buffer.Length - nextWrite, nextWrite);
                     for (int i = buffer.Length; i < newBuffer.Length; i++)
                     {
                         newBuffer[i] = NewInstance();

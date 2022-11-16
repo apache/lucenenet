@@ -3,6 +3,7 @@ using J2N.Collections;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util.Packed;
 using RandomizedTesting.Generators;
 using System;
@@ -909,7 +910,7 @@ namespace Lucene.Net.Util.Fst
                         {
                             // consult our parent
                             scratch.Length = prefix.Length - 1;
-                            Array.Copy(prefix.Int32s, prefix.Offset, scratch.Int32s, 0, scratch.Length);
+                            Arrays.Copy(prefix.Int32s, prefix.Offset, scratch.Int32s, 0, scratch.Length);
                             keep = prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo2) && cmo2 != null && ((prune2 > 1 && cmo2.Count >= prune2) || (prune2 == 1 && (cmo2.Count >= 2 || prefix.Length <= 1)));
                             //System.out.println("    parent count = " + (cmo2 is null ? -1 : cmo2.count));
                         }

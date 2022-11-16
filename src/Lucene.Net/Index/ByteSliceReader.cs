@@ -1,4 +1,5 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -156,7 +157,7 @@ namespace Lucene.Net.Index
                 if (numLeft < len)
                 {
                     // Read entire slice
-                    Array.Copy(buffer, upto, b, offset, numLeft);
+                    Arrays.Copy(buffer, upto, b, offset, numLeft);
                     offset += numLeft;
                     len -= numLeft;
                     NextSlice();
@@ -164,7 +165,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // this slice is the last one
-                    Array.Copy(buffer, upto, b, offset, len);
+                    Arrays.Copy(buffer, upto, b, offset, len);
                     upto += len;
                     break;
                 }

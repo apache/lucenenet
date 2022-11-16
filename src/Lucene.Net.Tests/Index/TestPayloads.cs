@@ -5,6 +5,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -221,7 +222,7 @@ namespace Lucene.Net.Index
                         BytesRef br = tps[j].GetPayload();
                         if (br != null)
                         {
-                            Array.Copy(br.Bytes, br.Offset, verifyPayloadData, offset, br.Length);
+                            Arrays.Copy(br.Bytes, br.Offset, verifyPayloadData, offset, br.Length);
                             offset += br.Length;
                         }
                     }
@@ -297,7 +298,7 @@ namespace Lucene.Net.Index
             BytesRef bref = tp.GetPayload();
             verifyPayloadData = new byte[bref.Length];
             var portion = new byte[1500];
-            Array.Copy(payloadData, 100, portion, 0, 1500);
+            Arrays.Copy(payloadData, 100, portion, 0, 1500);
 
             AssertByteArrayEquals(portion, bref.Bytes, bref.Offset, bref.Length);
             reader.Dispose();
@@ -313,7 +314,7 @@ namespace Lucene.Net.Index
             string s = TestUtil.RandomFixedByteLengthUnicodeString(Random, data.Length);
             var b = s.GetBytes(utf8);
             if (Debugging.AssertsEnabled) Debugging.Assert(b.Length == data.Length);
-            System.Buffer.BlockCopy(b, 0, data, 0, b.Length);
+            Arrays.Copy(b, 0, data, 0, b.Length);
         }
 
         private byte[] GenerateRandomData(int n)

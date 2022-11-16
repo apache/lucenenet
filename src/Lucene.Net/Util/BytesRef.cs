@@ -275,7 +275,7 @@ namespace Lucene.Net.Util
                 bytes = new byte[other.Length];
                 Offset = 0;
             }
-            Array.Copy(other.bytes, other.Offset, bytes, Offset, other.Length);
+            Arrays.Copy(other.bytes, other.Offset, bytes, Offset, other.Length);
             Length = other.Length;
         }
 
@@ -291,11 +291,11 @@ namespace Lucene.Net.Util
             if (bytes.Length - Offset < newLen)
             {
                 var newBytes = new byte[newLen];
-                Array.Copy(bytes, Offset, newBytes, 0, Length);
+                Arrays.Copy(bytes, Offset, newBytes, 0, Length);
                 Offset = 0;
                 bytes = newBytes;
             }
-            Array.Copy(other.bytes, other.Offset, bytes, Length + Offset, other.Length);
+            Arrays.Copy(other.bytes, other.Offset, bytes, Length + Offset, other.Length);
             Length = newLen;
         }
 

@@ -86,7 +86,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // to happen.
             int[] copyParents = copyFrom.Parents;
             this.parents = new int[reader.MaxDoc];
-            Array.Copy(copyParents, 0, parents, 0, copyParents.Length);
+            Arrays.Copy(copyParents, 0, parents, 0, copyParents.Length);
             InitParents(reader, copyParents.Length);
 
             if (copyFrom.initializedChildren)
@@ -106,8 +106,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     if (copyFrom != null)
                     {
                         // called from the ctor, after we know copyFrom has initialized children/siblings
-                        Array.Copy(copyFrom.Children, 0, children, 0, copyFrom.Children.Length);
-                        Array.Copy(copyFrom.Siblings, 0, siblings, 0, copyFrom.Siblings.Length);
+                        Arrays.Copy(copyFrom.Children, 0, children, 0, copyFrom.Children.Length);
+                        Arrays.Copy(copyFrom.Siblings, 0, siblings, 0, copyFrom.Siblings.Length);
                         ComputeChildrenSiblings(copyFrom.parents.Length);
                     }
                     else

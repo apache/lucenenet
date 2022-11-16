@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
+using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             {
                 var clone = new Block(chars.Length);
                 clone.length = length;
-                Array.Copy(chars, clone.chars, chars.Length);
+                Arrays.Copy(chars, clone.chars, chars.Length);
                 return clone;
             }
 
@@ -172,7 +173,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 {
                     toCopy = remainingInBlock;
                 }
-                Array.Copy(chars, offset, this.current.chars, this.current.length, toCopy);
+                Arrays.Copy(chars, offset, this.current.chars, this.current.length, toCopy);
                 offset += toCopy;
                 remain -= toCopy;
                 this.current.length += toCopy;

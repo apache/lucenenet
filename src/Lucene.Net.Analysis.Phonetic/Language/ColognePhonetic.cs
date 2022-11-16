@@ -1,4 +1,5 @@
 ﻿// commons-codec version compatibility level: 1.9
+using Lucene.Net.Support;
 using System;
 using System.Globalization;
 
@@ -231,7 +232,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             protected override char[] CopyData(int start, int length)
             {
                 char[] newData = new char[length];
-                System.Array.Copy(m_data, start, newData, 0, length);
+                Arrays.Copy(m_data, start, newData, 0, length);
                 return newData;
             }
         }
@@ -252,7 +253,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             protected override char[] CopyData(int start, int length)
             {
                 char[] newData = new char[length];
-                System.Array.Copy(m_data, m_data.Length - this.m_length + start, newData, 0, length);
+                Arrays.Copy(m_data, m_data.Length - this.m_length + start, newData, 0, length);
                 return newData;
             }
 

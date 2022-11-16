@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
             {
                 int newSize = ArrayUtil.Oversize(numVectorFields + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
                 TermVectorsConsumerPerField[] newArray = new TermVectorsConsumerPerField[newSize];
-                Array.Copy(perFields, 0, newArray, 0, numVectorFields);
+                Arrays.Copy(perFields, 0, newArray, 0, numVectorFields);
                 perFields = newArray;
             }
 

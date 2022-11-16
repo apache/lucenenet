@@ -346,9 +346,9 @@ namespace Lucene.Net.Index
 
                 base.CopyTo(toArray, numToCopy);
 
-                Array.Copy(freqs, 0, to.freqs, 0, size);
-                Array.Copy(lastOffsets, 0, to.lastOffsets, 0, size);
-                Array.Copy(lastPositions, 0, to.lastPositions, 0, size);
+                Arrays.Copy(freqs, 0, to.freqs, 0, size);
+                Arrays.Copy(lastOffsets, 0, to.lastOffsets, 0, size);
+                Arrays.Copy(lastPositions, 0, to.lastPositions, 0, size);
             }
 
             internal override int BytesPerPosting()

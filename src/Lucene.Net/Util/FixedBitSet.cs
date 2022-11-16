@@ -698,7 +698,7 @@ namespace Lucene.Net.Util
         public FixedBitSet Clone()
         {
             long[] bits = new long[this.bits.Length];
-            Array.Copy(this.bits, 0, bits, 0, bits.Length);
+            Arrays.Copy(this.bits, 0, bits, 0, bits.Length);
             return new FixedBitSet(bits, numBits);
         }
 

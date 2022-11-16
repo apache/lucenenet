@@ -593,7 +593,7 @@ namespace Lucene.Net.Search
             public void InitSearcher(long[] nodeVersions)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(currentShardSearcher is null);
-                Array.Copy(nodeVersions, 0, currentNodeVersions, 0, currentNodeVersions.Length);
+                Arrays.Copy(nodeVersions, 0, currentNodeVersions, 0, currentNodeVersions.Length);
                 currentShardSearcher = new ShardIndexSearcher(this, GetCurrentNodeVersions(), Mgr.Acquire().IndexReader, MyNodeID);
             }
 

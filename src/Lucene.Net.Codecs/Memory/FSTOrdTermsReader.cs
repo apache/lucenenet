@@ -880,7 +880,7 @@ namespace Lucene.Net.Codecs.Memory
                     if (level + 1 == stack.Length)
                     {
                         var temp = new Frame[ArrayUtil.Oversize(level + 2, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                        Array.Copy(stack, 0, temp, 0, stack.Length);
+                        Arrays.Copy(stack, 0, temp, 0, stack.Length);
                         for (int i = stack.Length; i < temp.Length; i++)
                         {
                             temp[i] = new Frame();

@@ -173,11 +173,11 @@ namespace Lucene.Net.Index
                 {
                     int newSize = ArrayUtil.Oversize(numStoredFields + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
                     IIndexableField[] newArray = new IIndexableField[newSize];
-                    Array.Copy(storedFields, 0, newArray, 0, numStoredFields);
+                    Arrays.Copy(storedFields, 0, newArray, 0, numStoredFields);
                     storedFields = newArray;
 
                     FieldInfo[] newInfoArray = new FieldInfo[newSize];
-                    Array.Copy(fieldInfos, 0, newInfoArray, 0, numStoredFields);
+                    Arrays.Copy(fieldInfos, 0, newInfoArray, 0, numStoredFields);
                     fieldInfos = newInfoArray;
                 }
 

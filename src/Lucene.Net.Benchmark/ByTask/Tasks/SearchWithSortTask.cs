@@ -1,6 +1,7 @@
 ﻿using J2N.Text;
 using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
@@ -96,7 +97,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             if (upto < sortFields.Length)
             {
                 SortField[] newSortFields = new SortField[upto];
-                System.Array.Copy(sortFields, 0, newSortFields, 0, upto);
+                Arrays.Copy(sortFields, 0, newSortFields, 0, upto);
                 sortFields = newSortFields;
             }
             this.sort = new Sort(sortFields);

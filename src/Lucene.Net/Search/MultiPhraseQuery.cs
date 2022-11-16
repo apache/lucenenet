@@ -594,7 +594,7 @@ namespace Lucene.Net.Search
             private void GrowArray()
             {
                 var newArray = new int[_arraySize * 2];
-                Array.Copy(_array, 0, newArray, 0, _arraySize);
+                Arrays.Copy(_array, 0, newArray, 0, _arraySize);
                 _array = newArray;
                 _arraySize *= 2;
             }

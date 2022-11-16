@@ -1,4 +1,5 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -131,8 +132,8 @@ namespace Lucene.Net.Util.Fst
                 if (Debugging.AssertsEnabled) Debugging.Assert(prefix.Length > 0);
                 if (Debugging.AssertsEnabled) Debugging.Assert(output.Length > 0);
                 BytesRef result = new BytesRef(prefix.Length + output.Length);
-                Array.Copy(prefix.Bytes, prefix.Offset, result.Bytes, 0, prefix.Length);
-                Array.Copy(output.Bytes, output.Offset, result.Bytes, prefix.Length, output.Length);
+                Arrays.Copy(prefix.Bytes, prefix.Offset, result.Bytes, 0, prefix.Length);
+                Arrays.Copy(output.Bytes, output.Offset, result.Bytes, prefix.Length, output.Length);
                 result.Length = prefix.Length + output.Length;
                 return result;
             }

@@ -1,4 +1,5 @@
 ﻿using J2N.Text;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -64,7 +65,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 throw new ArgumentOutOfRangeException(nameof(length), length, $"{nameof(length)} must not be negative.");
 
             GrowTermBuffer(length);
-            Array.Copy(buffer, offset, termBuffer, 0, length);
+            Arrays.Copy(buffer, offset, termBuffer, 0, length);
             termLength = length;
         }
 
@@ -261,7 +262,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (startIndex > value.Length - charCount)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
-            Array.Copy(value, startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
+            Arrays.Copy(value, startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
             Length += charCount;
 
             return this;
@@ -313,7 +314,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return this; // No-op
             }
             int len = value.Length;
-            Array.Copy(value.Buffer, 0, ResizeBuffer(termLength + len), termLength, len);
+            Arrays.Copy(value.Buffer, 0, ResizeBuffer(termLength + len), termLength, len);
             termLength += len;
             return this;
         }
@@ -359,7 +360,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (termBuffer.Length < length)
             {
                 char[] newBuffer = CreateBuffer(length);
-                Array.Copy(termBuffer, 0, newBuffer, 0, termBuffer.Length);
+                Arrays.Copy(termBuffer, 0, newBuffer, 0, termBuffer.Length);
                 this.termBuffer = newBuffer;
             }
 
@@ -401,7 +402,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             CharTermAttribute t = (CharTermAttribute)base.Clone();
             // Do a deep clone
             t.termBuffer = new char[this.termLength];
-            Array.Copy(this.termBuffer, 0, t.termBuffer, 0, this.termLength);
+            Arrays.Copy(this.termBuffer, 0, t.termBuffer, 0, this.termLength);
             t.bytes = BytesRef.DeepCopyOf(bytes);
             return t;
         }

@@ -3294,9 +3294,9 @@ namespace Lucene.Net.Analysis.Util
                 // use fast path instead of iterating all values
                 // this is even on very small sets ~10 times faster than iterating
                 var keys = new char[m.keys.Length][];
-                m.keys.AsSpan().CopyTo(keys.AsSpan());
+                Arrays.Copy(m.keys, 0, keys, 0, keys.Length);
                 var values = new CharArrayDictionary<TValue>.MapValue[m.values.Length];
-                m.values.AsSpan().CopyTo(values.AsSpan());
+                Arrays.Copy(m.values, 0, values, 0, values.Length);
                 m = new CharArrayDictionary<TValue>(m) { keys = keys, values = values };
                 return m;
             }

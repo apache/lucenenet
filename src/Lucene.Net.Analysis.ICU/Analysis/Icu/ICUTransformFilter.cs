@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis.Icu
 
             public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count)
             {
-                System.Array.Copy(buffer, sourceIndex, destination, destinationIndex, count);
+                Arrays.Copy(buffer, sourceIndex, destination, destinationIndex, count);
             }
 
             public bool HasMetaData => false;
@@ -163,7 +163,7 @@ namespace Lucene.Net.Analysis.Icu
                 // shift text if necessary for the replacement
                 int newLength = ShiftForReplace(start, length + start, charsLen); // LUCENENET: Changed 2nd parameter to calculate limit
                 // insert the replacement text
-                System.Array.Copy(text, charsStart, buffer, start, charsLen);
+                Arrays.Copy(text, charsStart, buffer, start, charsLen);
                 token.Length = (this.length = newLength);
             }
 
@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Icu
                 // if the substring being replaced is longer or shorter than the
                 // replacement, need to shift things around
                 if (replacementLength != charsLen && limit < length)
-                    System.Array.Copy(buffer, limit, buffer, start + charsLen, length - limit);
+                    Arrays.Copy(buffer, limit, buffer, start + charsLen, length - limit);
                 return newLength;
             }
         }

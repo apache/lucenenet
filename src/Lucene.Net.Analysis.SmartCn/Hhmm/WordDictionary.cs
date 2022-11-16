@@ -1,6 +1,7 @@
 ﻿// lucene version compatibility level: 4.8.1
 using J2N;
 using J2N.IO;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
@@ -455,7 +456,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         // wordItemTable[j][k] = new WordItem();
                         wordItem_frequencyTable[j][k] = wordItem_frequencyTable[delimiterIndex][i];
                         wordItem_charArrayTable[j][k] = new char[wordItem_charArrayTable[delimiterIndex][i].Length - 1];
-                        System.Array.Copy(wordItem_charArrayTable[delimiterIndex][i], 1,
+                        Arrays.Copy(wordItem_charArrayTable[delimiterIndex][i], 1,
                             wordItem_charArrayTable[j][k], 0,
                             wordItem_charArrayTable[j][k].Length);
                     }

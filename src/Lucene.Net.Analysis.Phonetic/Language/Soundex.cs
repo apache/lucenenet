@@ -1,4 +1,5 @@
 ﻿// commons-codec version compatibility level: 1.10
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Analysis.Phonetic.Language
@@ -149,7 +150,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         public Soundex(char[] mapping)
         {
             this.soundexMapping = new char[mapping.Length];
-            System.Array.Copy(mapping, 0, this.soundexMapping, 0, mapping.Length);
+            Arrays.Copy(mapping, 0, this.soundexMapping, 0, mapping.Length);
             this.specialCaseHW = !HasMarker(this.soundexMapping);
         }
 

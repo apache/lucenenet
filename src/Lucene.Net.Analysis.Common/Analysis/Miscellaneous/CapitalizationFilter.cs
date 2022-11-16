@@ -1,9 +1,10 @@
 ﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -164,7 +165,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 //make a backup in case we exceed the word count
                 backup = new char[termBufferLength];
-                Array.Copy(termBuffer, 0, backup, 0, termBufferLength);
+                Arrays.Copy(termBuffer, 0, backup, 0, termBufferLength);
             }
 
             if (termBufferLength < maxTokenLength)

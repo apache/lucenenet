@@ -652,7 +652,7 @@ namespace Lucene.Net.Support
                 if (_growLockArray && tables.Locks.Length < MaxLockNumber)
                 {
                     newLocks = new object[tables.Locks.Length * 2];
-                    Array.Copy(tables.Locks, 0, newLocks, 0, tables.Locks.Length);
+                    Arrays.Copy(tables.Locks, 0, newLocks, 0, tables.Locks.Length);
                     for (var i = tables.Locks.Length; i < newLocks.Length; i++)
                     {
                         newLocks[i] = new object();

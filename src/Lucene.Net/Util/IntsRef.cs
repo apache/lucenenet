@@ -204,7 +204,7 @@ namespace Lucene.Net.Util
                 ints = new int[other.Length];
                 Offset = 0;
             }
-            Array.Copy(other.ints, other.Offset, ints, Offset, other.Length);
+            Arrays.Copy(other.ints, other.Offset, ints, Offset, other.Length);
             Length = other.Length;
         }
 

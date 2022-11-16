@@ -1,5 +1,6 @@
 ﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -481,7 +482,7 @@ namespace Lucene.Net.Index
                                 // It should be safe to round up to the nearest 32 bits in any case.
                                 int newLen = (newend + 3) & unchecked((int)0xfffffffc); // 4 byte alignment
                                 var newarr = new sbyte[newLen];
-                                Array.Copy(arr, 0, newarr, 0, pos);
+                                Arrays.Copy(arr, 0, newarr, 0, pos);
                                 arr = newarr;
                                 bytes[doc] = newarr;
                             }
@@ -634,10 +635,10 @@ namespace Lucene.Net.Index
                                         newlen <<= 1;
                                     }
                                     var newtarget = new sbyte[newlen];
-                                    Array.Copy(target, 0, newtarget, 0, pos);
+                                    Arrays.Copy(target, 0, newtarget, 0, pos);
                                     target = newtarget;
                                 }
-                                Array.Copy(arr, 0, target, pos, len);
+                                Arrays.Copy(arr, 0, target, pos, len);
                                 pos += len + 1; // skip single byte at end and leave it 0 for terminator
                             }
                         }
@@ -647,7 +648,7 @@ namespace Lucene.Net.Index
                     if (pos < target.Length)
                     {
                         var newtarget = new sbyte[pos];
-                        Array.Copy(target, 0, newtarget, 0, pos);
+                        Arrays.Copy(target, 0, newtarget, 0, pos);
                         target = newtarget;
                     }
 
