@@ -218,15 +218,15 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="length"/> chars of <paramref name="text"/> starting at <paramref name="offset"/>
+        /// <c>true</c> if the <paramref name="length"/> chars of <paramref name="text"/> starting at <paramref name="startIndex"/>
         /// are in the set.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
-        /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
-        public virtual bool Contains(char[] text, int offset, int length)
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual bool Contains(char[] text, int startIndex, int length)
         {
-            return map.ContainsKey(text, offset, length);
+            return map.ContainsKey(text, startIndex, length);
         }
 
         /// <summary>

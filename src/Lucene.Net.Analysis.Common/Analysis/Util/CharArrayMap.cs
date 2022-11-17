@@ -37,10 +37,10 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// A simple class that stores key <see cref="string"/>s as <see cref="T:char[]"/>'s in a
+    /// A simple class that stores text <see cref="string"/>s as <see cref="T:char[]"/>'s in a
     /// hash table. Note that this is not a general purpose
     /// class.  For example, it cannot remove items from the
-    /// map, nor does it resize its hash table to be smaller,
+    /// dictionary, nor does it resize its hash table to be smaller,
     /// etc.  It is designed to be quick to retrieve items
     /// by <see cref="T:char[]"/> keys without the necessity of converting
     /// to a <see cref="string"/> first.
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Util
     {
         // LUCENENET: Made public, renamed Empty
         /// <summary>
-        /// Returns an empty, unmodifiable map. </summary>
+        /// Returns an empty, read-only dictionary. </summary>
         public static readonly CharArrayDictionary<TValue> Empty = new CharArrayDictionary.EmptyCharArrayDictionary<TValue>();
 
         private const int INIT_SIZE = 8;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Create map with enough capacity to hold <paramref name="capacity"/> terms
+        /// Create dictionary with enough capacity to hold <paramref name="capacity"/> terms.
         /// </summary>
         /// <param name="matchVersion">
         ///          lucene compatibility version - see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
@@ -149,13 +149,13 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a map from the mappings in another map. 
+        /// Creates a dictionary from the mappings in another dictionary. 
         /// </summary>
         /// <param name="matchVersion">
         ///          compatibility match version see <a href="#version">Version
         ///          note</a> above for details. </param>
         /// <param name="collection">
-        ///          a map (<see cref="T:IDictionary{string, V}"/>) whose mappings to be copied </param>
+        ///          a dictionary (<see cref="T:IDictionary{string, V}"/>) whose mappings to be copied </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Create set from the supplied map (used internally for readonly maps...)
+        /// Create set from the supplied dictionary (used internally for readonly maps...)
         /// </summary>
         internal CharArrayDictionary(CharArrayDictionary<TValue> toCopy)
         {
@@ -203,78 +203,78 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Adds the <paramref name="value"/> for the passed in <paramref name="key"/>.
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="text"/>.
         /// </summary>
-        /// <param name="key">The string-able type to be added/updated in the dictionary.</param>
-        /// <param name="value">The corresponding value for the given <paramref name="key"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">An element with <paramref name="key"/> already exists in the dictionary.</exception>
-        public virtual void Add(string key, TValue value)
+        /// <param name="text">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">An element with <paramref name="text"/> already exists in the dictionary.</exception>
+        public virtual void Add(string text, TValue value)
         {
-            if (ContainsKey(key))
+            if (ContainsKey(text))
             {
-                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, key), nameof(key));
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, text), nameof(text));
             }
-            Set(key, value);
+            Set(text, value);
         }
 
         /// <summary>
-        /// Adds the <paramref name="value"/> for the passed in <paramref name="key"/>.
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="text"/>.
         /// </summary>
-        /// <param name="key">The string-able type to be added/updated in the dictionary.</param>
-        /// <param name="value">The corresponding value for the given <paramref name="key"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">An element with <paramref name="key"/> already exists in the dictionary.</exception>
-        public virtual void Add(char[] key, TValue value)
+        /// <param name="text">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">An element with <paramref name="text"/> already exists in the dictionary.</exception>
+        public virtual void Add(char[] text, TValue value)
         {
-            if (ContainsKey(key))
+            if (ContainsKey(text))
             {
-                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, key), nameof(key));
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, text), nameof(text));
             }
-            Set(key, value);
+            Set(text, value);
         }
 
         /// <summary>
-        /// Adds the <paramref name="value"/> for the passed in <paramref name="key"/>.
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="text"/>.
         /// </summary>
-        /// <param name="key">The string-able type to be added/updated in the dictionary.</param>
-        /// <param name="value">The corresponding value for the given <paramref name="key"/>.</param>
+        /// <param name="text">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="text"/>.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="key"/> is <c>null</c>.
+        /// <paramref name="text"/> is <c>null</c>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// The <paramref name="key"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
         /// </exception>
-        /// <exception cref="ArgumentException">An element with <paramref name="key"/> already exists in the dictionary.</exception>
-        public virtual void Add(ICharSequence key, TValue value)
+        /// <exception cref="ArgumentException">An element with <paramref name="text"/> already exists in the dictionary.</exception>
+        public virtual void Add(ICharSequence text, TValue value)
         {
-            if (ContainsKey(key))
+            if (ContainsKey(text))
             {
-                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, key), nameof(key));
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, text), nameof(text));
             }
-            Set(key, value);
+            Set(text, value);
         }
 
         /// <summary>
-        /// Adds the <paramref name="value"/> for the passed in <paramref name="key"/>.
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="text"/>.
         /// </summary>
-        /// <param name="key">The string-able type to be added/updated in the dictionary.</param>
-        /// <param name="value">The corresponding value for the given <paramref name="key"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException">An element with <paramref name="key"/> already exists in the dictionary.</exception>
-        public virtual void Add<T>(T key, TValue value)
+        /// <param name="text">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">An element with <paramref name="text"/> already exists in the dictionary.</exception>
+        public virtual void Add<T>(T text, TValue value)
         {
-            if (ContainsKey(key))
+            if (ContainsKey(text))
             {
-                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, key), nameof(key));
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, text), nameof(text));
             }
-            Set(key, value);
+            Set(text, value);
         }
 
         /// <summary>
         /// Returns an unmodifiable <see cref="CharArrayDictionary{TValue}"/>. This allows to provide
-        /// unmodifiable views of internal map for "read-only" use.
+        /// unmodifiable views of internal dictionary for "read-only" use.
         /// </summary>
         /// <returns> an new unmodifiable <see cref="CharArrayDictionary{TValue}"/>. </returns>
         // LUCENENET specific - allow .NET-like syntax for creating immutable collections
@@ -286,7 +286,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Clears all entries in this map. This method is supported for reusing, but not 
+        /// Clears all entries in this dictionary. This method is supported for reusing, but not 
         /// <see cref="IDictionary{TKey, TValue}.Remove(TKey)"/>. 
         /// </summary>
         public virtual void Clear()
@@ -387,15 +387,15 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="length"/> chars of <paramref name="text"/> starting at <paramref name="offset"/>
+        /// <c>true</c> if the <paramref name="length"/> chars of <paramref name="text"/> starting at <paramref name="startIndex"/>
         /// are in the <see cref="Keys"/> 
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
-        /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
-        public virtual bool ContainsKey(char[] text, int offset, int length)
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual bool ContainsKey(char[] text, int startIndex, int length)
         {
-            return keys[GetSlot(text, offset, length)] != null;
+            return keys[GetSlot(text, startIndex, length)] != null;
         }
 
         /// <summary>
@@ -475,21 +475,21 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Returns the value of the mapping of <paramref name="length"/> chars of <paramref name="text"/>
-        /// starting at <paramref name="offset"/>.
+        /// starting at <paramref name="startIndex"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
-        /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
-        /// <exception cref="KeyNotFoundException">The effective key is not found in the dictionary.</exception>
-        internal virtual TValue Get(char[] text, int offset, int length, bool throwIfNotFound = true)
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        /// <exception cref="KeyNotFoundException">The effective text is not found in the dictionary.</exception>
+        internal virtual TValue Get(char[] text, int startIndex, int length, bool throwIfNotFound = true)
         {
-            MapValue? value = values[GetSlot(text, offset, length)];
+            MapValue? value = values[GetSlot(text, startIndex, length)];
             if (value is not null)
             {
                 return value.Value;
             }
             if (throwIfNotFound)
-                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text, offset, length)));
+                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text, startIndex, length)));
             return default!;
         }
 
@@ -594,12 +594,12 @@ namespace Lucene.Net.Analysis.Util
 
         #region GetSlot
 
-        private int GetSlot(char[] text, int offset, int length)
+        private int GetSlot(char[] text, int startIndex, int length)
         {
-            int code = GetHashCode(text, offset, length);
+            int code = GetHashCode(text, startIndex, length);
             int pos = code & (keys.Length - 1);
             char[] text2 = keys[pos];
-            if (text2 != null && !Equals(text, offset, length, text2))
+            if (text2 != null && !Equals(text, startIndex, length, text2))
             {
                 int inc = ((code >> 8) + code) | 1;
                 do
@@ -607,7 +607,7 @@ namespace Lucene.Net.Analysis.Util
                     code += inc;
                     pos = code & (keys.Length - 1);
                     text2 = keys[pos];
-                } while (text2 != null && !Equals(text, offset, length, text2));
+                } while (text2 != null && !Equals(text, startIndex, length, text2));
             }
             return pos;
         }
@@ -676,9 +676,9 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="text"></param>
         /// <param name="value"></param>
-        /// <param name="previousValue">The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
         /// parameter if there was no mapping for <paramref name="text"/>.</param>
-        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the key already existed. The <paramref name="previousValue"/>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
         /// will be populated if the result is <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Put(char[] text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
@@ -699,11 +699,11 @@ namespace Lucene.Net.Analysis.Util
         /// <b>Note:</b> The <see cref="this[string]"/> setter is more efficient than this method if
         /// the <paramref name="previousValue"/> is not required.
         /// </summary>
-        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
         /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
-        /// <param name="previousValue">The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
         /// parameter if there was no mapping for <paramref name="text"/>.</param>
-        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the key already existed. The <paramref name="previousValue"/>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
         /// will be populated if the result is <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Put(string text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
@@ -724,11 +724,11 @@ namespace Lucene.Net.Analysis.Util
         /// <b>Note:</b> The <see cref="this[ICharSequence]"/> setter is more efficient than this method if
         /// the <paramref name="previousValue"/> is not required.
         /// </summary>
-        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
         /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
-        /// <param name="previousValue">The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
         /// parameter if there was no mapping for <paramref name="text"/>.</param>
-        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the key already existed. The <paramref name="previousValue"/>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
         /// will be populated if the result is <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="text"/> is <c>null</c>.
@@ -756,11 +756,11 @@ namespace Lucene.Net.Analysis.Util
         /// <b>Note:</b> The <see cref="this[object]"/> setter is more efficient than this method if
         /// the <paramref name="previousValue"/> is not required.
         /// </summary>
-        /// <param name="text">A key with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
         /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
-        /// <param name="previousValue">The previous value associated with the key, or the default for the type of <paramref name="value"/>
+        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
         /// parameter if there was no mapping for <paramref name="text"/>.</param>
-        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the key already existed. The <paramref name="previousValue"/>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
         /// will be populated if the result is <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Put<T>(T text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
@@ -1010,18 +1010,18 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Sets the value of the mapping of <paramref name="length"/> chars of <paramref name="text"/>
-        /// starting at <paramref name="offset"/>.
+        /// starting at <paramref name="startIndex"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
-        /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal virtual void Set(char[] text, int offset, int length, TValue? value)
+        internal virtual void Set(char[] text, int startIndex, int length, TValue? value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            SetImpl(text, offset, length, new MapValue(value));
+            SetImpl(text, startIndex, length, new MapValue(value));
         }
 
         /// <summary>
@@ -1202,10 +1202,10 @@ namespace Lucene.Net.Analysis.Util
         /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
-        /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetImpl(char[] text, int offset, int length, MapValue value)
+        private void SetImpl(char[] text, int startIndex, int length, MapValue value)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
@@ -1213,9 +1213,9 @@ namespace Lucene.Net.Analysis.Util
             version++;
             if (ignoreCase)
             {
-                charUtils.ToLower(text, offset, length);
+                charUtils.ToLower(text, startIndex, length);
             }
-            int slot = GetSlot(text, offset, length);
+            int slot = GetSlot(text, startIndex, length);
             if (keys[slot] != null)
             {
                 values[slot] = value;
@@ -1237,9 +1237,9 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{char[],TValue}"/>'s
-        /// entries, and calls this map's <see cref="Set(char[], TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(char[], TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="collection"/> is <c>null</c>.
         /// <para/>
@@ -1260,9 +1260,9 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{string,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Set(string, TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(string, TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="collection"/> is <c>null</c>.
         /// <para/>
@@ -1283,19 +1283,19 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{ICharSequence,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Set(ICharSequence, TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(ICharSequence, TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="collection"/> is <c>null</c>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// An element in the collection has a <c>null</c> key.
+        /// An element in the collection has a <c>null</c> text.
         /// <para/>
         /// -or-
         /// <para/>
-        /// The key's <see cref="ICharSequence.HasValue"/> property for a given element in the collection returns <c>false</c>.
+        /// The text's <see cref="ICharSequence.HasValue"/> property for a given element in the collection returns <c>false</c>.
         /// </exception>
         public virtual void PutAll(IDictionary<ICharSequence, TValue> collection)
         {
@@ -1310,9 +1310,9 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{T,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="collection"/> is <c>null</c>.
         /// <para/>
@@ -1333,9 +1333,9 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{char[],TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Set(char[], TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(char[], TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">The values to add/update in the current map.</param>
+        /// <param name="collection">The values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="collection"/> is <c>null</c>.
         /// <para/>
@@ -1356,9 +1356,9 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{string,TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Set(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(string, TValue)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">The values to add/update in the current map.</param>
+        /// <param name="collection">The values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="collection"/> is <c>null</c>.
         /// <para/>
@@ -1379,19 +1379,19 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{ICharSequence,TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Set(ICharSequence, TValue)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(ICharSequence, TValue)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">The values to add/update in the current map.</param>
+        /// <param name="collection">The values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="collection"/> is <c>null</c>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// An element in the collection has a <c>null</c> key.
+        /// An element in the collection has a <c>null</c> text.
         /// <para/>
         /// -or-
         /// <para/>
-        /// The key's <see cref="ICharSequence.HasValue"/> property for a given element in the collection returns <c>false</c>.
+        /// The text's <see cref="ICharSequence.HasValue"/> property for a given element in the collection returns <c>false</c>.
         /// </exception>
         public virtual void PutAll(IEnumerable<KeyValuePair<ICharSequence, TValue>> collection)
         {
@@ -1406,9 +1406,9 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{TKey,TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">The values to add/update in the current map.</param>
+        /// <param name="collection">The values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="collection"/> is <c>null</c>.
         /// <para/>
@@ -1464,18 +1464,18 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool Equals(char[] text1, int offset, int length, char[] text2)
+        private bool Equals(char[] text1, int startIndex, int length, char[] text2)
         {
             if (length != text2.Length)
             {
                 return false;
             }
-            int limit = offset + length;
+            int limit = startIndex + length;
             if (ignoreCase)
             {
                 for (int i = 0; i < length;)
                 {
-                    var codePointAt = charUtils.CodePointAt(text1, offset + i, limit);
+                    var codePointAt = charUtils.CodePointAt(text1, startIndex + i, limit);
                     if (Character.ToLower(codePointAt, CultureInfo.InvariantCulture) != charUtils.CodePointAt(text2, i, text2.Length)) // LUCENENET specific - need to use invariant culture to match Java
                     {
                         return false;
@@ -1487,7 +1487,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 for (int i = 0; i < length; i++)
                 {
-                    if (text1[offset + i] != text2[i])
+                    if (text1[startIndex + i] != text2[i])
                     {
                         return false;
                     }
@@ -1567,7 +1567,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="obj">Another dictionary to test the values of</param>
         /// <returns><c>true</c> if the given object is an <see cref="T:IDictionary{object, V}"/> that contains
-        /// the same key value pairs as the current map</returns>
+        /// the same text value pairs as the current dictionary</returns>
         public override bool Equals(object? obj)
         {
             if (obj is null)
@@ -1627,22 +1627,22 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int GetHashCode(char[] text, int offset, int length)
+        private int GetHashCode(char[] text, int startIndex, int length)
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-            if (offset < 0)
-                throw new ArgumentOutOfRangeException(nameof(offset), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex), SR.ArgumentOutOfRange_NeedNonNegNum);
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length), SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (offset > text.Length - length) // Checks for int overflow
+            if (startIndex > text.Length - length) // Checks for int overflow
                 throw new ArgumentException(SR.ArgumentOutOfRange_IndexLength);
 
             int code = 0;
-            int stop = offset + length;
+            int stop = startIndex + length;
             if (ignoreCase)
             {
-                for (int i = offset; i < stop;)
+                for (int i = startIndex; i < stop;)
                 {
                     int codePointAt = charUtils.CodePointAt(text, i, stop);
                     code = code * 31 + Character.ToLower(codePointAt, CultureInfo.InvariantCulture); // LUCENENET specific - need to use invariant culture to match Java
@@ -1651,7 +1651,7 @@ namespace Lucene.Net.Analysis.Util
             }
             else
             {
-                for (int i = offset; i < stop; i++)
+                for (int i = startIndex; i < stop; i++)
                 {
                     code = code * 31 + text[i];
                 }
@@ -1722,10 +1722,10 @@ namespace Lucene.Net.Analysis.Util
         public virtual LuceneVersion MatchVersion => matchVersion;
 
         /// <summary>
-        /// Adds a placeholder with the given <paramref name="text"/> as the key.
+        /// Adds a placeholder with the given <paramref name="text"/> as the text.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
-        /// <returns><c>true</c> if the key was added, <c>false</c> if the key already existed.</returns>
+        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Put(char[] text)
         {
@@ -1733,10 +1733,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Adds a placeholder with the given <paramref name="text"/> as the key.
+        /// Adds a placeholder with the given <paramref name="text"/> as the text.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
-        /// <returns><c>true</c> if the key was added, <c>false</c> if the key already existed.</returns>
+        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="text"/> is <c>null</c>.
         /// <para/>
@@ -1749,10 +1749,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Adds a placeholder with the given <paramref name="text"/> as the key.
+        /// Adds a placeholder with the given <paramref name="text"/> as the text.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
-        /// <returns><c>true</c> if the key was added, <c>false</c> if the key already existed.</returns>
+        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Put(string text)
         {
@@ -1760,10 +1760,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Adds a placeholder with the given <paramref name="text"/> as the key.
+        /// Adds a placeholder with the given <paramref name="text"/> as the text.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
-        /// <returns><c>true</c> if the key was added, <c>false</c> if the key already existed.</returns>
+        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Put<T>(T text)
         {
@@ -1811,21 +1811,21 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Gets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="offset">The position of the <paramref name="key"/> where the target key begins.</param>
-        /// <param name="length">The total length of the <paramref name="key"/>.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="text">The text of the value to get.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified text, 
+        /// if the text is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
-        /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="key"/>.</exception>
-        public virtual bool TryGetValue(char[] key, int offset, int length, [MaybeNullWhen(returnValue: false)] out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual bool TryGetValue(char[] text, int startIndex, int length, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
-            var val = values[GetSlot(key, offset, length)];
+            var val = values[GetSlot(text, startIndex, length)];
             if (val != null)
             {
                 value = val.Value;
@@ -1836,20 +1836,20 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Gets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="text">The text of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified text, 
+        /// if the text is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(char[] key, [MaybeNullWhen(returnValue: false)] out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool TryGetValue(char[] text, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
-            if (key is null)
-                throw new ArgumentNullException(nameof(key));
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
-            var val = values[GetSlot(key, 0, key.Length)];
+            var val = values[GetSlot(text, 0, text.Length)];
             if (val != null)
             {
                 value = val.Value;
@@ -1860,33 +1860,33 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Gets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="text">The text of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified text, 
+        /// if the text is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="key"/> is <c>null</c>.
+        /// <paramref name="text"/> is <c>null</c>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// The <paramref name="key"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
         /// </exception>
-        public virtual bool TryGetValue(ICharSequence key, [MaybeNullWhen(returnValue: false)] out TValue value)
+        public virtual bool TryGetValue(ICharSequence text, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
-            if (key is null || !key.HasValue)
-                throw new ArgumentNullException(nameof(key));
+            if (text is null || !text.HasValue)
+                throw new ArgumentNullException(nameof(text));
 
-            if (key is StringCharSequence strCs)
+            if (text is StringCharSequence strCs)
                 return TryGetValue(strCs.Value!, out value);
-            if (key is CharArrayCharSequence charArrayCs)
+            if (text is CharArrayCharSequence charArrayCs)
                 return TryGetValue(charArrayCs.Value!, out value);
-            if (key is StringBuilderCharSequence stringBuilderCs) // LUCENENET: Indexing into a StringBuilder is slow, so materialize
+            if (text is StringBuilderCharSequence stringBuilderCs) // LUCENENET: Indexing into a StringBuilder is slow, so materialize
                 return TryGetValue(stringBuilderCs.Value!.ToString(), out value);
 
-            var val = values[GetSlot(key)];
+            var val = values[GetSlot(text)];
             if (val != null)
             {
                 value = val.Value;
@@ -1897,17 +1897,17 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Gets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="text">The text of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified text, 
+        /// if the text is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue(string key, [NotNullWhen(returnValue: false)] out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool TryGetValue(string text, [NotNullWhen(returnValue: false)] out TValue value)
         {
-            var val = values[GetSlot(key)];
+            var val = values[GetSlot(text)];
             if (val != null)
             {
                 value = val.Value!;
@@ -1918,30 +1918,30 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Gets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="text">The text of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified text, 
+        /// if the text is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual bool TryGetValue<T>(T key, [MaybeNullWhen(returnValue: false)] out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool TryGetValue<T>(T text, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
-            if (key is null)
-                throw new ArgumentNullException(nameof(key));
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
-            if (key is string str)
+            if (text is string str)
                 return TryGetValue(str, out value);
-            if (key is char[] charArray)
+            if (text is char[] charArray)
                 return TryGetValue(charArray, 0, charArray.Length, out value);
-            if (key is ICharSequence cs)
+            if (text is ICharSequence cs)
                 return TryGetValue(cs, out value);
 
-            var returnType = CharArrayDictionary.ConvertObjectToChars(key, out char[] chars, out string s);
+            var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
             if (returnType == CharArrayDictionary.CharReturnType.String)
                 return TryGetValue(s, out value);
             else
@@ -1949,68 +1949,68 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
-        /// <param name="offset">The position of the <paramref name="key"/> where the target key begins.</param>
-        /// <param name="length">The total length of the <paramref name="key"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="length"/> is less than zero.</exception>
-        /// <exception cref="ArgumentException"><paramref name="offset"/> and <paramref name="length"/> refer to a position outside of <paramref name="key"/>.</exception>
-        public virtual TValue this[char[] key, int offset, int length]
+        /// <param name="text">The text of the value to get or set.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual TValue this[char[] text, int startIndex, int length]
         {
-            get => Get(key, offset, length, throwIfNotFound: true);
-            set => Set(key, offset, length, value);
+            get => Get(text, startIndex, length, throwIfNotFound: true);
+            set => Set(text, startIndex, length, value);
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual TValue this[char[] key]
+        /// <param name="text">The text of the value to get or set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual TValue this[char[] text]
         {
-            get => Get(key, throwIfNotFound: true);
-            set => Set(key, value);
+            get => Get(text, throwIfNotFound: true);
+            set => Set(text, value);
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
+        /// <param name="text">The text of the value to get or set.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="key"/> is <c>null</c>.
+        /// <paramref name="text"/> is <c>null</c>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// The <paramref name="key"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
         /// </exception>
-        public virtual TValue this[ICharSequence key]
+        public virtual TValue this[ICharSequence text]
         {
-            get => Get(key, throwIfNotFound: true);
-            set => Set(key, value);
+            get => Get(text, throwIfNotFound: true);
+            set => Set(text, value);
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual TValue this[string key]
+        /// <param name="text">The text of the value to get or set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual TValue this[string text]
         {
-            get => Get(key, throwIfNotFound: true);
-            set => Set(key, value);
+            get => Get(text, throwIfNotFound: true);
+            set => Set(text, value);
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
-        public virtual TValue this[object key]
+        /// <param name="text">The text of the value to get or set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual TValue this[object text]
         {
-            get => Get(key, throwIfNotFound: true);
-            set => Set(key, value);
+            get => Get(text, throwIfNotFound: true);
+            set => Set(text, value);
         }
 
         /// <summary>
@@ -2367,7 +2367,7 @@ namespace Lucene.Net.Analysis.Util
         /// <see cref="CharArrayDictionary{TValue}"/>.</returns>
         /// <remarks>
         /// For purposes of enumeration, each item is a <see cref="KeyValuePair{TKey, TValue}"/> structure
-        /// representing a value and its key. There are also properties allowing direct access
+        /// representing a value and its text. There are also properties allowing direct access
         /// to the <see cref="T:char[]"/> array of each element and quick conversions to <see cref="string"/> or <see cref="ICharSequence"/>.
         /// <para/>
         /// The <c>foreach</c> statement of the C# language (<c>for each</c> in C++, <c>For Each</c> in Visual Basic)
@@ -2557,7 +2557,7 @@ namespace Lucene.Net.Analysis.Util
         bool IDictionary.Contains(object key) => ContainsKey(key);
 
         /// <summary>
-        /// Gets the number of key/value pairs contained in the <see cref="CharArrayDictionary{TValue}"/>.
+        /// Gets the number of text/value pairs contained in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
         public virtual int Count => count;
 
@@ -2602,8 +2602,8 @@ namespace Lucene.Net.Analysis.Util
         // by adding a custom enumerator for KeyCollection.
 
         /// <summary>
-        /// Returns an <see cref="CharArraySet"/> view on the map's keys.
-        /// The set will use the same <see cref="matchVersion"/> as this map. 
+        /// Returns an <see cref="CharArraySet"/> view on the dictionary's keys.
+        /// The set will use the same <see cref="matchVersion"/> as this dictionary. 
         /// </summary>
         private CharArraySet KeySet
         {
@@ -2732,7 +2732,7 @@ namespace Lucene.Net.Analysis.Util
             internal bool HasNext => pos < dictionary.keys.Length;
 
             /// <summary>
-            /// Gets the current key as a <see cref="CharArrayCharSequence"/>.
+            /// Gets the current text as a <see cref="CharArrayCharSequence"/>.
             /// </summary>
             // LUCENENET specific - quick access to ICharSequence interface
             public ICharSequence CurrentKeyCharSequence
@@ -2750,7 +2750,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             /// <summary>
-            /// Gets the current key... do not modify the returned char[].
+            /// Gets the current text... do not modify the returned char[].
             /// </summary>
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             [WritableArray]
@@ -2769,7 +2769,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             /// <summary>
-            /// Gets the current key as a newly created <see cref="string"/> object.
+            /// Gets the current text as a newly created <see cref="string"/> object.
             /// </summary>
             public string CurrentKeyString
             {
@@ -2786,7 +2786,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             /// <summary>
-            /// Gets the value associated with the current key.
+            /// Gets the value associated with the current text.
             /// </summary>
             [MaybeNull]
             public TValue CurrentValue
@@ -2805,7 +2805,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             /// <summary>
-            /// Sets the value associated with the current key.
+            /// Sets the value associated with the current text.
             /// </summary>
             /// <returns>Returns the value prior to the update.</returns>
             [return: MaybeNull]
@@ -3016,7 +3016,7 @@ namespace Lucene.Net.Analysis.Util
     internal interface ICharArrayDictionary
     {
         void Clear();
-        bool ContainsKey(char[] text, int offset, int length);
+        bool ContainsKey(char[] text, int startIndex, int length);
         bool ContainsKey(char[] text);
         bool ContainsKey<T>(T text);
         bool ContainsKey(string text);
@@ -3054,33 +3054,33 @@ namespace Lucene.Net.Analysis.Util
     public static class CharArrayDictionary // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
-        /// Returns a copy of the given map as a <see cref="CharArrayDictionary{TValue}"/>. If the given map
+        /// Returns a copy of the given dictionary as a <see cref="CharArrayDictionary{TValue}"/>. If the given dictionary
         /// is a <see cref="CharArrayDictionary{TValue}"/> the ignoreCase property will be preserved.
         /// <para>
         /// <b>Note:</b> If you intend to create a copy of another <see cref="CharArrayDictionary{TValue}"/> where
-        /// the <see cref="LuceneVersion"/> of the source map differs from its copy
+        /// the <see cref="LuceneVersion"/> of the source dictionary differs from its copy
         /// <see cref="CharArrayDictionary{TValue}.CharArrayDictionary(LuceneVersion, IDictionary{string, TValue}, bool)"/> should be used instead.
         /// The <see cref="Copy{TValue}(LuceneVersion, IDictionary{string, TValue})"/> will preserve the <see cref="LuceneVersion"/> of the
-        /// source map if it is an instance of <see cref="CharArrayDictionary{TValue}"/>.
+        /// source dictionary if it is an instance of <see cref="CharArrayDictionary{TValue}"/>.
         /// </para>
         /// </summary>
         /// <param name="matchVersion">
         ///          compatibility match version see <a href="#version">Version
         ///          note</a> above for details. This argument will be ignored if the
-        ///          given map is a <see cref="CharArrayDictionary{TValue}"/>. </param>
-        /// <param name="map">
-        ///          a map to copy </param>
-        /// <returns> a copy of the given map as a <see cref="CharArrayDictionary{TValue}"/>. If the given map
+        ///          given dictionary is a <see cref="CharArrayDictionary{TValue}"/>. </param>
+        /// <param name="dictionary">
+        ///          a dictionary to copy </param>
+        /// <returns> a copy of the given dictionary as a <see cref="CharArrayDictionary{TValue}"/>. If the given dictionary
         ///         is a <see cref="CharArrayDictionary{TValue}"/> the ignoreCase property as well as the
-        ///         <paramref name="matchVersion"/> will be of the given map will be preserved. </returns>
-        public static CharArrayDictionary<TValue> Copy<TValue>(LuceneVersion matchVersion, IDictionary<string, TValue> map)
+        ///         <paramref name="matchVersion"/> will be of the given dictionary will be preserved. </returns>
+        public static CharArrayDictionary<TValue> Copy<TValue>(LuceneVersion matchVersion, IDictionary<string, TValue> dictionary)
         {
-            if (map == CharArrayDictionary<TValue>.Empty)
+            if (dictionary == CharArrayDictionary<TValue>.Empty)
             {
                 return CharArrayDictionary<TValue>.Empty;
             }
 
-            if (map is CharArrayDictionary<TValue> m)
+            if (dictionary is CharArrayDictionary<TValue> m)
             {
                 // use fast path instead of iterating all values
                 // this is even on very small sets ~10 times faster than iterating
@@ -3091,7 +3091,7 @@ namespace Lucene.Net.Analysis.Util
                 m = new CharArrayDictionary<TValue>(m) { keys = keys, values = values };
                 return m;
             }
-            return new CharArrayDictionary<TValue>(matchVersion, map, false);
+            return new CharArrayDictionary<TValue>(matchVersion, dictionary, false);
         }
 
         /// <summary>
@@ -3105,13 +3105,13 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Returns an unmodifiable <see cref="CharArrayDictionary{TValue}"/>. This allows to provide
-        /// unmodifiable views of internal map for "read-only" use.
+        /// unmodifiable views of internal dictionary for "read-only" use.
         /// </summary>
         /// <param name="map">
-        ///          a map for which the unmodifiable map is returned. </param>
+        ///          a dictionary for which the unmodifiable dictionary is returned. </param>
         /// <returns> an new unmodifiable <see cref="CharArrayDictionary{TValue}"/>. </returns>
         /// <exception cref="ArgumentException">
-        ///           if the given map is <c>null</c>. </exception>
+        ///           if the given dictionary is <c>null</c>. </exception>
         [Obsolete("Use the CharArrayDictionary<TValue>.AsReadOnly() instance method instead. This method will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
         public static CharArrayDictionary<TValue> UnmodifiableMap<TValue>(CharArrayDictionary<TValue> map)
         {
@@ -3215,7 +3215,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override bool IsReadOnly => true;
 
-            public override void Add(string key, TValue value)
+            public override void Add(string text, TValue value)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -3224,33 +3224,33 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue this[char[] key, int offset, int length]
+            public override TValue this[char[] text, int startIndex, int length]
             {
-                get => base[key, offset, length];
+                get => base[text, startIndex, length];
                 set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue this[char[] key]
+            public override TValue this[char[] text]
             {
-                get => base[key];
+                get => base[text];
                 set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue this[ICharSequence key]
+            public override TValue this[ICharSequence text]
             {
-                get => base[key];
+                get => base[text];
                 set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue this[string key]
+            public override TValue this[string text]
             {
-                get => base[key];
+                get => base[text];
                 set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue this[object key]
+            public override TValue this[object text]
             {
-                get => base[key];
+                get => base[text];
                 set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
@@ -3299,7 +3299,7 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            internal override void Set(char[] text, int offset, int length, TValue? value)
+            internal override void Set(char[] text, int startIndex, int length, TValue? value)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -3360,7 +3360,7 @@ namespace Lucene.Net.Analysis.Util
             {
             }
 
-            public override bool ContainsKey(char[] text, int offset, int length)
+            public override bool ContainsKey(char[] text, int startIndex, int length)
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));
@@ -3392,13 +3392,13 @@ namespace Lucene.Net.Analysis.Util
                 return false;
             }
 
-            internal override V Get(char[] text, int offset, int length, bool throwIfNotfound = true)
+            internal override V Get(char[] text, int startIndex, int length, bool throwIfNotfound = true)
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));
 
                 if (throwIfNotfound)
-                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text, offset, length)));
+                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text, startIndex, length)));
                 return default!;
             }
 
@@ -3627,12 +3627,12 @@ namespace Lucene.Net.Analysis.Util
     internal static class SR
     {
         public const string Arg_ArrayPlusOffTooSmall = "Destination array is not long enough to copy all the items in the collection. Check array index and length.";
-        public const string Arg_KeyNotFoundWithKey = "The given key '{0}' was not present in the dictionary.";
+        public const string Arg_KeyNotFoundWithKey = "The given text '{0}' was not present in the dictionary.";
         public const string Arg_NonZeroLowerBound = "The lower bound of target array must be zero.";
         public const string Arg_RankMultiDimNotSupported = "Only single dimensional arrays are supported for the requested action.";
         public const string Arg_WrongType = "The value '{0}' is not of type '{1}' and cannot be used in this generic collection.";
 
-        public const string Argument_AddingDuplicate = "An item with the same key has already been added. Key: {0}";
+        public const string Argument_AddingDuplicate = "An item with the same text has already been added. Key: {0}";
         public const string Argument_InvalidArrayType = "Target array type is not compatible with the type of items in the collection.";
 
         public const string ArgumentOutOfRange_IndexLength = "Index and length must refer to a location within the string.";
@@ -3641,7 +3641,7 @@ namespace Lucene.Net.Analysis.Util
         public const string InvalidOperation_EnumFailedVersion = "Collection was modified after the enumerator was instantiated.";
         public const string InvalidOperation_EnumOpCantHappen = "Enumeration has either not started or has already finished.";
 
-        public const string NotSupported_KeyCollectionSet = "Mutating a key collection derived from a dictionary is not allowed.";
+        public const string NotSupported_KeyCollectionSet = "Mutating a text collection derived from a dictionary is not allowed.";
         public const string NotSupported_ReadOnlyCollection = "Collection is read-only.";
         public const string NotSupported_ValueCollectionSet = "Mutating a value collection derived from a dictionary is not allowed.";
     }
