@@ -231,7 +231,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                map.Add(new KeyValuePair<string, int?>(NOT_IN_MAP, 3));
+                ((IDictionary<string, int?>)map).Add(new KeyValuePair<string, int?>(NOT_IN_MAP, 3));
                 fail("Modified unmodifiable map");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())

@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="item">A <see cref="T:KeyValuePair{string, V}"/> whose <see cref="T:KeyValuePair{string, V}.Value"/> 
         /// will be added for the corresponding <see cref="T:KeyValuePair{string, V}.Key"/>. </param>
-        public virtual void Add(KeyValuePair<string, TValue> item)
+        void ICollection<KeyValuePair<string, TValue>>.Add(KeyValuePair<string, TValue> item)
         {
             Add(item.Key, item.Value);
         }
@@ -3393,11 +3393,6 @@ namespace Lucene.Net.Analysis.Util
             }
 
             public override void Add<T>(T text, TValue value)
-            {
-                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
-            }
-
-            public override void Add(KeyValuePair<string, TValue> item)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
