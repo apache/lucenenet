@@ -669,13 +669,43 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Add the given mapping.
         /// If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[char[]]"/> setter is more efficient than this method if
+        /// the <paramref name="previousValue"/> is not required.
+        /// </summary>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
+        /// will be populated if the result is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual bool Put(char[] text, int startIndex, int length, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
+        {
+            MapValue? oldValue = PutImpl(text, startIndex, length, new MapValue(value));
+            if (oldValue is not null)
+            {
+                previousValue = oldValue.Value;
+                return false;
+            }
+            previousValue = default;
+            return true;
+        }
+
+        /// <summary>
+        /// Add the given mapping.
+        /// If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
         /// The user should never modify this text array after calling this method.
         /// <para/>
         /// <b>Note:</b> The <see cref="this[char[]]"/> setter is more efficient than this method if
         /// the <paramref name="previousValue"/> is not required.
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="value"></param>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
         /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
         /// parameter if there was no mapping for <paramref name="text"/>.</param>
         /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
@@ -879,6 +909,44 @@ namespace Lucene.Net.Analysis.Util
             return null;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private MapValue? PutImpl(char[] text, int startIndex, int length, MapValue value)
+        {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (startIndex > text.Length - length) // Checks for int overflow
+                throw new ArgumentException(SR.ArgumentOutOfRange_IndexLength);
+
+            version++;
+
+            if (ignoreCase)
+            {
+                charUtils.ToLower(text, startIndex, length);
+            }
+            int slot = GetSlot(text, startIndex, length);
+            if (keys[slot] != null)
+            {
+                MapValue oldValue = values[slot];
+                values[slot] = value;
+                return oldValue;
+            }
+            keys[slot] = text.AsSpan(startIndex, length).ToArray();
+            values[slot] = value;
+            count++;
+
+            if (count + (count >> 2) > keys.Length)
+            {
+                Rehash();
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// LUCENENET specific. Centralizes the logic between Put()
         /// implementations that accept a value and those that don't. This value is
@@ -1011,7 +1079,13 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Sets the value of the mapping of <paramref name="length"/> chars of <paramref name="text"/>
         /// starting at <paramref name="startIndex"/>.
+        /// <para/>
+        /// If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
         /// </summary>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
         /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
@@ -1026,6 +1100,9 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Sets the value of the mapping of the chars inside this <paramref name="text"/>.
+        /// <para/>
+        /// If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
+        /// The user should never modify this text array after calling this method.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1195,7 +1272,25 @@ namespace Lucene.Net.Analysis.Util
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            SetImpl(text, 0, text.Length, value);
+            version++;
+            if (ignoreCase)
+            {
+                charUtils.ToLower(text, 0, text.Length);
+            }
+            int slot = GetSlot(text, 0, text.Length);
+            if (keys[slot] != null)
+            {
+                values[slot] = value;
+                return;
+            }
+            keys[slot] = text;
+            values[slot] = value;
+            count++;
+
+            if (count + (count >> 2) > keys.Length)
+            {
+                Rehash();
+            }
         }
 
         /// <summary>
@@ -1209,6 +1304,12 @@ namespace Lucene.Net.Analysis.Util
         {
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (startIndex > text.Length - length) // Checks for int overflow
+                throw new ArgumentException(SR.ArgumentOutOfRange_IndexLength);
 
             version++;
             if (ignoreCase)
@@ -1221,7 +1322,7 @@ namespace Lucene.Net.Analysis.Util
                 values[slot] = value;
                 return;
             }
-            keys[slot] = text;
+            keys[slot] = text.AsSpan(startIndex, length).ToArray();
             values[slot] = value;
             count++;
 
@@ -1238,6 +1339,9 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{char[],TValue}"/>'s
         /// entries, and calls this dictionary's <see cref="Set(char[], TValue?)"/> operation once for each entry.
+        /// <para/>
+        /// If ignoreCase is <c>true</c> for this dictionary, the text arrays will be directly modified.
+        /// The user should never modify the text arrays after calling this method.
         /// </summary>
         /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
         /// <exception cref="ArgumentNullException">
@@ -1724,6 +1828,27 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Adds a placeholder with the given <paramref name="text"/> as the text.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
+        /// <para/>
+        /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArrayDictionary{TValue}"/>, the text array will be directly modified.
+        /// </summary>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual bool Put(char[] text, int startIndex, int length)
+        {
+            return PutImpl(text, startIndex, length, PLACEHOLDER) is null;
+        }
+
+        /// <summary>
+        /// Adds a placeholder with the given <paramref name="text"/> as the text.
+        /// Primarily for internal use by <see cref="CharArraySet"/>.
+        /// <para/>
+        /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArrayDictionary{TValue}"/>, the text array will be directly modified.
+        /// The user should never modify this text array after calling this method.
         /// </summary>
         /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
@@ -1950,6 +2075,8 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Gets or sets the value associated with the specified text.
+        /// <para/>
+        /// <b>Note:</b> If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
         /// </summary>
         /// <param name="text">The text of the value to get or set.</param>
         /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
@@ -1965,6 +2092,9 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Gets or sets the value associated with the specified text.
+        /// <para/>
+        /// <b>Note:</b> If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
+        /// The user should never modify this text array after calling this setter.
         /// </summary>
         /// <param name="text">The text of the value to get or set.</param>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
@@ -3025,10 +3155,12 @@ namespace Lucene.Net.Analysis.Util
         bool IgnoreCase { get; }
         bool IsReadOnly { get; }
         LuceneVersion MatchVersion { get; }
+        bool Put(char[] text, int startIndex, int Length);
         bool Put(char[] text);
         bool Put(ICharSequence text);
         bool Put<T>(T text);
         bool Put(string text);
+        void Set(char[] text, int startIndex, int length);
         void Set(char[] text);
         void Set(ICharSequence text);
         void Set<T>(T text);
@@ -3169,6 +3301,11 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
+            public override bool Put(char[] text, int startIndex, int length, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
             public override bool Put(char[] text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
@@ -3185,6 +3322,11 @@ namespace Lucene.Net.Analysis.Util
             }
 
             public override bool Put<T>(T text, TValue val, [MaybeNullWhen(true)] out TValue previousValue)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override bool Put(char[] text, int startIndex, int length)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
