@@ -276,12 +276,12 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Add the <see cref="object.ToString()"/> representation of <paramref name="text"/> into the set.
+        /// Adds the <see cref="object.ToString()"/> representation of <paramref name="text"/> into the set.
         /// The <see cref="object.ToString()"/> method is called after setting the thread to <see cref="CultureInfo.InvariantCulture"/>.
         /// If the type of <paramref name="text"/> is a value type, it will be converted using the 
         /// <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
-        /// <param name="text">A string-able object</param>
+        /// <param name="text">A string-able object.</param>
         /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add<T>(T text)
@@ -290,8 +290,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Add this <see cref="ICharSequence"/> into the set
+        /// Adds a <see cref="ICharSequence"/> into the set
         /// </summary>
+        /// <param name="text">The text to be added to the set.</param>
         /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(ICharSequence text)
@@ -300,8 +301,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Add this <see cref="string"/> into the set
+        /// Adds a <see cref="string"/> into the set
         /// </summary>
+        /// <param name="text">The text to be added to the set.</param>
         /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(string text)
@@ -310,16 +312,34 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Add this <see cref="T:char[]"/> directly to the set.
+        /// Adds a <see cref="T:char[]"/> directly to the set.
         /// <para/>
         /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArraySet"/>, the text array will be directly modified.
         /// The user should never modify this text array after calling this method.
         /// </summary>
+        /// <param name="text">The text to be added to the set.</param>
         /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Add(char[] text)
         {
             return map.Put(text);
+        }
+
+        /// <summary>
+        /// Adds a <see cref="T:char[]"/> to the set using the specified <paramref name="startIndex"/> and <paramref name="length"/>.
+        /// <para/>
+        /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArraySet"/>, the text array will be directly modified.
+        /// </summary>
+        /// <param name="text">The text to be added to the set.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if <paramref name="text"/> was added to the set; <c>false</c> if it already existed prior to this call.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual bool Add(char[] text, int startIndex, int length)
+        {
+            return map.Put(text, startIndex, length);
         }
 
         /// <summary>
