@@ -551,7 +551,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
-        internal virtual TValue Get(string text, bool throwIfNotFound)
+        internal virtual TValue Get(string text, bool throwIfNotFound = true)
         {
             var value = values[GetSlot(text)];
             if (value is not null)
@@ -995,6 +995,19 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal virtual void Set(char[] text, int startIndex, int length)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, startIndex, length, PLACEHOLDER);
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <paramref name="text"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void Set(char[] text)
         {
             if (text is null)
@@ -1067,6 +1080,7 @@ namespace Lucene.Net.Analysis.Util
             Set(chars);
         }
 
+        void ICharArrayDictionary.Set(char[] text, int startIndex, int length) => Set(text, startIndex, length);
         void ICharArrayDictionary.Set(char[] text) => Set(text);
         void ICharArrayDictionary.Set(ICharSequence text) => Set(text);
         void ICharArrayDictionary.Set<T>(T text) => Set(text);
@@ -1831,7 +1845,7 @@ namespace Lucene.Net.Analysis.Util
         /// <para/>
         /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArrayDictionary{TValue}"/>, the text array will be directly modified.
         /// </summary>
-        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="text">A key with which the placeholder is associated.</param>
         /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
         /// <param name="length">The total length of the <paramref name="text"/>.</param>
         /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
@@ -3361,6 +3375,22 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
+
+            public override void Add(char[] text, TValue value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void Add(ICharSequence text, TValue value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void Add<T>(T text, TValue value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
             public override void Add(KeyValuePair<string, TValue> item)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
@@ -3441,12 +3471,17 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            internal override void Set(char[] text, int startIndex, int length, TValue? value)
+            internal override void Set(char[] text, TValue? value)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            internal override void Set(char[] text, TValue? value)
+            internal override void Set(char[] text, int startIndex, int length)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(char[] text, int startIndex, int length, TValue? value)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
