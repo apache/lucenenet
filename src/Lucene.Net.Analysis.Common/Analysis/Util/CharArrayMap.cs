@@ -149,18 +149,75 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a dictionary from the mappings in another dictionary. 
+        /// Creates a dictionary from the mappings in another dictionary.
         /// </summary>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
+        ///          compatibility match version see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
         /// <param name="collection">
-        ///          a dictionary (<see cref="T:IDictionary{string, V}"/>) whose mappings to be copied </param>
+        ///          a dictionary (<see cref="T:IDictionary{string, V}"/>) whose mappings to be copied. </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
         public CharArrayDictionary(LuceneVersion matchVersion, IDictionary<string, TValue> collection, bool ignoreCase)
+            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
+        {
+            // LUCENENET: Added guard clause
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
+            foreach (var v in collection)
+            {
+                // LUCENENET: S1699: Don't call call protected members in the constructor
+                if (keys[GetSlot(v.Key)] != null) // ContainsKey
+                {
+                    throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, v.Key));
+                }
+                SetImpl(v.Key, new MapValue(v.Value));
+            }
+        }
+
+        /// <summary>
+        /// Creates a dictionary from the mappings in another dictionary.
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          compatibility match version see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
+        /// <param name="collection">
+        ///          a dictionary (<see cref="T:IDictionary{char[], V}"/>) whose mappings to be copied. </param>
+        /// <param name="ignoreCase">
+        ///          <c>false</c> if and only if the set should be case sensitive;
+        ///          otherwise <c>true</c>. </param>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public CharArrayDictionary(LuceneVersion matchVersion, IDictionary<char[], TValue> collection, bool ignoreCase)
+            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
+        {
+            // LUCENENET: Added guard clause
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
+            foreach (var v in collection)
+            {
+                // LUCENENET: S1699: Don't call call protected members in the constructor
+                if (keys[GetSlot(v.Key!, 0, v.Key?.Length ?? 0)] != null) // ContainsKey
+                {
+                    throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, v.Key));
+                }
+                SetImpl(v.Key!, new MapValue(v.Value));
+            }
+        }
+
+        /// <summary>
+        /// Creates a dictionary from the mappings in another dictionary.
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          compatibility match version see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
+        /// <param name="collection">
+        ///          a dictionary (<see cref="T:IDictionary{ICharSequence, V}"/>) whose mappings to be copied. </param>
+        /// <param name="ignoreCase">
+        ///          <c>false</c> if and only if the set should be case sensitive;
+        ///          otherwise <c>true</c>. </param>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public CharArrayDictionary(LuceneVersion matchVersion, IDictionary<ICharSequence, TValue> collection, bool ignoreCase)
             : this(matchVersion, collection?.Count ?? 0, ignoreCase)
         {
             // LUCENENET: Added guard clause
