@@ -132,7 +132,7 @@ namespace Lucene.Net.Documents
                         if (!fieldValueCounts.TryGetValue(f.Name, out int count))
                             count = 0;
                         count++;
-                        fieldValueCounts.Put(f.Name, count);
+                        fieldValueCounts[f.Name] = count;
                         assertTrue(f.Name + " is " + f.GetType(),
                                    f is LazyDocument.LazyField);
                         LazyDocument.LazyField lf = (LazyDocument.LazyField)f;

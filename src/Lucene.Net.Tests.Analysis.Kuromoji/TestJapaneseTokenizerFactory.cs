@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Ja
         public void TestMode()
         {
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put("mode", "normal");
+            args["mode"] = "normal";
             JapaneseTokenizerFactory factory = new JapaneseTokenizerFactory(args);
             factory.Inform(new StringMockResourceLoader(""));
             TokenStream ts = factory.Create(new StringReader("シニアソフトウェアエンジニア"));
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Ja
                 "# Custom reading for sumo wrestler\n" +
                 "朝青龍,朝青龍,アサショウリュウ,カスタム人名\n";
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put("userDictionary", "userdict.txt");
+            args["userDictionary"] = "userdict.txt";
             JapaneseTokenizerFactory factory = new JapaneseTokenizerFactory(args);
             factory.Inform(new StringMockResourceLoader(userDict));
             TokenStream ts = factory.Create(new StringReader("関西国際空港に行った"));
@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.Ja
         public void TestPreservePunctuation()
         {
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put("discardPunctuation", "false");
+            args["discardPunctuation"] = "false";
             JapaneseTokenizerFactory factory = new JapaneseTokenizerFactory(args);
             factory.Inform(new StringMockResourceLoader(""));
             TokenStream ts = factory.Create(

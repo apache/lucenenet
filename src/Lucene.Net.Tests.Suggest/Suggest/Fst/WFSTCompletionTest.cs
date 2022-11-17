@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
                 // we can probably do Integer.MAX_VALUE here, but why worry.
                 int weight = LuceneTestCase.Random.nextInt(1 << 24);
-                slowCompletor.Put(s, (long)weight);
+                slowCompletor[s] = (long)weight;
                 keys[i] = new Input(s, weight);
             }
 

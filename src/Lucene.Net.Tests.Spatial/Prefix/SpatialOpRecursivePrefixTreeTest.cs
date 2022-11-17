@@ -262,8 +262,8 @@ namespace Lucene.Net.Spatial.Prefix
                     indexedShape = randomRectangle();//just one rect
                 }
 
-                indexedShapes.Put(id, indexedShape);
-                indexedShapesGS.Put(id, gridSnap(indexedShape));
+                indexedShapes[id] = indexedShape;
+                indexedShapesGS[id] = gridSnap(indexedShape);
 
                 adoc(id, indexedShape);
 

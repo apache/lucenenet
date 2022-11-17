@@ -649,13 +649,13 @@ namespace Lucene.Net.Search.VectorHighlight
 #pragma warning disable 612, 618 // LUCENENET NOTE: Class calls obsolete (default) constructor
             public AnalyzerWrapperAnonymousClass()
             {
-                fieldAnalyzers.Put("field", new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET));
-                fieldAnalyzers.Put("field_exact", new MockAnalyzer(Random));
-                fieldAnalyzers.Put("field_super_exact", new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
-                fieldAnalyzers.Put("field_characters", new MockAnalyzer(Random, new CharacterRunAutomaton(new RegExp(".").ToAutomaton()), true));
-                fieldAnalyzers.Put("field_tripples", new MockAnalyzer(Random, new CharacterRunAutomaton(new RegExp("...").ToAutomaton()), true));
-                fieldAnalyzers.Put("field_sliced", fieldAnalyzers["field"]);
-                fieldAnalyzers.Put("field_der_red", fieldAnalyzers["field"]);  // This is required even though we provide a token stream
+                fieldAnalyzers["field"] = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
+                fieldAnalyzers["field_exact"] = new MockAnalyzer(Random);
+                fieldAnalyzers["field_super_exact"] = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
+                fieldAnalyzers["field_characters"] = new MockAnalyzer(Random, new CharacterRunAutomaton(new RegExp(".").ToAutomaton()), true);
+                fieldAnalyzers["field_tripples"] = new MockAnalyzer(Random, new CharacterRunAutomaton(new RegExp("...").ToAutomaton()), true);
+                fieldAnalyzers["field_sliced"] = fieldAnalyzers["field"];
+                fieldAnalyzers["field_der_red"] = fieldAnalyzers["field"];  // This is required even though we provide a token stream
             }
 #pragma warning restore 612, 618
             protected override Analyzer GetWrappedAnalyzer(string fieldName)

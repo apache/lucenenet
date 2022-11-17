@@ -485,7 +485,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
             IDictionary<string, DateResolution> fieldMap = new JCG.Dictionary<string, DateResolution>();
             // set a field specific date resolution
-            fieldMap.Put(monthField, DateResolution.MONTH);
+            fieldMap[monthField] = DateResolution.MONTH;
 #pragma warning disable 612, 618
             qp.SetDateResolution(fieldMap);
 #pragma warning restore 612, 618
@@ -494,7 +494,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             qp.SetDateResolution(DateResolution.MILLISECOND);
 
             // set second field specific date resolution
-            fieldMap.Put(hourField, DateResolution.HOUR);
+            fieldMap[hourField] = DateResolution.HOUR;
 #pragma warning disable 612, 618
             qp.SetDateResolution(fieldMap);
 #pragma warning restore 612, 618

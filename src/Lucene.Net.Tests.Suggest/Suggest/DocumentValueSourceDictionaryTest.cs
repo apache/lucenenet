@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Suggest
                     contexts.SetBytesValue(new BytesRef("ctx_" + i + "_" + j));
                     doc.Add(contexts);
                 }
-                docs.Put(field.GetStringValue(), doc);
+                docs[field.GetStringValue()] = doc;
             }
             return docs;
         }

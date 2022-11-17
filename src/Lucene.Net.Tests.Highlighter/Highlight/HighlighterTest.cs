@@ -1244,7 +1244,7 @@ namespace Lucene.Net.Search.Highlight
             TestHighlightRunner helper = new TestHighlightRunner((instance) =>
             {
                 IDictionary<String, String> synonyms = new JCG.Dictionary<String, String>();
-                synonyms.Put("football", "soccer,footie");
+                synonyms["football"] = "soccer,footie";
                 Analyzer analyzer = new SynonymAnalyzer(synonyms);
 
                 String s = "football-soccer in the euro 2004 footie competition";

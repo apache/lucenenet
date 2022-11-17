@@ -144,8 +144,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public void TestBoostsSimple()
         {
             IDictionary<String, float> boosts = new Dictionary<String, float>();
-            boosts.Put("b", 5);
-            boosts.Put("t", 10);
+            boosts["b"] = 5;
+            boosts["t"] = 10;
             String[] fields = { "b", "t" };
             StandardQueryParser mfqp = new StandardQueryParser();
             mfqp.SetMultiFields(fields);

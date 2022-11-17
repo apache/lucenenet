@@ -68,10 +68,10 @@ namespace Lucene.Net.Search.Suggest
                     }
                 } while (sorted.ContainsKey(key2));
                 long value = random.Next();
-                sortedWithoutPayload.Put(key2, value);
-                sorted.Put(key2, new KeyValuePair<long, BytesRef>(value, payload));
-                sortedWithContext.Put(key2, new KeyValuePair<long, ISet<BytesRef>>(value, ctxs));
-                sortedWithPayloadAndContext.Put(key2, new KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>(value, new KeyValuePair<BytesRef, ISet<BytesRef>>(payload, ctxs)));
+                sortedWithoutPayload[key2] = value;
+                sorted[key2] = new KeyValuePair<long, BytesRef>(value, payload);
+                sortedWithContext[key2] = new KeyValuePair<long, ISet<BytesRef>>(value, ctxs);
+                sortedWithPayloadAndContext[key2] = new KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>(value, new KeyValuePair<BytesRef, ISet<BytesRef>>(payload, ctxs));
                 unsorted[i] = new Input(key2, value, payload);
                 unsortedWithoutPayload[i] = new Input(key2, value);
                 unsortedWithContexts[i] = new Input(key2, value, ctxs);
@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 long value = wrapper.Weight;
                 BytesRef payload = wrapper.Payload;
-                actual.Put(BytesRef.DeepCopyOf(wrapper.Current), new KeyValuePair<long, BytesRef>(value, BytesRef.DeepCopyOf(payload)));
+                actual[BytesRef.DeepCopyOf(wrapper.Current)] = new KeyValuePair<long, BytesRef>(value, BytesRef.DeepCopyOf(payload));
             }
             assertEquals(sorted, actual, aggressive: false);
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 long value = wrapperWithoutPayload.Weight;
                 assertNull(wrapperWithoutPayload.Payload);
-                actualWithoutPayload.Put(BytesRef.DeepCopyOf(wrapperWithoutPayload.Current), value);
+                actualWithoutPayload[BytesRef.DeepCopyOf(wrapperWithoutPayload.Current)] = value;
             }
             assertEquals(sortedWithoutPayload, actualWithoutPayload, aggressive: false);
         }
