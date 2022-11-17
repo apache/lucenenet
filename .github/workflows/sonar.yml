@@ -25,6 +25,7 @@ on:
     - cron: '36 12 * * *' # 12:36 PM UTC, daily (picked an odd start time to try to avoid competing for agents with other projects)
 jobs:
   build:
+    if: github.repository == 'apache/lucenenet' # Don't run on forks
     name: Build and analyze
     runs-on: windows-latest
     steps:
