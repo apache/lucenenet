@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.De
         [Test]
         public virtual void TestStemExclusionTable()
         {
-            GermanAnalyzer a = new GermanAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, new CharArraySet(TEST_VERSION_CURRENT, AsSet("tischen"), false));
+            GermanAnalyzer a = new GermanAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, new CharArraySet(TEST_VERSION_CURRENT, AsSet("tischen"), false));
             CheckOneTerm(a, "tischen", "tischen");
         }
 

@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Ru
         /// <param name="stopwords">
         ///          a stopword set </param>
         public RussianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

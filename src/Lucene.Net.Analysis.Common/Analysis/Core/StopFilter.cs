@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
@@ -109,6 +109,20 @@ namespace Lucene.Net.Analysis.Core
         /// <param name="ignoreCase"> if true, all words are lower cased first </param>
         /// <returns> A Set (<see cref="CharArraySet"/>) containing the words </returns>
         public static CharArraySet MakeStopSet<T1>(LuceneVersion matchVersion, IList<T1> stopWords, bool ignoreCase)
+        {
+            var stopSet = new CharArraySet(matchVersion, stopWords.Count, ignoreCase);
+            stopSet.UnionWith(stopWords);
+            return stopSet;
+        }
+
+        /// <summary>
+        /// Creates a stopword set from the given stopword list. </summary>
+        /// <param name="matchVersion"> <see cref="LuceneVersion"/> to enable correct Unicode 4.0 behavior in the returned set if Version > 3.0 </param>
+        /// <param name="stopWords"> A List of <see cref="string"/>s or <see cref="T:char[]"/> or any other ToString()-able list representing the stopwords </param>
+        /// <param name="ignoreCase"> if true, all words are lower cased first </param>
+        /// <returns> A Set (<see cref="CharArraySet"/>) containing the words </returns>
+        // LUCENENET specific - Optimization to go through the string version of UnionWith
+        public static CharArraySet MakeStopSet(LuceneVersion matchVersion, IList<string> stopWords, bool ignoreCase)
         {
             var stopSet = new CharArraySet(matchVersion, stopWords.Count, ignoreCase);
             stopSet.UnionWith(stopWords);

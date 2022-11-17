@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Uk
         /// <param name="matchVersion"><see cref="LuceneVersion"/> to match.</param>
         /// <param name="stopwords">A stopword set.</param>
         public UkrainianMorfologikAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-            : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Bg
         /// Builds an analyzer with the given stop words.
         /// </summary>
         public BulgarianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+              : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

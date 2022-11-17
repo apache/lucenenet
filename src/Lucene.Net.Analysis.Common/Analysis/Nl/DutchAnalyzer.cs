@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Nl
         private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
-            internal static readonly CharArrayMap<string> DEFAULT_STEM_DICT = LoadDefaultStemDict();
+            internal static readonly CharArrayDictionary<string> DEFAULT_STEM_DICT = LoadDefaultStemDict();
             private static CharArraySet LoadDefaultStopSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
                 try
@@ -90,15 +90,15 @@ namespace Lucene.Net.Analysis.Nl
 
             }
 
-            private static CharArrayMap<string> LoadDefaultStemDict() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+            private static CharArrayDictionary<string> LoadDefaultStemDict() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
 #pragma warning disable 612, 618
-                var DEFAULT_STEM_DICT = new CharArrayMap<string>(LuceneVersion.LUCENE_CURRENT, 4, false);
+                var DEFAULT_STEM_DICT = new CharArrayDictionary<string>(LuceneVersion.LUCENE_CURRENT, 4, false);
 #pragma warning restore 612, 618
-                DEFAULT_STEM_DICT.Put("fiets", "fiets"); //otherwise fiet
-                DEFAULT_STEM_DICT.Put("bromfiets", "bromfiets"); //otherwise bromfiet
-                DEFAULT_STEM_DICT.Put("ei", "eier");
-                DEFAULT_STEM_DICT.Put("kind", "kinder");
+                DEFAULT_STEM_DICT["fiets"] = "fiets"; //otherwise fiet
+                DEFAULT_STEM_DICT["bromfiets"] = "bromfiets"; //otherwise bromfiet
+                DEFAULT_STEM_DICT["ei"] = "eier";
+                DEFAULT_STEM_DICT["kind"] = "kinder";
                 return DEFAULT_STEM_DICT;
             }
         }
@@ -112,12 +112,12 @@ namespace Lucene.Net.Analysis.Nl
         /// <summary>
         /// Contains words that should be indexed but not stemmed.
         /// </summary>
-        private CharArraySet excltable = CharArraySet.EMPTY_SET;
+        private CharArraySet excltable = CharArraySet.Empty;
 
         private readonly StemmerOverrideFilter.StemmerOverrideMap stemdict;
 
         // null if on 3.1 or later - only for bw compat
-        private readonly CharArrayMap<string> origStemdict;
+        private readonly CharArrayDictionary<string> origStemdict;
         private readonly LuceneVersion matchVersion;
 
         /// <summary>
@@ -125,17 +125,17 @@ namespace Lucene.Net.Analysis.Nl
         /// and a few default entries for the stem exclusion table.
         /// </summary>
         public DutchAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET, CharArraySet.EMPTY_SET, DefaultSetHolder.DEFAULT_STEM_DICT)
+              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET, CharArraySet.Empty, DefaultSetHolder.DEFAULT_STEM_DICT)
         {
             // historically, only this ctor populated the stem dict!!!!!
         }
 
         public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET,
+              : this(matchVersion, stopwords, CharArraySet.Empty,
 #pragma warning disable 612, 618
                     matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
 #pragma warning restore 612, 618
-                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayMap<string>.EmptyMap())
+                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.Empty)
         {
             // historically, this ctor never the stem dict!!!!!
             // so we populate it only for >= 3.6
@@ -146,13 +146,13 @@ namespace Lucene.Net.Analysis.Nl
 #pragma warning disable 612, 618
                     matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
 #pragma warning restore 612, 618
-                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayMap<string>.EmptyMap())
+                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.Empty)
         {
             // historically, this ctor never the stem dict!!!!!
             // so we populate it only for >= 3.6
         }
 
-        public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable, CharArrayMap<string> stemOverrideDict)
+        public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable, CharArrayDictionary<string> stemOverrideDict)
         {
             this.matchVersion = matchVersion;
             this.stoptable = CharArraySet.Copy(matchVersion, stopwords).AsReadOnly();
@@ -162,19 +162,19 @@ namespace Lucene.Net.Analysis.Nl
 #pragma warning restore 612, 618
             {
                 this.stemdict = null;
-                this.origStemdict = CharArrayMap.Copy(matchVersion, stemOverrideDict).AsReadOnly();
+                this.origStemdict = CharArrayDictionary.Copy(matchVersion, stemOverrideDict).AsReadOnly();
             }
             else
             {
                 this.origStemdict = null;
                 // we don't need to ignore case here since we lowercase in this analyzer anyway
                 StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(false);
-                using (CharArrayMap<string>.EntryIterator iter = (CharArrayMap<string>.EntryIterator)stemOverrideDict.EntrySet().GetEnumerator())
+                using (var iter = stemOverrideDict.GetEnumerator())
                 {
                     CharsRef spare = new CharsRef();
-                    while (iter.HasNext)
+                    while (iter.MoveNext())
                     {
-                        char[] nextKey = iter.NextKey();
+                        char[] nextKey = iter.CurrentKey;
                         spare.CopyChars(nextKey, 0, nextKey.Length);
                         builder.Add(spare.Chars, iter.CurrentValue);
                     }

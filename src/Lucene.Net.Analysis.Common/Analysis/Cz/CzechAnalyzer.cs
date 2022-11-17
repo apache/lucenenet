@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Cz
         /// <param name="matchVersion"> <see cref="LuceneVersion"/> to match </param>
         /// <param name="stopwords"> a stopword set </param>
         public CzechAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+              : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

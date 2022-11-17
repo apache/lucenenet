@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Fr
         /// <param name="stopwords">
         ///          a stopword set </param>
         public FrenchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+              : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

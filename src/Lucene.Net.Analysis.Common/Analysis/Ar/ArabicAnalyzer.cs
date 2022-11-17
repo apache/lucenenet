@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Ar
         /// <param name="stopwords">
         ///          a stopword set </param>
         public ArabicAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+              : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

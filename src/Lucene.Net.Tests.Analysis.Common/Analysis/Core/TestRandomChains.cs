@@ -304,7 +304,7 @@ namespace Lucene.Net.Analysis.Core
             { typeof(string), new StringArgProducer() },
             { typeof(NormalizeCharMap), new NormalizeCharMapArgProducer() },
             { typeof(CharacterRunAutomaton), new CharacterRunAutomatonArgProducer() },
-            { typeof(CharArrayMap<string>), new StringCharArrayMapArgProducer() },
+            { typeof(CharArrayDictionary<string>), new StringCharArrayMapArgProducer() },
             { typeof(StemmerOverrideFilter.StemmerOverrideMap), new StemmerOverrideMapArgProducer() },
             { typeof(SynonymMap), new SynonymMapArgProducer() },
             { typeof(WordDelimiterFlags), new AnonymousProducer((random) => {
@@ -648,11 +648,11 @@ namespace Lucene.Net.Analysis.Core
             public object Create(Random random)
             {
                 int num = random.nextInt(10);
-                CharArrayMap<string> map = new CharArrayMap<string>(TEST_VERSION_CURRENT, num, random.nextBoolean());
+                CharArrayDictionary<string> map = new CharArrayDictionary<string>(TEST_VERSION_CURRENT, num, random.nextBoolean());
                 for (int i = 0; i < num; i++)
                 {
                     // TODO: make nastier
-                    map.Put(TestUtil.RandomSimpleString(random), TestUtil.RandomSimpleString(random));
+                    map[TestUtil.RandomSimpleString(random)] = TestUtil.RandomSimpleString(random);
                 }
                 return map;
             }

@@ -319,7 +319,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private void AssertTokIncludes(SlowSynonymMap map, string src, string exp)
         {
-            Token[] tokens = map.Submap.Get(src).Synonyms;
+            Token[] tokens = map.Submap[src].Synonyms;
             bool inc = false;
             foreach (Token token in tokens)
             {
@@ -333,7 +333,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private SlowSynonymMap GetSubSynonymMap(SlowSynonymMap map, string src)
         {
-            return map.Submap.Get(src);
+            return map.Submap.TryGetValue(src, out SlowSynonymMap result) ? result : null;
         }
     }
 }
