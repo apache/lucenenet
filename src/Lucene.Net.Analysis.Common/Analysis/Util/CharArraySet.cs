@@ -363,7 +363,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return Empty;
             }
-            if (set.map is CharArrayDictionary.UnmodifiableCharArrayDictionary<object>)
+            if (set.map is CharArrayDictionary.ReadOnlyCharArrayDictionary<object>)
             {
                 return set;
             }
@@ -382,7 +382,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return Empty;
             }
-            if (this.map is CharArrayDictionary.UnmodifiableCharArrayDictionary<object>)
+            if (this.map is CharArrayDictionary.ReadOnlyCharArrayDictionary<object>)
             {
                 return this;
             }

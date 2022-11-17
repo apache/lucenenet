@@ -280,9 +280,9 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - allow .NET-like syntax for creating immutable collections
         public CharArrayDictionary<TValue> AsReadOnly()
         {
-            return this is CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue> readOnlyDictionary ?
+            return this is CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue> readOnlyDictionary ?
                 readOnlyDictionary :
-                new CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>(this);
+                new CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>(this);
         }
 
         /// <summary>
@@ -3123,15 +3123,15 @@ namespace Lucene.Net.Analysis.Util
             {
                 return CharArrayDictionary<TValue>.Empty;
             }
-            if (map is CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>)
+            if (map is CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>)
             {
                 return map;
             }
-            return new CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>(map);
+            return new CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>(map);
         }
 
         /// <summary>
-        /// Used by <see cref="CharArraySet"/> to create an <see cref="UnmodifiableCharArrayDictionary{TValue}"/> instance
+        /// Used by <see cref="CharArraySet"/> to create an <see cref="ReadOnlyCharArrayDictionary{TValue}"/> instance
         /// without knowing the type of <typeparamref name="TValue"/>.
         /// </summary>
         internal static ICharArrayDictionary UnmodifiableMap<TValue>(ICharArrayDictionary map)
@@ -3144,23 +3144,23 @@ namespace Lucene.Net.Analysis.Util
             {
                 return CharArrayDictionary<TValue>.Empty;
             }
-            if (map is CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>)
+            if (map is CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>)
             {
                 return map;
             }
-            return new CharArrayDictionary.UnmodifiableCharArrayDictionary<TValue>(map);
+            return new CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>(map);
         }
 
-        #region Nested Class: UnmodifiableCharArrayDictionary<TValue>
+        #region Nested Class: ReadOnlyCharArrayDictionary<TValue>
 
         // package private CharArraySet instanceof check in CharArraySet
-        internal class UnmodifiableCharArrayDictionary<TValue> : CharArrayDictionary<TValue>
+        internal class ReadOnlyCharArrayDictionary<TValue> : CharArrayDictionary<TValue>
         {
-            public UnmodifiableCharArrayDictionary([DisallowNull] CharArrayDictionary<TValue> map)
+            public ReadOnlyCharArrayDictionary([DisallowNull] CharArrayDictionary<TValue> map)
                 : base(map)
             { }
 
-            public UnmodifiableCharArrayDictionary([DisallowNull] ICharArrayDictionary map)
+            public ReadOnlyCharArrayDictionary([DisallowNull] ICharArrayDictionary map)
                 : base((CharArrayDictionary<TValue>)map)
             { }
 
@@ -3347,11 +3347,11 @@ namespace Lucene.Net.Analysis.Util
         #region Nested Class: EmptyCharArrayDictionary<V>
 
         /// <summary>
-        /// Empty <see cref="UnmodifiableCharArrayDictionary{V}"/> optimized for speed.
+        /// Empty <see cref="ReadOnlyCharArrayDictionary{V}"/> optimized for speed.
         /// Contains checks will always return <c>false</c> or throw
         /// NPE if necessary.
         /// </summary>
-        internal class EmptyCharArrayDictionary<V> : UnmodifiableCharArrayDictionary<V>
+        internal class EmptyCharArrayDictionary<V> : ReadOnlyCharArrayDictionary<V>
         {
             public EmptyCharArrayDictionary()
 #pragma warning disable 612, 618
