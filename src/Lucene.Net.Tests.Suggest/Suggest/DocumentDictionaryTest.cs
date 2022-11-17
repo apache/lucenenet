@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.Suggest
                     term = field.GetStringValue();
                 }
 
-                docs.Put(term, doc);
+                docs[term] = doc;
             }
             return new KeyValuePair<IList<string>, IDictionary<string, Document>>(invalidDocTerms, docs);
         }

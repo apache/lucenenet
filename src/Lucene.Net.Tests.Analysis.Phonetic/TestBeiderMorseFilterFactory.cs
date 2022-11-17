@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Phonetic
         public void TestLanguageSet()
         {
             IDictionary<String, String> args = new Dictionary<string, string>();
-            args.Put("languageSet", "polish");
+            args["languageSet"] = "polish";
             BeiderMorseFilterFactory factory = new BeiderMorseFilterFactory(args);
             TokenStream ts = factory.Create(new MockTokenizer(new StringReader("Weinberg"), MockTokenizer.WHITESPACE, false));
             AssertTokenStreamContents(ts,
@@ -58,8 +58,8 @@ namespace Lucene.Net.Analysis.Phonetic
         public void TestOptions()
         {
             IDictionary<String, String> args = new Dictionary<string, string>();
-            args.Put("nameType", "ASHKENAZI");
-            args.Put("ruleType", "EXACT");
+            args["nameType"] = "ASHKENAZI";
+            args["ruleType"] = "EXACT";
             BeiderMorseFilterFactory factory = new BeiderMorseFilterFactory(args);
             TokenStream ts = factory.Create(new MockTokenizer(new StringReader("Weinberg"), MockTokenizer.WHITESPACE, false));
             AssertTokenStreamContents(ts,

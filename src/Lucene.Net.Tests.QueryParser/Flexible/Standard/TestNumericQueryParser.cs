@@ -260,8 +260,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     continue;
                 }
 
-                numericConfigMap.Put(type.ToString(), new NumericConfig(PRECISION_STEP,
-                    NUMBER_FORMAT, type)); 
+                numericConfigMap[type.ToString()] = new NumericConfig(PRECISION_STEP, NUMBER_FORMAT, type); 
 
                 FieldType ft2 = new FieldType(Int32Field.TYPE_NOT_STORED);
                 ft2.NumericType = (type);
@@ -289,17 +288,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                         field = null!;
                         break;
                 }
-                numericFieldMap.Put(type.ToString(), field);
+                numericFieldMap[type.ToString()] = field;
                 doc.Add(field);
             }
 
-            numericConfigMap.Put(DATE_FIELD_NAME, new NumericConfig(PRECISION_STEP,
-                DATE_FORMAT, NumericType.INT64));
+            numericConfigMap[DATE_FIELD_NAME] = new NumericConfig(PRECISION_STEP, DATE_FORMAT, NumericType.INT64);
             FieldType ft = new FieldType(Int64Field.TYPE_NOT_STORED);
             ft.IsStored = (true);
             ft.NumericPrecisionStep = (PRECISION_STEP);
             Int64Field dateField = new Int64Field(DATE_FIELD_NAME, 0L, ft);
-            numericFieldMap.Put(DATE_FIELD_NAME, dateField);
+            numericFieldMap[DATE_FIELD_NAME] = dateField;
             doc.Add(dateField);
 
             foreach (NumberType numberType in (NumberType[])Enum.GetValues(typeof(NumberType)))

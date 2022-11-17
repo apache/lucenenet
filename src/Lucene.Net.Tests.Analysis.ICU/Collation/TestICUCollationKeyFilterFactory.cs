@@ -244,8 +244,8 @@ namespace Lucene.Net.Collation
             String germanUmlaut = "Töne";
             String germanOE = "Toene";
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put("custom", "rules.txt");
-            args.Put("strength", "primary");
+            args["custom"] = "rules.txt";
+            args["strength"] = "primary";
             ICUCollationKeyFilterFactory factory = new ICUCollationKeyFilterFactory(args);
             factory.Inform(new StringMockResourceLoader(tailoredRules));
             TokenStream tsUmlaut = factory.Create(
@@ -318,7 +318,7 @@ namespace Lucene.Net.Collation
                 String prev = args.Put(keysAndValues[i], keysAndValues[i + 1]);
                 assertNull("duplicate values for key: " + keysAndValues[i], prev);
             }
-            String previous = args.Put("luceneMatchVersion", TEST_VERSION_CURRENT.toString());
+            String previous = args.Put("luceneMatchVersion", TEST_VERSION_CURRENT.ToString());
             assertNull("duplicate values for key: luceneMatchVersion", previous);
             TokenFilterFactory factory = null;
             try

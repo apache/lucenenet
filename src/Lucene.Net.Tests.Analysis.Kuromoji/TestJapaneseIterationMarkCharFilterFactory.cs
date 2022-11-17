@@ -59,8 +59,8 @@ namespace Lucene.Net.Analysis.Ja
             tokenizerFactory.Inform(new StringMockResourceLoader(""));
 
             IDictionary<String, String> filterArgs = new Dictionary<String, String>();
-            filterArgs.Put("normalizeKanji", "true");
-            filterArgs.Put("normalizeKana", "false");
+            filterArgs["normalizeKanji"] = "true";
+            filterArgs["normalizeKana"] = "false";
             JapaneseIterationMarkCharFilterFactory filterFactory = new JapaneseIterationMarkCharFilterFactory(filterArgs);
 
             TextReader filter = filterFactory.Create(
@@ -77,8 +77,8 @@ namespace Lucene.Net.Analysis.Ja
             tokenizerFactory.Inform(new StringMockResourceLoader(""));
 
             IDictionary<String, String> filterArgs = new Dictionary<String, String>();
-            filterArgs.Put("normalizeKanji", "false");
-            filterArgs.Put("normalizeKana", "true");
+            filterArgs["normalizeKanji"] = "false";
+            filterArgs["normalizeKana"] = "true";
             JapaneseIterationMarkCharFilterFactory filterFactory = new JapaneseIterationMarkCharFilterFactory(filterArgs);
 
             TextReader filter = filterFactory.Create(

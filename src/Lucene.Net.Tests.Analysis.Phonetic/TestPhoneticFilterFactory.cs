@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Phonetic
         public void TestFactoryDefaults()
         {
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put(PhoneticFilterFactory.ENCODER, "Metaphone");
+            args[PhoneticFilterFactory.ENCODER] = "Metaphone";
             PhoneticFilterFactory factory = new PhoneticFilterFactory(args);
             factory.Inform(new ClasspathResourceLoader(factory.GetType()));
             assertTrue(factory.GetEncoder() is Metaphone);
@@ -45,8 +45,8 @@ namespace Lucene.Net.Analysis.Phonetic
         public void TestInjectFalse()
         {
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put(PhoneticFilterFactory.ENCODER, "Metaphone");
-            args.Put(PhoneticFilterFactory.INJECT, "false");
+            args[PhoneticFilterFactory.ENCODER] = "Metaphone";
+            args[PhoneticFilterFactory.INJECT] = "false";
             PhoneticFilterFactory factory = new PhoneticFilterFactory(args);
             factory.Inform(new ClasspathResourceLoader(factory.GetType()));
             assertFalse(factory.inject);
@@ -56,8 +56,8 @@ namespace Lucene.Net.Analysis.Phonetic
         public void TestMaxCodeLength()
         {
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put(PhoneticFilterFactory.ENCODER, "Metaphone");
-            args.Put(PhoneticFilterFactory.MAX_CODE_LENGTH, "2");
+            args[PhoneticFilterFactory.ENCODER] = "Metaphone";
+            args[PhoneticFilterFactory.MAX_CODE_LENGTH] = "2";
             PhoneticFilterFactory factory = new PhoneticFilterFactory(args);
             factory.Inform(new ClasspathResourceLoader(factory.GetType()));
             assertEquals(2, ((Metaphone)factory.GetEncoder()).MaxCodeLen);
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Phonetic
             try
             {
                 IDictionary<String, String> args = new Dictionary<String, String>();
-                args.Put("encoder", "XXX");
+                args["encoder"] = "XXX";
                 PhoneticFilterFactory factory = new PhoneticFilterFactory(args);
                 factory.Inform(new ClasspathResourceLoader(factory.GetType()));
                 fail();
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Phonetic
             try
             {
                 IDictionary<String, String> args = new Dictionary<String, String>();
-                args.Put("encoder", "org.apache.commons.codec.language.NonExistence");
+                args["encoder"] = "org.apache.commons.codec.language.NonExistence";
                 PhoneticFilterFactory factory = new PhoneticFilterFactory(args);
                 factory.Inform(new ClasspathResourceLoader(factory.GetType()));
                 fail();
@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis.Phonetic
         public void TestFactoryReflection()
         {
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put(PhoneticFilterFactory.ENCODER, "Metaphone");
+            args[PhoneticFilterFactory.ENCODER] = "Metaphone";
             PhoneticFilterFactory factory = new PhoneticFilterFactory(args);
             factory.Inform(new ClasspathResourceLoader(factory.GetType()));
             assertTrue(factory.GetEncoder() is Metaphone);
@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Phonetic
         public void TestFactoryReflectionCaverphone2()
         {
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put(PhoneticFilterFactory.ENCODER, "Caverphone2");
+            args[PhoneticFilterFactory.ENCODER] = "Caverphone2";
             PhoneticFilterFactory factory = new PhoneticFilterFactory(args);
             factory.Inform(new ClasspathResourceLoader(factory.GetType()));
             assertTrue(factory.GetEncoder() is Caverphone2);
@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Phonetic
         public void TestFactoryReflectionCaverphone()
         {
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put(PhoneticFilterFactory.ENCODER, "Caverphone");
+            args[PhoneticFilterFactory.ENCODER] = "Caverphone";
             PhoneticFilterFactory factory = new PhoneticFilterFactory(args);
             factory.Inform(new ClasspathResourceLoader(factory.GetType()));
             assertTrue(factory.GetEncoder() is Caverphone2);
@@ -217,8 +217,8 @@ namespace Lucene.Net.Analysis.Phonetic
         {
             Tokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.WHITESPACE, false);
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put("encoder", algName);
-            args.Put("inject", inject);
+            args["encoder"] = algName;
+            args["inject"] = inject;
             PhoneticFilterFactory factory = new PhoneticFilterFactory(args);
             factory.Inform(new ClasspathResourceLoader(factory.GetType()));
             TokenStream stream = factory.Create(tokenizer);
