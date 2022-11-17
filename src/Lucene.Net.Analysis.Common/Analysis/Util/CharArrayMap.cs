@@ -2058,11 +2058,22 @@ namespace Lucene.Net.Analysis.Util
         {
             private readonly CharArrayDictionary<TValue> dictionary;
 
+            /// <summary>
+            /// Initializes a new instance of <see cref="ValueCollection"/> for the provided <see cref="CharArrayDictionary{TValue}"/>.
+            /// </summary>
+            /// <param name="dictionary">The dictionary to read the values from.</param>
+            /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
             public ValueCollection(CharArrayDictionary<TValue> dictionary)
             {
                 this.dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
             }
 
+            /// <summary>
+            /// Gets the number of elements contained in the <see cref="ValueCollection"/>.
+            /// </summary>
+            /// <remarks>
+            /// Retrieving the value of this property is an O(1) operation.
+            /// </remarks>
             public int Count => dictionary.Count;
 
             bool ICollection<TValue>.IsReadOnly => true;
@@ -2081,6 +2092,11 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ValueCollectionSet);
             }
 
+            /// <summary>
+            /// Determines whether the set contains a specific element.
+            /// </summary>
+            /// <param name="item">The element to locate in the set.</param>
+            /// <returns><c>true</c> if the set contains item; otherwise, <c>false</c>.</returns>
             [SuppressMessage("Style", "IDE0002:Name can be simplified", Justification = "This is a false warning.")]
             public bool Contains(TValue item)
             {
@@ -2093,6 +2109,24 @@ namespace Lucene.Net.Analysis.Util
                 return false;
             }
 
+            /// <summary>
+            /// Copies the <see cref="ValueCollection"/> elements to an existing one-dimensional
+            /// array, starting at the specified array index.
+            /// </summary>
+            /// <param name="array">The one-dimensional array that is the destination of the elements copied from
+            /// the <see cref="ValueCollection"/>. The array must have zero-based indexing.</param>
+            /// <param name="index">The zero-based index in <paramref name="array"/> at which copying begins.</param>
+            /// <exception cref="ArgumentNullException"><paramref name="array"/> is <c>null</c>.</exception>
+            /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than 0.</exception>
+            /// <exception cref="ArgumentException">The number of elements in the source <see cref="ValueCollection"/>
+            /// is greater than the available space from <paramref name="index"/> to the end of the destination
+            /// <paramref name="array"/>.</exception>
+            /// <remarks>
+            /// The elements are copied to the array in the same order in which the enumerator iterates through the
+            /// <see cref="ValueCollection"/>.
+            /// <para/>
+            /// This method is an O(<c>n</c>) operation, where <c>n</c> is <see cref="Count"/>.
+            /// </remarks>
             public void CopyTo(TValue[] array, int index)
             {
                 if (array is null)
@@ -2138,6 +2172,18 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
 
+            /// <summary>
+            /// Returns an enumerator that iterates through the <see cref="ValueCollection"/>.
+            /// </summary>
+            /// <returns>An enumerator that iterates through the <see cref="ValueCollection"/>.</returns>
+            /// <remarks>
+            /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to
+            /// the collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably
+            /// invalidated and the next call to <see cref="Enumerator.MoveNext()"/> or <see cref="IEnumerator.Reset()"/>
+            /// throws an <see cref="InvalidOperationException"/>.
+            /// <para/>
+            /// This method is an <c>O(log n)</c> operation.
+            /// </remarks>
             public Enumerator GetEnumerator()
             {
                 return new Enumerator(dictionary);
@@ -2152,6 +2198,14 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ValueCollectionSet);
             }
 
+            /// <summary>
+            /// Returns a string that represents the current collection.
+            /// <para/>
+            /// The presentation has a specific format. It is enclosed by square
+            /// brackets ("[]"). Elements are separated by ', ' (comma and space).
+            /// <c>null</c> values are represented as the string "null".
+            /// </summary>
+            /// <returns>A string that represents the current collection.</returns>
             public override string ToString()
             {
                 using var i = GetEnumerator();
@@ -2179,8 +2233,40 @@ namespace Lucene.Net.Analysis.Util
             #region Nested Struct: Enumerator
 
             /// <summary>
-            /// Struct to enumerate the values in the <see cref="ValueCollection"/>.
+            /// Enumerates the elements of a <see cref="ValueCollection"/>.
             /// </summary>
+            /// <remarks>
+            /// The <c>foreach</c> statement of the C# language (<c>for each</c> in C++, <c>For Each</c> in Visual Basic)
+            /// hides the complexity of enumerators. Therefore, using <c>foreach</c> is recommended instead of directly manipulating the enumerator.
+            /// <para/>
+            /// Enumerators can be used to read the data in the collection, but they cannot be used to modify the underlying collection.
+            /// <para/>
+            /// Initially, the enumerator is positioned before the first element in the collection. At this position, the
+            /// <see cref="Current"/> property is undefined. Therefore, you must call the
+            /// <see cref="MoveNext()"/> method to advance the enumerator to the first element
+            /// of the collection before reading the value of <see cref="Current"/>.
+            /// <para/>
+            /// The <see cref="Current"/> property returns the same object until
+            /// <see cref="MoveNext()"/> is called. <see cref="MoveNext()"/>
+            /// sets <see cref="Current"/> to the next element.
+            /// <para/>
+            /// If <see cref="MoveNext()"/> passes the end of the collection, the enumerator is
+            /// positioned after the last element in the collection and <see cref="MoveNext()"/>
+            /// returns <c>false</c>. When the enumerator is at this position, subsequent calls to <see cref="MoveNext()"/>
+            /// also return <c>false</c>. If the last call to <see cref="MoveNext()"/> returned <c>false</c>,
+            /// <see cref="Current"/> is undefined. You cannot set <see cref="Current"/>
+            /// to the first element of the collection again; you must create a new enumerator object instead.
+            /// <para/>
+            /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection,
+            /// such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated and the next call
+            /// to <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+            /// <see cref="InvalidOperationException"/>.
+            /// <para/>
+            /// The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is
+            /// intrinsically not a thread-safe procedure. To guarantee thread safety during enumeration, you can lock the
+            /// collection during the entire enumeration. To allow the collection to be accessed by multiple threads for
+            /// reading and writing, you must implement your own synchronization.
+            /// </remarks>
             // LUCENENET specific
             public readonly struct Enumerator : IEnumerator<TValue>, IEnumerator
             {
@@ -2191,15 +2277,62 @@ namespace Lucene.Net.Analysis.Util
                     this.entryIterator = dictionary.GetEnumerator();
                 }
 
+                /// <summary>
+                /// Gets the element at the current position of the enumerator.
+                /// </summary>
+                /// <remarks>
+                /// <see cref="Current"/> is undefined under any of the following conditions:
+                /// <list type="bullet">
+                ///     <item><description>
+                ///         The enumerator is positioned before the first element of the collection. That happens after an
+                ///         enumerator is created or after the <see cref="IEnumerator.Reset()"/> method is called. The <see cref="MoveNext()"/>
+                ///         method must be called to advance the enumerator to the first element of the collection before reading the value of
+                ///         the <see cref="Current"/> property.
+                ///     </description></item>
+                ///     <item><description>
+                ///         The last call to <see cref="MoveNext()"/> returned <c>false</c>, which indicates the end of the collection and that the
+                ///         enumerator is positioned after the last element of the collection.
+                ///     </description></item>
+                ///     <item><description>
+                ///         The enumerator is invalidated due to changes made in the collection, such as adding, modifying, or deleting elements.
+                ///     </description></item>
+                /// </list>
+                /// <para/>
+                /// <see cref="Current"/> does not move the position of the enumerator, and consecutive calls to <see cref="Current"/> return
+                /// the same object until either <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> is called.
+                /// </remarks>
                 public TValue Current => entryIterator.CurrentValue!;
 
                 object IEnumerator.Current => entryIterator.CurrentValue!;
 
+                /// <summary>
+                /// Releases all resources used by the <see cref="Enumerator"/>.
+                /// </summary>
                 public void Dispose()
                 {
                     entryIterator.Dispose();
                 }
 
+                /// <summary>
+                /// Advances the enumerator to the next element of the <see cref="ValueCollection"/>.
+                /// </summary>
+                /// <returns><c>true</c> if the enumerator was successfully advanced to the next element;
+                /// <c>false</c> if the enumerator has passed the end of the collection.</returns>
+                /// <exception cref="InvalidOperationException">The collection was modified after the enumerator was created.</exception>
+                /// <remarks>
+                /// After an enumerator is created, the enumerator is positioned before the first element in the collection,
+                /// and the first call to the <see cref="MoveNext()"/> method advances the enumerator to the first element
+                /// of the collection.
+                /// <para/>
+                /// If MoveNext passes the end of the collection, the enumerator is positioned after the last element in the
+                /// collection and <see cref="MoveNext()"/> returns <c>false</c>. When the enumerator is at this position,
+                /// subsequent calls to <see cref="MoveNext()"/> also return <c>false</c>.
+                /// <para/>
+                /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the
+                /// collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated
+                /// and the next call to <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+                /// <see cref="InvalidOperationException"/>.
+                /// </remarks>
                 public bool MoveNext()
                 {
                     return entryIterator.MoveNext();
@@ -2230,6 +2363,49 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Returns an enumerator that iterates through the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
+        /// <returns>A <see cref="CharArrayDictionary{TValue}.Enumerator"/> for the
+        /// <see cref="CharArrayDictionary{TValue}"/>.</returns>
+        /// <remarks>
+        /// For purposes of enumeration, each item is a <see cref="KeyValuePair{TKey, TValue}"/> structure
+        /// representing a value and its key. There are also properties allowing direct access
+        /// to the <see cref="T:char[]"/> array of each element and quick conversions to <see cref="string"/> or <see cref="ICharSequence"/>.
+        /// <para/>
+        /// The <c>foreach</c> statement of the C# language (<c>for each</c> in C++, <c>For Each</c> in Visual Basic)
+        /// hides the complexity of enumerators. Therefore, using <c>foreach</c> is recommended instead of directly manipulating the enumerator.
+        /// <para/>
+        /// This enumerator can be used to read the data in the collection, or modify the corresponding value at the current position.
+        /// <para/>
+        /// Initially, the enumerator is positioned before the first element in the collection. At this position, the
+        /// <see cref="Enumerator.Current"/> property is undefined. Therefore, you must call the
+        /// <see cref="Enumerator.MoveNext()"/> method to advance the enumerator to the first element
+        /// of the collection before reading the value of <see cref="Enumerator.Current"/>.
+        /// <para/>
+        /// The <see cref="Enumerator.Current"/> property returns the same object until
+        /// <see cref="Enumerator.MoveNext()"/> is called. <see cref="Enumerator.MoveNext()"/>
+        /// sets <see cref="Enumerator.Current"/> to the next element.
+        /// <para/>
+        /// If <see cref="Enumerator.MoveNext()"/> passes the end of the collection, the enumerator is
+        /// positioned after the last element in the collection and <see cref="Enumerator.MoveNext()"/>
+        /// returns <c>false</c>. When the enumerator is at this position, subsequent calls to <see cref="Enumerator.MoveNext()"/>
+        /// also return <c>false</c>. If the last call to <see cref="Enumerator.MoveNext()"/> returned <c>false</c>,
+        /// <see cref="Enumerator.Current"/> is undefined. You cannot set <see cref="Enumerator.Current"/>
+        /// to the first element of the collection again; you must create a new enumerator object instead.
+        /// <para/>
+        /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection,
+        /// such as adding, modifying, or deleting elements (other than through the <see cref="Enumerator.SetValue(TValue)"/> method),
+        /// the enumerator is irrecoverably invalidated and the next call
+        /// to <see cref="Enumerator.MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+        /// <see cref="InvalidOperationException"/>.
+        /// <para/>
+        /// The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is
+        /// intrinsically not a thread-safe procedure. To guarantee thread safety during enumeration, you can lock the
+        /// collection during the entire enumeration. To allow the collection to be accessed by multiple threads for
+        /// reading and writing, you must implement your own synchronization.
+        /// <para/>
+        /// Default implementations of collections in the <see cref="J2N.Collections.Generic"/> namespace are not synchronized.
+        /// <para/>
+        /// This method is an O(1) operation.
+        /// </remarks>
         public Enumerator GetEnumerator()
         {
             return new Enumerator(this, Enumerator.KeyValuePair);
@@ -2478,8 +2654,45 @@ namespace Lucene.Net.Analysis.Util
         #region Nested Class: Enumerator
 
         /// <summary>
-        /// Public enumerator class so efficient properties are exposed to users.
+        /// Enumerates the elements of a <see cref="CharArrayDictionary{TValue}"/>.
+        /// <para/>
+        /// This enumerator exposes <see cref="CurrentKey"/> efficient access to the
+        /// underlying <see cref="T:char[]"/>. It also has <see cref="CurrentKeyString"/>,
+        /// <see cref="CurrentKeyCharSequence"/>, and <see cref="CurrentValue"/> properties for
+        /// convenience.
         /// </summary>
+        /// <remarks>
+        /// The <c>foreach</c> statement of the C# language (<c>for each</c> in C++, <c>For Each</c> in Visual Basic)
+        /// hides the complexity of enumerators. Therefore, using <c>foreach</c> is recommended instead of directly manipulating the enumerator.
+        /// <para/>
+        /// This enumerator can be used to read the data in the collection, or modify the corresponding value at the current position.
+        /// <para/>
+        /// Initially, the enumerator is positioned before the first element in the collection. At this position, the
+        /// <see cref="Current"/> property is undefined. Therefore, you must call the
+        /// <see cref="MoveNext()"/> method to advance the enumerator to the first element
+        /// of the collection before reading the value of <see cref="Current"/>.
+        /// <para/>
+        /// The <see cref="Current"/> property returns the same object until
+        /// <see cref="MoveNext()"/> is called. <see cref="MoveNext()"/>
+        /// sets <see cref="Current"/> to the next element.
+        /// <para/>
+        /// If <see cref="MoveNext()"/> passes the end of the collection, the enumerator is
+        /// positioned after the last element in the collection and <see cref="MoveNext()"/>
+        /// returns <c>false</c>. When the enumerator is at this position, subsequent calls to <see cref="MoveNext()"/>
+        /// also return <c>false</c>. If the last call to <see cref="MoveNext()"/> returned <c>false</c>,
+        /// <see cref="Current"/> is undefined. You cannot set <see cref="Current"/>
+        /// to the first element of the collection again; you must create a new enumerator object instead.
+        /// <para/>
+        /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection,
+        /// such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated and the next call
+        /// to <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+        /// <see cref="InvalidOperationException"/>.
+        /// <para/>
+        /// The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is
+        /// intrinsically not a thread-safe procedure. To guarantee thread safety during enumeration, you can lock the
+        /// collection during the entire enumeration. To allow the collection to be accessed by multiple threads for
+        /// reading and writing, you must implement your own synchronization.
+        /// </remarks>
         // LUCENENET: An attempt was made to make this into a struct, but since it has mutable state that didn't work. So, this should remain a class.
         public sealed class Enumerator : IEnumerator<KeyValuePair<string, TValue>>, IDictionaryEnumerator, ICharArrayDictionaryEnumerator
         {
@@ -2537,7 +2750,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             /// <summary>
-            /// Gets the current key... do not modify the returned char[]
+            /// Gets the current key... do not modify the returned char[].
             /// </summary>
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             [WritableArray]
@@ -2619,11 +2832,35 @@ namespace Lucene.Net.Analysis.Util
             // LUCENENET: Next() and Remove() methods eliminated here
 
             #region Added for better .NET support LUCENENET
+
+            /// <summary>
+            /// Releases all resources used by the <see cref="Enumerator"/>.
+            /// </summary>
             public void Dispose()
             {
                 // nothing to do
             }
 
+            /// <summary>
+            /// Advances the enumerator to the next element of the <see cref="CharArrayDictionary{TValue}"/>.
+            /// </summary>
+            /// <returns><c>true</c> if the enumerator was successfully advanced to the next element;
+            /// <c>false</c> if the enumerator has passed the end of the collection.</returns>
+            /// <exception cref="InvalidOperationException">The collection was modified after the enumerator was created.</exception>
+            /// <remarks>
+            /// After an enumerator is created, the enumerator is positioned before the first element in the collection,
+            /// and the first call to the <see cref="MoveNext()"/> method advances the enumerator to the first element
+            /// of the collection.
+            /// <para/>
+            /// If <see cref="MoveNext()"/> passes the end of the collection, the enumerator is positioned after the last element in the
+            /// collection and <see cref="MoveNext()"/> returns <c>false</c>. When the enumerator is at this position,
+            /// subsequent calls to <see cref="MoveNext()"/> also return <c>false</c>.
+            /// <para/>
+            /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the
+            /// collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated
+            /// and the next call to <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+            /// <see cref="InvalidOperationException"/>.
+            /// </remarks>
             public bool MoveNext()
             {
                 if (version != dictionary.version)
@@ -2653,6 +2890,30 @@ namespace Lucene.Net.Analysis.Util
 
             void ICharArrayDictionaryEnumerator.Reset() => Reset();
 
+            /// <summary>
+            /// Gets the element at the current position of the enumerator.
+            /// </summary>
+            /// <remarks>
+            /// <see cref="Current"/> is undefined under any of the following conditions:
+            /// <list type="bullet">
+            ///     <item><description>
+            ///         The enumerator is positioned before the first element of the collection. That happens after an
+            ///         enumerator is created or after the <see cref="IEnumerator.Reset()"/> method is called. The <see cref="MoveNext()"/>
+            ///         method must be called to advance the enumerator to the first element of the collection before reading the value of
+            ///         the <see cref="Current"/> property.
+            ///     </description></item>
+            ///     <item><description>
+            ///         The last call to <see cref="MoveNext()"/> returned <c>false</c>, which indicates the end of the collection and that the
+            ///         enumerator is positioned after the last element of the collection.
+            ///     </description></item>
+            ///     <item><description>
+            ///         The enumerator is invalidated due to changes made in the collection, such as adding, modifying, or deleting elements.
+            ///     </description></item>
+            /// </list>
+            /// <para/>
+            /// <see cref="Current"/> does not move the position of the enumerator, and consecutive calls to <see cref="Current"/> return
+            /// the same object until either <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> is called.
+            /// </remarks>
             public KeyValuePair<string, TValue> Current
             {
                 get

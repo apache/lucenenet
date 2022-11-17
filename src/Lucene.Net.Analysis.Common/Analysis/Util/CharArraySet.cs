@@ -523,8 +523,17 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns an <see cref="IEnumerator"/> for newly created <see cref="string"/> or existing <see cref="T:char[]"/> instances in this set.
+        /// Returns an enumerator that iterates through the <see cref="CharArraySet"/>.
         /// </summary>
+        /// <returns>An enumerator that iterates through the <see cref="CharArraySet"/>.</returns>
+        /// <remarks>
+        /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to
+        /// the collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably
+        /// invalidated and the next call to <see cref="Enumerator.MoveNext()"/> or <see cref="IEnumerator.Reset()"/>
+        /// throws an <see cref="InvalidOperationException"/>.
+        /// <para/>
+        /// This method is an <c>O(log n)</c> operation.
+        /// </remarks>
         public Enumerator GetEnumerator()
         {
             // LUCENENET specific - Use custom Enumerator to prevent endless recursion
@@ -538,8 +547,46 @@ namespace Lucene.Net.Analysis.Util
         #region Nested Struct: Enumerator
 
         /// <summary>
-        /// Public enumerator struct so efficient properties are exposed to users. LUCENENET specific.
+        /// Enumerates the elements of a <see cref="CharArraySet"/> object.
+        /// <para/>
+        /// This implementation provides direct access to the <see cref="T:char[]"/> array of the underlying collection
+        /// as well as convenience properties for converting to <see cref="string"/> and <see cref="ICharSequence"/>.
         /// </summary>
+        /// <remarks>
+        /// The <c>foreach</c> statement of the C# language (<c>for each</c> in C++, <c>For Each</c> in Visual Basic)
+        /// hides the complexity of enumerators. Therefore, using <c>foreach</c> is recommended instead of directly manipulating the enumerator.
+        /// <para/>
+        /// Enumerators can be used to read the data in the collection, but they cannot be used to modify the underlying collection.
+        /// <para/>
+        /// Initially, the enumerator is positioned before the first element in the collection. At this position, the
+        /// <see cref="Current"/> property is undefined. Therefore, you must call the
+        /// <see cref="MoveNext()"/> method to advance the enumerator to the first element
+        /// of the collection before reading the value of <see cref="Current"/>.
+        /// <para/>
+        /// The <see cref="Current"/> property returns the same object until
+        /// <see cref="MoveNext()"/> is called. <see cref="MoveNext()"/>
+        /// sets <see cref="Current"/> to the next element.
+        /// <para/>
+        /// If <see cref="MoveNext()"/> passes the end of the collection, the enumerator is
+        /// positioned after the last element in the collection and <see cref="MoveNext()"/>
+        /// returns <c>false</c>. When the enumerator is at this position, subsequent calls to <see cref="MoveNext()"/>
+        /// also return <c>false</c>. If the last call to <see cref="MoveNext()"/> returned false,
+        /// <see cref="Current"/> is undefined. You cannot set <see cref="Current"/>
+        /// to the first element of the collection again; you must create a new enumerator object instead.
+        /// <para/>
+        /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection,
+        /// such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated and the next call
+        /// to <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+        /// <see cref="InvalidOperationException"/>.
+        /// <para/>
+        /// The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is
+        /// intrinsically not a thread-safe procedure. To guarantee thread safety during enumeration, you can lock the
+        /// collection during the entire enumeration. To allow the collection to be accessed by multiple threads for
+        /// reading and writing, you must implement your own synchronization.
+        /// <para/>
+        /// This method is an O(1) operation.
+        /// </remarks>
+        //  LUCENENET specific.
         public readonly struct Enumerator : IEnumerator<string>, IEnumerator
         {
             private readonly ICharArrayDictionaryEnumerator enumerator;
@@ -550,7 +597,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             /// <summary>
-            /// Gets the current key as a <see cref="CharArrayCharSequence"/>.
+            /// Gets the current value as a <see cref="CharArrayCharSequence"/>.
             /// </summary>
             // LUCENENET specific - quick access to ICharSequence interface
             public ICharSequence CurrentValueCharSequence
@@ -579,11 +626,34 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
 
+            /// <summary>
+            /// Releases all resources used by the <see cref="Enumerator"/>.
+            /// </summary>
             public void Dispose()
             {
                 enumerator.Dispose();
             }
 
+            /// <summary>
+            /// Advances the enumerator to the next element of the <see cref="CharArraySet"/>.
+            /// </summary>
+            /// <returns><c>true</c> if the enumerator was successfully advanced to the next element;
+            /// <c>false</c> if the enumerator has passed the end of the collection.</returns>
+            /// <exception cref="InvalidOperationException">The collection was modified after the enumerator was created.</exception>
+            /// <remarks>
+            /// After an enumerator is created, the enumerator is positioned before the first element in the collection,
+            /// and the first call to the <see cref="MoveNext()"/> method advances the enumerator to the first element
+            /// of the collection.
+            /// <para/>
+            /// If <see cref="MoveNext()"/> passes the end of the collection, the enumerator is positioned after the last element in the
+            /// collection and <see cref="MoveNext()"/> returns <c>false</c>. When the enumerator is at this position,
+            /// subsequent calls to <see cref="MoveNext()"/> also return <c>false</c>.
+            /// <para/>
+            /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the
+            /// collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated
+            /// and the next call to <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+            /// <see cref="InvalidOperationException"/>.
+            /// </remarks>
             public bool MoveNext()
             {
                 return enumerator.MoveNext();
@@ -595,8 +665,14 @@ namespace Lucene.Net.Analysis.Util
         #endregion Nested Struct: Enumerator
 
         /// <summary>
-        /// Returns a string that represents the current object. (Inherited from <see cref="object"/>.)
+        /// Returns a string that represents the current collection.
+        /// <para/>
+        /// The presentation has a specific format. It is enclosed by curly
+        /// brackets ("{}"). Keys and values are separated by '=',
+        /// KeyValuePairs are separated by ', ' (comma and space).
+        /// <c>null</c> values are represented as the string "null".
         /// </summary>
+        /// <returns>A string that represents the current collection.</returns>
         public override string ToString()
         {
             if (Count == 0)
