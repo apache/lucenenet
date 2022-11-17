@@ -1852,7 +1852,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
         /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
-        public virtual bool Put(char[] text, int startIndex, int length)
+        internal virtual bool Put(char[] text, int startIndex, int length)
         {
             return PutImpl(text, startIndex, length, PLACEHOLDER) is null;
         }
@@ -1866,7 +1866,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        public virtual bool Put(char[] text)
+        internal virtual bool Put(char[] text)
         {
             return PutImpl(text, PLACEHOLDER) is null;
         }
@@ -1882,7 +1882,7 @@ namespace Lucene.Net.Analysis.Util
         /// -or-
         /// <para/>
         /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.</exception>
-        public virtual bool Put(ICharSequence text)
+        internal virtual bool Put(ICharSequence text)
         {
             return PutImpl(text, PLACEHOLDER) is null;
         }
@@ -1893,7 +1893,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        public virtual bool Put(string text)
+        internal virtual bool Put(string text)
         {
             return PutImpl(text, PLACEHOLDER) is null;
         }
@@ -1904,10 +1904,16 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
-        public virtual bool Put<T>(T text)
+        internal virtual bool Put<T>(T text)
         {
             return PutImpl(text, PLACEHOLDER) is null;
         }
+
+        bool ICharArrayDictionary.Put(char[] text, int startIndex, int length) => Put(text, startIndex, length);
+        bool ICharArrayDictionary.Put(char[] text) => Put(text);
+        bool ICharArrayDictionary.Put(string text) => Put(text);
+        bool ICharArrayDictionary.Put(ICharSequence text) => Put(text);
+        bool ICharArrayDictionary.Put<T>(T text) => Put(text);
 
         /// <summary>
         /// Returns a copy of the current <see cref="CharArrayDictionary{TValue}"/> as a new instance of <see cref="CharArrayDictionary{TValue}"/>.
@@ -3340,27 +3346,27 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(char[] text, int startIndex, int length)
+            internal override bool Put(char[] text, int startIndex, int length)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(char[] text)
+            internal override bool Put(char[] text)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(ICharSequence text)
+            internal override bool Put(ICharSequence text)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(string text)
+            internal override bool Put(string text)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put<T>(T text)
+            internal override bool Put<T>(T text)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
