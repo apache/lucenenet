@@ -2088,74 +2088,38 @@ namespace Lucene.Net.Analysis.Util
     }
 
     /// <summary>
-    /// Extensions to <see cref="ISet{T}"/> for <see cref="CharArraySet"/>.
+    /// Extensions to <see cref="IEnumerable{T}"/> for <see cref="CharArraySet"/>.
     /// </summary>
     // LUCENENET specific
-    public static class SetExtensions
+    public static class EnumerableExtensions
     {
         /// <summary>
-        /// Returns a copy of this <see cref="ISet{T}"/> as a new instance of <see cref="CharArraySet"/> with the
+        /// Returns a copy of this <see cref="IEnumerable{T}"/> as a new instance of <see cref="CharArraySet"/> with the
         /// specified <paramref name="matchVersion"/> and ignoreCase set to <c>false</c>.
         /// </summary>
-        /// <typeparam name="T">The type of set. Typically a <see cref="string"/> or <see cref="T:char[]"/>.</typeparam>
-        /// <param name="set">This set.</param>
+        /// <typeparam name="T">The type of collection. Typically a <see cref="string"/> or <see cref="T:char[]"/>.</typeparam>
+        /// <param name="collection">This collection.</param>
         /// <param name="matchVersion">Compatibility match version.</param>
-        /// <returns>A copy of this <see cref="ISet{T}"/> as a <see cref="CharArraySet"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        public static CharArraySet ToCharArraySet<T>(this ISet<T> set, LuceneVersion matchVersion)
+        /// <returns>A copy of this <see cref="IEnumerable{T}"/> as a <see cref="CharArraySet"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public static CharArraySet ToCharArraySet<T>(this IEnumerable<T> collection, LuceneVersion matchVersion)
         {
-            return CharArraySet.CopySet(matchVersion, set, ignoreCase: false);
+            return CharArraySet.CopySet(matchVersion, collection, ignoreCase: false);
         }
 
         /// <summary>
-        /// Returns a copy of this <see cref="ISet{T}"/> as a new instance of <see cref="CharArraySet"/> with the
+        /// Returns a copy of this <see cref="IEnumerable{T}"/> as a new instance of <see cref="CharArraySet"/> with the
         /// specified <paramref name="matchVersion"/> and <paramref name="ignoreCase"/>.
         /// </summary>
-        /// <typeparam name="T">The type of set. Typically a <see cref="string"/> or <see cref="T:char[]"/>.</typeparam>
-        /// <param name="set">This set.</param>
+        /// <typeparam name="T">The type of collection. Typically a <see cref="string"/> or <see cref="T:char[]"/>.</typeparam>
+        /// <param name="collection">This collection.</param>
         /// <param name="matchVersion">Compatibility match version.</param>
         /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
-        /// <returns>A copy of this <see cref="ISet{T}"/> as a <see cref="CharArraySet"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <c>null</c>.</exception>
-        public static CharArraySet ToCharArraySet<T>(this ISet<T> set, LuceneVersion matchVersion, bool ignoreCase)
+        /// <returns>A copy of this <see cref="IEnumerable{T}"/> as a <see cref="CharArraySet"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public static CharArraySet ToCharArraySet<T>(this IEnumerable<T> collection, LuceneVersion matchVersion, bool ignoreCase)
         {
-            return CharArraySet.CopySet(matchVersion, set, ignoreCase);
-        }
-    }
-
-    /// <summary>
-    /// Extensions to <see cref="IList{T}"/> for <see cref="CharArraySet"/>.
-    /// </summary>
-    // LUCENENET specific
-    public static class ListExtensions
-    {
-        /// <summary>
-        /// Returns a copy of this <see cref="IList{T}"/> as a new instance of <see cref="CharArraySet"/> with the
-        /// specified <paramref name="matchVersion"/> and ignoreCase set to <c>false</c>.
-        /// </summary>
-        /// <typeparam name="T">The type of list. Typically a <see cref="string"/> or <see cref="T:char[]"/>.</typeparam>
-        /// <param name="list">This list.</param>
-        /// <param name="matchVersion">Compatibility match version.</param>
-        /// <returns>A copy of this <see cref="IList{T}"/> as a <see cref="CharArraySet"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="list"/> is <c>null</c>.</exception>
-        public static CharArraySet ToCharArraySet<T>(this IList<T> list, LuceneVersion matchVersion)
-        {
-            return CharArraySet.CopySet(matchVersion, list, ignoreCase: false);
-        }
-
-        /// <summary>
-        /// Returns a copy of this <see cref="IList{T}"/> as a new instance of <see cref="CharArraySet"/> with the
-        /// specified <paramref name="matchVersion"/> and <paramref name="ignoreCase"/>.
-        /// </summary>
-        /// <typeparam name="T">The type of list. Typically a <see cref="string"/> or <see cref="T:char[]"/>.</typeparam>
-        /// <param name="list">This list.</param>
-        /// <param name="matchVersion">Compatibility match version.</param>
-        /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
-        /// <returns>A copy of this <see cref="IList{T}"/> as a <see cref="CharArraySet"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="list"/> is <c>null</c>.</exception>
-        public static CharArraySet ToCharArraySet<T>(this IList<T> list, LuceneVersion matchVersion, bool ignoreCase)
-        {
-            return CharArraySet.CopySet(matchVersion, list, ignoreCase);
+            return CharArraySet.CopySet(matchVersion, collection, ignoreCase);
         }
     }
 }
