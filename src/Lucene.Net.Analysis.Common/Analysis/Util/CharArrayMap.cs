@@ -2575,6 +2575,7 @@ namespace Lucene.Net.Analysis.Util
             /// <summary>
             /// Gets the value associated with the current key.
             /// </summary>
+            [MaybeNull]
             public TValue CurrentValue
             {
                 get
@@ -2586,7 +2587,7 @@ namespace Lucene.Net.Analysis.Util
                         throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
 
                     var val = dictionary.values[lastPos];
-                    return val != null ? val.Value : default!;
+                    return val != null ? val.Value : default;
                 }
             }
 
