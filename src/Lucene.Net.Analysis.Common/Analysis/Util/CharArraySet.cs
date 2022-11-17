@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Util
         [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
-        public static readonly CharArraySet Empty = new CharArraySet(CharArrayDictionary<string>.Empty);
+        public static readonly CharArraySet Empty = new CharArraySet(CharArrayDictionary<object>.Empty);
 
         [Obsolete("Use Empty instead. This field will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
         public static CharArraySet EMPTY_SET => Empty;
