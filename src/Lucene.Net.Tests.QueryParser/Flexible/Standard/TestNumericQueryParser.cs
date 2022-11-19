@@ -240,7 +240,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             randomNumberMap[NumericType.DOUBLE.ToString()] = (J2N.Numerics.Double)randomDouble;
             randomNumberMap[DATE_FIELD_NAME] = (J2N.Numerics.Int64)randomDate;
 
-            RANDOM_NUMBER_MAP = randomNumberMap.AsReadOnly();
+            RANDOM_NUMBER_MAP = JCG.Extensions.DictionaryExtensions.AsReadOnly(randomNumberMap);
 
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory,
