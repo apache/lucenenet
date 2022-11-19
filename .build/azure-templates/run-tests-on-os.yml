@@ -104,6 +104,14 @@ steps:
     performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
   condition: and(succeeded(), contains('${{ parameters.framework }}', 'net5.'))
 
+- task: UseDotNet@2
+  displayName: 'Use .NET sdk 6.0.403'
+  inputs:
+    packageType: 'sdk'
+    version: '5.0.403'
+    performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net6.'))
+
 #- template: 'show-all-files.yml' # Uncomment for debugging
 - pwsh: |
     $framework = '${{ parameters.framework }}'
