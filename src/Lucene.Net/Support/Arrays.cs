@@ -580,12 +580,7 @@ namespace Lucene.Net.Support
         public static T[] CopyOf<T>(T[] original, int newLength)
         {
             T[] newArray = new T[newLength];
-
-            for (int i = 0; i < Math.Min(original.Length, newLength); i++)
-            {
-                newArray[i] = original[i];
-            }
-
+            Copy(original, newArray, Math.Min(original.Length, newLength));
             return newArray;
         }
 
