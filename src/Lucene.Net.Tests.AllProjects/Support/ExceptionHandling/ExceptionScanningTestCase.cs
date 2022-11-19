@@ -352,6 +352,7 @@ namespace Lucene.Net.Support.ExceptionHandling
                 typeof(OverflowException), // Subclasses ArithmeticException, so probably okay
                 typeof(PlatformNotSupportedException),
                 typeof(RankException),
+                typeof(System.ComponentModel.Win32Exception), // Added for .NET 7 (not sure why, this is an old exception)
                 typeof(System.Reflection.CustomAttributeFormatException), // Maybe like AnnotationTypeMismatchException in Java...?
                 typeof(System.Resources.MissingSatelliteAssemblyException),
                 //typeof(System.Runtime.CompilerServices.SwitchExpressionException), // .NET Standard 2.1+ only (conditionally added below)
