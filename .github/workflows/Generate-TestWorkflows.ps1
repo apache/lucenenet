@@ -51,9 +51,13 @@
  .PARAMETER Configurations
     A string array of build configurations to run the tests on. The default is @('Release').
 
+ .PARAMETER DotNet7SDKVersion
+    The SDK version of .NET 7.x to install on the build agent to be used for building and
+    testing. This SDK is always installed on the build agent. The default is 7.0.100.
+
  .PARAMETER DotNet6SDKVersion
     The SDK version of .NET 6.x to install on the build agent to be used for building and
-    testing. This SDK is always installed on the build agent. The default is 6.0.100.
+    testing. This SDK is always installed on the build agent. The default is 6.0.403.
 
  .PARAMETER DotNet5SDKVersion
     The SDK version of .NET 5.x to install on the build agent to be used for building and
@@ -64,7 +68,7 @@ param(
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net6.0', 'net5.0','net461','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net462
+    [string[]]$TestFrameworks = @('net7.0', 'net5.0','net461','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net462
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
@@ -72,7 +76,9 @@ param(
 
     [string[]]$Configurations = @('Release'),
 
-    [string]$DotNet6SDKVersion = '6.0.100',
+    [string]$DotNet7SDKVersion = '7.0.100',
+
+    [string]$DotNet6SDKVersion = '6.0.403',
 
     [string]$DotNet5SDKVersion = '5.0.400'
 )
@@ -154,6 +160,7 @@ function Write-TestWorkflow(
     [string[]]$TestFrameworks = @('net5.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
+    [string]$DotNet7SDKVersion = $DotNet7SDKVersion,
     [string]$DotNet6SDKVersion = $DotNet6SDKVersion,
     [string]$DotNet5SDKVersion = $DotNet5SDKVersion) {
 
@@ -285,6 +292,12 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '$DotNet6SDKVersion'
+        if: `${{ startswith(matrix.framework, 'net6.') }}
+
+      - name: Setup .NET 7 SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '$DotNet7SDKVersion'
 
       - name: Setup Environment Variables
         run: |
@@ -343,7 +356,7 @@ try {
     Pop-Location
 }
 
-#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion
+#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet7SDKVersion $DotNet7SDKVersion -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion
 
 #Write-Host $TestProjects
 
@@ -370,5 +383,5 @@ foreach ($testProject in $TestProjects) {
     Write-Host "Frameworks To Test for ${projectName}: $($frameworks -join ';')" -ForegroundColor Cyan
 
     #Write-Host "Project: $projectName"
-    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion
+    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet7SDKVersion $DotNet7SDKVersion -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion
 }
