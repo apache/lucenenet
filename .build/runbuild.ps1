@@ -27,7 +27,7 @@ properties {
     [string]$testResultsDirectory = "$artifactsDirectory/TestResults"
     [string]$publishDirectory = "$artifactsDirectory/Publish"
     [string]$solutionFile = "$baseDirectory/Lucene.Net.sln"
-    [string]$minimumSdkVersion = "6.0.100"
+    [string]$minimumSdkVersion = "7.0.100"
     [string]$globalJsonFile = "$baseDirectory/global.json"
     [string]$versionPropsFile = "$baseDirectory/version.props"
     [string]$luceneReadmeFile = "$baseDirectory/src/Lucene.Net/readme-nuget.md"
