@@ -75,7 +75,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net6.0, net5.0, net48, net461]
+        framework: [net7.0, net5.0, net48, net461]
         platform: [x64]
         configuration: [Release]
         exclude:
@@ -112,7 +112,13 @@ jobs:
       - name: Setup .NET 6 SDK
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.100'
+          dotnet-version: '6.0.403'
+        if: ${{ startswith(matrix.framework, 'net6.') }}
+
+      - name: Setup .NET 7 SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '7.0.100'
 
       - name: Setup Environment Variables
         run: |
