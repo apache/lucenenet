@@ -76,10 +76,7 @@ namespace Lucene.Net.Support
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Fill<T>(T[] a, T val)
         {
-            for (int i = 0; i < a.Length; i++)
-            {
-                a[i] = val;
-            }
+            ArrayFiller<T>.Default.Fill(a, val, 0, a.Length);
         }
 
         /// <summary>
@@ -113,11 +110,52 @@ namespace Lucene.Net.Support
             if (toIndex > a.Length)
                 throw new ArgumentOutOfRangeException(nameof(toIndex));
 
-            for (int i = fromIndex; i < toIndex; i++)
+            int length = toIndex - fromIndex;
+            ArrayFiller<T>.Default.Fill(a, val, fromIndex, length);
+        }
+
+        #region ArrayFiller<T>
+        private class ArrayFiller<T>
+        {
+            public static readonly IArrayFiller<T> Default = LoadArrayFiller();
+
+            private static IArrayFiller<T> LoadArrayFiller()
             {
-                a[i] = val;
+#if FEATURE_ARRAY_FILL
+                if (PlatformDetection.IsNetCore)
+                    return new SpanFillArrayFiller<T>();
+
+                return new ArrayFillArrayFiller<T>();
+#else
+                return new SpanFillArrayFiller<T>();
+#endif
+            }
+
+        }
+
+        private interface IArrayFiller<T>
+        {
+            void Fill(T[] array, T value, int startIndex, int count);
+        }
+
+#if FEATURE_ARRAY_FILL
+        private class ArrayFillArrayFiller<T> : IArrayFiller<T>
+        {
+            public void Fill(T[] array, T value, int startIndex, int count)
+            {
+                Array.Fill(array, value, startIndex, count);
             }
         }
+#endif
+        private class SpanFillArrayFiller<T> : IArrayFiller<T>
+        {
+            public void Fill(T[] array, T value, int startIndex, int count)
+            {
+                array.AsSpan(startIndex, count).Fill(value);
+            }
+        }
+
+        #endregion ArrayFiller<T>
 
         /// <summary>
         /// Copies a range of elements from an Array starting at the first element and pastes them
