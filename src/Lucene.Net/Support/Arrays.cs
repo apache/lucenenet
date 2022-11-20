@@ -589,12 +589,7 @@ namespace Lucene.Net.Support
         {
             int newLength = endIndexExc - startIndexInc;
             T[] newArray = new T[newLength];
-
-            for (int i = startIndexInc, j = 0; i < endIndexExc; i++, j++)
-            {
-                newArray[j] = original[i];
-            }
-
+            Copy(original, startIndexInc, newArray, 0, newLength);
             return newArray;
         }
 
