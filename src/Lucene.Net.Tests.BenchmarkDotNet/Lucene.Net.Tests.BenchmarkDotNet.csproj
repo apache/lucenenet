@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <StartupObject>Lucene.Net.Tests.BenchmarkDotNet.Program</StartupObject>
     
     <!-- Don't sign the assembly so we don't get warnings about early versions of Lucene.NET that weren't signed -->
