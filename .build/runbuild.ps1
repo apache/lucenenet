@@ -174,6 +174,9 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
             $env:SYSTEM_DEFAULTWORKINGDIRECTORY = "$baseDirectory"
         }
 
+        Write-Host ""
+        Write-Host "\nSYSTEM_DEFAULTWORKINGDIRECTORY is $env:SYSTEM_DEFAULTWORKINGDIRECTORY (for lucene-cli installation tests)" -ForegroundColor Yellow
+
         $success = $true
     } finally {
         #if ($success -ne $true) {
