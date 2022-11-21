@@ -28,11 +28,13 @@ namespace Lucene.Net.Tests.BenchmarkDotNet
             //new BuildConfiguration { PackageVersion = "4.8.0-beta00007" },
             //new BuildConfiguration { PackageVersion = "4.8.0-beta00008" },
             //new BuildConfiguration { PackageVersion = "4.8.0-beta00009" },
-            new BuildConfiguration { PackageVersion = "4.8.0-beta00010" },
-            new BuildConfiguration { PackageVersion = "4.8.0-beta00011" },
-            new BuildConfiguration { PackageVersion = "4.8.0-beta00012" },
-            new BuildConfiguration { PackageVersion = "4.8.0-beta00013" },
+            //new BuildConfiguration { PackageVersion = "4.8.0-beta00010" },
+            //new BuildConfiguration { PackageVersion = "4.8.0-beta00011" },
+            //new BuildConfiguration { PackageVersion = "4.8.0-beta00012" },
+            //new BuildConfiguration { PackageVersion = "4.8.0-beta00013" },
             new BuildConfiguration { PackageVersion = "4.8.0-beta00014" },
+            new BuildConfiguration { PackageVersion = "4.8.0-beta00015" },
+            new BuildConfiguration { PackageVersion = "4.8.0-beta00016" },
             new BuildConfiguration { CustomConfigurationName = "LocalBuild", Id = "LocalBuild" },
         };
     }
