@@ -1,8 +1,10 @@
 ﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support.IO;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -202,9 +204,37 @@ namespace Lucene.Net.Store
         private void RmDir(DirectoryInfo dir)
         {
             FileInfo[] files = dir.GetFiles();
+            List<FileInfo> retryFiles = null;
             for (int i = 0; i < files.Length; i++)
             {
-                files[i].Delete();
+                try
+                {
+                    files[i].Delete();
+                }
+                catch (IOException)
+                {
+                    // LUCENENET specific - we can get here if Windows stil has a lock on the file. We will put it into a list to retry.
+                    if (retryFiles is null) retryFiles = new List<FileInfo>();
+                    retryFiles.Add(files[i]);
+                }
+            }
+            // LUCENENET specific - retry the deletion if it failed on the first pass
+            if (retryFiles is not null)
+            {
+                // Second pass - if this attempt doesn't work, just give up.
+                foreach (var file in retryFiles)
+                {
+                    try
+                    {
+                        file.Delete();
+                    }
+                    catch { /* ignore */ }
+                }
+                if (retryFiles.Count == 0)
+                {
+                    dir.Delete();
+                }
+                return;
             }
             dir.Delete();
         }
