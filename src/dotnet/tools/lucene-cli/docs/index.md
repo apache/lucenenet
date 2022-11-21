@@ -4,7 +4,7 @@ The Lucene.NET command line interface (CLI) is a new cross-platform toolchain wi
 
 ## Prerequisites
 
-- [.NET 5.0 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
+- [.NET 6.0 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
 
 ## Installation
 
