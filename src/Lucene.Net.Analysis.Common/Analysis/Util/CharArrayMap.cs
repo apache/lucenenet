@@ -350,8 +350,8 @@ namespace Lucene.Net.Analysis.Util
         {
             version++;
             count = 0;
-            keys.Fill(null);
-            values.Fill(null);
+            Arrays.Fill(keys, null);
+            Arrays.Fill(values, null);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -57,7 +58,7 @@ namespace Lucene.Net.Util
         {
             lastElement = 0;
             currentOffset = 0;
-            Array.Clear(offsets, 0, offsets.Length);
+            Arrays.Fill(offsets, 0);
             pool.Reset(false, true); // no need to 0 fill the buffers we control the allocator
         }
 

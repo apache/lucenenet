@@ -521,10 +521,7 @@ namespace Lucene.Net.Codecs.Lucene40
             size = input.ReadInt32(); // (re)read size
             count = input.ReadInt32(); // read count
             bits = new byte[GetNumBytes(size)]; // allocate bits
-            for (int i = 0; i < bits.Length; ++i)
-            {
-                bits[i] = 0xff;
-            }
+            Arrays.Fill(bits, (byte)0xff);
             ClearUnusedBits();
             int last = 0;
             int numCleared = Length - Count();
