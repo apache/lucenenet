@@ -1,5 +1,6 @@
 ﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -200,7 +201,7 @@ namespace Lucene.Net.Util
         internal virtual void Reset(int from, int to)
         {
             stackSize = 0;
-            Array.Clear(runEnds, 0, runEnds.Length);
+            Arrays.Fill(runEnds, 0);
             runEnds[0] = from;
             this.to = to;
             int length = to - from;

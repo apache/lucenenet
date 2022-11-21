@@ -912,7 +912,7 @@ namespace Lucene.Net.Util
                         keys[slot] = key;
                     }
                 }
-                Array.Clear(oldKeys, 0, oldKeys.Length);
+                Arrays.Fill(oldKeys, null);
             }
 
             /// <summary>
@@ -969,7 +969,7 @@ namespace Lucene.Net.Util
             public void Clear()
             {
                 Assigned = 0;
-                Array.Clear(keys, 0, keys.Length);
+                Arrays.Fill(keys, null);
             }
 
             public int Count => Assigned; // LUCENENET NOTE: This was size() in Lucene.
