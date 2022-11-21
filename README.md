@@ -125,7 +125,7 @@ There are several demos implemented as simple console applications that can be c
 
 There is also a dotnet command line tool available on NuGet. It contains all of the demos as well as tools maintaining your Lucene.NET index, featuring operations such as splitting, merging, listing segment info, fixing, deleting segments, upgrading, etc. Always be sure to back up your index before running any commands against it!
 
-- [Prerequisite: .NET Core 3.1 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
+- [Prerequisite: .NET 6.0 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
 
 ```
 dotnet tool install lucene-cli -g --version 4.8.0-beta00015
@@ -177,8 +177,8 @@ Before you start working on a pull request, please read our [Contributing](https
 
 ##### Prerequisites
 
-1. [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) 3.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your PowerShell version)
-2. [.NET 6.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
+1. [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) 5.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your PowerShell version)
+2. [.NET 7.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 ##### Execution
 
@@ -276,10 +276,8 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 
 #### Prerequisites
 
-1. Visual Studio 2019 or higher
-2. [.NET 6.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
-
-> **NOTE:** Preview versions of .NET SDK require the "Use previews of the .NET SDK (requires restart)" option to be enabled in Visual Studio under Tools > Options > Environment > Preview Features. .NET 6.0 is not supported on Visual Studio 2019, so the only option available for building on VS 2019 is to use a pre-release .NET 6.0 SDK.
+1. Visual Studio 2022 or higher
+2. [.NET 7.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 #### Execution
 
