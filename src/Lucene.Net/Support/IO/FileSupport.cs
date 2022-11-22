@@ -2,9 +2,10 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+#nullable enable
 
 namespace Lucene.Net.Support.IO
 {
@@ -30,6 +31,9 @@ namespace Lucene.Net.Support.IO
     /// </summary>
     internal static class FileSupport
     {
+        private static readonly FileStreamOptions DefaultFileStreamOptionsCreateOnly = new FileStreamOptions { Access = FileAccess.Write, Share = FileShare.ReadWrite, BufferSize = 1 };
+        public static readonly FileStreamOptions DefaultFileStreamOptions = new FileStreamOptions { Access = FileAccess.ReadWrite, BufferSize = 8192, Options = FileOptions.DeleteOnClose | FileOptions.RandomAccess };
+
         private static readonly char[] INVALID_FILENAME_CHARS = Path.GetInvalidFileNameChars();
 
         // LUCNENENET NOTE: Lookup the HResult value we are interested in for the current OS
@@ -118,9 +122,18 @@ namespace Lucene.Net.Support.IO
         /// <param name="prefix">The prefix string to be used in generating the file's name; must be at least three characters long</param>
         /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case a random suffix will be generated</param>
         /// <returns>A <see cref="FileInfo"/> instance representing the temp file that was created.</returns>
-        public static FileInfo CreateTempFile(string prefix, string suffix)
+        /// <exception cref="ArgumentNullException"><paramref name="prefix"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="prefix"/> length is less than 3 characters.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="prefix"/> or <paramref name="suffix"/> contains invalid characters according to <see cref="Path.GetInvalidFileNameChars()"/>.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FileInfo CreateTempFile(string prefix, string? suffix)
         {
-            return CreateTempFile(prefix, suffix, null);
+            return CreateTempFile(prefix, suffix, (string)null!);
         }
 
         /// <summary>
@@ -130,29 +143,170 @@ namespace Lucene.Net.Support.IO
         /// If this method returns successfully then it is guaranteed that:
         /// <list type="number">
         /// <item><description>The file denoted by the returned abstract pathname did not exist before this method was invoked, and</description></item>
-        /// <item><description>Neither this method nor any of its variants will return the same abstract pathname again in the current invocation of the virtual machine.</description></item>
+        /// <item><description>Neither this method nor any of its variants will return the same abstract pathname again in the current invocation of the application.</description></item>
         /// </list>
-        /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically, 
+        /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically,
         /// it must be deleted by the caller.
         /// <para/>
-        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful 
-        /// string such as "hjb" or "mail". 
+        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful
+        /// string such as "hjb" or "mail".
         /// <para/>
         /// The suffix argument may be null, in which case a random suffix will be used.
         /// <para/>
-        /// Both prefix and suffix must be provided with valid characters for the underlying system, as specified by 
+        /// Both prefix and suffix must be provided with valid characters for the underlying system, as specified by
         /// <see cref="Path.GetInvalidFileNameChars()"/>.
         /// <para/>
-        /// If the directory argument is null then the system-dependent default temporary-file directory will be used, 
-        /// with a random subdirectory name. The default temporary-file directory is specified by the 
-        /// <see cref="Path.GetTempPath()"/> method. On UNIX systems the default value of this property is typically 
+        /// If the directory argument is null then the system-dependent default temporary-file directory will be used,
+        /// with a random subdirectory name. The default temporary-file directory is specified by the
+        /// <see cref="Path.GetTempPath()"/> method. On UNIX systems the default value of this property is typically
         /// "/tmp" or "/var/tmp"; on Microsoft Windows systems it is typically "C:\\Users\\[UserName]\\AppData\Local\Temp".
         /// </remarks>
         /// <param name="prefix">The prefix string to be used in generating the file's name; must be at least three characters long</param>
         /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case a random suffix will be generated</param>
         /// <param name="directory">The directory in which the file is to be created, or null if the default temporary-file directory is to be used</param>
         /// <returns>A <see cref="FileInfo"/> instance representing the temp file that was created.</returns>
-        public static FileInfo CreateTempFile(string prefix, string suffix, DirectoryInfo directory)
+        /// <exception cref="ArgumentNullException"><paramref name="prefix"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="prefix"/> length is less than 3 characters.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="prefix"/> or <paramref name="suffix"/> contains invalid characters according to <see cref="Path.GetInvalidFileNameChars()"/>.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FileInfo CreateTempFile(string prefix, string suffix, DirectoryInfo? directory)
+        {
+            using var stream = CreateTempFileAsStream(prefix, suffix, directory?.FullName, DefaultFileStreamOptionsCreateOnly);
+            return new FileInfo(stream.Name);
+        }
+
+        /// <summary>
+        /// Creates a new empty file in the specified directory, using the given prefix and suffix strings to generate its name.
+        /// </summary>
+        /// <remarks>
+        /// If this method returns successfully then it is guaranteed that:
+        /// <list type="number">
+        /// <item><description>The file denoted by the returned abstract pathname did not exist before this method was invoked, and</description></item>
+        /// <item><description>Neither this method nor any of its variants will return the same abstract pathname again in the current invocation of the application.</description></item>
+        /// </list>
+        /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically,
+        /// it must be deleted by the caller.
+        /// <para/>
+        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful 
+        /// string such as "hjb" or "mail".
+        /// <para/>
+        /// The suffix argument may be null, in which case a random suffix will be used.
+        /// <para/>
+        /// Both prefix and suffix must be provided with valid characters for the underlying system, as specified by
+        /// <see cref="Path.GetInvalidFileNameChars()"/>.
+        /// <para/>
+        /// If the directory argument is null then the system-dependent default temporary-file directory will be used,
+        /// with a random subdirectory name. The default temporary-file directory is specified by the
+        /// <see cref="Path.GetTempPath()"/> method. On UNIX systems the default value of this property is typically
+        /// "/tmp" or "/var/tmp"; on Microsoft Windows systems it is typically "C:\\Users\\[UserName]\\AppData\Local\Temp".
+        /// </remarks>
+        /// <param name="prefix">The prefix string to be used in generating the file's name; must be at least three characters long</param>
+        /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case a random suffix will be generated</param>
+        /// <param name="directory">The directory in which the file is to be created, or null if the default temporary-file directory is to be used</param>
+        /// <returns>A <see cref="FileInfo"/> instance representing the temp file that was created.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="prefix"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="prefix"/> length is less than 3 characters.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="prefix"/> or <paramref name="suffix"/> contains invalid characters according to <see cref="Path.GetInvalidFileNameChars()"/>.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FileInfo CreateTempFile(string prefix, string? suffix, string? directory)
+        {
+            using var stream = CreateTempFileAsStream(prefix, suffix, directory, DefaultFileStreamOptionsCreateOnly);
+            return new FileInfo(stream.Name);
+        }
+
+        /// <summary>
+        /// Creates a new empty file in the specified directory, using the given prefix and suffix strings to generate its name and returns an open stream to it.
+        /// </summary>
+        /// <remarks>
+        /// If this method returns successfully then it is guaranteed that:
+        /// <list type="number">
+        /// <item><description>The file denoted by the returned abstract pathname did not exist before this method was invoked, and</description></item>
+        /// <item><description>Neither this method nor any of its variants will return the same abstract pathname again in the current invocation of the application.</description></item>
+        /// </list>
+        /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically,
+        /// it must be deleted by the caller.
+        /// <para/>
+        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful 
+        /// string such as "hjb" or "mail".
+        /// <para/>
+        /// The suffix argument may be null, in which case a random suffix will be used.
+        /// <para/>
+        /// Both prefix and suffix must be provided with valid characters for the underlying system, as specified by
+        /// <see cref="Path.GetInvalidFileNameChars()"/>.
+        /// <para/>
+        /// If the directory argument is null then the system-dependent default temporary-file directory will be used,
+        /// with a random subdirectory name. The default temporary-file directory is specified by the
+        /// <see cref="Path.GetTempPath()"/> method. On UNIX systems the default value of this property is typically
+        /// "/tmp" or "/var/tmp"; on Microsoft Windows systems it is typically "C:\\Users\\[UserName]\\AppData\Local\Temp".
+        /// </remarks>
+        /// <param name="prefix">The prefix string to be used in generating the file's name; must be at least three characters long</param>
+        /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case a random suffix will be generated</param>
+        /// <param name="directory">The directory in which the file is to be created, or null if the default temporary-file directory is to be used</param>
+        /// <param name="options">The options to pass to the <see cref="FileStream"/>.</param>
+        /// <returns>A <see cref="FileStream"/> instance representing the temp file that was created.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="prefix"/> or <paramref name="options"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="prefix"/> length is less than 3 characters.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="prefix"/> or <paramref name="suffix"/> contains invalid characters according to <see cref="Path.GetInvalidFileNameChars()"/>.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FileStream CreateTempFileAsStream(string prefix, string? suffix, DirectoryInfo? directory, FileStreamOptions options)
+        {
+            return CreateTempFileAsStream(prefix, suffix, directory?.FullName, options);
+        }
+
+        /// <summary>
+        /// Creates a new empty file in the specified directory, using the given prefix and suffix strings to generate its name and returns an open stream to it.
+        /// </summary>
+        /// <remarks>
+        /// If this method returns successfully then it is guaranteed that:
+        /// <list type="number">
+        /// <item><description>The file denoted by the returned abstract pathname did not exist before this method was invoked, and</description></item>
+        /// <item><description>Neither this method nor any of its variants will return the same abstract pathname again in the current invocation of the application.</description></item>
+        /// </list>
+        /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically,
+        /// it must be deleted by the caller.
+        /// <para/>
+        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful 
+        /// string such as "hjb" or "mail".
+        /// <para/>
+        /// The suffix argument may be null, in which case a random suffix will be used.
+        /// <para/>
+        /// Both prefix and suffix must be provided with valid characters for the underlying system, as specified by
+        /// <see cref="Path.GetInvalidFileNameChars()"/>.
+        /// <para/>
+        /// If the directory argument is null then the system-dependent default temporary-file directory will be used,
+        /// with a random subdirectory name. The default temporary-file directory is specified by the
+        /// <see cref="Path.GetTempPath()"/> method. On UNIX systems the default value of this property is typically
+        /// "/tmp" or "/var/tmp"; on Microsoft Windows systems it is typically "C:\\Users\\[UserName]\\AppData\Local\Temp".
+        /// </remarks>
+        /// <param name="prefix">The prefix string to be used in generating the file's name; must be at least three characters long</param>
+        /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case a random suffix will be generated</param>
+        /// <param name="directory">The directory in which the file is to be created, or null if the default temporary-file directory is to be used</param>
+        /// <param name="options">The options to pass to the <see cref="FileStream"/>.</param>
+        /// <returns>A <see cref="FileStream"/> instance representing the temp file that was created.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="prefix"/> or <paramref name="options"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="prefix"/> length is less than 3 characters.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="prefix"/> or <paramref name="suffix"/> contains invalid characters according to <see cref="Path.GetInvalidFileNameChars()"/>.
+        /// </exception>
+        public static FileStream CreateTempFileAsStream(string prefix, string? suffix, string? directory, FileStreamOptions options)
         {
             if (string.IsNullOrEmpty(prefix))
                 throw new ArgumentNullException(nameof(prefix));
@@ -168,10 +322,10 @@ namespace Lucene.Net.Support.IO
             // If no directory supplied, create one.
             if (directory is null)
             {
-                directory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName())));
+                directory = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
             }
             // Ensure the directory exists (this does nothing if it already exists, although may throw exceptions in cases where permissions are changed)
-            directory.Create();
+            Directory.CreateDirectory(directory);
             string fileName;
 
             while (true)
@@ -185,16 +339,15 @@ namespace Lucene.Net.Support.IO
 
                 try
                 {
-                    // Create the file, and close it immediately
-                    using var stream = new FileStream(fileName, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
-                    break;
+                    // Create the file, and return it only if successful
+                    return new FileStream(fileName, FileMode.CreateNew, options.Access, options.Share, options.BufferSize, options.Options);
                 }
                 catch (IOException e) when (IsFileAlreadyExistsException(e, fileName))
                 {
                     // If the error was because the file exists, try again.
+                    // We might get here if another process or thread created the file since we checked above.
                 }
             }
-            return new FileInfo(fileName);
         }
 
         /// <summary>
@@ -211,6 +364,9 @@ namespace Lucene.Net.Support.IO
         /// occurs when an attempt is made to create a file that already exists.</returns>
         public static bool IsFileAlreadyExistsException(Exception ex, string filePath)
         {
+            if (string.IsNullOrEmpty(filePath))
+                throw new ArgumentNullException(nameof(filePath));
+
             if (!typeof(IOException).Equals(ex))
                 return false;
             else if (HRESULT_FILE_ALREADY_EXISTS.HasValue)
@@ -227,8 +383,31 @@ namespace Lucene.Net.Support.IO
         /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case a random suffix will be generated</param>
         /// <param name="directory">A <see cref="DirectoryInfo"/> object containing the temp directory path. Must not be null.</param>
         /// <returns>A random file name</returns>
-        internal static string NewTempFileName(string prefix, string suffix, DirectoryInfo directory)
+        /// <exception cref="ArgumentNullException"><paramref name="prefix"/> is <c>null</c> or whitespace or <paramref name="directory"/> is <c>null</c>.</exception>
+        internal static string NewTempFileName(string prefix, string? suffix, DirectoryInfo directory)
         {
+            if (directory is null)
+                throw new ArgumentNullException(nameof(directory));
+
+            return NewTempFileName(prefix, suffix, directory.FullName);
+        }
+
+        /// <summary>
+        /// Generates a new random file name with the provided <paramref name="directory"/>, 
+        /// <paramref name="prefix"/> and optional <paramref name="suffix"/>.
+        /// </summary>
+        /// <param name="prefix">The prefix string to be used in generating the file's name</param>
+        /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case a random suffix will be generated</param>
+        /// <param name="directory">A <see cref="string"/> containing the temp directory path. Must not be null.</param>
+        /// <returns>A random file name</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="prefix"/> or <paramref name="directory"/> is <c>null</c> or whitespace.</exception>
+        internal static string NewTempFileName(string prefix, string? suffix, string directory)
+        {
+            if (string.IsNullOrWhiteSpace(prefix))
+                throw new ArgumentNullException(nameof(prefix));
+            if (string.IsNullOrWhiteSpace(directory))
+                throw new ArgumentNullException(nameof(directory));
+
             string randomFileName = Path.GetRandomFileName();
 
             if (suffix != null)
@@ -239,7 +418,7 @@ namespace Lucene.Net.Support.IO
                 );
             }
 
-            return Path.Combine(directory.FullName, string.Concat(prefix, randomFileName));
+            return Path.Combine(directory, string.Concat(prefix, randomFileName));
         }
 
         private static readonly ConcurrentDictionary<string, string> fileCanonPathCache = new ConcurrentDictionary<string, string>();
@@ -261,7 +440,7 @@ namespace Lucene.Net.Support.IO
             string absPath = path.FullName; // LUCENENET NOTE: This internally calls GetFullPath(), which resolves relative paths
             byte[] result = Encoding.UTF8.GetBytes(absPath);
 
-            if (fileCanonPathCache.TryGetValue(absPath, out string canonPath) && canonPath != null)
+            if (fileCanonPathCache.TryGetValue(absPath, out string? canonPath) && canonPath != null)
             {
                 return canonPath;
             }
