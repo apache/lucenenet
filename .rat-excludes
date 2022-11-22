@@ -38,3 +38,4 @@ ConfigurationReloadToken\.cs
 ConfigurationRoot\.cs
 ConfigurationSection\.cs
 DateTimeOffsetUtil\.cs
+FileStreamOptions\.cs
