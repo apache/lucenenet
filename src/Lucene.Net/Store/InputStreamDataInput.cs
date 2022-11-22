@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 
 namespace Lucene.Net.Store
@@ -25,16 +25,16 @@ namespace Lucene.Net.Store
     /// </summary>
     public class InputStreamDataInput : DataInput, IDisposable
     {
-        private BinaryReader _reader;
+        private readonly Stream _is;
 
         public InputStreamDataInput(Stream @is)
         {
-            this._reader = new BinaryReader(@is);
+            this._is = @is ?? throw new ArgumentNullException(nameof(@is));
         }
 
         public override byte ReadByte()
         {
-            int v = _reader.ReadByte();
+            int v = _is.ReadByte();
             if (v == -1)
             {
                 throw EOFException.Create();
@@ -46,7 +46,7 @@ namespace Lucene.Net.Store
         {
             while (len > 0)
             {
-                int cnt = _reader.Read(b, offset, len);
+                int cnt = _is.Read(b, offset, len);
                 if (cnt < 0)
                 {
                     // Partially read the input, but no more data available in the stream.
@@ -60,23 +60,14 @@ namespace Lucene.Net.Store
         public void Dispose()
         {
             Dispose(true);
-
             GC.SuppressFinalize(this);
         }
 
-        private bool disposed = false;
-
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (disposing)
             {
-                if (disposing)
-                {
-                    _reader.Dispose();
-                }
-
-                _reader = null;
-                disposed = true;
+                _is.Dispose();
             }
         }
     }
