@@ -14,6 +14,8 @@ using System.Text;
 using JCG = J2N.Collections.Generic;
 #nullable enable
 
+// LUCENENET specific - this class was significantly refactored from its Java counterpart to look and act more like collections in .NET.
+
 namespace Lucene.Net.Analysis.Util
 {
     /*
@@ -66,12 +68,15 @@ namespace Lucene.Net.Analysis.Util
     /// </para>
     /// </summary>
     [DebuggerDisplay("Count = {Count}, Values = {ToString()}")]
+    [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+    [SuppressMessage("CodeQuality", "S3218:Inner class members should not shadow outer class \"static\" or type members", Justification = "Following Microsoft's code style for collections")]
+    [SuppressMessage("CodeQuality", "S1939:Inheritance list should not be redundant", Justification = "Following Microsoft's code style for collections")]
     public class CharArraySet : ISet<string>, ICollection<string>, ICollection, IReadOnlyCollection<string>
 #if FEATURE_READONLYSET
         , IReadOnlySet<string>
 #endif
     {
-        [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
         public static readonly CharArraySet Empty = new CharArraySet(CharArrayDictionary<object>.Empty);
@@ -775,14 +780,14 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="index">The zero-based index in array at which copying begins.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
-        public void CopyTo(string[] array, int index)
+        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
+        public void CopyTo(string[] array, int arrayIndex)
         {
-            CopyTo(array, index, map.Count);
+            CopyTo(array, arrayIndex, map.Count);
         }
 
         /// <summary>
@@ -791,30 +796,30 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="index">The zero-based index in array at which copying begins.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> or <paramref name="count"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> or <paramref name="count"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="index"/> is greater than the length of the destination <paramref name="array"/>.
+        /// <paramref name="arrayIndex"/> is greater than the length of the destination <paramref name="array"/>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// <paramref name="count"/> is greater than the available space from the <paramref name="index"/>
+        /// <paramref name="count"/> is greater than the available space from the <paramref name="arrayIndex"/>
         /// to the end of the destination <paramref name="array"/>.
         /// </exception>
-        internal void CopyTo(string[] array, int index, int count)
+        internal void CopyTo(string[] array, int arrayIndex, int count)
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
-            if (index < 0)
-                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, SR.ArgumentOutOfRange_NeedNonNegNum);
             if (count < 0)
                 throw new ArgumentOutOfRangeException(nameof(count), count, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (index > array.Length || count > array.Length - index)
+            if (arrayIndex > array.Length || count > array.Length - arrayIndex)
                 throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             using var iter = GetEnumerator();
-            for (int i = index, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
+            for (int i = arrayIndex, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
             {
                 array[i] = iter.Current;
             }
@@ -856,30 +861,30 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The jagged <see cref="T:char[][]"/> array or <see cref="IList{T}"/> of type char[] that is the destination of the
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="index">The zero-based index in array at which copying begins.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> or <paramref name="count"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> or <paramref name="count"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="index"/> is greater than the length of the destination <paramref name="array"/>.
+        /// <paramref name="arrayIndex"/> is greater than the length of the destination <paramref name="array"/>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// <paramref name="count"/> is greater than the available space from the <paramref name="index"/>
+        /// <paramref name="count"/> is greater than the available space from the <paramref name="arrayIndex"/>
         /// to the end of the destination <paramref name="array"/>.
         /// </exception>
-        internal void CopyTo(IList<char[]> array, int index, int count)
+        internal void CopyTo(IList<char[]> array, int arrayIndex, int count)
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
-            if (index < 0)
-                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, SR.ArgumentOutOfRange_NeedNonNegNum);
             if (count < 0)
                 throw new ArgumentOutOfRangeException(nameof(count), count, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (index > array.Count || count > array.Count - index)
+            if (arrayIndex > array.Count || count > array.Count - arrayIndex)
                 throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             using var iter = GetEnumerator();
-            for (int i = index, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
+            for (int i = arrayIndex, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
             {
                 array[i] = (char[])iter.CurrentValue.Clone();
             }
@@ -905,14 +910,14 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="index">The zero-based index in array at which copying begins.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
-        public void CopyTo(ICharSequence[] array, int index)
+        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
+        public void CopyTo(ICharSequence[] array, int arrayIndex)
         {
-            CopyTo(array, index, map.Count);
+            CopyTo(array, arrayIndex, map.Count);
         }
 
         /// <summary>
@@ -921,30 +926,30 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the 
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
-        /// <param name="index">The zero-based index in array at which copying begins.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> or <paramref name="count"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> or <paramref name="count"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="index"/> is greater than the length of the destination <paramref name="array"/>.
+        /// <paramref name="arrayIndex"/> is greater than the length of the destination <paramref name="array"/>.
         /// <para/>
         /// -or-
         /// <para/>
-        /// <paramref name="count"/> is greater than the available space from the <paramref name="index"/>
+        /// <paramref name="count"/> is greater than the available space from the <paramref name="arrayIndex"/>
         /// to the end of the destination <paramref name="array"/>.
         /// </exception>
-        internal void CopyTo(ICharSequence[] array, int index, int count)
+        internal void CopyTo(ICharSequence[] array, int arrayIndex, int count)
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
-            if (index < 0)
-                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, SR.ArgumentOutOfRange_NeedNonNegNum);
             if (count < 0)
                 throw new ArgumentOutOfRangeException(nameof(count), count, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (index > array.Length || count > array.Length - index)
+            if (arrayIndex > array.Length || count > array.Length - arrayIndex)
                 throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             using var iter = GetEnumerator();
-            for (int i = index, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
+            for (int i = arrayIndex, numCopied = 0; numCopied < count && iter.MoveNext(); i++, numCopied++)
             {
                 array[i] = ((char[])iter.CurrentValue.Clone()).AsCharSequence();
             }
@@ -1901,17 +1906,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">collection to be checked for containment in this collection</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
         [Obsolete("Use the IsSupersetOf() method instead. This method will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool ContainsAll(IEnumerable<string> other)
-        {
-            foreach (var local in other)
-            {
-                if (local is null || !this.Contains(local))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        public virtual bool ContainsAll(IEnumerable<string> other) => IsSupersetOf(other);
 
         /// <summary>
         /// Returns <c>true</c> if this collection contains all of the elements
@@ -1920,17 +1915,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">collection to be checked for containment in this collection</param>
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> contains all of the elements in the specified collection; otherwise, <c>false</c>.</returns>
         [Obsolete("Use the IsSupersetOf() method instead. This method will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool ContainsAll<T>(IEnumerable<T> other)
-        {
-            foreach (var local in other)
-            {
-                if (local is null || !this.Contains(local))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        public virtual bool ContainsAll<T>(IEnumerable<T> other) => IsSupersetOf(other);
 
         /// <summary>
         /// Returns <c>true</c> if this collection contains all of the elements

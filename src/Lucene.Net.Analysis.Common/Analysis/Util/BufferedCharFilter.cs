@@ -641,15 +641,6 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        /// <inheritdoc/>
-        public override bool Equals(object obj) => @in.Equals(obj);
-
-        /// <inheritdoc/>
-        public override int GetHashCode() => @in.GetHashCode();
-
-        /// <inheritdoc/>
-        public override string ToString() => @in.ToString();
-
 #if FEATURE_STREAM_READ_SPAN
         /// <summary>
         /// Not supported.
