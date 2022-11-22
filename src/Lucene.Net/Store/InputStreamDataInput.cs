@@ -29,7 +29,7 @@ namespace Lucene.Net.Store
 
         public InputStreamDataInput(Stream @is)
         {
-            this._is = @is ?? throw new ArgumentNullException(nameof(@is));
+            this._is = @is ?? throw new ArgumentNullException(nameof(@is)); // LUCENENET specific - added null guard clause
         }
 
         public override byte ReadByte()

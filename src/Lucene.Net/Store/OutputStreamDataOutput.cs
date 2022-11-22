@@ -29,7 +29,7 @@ namespace Lucene.Net.Store
 
         public OutputStreamDataOutput(Stream os)
         {
-            this._os = os;
+            this._os = os ?? throw new ArgumentNullException(nameof(os)); // LUCENENET specific - added null guard clause
         }
 
         public override void WriteByte(byte b)
