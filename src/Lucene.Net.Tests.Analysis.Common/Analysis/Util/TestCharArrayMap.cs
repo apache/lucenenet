@@ -586,13 +586,13 @@ namespace Lucene.Net.Analysis.Util
 
             // Full array
             var array1 = new KeyValuePair<string, int?>[target.Count];
-            target.CopyTo(array1, 0);
+            ((ICollection<KeyValuePair<string, int?>>)target).CopyTo(array1, 0);
             assertTrue(stopwords.SetEquals(array1));
 
             // Bounded to lower start index
             int startIndex = 3;
             var array2 = new KeyValuePair<string, int?>[target.Count + startIndex];
-            target.CopyTo(array2, startIndex);
+            ((ICollection<KeyValuePair<string, int?>>)target).CopyTo(array2, startIndex);
 
             assertEquals(default, array2[0]);
             assertEquals(default, array2[1]);

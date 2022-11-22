@@ -1129,7 +1129,10 @@ namespace Lucene.Net.Index
         /// finished (which should be at most a few seconds), and
         /// then return. </param>
         [MethodImpl(MethodImplOptions.NoInlining)]
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "This is Lucene's alternate path to Dispose() and we must suppress the finalizer here.")]
+        [SuppressMessage("Usage", "S2953:Methods named \"Dispose\" should implement \"IDisposable.Dispose\"", Justification = "This is Lucene's alternate path to Dispose() and we must suppress the finalizer here.")]
+        [SuppressMessage("Usage", "S3971:\"GC.SuppressFinalize\" should not be called", Justification = "This is Lucene's alternate path to Dispose() and we must suppress the finalizer here.")]
         public void Dispose(bool waitForMerges)
         {
             Dispose(disposing: true, waitForMerges);
@@ -1218,7 +1221,7 @@ namespace Lucene.Net.Index
 
         private bool AssertEventQueueAfterClose()
         {
-            if (eventQueue.Count == 0)
+            if (eventQueue.IsEmpty)
             {
                 return true;
             }
@@ -1786,7 +1789,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (!(readerIn is AtomicReader reader))
+                if (readerIn is not AtomicReader reader)
                 {
                     // Composite reader: lookup sub-reader and re-base docID:
                     IList<AtomicReaderContext> leaves = readerIn.Leaves;
@@ -1801,7 +1804,7 @@ namespace Lucene.Net.Index
                 }
                 // else: Reader is already atomic: use the incoming docID
 
-                if (!(reader is SegmentReader segmentReader))
+                if (reader is not SegmentReader segmentReader)
                 {
                     throw new ArgumentException("the reader must be a SegmentReader or composite reader containing only SegmentReaders");
                 }
@@ -2612,7 +2615,7 @@ namespace Lucene.Net.Index
                 {
                     return false;
                 }
-                bool newMergesFound = false;
+                bool newMergesFound; // LUCENENET specific - removed unnecessary assignment
                 MergePolicy.MergeSpecification spec;
                 if (maxNumSegments != UNBOUNDED_MAX_MERGE_SEGMENTS)
                 {
@@ -3701,7 +3704,7 @@ namespace Lucene.Net.Index
             IDictionary<string, string> attributes;
             // copy the attributes map, we might modify it below.
             // also we need to ensure its read-write, since we will invoke the SIwriter (which might want to set something).
-#pragma warning disable 612, 618
+#pragma warning disable CS0618 // Type or member is obsolete
             if (info.Info.Attributes is null)
             {
                 attributes = new Dictionary<string, string>();
@@ -3710,7 +3713,7 @@ namespace Lucene.Net.Index
             {
                 attributes = new Dictionary<string, string>(info.Info.Attributes);
             }
-#pragma warning restore 612, 618
+#pragma warning restore CS0618 // Type or member is obsolete
             if (docStoreFiles3xOnly != null)
             {
                 // only violate the codec this way if it's preflex &
@@ -3754,9 +3757,9 @@ namespace Lucene.Net.Index
             }
             catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
             {
-#pragma warning disable 612, 618
+#pragma warning disable CS0618 // Type or member is obsolete
                 if (currentCodec is Lucene3xCodec)
-#pragma warning restore 612, 618
+#pragma warning restore CS0618 // Type or member is obsolete
                 {
                     // OK: 3x codec cannot write a new SI file;
                     // SegmentInfos will write this on commit

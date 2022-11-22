@@ -30,7 +30,7 @@ namespace Lucene.Net.Cli.CommandLine
      * limitations under the License.
      */
 
-    [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+    [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
     [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "This was part of the original design")]
     [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "This was part of the original design")]
     public class CommandLineApplication

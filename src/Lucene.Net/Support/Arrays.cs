@@ -3,6 +3,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -115,7 +116,7 @@ namespace Lucene.Net.Support
         }
 
         #region ArrayFiller<T>
-        private class ArrayFiller<T>
+        private static class ArrayFiller<T>
         {
             public static readonly IArrayFiller<T> Default = LoadArrayFiller();
 
@@ -133,13 +134,13 @@ namespace Lucene.Net.Support
 
         }
 
-        private interface IArrayFiller<T>
+        private interface IArrayFiller<in T>
         {
             void Fill(T[] array, T value, int startIndex, int count);
         }
 
 #if FEATURE_ARRAY_FILL
-        private class ArrayFillArrayFiller<T> : IArrayFiller<T>
+        private sealed class ArrayFillArrayFiller<T> : IArrayFiller<T>
         {
             public void Fill(T[] array, T value, int startIndex, int count)
             {
@@ -147,7 +148,7 @@ namespace Lucene.Net.Support
             }
         }
 #endif
-        private class SpanFillArrayFiller<T> : IArrayFiller<T>
+        private sealed class SpanFillArrayFiller<T> : IArrayFiller<T>
         {
             public void Fill(T[] array, T value, int startIndex, int count)
             {
@@ -218,12 +219,13 @@ namespace Lucene.Net.Support
             ArrayCopier<T>.Default.Copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length);
         }
 
-        private class PlatformDetection
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S3400:Methods should not return constants", Justification = "Clearly, this is not always a constant value (SonarCloud bug)")]
+        private static class PlatformDetection
         {
             // We put this in its own class so every type doesn't have to reload it. But, at the same time,
             // we don't want to have to load this just to use the Arrays class.
             public static readonly bool IsFullFramework = LoadIsFullFramework();
-            //public static readonly bool IsNetNative = RuntimeInformation.FrameworkDescription.StartsWith(".NET Native", StringComparison.OrdinalIgnoreCase);
             public static readonly bool IsNetCore = LoadIsNetCore();
 
             private static bool LoadIsFullFramework()
@@ -251,7 +253,7 @@ namespace Lucene.Net.Support
 
         #region ArrayCopier<T>
 
-        private class ArrayCopier<T>
+        private static class ArrayCopier<T>
         {
             public static readonly IArrayCopier<T> Default = LoadArrayCopier();
 
@@ -320,12 +322,12 @@ namespace Lucene.Net.Support
             }
         }
 
-        private interface IArrayCopier<T>
+        private interface IArrayCopier<in T>
         {
             void Copy(T[] sourceArray, int sourceIndex, T[] destinationArray, int destinationIndex, int length);
         }
 
-        private class SpanArrayCopier<T> : IArrayCopier<T>
+        private sealed class SpanArrayCopier<T> : IArrayCopier<T>
         {
             public void Copy(T[] sourceArray, int sourceIndex, T[] destinationArray, int destinationIndex, int length)
             {
@@ -333,7 +335,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private class SystemArrayCopyArrayCopier<T> : IArrayCopier<T>
+        private sealed class SystemArrayCopyArrayCopier<T> : IArrayCopier<T>
         {
             public void Copy(T[] sourceArray, int sourceIndex, T[] destinationArray, int destinationIndex, int length)
             {
@@ -343,7 +345,7 @@ namespace Lucene.Net.Support
 
         #region Primitive Type Buffer.MemoryCopy() Array Copiers
         // We save some arithmetic by having a specialized type for byte, since we know it is measured in bytes.
-        private class ByteBufferMemoryCopyArrayCopier : IArrayCopier<byte>
+        private sealed class ByteBufferMemoryCopyArrayCopier : IArrayCopier<byte>
         {
             public void Copy(byte[] sourceArray, int sourceIndex, byte[] destinationArray, int destinationIndex, int length)
             {
@@ -360,7 +362,7 @@ namespace Lucene.Net.Support
         }
 
         // We save some arithmetic by having a specialized type for byte, since we know it is measured in bytes.
-        private class SByteBufferMemoryCopyArrayCopier : IArrayCopier<sbyte>
+        private sealed class SByteBufferMemoryCopyArrayCopier : IArrayCopier<sbyte>
         {
             public void Copy(sbyte[] sourceArray, int sourceIndex, sbyte[] destinationArray, int destinationIndex, int length)
             {
@@ -379,7 +381,7 @@ namespace Lucene.Net.Support
         // LUCENENET NOTE: Tried to make the following types one generic type, but SDKs prior to .NET 7 won't compile it.
         // See: https://github.com/dotnet/runtime/issues/76255
 
-        private class Int16BufferMemoryCopyArrayCopier : IArrayCopier<short>
+        private sealed class Int16BufferMemoryCopyArrayCopier : IArrayCopier<short>
         {
             public void Copy(short[] sourceArray, int sourceIndex, short[] destinationArray, int destinationIndex, int length)
             {
@@ -398,7 +400,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private class UInt16BufferMemoryCopyArrayCopier : IArrayCopier<ushort>
+        private sealed class UInt16BufferMemoryCopyArrayCopier : IArrayCopier<ushort>
         {
             public void Copy(ushort[] sourceArray, int sourceIndex, ushort[] destinationArray, int destinationIndex, int length)
             {
@@ -417,7 +419,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private class Int32BufferMemoryCopyArrayCopier : IArrayCopier<int>
+        private sealed class Int32BufferMemoryCopyArrayCopier : IArrayCopier<int>
         {
             public void Copy(int[] sourceArray, int sourceIndex, int[] destinationArray, int destinationIndex, int length)
             {
@@ -436,7 +438,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private class UInt32BufferMemoryCopyArrayCopier : IArrayCopier<uint>
+        private sealed class UInt32BufferMemoryCopyArrayCopier : IArrayCopier<uint>
         {
             public void Copy(uint[] sourceArray, int sourceIndex, uint[] destinationArray, int destinationIndex, int length)
             {
@@ -455,7 +457,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private class Int64BufferMemoryCopyArrayCopier : IArrayCopier<long>
+        private sealed class Int64BufferMemoryCopyArrayCopier : IArrayCopier<long>
         {
             public void Copy(long[] sourceArray, int sourceIndex, long[] destinationArray, int destinationIndex, int length)
             {
@@ -474,7 +476,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private class UInt64BufferMemoryCopyArrayCopier : IArrayCopier<ulong>
+        private sealed class UInt64BufferMemoryCopyArrayCopier : IArrayCopier<ulong>
         {
             public void Copy(ulong[] sourceArray, int sourceIndex, ulong[] destinationArray, int destinationIndex, int length)
             {
@@ -493,7 +495,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private class SingleBufferMemoryCopyArrayCopier : IArrayCopier<float>
+        private sealed class SingleBufferMemoryCopyArrayCopier : IArrayCopier<float>
         {
             public void Copy(float[] sourceArray, int sourceIndex, float[] destinationArray, int destinationIndex, int length)
             {
@@ -512,7 +514,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private class DoubleBufferMemoryCopyArrayCopier : IArrayCopier<double>
+        private sealed class DoubleBufferMemoryCopyArrayCopier : IArrayCopier<double>
         {
             public void Copy(double[] sourceArray, int sourceIndex, double[] destinationArray, int destinationIndex, int length)
             {
@@ -531,7 +533,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private class CharBufferMemoryCopyArrayCopier : IArrayCopier<char>
+        private sealed class CharBufferMemoryCopyArrayCopier : IArrayCopier<char>
         {
             public void Copy(char[] sourceArray, int sourceIndex, char[] destinationArray, int destinationIndex, int length)
             {
@@ -550,7 +552,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private class BooleanBufferMemoryCopyArrayCopier : IArrayCopier<bool>
+        private sealed class BooleanBufferMemoryCopyArrayCopier : IArrayCopier<bool>
         {
             public void Copy(bool[] sourceArray, int sourceIndex, bool[] destinationArray, int destinationIndex, int length)
             {

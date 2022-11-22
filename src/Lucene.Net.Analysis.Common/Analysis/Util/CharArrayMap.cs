@@ -17,6 +17,8 @@ using System.Text;
 using JCG = J2N.Collections.Generic;
 #nullable enable
 
+// LUCENENET specific - this class was significantly refactored from its Java counterpart to look and act more like collections in .NET.
+
 namespace Lucene.Net.Analysis.Util
 {
     /*
@@ -60,11 +62,17 @@ namespace Lucene.Net.Analysis.Util
     /// </para>
     /// </summary>
     [DebuggerDisplay("Count = {Count}, Values = {ToString()}")]
+    [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+    [SuppressMessage("CodeQuality", "S3218:Inner class members should not shadow outer class \"static\" or type members", Justification = "Following Microsoft's code style for collections")]
+    [SuppressMessage("CodeQuality", "S1939:Inheritance list should not be redundant", Justification = "Following Microsoft's code style for collections")]
     public class CharArrayDictionary<TValue> : ICharArrayDictionary, IDictionary<string, TValue>, IDictionary, IReadOnlyDictionary<string, TValue>
     {
         // LUCENENET: Made public, renamed Empty
         /// <summary>
         /// Returns an empty, read-only dictionary. </summary>
+        [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
+        [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
         public static readonly CharArrayDictionary<TValue> Empty = new CharArrayDictionary.EmptyCharArrayDictionary<TValue>();
 
         private const int INIT_SIZE = 8;
@@ -335,11 +343,11 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <returns> an new unmodifiable <see cref="CharArrayDictionary{TValue}"/>. </returns>
         // LUCENENET specific - allow .NET-like syntax for creating immutable collections
-        public CharArrayDictionary<TValue> AsReadOnly()
+        public CharArrayDictionary<TValue> AsReadOnly() => AsReadOnlyImpl();
+
+        private protected virtual CharArrayDictionary<TValue> AsReadOnlyImpl() // Hack so we can make it virtual
         {
-            return this is CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue> readOnlyDictionary ?
-                readOnlyDictionary :
-                new CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>(this);
+            return new CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>(this);
         }
 
         /// <summary>
@@ -363,31 +371,36 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="index"/>.
+        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="arrayIndex"/>.
         /// The array is assumed to already be dimensioned to fit the elements in this dictionary; otherwise a <see cref="ArgumentOutOfRangeException"/>
         /// will be thrown.
         /// </summary>
         /// <param name="array">The array to copy the items into.</param>
-        /// <param name="index">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
+        /// <param name="arrayIndex">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
-        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
-        public virtual void CopyTo(KeyValuePair<string, TValue>[] array, int index)
+        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
+        // LUCENENET: Generally, it makes more sense to use the Enuerator explicitly so we have access to the underling char[] and so
+        // we don't have to new up a KeyValuePair<string, TValue> just for the sake of reading data.
+        private void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
-            if (index < 0)
-                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
-            if (count > array.Length - index)
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (count > array.Length - arrayIndex)
                 throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             using var iter = GetEnumerator();
-            for (int i = index; iter.MoveNext(); i++)
+            for (int i = arrayIndex; iter.MoveNext(); i++)
             {
                 array[i] = new KeyValuePair<string, TValue>(iter.CurrentKeyString, iter.CurrentValue!);
             }
         }
+
+        void ICollection<KeyValuePair<string, TValue>>.CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex) => CopyTo(array, arrayIndex);
+
 
         /// <summary>
         /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="index"/>.
@@ -400,7 +413,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
         /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
-        public virtual void CopyTo(KeyValuePair<char[], TValue>[] array, int index)
+        internal void CopyTo(KeyValuePair<char[], TValue>[] array, int index) // internal for testing
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
@@ -427,7 +440,7 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
         /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
-        public virtual void CopyTo(KeyValuePair<ICharSequence, TValue>[] array, int index)
+        internal void CopyTo(KeyValuePair<ICharSequence, TValue>[] array, int index) // internal for testing
         {
             if (array is null)
                 throw new ArgumentNullException(nameof(array));
@@ -2322,11 +2335,11 @@ namespace Lucene.Net.Analysis.Util
             /// </summary>
             /// <param name="array">The one-dimensional array that is the destination of the elements copied from
             /// the <see cref="ValueCollection"/>. The array must have zero-based indexing.</param>
-            /// <param name="index">The zero-based index in <paramref name="array"/> at which copying begins.</param>
+            /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
             /// <exception cref="ArgumentNullException"><paramref name="array"/> is <c>null</c>.</exception>
-            /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than 0.</exception>
+            /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than 0.</exception>
             /// <exception cref="ArgumentException">The number of elements in the source <see cref="ValueCollection"/>
-            /// is greater than the available space from <paramref name="index"/> to the end of the destination
+            /// is greater than the available space from <paramref name="arrayIndex"/> to the end of the destination
             /// <paramref name="array"/>.</exception>
             /// <remarks>
             /// The elements are copied to the array in the same order in which the enumerator iterates through the
@@ -2334,17 +2347,17 @@ namespace Lucene.Net.Analysis.Util
             /// <para/>
             /// This method is an O(<c>n</c>) operation, where <c>n</c> is <see cref="Count"/>.
             /// </remarks>
-            public void CopyTo(TValue[] array, int index)
+            public void CopyTo(TValue[] array, int arrayIndex)
             {
                 if (array is null)
                     throw new ArgumentNullException(nameof(array));
-                if (index < 0)
-                    throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
-                if (index > array.Length || dictionary.Count > array.Length - index)
+                if (arrayIndex < 0)
+                    throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, SR.ArgumentOutOfRange_NeedNonNegNum);
+                if (arrayIndex > array.Length || dictionary.Count > array.Length - arrayIndex)
                     throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
                 foreach (var entry in this)
-                    array[index++] = entry!;
+                    array[arrayIndex++] = entry!;
             }
 
             void ICollection.CopyTo(Array array, int index)
@@ -2644,6 +2657,7 @@ namespace Lucene.Net.Analysis.Util
             throw UnsupportedOperationException.Create();
         }
 
+        [SuppressMessage("Style", "IDE0083:Use pattern matching", Justification = "Following Microsoft's coding style")]
         void ICollection.CopyTo(Array array, int index)
         {
             if (array is null)
@@ -3232,7 +3246,7 @@ namespace Lucene.Net.Analysis.Util
         bool IgnoreCase { get; }
         bool IsReadOnly { get; }
         LuceneVersion MatchVersion { get; }
-        bool Put(char[] text, int startIndex, int Length);
+        bool Put(char[] text, int startIndex, int length);
         bool Put(char[] text);
         bool Put(ICharSequence text);
         bool Put<T>(T text);
@@ -3373,6 +3387,8 @@ namespace Lucene.Net.Analysis.Util
                 : base((CharArrayDictionary<TValue>)map)
             { }
 
+            private protected override CharArrayDictionary<TValue> AsReadOnlyImpl() => this;
+
             public override void Clear()
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
@@ -3388,17 +3404,17 @@ namespace Lucene.Net.Analysis.Util
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(ICharSequence text, TValue val, [MaybeNullWhen(true)] out TValue previousValue)
+            public override bool Put(ICharSequence text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(string text, TValue val, [MaybeNullWhen(true)] out TValue previousValue)
+            public override bool Put(string text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put<T>(T text, TValue val, [MaybeNullWhen(true)] out TValue previousValue)
+            public override bool Put<T>(T text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
                 throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
@@ -3588,10 +3604,11 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         internal class EmptyCharArrayDictionary<V> : ReadOnlyCharArrayDictionary<V>
         {
+            [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Clearly a bug with code analysis - we need the suppression to stop the obsolete warning")]
             public EmptyCharArrayDictionary()
-#pragma warning disable 612, 618
+#pragma warning disable CS0618 // Type or member is obsolete
                 : base(new CharArrayDictionary<V>(LuceneVersion.LUCENE_CURRENT, 0, false))
-#pragma warning restore 612, 618
+#pragma warning restore CS0618 // Type or member is obsolete
             {
             }
 
@@ -3627,42 +3644,42 @@ namespace Lucene.Net.Analysis.Util
                 return false;
             }
 
-            internal override V Get(char[] text, int startIndex, int length, bool throwIfNotfound = true)
+            internal override V Get(char[] text, int startIndex, int length, bool throwIfNotFound = true)
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));
 
-                if (throwIfNotfound)
+                if (throwIfNotFound)
                     throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text, startIndex, length)));
                 return default!;
             }
 
-            internal override V Get(char[] text, bool throwIfNotfound = true)
+            internal override V Get(char[] text, bool throwIfNotFound = true)
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));
 
-                if (throwIfNotfound)
+                if (throwIfNotFound)
                     throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text)));
                 return default!;
             }
 
-            internal override V Get(ICharSequence text, bool throwIfNotfound = true)
+            internal override V Get(ICharSequence text, bool throwIfNotFound = true)
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));
 
-                if (throwIfNotfound)
+                if (throwIfNotFound)
                     throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
                 return default!;
             }
 
-            internal override V Get<T>(T text, bool throwIfNotfound = true)
+            internal override V Get<T>(T text, bool throwIfNotFound = true)
             {
                 if (text is null)
                     throw new ArgumentNullException(nameof(text));
 
-                if (throwIfNotfound)
+                if (throwIfNotFound)
                     throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
                 return default!;
             }
