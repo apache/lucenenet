@@ -405,11 +405,33 @@ namespace Lucene.Net.Util
             if (output is null)
                 throw new ArgumentNullException(nameof(output));
 
+            output.Delete();
+
             using FileStream inputStream = new FileStream(input.FullName, FileMode.Open, FileAccess.ReadWrite,
                 FileShare.Read, bufferSize: DEFAULT_FILESTREAM_BUFFER_SIZE, FileOptions.DeleteOnClose | FileOptions.RandomAccess);
-            using FileStream outputStream = new FileStream(output.FullName, FileMode.Open, FileAccess.ReadWrite,
-                FileShare.Read, bufferSize: DEFAULT_FILESTREAM_BUFFER_SIZE, FileOptions.DeleteOnClose | FileOptions.RandomAccess);
-            return Sort(inputStream, outputStream);
+            using FileStream outputStream = new FileStream(output.FullName, FileMode.CreateNew, FileAccess.ReadWrite,
+                FileShare.Read, bufferSize: DEFAULT_FILESTREAM_BUFFER_SIZE, FileOptions.RandomAccess);
+            bool success = false;
+            try
+            {
+                var sort = Sort(inputStream, outputStream);
+                success = true;
+                return sort;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    try
+                    {
+                        outputStream.Dispose();
+                    }
+                    finally
+                    {
+                        output.Delete();
+                    }
+                }
+            }
         }
 
         /// <summary>
