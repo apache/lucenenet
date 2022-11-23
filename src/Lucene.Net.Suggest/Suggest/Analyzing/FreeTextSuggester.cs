@@ -270,13 +270,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
 
             string prefix = this.GetType().Name;
-            var directory = OfflineSorter.GetDefaultTempDir();
+            var directory = OfflineSorter.DefaultTempDir;
 
             // LUCENENET specific - using GetRandomFileName() instead of picking a random int
             DirectoryInfo tempIndexPath; // LUCENENET: IDE0059: Remove unnecessary value assignment
             while (true)
             {
-                tempIndexPath = new DirectoryInfo(Path.Combine(directory.FullName, prefix + ".index." + Path.GetFileNameWithoutExtension(Path.GetRandomFileName())));
+                tempIndexPath = new DirectoryInfo(Path.Combine(directory, prefix + ".index." + Path.GetFileNameWithoutExtension(Path.GetRandomFileName())));
                 tempIndexPath.Create();
                 if (System.IO.Directory.Exists(tempIndexPath.FullName))
                 {

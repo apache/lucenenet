@@ -41,6 +41,18 @@ namespace Lucene.Net.Util
     public sealed class OfflineSorter
     {
         /// <summary>
+        /// The default encoding (UTF-8 without a byte order mark) used by <see cref="ByteSequencesReader"/> and <see cref="ByteSequencesWriter"/>.
+        /// This encoding should always be used when calling the constructor overloads that accept <see cref="BinaryReader"/> or <see cref="BinaryWriter"/>.
+        /// </summary>
+        public static readonly Encoding DEFAULT_ENCODING = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
+        /// <summary>
+        /// The recommended buffer size to use on <see cref="Sort(FileStream, FileStream)"/> or when creating a
+        /// <see cref="ByteSequencesReader"/> and <see cref="ByteSequencesWriter"/>.
+        /// </summary>
+        public const int DEFAULT_FILESTREAM_BUFFER_SIZE = 8192;
+
+        /// <summary>
         /// Convenience constant for megabytes </summary>
         public const long MB = 1024 * 1024;
         /// <summary>
@@ -192,7 +204,7 @@ namespace Lucene.Net.Util
         }
 
         private readonly BufferSize ramBufferSize;
-        private readonly DirectoryInfo tempDirectory;
+        private readonly string tempDirectory;
 
         private readonly Counter bufferBytesUsed = Counter.NewCounter();
         private readonly BytesRefArray buffer;
@@ -205,22 +217,27 @@ namespace Lucene.Net.Util
         public static readonly IComparer<BytesRef> DEFAULT_COMPARER = Utf8SortedAsUnicodeComparer.Instance;
 
         /// <summary>
+        /// LUCENENET specific - cache the temp directory path so we can return it from a property.
+        /// </summary>
+        private static readonly string DEFAULT_TEMP_DIR = Path.GetTempPath();
+
+        /// <summary>
         /// Defaults constructor.
         /// </summary>
-        /// <seealso cref="GetDefaultTempDir()"/>
+        /// <seealso cref="DefaultTempDir"/>
         /// <seealso cref="BufferSize.Automatic()"/>
         public OfflineSorter()
-            : this(DEFAULT_COMPARER, BufferSize.Automatic(), GetDefaultTempDir(), MAX_TEMPFILES)
+            : this(DEFAULT_COMPARER, BufferSize.Automatic(), DefaultTempDir, MAX_TEMPFILES)
         {
         }
 
         /// <summary>
         /// Defaults constructor with a custom comparer.
         /// </summary>
-        /// <seealso cref="GetDefaultTempDir()"/>
+        /// <seealso cref="DefaultTempDir"/>
         /// <seealso cref="BufferSize.Automatic()"/>
         public OfflineSorter(IComparer<BytesRef> comparer)
-            : this(comparer, BufferSize.Automatic(), GetDefaultTempDir(), MAX_TEMPFILES)
+            : this(comparer, BufferSize.Automatic(), DefaultTempDir, MAX_TEMPFILES)
         {
         }
 
@@ -231,13 +248,26 @@ namespace Lucene.Net.Util
         /// <exception cref="ArgumentException"><paramref name="ramBufferSize"/> bytes are less than <see cref="ABSOLUTE_MIN_SORT_BUFFER_SIZE"/>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxTempfiles"/> is less than 2.</exception>
         public OfflineSorter(IComparer<BytesRef> comparer, BufferSize ramBufferSize, DirectoryInfo tempDirectory, int maxTempfiles)
+            : this(comparer, ramBufferSize, tempDirectory?.FullName ?? throw new ArgumentNullException(nameof(tempDirectory)), maxTempfiles)
+        {
+
+        }
+
+        /// <summary>
+        /// All-details constructor.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="comparer"/>, <paramref name="ramBufferSize"/> or <paramref name="tempDirectoryPath"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException"><paramref name="ramBufferSize"/> bytes are less than <see cref="ABSOLUTE_MIN_SORT_BUFFER_SIZE"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxTempfiles"/> is less than 2.</exception>
+        // LUCENENET specific
+        public OfflineSorter(IComparer<BytesRef> comparer, BufferSize ramBufferSize, string tempDirectoryPath, int maxTempfiles)
         {
             if (comparer is null)
                 throw new ArgumentNullException(nameof(comparer)); // LUCENENET: Added guard clauses
             if (ramBufferSize is null)
                 throw new ArgumentNullException(nameof(ramBufferSize));
-            if (tempDirectory is null)
-                throw new ArgumentNullException(nameof(tempDirectory));
+            if (tempDirectoryPath is null)
+                throw new ArgumentNullException(nameof(tempDirectoryPath));
 
             buffer = new BytesRefArray(bufferBytesUsed);
             if (ramBufferSize.bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
@@ -251,44 +281,49 @@ namespace Lucene.Net.Util
             }
 
             this.ramBufferSize = ramBufferSize;
-            this.tempDirectory = tempDirectory;
+            this.tempDirectory = tempDirectoryPath;
             this.maxTempFiles = maxTempfiles;
             this.comparer = comparer;
-        }
-
-        /// <summary>
-        /// All-details constructor, specifying <paramref name="tempDirectoryPath"/> as a <see cref="string"/>.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="comparer"/>, <paramref name="ramBufferSize"/> or <paramref name="tempDirectoryPath"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentException"><paramref name="ramBufferSize"/> bytes are less than <see cref="ABSOLUTE_MIN_SORT_BUFFER_SIZE"/>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxTempfiles"/> is less than 2.</exception>
-        // LUCENENET specific
-        public OfflineSorter(IComparer<BytesRef> comparer, BufferSize ramBufferSize, string tempDirectoryPath, int maxTempfiles)
-            : this(comparer, ramBufferSize, string.IsNullOrWhiteSpace(tempDirectoryPath) ? new DirectoryInfo(tempDirectoryPath) : throw new ArgumentException($"{nameof(tempDirectoryPath)} must not be null or empty."), maxTempfiles)
-        {
         }
 
         /// <summary>
         /// Sort input to output, explicit hint for the buffer size. The amount of allocated
         /// memory may deviate from the hint (may be smaller or larger).
         /// </summary>
+        /// <param name="input">The input stream. Must be both seekable and readable.</param>
+        /// <param name="output">The output stream. Must be seekable and writable.</param>
         /// <exception cref="ArgumentNullException"><paramref name="input"/> or <paramref name="output"/> is <c>null</c>.</exception>
-        public SortInfo Sort(FileInfo input, FileInfo output)
+        /// <exception cref="ArgumentException">
+        /// <paramref name="input"/> or <paramref name="output"/> is not seekable.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="input"/> is not readable.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="output"/> is not writable.
+        /// </exception>
+        /// <exception cref="ArgumentException"><paramref name="input"/> or <paramref name="output"/> is not seekable.</exception>
+        public SortInfo Sort(FileStream input, FileStream output)
         {
             if (input is null)
                 throw new ArgumentNullException(nameof(input)); // LUCENENET: Added guard clauses
             if (output is null)
                 throw new ArgumentNullException(nameof(output));
+            if (!input.CanSeek)
+                throw new ArgumentException($"{nameof(input)} stream must be seekable.");
+            if (!output.CanSeek)
+                throw new ArgumentException($"{nameof(output)} stream must be seekable.");
 
             sortInfo = new SortInfo(this) { TotalTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond }; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
-            output.Delete();
+            // LUCENENET specific - the output is an open stream. We know we don't have to delete it before we start.
 
-            var merges = new JCG.List<FileInfo>();
-            bool success2 = false;
+            var merges = new JCG.List<FileStream>();
             try
             {
-                var inputStream = new ByteSequencesReader(input);
+                var inputStream = new ByteSequencesReader(input, leaveOpen: true);
                 bool success = false;
                 try
                 {
@@ -302,18 +337,17 @@ namespace Lucene.Net.Util
                         // Handle intermediate merges.
                         if (merges.Count == maxTempFiles)
                         {
-                            var intermediate = FileSupport.CreateTempFile("sort", "intermediate", tempDirectory);
+                            var intermediate = FileSupport.CreateTempFileAsStream("sort", "intermediate", tempDirectory);
                             try
                             {
                                 MergePartitions(merges, intermediate);
                             }
                             finally
                             {
-                                foreach (var file in merges)
-                                {
-                                    file.Delete();
-                                }
+                                // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
+                                IOUtils.Dispose(merges);
                                 merges.Clear();
+                                intermediate.Position = 0;
                                 merges.Add(intermediate);
                             }
                             sortInfo.TempMergeFiles++;
@@ -336,34 +370,23 @@ namespace Lucene.Net.Util
                 // One partition, try to rename or copy if unsuccessful.
                 if (merges.Count == 1)
                 {
-                    FileInfo single = merges[0];
+                    // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
+                    using FileStream single = merges[0];
                     Copy(single, output);
-                    try
-                    {
-                        File.Delete(single.FullName);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
                 }
                 else
                 {
                     // otherwise merge the partitions with a priority queue.
                     MergePartitions(merges, output);
                 }
-                success2 = true;
             }
             finally
             {
-                foreach (FileInfo file in merges)
-                {
-                    file.Delete();
-                }
-                if (!success2)
-                {
-                    output.Delete();
-                }
+                // LUCENENET: Reset the position to the beginning of the streams so we don't have to reopen the files
+                input.Position = 0;
+                output.Position = 0;
+                IOUtils.Dispose(merges);
+                // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
             }
 
             sortInfo.TotalTime = ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - sortInfo.TotalTime); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
@@ -371,47 +394,49 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the default temporary directory. By default, the System's temp folder. If not accessible
-        /// or not available, an <see cref="IOException"/> is thrown.
+        /// Sort input to output, explicit hint for the buffer size. The amount of allocated
+        /// memory may deviate from the hint (may be smaller or larger).
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static DirectoryInfo GetDefaultTempDir()
+        /// <exception cref="ArgumentNullException"><paramref name="input"/> or <paramref name="output"/> is <c>null</c>.</exception>
+        public SortInfo Sort(FileInfo input, FileInfo output)
         {
-            return new DirectoryInfo(Path.GetTempPath());
+            if (input is null)
+                throw new ArgumentNullException(nameof(input)); // LUCENENET: Added guard clauses
+            if (output is null)
+                throw new ArgumentNullException(nameof(output));
+
+            using FileStream inputStream = new FileStream(input.FullName, FileMode.Open, FileAccess.ReadWrite,
+                FileShare.Read, bufferSize: DEFAULT_FILESTREAM_BUFFER_SIZE, FileOptions.DeleteOnClose | FileOptions.RandomAccess);
+            using FileStream outputStream = new FileStream(output.FullName, FileMode.Open, FileAccess.ReadWrite,
+                FileShare.Read, bufferSize: DEFAULT_FILESTREAM_BUFFER_SIZE, FileOptions.DeleteOnClose | FileOptions.RandomAccess);
+            return Sort(inputStream, outputStream);
         }
 
         /// <summary>
-        /// Returns the default temporary directory. By default, the System's temp folder. If not accessible
-        /// or not available, an <see cref="IOException"/> is thrown.
+        /// Returns the default temporary directory. By default, the System's temp folder.
         /// </summary>
-        [Obsolete("Use GetDefaultTempDir() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public static DirectoryInfo DefaultTempDir()
-        {
-            return new DirectoryInfo(Path.GetTempPath());
-        }
+        public static string DefaultTempDir => DEFAULT_TEMP_DIR;
 
         /// <summary>
         /// Copies one file to another.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void Copy(FileInfo file, FileInfo output)
+        private static void Copy(FileStream file, FileStream output)
         {
-            using Stream inputStream = file.OpenRead();
-            using Stream outputStream = output.OpenWrite();
-            inputStream.CopyTo(outputStream);
+            file.CopyTo(output);
         }
 
         /// <summary>
         /// Sort a single partition in-memory. </summary>
-        private FileInfo SortPartition(/*int len*/) // LUCENENET NOTE: made private, since protected is not valid in a sealed class. Also eliminated unused parameter.
+        private FileStream SortPartition(/*int len*/) // LUCENENET NOTE: made private, since protected is not valid in a sealed class. Also eliminated unused parameter.
         {
             var data = this.buffer;
-            FileInfo tempFile = FileSupport.CreateTempFile("sort", "partition", tempDirectory);
+            FileStream tempFile = FileSupport.CreateTempFileAsStream("sort", "partition", tempDirectory);
 
             long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             sortInfo!.SortTime += ((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
-            using (var @out = new ByteSequencesWriter(tempFile))
+            using (var @out = new ByteSequencesWriter(tempFile, leaveOpen: true))
             {
                 IBytesRefEnumerator iter = buffer.GetEnumerator(comparer);
                 while (iter.MoveNext())
@@ -423,16 +448,17 @@ namespace Lucene.Net.Util
 
             // Clean up the buffer for the next partition.
             data.Clear();
+            tempFile.Position = 0;
             return tempFile;
         }
 
         /// <summary>
         /// Merge a list of sorted temporary files (partitions) into an output file. </summary>
-        internal void MergePartitions(IList<FileInfo> merges, FileInfo outputFile)
+        internal void MergePartitions(IList<FileStream> merges, FileStream outputFile)
         {
             long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
-            var @out = new ByteSequencesWriter(outputFile);
+            var @out = new ByteSequencesWriter(outputFile, leaveOpen: true);
 
             PriorityQueue<FileAndTop> queue = new PriorityQueueAnonymousClass(this, merges.Count);
 
@@ -442,7 +468,7 @@ namespace Lucene.Net.Util
                 // Open streams and read the top for each file
                 for (int i = 0; i < merges.Count; i++)
                 {
-                    streams[i] = new ByteSequencesReader(merges[i]);
+                    streams[i] = new ByteSequencesReader(merges[i], leaveOpen: true);
                     byte[]? line = streams[i].Read();
                     if (line is not null)
                     {
@@ -536,73 +562,57 @@ namespace Lucene.Net.Util
             }
         }
 
-
         /// <summary>
         /// Utility class to emit length-prefixed <see cref="T:byte[]"/> entries to an output stream for sorting.
         /// Complementary to <see cref="ByteSequencesReader"/>.
         /// </summary>
         public class ByteSequencesWriter : IDisposable
         {
-            private readonly DataOutput os;
+            private readonly BinaryWriter os;
             private bool disposed; // LUCENENET specific
 
             /// <summary>
-            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileInfo"/>. </summary>
-            /// <exception cref="ArgumentNullException"><paramref name="file"/> is <c>null</c>.</exception>
-            public ByteSequencesWriter(FileInfo file)
-                : this(NewBinaryWriterDataOutput(file))
+            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileStream"/>. </summary>
+            /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
+            public ByteSequencesWriter(FileStream stream)
+                : this(new BinaryWriter(stream, DEFAULT_ENCODING, leaveOpen: false))
             {
             }
 
             /// <summary>
-            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileInfo"/>. </summary>
-            /// <exception cref="ArgumentException"><paramref name="path"/> is <c>null</c> or whitespace.</exception>
+            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileStream"/>. </summary>
+            /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
+            public ByteSequencesWriter(FileStream stream, bool leaveOpen)
+                : this(new BinaryWriter(stream, DEFAULT_ENCODING, leaveOpen))
+            {
+            }
+
+            /// <summary>
+            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided file path. </summary>
+            /// <exception cref="ArgumentNullException"><paramref name="path"/> is <c>null</c>.</exception>
             public ByteSequencesWriter(string path)
-                : this(NewBinaryWriterDataOutput(path))
+                : this(new FileStream(path, FileMode.Open, FileAccess.Write, FileShare.Read, bufferSize: DEFAULT_FILESTREAM_BUFFER_SIZE))
             {
             }
 
             /// <summary>
-            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="DataOutput"/>. </summary>
-            /// <exception cref="ArgumentNullException"><paramref name="os"/> is <c>null</c>.</exception>
-            public ByteSequencesWriter(DataOutput os)
-            {
-                this.os = os ?? throw new ArgumentNullException(nameof(os)); // LUCENENET: Added guard clause
-            }
-
-            /// <summary>
-            /// LUCENENET specific - ensures the file has been created with no BOM
-            /// if it doesn't already exist and opens the file for writing.
-            /// Java doesn't use a BOM by default.
-            /// </summary>
+            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileInfo"/>. </summary>
             /// <exception cref="ArgumentNullException"><paramref name="file"/> is <c>null</c>.</exception>
-            private static BinaryWriterDataOutput NewBinaryWriterDataOutput(FileInfo file)
+            // LUCENENET specific - This is for bw compatibility with an earlier approach using FileInfo (similar to how it worked in Java)
+            public ByteSequencesWriter(FileInfo file)
+                : this(file?.FullName ?? throw new ArgumentNullException(nameof(file)))
             {
-                if (file is null)
-                    throw new ArgumentNullException(nameof(file));
-
-                return NewBinaryWriterDataOutput(file.FullName);
             }
 
             /// <summary>
-            /// LUCENENET specific - ensures the file has been created with no BOM
-            /// if it doesn't already exist and opens the file for writing.
-            /// Java doesn't use a BOM by default.
+            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="BinaryWriter"/>.
+            /// <b>NOTE:</b> To match Lucene, pass the <paramref name="writer"/>'s constructor the
+            /// <see cref="DEFAULT_ENCODING"/>, which is UTF-8 without a byte order mark.
             /// </summary>
-            /// <exception cref="ArgumentException"><paramref name="path"/> is <c>null</c> or whitespace.</exception>
-            private static BinaryWriterDataOutput NewBinaryWriterDataOutput(string path)
+            /// <exception cref="ArgumentNullException"><paramref name="writer"/> is <c>null</c>.</exception>
+            public ByteSequencesWriter(BinaryWriter writer)
             {
-                if (string.IsNullOrWhiteSpace(path))
-                    throw new ArgumentException($"{nameof(path)} may not be null or whitespace.");
-
-                // Create the file (without BOM) if it doesn't already exist
-                if (!File.Exists(path))
-                {
-                    // Create the file
-                    File.WriteAllText(path, string.Empty, new UTF8Encoding(false) /* No BOM */);
-                }
-
-                return new BinaryWriterDataOutput(new BinaryWriter(new FileStream(path, FileMode.Open, FileAccess.Write)));
+                this.os = writer ?? throw new ArgumentNullException(nameof(writer)); // LUCENENET: Added guard clause
             }
 
             /// <summary>
@@ -648,8 +658,8 @@ namespace Lucene.Net.Util
                 if (off > bytes.Length - len) // Checks for int overflow
                     throw new ArgumentException("Index and length must refer to a location within the array.");
 
-                os.WriteInt16((short)len);
-                os.WriteBytes(bytes, off, len); // LUCENENET NOTE: We call WriteBytes, since there is no Write() on Lucene's version of DataOutput
+                os.Write((short)len);
+                os.Write(bytes, off, len);
             }
 
             /// <summary>
@@ -666,12 +676,11 @@ namespace Lucene.Net.Util
             /// </summary>
             protected virtual void Dispose(bool disposing) // LUCENENET specific - implemented proper dispose pattern
             {
-                if (!disposed && disposing && this.os is IDisposable disposable)
+                if (!disposed && disposing)
                 {
-                    disposable.Dispose();
+                    os.Dispose();
                     disposed = true;
                 }
-                    
             }
         }
 
@@ -681,16 +690,22 @@ namespace Lucene.Net.Util
         /// </summary>
         public class ByteSequencesReader : IDisposable
         {
-            private readonly DataInput inputStream;
+            private readonly BinaryReader @is;
             private bool disposed; // LUCENENET specific
 
             /// <summary>
-            /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="FileInfo"/>. </summary>
-            /// <exception cref="ArgumentNullException"><paramref name="file"/> is <c>null</c>.</exception>
-            public ByteSequencesReader(FileInfo file)
-                : this(file is not null ?
-                      new BinaryReaderDataInput(new BinaryReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))) :
-                      throw new ArgumentNullException(nameof(file))) // LUCENENET: Added guard clause
+            /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="FileStream"/>. </summary>
+            /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
+            public ByteSequencesReader(FileStream stream)
+                : this(new BinaryReader(stream, DEFAULT_ENCODING, leaveOpen: false))
+            {
+            }
+
+            /// <summary>
+            /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="FileStream"/>. </summary>
+            /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
+            public ByteSequencesReader(FileStream stream, bool leaveOpen)
+                : this(new BinaryReader(stream, DEFAULT_ENCODING, leaveOpen))
             {
             }
 
@@ -699,16 +714,29 @@ namespace Lucene.Net.Util
             /// <exception cref="ArgumentException"><paramref name="path"/> is <c>null</c> or whitespace.</exception>
             // LUCENENET specific
             public ByteSequencesReader(string path)
-                : this(!string.IsNullOrWhiteSpace(path) ? new FileInfo(path) : throw new ArgumentException($"{nameof(path)} may not be null or whitespace."))
+                : this(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: DEFAULT_FILESTREAM_BUFFER_SIZE))
             {
             }
 
             /// <summary>
-            /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="DataInput"/>. </summary>
-            /// <exception cref="ArgumentNullException"><paramref name="inputStream"/> is <c>null</c>.</exception>
-            public ByteSequencesReader(DataInput inputStream)
+            /// Constructs a <see cref="ByteSequencesReader"/> from the provided <paramref name="file"/>. </summary>
+            /// <exception cref="ArgumentException"><paramref name="file"/> is <c>null</c> or whitespace.</exception>
+            // LUCENENET specific - This is for bw compatibility with an earlier approach using FileInfo (similar to how it worked in Java)
+            public ByteSequencesReader(FileInfo file)
+                : this(file?.FullName ?? throw new ArgumentNullException(nameof(file)))
             {
-                this.inputStream = inputStream ?? throw new ArgumentNullException(nameof(inputStream)); // LUCENENET: Added guard clause
+            }
+
+            /// <summary>
+            /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="BinaryReader"/>.
+            /// <para/>
+            /// <b>NOTE:</b> To match Lucene, pass the <paramref name="reader"/>'s constructor the
+            /// <see cref="DEFAULT_ENCODING"/>, which is UTF-8 without a byte order mark.
+            /// </summary>
+            /// <exception cref="ArgumentNullException"><paramref name="reader"/> is <c>null</c>.</exception>
+            public ByteSequencesReader(BinaryReader reader)
+            {
+                this.@is = reader ?? throw new ArgumentNullException(nameof(reader)); // LUCENENET: Added guard clause
             }
 
             /// <summary>
@@ -727,7 +755,7 @@ namespace Lucene.Net.Util
                 ushort length;
                 try
                 {
-                    length = (ushort)inputStream.ReadInt16();
+                    length = (ushort)@is.ReadInt16();
                 }
                 catch (Exception e) when (e.IsEOFException())
                 {
@@ -737,7 +765,7 @@ namespace Lucene.Net.Util
                 @ref.Grow(length);
                 @ref.Offset = 0;
                 @ref.Length = length;
-                inputStream.ReadBytes(@ref.Bytes, 0, length);
+                @is.Read(@ref.Bytes, 0, length);
                 return true;
             }
 
@@ -753,7 +781,7 @@ namespace Lucene.Net.Util
                 ushort length;
                 try
                 {
-                    length = (ushort)inputStream.ReadInt16();
+                    length = (ushort)@is.ReadInt16();
                 }
                 catch (Exception e) when (e.IsEOFException())
                 {
@@ -762,7 +790,7 @@ namespace Lucene.Net.Util
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0, "Sanity: sequence length < 0: {0}", length);
                 byte[] result = new byte[length];
-                inputStream.ReadBytes(result, 0, length);
+                @is.Read(result, 0, length);
                 return result;
             }
 
@@ -777,9 +805,9 @@ namespace Lucene.Net.Util
 
             protected virtual void Dispose(bool disposing) // LUCENENET specific - implemented proper dispose pattern
             {
-                if (!disposed && disposing && this.inputStream is IDisposable disposable)
+                if (!disposed && disposing)
                 {
-                    disposable.Dispose();
+                    @is.Dispose();
                     disposed = true;
                 }
             }

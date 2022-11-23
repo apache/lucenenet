@@ -84,7 +84,7 @@ namespace Lucene.Net.Util
         public virtual void TestIntermediateMerges()
         {
             // Sort 20 mb worth of data with 1mb buffer, binary merging.
-            OfflineSorter.SortInfo info = CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARER, OfflineSorter.BufferSize.Megabytes(1), OfflineSorter.GetDefaultTempDir(), 2), GenerateRandom((int)OfflineSorter.MB * 20));
+            OfflineSorter.SortInfo info = CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARER, OfflineSorter.BufferSize.Megabytes(1), OfflineSorter.DefaultTempDir, 2), GenerateRandom((int)OfflineSorter.MB * 20));
             Assert.IsTrue(info.MergeRounds > 10);
         }
 
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
         public virtual void TestSmallRandom()
         {
             // Sort 20 mb worth of data with 1mb buffer.
-            OfflineSorter.SortInfo sortInfo = CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARER, OfflineSorter.BufferSize.Megabytes(1), OfflineSorter.GetDefaultTempDir(), OfflineSorter.MAX_TEMPFILES), GenerateRandom((int)OfflineSorter.MB * 20));
+            OfflineSorter.SortInfo sortInfo = CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARER, OfflineSorter.BufferSize.Megabytes(1), OfflineSorter.DefaultTempDir, OfflineSorter.MAX_TEMPFILES), GenerateRandom((int)OfflineSorter.MB * 20));
             Assert.AreEqual(1, sortInfo.MergeRounds);
         }
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.Util
         public virtual void TestLargerRandom()
         {
             // Sort 100MB worth of data with 15mb buffer.
-            CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARER, OfflineSorter.BufferSize.Megabytes(16), OfflineSorter.GetDefaultTempDir(), OfflineSorter.MAX_TEMPFILES), GenerateRandom((int)OfflineSorter.MB * 100));
+            CheckSort(new OfflineSorter(OfflineSorter.DEFAULT_COMPARER, OfflineSorter.BufferSize.Megabytes(16), OfflineSorter.DefaultTempDir, OfflineSorter.MAX_TEMPFILES), GenerateRandom((int)OfflineSorter.MB * 100));
         }
 
         private byte[][] GenerateRandom(int howMuchData)
@@ -136,12 +136,13 @@ namespace Lucene.Net.Util
         /// </summary>
         private OfflineSorter.SortInfo CheckSort(OfflineSorter sort, byte[][] data)
         {
-            FileInfo unsorted = WriteAll("unsorted", data);
+            using FileStream unsorted = WriteAll("unsorted", data);
 
             Array.Sort(data, unsignedByteOrderComparer);
-            FileInfo golden = WriteAll("golden", data);
+            using FileStream golden = WriteAll("golden", data);
 
-            FileInfo sorted = new FileInfo(Path.Combine(tempDir.FullName, "sorted"));
+            string sortedFile = Path.Combine(tempDir.FullName, "sorted");
+            using FileStream sorted = new FileStream(sortedFile, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read, bufferSize: OfflineSorter.DEFAULT_FILESTREAM_BUFFER_SIZE, FileOptions.DeleteOnClose);
             OfflineSorter.SortInfo sortInfo = sort.Sort(unsorted, sorted);
             //System.out.println("Input size [MB]: " + unsorted.Length() / (1024 * 1024));
             //System.out.println(sortInfo);
@@ -153,15 +154,16 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Make sure two files are byte-byte identical.
         /// </summary>
-        private void AssertFilesIdentical(FileInfo golden, FileInfo sorted)
+        // LUCENENET specific - switched to using FileStream rather than FileInfo
+        private void AssertFilesIdentical(FileStream golden, FileStream sorted)
         {
             Assert.AreEqual(golden.Length, sorted.Length);
 
             byte[] buf1 = new byte[64 * 1024];
             byte[] buf2 = new byte[64 * 1024];
             int len;
-            using Stream is1 = golden.Open(FileMode.Open, FileAccess.Read, FileShare.Delete);
-            using Stream is2 = sorted.Open(FileMode.Open, FileAccess.Read, FileShare.Delete);
+            Stream is1 = golden;
+            Stream is2 = sorted;
             while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
             {
                 is2.Read(buf2, 0, len);
@@ -172,17 +174,19 @@ namespace Lucene.Net.Util
             }
         }
 
-        private FileInfo WriteAll(string name, byte[][] data)
+        // LUCENENET specific - switched to using FileStream rather than FileInfo
+        private FileStream WriteAll(string name, byte[][] data)
         {
             FileInfo file = new FileInfo(Path.Combine(tempDir.FullName, name));
-            using (file.Create()) { }
-            OfflineSorter.ByteSequencesWriter w = new OfflineSorter.ByteSequencesWriter(file);
+            var stream = new FileStream(file.FullName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read, bufferSize: OfflineSorter.DEFAULT_FILESTREAM_BUFFER_SIZE, FileOptions.DeleteOnClose);
+            OfflineSorter.ByteSequencesWriter w = new OfflineSorter.ByteSequencesWriter(stream, leaveOpen: true);
             foreach (byte[] datum in data)
             {
                 w.Write(datum);
             }
             w.Dispose();
-            return file;
+            stream.Position = 0; // LUCENENET specific - reset the position back to the start of the file so we don't need to reopen it.
+            return stream;
         }
 
         [Test]
