@@ -55,8 +55,8 @@ namespace Lucene.Net.Analysis.Hunspell
             dictWriter.Write("1\ndrink/2\n");
             dictWriter.Dispose();
 
-            using Stream affStream = new FileStream(affix.FullName, FileMode.OpenOrCreate);
-            using Stream dictStream = new FileStream(dict.FullName, FileMode.OpenOrCreate);
+            using Stream affStream = new FileStream(affix.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            using Stream dictStream = new FileStream(dict.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
             Dictionary dictionary = new Dictionary(affStream, dictStream);
             Stemmer stemmer = new Stemmer(dictionary);

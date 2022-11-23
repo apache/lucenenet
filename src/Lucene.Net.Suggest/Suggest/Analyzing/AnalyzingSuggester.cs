@@ -9,10 +9,8 @@ using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using JCG = J2N.Collections.Generic;
 using Int64 = J2N.Numerics.Int64;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -405,9 +403,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
             string prefix = this.GetType().Name;
-            var directory = OfflineSorter.GetDefaultTempDir();
-            var tempInput = FileSupport.CreateTempFile(prefix, ".input", directory);
-            var tempSorted = FileSupport.CreateTempFile(prefix, ".sorted", directory);
+            var directory = OfflineSorter.DefaultTempDir;
+            // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
+            using var tempInput = FileSupport.CreateTempFileAsStream(prefix, ".input", directory);
+            using var tempSorted = FileSupport.CreateTempFileAsStream(prefix, ".sorted", directory);
 
             hasPayloads = enumerator.HasPayloads;
 
@@ -502,13 +501,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     count++;
                 }
-                writer.Dispose();
+
+                tempInput.Position = 0;
 
                 // Sort all input/output pairs (required by FST.Builder):
                 (new OfflineSorter(new AnalyzingComparer(hasPayloads))).Sort(tempInput, tempSorted);
 
                 // Free disk space:
-                tempInput.Delete();
+                writer.Dispose(); // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
 
                 reader = new OfflineSorter.ByteSequencesReader(tempSorted);
 
@@ -627,9 +627,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     IOUtils.DisposeWhileHandlingException(reader, writer);
                 }
-
-                tempInput.Delete();
-                tempSorted.Delete();
+                // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
             }
         }
 

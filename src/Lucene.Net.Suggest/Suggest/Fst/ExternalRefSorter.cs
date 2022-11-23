@@ -1,7 +1,9 @@
 ﻿using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using FileStreamOptions = Lucene.Net.Support.IO.FileStreamOptions;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
@@ -22,8 +24,6 @@ namespace Lucene.Net.Search.Suggest.Fst
      * limitations under the License.
      */
 
-    using System.Collections.Generic;
-
     /// <summary>
     /// Builds and iterates over sequences stored on disk.
     /// </summary>
@@ -31,8 +31,10 @@ namespace Lucene.Net.Search.Suggest.Fst
     {
         private readonly OfflineSorter sort;
         private OfflineSorter.ByteSequencesWriter writer;
-        private FileInfo input;
-        private FileInfo sorted;
+        private FileStream input;
+        // LUCENENET specific - removed sorted and made it a local variable of GetEnumerator()
+        private string sortedFileName; // LUCENENET specific
+        private bool isSorted; // LUCENENET specific
 
         /// <summary>
         /// Will buffer all sequences to a temporary file and then sort (all on-disk).
@@ -40,8 +42,8 @@ namespace Lucene.Net.Search.Suggest.Fst
         public ExternalRefSorter(OfflineSorter sort)
         {
             this.sort = sort;
-            this.input = FileSupport.CreateTempFile("RefSorter-", ".raw", OfflineSorter.GetDefaultTempDir());
-            this.writer = new OfflineSorter.ByteSequencesWriter(input);
+            this.input = FileSupport.CreateTempFileAsStream("RefSorter-", ".raw", OfflineSorter.DefaultTempDir);
+            this.writer = new OfflineSorter.ByteSequencesWriter(input, leaveOpen: true);
         }
 
         public virtual void Add(BytesRef utf8)
@@ -55,19 +57,28 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         public virtual IBytesRefEnumerator GetEnumerator()
         {
-            if (sorted is null)
+            if (!isSorted)
             {
                 CloseWriter();
+                input.Position = 0;
 
-                sorted = FileSupport.CreateTempFile("RefSorter-", ".sorted", OfflineSorter.GetDefaultTempDir());
+                using var sorted = FileSupport.CreateTempFileAsStream("RefSorter-", ".sorted", OfflineSorter.DefaultTempDir, EnumeratorFileStreamOptions);
+                sortedFileName = sorted.Name; // LUCENENET specific - store the name so all future calls to GetEnumerator() can open the file.
                 sort.Sort(input, sorted);
+                isSorted = true; // LUCENENET switched to using a boolean to track whether or not we are sorted so we can dispose sorted in this method.
 
-                input.Delete();
+                input.Dispose(); // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
                 input = null;
             }
 
-            return new ByteSequenceEnumerator(new OfflineSorter.ByteSequencesReader(sorted), sort.Comparer);
+            var sortedClone = new FileStream(sortedFileName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, bufferSize: OfflineSorter.DEFAULT_FILESTREAM_BUFFER_SIZE);
+            return new ByteSequenceEnumerator(new OfflineSorter.ByteSequencesReader(sortedClone), sort.Comparer);
         }
+
+        /// <summary>
+        /// LUCENENET specific - permissive file options so we can delete the file without errors. We only do that when someone calls <see cref="Dispose()"/> on this class.
+        /// </summary>
+        private static readonly FileStreamOptions EnumeratorFileStreamOptions = new FileStreamOptions { Access = FileAccess.ReadWrite, Share = FileShare.ReadWrite | FileShare.Delete, BufferSize = OfflineSorter.DEFAULT_FILESTREAM_BUFFER_SIZE };
 
         private void CloseWriter()
         {
@@ -99,14 +110,8 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
                 finally
                 {
-                    if (input != null)
-                    {
-                        input.Delete();
-                    }
-                    if (sorted != null)
-                    {
-                        sorted.Delete();
-                    }
+                    input?.Dispose();
+                    File.Delete(sortedFileName);
                 }
             }
         }

@@ -110,7 +110,8 @@ namespace Lucene.Net.Analysis.Hunspell
         // when set, some words have exceptional stems, and the last entry is a pointer to stemExceptions
         internal bool hasStemExceptions;
 
-        private readonly DirectoryInfo tempDir = OfflineSorter.GetDefaultTempDir(); // TODO: make this configurable?
+        // LUCENENET specific - changed from DirectoryInfo to string
+        private readonly string tempDir = OfflineSorter.DefaultTempDir; // TODO: make this configurable?
 
         internal bool ignoreCase;
         internal bool complexPrefixes;
@@ -174,28 +175,20 @@ namespace Lucene.Net.Analysis.Hunspell
             this.needsOutputCleaning = false; // set if we have an OCONV
             flagLookup.Add(new BytesRef()); // no flags -> ord 0
 
-            FileInfo aff = FileSupport.CreateTempFile("affix", "aff", tempDir);
+            FileStream aff = FileSupport.CreateTempFileAsStream("affix", "aff", tempDir);
             try
             {
-                using (Stream @out = aff.Open(FileMode.Open, FileAccess.ReadWrite))
-                {
-                    // copy contents of affix stream to temp file
-                    affix.CopyTo(@out);
-                }
+                // copy contents of affix stream to temp file
+                affix.CopyTo(aff);
+                aff.Position = 0; // LUCENENET specific - seek to the beginning of the file so we don't need to reopen
 
                 // pass 1: get encoding
-                string encoding;
-                using (Stream aff1 = aff.Open(FileMode.Open, FileAccess.Read))
-                {
-                    encoding = GetDictionaryEncoding(aff1);
-                }
+                string encoding = GetDictionaryEncoding(aff);
+                aff.Position = 0; // LUCENENET specific - seek to the beginning of the file so we don't need to reopen
 
                 // pass 2: parse affixes
                 Encoding decoder = GetSystemEncoding(encoding);
-                using (Stream aff2 = aff.Open(FileMode.Open, FileAccess.Read))
-                {
-                    ReadAffixFile(aff2, decoder);
-                }
+                ReadAffixFile(aff, decoder);
 
                 // read dictionary entries
                 Int32SequenceOutputs o = Int32SequenceOutputs.Singleton;
@@ -207,14 +200,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             finally
             {
-                try
-                {
-                    aff.Delete();
-                }
-                catch
-                {
-                    // ignore
-                }
+                aff.Dispose();
             }
         }
 
@@ -921,8 +907,8 @@ namespace Lucene.Net.Analysis.Hunspell
 
             StringBuilder sb = new StringBuilder();
 
-            FileInfo unsorted = FileSupport.CreateTempFile("unsorted", "dat", tempDir);
-            using (OfflineSorter.ByteSequencesWriter writer = new OfflineSorter.ByteSequencesWriter(unsorted))
+            using FileStream unsorted = FileSupport.CreateTempFileAsStream("unsorted", "dat", tempDir);
+            using (OfflineSorter.ByteSequencesWriter writer = new OfflineSorter.ByteSequencesWriter(unsorted, leaveOpen: true))
             {
                 foreach (Stream dictionary in dictionaries)
                 {
@@ -983,7 +969,10 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
             }
 
-            FileInfo sorted = FileSupport.CreateTempFile("sorted", "dat", tempDir);
+            // LUCENENET: Reset the position to the beginning of the stream so we don't have to reopen the file
+            unsorted.Position = 0;
+
+            using FileStream sorted = FileSupport.CreateTempFileAsStream("sorted", "dat", tempDir);
 
             OfflineSorter sorter = new OfflineSorter(Comparer<BytesRef>.Create((o1, o2) =>
             {
@@ -1028,14 +1017,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
             }));
             sorter.Sort(unsorted, sorted);
-            try
-            {
-                unsorted.Delete();
-            }
-            catch
-            {
-                // ignore
-            }
+            // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
 
             using (OfflineSorter.ByteSequencesReader reader = new OfflineSorter.ByteSequencesReader(sorted))
             {
@@ -1138,14 +1120,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 Lucene.Net.Util.Fst.Util.ToUTF32(currentEntry, scratchInts);
                 words.Add(scratchInts, currentOrds);
             }
-            try
-            {
-                sorted.Delete();
-            }
-            catch
-            {
-                // ignore
-            }
+            // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
         }
 
         internal static char[] DecodeFlags(BytesRef b)
