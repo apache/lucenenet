@@ -31,6 +31,17 @@ An excellent introductory series from [Simone Chiaretta](http://codeclimber.net.
 - [Dissecting Storage Documents and Fields](https://codeclimber.net.nz/archive/2009/09/04/dissecting-lucenenet-storage-documents-and-fields/)
 - [Lucene - or how I stopped worrying and learned to love unstructured data](https://codeclimber.net.nz/archive/2009/09/08/lucene-or-how-i-stopped-worrying-and-learned-to/)
 
+### Series on using Lucene.Net with Blazor
+
+A series that covers Lucene.Net search, pagination, auto complete, faceting and highlighting in Blazor from [Thomas Beck](
+https://blog.beckshome.com/). Source for all projects [available on GitHub](https://github.com/thbst16/dotnet-lucene-search) with a [live demo site](https://dotnet-lucene-search.azurewebsites.net/) available as well.
+
+- [Lucene + Blazor, Part 1: Basic Search](https://blog.beckshome.com/2022/10/lucene-blazor-part-1-basic-search)
+- [Lucene + Blazor, Part 2: Results Paging](https://blog.beckshome.com/2022/11/lucene-blazor-part-2-results-paging)
+- [Lucene + Blazor, Part 3: Auto Complete](https://blog.beckshome.com/2022/11/lucene-blazor-part-3-auto-complete)
+- [Lucene + Blazor, Part 4: Faceting](https://blog.beckshome.com/2022/11/lucene-blazor-part-4-faceting)
+- [Lucene + Blazor, Part 5: Highlighting](https://blog.beckshome.com/2022/11/lucene-blazor-part-5-highlighting)
+
 ### Other posts
 
 - [Lazily setting the SetMultiTermRewriteMethod](https://shazwazza.com/post/how-to-set-rewrite-method-on-queries-lazily-in-lucene/)
