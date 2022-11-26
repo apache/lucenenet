@@ -120,7 +120,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return null;
             }
 
-            TopOrdAndInt32Queue q = new TopOrdAndInt32Queue(Math.Min(m_taxoReader.Count, topN));
+            using TopOrdAndInt32Queue q = new TopOrdAndInt32Queue(Math.Min(m_taxoReader.Count, topN));
 
             int bottomValue = 0;
 

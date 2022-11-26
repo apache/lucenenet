@@ -26,10 +26,12 @@ namespace Lucene.Net.Facet
     /// <para/>
     /// NOTE: This was TopOrdAndIntQueue in Lucene
     /// </summary>
-    public class TopOrdAndInt32Queue : PriorityQueue<OrdAndValue<int>>
+    public class TopOrdAndInt32Queue : PooledPriorityQueue<OrdAndValue<int>>
     {
         // LUCENENET specific - de-nested OrdAndValue and made it into a generic struct
         // so it can be used with this class and TopOrdAndSingleQueue
+
+        // LUCENENET specific - use pooled priority queue to reuse heap array.
 
         /// <summary>
         /// Sole constructor.

@@ -142,7 +142,8 @@ namespace Lucene.Net.Facet.SortedSet
                 string[] parts = FacetsConfig.StringToPath(scratch.Utf8ToString());
                 labelValues[i] = new LabelAndValue(parts[1], ordAndValue.Value);
             }
-
+            // LUCENENET specific - free pooled queue
+            q.Dispose();
             return new FacetResult(dim, Arrays.Empty<string>(), dimCount, labelValues, childCount);
         }
 
