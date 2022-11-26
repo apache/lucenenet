@@ -89,9 +89,8 @@ namespace Lucene.Net.Util
 
         protected PriorityQueueBase(int maxSize, bool prepopulate) // LUCENENET specific - made protected instead of public
         {
-            this.heap = AllocateHeapArray();
             this.maxSize = maxSize;
-
+            this.heap = AllocateHeapArray();
             if (prepopulate)
             {
                 // If sentinel objects are supported, populate the queue with them
