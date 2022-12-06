@@ -191,7 +191,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// ~20-25% fewer cells.
         /// </param>
         /// <returns>a set of cells (no dups), sorted, immutable, non-null</returns>
-        public virtual IList<Cell> GetCells(IShape? shape, int detailLevel, bool inclParents, 
+        public virtual IList<Cell> GetCells(IShape? shape, int detailLevel, bool inclParents,
             bool simplify)
         {
             //TODO consider an on-demand iterator -- it won't build up all cells in memory.
@@ -214,8 +214,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// descends.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="cell"/> is <c>null</c>.</exception>
-        private bool RecursiveGetCells(Cell cell, IShape? shape, int detailLevel, 
-            bool inclParents, bool simplify, 
+        private bool RecursiveGetCells(Cell cell, IShape? shape, int detailLevel,
+            bool inclParents, bool simplify,
             IList<Cell> result)
         {
             // LUCENENET specific - added guard clause

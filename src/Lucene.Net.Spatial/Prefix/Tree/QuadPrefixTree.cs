@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Diagnostics;
-using Lucene.Net.Util;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
@@ -57,8 +56,6 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         internal readonly int[] levelS; // side
         internal readonly int[] levelN; // number
 
-        protected internal bool m_robust = true; // for backward compatibility, use the old method if user specified old version.
-
         /// <summary>
         /// Initializes a new instance of <see cref="QuadPrefixTree"/> with the specified
         /// spatial context (<paramref name="ctx"/>), <paramref name="bounds"/> and <paramref name="maxLevels"/>.
@@ -80,10 +77,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             ymin = bounds.MinY;
             ymax = bounds.MaxY;
 
-            levelW = new double[maxLevels + 1];
-            levelH = new double[maxLevels + 1];
-            levelS = new int[maxLevels + 1];
-            levelN = new int[maxLevels + 1];
+            levelW = new double[maxLevels];
+            levelH = new double[maxLevels];
+            levelS = new int[maxLevels];
+            levelN = new int[maxLevels];
 
             gridW = xmax - xmin;
             gridH = ymax - ymin;
@@ -165,49 +162,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             if (p is null)
                 throw new ArgumentNullException(nameof(p));
 
-            //IList<Cell> cells = new JCG.List<Cell>(1);
-            //Build(xmid, ymid, 0, cells, new StringBuilder(), m_ctx.MakePoint(p.X, p.Y), level);
-            //return cells[0];
-            if (!m_robust)
-            {
-                IList<Cell> cells = new JCG.List<Cell>(1);
-                buildNotRobustly(xmid, ymid, 0, cells, new StringBuilder(), m_ctx.MakePoint(p.X, p.Y), level);
-                if(cells.Count > 0)
-                    return cells[0];
-            }
-
-            double currentXmid = xmid;
-            double currentYmid = ymid;
-            double xp = p.X;
-            double yp = p.Y;
-            StringBuilder str = new StringBuilder();
-            int levelLimit = level > m_maxLevels ? m_maxLevels : level;
-            SpatialRelation rel = SpatialRelation.Contains;
-            for (int lvl = 0; lvl < levelLimit; lvl++){
-                int c = battenberg(currentXmid, currentYmid, xp, yp);
-                double halfWidth = levelW[lvl + 1];
-                double halfHeight = levelH[lvl + 1];
-                switch(c){
-                    case 0:
-                        currentXmid -= halfWidth;
-                        currentYmid += halfHeight;
-                        break;
-                    case 1:
-                        currentXmid += halfWidth;
-                        currentYmid += halfHeight;
-                        break;
-                    case 2:
-                        currentXmid -= halfWidth;
-                        currentYmid -= halfHeight;
-                        break;
-                    case 3:
-                        currentXmid += halfWidth;
-                        currentYmid -= halfHeight;
-                        break;
-                }
-                str.Append((char)('A'+c));
-            }
-            return new QuadCell(this, str.ToString(), rel);
+            IList<Cell> cells = new JCG.List<Cell>(1);
+            Build(xmid, ymid, 0, cells, new StringBuilder(), m_ctx.MakePoint(p.X, p.Y), level);
+            return cells[0];
         }
 
         //note cells could be longer if p on edge
@@ -221,7 +178,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return new QuadCell(this, bytes, offset, length);
         }
 
-        private void buildNotRobustly(
+        private void Build(
             double x,
             double y,
             int level,
@@ -236,17 +193,17 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             // Z-Order
             // http://en.wikipedia.org/wiki/Z-order_%28curve%29
-            checkBattenbergNotRobustly('A', x - w, y + h, level, matches, str, shape, maxLevel);
-            checkBattenbergNotRobustly('B', x + w, y + h, level, matches, str, shape, maxLevel);
-            checkBattenbergNotRobustly('C', x - w, y - h, level, matches, str, shape, maxLevel);
-            checkBattenbergNotRobustly('D', x + w, y - h, level, matches, str, shape, maxLevel);
+            CheckBattenberg('A', x - w, y + h, level, matches, str, shape, maxLevel);
+            CheckBattenberg('B', x + w, y + h, level, matches, str, shape, maxLevel);
+            CheckBattenberg('C', x - w, y - h, level, matches, str, shape, maxLevel);
+            CheckBattenberg('D', x + w, y - h, level, matches, str, shape, maxLevel);
         }
 
         // possibly consider hilbert curve
         // http://en.wikipedia.org/wiki/Hilbert_curve
         // http://blog.notdot.net/2009/11/Damn-Cool-Algorithms-Spatial-indexing-with-Quadtrees-and-Hilbert-Curves
         // if we actually use the range property in the query, this could be useful
-        private void checkBattenbergNotRobustly(
+        private void CheckBattenberg(
             char c,
             double cx,
             double cy,
@@ -285,29 +242,10 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 }
                 else
                 {
-                    buildNotRobustly(cx, cy, nextLevel, matches, str, shape, maxLevel);
+                    Build(cx, cy, nextLevel, matches, str, shape, maxLevel);
                 }
             }
             str.Length = strlen;
-        }
-
-        protected int battenberg(double xmid, double ymid, double xp, double yp) {
-            // http://en.wikipedia.org/wiki/Z-order_%28curve%29
-            if (ymid <= yp) {
-                if (xmid >= xp) {
-                    return 0;
-                }
-                return 1;
-            } else {
-                if (xmid >= xp) {
-                    return 2;
-                }
-                return 3;
-            }
-            // possibly consider hilbert curve
-            // http://en.wikipedia.org/wiki/Hilbert_curve
-            // http://blog.notdot.net/2009/11/Damn-Cool-Algorithms-Spatial-indexing-with-Quadtrees-and-Hilbert-Curves
-            // if we actually use the range property in the query, this could be useful
         }
 
         #region Nested type: QuadCell
@@ -431,9 +369,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             if (m_ctx is null)
                 throw new InvalidOperationException($"{nameof(m_ctx)} must be set prior to calling GetLevelForDistance(double).");
 
-            //var grid = new QuadPrefixTree(m_ctx, QuadPrefixTree.MAX_LEVELS_POSSIBLE);
-            //return grid.GetLevelForDistance(degrees);
-            return NewSPT().GetLevelForDistance(degrees);
+            var grid = new QuadPrefixTree(m_ctx, QuadPrefixTree.MAX_LEVELS_POSSIBLE);
+            return grid.GetLevelForDistance(degrees);
         }
 
         protected internal override SpatialPrefixTree NewSPT()
@@ -442,10 +379,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             if (m_ctx is null)
                 throw new InvalidOperationException($"{nameof(m_ctx)} must be set prior to calling NewSPT().");
 
-            //return new QuadPrefixTree(m_ctx, m_maxLevels ?? QuadPrefixTree.MAX_LEVELS_POSSIBLE);
-            QuadPrefixTree tree = new QuadPrefixTree(m_ctx, m_maxLevels ?? QuadPrefixTree.MAX_LEVELS_POSSIBLE);
-            tree.m_robust = getVersion().OnOrAfter(LuceneVersion.LUCENE_48);
-            return tree;
+            return new QuadPrefixTree(m_ctx, m_maxLevels ?? QuadPrefixTree.MAX_LEVELS_POSSIBLE);
         }
     }
 }
