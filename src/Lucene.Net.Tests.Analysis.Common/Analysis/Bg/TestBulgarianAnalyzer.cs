@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Bg
         [Test]
         public virtual void TestCustomStopwords()
         {
-            Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
             AssertAnalyzesTo(a, "Как се казваш?", new string[] { "как", "се", "казваш" });
         }
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Bg
         {
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
             set.add("строеве");
-            Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            Analyzer a = new BulgarianAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, set);
             AssertAnalyzesTo(a, "строевете строеве", new string[] { "строй", "строеве" });
         }
 

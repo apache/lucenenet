@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -258,7 +259,7 @@ namespace Lucene.Net.Search
                             // Can't use TopDocs#topDocs(start, howMany), since it has different behaviour when start >= hitCount
                             // than TopDocs#merge currently has
                             ScoreDoc[] newScoreDocs = new ScoreDoc[Math.Min(size, tempTopHits.ScoreDocs.Length - from)];
-                            Array.Copy(tempTopHits.ScoreDocs, from, newScoreDocs, 0, newScoreDocs.Length);
+                            Arrays.Copy(tempTopHits.ScoreDocs, from, newScoreDocs, 0, newScoreDocs.Length);
                             tempTopHits.ScoreDocs = newScoreDocs;
                             topHits = tempTopHits;
                         }
@@ -286,7 +287,7 @@ namespace Lucene.Net.Search
                             // Can't use TopDocs#topDocs(start, howMany), since it has different behaviour when start >= hitCount
                             // than TopDocs#merge currently has
                             ScoreDoc[] newScoreDocs = new ScoreDoc[Math.Min(size, tempTopHits.ScoreDocs.Length - from)];
-                            Array.Copy(tempTopHits.ScoreDocs, from, newScoreDocs, 0, newScoreDocs.Length);
+                            Arrays.Copy(tempTopHits.ScoreDocs, from, newScoreDocs, 0, newScoreDocs.Length);
                             tempTopHits.ScoreDocs = newScoreDocs;
                             topHits = tempTopHits;
                         }

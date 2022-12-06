@@ -1,5 +1,6 @@
 ﻿using J2N.Numerics;
 using J2N.Text;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -118,7 +119,7 @@ namespace Lucene.Net.Codecs.Compressing
             int matchRef = Random.Next(30);
             int matchOff = RandomInts.RandomInt32Between(Random, decompressed.Length - 40, decompressed.Length - 20);
             int matchLength = RandomInts.RandomInt32Between(Random, 4, 10);
-            Array.Copy(decompressed, matchRef, decompressed, matchOff, matchLength);
+            Arrays.Copy(decompressed, matchRef, decompressed, matchOff, matchLength);
             Test(decompressed);
         }
 

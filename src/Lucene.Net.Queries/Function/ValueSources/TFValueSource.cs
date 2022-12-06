@@ -58,7 +58,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new SingleDocValuesAnonymousClass(this, this, terms, similarity);
         }
 
-        private class SingleDocValuesAnonymousClass : SingleDocValues
+        private sealed class SingleDocValuesAnonymousClass : SingleDocValues
         {
             private readonly TFValueSource outerInstance;
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             private int atDoc;
             private int lastDocRequested;
 
-            public virtual void Reset()
+            public void Reset()
             {
                 // no one should call us for deleted docs?
 
@@ -107,7 +107,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 atDoc = -1;
             }
 
-            private class DocsEnumAnonymousClass : DocsEnum
+            private sealed class DocsEnumAnonymousClass : DocsEnum
             {
                 public override int Freq => 0;
 

@@ -24,7 +24,8 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
+    <RollForward Condition=" $(TargetFramework.StartsWith('net7.')) ">Major</RollForward>
 
     <IsPublishable>true</IsPublishable>
     <IsPublishable Condition="$(TargetFramework.StartsWith('net4'))">false</IsPublishable>
@@ -39,11 +40,11 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     
-    
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <NoWarn Label="Nested types should not be visible">$(NoWarn);CA1034</NoWarn>
     <NoWarn Label="Remove unused parameter">$(NoWarn);IDE0060</NoWarn>
   </PropertyGroup>
+
 
   <ItemGroup>
     <None Include="docs\index.md" Pack="true" PackagePath="\readme.md" />

@@ -66,7 +66,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new FunctionValuesAnonymousClass2(this, valsArr);
         }
 
-        private class FunctionValuesAnonymousClass : FunctionValues
+        private sealed class FunctionValuesAnonymousClass : FunctionValues
         {
             private readonly VectorValueSource outerInstance;
 
@@ -137,7 +137,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        private class FunctionValuesAnonymousClass2 : FunctionValues
+        private sealed class FunctionValuesAnonymousClass2 : FunctionValues
         {
             private readonly VectorValueSource outerInstance;
             private readonly FunctionValues[] valsArr;
@@ -264,7 +264,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 }
                 sb.Append(source);
             }
-            sb.Append(")");
+            sb.Append(')');
             return sb.ToString();
         }
 

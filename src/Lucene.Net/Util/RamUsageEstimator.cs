@@ -3,6 +3,7 @@ using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -911,7 +912,7 @@ namespace Lucene.Net.Util
                         keys[slot] = key;
                     }
                 }
-                Array.Clear(oldKeys, 0, oldKeys.Length);
+                Arrays.Fill(oldKeys, null);
             }
 
             /// <summary>
@@ -947,7 +948,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Round the capacity to the next allowed value.
             /// </summary>
-            private int RoundCapacity(int requestedCapacity) // LUCENENET NOTE: made private, since protected is not valid in a sealed class
+            private static int RoundCapacity(int requestedCapacity) // LUCENENET NOTE: made private, since protected is not valid in a sealed class // LUCENENET: CA1822: Mark members as static
             {
                 // Maximum positive integer that is a power of two.
                 if (requestedCapacity > ((int)(0x80000000 >> 1))) // LUCENENET: No need to cast to uint because it already is
@@ -968,7 +969,7 @@ namespace Lucene.Net.Util
             public void Clear()
             {
                 Assigned = 0;
-                Array.Clear(keys, 0, keys.Length);
+                Arrays.Fill(keys, null);
             }
 
             public int Count => Assigned; // LUCENENET NOTE: This was size() in Lucene.
@@ -984,19 +985,19 @@ namespace Lucene.Net.Util
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public IEnumerator<KType> GetEnumerator()
             {
-                return new IteratorAnonymousClass(this);
+                return new EnumeratorAnonymousClass(this);
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousClass : IEnumerator<KType>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<KType>
             {
                 private readonly IdentityHashSet<KType> outerInstance;
 
-                public IteratorAnonymousClass(IdentityHashSet<KType> outerInstance)
+                public EnumeratorAnonymousClass(IdentityHashSet<KType> outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     pos = -1;
@@ -1022,7 +1023,7 @@ namespace Lucene.Net.Util
 
                 public KType Current => current;
 
-                object System.Collections.IEnumerator.Current => Current;
+                object IEnumerator.Current => Current;
 
                 private object FetchNext()
                 {
@@ -1042,6 +1043,7 @@ namespace Lucene.Net.Util
 
                 public void Dispose()
                 {
+                    // LUCENENET: Intentionally blank
                 }
             }
         }

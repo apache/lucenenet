@@ -186,7 +186,7 @@ namespace Lucene.Net.Expressions
             {
                 if (i > 0)
                 {
-                    sb.Append("+");
+                    sb.Append('+');
                 }
                 sb.Append("x" + i);
                 bindings.Add(new SortField("x" + i, SortFieldType.SCORE));

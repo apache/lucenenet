@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -92,7 +93,7 @@ namespace Lucene.Net.Sandbox.Queries
                 this.boostAtt = Attributes.AddAttribute<IBoostAttribute>();
 
                 this.text = new int[outerInstance.m_termLength - outerInstance.m_realPrefixLength];
-                System.Array.Copy(outerInstance.m_termText, outerInstance.m_realPrefixLength, text, 0, text.Length);
+                Arrays.Copy(outerInstance.m_termText, outerInstance.m_realPrefixLength, text, 0, text.Length);
                 string prefix = UnicodeUtil.NewString(outerInstance.m_termText, 0, outerInstance.m_realPrefixLength);
                 prefixBytesRef = new BytesRef(prefix);
                 this.d = new int[this.text.Length + 1];

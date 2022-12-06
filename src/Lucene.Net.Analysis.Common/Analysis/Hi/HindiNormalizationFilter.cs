@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Hi
@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Hi
     /// In some cases the normalization may cause unrelated terms to conflate, so
     /// to prevent terms from being normalized use an instance of
     /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
-    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
+    /// the <see cref="IKeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para> 
     /// </summary>
     /// <seealso cref="HindiNormalizer"/>

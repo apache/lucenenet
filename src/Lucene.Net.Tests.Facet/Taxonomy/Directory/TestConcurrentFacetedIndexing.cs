@@ -43,27 +43,27 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         // always returns true in put(), to indicate some cache entries were cleared.
         private static ITaxonomyWriterCache NO_OP_CACHE = new TaxonomyWriterCacheAnonymousClass();
 
-        private class TaxonomyWriterCacheAnonymousClass : ITaxonomyWriterCache
+        private sealed class TaxonomyWriterCacheAnonymousClass : ITaxonomyWriterCache
         {
             public TaxonomyWriterCacheAnonymousClass()
             {
             }
 
 
-            public virtual void Dispose()
+            public void Dispose()
             {
             }
-            public virtual int Get(FacetLabel categoryPath)
+            public int Get(FacetLabel categoryPath)
             {
                 return -1;
             }
-            public virtual bool Put(FacetLabel categoryPath, int ordinal)
+            public bool Put(FacetLabel categoryPath, int ordinal)
             {
                 return true;
             }
-            public virtual bool IsFull => true;
+            public bool IsFull => true;
 
-            public virtual void Clear()
+            public void Clear()
             {
             }
 
@@ -165,7 +165,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IOUtils.Dispose(tw, iw, tr, taxoDir, indexDir);
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestConcurrentFacetedIndexing outerInstance;
 

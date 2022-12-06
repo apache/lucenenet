@@ -339,11 +339,11 @@ namespace Lucene.Net.Analysis.En
             }
         }
 
-        private static readonly CharArrayMap<DictEntry> dict_ht = InitializeDictHash();
+        private static readonly CharArrayDictionary<DictEntry> dict_ht = InitializeDictHash();
 
         // caching off 
         // 
-        // private int maxCacheSize; private CharArrayMap{String} cache =
+        // private int maxCacheSize; private CharArrayDictionary{String} cache =
         // null; private static final String SAME = "SAME"; // use if stemmed form is
         // the same
 
@@ -357,7 +357,7 @@ namespace Lucene.Net.Analysis.En
         private int k;
 
         // private void initializeStemHash() { if (maxCacheSize > 0) cache = new
-        // CharArrayMap<String>(maxCacheSize,false); }
+        // CharArrayDictionary<String>(maxCacheSize,false); }
 
         private char FinalChar => word[k];
 
@@ -388,20 +388,20 @@ namespace Lucene.Net.Analysis.En
             }
         }
 
-        private static CharArrayMap<DictEntry> InitializeDictHash()
+        private static CharArrayDictionary<DictEntry> InitializeDictHash()
         {
             DictEntry defaultEntry;
             DictEntry entry;
 
 #pragma warning disable 612, 618
-            CharArrayMap<DictEntry> d = new CharArrayMap<DictEntry>(LuceneVersion.LUCENE_CURRENT, 1000, false);
+            CharArrayDictionary<DictEntry> d = new CharArrayDictionary<DictEntry>(LuceneVersion.LUCENE_CURRENT, 1000, false);
 #pragma warning restore 612, 618
             for (int i = 0; i < exceptionWords.Length; i++)
             {
                 if (!d.ContainsKey(exceptionWords[i]))
                 {
                     entry = new DictEntry(exceptionWords[i], true);
-                    d.Put(exceptionWords[i], entry);
+                    d[exceptionWords[i]] = entry;
                 }
                 else
                 {
@@ -414,7 +414,7 @@ namespace Lucene.Net.Analysis.En
                 if (!d.ContainsKey(directConflations[i][0]))
                 {
                     entry = new DictEntry(directConflations[i][1], false);
-                    d.Put(directConflations[i][0], entry);
+                    d[directConflations[i][0]] = entry;
                 }
                 else
                 {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Analysis.En
                 if (!d.ContainsKey(countryNationality[i][0]))
                 {
                     entry = new DictEntry(countryNationality[i][1], false);
-                    d.Put(countryNationality[i][0], entry);
+                    d[countryNationality[i][0]] = entry;
                 }
                 else
                 {
@@ -444,7 +444,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -457,7 +457,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -470,7 +470,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -483,7 +483,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -496,7 +496,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -509,7 +509,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -522,7 +522,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(array[i]))
                 {
-                    d.Put(array[i], defaultEntry);
+                    d[array[i]] = defaultEntry;
                 }
                 else
                 {
@@ -534,7 +534,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(KStemData8.data[i]))
                 {
-                    d.Put(KStemData8.data[i], defaultEntry);
+                    d[KStemData8.data[i]] = defaultEntry;
                 }
                 else
                 {
@@ -546,7 +546,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(supplementDict[i]))
                 {
-                    d.Put(supplementDict[i], defaultEntry);
+                    d[supplementDict[i]] = defaultEntry;
                 }
                 else
                 {
@@ -558,7 +558,7 @@ namespace Lucene.Net.Analysis.En
             {
                 if (!d.ContainsKey(properNouns[i]))
                 {
-                    d.Put(properNouns[i], defaultEntry);
+                    d[properNouns[i]] = defaultEntry;
                 }
                 else
                 {
@@ -569,7 +569,7 @@ namespace Lucene.Net.Analysis.En
             return d;
         }
 
-        private bool IsAlpha(char ch)
+        private static bool IsAlpha(char ch) // LUCENENET: CA1822: Mark members as static
         {
             return ch >= 'a' && ch <= 'z'; // terms must be lowercased already
         }
@@ -651,8 +651,7 @@ namespace Lucene.Net.Analysis.En
             {
                 return matchedEntry;
             }
-            DictEntry e = dict_ht.Get(word.Array, 0, word.Length);
-            if (e != null && !e.exception)
+            if (dict_ht.TryGetValue(word.Array, 0, word.Length, out DictEntry e) && e != null && !e.exception)
             {
                 matchedEntry = e; // only cache if it's not an exception.
             }
@@ -722,7 +721,7 @@ namespace Lucene.Net.Analysis.En
                     {
                         Lookup();
                     }
-                    return;
+                    //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                 }
                 else
                 {
@@ -770,8 +769,7 @@ namespace Lucene.Net.Analysis.En
             // thisLookup); } else { // System.out.println("new lookup:" + thisLookup);
             // }
 
-            matchedEntry = dict_ht.Get(word.Array, 0, word.Length);
-            return matchedEntry != null;
+            return dict_ht.TryGetValue(word.Array, 0, word.Length, out matchedEntry) && matchedEntry != null;
         }
 
         // Set<String> lookups = new HashSet<>();
@@ -872,7 +870,7 @@ namespace Lucene.Net.Analysis.En
                 word.UnsafeWrite('e');
                 k = j + 1;
                 // nolookup() - we already tried the "e" ending
-                return;
+                //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
         }
 
@@ -990,7 +988,7 @@ namespace Lucene.Net.Analysis.En
                 word.UnsafeWrite('e');
                 k = j + 1;
                 // nolookup(); we already tried an 'e' ending
-                return;
+                //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
         }
 
@@ -1068,7 +1066,7 @@ namespace Lucene.Net.Analysis.En
                 word.Length = j + 1;
                 k = j;
                 // nolookup(), we already did it.
-                return;
+                //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
         }
 
@@ -1106,7 +1104,7 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup() because we restored the original ending
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>handle -ness</summary>
@@ -1126,7 +1124,7 @@ namespace Lucene.Net.Analysis.En
                 }
                 Lookup();
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>handle -ism</summary>
@@ -1142,7 +1140,7 @@ namespace Lucene.Net.Analysis.En
                 k = j;
                 Lookup();
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>this routine deals with -ment endings.</summary>
@@ -1162,7 +1160,7 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>this routine deals with -ize endings.</summary>
@@ -1203,7 +1201,7 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup()
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>handle -ency and -ancy</summary>
@@ -1229,7 +1227,7 @@ namespace Lucene.Net.Analysis.En
                 k = j + 3;
                 Lookup();
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>handle -able and -ible</summary>
@@ -1283,7 +1281,7 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup()
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>
@@ -1327,7 +1325,7 @@ namespace Lucene.Net.Analysis.En
                 k = j + 2;
                 // nolookup()
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         private static char[] ization = "ization".ToCharArray();
@@ -1473,7 +1471,7 @@ namespace Lucene.Net.Analysis.En
             }
 
             // nolookup(); all of the other paths restored original values
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>
@@ -1647,7 +1645,7 @@ namespace Lucene.Net.Analysis.En
                 k = j;
                 // nolookup()... we already tried removing the "ly" variant
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>
@@ -1744,7 +1742,7 @@ namespace Lucene.Net.Analysis.En
                 }
 
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         /// <summary>
@@ -1804,7 +1802,7 @@ namespace Lucene.Net.Analysis.En
                 k = old_k;
                 // nolookup()
             }
-            return;
+            //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
         }
 
         internal KStemmer()
@@ -1872,8 +1870,7 @@ namespace Lucene.Net.Analysis.En
 
             // first check the stemmer dictionaries, and avoid using the
             // cache if it's in there.
-            DictEntry entry = dict_ht.Get(term, 0, len);
-            if (entry != null)
+            if (dict_ht.TryGetValue(term, 0, len, out DictEntry entry) && entry != null)
             {
                 if (entry.root != null)
                 {

@@ -1,6 +1,7 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
 using System;
 using System.Globalization;
 
@@ -111,7 +112,7 @@ namespace Lucene.Net.Analysis.Tr
         /// lookahead for a combining dot above.
         /// other NSMs may be in between.
         /// </summary>
-        private bool IsBeforeDot(char[] s, int pos, int len)
+        private static bool IsBeforeDot(char[] s, int pos, int len) // LUCENENET: CA1822: Mark members as static
         {
             for (int i = pos; i < len;)
             {
@@ -134,10 +135,10 @@ namespace Lucene.Net.Analysis.Tr
         /// delete a character in-place.
         /// rarely happens, only if <see cref="COMBINING_DOT_ABOVE"/> is found after an i
         /// </summary>
-        private int Delete(char[] s, int pos, int len)
+        private static int Delete(char[] s, int pos, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (pos < len)
-                Array.Copy(s, pos + 1, s, pos, len - pos - 1);
+                Arrays.Copy(s, pos + 1, s, pos, len - pos - 1);
 
             return len - 1;
         }

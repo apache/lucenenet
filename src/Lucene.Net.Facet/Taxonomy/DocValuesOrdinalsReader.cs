@@ -62,7 +62,7 @@ namespace Lucene.Net.Facet.Taxonomy
             return new OrdinalsSegmentReaderAnonymousClass(this, values);
         }
 
-        private class OrdinalsSegmentReaderAnonymousClass : OrdinalsSegmentReader
+        private sealed class OrdinalsSegmentReaderAnonymousClass : OrdinalsSegmentReader
         {
             private readonly DocValuesOrdinalsReader outerInstance;
 

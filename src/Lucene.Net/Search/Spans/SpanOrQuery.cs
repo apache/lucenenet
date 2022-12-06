@@ -214,7 +214,7 @@ namespace Lucene.Net.Search.Spans
             return new SpansAnonymousClass(this, context, acceptDocs, termContexts);
         }
 
-        private class SpansAnonymousClass : Spans
+        private sealed class SpansAnonymousClass : Spans
         {
             private readonly SpanOrQuery outerInstance;
 

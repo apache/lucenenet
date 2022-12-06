@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Highlight
             assertEquals("<B>This</B> piece of text refers to Kennedy at the beginning then has a longer piece of text that is <B>very</B>", fragment);
         }
 
-        private class TestHighlightUnknowQueryAnonymousClass : Query
+        private sealed class TestHighlightUnknowQueryAnonymousClass : Query
         {
             public override Query Rewrite(IndexReader reader)
             {
@@ -1244,7 +1244,7 @@ namespace Lucene.Net.Search.Highlight
             TestHighlightRunner helper = new TestHighlightRunner((instance) =>
             {
                 IDictionary<String, String> synonyms = new JCG.Dictionary<String, String>();
-                synonyms.Put("football", "soccer,footie");
+                synonyms["football"] = "soccer,footie";
                 Analyzer analyzer = new SynonymAnalyzer(synonyms);
 
                 String s = "football-soccer in the euro 2004 footie competition";
@@ -1543,7 +1543,7 @@ namespace Lucene.Net.Search.Highlight
             assertEquals("XHTML Encoding should have worked:", rawDocContent, decodedSnippet);
         }
 
-        private class TestEncodingScorerAnonymousClass : IScorer
+        private sealed class TestEncodingScorerAnonymousClass : IScorer
         {
             private readonly HighlighterTest outerInstance;
 

@@ -31,7 +31,7 @@ namespace Lucene.Net.Join
     /// query joins in reverse: you provide a <see cref="Query"/> matching
     /// parent documents and it joins down to child
     /// documents.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     [Obsolete("Use Lucene.Net.Search.Join.ToChildBlockJoinQuery instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
@@ -39,7 +39,7 @@ namespace Lucene.Net.Join
     {
         /// <summary>
         /// Message thrown from <see cref="ToChildBlockJoinScorer.ValidateParentDoc"/>
-        /// on mis-use, when the parent query incorrectly returns child docs. 
+        /// on mis-use, when the parent query incorrectly returns child docs.
         /// </summary>
         internal const string INVALID_QUERY_MESSAGE = "Parent query yields document which is not matched by parents filter, docID=";
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.Join
         /// Create a <see cref="ToChildBlockJoinQuery"/>.
         /// </summary>
         /// <param name="parentQuery"><see cref="Query"/> that matches parent documents</param>
-        /// <param name="parentsFilter"><see cref="Filter"/> (must produce FixedBitSet per-segment, like <see cref="FixedBitSetCachingWrapperFilter"/>) 
+        /// <param name="parentsFilter"><see cref="Filter"/> (must produce FixedBitSet per-segment, like <see cref="FixedBitSetCachingWrapperFilter"/>)
         /// identifying the parent documents.</param>
         /// <param name="doScores">True if parent scores should be calculated.</param>
         public ToChildBlockJoinQuery(Query parentQuery, Filter parentsFilter, bool doScores)
@@ -256,12 +256,12 @@ namespace Lucene.Net.Join
                     }
                     //System.out.println("  " + childDoc);
                     return _childDoc;
-                nextChildDocContinue:;
+                nextChildDocContinue: {/* LUCENENET: intentionally blank */}
                 }
             }
 
             /// <summary>
-            /// Detect mis-use, where provided parent query in fact sometimes returns child documents.  
+            /// Detect mis-use, where provided parent query in fact sometimes returns child documents.
             /// </summary>
             private void ValidateParentDoc()
             {

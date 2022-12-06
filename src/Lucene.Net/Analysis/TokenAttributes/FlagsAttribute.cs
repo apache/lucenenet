@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -19,56 +19,20 @@ namespace Lucene.Net.Analysis.TokenAttributes
      * limitations under the License.
      */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
-
-    /// <summary>
-    /// Default implementation of <see cref="IFlagsAttribute"/>. </summary>
-    public class FlagsAttribute : Attribute, IFlagsAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    /// <summary> This attribute can be used to pass different flags down the <see cref="Tokenizer" /> chain,
+    /// eg from one TokenFilter to another one.
+    /// <para/>
+    /// This is completely distinct from <see cref="ITypeAttribute"/>, although they do share similar purposes.
+    /// The flags can be used to encode information about the token for use by other 
+    /// <see cref="TokenFilter"/>s.
+    /// <para/>
+    /// @lucene.experimental While we think this is here to stay, we may want to change it to be a long.
+    /// </summary>
+    public interface IFlagsAttribute : IAttribute
     {
-        private int flags = 0;
-
         /// <summary>
-        /// Initialize this attribute with no bits set </summary>
-        public FlagsAttribute()
-        {
-        }
-
-        public virtual int Flags
-        {
-            get => flags;
-            set => this.flags = value;
-        }
-
-        public override void Clear()
-        {
-            flags = 0;
-        }
-
-        public override bool Equals(object other)
-        {
-            if (this == other)
-            {
-                return true;
-            }
-
-            if (other is FlagsAttribute flagsAttribute)
-            {
-                return flagsAttribute.flags == flags;
-            }
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return flags;
-        }
-
-        public override void CopyTo(IAttribute target)
-        {
-            FlagsAttribute t = (FlagsAttribute)target;
-            t.Flags = flags;
-        }
+        /// Get the bitset for any bits that have been set.
+        /// </summary>
+        int Flags { get; set; }
     }
 }

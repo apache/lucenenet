@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util.Fst;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -239,12 +240,12 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private void WriteHeader(IndexOutput @out)
+        private static void WriteHeader(IndexOutput @out) // LUCENENET: CA1822: Mark members as static
         {
             CodecUtil.WriteHeader(@out, TERMS_CODEC_NAME, TERMS_VERSION_CURRENT);
         }
 
-        private void WriteTrailer(IndexOutput output, long dirStart)
+        private static void WriteTrailer(IndexOutput output, long dirStart) // LUCENENET: CA1822: Mark members as static
         {
             output.WriteInt64(dirStart);
         }
@@ -405,7 +406,7 @@ namespace Lucene.Net.Codecs.Memory
                 _lastBlockStatsFp = _statsOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 _lastBlockMetaLongsFp = _metaLongsOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 _lastBlockMetaBytesFp = _metaBytesOut.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
-                Array.Copy(_lastLongs, 0, _lastBlockLongs, 0, _longsSize);
+                Arrays.Copy(_lastLongs, 0, _lastBlockLongs, 0, _longsSize);
             }
         }
     }

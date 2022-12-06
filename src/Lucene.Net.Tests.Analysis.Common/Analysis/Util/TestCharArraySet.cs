@@ -1,9 +1,13 @@
 ﻿// Lucene version compatibility level 4.8.1
+using J2N.Collections;
+using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,7 +65,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(set.Contains(new string(findme, 1, 4)));
 
             // test unmodifiable
-            set = CharArraySet.UnmodifiableSet(set);
+            set = set.AsReadOnly();
             assertTrue(set.Contains(findme, 1, 4));
             assertTrue(set.Contains(new string(findme, 1, 4)));
         }
@@ -77,7 +81,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(set.Contains("1"));
             assertTrue(set.Contains(new char[] { '1' }));
             // test unmodifiable
-            set = CharArraySet.UnmodifiableSet(set);
+            set = set.AsReadOnly();
             assertTrue(set.Contains(val));
             assertTrue(set.Contains(J2N.Numerics.Int32.GetInstance(1))); // another integer
             assertTrue(set.Contains("1"));
@@ -110,7 +114,7 @@ namespace Lucene.Net.Analysis.Util
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
             set.UnionWith(TEST_STOP_WORDS);
             int size = set.size();
-            set = CharArraySet.UnmodifiableSet(set);
+            set = set.AsReadOnly();
             assertEquals("Set size changed due to unmodifiableSet call", size, set.size());
             string NOT_IN_SET = "SirGallahad";
             assertFalse("Test String already exists in set", set.Contains(NOT_IN_SET));
@@ -195,9 +199,7 @@ namespace Lucene.Net.Analysis.Util
             // above fails to execute.
             try
             {
-#pragma warning disable 612, 618
-                set.Remove(TEST_STOP_WORDS[0]);
-#pragma warning restore 612, 618
+                ((ISet<string>)set).Remove(TEST_STOP_WORDS[0]);
                 fail("Modified unmodifiable set");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -222,7 +224,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                set.retainAll(new CharArraySet(TEST_VERSION_CURRENT, new [] { NOT_IN_SET }, true));
+                ((ISet<string>)set).ExceptWith(new CharArraySet(TEST_VERSION_CURRENT, new [] { NOT_IN_SET }, true));
                 fail("Modified unmodifiable set");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -233,7 +235,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                set.addAll(new[] { NOT_IN_SET});
+                set.UnionWith(new[] { NOT_IN_SET});
                 fail("Modified unmodifiable set");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -244,7 +246,7 @@ namespace Lucene.Net.Analysis.Util
 
             for (int i = 0; i < TEST_STOP_WORDS.Length; i++)
             {
-                assertTrue(set.contains(TEST_STOP_WORDS[i]));
+                assertTrue(set.Contains(TEST_STOP_WORDS[i]));
             }
         }
 
@@ -255,7 +257,7 @@ namespace Lucene.Net.Analysis.Util
             set.UnionWith(TEST_STOP_WORDS);
             set.Add(Convert.ToInt32(1));
             int size = set.size();
-            set = CharArraySet.UnmodifiableSet(set);
+            set = set.AsReadOnly();
             assertEquals("Set size changed due to unmodifiableSet call", size, set.size());
             foreach (var stopword in TEST_STOP_WORDS)
             {
@@ -265,15 +267,16 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(set.Contains("1"));
             assertTrue(set.Contains(new[] { '1' }));
 
-            try
-            {
-                CharArraySet.UnmodifiableSet(null);
-                fail("can not make null unmodifiable");
-            }
-            catch (ArgumentNullException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
-            {
-                // expected
-            }
+            // LUCENENET specific - we use an instance method, so this is not a valid call
+            //try
+            //{
+            //    CharArraySet.UnmodifiableSet(null);
+            //    fail("can not make null unmodifiable");
+            //}
+            //catch (ArgumentNullException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            //{
+            //    // expected
+            //}
         }
 
         [Test]
@@ -563,7 +566,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestCopyEmptySet()
         {
-            assertSame(CharArraySet.EMPTY_SET, CharArraySet.Copy(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET));
+            assertSame(CharArraySet.Empty, CharArraySet.Copy(TEST_VERSION_CURRENT, CharArraySet.Empty));
         }
 
         /// <summary>
@@ -572,17 +575,17 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestEmptySet()
         {
-            assertEquals(0, CharArraySet.EMPTY_SET.size());
+            assertEquals(0, CharArraySet.Empty.size());
 
-            assertTrue(CharArraySet.EMPTY_SET.Count == 0);
+            assertTrue(CharArraySet.Empty.Count == 0);
             foreach (string stopword in TEST_STOP_WORDS)
             {
-                assertFalse(CharArraySet.EMPTY_SET.Contains(stopword));
+                assertFalse(CharArraySet.Empty.Contains(stopword));
             }
-            assertFalse(CharArraySet.EMPTY_SET.Contains("foo"));
-            assertFalse(CharArraySet.EMPTY_SET.Contains((object)"foo"));
-            assertFalse(CharArraySet.EMPTY_SET.Contains("foo".ToCharArray()));
-            assertFalse(CharArraySet.EMPTY_SET.Contains("foo".ToCharArray(), 0, 3));
+            assertFalse(CharArraySet.Empty.Contains("foo"));
+            assertFalse(CharArraySet.Empty.Contains((object)"foo"));
+            assertFalse(CharArraySet.Empty.Contains("foo".ToCharArray()));
+            assertFalse(CharArraySet.Empty.Contains("foo".ToCharArray(), 0, 3));
         }
 
         /// <summary>
@@ -677,6 +680,315 @@ namespace Lucene.Net.Analysis.Util
             equatableSetReverse.Remove("sells");
             assertTrue(charArraySet.GetHashCode().Equals(equatableSetReverse.GetHashCode()));
             assertTrue(charArraySet.Equals(equatableSetReverse));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestSetEqualsObject()
+        {
+            var originalValues = new object[] { "sally".ToCharArray(), "sells".AsCharSequence(), "seashells".ToCharArray(), "by", "the".AsCharSequence(), "sea".ToCharArray(), "shore" };
+            var unequalValues = new object[] { "sally", "sells", "seashells", "by", "the", "sea", "sometimes" };
+            var unequalCaseValues = new object[] { "Sally".AsCharSequence(), "Sells".ToCharArray(), "Seashells", "by".ToCharArray(), "the", "Sea".ToCharArray(), "Shore".AsCharSequence() };
+            var unequalValueCount = new object[] { "sally".ToCharArray(), "sells".AsCharSequence(), "seashells".ToCharArray(), "by".AsCharSequence(), "the", "strange".AsCharSequence(), "sea", "shore".ToCharArray() };
+
+            TestSetEqualsObject(ignoreCase: false, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+            TestSetEqualsObject(ignoreCase: true, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestSetEqualsCharArray()
+        {
+            var originalValues = new List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var unequalValues = new List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "sometimes".ToCharArray() };
+            var unequalCaseValues = new List<char[]> { "Sally".ToCharArray(), "Sells".ToCharArray(), "Seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "Sea".ToCharArray(), "Shore".ToCharArray() };
+            var unequalValueCount = new List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "strange".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+
+            // LUCENENET NOTE: We must test the ignoreCase false case first here, because the true
+            // case will actually lowercase our input char arrays.
+            TestSetEqualsCharArray(ignoreCase: false, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+            TestSetEqualsCharArray(ignoreCase: true, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestSetEqualsString()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            var unequalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "sometimes" };
+            var unequalCaseValues = new string[] { "Sally", "Sells", "Seashells", "by", "the", "Sea", "Shore" };
+            var unequalValueCount = new string[] { "sally", "sells", "seashells", "by", "the", "strange", "sea", "shore" };
+
+            TestSetEqualsString(ignoreCase: false, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+            TestSetEqualsString(ignoreCase: true, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestSetEqualsCharSequence()
+        {
+            var originalValues = new ICharSequence[] { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            var unequalValues = new ICharSequence[] { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "sometimes".AsCharSequence() };
+            var unequalCaseValues = new ICharSequence[] { "Sally".AsCharSequence(), "Sells".AsCharSequence(), "Seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "Sea".AsCharSequence(), "Shore".AsCharSequence() };
+            var unequalValueCount = new ICharSequence[] { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "strange".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+
+            TestSetEqualsCharSequence(ignoreCase: false, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+            TestSetEqualsCharSequence(ignoreCase: true, originalValues, unequalValues, unequalCaseValues, unequalValueCount);
+        }
+
+        /// <summary>
+        /// Class that only implements <see cref="IEnumerable{T}"/>, so we can bypass the optimized
+        /// paths that cast to <see cref="ICollection{T}"/>.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private class TestEnumerable<T> : IEnumerable<T>
+        {
+            private readonly IEnumerable<T> source;
+            public TestEnumerable(IEnumerable<T> source)
+            {
+                this.source = source ?? throw new ArgumentNullException(nameof(source));
+            }
+
+            public IEnumerator<T> GetEnumerator() => source.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        private static CharArraySet CreateCharArraySet<T>(Version matchVersion, IList<T> values, bool ignoreCase)
+        {
+            var type = typeof(T);
+            if (type.Equals(typeof(string)))
+            {
+                return new CharArraySet(TEST_VERSION_CURRENT, (IList<string>)(object)values, ignoreCase);
+            }
+            else if (type.Equals(typeof(char[])))
+            {
+                return new CharArraySet(TEST_VERSION_CURRENT, (IList<char[]>)(object)values, ignoreCase);
+            }
+            else if (type.Equals(typeof(ICharSequence)))
+            {
+                return new CharArraySet(TEST_VERSION_CURRENT, (IList<ICharSequence>)(object)values, ignoreCase);
+            }
+
+            var result = new CharArraySet(TEST_VERSION_CURRENT, values.Count, ignoreCase);
+
+            foreach (var value in values)
+            {
+                result.Add(value);
+            }
+
+            return result;
+        }
+
+        public virtual void TestSetEqualsString(bool ignoreCase, IList<string> originalValues, IList<string> unequalValues, IList<string> unequalCaseValues, IList<string> unequalValueCount)
+        {
+            var originalValuesShuffled = originalValues.ToArray();
+            originalValuesShuffled.Shuffle(Random);
+
+            CharArraySet target = CreateCharArraySet(TEST_VERSION_CURRENT, originalValues, ignoreCase);
+
+            var charArraySet_Equal = CreateCharArraySet(TEST_VERSION_CURRENT, originalValuesShuffled, ignoreCase);
+            var charArraySet_Unequal = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValues, ignoreCase);
+            var charArraySet_UnequalCase = CreateCharArraySet(TEST_VERSION_CURRENT, unequalCaseValues, ignoreCase);
+            var charArraySet_UnequalValueCount = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValueCount, ignoreCase);
+
+            assertTrue(target.SetEquals(charArraySet_Equal));
+            assertFalse(target.SetEquals(charArraySet_Unequal));
+            assertEquals(target.SetEquals(charArraySet_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(charArraySet_UnequalValueCount));
+
+            var set_Equal = new HashSet<string>(originalValuesShuffled);
+            var set_EqualWithNull = new HashSet<string>(originalValuesShuffled) { null };
+            var set_Unequal = new HashSet<string>(unequalValues);
+            var set_UnequalCase = new HashSet<string>(unequalCaseValues);
+            var set_UnequalValueCount = new HashSet<string>(unequalValueCount);
+
+            assertTrue(target.SetEquals(set_Equal));
+            assertFalse(target.SetEquals(set_EqualWithNull));
+            assertFalse(target.SetEquals(set_Unequal));
+            assertEquals(target.SetEquals(set_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(set_UnequalValueCount));
+
+            var list_Equal = new List<string>(originalValuesShuffled);
+            var list_EqualWithNull = new List<string>(originalValuesShuffled) { null };
+            var list_Unequal = new List<string>(unequalValues);
+            var list_UnequalCase = new List<string>(unequalCaseValues);
+            var list_UnequalValueCount = new List<string>(unequalValueCount);
+
+            assertTrue(target.SetEquals(list_Equal));
+            assertFalse(target.SetEquals(list_EqualWithNull));
+            assertFalse(target.SetEquals(list_Unequal));
+            assertEquals(target.SetEquals(list_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(list_UnequalValueCount));
+
+            var enumerable_Equal = new TestEnumerable<string>(list_Equal);
+            var enumerable_EqualWithNull = new TestEnumerable<string>(list_EqualWithNull);
+            var enumerable_Unequal = new TestEnumerable<string>(list_Unequal);
+            var enumerable_UnequalCase = new TestEnumerable<string>(list_UnequalCase);
+            var enumerable_UnequalValueCount = new TestEnumerable<string>(unequalValueCount);
+
+            assertTrue(target.SetEquals(enumerable_Equal));
+            assertFalse(target.SetEquals(enumerable_EqualWithNull));
+            assertFalse(target.SetEquals(enumerable_Unequal));
+            assertEquals(target.SetEquals(enumerable_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(enumerable_UnequalValueCount));
+        }
+
+        public virtual void TestSetEqualsCharArray(bool ignoreCase, IList<char[]> originalValues, IList<char[]> unequalValues, IList<char[]> unequalCaseValues, IList<char[]> unequalValueCount)
+        {
+            var originalValuesShuffled = originalValues.ToArray();
+            originalValuesShuffled.Shuffle(Random);
+
+            CharArraySet target = CreateCharArraySet(TEST_VERSION_CURRENT, originalValues, ignoreCase);
+
+            var charArraySet_Equal = CreateCharArraySet(TEST_VERSION_CURRENT, originalValuesShuffled, ignoreCase);
+            var charArraySet_Unequal = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValues, ignoreCase);
+            var charArraySet_UnequalCase = CreateCharArraySet(TEST_VERSION_CURRENT, unequalCaseValues, ignoreCase);
+            var charArraySet_UnequalValueCount = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValueCount, ignoreCase);
+
+            assertTrue(target.SetEquals(charArraySet_Equal));
+            assertFalse(target.SetEquals(charArraySet_Unequal));
+            assertEquals(target.SetEquals(charArraySet_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(charArraySet_UnequalValueCount));
+
+            var set_Equal = new HashSet<char[]>(originalValuesShuffled);
+            var set_EqualWithNull = new HashSet<char[]>(originalValuesShuffled) { null };
+            var set_Unequal = new HashSet<char[]>(unequalValues);
+            var set_UnequalCase = new HashSet<char[]>(unequalCaseValues);
+            var set_UnequalValueCount = new HashSet<char[]>(unequalValueCount);
+
+            assertTrue(target.SetEquals(set_Equal));
+            assertFalse(target.SetEquals(set_EqualWithNull));
+            assertFalse(target.SetEquals(set_Unequal));
+            assertEquals(target.SetEquals(set_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(set_UnequalValueCount));
+
+            var list_Equal = new List<char[]>(originalValuesShuffled);
+            var list_EqualWithNull = new List<char[]>(originalValuesShuffled) { null };
+            var list_Unequal = new List<char[]>(unequalValues);
+            var list_UnequalCase = new List<char[]>(unequalCaseValues);
+            var list_UnequalValueCount = new List<char[]>(unequalValueCount);
+
+            assertTrue(target.SetEquals(list_Equal));
+            assertFalse(target.SetEquals(list_EqualWithNull));
+            assertFalse(target.SetEquals(list_Unequal));
+            assertEquals(target.SetEquals(list_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(list_UnequalValueCount));
+
+            var enumerable_Equal = new TestEnumerable<char[]>(list_Equal);
+            var enumerable_EqualWithNull = new TestEnumerable<char[]>(list_EqualWithNull);
+            var enumerable_Unequal = new TestEnumerable<char[]>(list_Unequal);
+            var enumerable_UnequalCase = new TestEnumerable<char[]>(list_UnequalCase);
+            var enumerable_UnequalValueCount = new TestEnumerable<char[]>(unequalValueCount);
+
+            assertTrue(target.SetEquals(enumerable_Equal));
+            assertFalse(target.SetEquals(enumerable_EqualWithNull));
+            assertFalse(target.SetEquals(enumerable_Unequal));
+            assertEquals(target.SetEquals(enumerable_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(enumerable_UnequalValueCount));
+        }
+
+        public virtual void TestSetEqualsCharSequence(bool ignoreCase, IList<ICharSequence> originalValues, IList<ICharSequence> unequalValues, IList<ICharSequence> unequalCaseValues, IList<ICharSequence> unequalValueCount)
+        {
+            var originalValuesShuffled = originalValues.ToArray();
+            originalValuesShuffled.Shuffle(Random);
+
+            CharArraySet target = CreateCharArraySet(TEST_VERSION_CURRENT, originalValues, ignoreCase);
+
+            var charArraySet_Equal = CreateCharArraySet(TEST_VERSION_CURRENT, originalValuesShuffled, ignoreCase);
+            var charArraySet_Unequal = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValues, ignoreCase);
+            var charArraySet_UnequalCase = CreateCharArraySet(TEST_VERSION_CURRENT, unequalCaseValues, ignoreCase);
+            var charArraySet_UnequalValueCount = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValueCount, ignoreCase);
+
+            assertTrue(target.SetEquals(charArraySet_Equal));
+            assertFalse(target.SetEquals(charArraySet_Unequal));
+            assertEquals(target.SetEquals(charArraySet_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(charArraySet_UnequalValueCount));
+
+            var set_Equal = new HashSet<ICharSequence>(originalValuesShuffled);
+            var set_EqualWithNull = new HashSet<ICharSequence>(originalValuesShuffled) { null, new CharArrayCharSequence(null) };
+            var set_Unequal = new HashSet<ICharSequence>(unequalValues);
+            var set_UnequalCase = new HashSet<ICharSequence>(unequalCaseValues);
+            var set_UnequalValueCount = new HashSet<ICharSequence>(unequalValueCount);
+
+            assertTrue(target.SetEquals(set_Equal));
+            assertFalse(target.SetEquals(set_EqualWithNull));
+            assertFalse(target.SetEquals(set_Unequal));
+            assertEquals(target.SetEquals(set_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(set_UnequalValueCount));
+
+            var list_Equal = new List<ICharSequence>(originalValuesShuffled);
+            var list_EqualWithNull = new List<ICharSequence>(originalValuesShuffled) { null, new CharArrayCharSequence(null) };
+            var list_Unequal = new List<ICharSequence>(unequalValues);
+            var list_UnequalCase = new List<ICharSequence>(unequalCaseValues);
+            var list_UnequalValueCount = new List<ICharSequence>(unequalValueCount);
+
+            assertTrue(target.SetEquals(list_Equal));
+            assertFalse(target.SetEquals(list_EqualWithNull));
+            assertFalse(target.SetEquals(list_Unequal));
+            assertEquals(target.SetEquals(list_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(list_UnequalValueCount));
+
+            var enumerable_Equal = new TestEnumerable<ICharSequence>(list_Equal);
+            var enumerable_EqualWithNull = new TestEnumerable<ICharSequence>(list_EqualWithNull);
+            var enumerable_Unequal = new TestEnumerable<ICharSequence>(list_Unequal);
+            var enumerable_UnequalCase = new TestEnumerable<ICharSequence>(list_UnequalCase);
+            var enumerable_UnequalValueCount = new TestEnumerable<ICharSequence>(unequalValueCount);
+
+            assertTrue(target.SetEquals(enumerable_Equal));
+            assertFalse(target.SetEquals(enumerable_EqualWithNull));
+            assertFalse(target.SetEquals(enumerable_Unequal));
+            assertEquals(target.SetEquals(enumerable_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(enumerable_UnequalValueCount));
+        }
+
+        public virtual void TestSetEqualsObject(bool ignoreCase, IList<object> originalValues, IList<object> unequalValues, IList<object> unequalCaseValues, IList<object> unequalValueCount)
+        {
+            var originalValuesShuffled = originalValues.ToArray();
+            originalValuesShuffled.Shuffle(Random);
+
+            CharArraySet target = CreateCharArraySet(TEST_VERSION_CURRENT, originalValues, ignoreCase);
+
+            var charArraySet_Equal = CreateCharArraySet(TEST_VERSION_CURRENT, originalValuesShuffled, ignoreCase);
+            var charArraySet_Unequal = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValues, ignoreCase);
+            var charArraySet_UnequalCase = CreateCharArraySet(TEST_VERSION_CURRENT, unequalCaseValues, ignoreCase);
+            var charArraySet_UnequalValueCount = CreateCharArraySet(TEST_VERSION_CURRENT, unequalValueCount, ignoreCase);
+
+            assertTrue(target.SetEquals(charArraySet_Equal));
+            assertFalse(target.SetEquals(charArraySet_Unequal));
+            assertEquals(target.SetEquals(charArraySet_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(charArraySet_UnequalValueCount));
+
+            var set_Equal = new HashSet<object>(originalValuesShuffled);
+            var set_EqualWithNull = new HashSet<object>(originalValuesShuffled) { null };
+            var set_Unequal = new HashSet<object>(unequalValues);
+            var set_UnequalCase = new HashSet<object>(unequalCaseValues);
+            var set_UnequalValueCount = new HashSet<object>(unequalValueCount);
+
+            assertTrue(target.SetEquals(set_Equal));
+            assertFalse(target.SetEquals(set_EqualWithNull));
+            assertFalse(target.SetEquals(set_Unequal));
+            assertEquals(target.SetEquals(set_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(set_UnequalValueCount));
+
+            var list_Equal = new List<object>(originalValuesShuffled);
+            var list_EqualWithNull = new List<object>(originalValuesShuffled) { null };
+            var list_Unequal = new List<object>(unequalValues);
+            var list_UnequalCase = new List<object>(unequalCaseValues);
+            var list_UnequalValueCount = new List<object>(unequalValueCount);
+
+            assertTrue(target.SetEquals(list_Equal));
+            assertFalse(target.SetEquals(list_EqualWithNull));
+            assertFalse(target.SetEquals(list_Unequal));
+            assertEquals(target.SetEquals(list_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(list_UnequalValueCount));
+
+            var enumerable_Equal = new TestEnumerable<object>(list_Equal);
+            var enumerable_EqualWithNull = new TestEnumerable<object>(list_EqualWithNull);
+            var enumerable_Unequal = new TestEnumerable<object>(list_Unequal);
+            var enumerable_UnequalCase = new TestEnumerable<object>(list_UnequalCase);
+            var enumerable_UnequalValueCount = new TestEnumerable<object>(unequalValueCount);
+
+            assertTrue(target.SetEquals(enumerable_Equal));
+            assertFalse(target.SetEquals(enumerable_EqualWithNull));
+            assertFalse(target.SetEquals(enumerable_Unequal));
+            assertEquals(target.SetEquals(enumerable_UnequalCase), ignoreCase);
+            assertFalse(target.SetEquals(enumerable_UnequalValueCount));
         }
 
         [Test, LuceneNetSpecific]
@@ -789,8 +1101,35 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new JCG.List<string> { "seashells", "sea", "shore" };
-            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<string> { "seashells", "sea", "shore", null };
+            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more", null };
+
+            assertFalse(target.IsSubsetOf(subset));
+            assertTrue(target.IsSubsetOf(superset));
+            assertTrue(target.IsSubsetOf(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsSubsetOfCharArray()
+        {
+            var originalValues = new JCG.List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var originalValuesCopy = originalValues.Select(x => (char[])x.Clone()).ToList();
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), null };
+            var superset = new JCG.List<char[]> { "introducing".ToCharArray(), "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), "and".ToCharArray(), "more".ToCharArray(), null };
+
+            assertFalse(target.IsSubsetOf(subset));
+            assertTrue(target.IsSubsetOf(superset));
+            assertTrue(target.IsSubsetOf(originalValuesCopy));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsSubsetOfCharSequence()
+        {
+            var originalValues = new JCG.List<ICharSequence> { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<ICharSequence> { "seashells".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), null, new CharArrayCharSequence(null) };
+            var superset = new JCG.List<ICharSequence> { "introducing".AsCharSequence(), "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), "and".AsCharSequence(), "more".AsCharSequence(), null, new CharArrayCharSequence(null) };
 
             assertFalse(target.IsSubsetOf(subset));
             assertTrue(target.IsSubsetOf(superset));
@@ -802,8 +1141,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new JCG.List<object> { "seashells", "sea", "shore" };
-            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<object> { "seashells", "sea", "shore", null };
+            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more", null };
 
             assertFalse(target.IsSubsetOf(subset));
             assertTrue(target.IsSubsetOf(superset));
@@ -815,8 +1154,35 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new JCG.List<string> { "seashells", "sea", "shore" };
-            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<string> { "seashells", "sea", "shore", null };
+            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more", null };
+
+            assertFalse(target.IsProperSubsetOf(subset));
+            assertTrue(target.IsProperSubsetOf(superset));
+            assertFalse(target.IsProperSubsetOf(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsProperSubsetOfCharArray()
+        {
+            var originalValues = new JCG.List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var originalValuesCopy = originalValues.Select(x => (char[])x.Clone()).ToList();
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), null };
+            var superset = new JCG.List<char[]> { "introducing".ToCharArray(), "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), "and".ToCharArray(), "more".ToCharArray(), null };
+
+            assertFalse(target.IsProperSubsetOf(subset));
+            assertTrue(target.IsProperSubsetOf(superset));
+            assertFalse(target.IsProperSubsetOf(originalValuesCopy));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsProperSubsetOfCharSequence()
+        {
+            var originalValues = new JCG.List<ICharSequence> { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<ICharSequence> { "seashells".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), null, new CharArrayCharSequence(null) };
+            var superset = new JCG.List<ICharSequence> { "introducing".AsCharSequence(), "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), "and".AsCharSequence(), "more".AsCharSequence(), null, new CharArrayCharSequence(null) };
 
             assertFalse(target.IsProperSubsetOf(subset));
             assertTrue(target.IsProperSubsetOf(superset));
@@ -828,8 +1194,8 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var subset = new JCG.List<object> { "seashells", "sea", "shore" };
-            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var subset = new JCG.List<object> { "seashells", "sea", "shore", null };
+            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more", null };
 
             assertFalse(target.IsProperSubsetOf(subset));
             assertTrue(target.IsProperSubsetOf(superset));
@@ -842,7 +1208,34 @@ namespace Lucene.Net.Analysis.Util
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
             var subset = new JCG.List<string> { "seashells", "sea", "shore" };
-            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more", null };
+
+            assertTrue(target.IsSupersetOf(subset));
+            assertFalse(target.IsSupersetOf(superset));
+            assertTrue(target.IsSupersetOf(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsSupersetOfCharArray()
+        {
+            var originalValues = new JCG.List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var originalValuesCopy = originalValues.Select(x => (char[])x.Clone()).ToList();
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var superset = new JCG.List<char[]> { "introducing".ToCharArray(), "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), "and".ToCharArray(), "more".ToCharArray(), null };
+
+            assertTrue(target.IsSupersetOf(subset));
+            assertFalse(target.IsSupersetOf(superset));
+            assertTrue(target.IsSupersetOf(originalValuesCopy));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsSupersetOfCharSequence()
+        {
+            var originalValues = new JCG.List<ICharSequence> { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<ICharSequence> { "seashells".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            var superset = new JCG.List<ICharSequence> { "introducing".AsCharSequence(), "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), "and".AsCharSequence(), "more".AsCharSequence(), null, new CharArrayCharSequence(null) };
 
             assertTrue(target.IsSupersetOf(subset));
             assertFalse(target.IsSupersetOf(superset));
@@ -855,7 +1248,7 @@ namespace Lucene.Net.Analysis.Util
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
             var subset = new JCG.List<object> { "seashells", "sea", "shore" };
-            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more", null };
 
             assertTrue(target.IsSupersetOf(subset));
             assertFalse(target.IsSupersetOf(superset));
@@ -868,7 +1261,34 @@ namespace Lucene.Net.Analysis.Util
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
             var subset = new JCG.List<string> { "seashells", "sea", "shore" };
-            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var superset = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more", null };
+
+            assertTrue(target.IsProperSupersetOf(subset));
+            assertFalse(target.IsProperSupersetOf(superset));
+            assertFalse(target.IsProperSupersetOf(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsProperSupersetOfCharArray()
+        {
+            var originalValues = new JCG.List<char[]> { "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var originalValuesCopy = originalValues.Select(x => (char[])x.Clone()).ToList();
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<char[]> { "seashells".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray() };
+            var superset = new JCG.List<char[]> { "introducing".ToCharArray(), "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), "and".ToCharArray(), "more".ToCharArray(), null };
+
+            assertTrue(target.IsProperSupersetOf(subset));
+            assertFalse(target.IsProperSupersetOf(superset));
+            assertFalse(target.IsProperSupersetOf(originalValuesCopy));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsProperSupersetOfCharSequence()
+        {
+            var originalValues = new JCG.List<ICharSequence> { "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var subset = new JCG.List<ICharSequence> { "seashells".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence() };
+            var superset = new JCG.List<ICharSequence> { "introducing".AsCharSequence(), "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), "and".AsCharSequence(), "more".AsCharSequence(), null, new CharArrayCharSequence(null) };
 
             assertTrue(target.IsProperSupersetOf(subset));
             assertFalse(target.IsProperSupersetOf(superset));
@@ -881,7 +1301,7 @@ namespace Lucene.Net.Analysis.Util
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
             var subset = new JCG.List<object> { "seashells", "sea", "shore" };
-            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var superset = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more", null };
 
             assertTrue(target.IsProperSupersetOf(subset));
             assertFalse(target.IsProperSupersetOf(superset));
@@ -893,8 +1313,34 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var nonOverlapping = new JCG.List<string> { "peter", "piper", "picks", "a", "pack", "of", "pickled", "peppers" };
-            var overlapping = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var nonOverlapping = new JCG.List<string> { "peter", "piper", "picks", "a", "pack", "of", "pickled", "peppers", null };
+            var overlapping = new JCG.List<string> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more", null };
+
+            assertFalse(target.Overlaps(nonOverlapping));
+            assertTrue(target.Overlaps(overlapping));
+            assertTrue(target.Overlaps(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestOverlapsCharArray()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var nonOverlapping = new JCG.List<char[]> { "peter".ToCharArray(), "piper".ToCharArray(), "picks".ToCharArray(), "a".ToCharArray(), "pack".ToCharArray(), "of".ToCharArray(), "pickled".ToCharArray(), "peppers".ToCharArray(), null };
+            var overlapping = new JCG.List<char[]> { "introducing".ToCharArray(), "sally".ToCharArray(), "sells".ToCharArray(), "seashells".ToCharArray(), "by".ToCharArray(), "the".ToCharArray(), "sea".ToCharArray(), "shore".ToCharArray(), "and".ToCharArray(), "more".ToCharArray(), null };
+
+            assertFalse(target.Overlaps(nonOverlapping));
+            assertTrue(target.Overlaps(overlapping));
+            assertTrue(target.Overlaps(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestOverlapsCharSequence()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            var nonOverlapping = new JCG.List<ICharSequence> { "peter".AsCharSequence(), "piper".AsCharSequence(), "picks".AsCharSequence(), "a".AsCharSequence(), "pack".AsCharSequence(), "of".AsCharSequence(), "pickled".AsCharSequence(), "peppers".AsCharSequence(), null, new CharArrayCharSequence(null) };
+            var overlapping = new JCG.List<ICharSequence> { "introducing".AsCharSequence(), "sally".AsCharSequence(), "sells".AsCharSequence(), "seashells".AsCharSequence(), "by".AsCharSequence(), "the".AsCharSequence(), "sea".AsCharSequence(), "shore".AsCharSequence(), "and".AsCharSequence(), "more".AsCharSequence(), null, new CharArrayCharSequence(null) };
 
             assertFalse(target.Overlaps(nonOverlapping));
             assertTrue(target.Overlaps(overlapping));
@@ -906,12 +1352,393 @@ namespace Lucene.Net.Analysis.Util
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
             CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
-            var nonOverlapping = new JCG.List<object> { "peter", "piper", "picks", "a", "pack", "of", "pickled", "peppers" };
-            var overlapping = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more" };
+            var nonOverlapping = new JCG.List<object> { "peter", "piper", "picks", "a", "pack", "of", "pickled", "peppers", null };
+            var overlapping = new JCG.List<object> { "introducing", "sally", "sells", "seashells", "by", "the", "sea", "shore", "and", "more", null };
 
             assertFalse(target.Overlaps(nonOverlapping));
             assertTrue(target.Overlaps(overlapping));
             assertTrue(target.Overlaps(originalValues));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIsReadOnly()
+        {
+            var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            CharArraySet target = new CharArraySet(TEST_VERSION_CURRENT, originalValues, false);
+            CharArraySet readOnlyTarget = target.AsReadOnly();
+
+            assertFalse(target.IsReadOnly);
+            assertTrue(readOnlyTarget.IsReadOnly);
+        }
+
+
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArraySet_CharArraySet_BWCompat()
+        {
+            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
+
+            IList<string> stopwords = TEST_STOP_WORDS;
+            IList<string> stopwordsUpper = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                stopwordsUpper.Add(@string.ToUpperInvariant());
+            }
+            setIngoreCase.UnionWith(TEST_STOP_WORDS);
+            setIngoreCase.Add(Convert.ToInt32(1));
+            setCaseSensitive.UnionWith(TEST_STOP_WORDS);
+            setCaseSensitive.Add(Convert.ToInt32(1));
+
+            CharArraySet copy = setIngoreCase.ToCharArraySet(TEST_VERSION_CURRENT);
+            CharArraySet copyCaseSens = setCaseSensitive.ToCharArraySet(TEST_VERSION_CURRENT);
+
+            assertEquals(setIngoreCase.Count, copy.Count);
+            assertEquals(setCaseSensitive.Count, copy.Count);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copyCaseSens.IsSupersetOf(stopwords));
+            foreach (string @string in stopwordsUpper)
+            {
+                assertFalse(copyCaseSens.Contains(@string));
+            }
+            // test adding terms to the copy
+            IList<string> newWords = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                newWords.Add(@string + "_1");
+            }
+            copy.UnionWith(newWords);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copy.IsSupersetOf(newWords));
+            // new added terms are not in the source set
+            foreach (string @string in newWords)
+            {
+                assertFalse(setIngoreCase.Contains(@string));
+                assertFalse(setCaseSensitive.Contains(@string));
+
+            }
+        }
+
+        /// <summary>
+        /// Test the ToCharArraySet function with a CharArraySet as a source
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArraySet_CharArraySet()
+        {
+            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
+
+            IList<string> stopwords = TEST_STOP_WORDS;
+            IList<string> stopwordsUpper = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                stopwordsUpper.Add(@string.ToUpperInvariant());
+            }
+            setIngoreCase.UnionWith(TEST_STOP_WORDS);
+            setIngoreCase.Add(Convert.ToInt32(1));
+            setCaseSensitive.UnionWith(TEST_STOP_WORDS);
+            setCaseSensitive.Add(Convert.ToInt32(1));
+
+            CharArraySet copy = CharArraySet.Copy(TEST_VERSION_CURRENT, setIngoreCase);
+            CharArraySet copyCaseSens = CharArraySet.Copy(TEST_VERSION_CURRENT, setCaseSensitive);
+
+            assertEquals(setIngoreCase.Count, copy.Count);
+            assertEquals(setCaseSensitive.Count, copy.Count);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copyCaseSens.IsSupersetOf(stopwords));
+            foreach (string @string in stopwordsUpper)
+            {
+                assertFalse(copyCaseSens.Contains(@string));
+            }
+            // test adding terms to the copy
+            IList<string> newWords = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                newWords.Add(@string + "_1");
+            }
+            copy.UnionWith(newWords);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copy.IsSupersetOf(newWords));
+            // new added terms are not in the source set
+            foreach (string @string in newWords)
+            {
+                assertFalse(setIngoreCase.Contains(@string));
+                assertFalse(setCaseSensitive.Contains(@string));
+            }
+        }
+
+        /// <summary>
+        /// Test the ToCharArraySet function with a CharArraySet as a source
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArray_MatchVersion_IgnoreCase_SetCharArray()
+        {
+            CharArraySet setIngoreCase = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            CharArraySet setCaseSensitive = new CharArraySet(TEST_VERSION_CURRENT, 10, false);
+
+            IList<string> stopwords = TEST_STOP_WORDS;
+            IList<string> stopwordsUpper = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                stopwordsUpper.Add(@string.ToUpperInvariant());
+            }
+            setIngoreCase.UnionWith(TEST_STOP_WORDS);
+            setIngoreCase.Add(Convert.ToInt32(1));
+            setCaseSensitive.UnionWith(TEST_STOP_WORDS);
+            setCaseSensitive.Add(Convert.ToInt32(1));
+
+            CharArraySet copy = setCaseSensitive.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: true);
+            CharArraySet copyCaseSens = setCaseSensitive.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: false);
+
+            assertEquals(setIngoreCase.Count, copy.Count);
+            assertEquals(setCaseSensitive.Count, copy.Count);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copyCaseSens.IsSupersetOf(stopwords));
+            foreach (string @string in stopwordsUpper)
+            {
+                assertFalse(copyCaseSens.Contains(@string));
+            }
+            // test adding terms to the copy
+            IList<string> newWords = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                newWords.Add(@string + "_1");
+            }
+            copy.UnionWith(newWords);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copy.IsSupersetOf(newWords));
+            // new added terms are not in the source set
+            foreach (string @string in newWords)
+            {
+                assertFalse(setIngoreCase.Contains(@string));
+                assertFalse(setCaseSensitive.Contains(@string));
+            }
+        }
+
+        /// <summary>
+        /// Test the ToCharArraySet function with a .NET <seealso cref="ISet{T}"/> as a source
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArray_MatchVersion_SetJDKSet()
+        {
+            ISet<string> set = new JCG.HashSet<string>();
+
+            IList<string> stopwords = TEST_STOP_WORDS;
+            IList<string> stopwordsUpper = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                stopwordsUpper.Add(@string.ToUpperInvariant());
+            }
+            set.UnionWith(TEST_STOP_WORDS);
+
+            CharArraySet copyCaseSens = set.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: false);
+            CharArraySet copy = stopwordsUpper.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: true);
+
+            assertEquals(set.Count, copyCaseSens.Count);
+            assertEquals(set.Count, copy.Count);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copyCaseSens.IsSupersetOf(stopwords));
+            foreach (string @string in stopwordsUpper)
+            {
+                assertFalse(copyCaseSens.Contains(@string));
+            }
+
+            IList<string> newWords = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                newWords.Add(@string + "_1");
+            }
+            copy.UnionWith(newWords);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copy.IsSupersetOf(newWords));
+            // new added terms are not in the source set
+            foreach (string @string in newWords)
+            {
+                assertFalse(set.Contains(@string));
+                assertFalse(stopwordsUpper.Contains(@string));
+            }
+        }
+
+        /// <summary>
+        /// Test the ToCharArraySet function with a .NET <seealso cref="ISet{T}"/> as a source
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArray_MatchVersion_IgnoreCase_SetJDKSet()
+        {
+            ISet<string> set = new JCG.HashSet<string>();
+
+            IList<string> stopwords = TEST_STOP_WORDS;
+            IList<string> stopwordsUpper = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                stopwordsUpper.Add(@string.ToUpperInvariant());
+            }
+            set.UnionWith(TEST_STOP_WORDS);
+
+            CharArraySet copyCaseSens = set.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: false);
+            CharArraySet copy = stopwordsUpper.ToCharArraySet(TEST_VERSION_CURRENT, ignoreCase: true);
+
+            assertEquals(set.Count, copyCaseSens.Count);
+            assertEquals(set.Count, copy.Count);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copyCaseSens.IsSupersetOf(stopwords));
+            foreach (string @string in stopwordsUpper)
+            {
+                assertFalse(copyCaseSens.Contains(@string));
+            }
+
+            IList<string> newWords = new JCG.List<string>();
+            foreach (string @string in stopwords)
+            {
+                newWords.Add(@string + "_1");
+            }
+            copy.UnionWith(newWords);
+
+            assertTrue(copy.IsSupersetOf(stopwords));
+            assertTrue(copy.IsSupersetOf(stopwordsUpper));
+            assertTrue(copy.IsSupersetOf(newWords));
+            // new added terms are not in the source set
+            foreach (string @string in newWords)
+            {
+                assertFalse(set.Contains(@string));
+                assertFalse(stopwordsUpper.Contains(@string));
+            }
+        }
+
+        /// <summary>
+        /// Tests a special case of <see cref="CharArraySet.ToCharArraySet()"/> where the
+        /// set to copy is the <see cref="CharArraySet.Empty"/>
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestToCharArraySetEmptySet()
+        {
+            assertSame(CharArraySet.Empty, CharArraySet.Empty.ToCharArraySet(TEST_VERSION_CURRENT));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestCopyToStringArray()
+        {
+            var stopwords = new HashSet<string>(TEST_STOP_WORDS, StringComparer.OrdinalIgnoreCase);
+            var target = new CharArraySet(TEST_VERSION_CURRENT, stopwords, ignoreCase: false);
+
+            // Full array
+            var array1 = new string[target.Count];
+            target.CopyTo(array1);
+            assertTrue(stopwords.SetEquals(array1));
+
+            // Bounded to lower start index
+            int startIndex = 3;
+            var array2 = new string[target.Count + startIndex];
+            target.CopyTo(array2, startIndex);
+
+            assertNull(array2[0]);
+            assertNull(array2[1]);
+            assertNull(array2[2]);
+            assertTrue(stopwords.IsProperSubsetOf(array2));
+            assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
+
+            // Constrianed both start index and count
+            startIndex = 5;
+            int count = 7;
+            var array3 = new string[count + startIndex];
+            target.CopyTo(array3, startIndex, count);
+
+            assertNull(array3[0]);
+            assertNull(array3[1]);
+            assertNull(array3[2]);
+            assertNull(array3[3]);
+            assertNull(array3[4]);
+            assertTrue(stopwords.IsProperSupersetOf(array3.Skip(startIndex).Take(count).ToArray()));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestCopyToStringCharArray()
+        {
+            var stopwords = new JCG.HashSet<char[]>(TEST_STOP_WORDS.Select(x => x.ToCharArray()));
+            var target = new CharArraySet(TEST_VERSION_CURRENT, stopwords, ignoreCase: false);
+
+            // Full array
+            var array1 = new char[target.Count][];
+            target.CopyTo(array1);
+            assertTrue(target.SetEquals(array1));
+
+            // Bounded to lower start index
+            int startIndex = 3;
+            var array2 = new char[target.Count + startIndex][];
+            target.CopyTo(array2, startIndex);
+
+            assertNull(array2[0]);
+            assertNull(array2[1]);
+            assertNull(array2[2]);
+            assertTrue(target.IsProperSubsetOf(array2));
+            assertTrue(target.SetEquals(array2.Skip(startIndex).ToArray()));
+
+            // Constrianed both start index and count
+            startIndex = 5;
+            int count = 7;
+            var array3 = new char[count + startIndex][];
+            target.CopyTo(array3, startIndex, count);
+
+            assertNull(array3[0]);
+            assertNull(array3[1]);
+            assertNull(array3[2]);
+            assertNull(array3[3]);
+            assertNull(array3[4]);
+            assertTrue(target.IsProperSupersetOf(array3.Skip(startIndex).Take(count).ToArray()));
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestCopyToCharSequence()
+        {
+            var stopwords = new HashSet<ICharSequence>(TEST_STOP_WORDS.Select(x => x.AsCharSequence()));
+            var target = new CharArraySet(TEST_VERSION_CURRENT, stopwords, ignoreCase: false);
+
+            // Full array
+            var array1 = new ICharSequence[target.Count];
+            target.CopyTo(array1);
+            assertTrue(stopwords.SetEquals(array1));
+
+            // Bounded to lower start index
+            int startIndex = 3;
+            var array2 = new ICharSequence[target.Count + startIndex];
+            target.CopyTo(array2, startIndex);
+
+            assertNull(array2[0]);
+            assertNull(array2[1]);
+            assertNull(array2[2]);
+            assertTrue(stopwords.IsProperSubsetOf(array2));
+            assertTrue(stopwords.SetEquals(array2.Skip(startIndex).ToArray()));
+
+            // Constrianed both start index and count
+            startIndex = 5;
+            int count = 7;
+            var array3 = new ICharSequence[count + startIndex];
+            target.CopyTo(array3, startIndex, count);
+
+            assertNull(array3[0]);
+            assertNull(array3[1]);
+            assertNull(array3[2]);
+            assertNull(array3[3]);
+            assertNull(array3[4]);
+            assertTrue(stopwords.IsProperSupersetOf(array3.Skip(startIndex).Take(count).ToArray()));
         }
 
         #endregion

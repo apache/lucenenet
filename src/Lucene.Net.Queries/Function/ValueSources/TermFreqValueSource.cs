@@ -50,7 +50,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new Int32DocValuesAnonymousClass(this, this, terms);
         }
 
-        private class Int32DocValuesAnonymousClass : Int32DocValues
+        private sealed class Int32DocValuesAnonymousClass : Int32DocValues
         {
             private readonly TermFreqValueSource outerInstance;
 
@@ -69,7 +69,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             private int atDoc;
             private int lastDocRequested;
 
-            public virtual void Reset()
+            public void Reset()
             {
                 // no one should call us for deleted docs?
 
@@ -97,7 +97,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 atDoc = -1;
             }
 
-            private class DocsEnumAnonymousClass : DocsEnum
+            private sealed class DocsEnumAnonymousClass : DocsEnum
             {
                 public override int Freq => 0;
 

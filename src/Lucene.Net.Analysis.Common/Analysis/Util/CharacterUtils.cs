@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (bufferSize < 2)
             {
-                // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                // LUCENENET: Changed from IllegalArgumentException to ArgumentOutOfRangeException
                 throw new ArgumentOutOfRangeException(nameof(bufferSize), "buffersize must be >= 2");
             }
             return new CharacterBuffer(new char[bufferSize], 0, 0);
@@ -183,10 +183,17 @@ namespace Lucene.Net.Analysis.Util
                 Debugging.Assert(offset <= 0 && offset <= buffer.Length);
             }
 
-            // Slight optimization, eliminating a few method calls internally
-            CultureInfo.InvariantCulture.TextInfo
-                .ToLower(new string(buffer, offset, length))
-                .CopyTo(0, buffer, offset, length);
+            // Reduce allocations by using the stack and spans
+            var source = new ReadOnlySpan<char>(buffer, offset, length);
+            var destination = buffer.AsSpan(offset, length);
+            var spare = length * sizeof(char) <= Constants.MaxStackByteLimit ? stackalloc char[length] : new char[length];
+            source.ToLower(spare, CultureInfo.InvariantCulture);
+            spare.CopyTo(destination);
+
+            //// Slight optimization, eliminating a few method calls internally
+            //CultureInfo.InvariantCulture.TextInfo
+            //    .ToLower(new string(buffer, offset, length))
+            //    .CopyTo(0, buffer, offset, length);
 
             //// Optimization provided by Vincent Van Den Berghe: 
             //// http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
@@ -194,8 +201,9 @@ namespace Lucene.Net.Analysis.Util
             //    .ToLowerInvariant()
             //    .CopyTo(0, buffer, offset, length);
 
-            // Original (slow) Lucene implementation:
-            //for (int i = offset; i < limit; )
+            //// Original (slow) Lucene implementation:
+            //int limit = length - offset;
+            //for (int i = offset; i < limit;)
             //{
             //    i += Character.ToChars(
             //        Character.ToLower(
@@ -217,10 +225,17 @@ namespace Lucene.Net.Analysis.Util
                 Debugging.Assert(offset <= 0 && offset <= buffer.Length);
             }
 
-            // Slight optimization, eliminating a few method calls internally
-            CultureInfo.InvariantCulture.TextInfo
-                .ToUpper(new string(buffer, offset, length))
-                .CopyTo(0, buffer, offset, length);
+            // Reduce 2 heap allocations by using the stack and spans
+            var source = new ReadOnlySpan<char>(buffer, offset, length);
+            var destination = buffer.AsSpan(offset, length);
+            var spare = length * sizeof(char) <= Constants.MaxStackByteLimit ? stackalloc char[length] : new char[length];
+            source.ToUpper(spare, CultureInfo.InvariantCulture);
+            spare.CopyTo(destination);
+
+            //// Slight optimization, eliminating a few method calls internally
+            //CultureInfo.InvariantCulture.TextInfo
+            //    .ToUpper(new string(buffer, offset, length))
+            //    .CopyTo(0, buffer, offset, length);
 
             //// Optimization provided by Vincent Van Den Berghe: 
             //// http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
@@ -228,8 +243,9 @@ namespace Lucene.Net.Analysis.Util
             //    .ToUpperInvariant()
             //    .CopyTo(0, buffer, offset, length);
 
-            // Original (slow) Lucene implementation:
-            //for (int i = offset; i < limit; )
+            //// Original (slow) Lucene implementation:
+            //int limit = length - offset;
+            //for (int i = offset; i < limit;)
             //{
             //    i += Character.ToChars(
             //        Character.ToUpper(
@@ -244,7 +260,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (srcLen < 0)
             {
-                // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                // LUCENENET: Changed from IllegalArgumentException to ArgumentOutOfRangeException
                 throw new ArgumentOutOfRangeException(nameof(srcLen), "srcLen must be >= 0");
             }
             int codePointCount = 0;
@@ -261,11 +277,12 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Converts a sequence of unicode code points to a sequence of .NET characters. </summary>
         ///  <returns> the number of chars written to the destination buffer  </returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         public int ToChars(int[] src, int srcOff, int srcLen, char[] dest, int destOff)
         {
             if (srcLen < 0)
             {
-                // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                // LUCENENET: Changed from IllegalArgumentException to ArgumentOutOfRangeException
                 throw new ArgumentOutOfRangeException(nameof(srcLen), "srcLen must be >= 0");
             }
             int written = 0;
@@ -361,7 +378,7 @@ namespace Lucene.Net.Analysis.Util
                 if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Buffer.Length >= 2);
                 if (numChars < 2 || numChars > buffer.Buffer.Length)
                 {
-                    // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                    // LUCENENET: Changed from IllegalArgumentException to ArgumentOutOfRangeException
                     throw new ArgumentOutOfRangeException(nameof(numChars), "numChars must be >= 2 and <= the buffer size");
                 }
                 char[] charBuffer = buffer.Buffer;
@@ -469,11 +486,11 @@ namespace Lucene.Net.Analysis.Util
                     throw new ArgumentNullException(nameof(chars)); // LUCENENET specific - added null guard clause
                 if (offset >= limit)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(offset), "offset must be less than limit");
+                    throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must be less than limit.");
                 }
                 // LUCENENET specific - added array bound check
                 if (offset < 0  || offset >= chars.Length)
-                    throw new ArgumentOutOfRangeException(nameof(offset));
+                    throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must not be negative and be less than chars.Length.");
 
                 return chars[offset];
             }
@@ -483,7 +500,7 @@ namespace Lucene.Net.Analysis.Util
                 if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Buffer.Length >= 1);
                 if (numChars < 1 || numChars > buffer.Buffer.Length)
                 {
-                    // LUCENENET: Changed from InvalidArgumentException to ArgumentOutOfRangeException
+                    // LUCENENET: Changed from IllegalArgumentException to ArgumentOutOfRangeException
                     throw new ArgumentOutOfRangeException(nameof(numChars), "numChars must be >= 1 and <= the buffer size");
                 }
                 buffer.offset = 0;
@@ -527,12 +544,13 @@ namespace Lucene.Net.Analysis.Util
 
             public override int OffsetByCodePoints(char[] buf, int start, int count, int index, int offset)
             {
-                int result = index + offset;
+                // LUCENENET: Checks for int overflow
+                uint result = (uint)index + (uint)offset;
                 if (result < 0 || result > count)
                 {
                     throw new ArgumentOutOfRangeException(nameof(index) + " + " + nameof(offset), "index + offset must be >= 0 and <= count");
                 }
-                return result;
+                return (int)result;
             }
         }
 

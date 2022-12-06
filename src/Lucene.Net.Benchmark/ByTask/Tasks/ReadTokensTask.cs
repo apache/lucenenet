@@ -152,7 +152,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
             }
 
-            protected override void Dispose(bool disposing) { }
+            protected override void Dispose(bool disposing)
+            {
+                // LUCENENET: Intentionally blank
+            }
         }
 
         /// <summary>

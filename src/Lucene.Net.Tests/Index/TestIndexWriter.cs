@@ -15,6 +15,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -1037,7 +1038,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TokenStreamAnonymousClass : TokenStream
+        private sealed class TokenStreamAnonymousClass : TokenStream
         {
             private readonly TestIndexWriter outerInstance;
 
@@ -2318,7 +2319,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class AnalyzerAnonymousClass : Analyzer
+        private sealed class AnalyzerAnonymousClass : Analyzer
         {
             private readonly TestIndexWriter outerInstance;
 
@@ -2601,7 +2602,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    w.AddDocuments(new RandomFailingFieldIterable(docs, Random));
+                    w.AddDocuments(new RandomFailingFieldEnumerable(docs, Random));
                     success = true;
                 }
                 catch (Exception e) when (e.IsRuntimeException())
@@ -2640,12 +2641,12 @@ namespace Lucene.Net.Index
             IOUtils.Dispose(reader, w, dir);
         }
 
-        private class RandomFailingFieldIterable : IEnumerable<IEnumerable<IIndexableField>>
+        private class RandomFailingFieldEnumerable : IEnumerable<IEnumerable<IIndexableField>>
         {
             internal readonly IList<IEnumerable<IIndexableField>> docList;
             internal readonly Random random;
 
-            public RandomFailingFieldIterable(IList<IEnumerable<IIndexableField>> docList, Random random)
+            public RandomFailingFieldEnumerable(IList<IEnumerable<IIndexableField>> docList, Random random)
             {
                 this.docList = docList;
                 this.random = random;
@@ -2653,47 +2654,48 @@ namespace Lucene.Net.Index
 
             public virtual IEnumerator<IEnumerable<IIndexableField>> GetEnumerator()
             {
-                return docList.GetEnumerator();
-                //return new IteratorAnonymousClass(this, docIter);
+                return new EnumeratorAnonymousClass(this, docList.GetEnumerator());
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
 
-            /*
-          private class IteratorAnonymousClass : IEnumerator<IEnumerable<IndexableField>>
-          {
-              private readonly RandomFailingFieldIterable outerInstance;
+            private sealed class EnumeratorAnonymousClass : IEnumerator<IEnumerable<IIndexableField>>
+            {
+                private readonly RandomFailingFieldEnumerable outerInstance;
+                private readonly IEnumerator<IEnumerable<IIndexableField>> docIter;
 
-              private IEnumerator<IEnumerable<IndexableField>> DocIter;
-
-              public IteratorAnonymousClass(RandomFailingFieldIterable outerInstance, IEnumerator<IEnumerable<IndexableField>> docIter)
-              {
-                  this.outerInstance = outerInstance;
-                  this.DocIter = docIter;
-              }
-
-              public virtual bool HasNext()
-              {
-                return DocIter.hasNext();
-              }
-
-              public virtual IEnumerable<IndexableField> Next()
-              {
-                if (outerInstance.Random.Next(5) == 0)
+                public EnumeratorAnonymousClass(RandomFailingFieldEnumerable outerInstance, IEnumerator<IEnumerable<IIndexableField>> docIter)
                 {
-                  throw RuntimeException.Create("boom");
+                    this.outerInstance = outerInstance;
+                    this.docIter = docIter;
                 }
-                return DocIter.Next();
-              }
 
-              public virtual void Remove()
-              {
-                  throw UnsupportedOperationException.Create();
-              }
-          }*/
+                public IEnumerable<IIndexableField> Current => docIter.Current;
+
+                object IEnumerator.Current => Current;
+
+                public void Dispose()
+                {
+                    // nothing to do
+                }
+
+                public bool MoveNext()
+                {
+                    if (Random.Next(5) == 0)
+                    {
+                        throw RuntimeException.Create("boom");
+                    }
+                    return docIter.MoveNext();
+                }
+
+                public void Reset()
+                {
+                    throw UnsupportedOperationException.Create();
+                }
+            }
         }
 
         // LUCENE-2727/LUCENE-2812/LUCENE-4738:
@@ -2837,7 +2839,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TestPointAnonymousClass : ITestPoint
+        private sealed class TestPointAnonymousClass : ITestPoint
         {
             private readonly TestIndexWriter outerInstance;
 

@@ -89,7 +89,16 @@ namespace Lucene.Net.Codecs.PerField
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Dispose()
             {
-                Consumer.Dispose();
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    Consumer.Dispose();
+                }
             }
         }
 

@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Create a new <see cref="LengthFilter"/>. This will filter out tokens whose
-        /// <see cref="CharTermAttribute"/> is either too short (<see cref="ICharTermAttribute.Length"/>
+        /// <see cref="ICharTermAttribute"/> is either too short (<see cref="ICharTermAttribute.Length"/>
         /// &lt; min) or too long (<see cref="ICharTermAttribute.Length"/> &gt; max). </summary>
         /// <param name="version"> the Lucene match version </param>
         /// <param name="in">      the <see cref="TokenStream"/> to consume </param>

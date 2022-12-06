@@ -35,9 +35,9 @@ namespace Lucene.Net.Analysis.Snowball
     /// </para>
     /// 
     /// <para>
-    /// Note: This filter is aware of the <see cref="KeywordAttribute"/>. To prevent
+    /// Note: This filter is aware of the <see cref="IKeywordAttribute"/>. To prevent
     /// certain terms from being passed to the stemmer
-    /// <see cref="KeywordAttribute.IsKeyword"/> should be set to <c>true</c>
+    /// <see cref="IKeywordAttribute.IsKeyword"/> should be set to <c>true</c>
     /// in a previous <see cref="TokenStream"/>.
     /// 
     /// Note: For including the original term as well as the stemmed version, see

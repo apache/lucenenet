@@ -139,24 +139,24 @@ namespace Lucene.Net.Index
         // LUCENENET NOTE: This was termsIterable() in Lucene
         public virtual IEnumerable<Term> GetTermsEnumerable()
         {
-            return new IterableAnonymousClass(this);
+            return new EnumerableAnonymousClass(this);
         }
 
-        private class IterableAnonymousClass : IEnumerable<Term>
+        private sealed class EnumerableAnonymousClass : IEnumerable<Term>
         {
             private readonly FrozenBufferedUpdates outerInstance;
 
-            public IterableAnonymousClass(FrozenBufferedUpdates outerInstance)
+            public EnumerableAnonymousClass(FrozenBufferedUpdates outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
 
-            public virtual IEnumerator<Term> GetEnumerator()
+            public IEnumerator<Term> GetEnumerator()
             {
                 return outerInstance.terms.GetEnumerator();
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
@@ -165,21 +165,21 @@ namespace Lucene.Net.Index
         // LUCENENET NOTE: This was queriesIterable() in Lucene
         public virtual IEnumerable<QueryAndLimit> GetQueriesEnumerable()
         {
-            return new IterableAnonymousClass2(this);
+            return new EnumerableAnonymousClass2(this);
         }
 
-        private class IterableAnonymousClass2 : IEnumerable<QueryAndLimit>
+        private sealed class EnumerableAnonymousClass2 : IEnumerable<QueryAndLimit>
         {
             private readonly FrozenBufferedUpdates outerInstance;
 
-            public IterableAnonymousClass2(FrozenBufferedUpdates outerInstance)
+            public EnumerableAnonymousClass2(FrozenBufferedUpdates outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
 
-            public virtual IEnumerator<QueryAndLimit> GetEnumerator()
+            public IEnumerator<QueryAndLimit> GetEnumerator()
             {
-                return new IteratorAnonymousClass(this);
+                return new EnumeratorAnonymousClass(this);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -187,21 +187,21 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousClass : IEnumerator<QueryAndLimit>
+            private sealed class EnumeratorAnonymousClass : IEnumerator<QueryAndLimit>
             {
-                private readonly IterableAnonymousClass2 outerInstance;
+                private readonly EnumerableAnonymousClass2 outerInstance;
                 private readonly int upto;
                 private int i;
                 private QueryAndLimit current;
 
-                public IteratorAnonymousClass(IterableAnonymousClass2 outerInstance)
+                public EnumeratorAnonymousClass(EnumerableAnonymousClass2 outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     upto = this.outerInstance.outerInstance.queries.Length;
                     i = 0;
                 }
 
-                public virtual bool MoveNext()
+                public bool MoveNext()
                 {
                     if (i < upto)
                     {
@@ -212,17 +212,18 @@ namespace Lucene.Net.Index
                     return false;
                 }
 
-                public virtual QueryAndLimit Current => current;
+                public QueryAndLimit Current => current;
 
-                object System.Collections.IEnumerator.Current => Current;
+                object IEnumerator.Current => Current;
 
-                public virtual void Reset()
+                public void Reset()
                 {
                     throw UnsupportedOperationException.Create();
                 }
 
                 public void Dispose()
                 {
+                    // LUCENENET: Intentionally blank
                 }
             }
         }

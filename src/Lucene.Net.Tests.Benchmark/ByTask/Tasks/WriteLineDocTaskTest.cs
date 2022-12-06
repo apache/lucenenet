@@ -368,7 +368,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 br.Dispose();
             }
         }
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly WriteLineDocTask wldt;
             public ThreadAnonymousClass(string name, WriteLineDocTask wldt)

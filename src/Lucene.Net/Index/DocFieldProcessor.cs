@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -257,7 +258,7 @@ namespace Lucene.Net.Index
                     {
                         int newSize = fields.Length * 2;
                         DocFieldProcessorPerField[] newArray = new DocFieldProcessorPerField[newSize];
-                        Array.Copy(fields, 0, newArray, 0, fieldCount);
+                        Arrays.Copy(fields, 0, newArray, 0, fieldCount);
                         fields = newArray;
                     }
 

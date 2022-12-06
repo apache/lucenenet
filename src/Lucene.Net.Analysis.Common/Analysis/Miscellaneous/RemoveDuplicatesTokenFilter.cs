@@ -1,6 +1,7 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 
@@ -88,7 +89,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
                 // clone the term, and add to the set of seen terms.
                 char[] saved = new char[length];
-                Array.Copy(term, 0, saved, 0, length);
+                Arrays.Copy(term, 0, saved, 0, length);
                 previous.Add(saved);
 
                 if (!duplicate)

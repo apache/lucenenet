@@ -82,7 +82,7 @@ namespace Lucene.Net.Spatial.Serialized
             return new Field[] { new BinaryDocValuesField(FieldName, bytesRef) };
         }
 
-        private class OutputStreamAnonymousClass : MemoryStream
+        private sealed class OutputStreamAnonymousClass : MemoryStream
         {
             private readonly BytesRef bytesRef;
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Spatial.Serialized
                 return new DocIdSetAnonymousClass(this, context, acceptDocs);
             }
 
-            private class DocIdSetAnonymousClass : DocIdSet
+            private sealed class DocIdSetAnonymousClass : DocIdSet
             {
                 private readonly PredicateValueSourceFilter outerInstance;
                 private readonly AtomicReaderContext context;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Spatial.Serialized
                     }
                 }
 
-                private class BitsAnonymousClass : IBits
+                private sealed class BitsAnonymousClass : IBits
                 {
                     private readonly FunctionValues predFuncValues;
                     private readonly AtomicReaderContext context;
@@ -204,14 +204,14 @@ namespace Lucene.Net.Spatial.Serialized
                         this.acceptDocs = acceptDocs;
                     }
 
-                    public virtual bool Get(int index)
+                    public bool Get(int index)
                     {
                         if (acceptDocs != null && !acceptDocs.Get(index))
                             return false;
                         return predFuncValues.BoolVal(index);
                     }
 
-                    public virtual int Length => context.Reader.MaxDoc;
+                    public int Length => context.Reader.MaxDoc;
                 }
             }
 
@@ -261,7 +261,7 @@ namespace Lucene.Net.Spatial.Serialized
                 return new FuctionValuesAnonymousClass(this, docValues);
             }
 
-            private class FuctionValuesAnonymousClass : FunctionValues
+            private sealed class FuctionValuesAnonymousClass : FunctionValues
             {
                 private readonly ShapeDocValueSource outerInstance;
                 private readonly BinaryDocValues docValues;

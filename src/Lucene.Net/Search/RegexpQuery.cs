@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
         /// </summary>
         private static readonly IAutomatonProvider defaultProvider = new AutomatonProviderAnonymousClass();
 
-        private class AutomatonProviderAnonymousClass : IAutomatonProvider
+        private sealed class AutomatonProviderAnonymousClass : IAutomatonProvider
         {
             public Automaton GetAutomaton(string name)
             {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
             if (!m_term.Field.Equals(field, StringComparison.Ordinal))
             {
                 buffer.Append(m_term.Field);
-                buffer.Append(":");
+                buffer.Append(':');
             }
             buffer.Append('/');
             buffer.Append(m_term.Text);

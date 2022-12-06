@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -84,7 +84,7 @@ namespace Lucene.Net.Util
         {
             int o = random.Next(1000);
             var toSort = new Entry[o + arr.Length + random.Next(3)];
-            Array.Copy(arr, 0, toSort, o, arr.Length);
+            Arrays.Copy(arr, 0, toSort, o, arr.Length);
             Sorter sorter = NewSorter(toSort);
             sorter.Sort(o, o + arr.Length);
             AssertSorted(arr, Arrays.CopyOfRange(toSort, o, o + arr.Length));

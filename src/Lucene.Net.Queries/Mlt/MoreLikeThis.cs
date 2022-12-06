@@ -474,20 +474,20 @@ namespace Lucene.Net.Queries.Mlt
         public string DescribeParams()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("\t").Append("maxQueryTerms  : ").Append(MaxQueryTerms).Append("\n");
-            sb.Append("\t").Append("minWordLen     : ").Append(MinWordLen).Append("\n");
-            sb.Append("\t").Append("maxWordLen     : ").Append(MaxWordLen).Append("\n");
-            sb.Append("\t").Append("fieldNames     : ");
+            sb.Append('\t').Append("maxQueryTerms  : ").Append(MaxQueryTerms).Append('\n');
+            sb.Append('\t').Append("minWordLen     : ").Append(MinWordLen).Append('\n');
+            sb.Append('\t').Append("maxWordLen     : ").Append(MaxWordLen).Append('\n');
+            sb.Append('\t').Append("fieldNames     : ");
             string delim = "";
             foreach (string fieldName in FieldNames)
             {
                 sb.Append(delim).Append(fieldName);
                 delim = ", ";
             }
-            sb.Append("\n");
-            sb.Append("\t").Append("boost          : ").Append(ApplyBoost).Append("\n");
-            sb.Append("\t").Append("minTermFreq    : ").Append(MinTermFreq).Append("\n");
-            sb.Append("\t").Append("minDocFreq     : ").Append(MinDocFreq).Append("\n");
+            sb.Append('\n');
+            sb.Append('\t').Append("boost          : ").Append(ApplyBoost).Append('\n');
+            sb.Append('\t').Append("minTermFreq    : ").Append(MinTermFreq).Append('\n');
+            sb.Append('\t').Append("minDocFreq     : ").Append(MinDocFreq).Append('\n');
             return sb.ToString();
         }
 

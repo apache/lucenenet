@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
@@ -141,7 +142,7 @@ namespace Lucene.Net.Index.Sorter
 
             protected override void Save(int i, int len)
             {
-                Array.Copy(docs, i, tmp, 0, len);
+                Arrays.Copy(docs, i, tmp, 0, len);
             }
 
             protected override void Restore(int i, int j)
@@ -212,7 +213,7 @@ namespace Lucene.Net.Index.Sorter
             return new DocMapAnonymousClass(maxDoc, newToOld, oldToNew);
         }
 
-        private class DocMapAnonymousClass : Sorter.DocMap
+        private sealed class DocMapAnonymousClass : Sorter.DocMap
         {
             private readonly int maxDoc;
             private readonly MonotonicAppendingInt64Buffer newToOld;
@@ -270,7 +271,7 @@ namespace Lucene.Net.Index.Sorter
             return Sort(reader.MaxDoc, comparer);
         }
 
-        private class DocComparerAnonymousClass : DocComparer
+        private sealed class DocComparerAnonymousClass : DocComparer
         {
             private readonly int[] reverseMul;
             private readonly FieldComparer[] comparers;
@@ -323,7 +324,7 @@ namespace Lucene.Net.Index.Sorter
 
         internal static readonly Scorer FAKESCORER = new ScorerAnonymousClass();
 
-        private class ScorerAnonymousClass : Scorer
+        private sealed class ScorerAnonymousClass : Scorer
         {
             public ScorerAnonymousClass() 
                 : base(null)

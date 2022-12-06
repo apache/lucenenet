@@ -73,7 +73,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IOUtils.Dispose(dirs);
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestAddTaxonomy outerInstance;
 
@@ -275,7 +275,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IOUtils.Dispose(src, dest);
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestAddTaxonomy outerInstance;
 

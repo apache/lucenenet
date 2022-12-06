@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Support.IO;
 using System;
 using System.IO;
@@ -90,6 +90,7 @@ namespace Lucene.Net.Util
             {
                 m_stream.Dispose();
             }
+            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
 
         public virtual bool IsSystemStream => isSystemStream;

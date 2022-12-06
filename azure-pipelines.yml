@@ -55,7 +55,7 @@ variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
 - name: DotNetSDKVersion
-  value: '6.0.100'
+  value: '7.0.100'
 - name: DocumentationArtifactName
   value: 'docs'
 - name: DocumentationArtifactZipFileName
@@ -232,6 +232,13 @@ stages:
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
+        framework: 'net7.0'
+        binaryArtifactName: '$(BinaryArtifactName)'
+        testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+
+    - template: '.build/azure-templates/publish-test-binaries.yml'
+      parameters:
+        publishDirectory: $(PublishTempDirectory)
         framework: 'net6.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
@@ -240,13 +247,6 @@ stages:
       parameters:
         publishDirectory: $(PublishTempDirectory)
         framework: 'net5.0'
-        binaryArtifactName: '$(BinaryArtifactName)'
-        testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
-
-    - template: '.build/azure-templates/publish-test-binaries.yml'
-      parameters:
-        publishDirectory: $(PublishTempDirectory)
-        framework: 'netcoreapp3.1'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
@@ -324,6 +324,66 @@ stages:
 - stage: Test_Stage
   displayName: 'Test Stage:'
   jobs:
+
+  - job: Test_net7_0_x64
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-latest'
+          maximumParallelJobs: 8
+          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+        Linux:
+          osName: 'Linux'
+          imageName: 'ubuntu-latest'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+        macOS:
+          osName: 'macOS'
+          imageName: 'macOS-latest'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+    displayName: 'Test net7.0,x64 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: '.build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: $(osName)
+        framework: 'net7.0'
+        vsTestPlatform: 'x64'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        maximumParallelJobs: $(maximumParallelJobs)
+        maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
+
+  - job: Test_net7_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-latest'
+          maximumParallelJobs: 8
+          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
+    displayName: 'Test net7.0,x86 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: '.build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: $(osName)
+        framework: 'net7.0'
+        vsTestPlatform: 'x86'
+        testBinariesArtifactName: '$(TestBinariesArtifactName)'
+        nugetArtifactName: '$(NuGetArtifactName)'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        maximumParallelJobs: $(maximumParallelJobs)
+        maximumAllowedFailures: $(maximumAllowedFailures)
+        dotNetSdkVersion: '$(DotNetSDKVersion)'
 
   - job: Test_net6_0_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
@@ -437,66 +497,6 @@ stages:
       parameters:
         osName: $(osName)
         framework: 'net5.0'
-        vsTestPlatform: 'x86'
-        testBinariesArtifactName: '$(TestBinariesArtifactName)'
-        nugetArtifactName: '$(NuGetArtifactName)'
-        testResultsArtifactName: '$(TestResultsArtifactName)'
-        maximumParallelJobs: $(maximumParallelJobs)
-        maximumAllowedFailures: $(maximumAllowedFailures)
-        dotNetSdkVersion: '$(DotNetSDKVersion)'
-
-  - job: Test_netcoreapp3_1_x64
-    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
-    strategy:
-      matrix:
-        Windows:
-          osName: 'Windows'
-          imageName: 'windows-2019'
-          maximumParallelJobs: 8
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-        Linux:
-          osName: 'Linux'
-          imageName: 'ubuntu-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-        macOS:
-          osName: 'macOS'
-          imageName: 'macOS-10.15' # macOS-latest should not be used here because we may get OS Darwin 19.6.0, which isn't supported fully (we get PlatformNotSupportedException).
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-    displayName: 'Test netcoreapp3.1,x64 on'
-    pool:
-      vmImage: $(imageName)
-    steps:
-    - template: '.build/azure-templates/run-tests-on-os.yml'
-      parameters:
-        osName: $(osName)
-        framework: 'netcoreapp3.1'
-        vsTestPlatform: 'x64'
-        testBinariesArtifactName: '$(TestBinariesArtifactName)'
-        nugetArtifactName: '$(NuGetArtifactName)'
-        testResultsArtifactName: '$(TestResultsArtifactName)'
-        maximumParallelJobs: $(maximumParallelJobs)
-        maximumAllowedFailures: $(maximumAllowedFailures)
-        dotNetSdkVersion: '$(DotNetSDKVersion)'
-
-  - job: Test_netcoreapp3_1_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
-    condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
-    strategy:
-      matrix:
-        Windows:
-          osName: 'Windows'
-          imageName: 'windows-2019'
-          maximumParallelJobs: 8
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-    displayName: 'Test netcoreapp3.1,x86 on'
-    pool:
-      vmImage: $(imageName)
-    steps:
-    - template: '.build/azure-templates/run-tests-on-os.yml'
-      parameters:
-        osName: $(osName)
-        framework: 'netcoreapp3.1'
         vsTestPlatform: 'x86'
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'

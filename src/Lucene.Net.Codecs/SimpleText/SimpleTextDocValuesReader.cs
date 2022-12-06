@@ -157,7 +157,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return new NumericDocValuesAnonymousClass(this, field, @in, scratch);
         }
 
-        private class NumericDocValuesAnonymousClass : NumericDocValues
+        private sealed class NumericDocValuesAnonymousClass : NumericDocValues
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -207,7 +207,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return new BitsAnonymousClass(this, field, input, scratch);
         }
 
-        private class BitsAnonymousClass : IBits
+        private sealed class BitsAnonymousClass : IBits
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -252,7 +252,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return new BinaryDocValuesAnonymousClass(this, field, input, scratch);
         }
 
-        private class BinaryDocValuesAnonymousClass : BinaryDocValues
+        private sealed class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -313,7 +313,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return new BitsAnonymousClass2(this, field, input, scratch);
         }
 
-        private class BitsAnonymousClass2 : IBits
+        private sealed class BitsAnonymousClass2 : IBits
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -376,7 +376,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return new SortedDocValuesAnonymousClass(this, field, input, scratch);
         }
 
-        private class SortedDocValuesAnonymousClass : SortedDocValues
+        private sealed class SortedDocValuesAnonymousClass : SortedDocValues
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 
@@ -476,7 +476,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return new SortedSetDocValuesAnonymousClass(this, field, input, scratch);
         }
 
-        private class SortedSetDocValuesAnonymousClass : SortedSetDocValues
+        private sealed class SortedSetDocValuesAnonymousClass : SortedSetDocValues
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
 

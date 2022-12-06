@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public abstract class DocMap
         {
-            internal DocMap()
+            private protected DocMap() // LUCENENET: Changed from internal to private protected
             {
             }
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
                 return new DocMapAnonymousClass(maxDoc, liveDocs, docMap, numDeletedDocs);
             }
 
-            private class DocMapAnonymousClass : DocMap
+            private sealed class DocMapAnonymousClass : DocMap
             {
                 private readonly int maxDoc;
                 private readonly IBits liveDocs;
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly CheckAbort NONE = new CheckAbortAnonymousClass();
 
-        private class CheckAbortAnonymousClass : CheckAbort
+        private sealed class CheckAbortAnonymousClass : CheckAbort
         {
             public CheckAbortAnonymousClass()
                 : base(null, null)

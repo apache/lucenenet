@@ -555,7 +555,7 @@ namespace Lucene.Net.Util
             return new FilteredTermsEnumAnonymousClass(termsEnum);
         }
 
-        private class FilteredTermsEnumAnonymousClass : FilteredTermsEnum
+        private sealed class FilteredTermsEnumAnonymousClass : FilteredTermsEnum
         {
             public FilteredTermsEnumAnonymousClass(TermsEnum termsEnum)
                 : base(termsEnum, false)
@@ -585,7 +585,7 @@ namespace Lucene.Net.Util
             return new FilteredTermsEnumAnonymousClass2(termsEnum);
         }
 
-        private class FilteredTermsEnumAnonymousClass2 : FilteredTermsEnum
+        private sealed class FilteredTermsEnumAnonymousClass2 : FilteredTermsEnum
         {
             public FilteredTermsEnumAnonymousClass2(TermsEnum termsEnum)
                 : base(termsEnum, false)

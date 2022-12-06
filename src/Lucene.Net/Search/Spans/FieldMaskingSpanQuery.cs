@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Spans
             StringBuilder buffer = new StringBuilder();
             buffer.Append("mask(");
             buffer.Append(maskedQuery.ToString(field));
-            buffer.Append(")");
+            buffer.Append(')');
             buffer.Append(ToStringUtils.Boost(Boost));
             buffer.Append(" as ");
             buffer.Append(this.field);

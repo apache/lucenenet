@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
@@ -103,7 +104,7 @@ namespace Lucene.Net.Util.Fst
                 int chunk = blockSize - nextWrite;
                 if (len <= chunk)
                 {
-                    System.Buffer.BlockCopy(b, offset, current, nextWrite, len);
+                    Arrays.Copy(b, offset, current, nextWrite, len);
                     nextWrite += len;
                     break;
                 }
@@ -111,7 +112,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     if (chunk > 0)
                     {
-                        Array.Copy(b, offset, current, nextWrite, chunk);
+                        Arrays.Copy(b, offset, current, nextWrite, chunk);
                         offset += chunk;
                         len -= chunk;
                     }
@@ -176,14 +177,14 @@ namespace Lucene.Net.Util.Fst
                 if (len <= downTo)
                 {
                     //System.out.println("      final: offset=" + offset + " len=" + len + " dest=" + (downTo-len));
-                    Array.Copy(b, offset, block, downTo - len, len);
+                    Arrays.Copy(b, offset, block, downTo - len, len);
                     break;
                 }
                 else
                 {
                     len -= downTo;
                     //System.out.println("      partial: offset=" + (offset + len) + " len=" + downTo + " dest=0");
-                    Array.Copy(b, offset + len, block, 0, downTo);
+                    Arrays.Copy(b, offset + len, block, 0, downTo);
                     blockIndex--;
                     block = blocks[blockIndex];
                     downTo = blockSize;
@@ -388,7 +389,7 @@ namespace Lucene.Net.Util.Fst
             if (current != null)
             {
                 byte[] lastBuffer = new byte[nextWrite];
-                Array.Copy(current, 0, lastBuffer, 0, nextWrite);
+                Arrays.Copy(current, 0, lastBuffer, 0, nextWrite);
                 blocks[blocks.Count - 1] = lastBuffer;
                 current = null;
             }
@@ -410,14 +411,14 @@ namespace Lucene.Net.Util.Fst
             {
                 return new ForwardBytesReader(blocks[0]);
             }
-            return new ForwardBytesReaderAnonymousInner(this);
+            return new ForwardBytesReaderAnonymousClass(this);
         }
 
-        private class ForwardBytesReaderAnonymousInner : FST.BytesReader
+        private sealed class ForwardBytesReaderAnonymousClass : FST.BytesReader
         {
             private readonly BytesStore outerInstance;
 
-            public ForwardBytesReaderAnonymousInner(BytesStore outerInstance)
+            public ForwardBytesReaderAnonymousClass(BytesStore outerInstance)
             {
                 this.outerInstance = outerInstance;
                 nextRead = outerInstance.blockSize;
@@ -451,7 +452,7 @@ namespace Lucene.Net.Util.Fst
                     int chunkLeft = outerInstance.blockSize - nextRead;
                     if (len <= chunkLeft)
                     {
-                        Array.Copy(current, nextRead, b, offset, len);
+                        Arrays.Copy(current, nextRead, b, offset, len);
                         nextRead += len;
                         break;
                     }
@@ -459,7 +460,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         if (chunkLeft > 0)
                         {
-                            Array.Copy(current, nextRead, b, offset, chunkLeft);
+                            Arrays.Copy(current, nextRead, b, offset, chunkLeft);
                             offset += chunkLeft;
                             len -= chunkLeft;
                         }
@@ -498,14 +499,14 @@ namespace Lucene.Net.Util.Fst
             {
                 return new ReverseBytesReader(blocks[0]);
             }
-            return new ReverseBytesReaderAnonymousInner(this);
+            return new ReverseBytesReaderAnonymousClass(this);
         }
 
-        private class ReverseBytesReaderAnonymousInner : FST.BytesReader
+        private sealed class ReverseBytesReaderAnonymousClass : FST.BytesReader
         {
             private readonly BytesStore outerInstance;
 
-            public ReverseBytesReaderAnonymousInner(BytesStore outerInstance)
+            public ReverseBytesReaderAnonymousClass(BytesStore outerInstance)
             {
                 this.outerInstance = outerInstance;
                 current = outerInstance.blocks.Count == 0 ? null : outerInstance.blocks[0];

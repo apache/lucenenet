@@ -265,7 +265,7 @@ namespace Egothor.Stemmer
                             // LUCENENET: Should never happen, but since we don't
                             // have a catch block here who knows what might happen if
                             // we don't do this.
-                            throw new ArgumentOutOfRangeException();
+                            throw IndexOutOfBoundsException.Create(nameof(cmd));
                         }
                     }
                     if (!TrySkip(key, LengthPP(p[i]), out key))
@@ -273,7 +273,7 @@ namespace Egothor.Stemmer
                         // LUCENENET: Should never happen, but since we don't
                         // have a catch block here who knows what might happen if
                         // we don't do this.
-                        throw new ArgumentOutOfRangeException();
+                        throw IndexOutOfBoundsException.Create(nameof(cmd));
                     }
                 }
                 // System.err.println("--->"+key);
@@ -349,7 +349,7 @@ namespace Egothor.Stemmer
             return m;
         }
 
-        private bool CannotFollow(char after, char goes)
+        private static bool CannotFollow(char after, char goes) // LUCENENET: CA1822: Mark members as static
         {
             switch (after)
             {
@@ -383,7 +383,7 @@ namespace Egothor.Stemmer
             return true;
         }
 
-        private int DashEven(string @in, int from)
+        private static int DashEven(string @in, int from) // LUCENENET: CA1822: Mark members as static
         {
             while (from < @in.Length)
             {
@@ -400,7 +400,7 @@ namespace Egothor.Stemmer
         }
 
 
-        private int LengthPP(string cmd)
+        private static int LengthPP(string cmd) // LUCENENET: CA1822: Mark members as static
         {
             int len = 0;
             for (int i = 0; i < cmd.Length; i++)

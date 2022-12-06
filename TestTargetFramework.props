@@ -28,14 +28,14 @@
     this setting only affects the test projects. -->
     <!--<TargetFramework>net461</TargetFramework>-->
     <!--<TargetFramework>net48</TargetFramework>-->
-    <!--<TargetFramework>netcoreapp3.1</TargetFramework>-->
-    <TargetFramework>net5.0</TargetFramework>
+    <!--<TargetFramework>net5.0</TargetFramework>-->
     <!--<TargetFramework>net6.0</TargetFramework>-->
+    <TargetFramework>net7.0</TargetFramework>
 
     <!-- Allow the build script to pass in the test frameworks to build for.
       This overrides the above TargetFramework setting. 
       LUCENENET TODO: Due to a parsing bug, we cannot pass a string with a ; to dotnet msbuild, so passing true as a workaround -->
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net7.0;net6.0;net5.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48;net461</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
   </PropertyGroup>
@@ -54,6 +54,9 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Warnings to be Disabled in Test Projects">
+    <!-- We purposely test on EoL frameworks for testing netstandard2.1, but we want to keep this warning in production code. -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    
     <NoWarn Label="Nested types should not be visible">$(NoWarn);CA1034</NoWarn>
     <NoWarn Label="Use Literals Where Appropriate">$(NoWarn);CA1802</NoWarn>
     <NoWarn Label="Add readonly modifier">$(NoWarn);CA1822</NoWarn>

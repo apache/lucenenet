@@ -4,6 +4,7 @@
 // NO WARRANTY!  This class is in the public domain.
 // $Id: AttributesImpl.java,v 1.9 2002/01/30 20:52:24 dbrownell Exp $
 
+using Lucene.Net.Support;
 using System;
 
 namespace Sax.Helpers
@@ -429,7 +430,7 @@ namespace Sax.Helpers
             {
                 if (index < length - 1)
                 {
-                    System.Array.Copy(data, (index + 1) * 5, data, index * 5,
+                    Arrays.Copy(data, (index + 1) * 5, data, index * 5,
                              (length - index - 1) * 5);
                 }
                 index = (length - 1) * 5;
@@ -584,7 +585,7 @@ namespace Sax.Helpers
             string[] newData = new string[max];
             if (length > 0)
             {
-                System.Array.Copy(data, 0, newData, 0, length * 5);
+                Arrays.Copy(data, 0, newData, 0, length * 5);
             }
             data = newData;
         }
@@ -594,7 +595,7 @@ namespace Sax.Helpers
         /// </summary>
         /// <param name="index">The index to report.</param>
         /// <exception cref="IndexOutOfRangeException">Always.</exception>
-        private void BadIndex(int index)
+        private static void BadIndex(int index) // LUCENENET: CA1822: Mark members as static
         {
             string msg =
                 "Attempt to modify attribute at illegal index: " + index;

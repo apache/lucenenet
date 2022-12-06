@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Create a new <see cref="CodepointCountFilter"/>. This will filter out tokens whose
-        /// <see cref="CharTermAttribute"/> is either too short (<see cref="Character.CodePointCount(char[], int, int)"/>
+        /// <see cref="ICharTermAttribute"/> is either too short (<see cref="Character.CodePointCount(char[], int, int)"/>
         /// &lt; min) or too long (<see cref="Character.CodePointCount(char[], int, int)"/> &gt; max). </summary>
         /// <param name="version"> the Lucene match version </param>
         /// <param name="in">      the <see cref="TokenStream"/> to consume </param>

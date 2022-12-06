@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal CompositeReader()
+        protected CompositeReader()
             : base()
         {
         }
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                 buffer.Append(subReaders[0]);
                 for (int i = 1, c = subReaders.Count; i < c; ++i)
                 {
-                    buffer.Append(" ").Append(subReaders[i]);
+                    buffer.Append(' ').Append(subReaders[i]);
                 }
             }
             buffer.Append(')');

@@ -1,5 +1,6 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -115,7 +116,7 @@ namespace Lucene.Net.Analysis.Util
             if (Debugging.AssertsEnabled) Debugging.Assert(pos < len);
             if (pos < len - 1) // don't arraycopy if asked to delete last character
             {
-                Array.Copy(s, pos + 1, s, pos, len - pos - 1);
+                Arrays.Copy(s, pos + 1, s, pos, len - pos - 1);
             }
             return len - 1;
         }
@@ -133,7 +134,7 @@ namespace Lucene.Net.Analysis.Util
             if (Debugging.AssertsEnabled) Debugging.Assert(pos + nChars <= len);
             if (pos + nChars < len) // don't arraycopy if asked to delete the last characters
             {
-                Array.Copy(s, pos + nChars, s, pos, len - pos - nChars);
+                Arrays.Copy(s, pos + nChars, s, pos, len - pos - nChars);
             }
             return len - nChars;
         }

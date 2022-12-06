@@ -1,4 +1,4 @@
-using J2N.Collections.Generic.Extensions;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Codecs
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal DocValuesConsumer()
+        protected DocValuesConsumer()
         {
         }
 
@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs
             AddNumericField(fieldInfo, GetMergeNumericFieldEnumerable(/* fieldInfo, // LUCENENET: Never read */ mergeState, toMerge, docsWithField));
         }
 
-        private IEnumerable<long?> GetMergeNumericFieldEnumerable(/*FieldInfo fieldinfo, // LUCENENET: Never read */ MergeState mergeState, IList<NumericDocValues> toMerge, IList<IBits> docsWithField)
+        private static IEnumerable<long?> GetMergeNumericFieldEnumerable(/*FieldInfo fieldinfo, // LUCENENET: Never read */ MergeState mergeState, IList<NumericDocValues> toMerge, IList<IBits> docsWithField) // LUCENENET: CA1822: Mark members as static
         {
             int readerUpto = -1;
             int docIDUpto = 0;
@@ -178,7 +178,7 @@ namespace Lucene.Net.Codecs
             AddBinaryField(fieldInfo, GetMergeBinaryFieldEnumerable(/*fieldInfo, // LUCENENET: Never read */ mergeState, toMerge, docsWithField));
         }
 
-        private IEnumerable<BytesRef> GetMergeBinaryFieldEnumerable(/*FieldInfo fieldInfo, // LUCENENET: Never read */ MergeState mergeState, IList<BinaryDocValues> toMerge, IList<IBits> docsWithField)
+        private static IEnumerable<BytesRef> GetMergeBinaryFieldEnumerable(/*FieldInfo fieldInfo, // LUCENENET: Never read */ MergeState mergeState, IList<BinaryDocValues> toMerge, IList<IBits> docsWithField) // LUCENENET: CA1822: Mark members as static
         {
             int readerUpto = -1;
             int docIDUpto = 0;
@@ -281,7 +281,7 @@ namespace Lucene.Net.Codecs
            );
         }
 
-        private IEnumerable<BytesRef> GetMergeSortValuesEnumerable(OrdinalMap map, SortedDocValues[] dvs)
+        private static IEnumerable<BytesRef> GetMergeSortValuesEnumerable(OrdinalMap map, SortedDocValues[] dvs) // LUCENENET: CA1822: Mark members as static
         {
             var scratch = new BytesRef();
             int currentOrd = 0;
@@ -296,7 +296,7 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        private IEnumerable<long?> GetMergeSortedFieldDocToOrdEnumerable(AtomicReader[] readers, SortedDocValues[] dvs, OrdinalMap map)
+        private static IEnumerable<long?> GetMergeSortedFieldDocToOrdEnumerable(AtomicReader[] readers, SortedDocValues[] dvs, OrdinalMap map) // LUCENENET: CA1822: Mark members as static
         {
             int readerUpTo = -1;
             int docIDUpTo = 0;
@@ -387,7 +387,7 @@ namespace Lucene.Net.Codecs
             );
         }
 
-        private IEnumerable<BytesRef> GetMergeSortedSetValuesEnumerable(OrdinalMap map, SortedSetDocValues[] dvs)
+        private static IEnumerable<BytesRef> GetMergeSortedSetValuesEnumerable(OrdinalMap map, SortedSetDocValues[] dvs) // LUCENENET: CA1822: Mark members as static
         {
             var scratch = new BytesRef();
             long currentOrd = 0;
@@ -402,7 +402,7 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        private IEnumerable<long?> GetMergeSortedSetDocToOrdCountEnumerable(AtomicReader[] readers, SortedSetDocValues[] dvs)
+        private static IEnumerable<long?> GetMergeSortedSetDocToOrdCountEnumerable(AtomicReader[] readers, SortedSetDocValues[] dvs) // LUCENENET: CA1822: Mark members as static
         {
             int readerUpto = -1;
             int docIDUpto = 0;
@@ -446,7 +446,7 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        private IEnumerable<long?> GetMergeSortedSetOrdsEnumerable(AtomicReader[] readers, SortedSetDocValues[] dvs, OrdinalMap map)
+        private static IEnumerable<long?> GetMergeSortedSetOrdsEnumerable(AtomicReader[] readers, SortedSetDocValues[] dvs, OrdinalMap map) // LUCENENET: CA1822: Mark members as static
         {
             int readerUpto = -1;
             int docIDUpto = 0;

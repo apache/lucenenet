@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Th
         /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
 
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Th
             {
                 try
                 {
-                    return LoadStopwordSet(false, typeof(ThaiAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT);
+                    return LoadStopwordSet(false, typeof(ThaiAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {

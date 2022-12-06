@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.En
@@ -41,9 +41,9 @@ namespace Lucene.Net.Analysis.En
     ///    }
     ///    </code>
     ///    <para>
-    ///    Note: This filter is aware of the <see cref="KeywordAttribute"/>. To prevent
+    ///    Note: This filter is aware of the <see cref="IKeywordAttribute"/>. To prevent
     ///    certain terms from being passed to the stemmer
-    ///    <see cref="KeywordAttribute.IsKeyword"/> should be set to <code>true</code>
+    ///    <see cref="IKeywordAttribute.IsKeyword"/> should be set to <code>true</code>
     ///    in a previous <see cref="TokenStream"/>.
     /// 
     ///    Note: For including the original term as well as the stemmed version, see

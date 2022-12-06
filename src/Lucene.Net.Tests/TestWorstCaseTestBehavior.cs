@@ -42,7 +42,7 @@ namespace Lucene.Net
             // once alive, leave it to run outside of the test scope.
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestWorstCaseTestBehavior outerInstance;
 
@@ -106,7 +106,7 @@ namespace Lucene.Net
             t.Join();
         }
 
-        private class ThreadAnonymousClass2 : ThreadJob
+        private sealed class ThreadAnonymousClass2 : ThreadJob
         {
             private readonly TestWorstCaseTestBehavior outerInstance;
 

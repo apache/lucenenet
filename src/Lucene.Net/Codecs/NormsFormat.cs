@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 
 namespace Lucene.Net.Codecs
 {
@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal NormsFormat()
+        protected NormsFormat()
         {
         }
 

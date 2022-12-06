@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -310,9 +311,9 @@ namespace Lucene.Net.Analysis.Synonym
                     int vIntLen = pos2 - pos;
 
                     // Move the count + includeOrig to the front of the byte[]:
-                    Array.Copy(scratch.Bytes, pos, spare, 0, vIntLen);
-                    Array.Copy(scratch.Bytes, 0, scratch.Bytes, vIntLen, pos);
-                    Array.Copy(spare, 0, scratch.Bytes, 0, vIntLen);
+                    Arrays.Copy(scratch.Bytes, pos, spare, 0, vIntLen);
+                    Arrays.Copy(scratch.Bytes, 0, scratch.Bytes, vIntLen, pos);
+                    Arrays.Copy(spare, 0, scratch.Bytes, 0, vIntLen);
 
                     if (dedupSet != null)
                     {
@@ -338,7 +339,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             private readonly Analyzer analyzer;
 
-            public Parser(bool dedup, Analyzer analyzer) 
+            protected Parser(bool dedup, Analyzer analyzer) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
                 : base(dedup)
             {
                 this.analyzer = analyzer;
@@ -380,7 +381,7 @@ namespace Lucene.Net.Analysis.Synonym
                             reuse.Chars[end++] = SynonymMap.WORD_SEPARATOR;
                             reuse.Length++;
                         }
-                        Array.Copy(termAtt.Buffer, 0, reuse.Chars, end, length);
+                        Arrays.Copy(termAtt.Buffer, 0, reuse.Chars, end, length);
                         reuse.Length += length;
                     }
                     ts.End();

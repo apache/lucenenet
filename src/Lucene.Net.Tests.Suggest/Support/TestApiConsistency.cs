@@ -38,7 +38,7 @@ namespace Lucene.Net.Tests.Suggest
         [TestCase(typeof(Lucene.Net.Search.Suggest.IInputEnumerator))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly, @"Snowball\.Ext\..+Stemmer");
+            base.TestPrivateFieldNames(typeFromTargetAssembly, @"Snowball\.Ext\..+Stemmer|EnumeratorFileStreamOptions");
         }
 
         [Test, LuceneNetSpecific]

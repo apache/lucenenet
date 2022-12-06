@@ -113,7 +113,7 @@ namespace Lucene.Net.Store
         /// <param name="lockFactory"> the lock factory to use, or null for the default
         /// (<seealso cref="NativeFSLockFactory"/>); </param>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        protected internal FSDirectory(DirectoryInfo path, LockFactory lockFactory)
+        protected FSDirectory(DirectoryInfo path, LockFactory lockFactory)
         {
             // new ctors use always NativeFSLockFactory as default:
             if (lockFactory is null)
@@ -562,6 +562,7 @@ namespace Lucene.Net.Store
                         }
                     }
                 }
+                //base.Dispose(disposing); // LUCENENET: No need to call base class, we are not using the functionality of BufferedIndexOutput
             }
 
             /// <summary>

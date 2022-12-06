@@ -213,7 +213,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return memoryUsage;
         }
 
-        private class EntryEnumerator : IEnumerator<Entry>
+        private sealed class EntryEnumerator : IEnumerator<Entry> // LUCENENET: Marked sealed
         {
             internal Entry next; // next entry to return
             internal int index; // current slot
@@ -243,7 +243,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Entry e = this.next;
                 if (e is null)
                 {
-                    throw IllegalStateException.Create(this.GetType() + " cannot get next entry"); ;
+                    throw IllegalStateException.Create(this.GetType() + " cannot get next entry");
                 }
 
                 Entry n = e.next;
@@ -266,6 +266,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             public void Dispose()
             {
+                // LUCENENET: Intentionally blank
             }
 
             public bool MoveNext()

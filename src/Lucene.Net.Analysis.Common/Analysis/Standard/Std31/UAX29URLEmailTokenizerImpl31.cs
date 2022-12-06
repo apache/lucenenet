@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
 using System;
 using System.IO;
 
@@ -3285,7 +3286,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
 
         public int YyChar => yychar;
 
-        /// <summary>Fills CharTermAttribute with the current token text.</summary>
+        /// <summary>Fills <see cref="ICharTermAttribute"/> with the current token text.</summary>
         public void GetText(ICharTermAttribute t)
         {
             t.CopyBuffer(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
@@ -3294,7 +3295,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /// <summary>
         /// Creates a new scanner
         /// </summary>
-        /// <param name="in">the TextReader to read input from.</param>
+        /// <param name="in">the <see cref="TextReader"/> to read input from.</param>
         public UAX29URLEmailTokenizerImpl31(TextReader @in)
         {
             this.zzReader = @in;
@@ -3330,7 +3331,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
             /* first: make room (if you can) */
             if (zzStartRead > 0)
             {
-                System.Array.Copy(zzBuffer, zzStartRead,
+                Arrays.Copy(zzBuffer, zzStartRead,
                                  zzBuffer, 0,
                                  zzEndRead - zzStartRead);
 
@@ -3346,7 +3347,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
             {
                 /* if not: blow it up */
                 char[] newBuffer = new char[zzCurrentPos * 2];
-                System.Array.Copy(zzBuffer, 0, newBuffer, 0, zzBuffer.Length);
+                Arrays.Copy(zzBuffer, 0, newBuffer, 0, zzBuffer.Length);
                 zzBuffer = newBuffer;
             }
 

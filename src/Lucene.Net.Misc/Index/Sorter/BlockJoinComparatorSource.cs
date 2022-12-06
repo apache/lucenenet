@@ -99,7 +99,7 @@ namespace Lucene.Net.Index.Sorter
                 childSlots, parentReverseMul, parentComparers, childReverseMul, childComparers);
         }
 
-        private class FieldComparerAnonymousClass : FieldComparer<J2N.Numerics.Int32>
+        private sealed class FieldComparerAnonymousClass : FieldComparer<J2N.Numerics.Int32>
         {
             private readonly BlockJoinComparerSource outerInstance;
 
@@ -210,12 +210,12 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            internal virtual int Parent(int doc)
+            internal int Parent(int doc)
             {
                 return parentBits.NextSetBit(doc);
             }
 
-            internal virtual int Compare(int docID1, int parent1, int docID2, int parent2)
+            internal int Compare(int docID1, int parent1, int docID2, int parent2)
             {
                 if (parent1 == parent2) // both are in the same block
                 {
@@ -243,7 +243,7 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            internal virtual int Compare(int docID1, int docID2, FieldComparer[] comparers, int[] reverseMul)
+            internal static int Compare(int docID1, int docID2, FieldComparer[] comparers, int[] reverseMul) // LUCENENET: CA1822: Mark members as static
             {
                 for (int i = 0; i < comparers.Length; i++)
                 {

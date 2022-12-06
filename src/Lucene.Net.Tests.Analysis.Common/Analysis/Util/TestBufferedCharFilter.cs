@@ -3,6 +3,7 @@
 // https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
 using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -280,7 +281,7 @@ namespace Lucene.Net.Analysis.Util
                 int toRead = len;
                 if (toRead > (SIZE - pos))
                     toRead = SIZE - pos;
-                System.Array.Copy(contents, pos, buf, off, toRead);
+                Arrays.Copy(contents, pos, buf, off, toRead);
                 pos += toRead;
                 return toRead;
             }

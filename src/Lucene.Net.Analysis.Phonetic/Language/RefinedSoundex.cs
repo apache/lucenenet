@@ -1,4 +1,5 @@
 ﻿// commons-codec version compatibility level: 1.9
+using Lucene.Net.Support;
 using System.Globalization;
 using System.Text;
 
@@ -73,7 +74,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         public RefinedSoundex(char[] mapping)
         {
             this.soundexMapping = new char[mapping.Length];
-            System.Array.Copy(mapping, 0, this.soundexMapping, 0, mapping.Length);
+            Arrays.Copy(mapping, 0, this.soundexMapping, 0, mapping.Length);
         }
 
         /// <summary>

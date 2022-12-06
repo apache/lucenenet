@@ -53,7 +53,7 @@ namespace Lucene.Net.Spatial
             }
         }
 
-        private class ObjGeneratorQueryAnonymousClass : ObjGenerator
+        private sealed class ObjGeneratorQueryAnonymousClass : ObjGenerator
         {
             private readonly SpatialStrategy strategy;
 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Spatial
             }
         }
 
-        private class ObjGeneratorFilterAnonymousClass : ObjGenerator
+        private sealed class ObjGeneratorFilterAnonymousClass : ObjGenerator
         {
             private readonly SpatialStrategy strategy;
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Spatial
             }
         }
 
-        private class ObjGeneratorDistanceValueSourceAnonymousClass : ObjGenerator
+        private sealed class ObjGeneratorDistanceValueSourceAnonymousClass : ObjGenerator
         {
             private readonly SpatialStrategy strategy;
 

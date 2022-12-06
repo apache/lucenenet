@@ -5,6 +5,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -42,7 +43,7 @@ namespace Lucene.Net.Index
     using Field = Field;
     using IBits = Lucene.Net.Util.IBits;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using PayloadAttribute = Lucene.Net.Analysis.TokenAttributes.PayloadAttribute;
+    using IPayloadAttribute = Lucene.Net.Analysis.TokenAttributes.IPayloadAttribute;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
 
@@ -157,7 +158,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < terms.Length; i++)
             {
                 sb.Append(terms[i].Text);
-                sb.Append(" ");
+                sb.Append(' ');
             }
             string content = sb.ToString();
 
@@ -221,7 +222,7 @@ namespace Lucene.Net.Index
                         BytesRef br = tps[j].GetPayload();
                         if (br != null)
                         {
-                            Array.Copy(br.Bytes, br.Offset, verifyPayloadData, offset, br.Length);
+                            Arrays.Copy(br.Bytes, br.Offset, verifyPayloadData, offset, br.Length);
                             offset += br.Length;
                         }
                     }
@@ -297,7 +298,7 @@ namespace Lucene.Net.Index
             BytesRef bref = tp.GetPayload();
             verifyPayloadData = new byte[bref.Length];
             var portion = new byte[1500];
-            Array.Copy(payloadData, 100, portion, 0, 1500);
+            Arrays.Copy(payloadData, 100, portion, 0, 1500);
 
             AssertByteArrayEquals(portion, bref.Bytes, bref.Offset, bref.Length);
             reader.Dispose();
@@ -313,7 +314,7 @@ namespace Lucene.Net.Index
             string s = TestUtil.RandomFixedByteLengthUnicodeString(Random, data.Length);
             var b = s.GetBytes(utf8);
             if (Debugging.AssertsEnabled) Debugging.Assert(b.Length == data.Length);
-            System.Buffer.BlockCopy(b, 0, data, 0, b.Length);
+            Arrays.Copy(b, 0, data, 0, b.Length);
         }
 
         private byte[] GenerateRandomData(int n)
@@ -331,11 +332,11 @@ namespace Lucene.Net.Index
             for (int i = 0; i < n; i++)
             {
                 sb.Length = 0;
-                sb.Append("t");
+                sb.Append('t');
                 int zeros = maxDigits - (int)(Math.Log(i) / Math.Log(10));
                 for (int j = 0; j < zeros; j++)
                 {
-                    sb.Append("0");
+                    sb.Append('0');
                 }
                 sb.Append(i);
                 terms[i] = new Term(fieldName, sb.ToString());
@@ -521,7 +522,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(pool.Count, numThreads);
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly TestPayloads outerInstance;
 
@@ -695,7 +696,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             Field field = new TextField("field", "", Field.Store.NO);
             TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
-            Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+            Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
             field.SetTokenStream(ts);
             doc.Add(field);
             writer.AddDocument(doc);
@@ -706,7 +707,7 @@ namespace Lucene.Net.Index
             field.SetTokenStream(ts);
             writer.AddDocument(doc);
             ts = new MockTokenizer(new StringReader("another"), MockTokenizer.WHITESPACE, true);
-            Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+            Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
             field.SetTokenStream(ts);
             writer.AddDocument(doc);
             DirectoryReader reader = writer.GetReader();
@@ -730,7 +731,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             Field field = new TextField("field", "", Field.Store.NO);
             TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
-            Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+            Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
             field.SetTokenStream(ts);
             doc.Add(field);
             Field field2 = new TextField("field", "", Field.Store.NO);
@@ -742,7 +743,7 @@ namespace Lucene.Net.Index
             doc.Add(field2);
             Field field3 = new TextField("field", "", Field.Store.NO);
             ts = new MockTokenizer(new StringReader("nopayload"), MockTokenizer.WHITESPACE, true);
-            Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+            Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
             field3.SetTokenStream(ts);
             doc.Add(field3);
             writer.AddDocument(doc);

@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.Compressing
     {
         /// <summary>
         /// Sole constructor, typically called from sub-classes. </summary>
-        protected internal Decompressor()
+        protected Decompressor()
         {
         }
 

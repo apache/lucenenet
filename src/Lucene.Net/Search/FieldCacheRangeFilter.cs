@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 
     public static class FieldCacheRangeFilter
     {
-        private class StringFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<string>
+        private sealed class StringFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<string>
         {
             internal StringFieldCacheRangeFilterAnonymousClass(string field, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
                 : base(field, null, lowerVal, upperVal, includeLower, includeUpper)
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class BytesRefFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<BytesRef>
+        private sealed class BytesRefFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<BytesRef>
         {
             internal BytesRefFieldCacheRangeFilterAnonymousClass(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
                 : base(field, null, lowerVal, upperVal, includeLower, includeUpper)
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
 
                 if (inclusiveUpperPoint < 0 || inclusiveLowerPoint > inclusiveUpperPoint)
                 {
-                    return null; ;
+                    return null;
                 }
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class SByteFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<sbyte?>
+        private sealed class SByteFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<sbyte?>
         {
             internal SByteFieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, sbyte? lowerVal, sbyte? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
@@ -255,7 +255,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class Int16FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<short?>
+        private sealed class Int16FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<short?>
         {
             internal Int16FieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
@@ -313,7 +313,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class Int32FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<int?>
+        private sealed class Int32FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<int?>
         {
             internal Int32FieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
@@ -368,7 +368,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class Int64FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<long?>
+        private sealed class Int64FieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<long?>
         {
             internal Int64FieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
@@ -423,7 +423,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class SingleFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<float?>
+        private sealed class SingleFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<float?>
         {
             internal SingleFieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
@@ -483,7 +483,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class DoubleFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<double?>
+        private sealed class DoubleFieldCacheRangeFilterAnonymousClass : FieldCacheRangeFilter<double?>
         {
             internal DoubleFieldCacheRangeFilterAnonymousClass(string field, FieldCache.IParser parser, double? lowerVal, double? upperVal, bool includeLower, bool includeUpper)
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
@@ -714,7 +714,7 @@ namespace Lucene.Net.Search
         internal readonly bool includeLower;
         internal readonly bool includeUpper;
 
-        protected internal FieldCacheRangeFilter(string field, FieldCache.IParser parser, T lowerVal, T upperVal, bool includeLower, bool includeUpper)
+        private protected FieldCacheRangeFilter(string field, FieldCache.IParser parser, T lowerVal, T upperVal, bool includeLower, bool includeUpper)
         {
             this.field = field;
             this.parser = parser;
@@ -733,7 +733,7 @@ namespace Lucene.Net.Search
         // From line 516 in Lucene
         public override sealed string ToString()
         {
-            StringBuilder sb = (new StringBuilder(field)).Append(":");
+            StringBuilder sb = (new StringBuilder(field)).Append(':');
             return sb.Append(includeLower ? '[' : '{').Append((lowerVal is null) ? "*" : lowerVal.ToString()).Append(" TO ").Append((upperVal is null) ? "*" : upperVal.ToString()).Append(includeUpper ? ']' : '}').ToString();
         }
 
@@ -769,7 +769,7 @@ namespace Lucene.Net.Search
             }
             return true;
         }
-        
+
         // LUCENENET specific - override this method to eliminate boxing on value types
         protected virtual bool Equals(T objA, T objB)
         {

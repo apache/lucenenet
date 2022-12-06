@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Search
@@ -57,7 +58,7 @@ namespace Lucene.Net.Search
         ///  <seealso cref="MultiTermQuery.MultiTermRewriteMethod"/>
         public static readonly ScoringRewrite<BooleanQuery> SCORING_BOOLEAN_QUERY_REWRITE = new ScoringRewriteAnonymousClass();
 
-        private class ScoringRewriteAnonymousClass : ScoringRewrite<BooleanQuery>
+        private sealed class ScoringRewriteAnonymousClass : ScoringRewrite<BooleanQuery>
         {
             public ScoringRewriteAnonymousClass()
             {
@@ -97,7 +98,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="MultiTermQuery.MultiTermRewriteMethod"/>
         public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = new RewriteMethodAnonymousClass();
 
-        private class RewriteMethodAnonymousClass : RewriteMethod
+        private sealed class RewriteMethodAnonymousClass : RewriteMethod
         {
             public RewriteMethodAnonymousClass()
             {
@@ -217,7 +218,7 @@ namespace Lucene.Net.Search
                 if (termState.Length < ord.Length)
                 {
                     TermContext[] tmpTermState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(termState, 0, tmpTermState, 0, termState.Length);
+                    Arrays.Copy(termState, 0, tmpTermState, 0, termState.Length);
                     termState = tmpTermState;
                 }
                 if (Debugging.AssertsEnabled) Debugging.Assert(termState.Length >= ord.Length && boost.Length >= ord.Length);

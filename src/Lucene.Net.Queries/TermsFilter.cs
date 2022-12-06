@@ -61,7 +61,7 @@ namespace Lucene.Net.Queries
         {
         }
 
-        private class FieldAndTermEnumAnonymousClass : FieldAndTermEnum
+        private sealed class FieldAndTermEnumAnonymousClass : FieldAndTermEnum
         {            
             public FieldAndTermEnumAnonymousClass(IList<Term> terms)
             {
@@ -103,7 +103,7 @@ namespace Lucene.Net.Queries
         {
         }
 
-        private class FieldAndTermEnumAnonymousClass2 : FieldAndTermEnum
+        private sealed class FieldAndTermEnumAnonymousClass2 : FieldAndTermEnum
         {
             public FieldAndTermEnumAnonymousClass2(string field, IList<BytesRef> terms)
                 : base(field)
@@ -209,7 +209,7 @@ namespace Lucene.Net.Queries
                 {
                     serializedTerms = ArrayUtil.Grow(serializedTerms, lastEndOffset + currentTerm.Length);
                 }
-                Array.Copy(currentTerm.Bytes, currentTerm.Offset, serializedTerms, lastEndOffset, currentTerm.Length);
+                Arrays.Copy(currentTerm.Bytes, currentTerm.Offset, serializedTerms, lastEndOffset, currentTerm.Length);
                 offsets[index] = lastEndOffset;
                 lastEndOffset += currentTerm.Length;
                 index++;
@@ -398,11 +398,11 @@ namespace Lucene.Net.Queries
 
             public abstract bool MoveNext();
 
-            public FieldAndTermEnum()
+            protected FieldAndTermEnum() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
             }
 
-            public FieldAndTermEnum(string field)
+            protected FieldAndTermEnum(string field) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.Field = field;
             }

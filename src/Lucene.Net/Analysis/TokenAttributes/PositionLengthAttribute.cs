@@ -1,4 +1,5 @@
-﻿using System;
+using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -19,63 +20,27 @@ namespace Lucene.Net.Analysis.TokenAttributes
      * limitations under the License.
      */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
-
     /// <summary>
-    /// Default implementation of <see cref="IPositionLengthAttribute"/>. </summary>
-    public class PositionLengthAttribute : Attribute, IPositionLengthAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    /// Determines how many positions this
+    /// token spans.  Very few analyzer components actually
+    /// produce this attribute, and indexing ignores it, but
+    /// it's useful to express the graph structure naturally
+    /// produced by decompounding, word splitting/joining,
+    /// synonym filtering, etc.
+    ///
+    /// <para/>NOTE: this is optional, and most analyzers
+    /// don't change the default value (1).
+    /// </summary>
+    public interface IPositionLengthAttribute : IAttribute
     {
-        private int positionLength = 1;
-
         /// <summary>
-        /// Initializes this attribute with position length of 1. </summary>
-        public PositionLengthAttribute()
-        {
-        }
-
-        public virtual int PositionLength
-        {
-            get => positionLength;
-            set
-            {
-                if (value < 1)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(PositionLength), "Position length must be 1 or greater: got " + value); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
-                }
-                this.positionLength = value;
-            }
-        }
-
-        public override void Clear()
-        {
-            this.positionLength = 1;
-        }
-
-        public override bool Equals(object other)
-        {
-            if (other == this)
-            {
-                return true;
-            }
-
-            if (other is PositionLengthAttribute _other)
-            {
-                return positionLength == _other.positionLength;
-            }
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return positionLength;
-        }
-
-        public override void CopyTo(IAttribute target)
-        {
-            PositionLengthAttribute t = (PositionLengthAttribute)target;
-            t.PositionLength = positionLength;
-        }
+        /// Gets or Sets the position length of this <see cref="Token"/> (how many positions this token
+        /// spans).
+        /// <para/>
+        /// The default value is one.
+        /// </summary>
+        /// <exception cref="ArgumentException"> if value
+        ///         is set to zero or negative. </exception>
+        int PositionLength { set; get; }
     }
 }

@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
             return new FilterAnonymousClass();
         }
 
-        private class FilterAnonymousClass : Filter
+        private sealed class FilterAnonymousClass : Filter
         {
             public FilterAnonymousClass()
             {
@@ -210,7 +210,7 @@ namespace Lucene.Net.Search
             return new FilterAnonymousClass2();
         }
 
-        private class FilterAnonymousClass2 : Filter
+        private sealed class FilterAnonymousClass2 : Filter
         {
             public FilterAnonymousClass2()
             {
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
             return TestUtil.RandomFilterStrategy(random);
         }
 
-        private class RandomAccessFilterStrategyAnonymousClass : FilteredQuery.RandomAccessFilterStrategy
+        private sealed class RandomAccessFilterStrategyAnonymousClass : FilteredQuery.RandomAccessFilterStrategy
         {
             public RandomAccessFilterStrategyAnonymousClass()
             {
@@ -502,7 +502,7 @@ namespace Lucene.Net.Search
             IOUtils.Dispose(reader, writer, directory);
         }
 
-        private class FilterAnonymousClass3 : Filter
+        private sealed class FilterAnonymousClass3 : Filter
         {
             private readonly TestFilteredQuery outerInstance;
 
@@ -532,7 +532,7 @@ namespace Lucene.Net.Search
                 return new DocIdSetAnonymousClass(this, nullBitset, reader, bitSet);
             }
 
-            private class DocIdSetAnonymousClass : DocIdSet
+            private sealed class DocIdSetAnonymousClass : DocIdSet
             {
                 private readonly FilterAnonymousClass3 outerInstance;
 
@@ -560,7 +560,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                private class BitsAnonymousClass : IBits
+                private sealed class BitsAnonymousClass : IBits
                 {
                     private readonly DocIdSetAnonymousClass outerInstance;
 
@@ -621,7 +621,7 @@ namespace Lucene.Net.Search
             IOUtils.Dispose(reader, writer, directory);
         }
 
-        private class FilterAnonymousClass4 : Filter
+        private sealed class FilterAnonymousClass4 : Filter
         {
             private readonly TestFilteredQuery outerInstance;
 
@@ -638,7 +638,7 @@ namespace Lucene.Net.Search
                 return new DocIdSetAnonymousClass2(this, context);
             }
 
-            private class DocIdSetAnonymousClass2 : DocIdSet
+            private sealed class DocIdSetAnonymousClass2 : DocIdSet
             {
                 private readonly FilterAnonymousClass4 outerInstance;
 
@@ -662,7 +662,7 @@ namespace Lucene.Net.Search
                     return new DocIdSetIteratorAnonymousClass(this, termDocsEnum);
                 }
 
-                private class DocIdSetIteratorAnonymousClass : DocIdSetIterator
+                private sealed class DocIdSetIteratorAnonymousClass : DocIdSetIterator
                 {
                     private readonly DocIdSetAnonymousClass2 outerInstance;
 

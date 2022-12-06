@@ -33,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
     {
         private readonly IDictionary<ConfigurationKey, object> configMap = new Dictionary<ConfigurationKey, object>();
 
-        internal AbstractQueryConfig()
+        private protected AbstractQueryConfig() // LUCENENET: Changed from internal to private protected
         {
             // although this class is public, it can only be constructed from package
         }

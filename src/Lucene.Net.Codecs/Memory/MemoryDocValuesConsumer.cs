@@ -404,18 +404,18 @@ namespace Lucene.Net.Codecs.Memory
             IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             // write the ordinals as a binary field
-            AddBinaryField(field, new IterableAnonymousClass(docToOrdCount, ords));
+            AddBinaryField(field, new EnumerableAnonymousClass(docToOrdCount, ords));
 
             // write the values as FST
             WriteFST(field, values);
         }
 
-        private class IterableAnonymousClass : IEnumerable<BytesRef>
+        private sealed class EnumerableAnonymousClass : IEnumerable<BytesRef>
         {
             private readonly IEnumerable<long?> _docToOrdCount;
             private readonly IEnumerable<long?> _ords;
 
-            public IterableAnonymousClass(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
+            public EnumerableAnonymousClass(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
                 _docToOrdCount = docToOrdCount;
                 _ords = ords;
@@ -423,7 +423,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public IEnumerator<BytesRef> GetEnumerator()
             {
-                return new SortedSetIterator(_docToOrdCount.GetEnumerator(), _ords.GetEnumerator());
+                return new SortedSetEnumerator(_docToOrdCount.GetEnumerator(), _ords.GetEnumerator());
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -433,7 +433,7 @@ namespace Lucene.Net.Codecs.Memory
         }
 
         // per-document vint-encoded byte[]
-        internal class SortedSetIterator : IEnumerator<BytesRef>
+        internal class SortedSetEnumerator : IEnumerator<BytesRef>
         {
             private byte[] buffer = new byte[10];
             private readonly ByteArrayDataOutput @out = new ByteArrayDataOutput(); // LUCENENET: marked readonly
@@ -446,7 +446,7 @@ namespace Lucene.Net.Codecs.Memory
 
             object IEnumerator.Current => this.Current;
 
-            internal SortedSetIterator(IEnumerator<long?> counts, IEnumerator<long?> ords)
+            internal SortedSetEnumerator(IEnumerator<long?> counts, IEnumerator<long?> ords)
             {
                 this.counts = counts;
                 this.ords = ords;
@@ -499,8 +499,17 @@ namespace Lucene.Net.Codecs.Memory
 
             public void Dispose()
             {
-                this.counts.Dispose();
-                this.ords.Dispose();
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    this.counts.Dispose();
+                    this.ords.Dispose();
+                }
             }
 
             // LUCENENET: Remove() not supported in .NET

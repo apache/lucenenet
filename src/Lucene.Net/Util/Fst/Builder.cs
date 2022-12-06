@@ -412,7 +412,7 @@ namespace Lucene.Net.Util.Fst
             if (frontier.Length < input.Length + 1)
             {
                 UnCompiledNode<T>[] next = new UnCompiledNode<T>[ArrayUtil.Oversize(input.Length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                Array.Copy(frontier, 0, next, 0, frontier.Length);
+                Arrays.Copy(frontier, 0, next, 0, frontier.Length);
                 for (int idx = frontier.Length; idx < next.Length; idx++)
                 {
                     next[idx] = new UnCompiledNode<T>(this, idx);
@@ -578,7 +578,7 @@ namespace Lucene.Net.Util.Fst
     /// </summary>
     public abstract class Builder
     {
-        internal Builder() { } // Disallow external creation
+        private protected Builder() { } // Disallow external creation
 
         /// <summary>
         /// Expert: this is invoked by Builder whenever a suffix
@@ -682,7 +682,7 @@ namespace Lucene.Net.Util.Fst
                 if (NumArcs == Arcs.Length)
                 {
                     Arc<S>[] newArcs = new Arc<S>[ArrayUtil.Oversize(NumArcs + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(Arcs, 0, newArcs, 0, Arcs.Length);
+                    Arrays.Copy(Arcs, 0, newArcs, 0, Arcs.Length);
                     for (int arcIdx = NumArcs; arcIdx < newArcs.Length; arcIdx++)
                     {
                         newArcs[arcIdx] = new Arc<S>();

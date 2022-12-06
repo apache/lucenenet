@@ -1,6 +1,7 @@
 ﻿using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
@@ -338,7 +339,7 @@ namespace Lucene.Net.Codecs.Memory
             return new FieldsConsumerAnonymousClass(this, @out);
         }
 
-        private class FieldsConsumerAnonymousClass : FieldsConsumer
+        private sealed class FieldsConsumerAnonymousClass : FieldsConsumer
         {
             private readonly MemoryPostingsFormat outerInstance;
 
@@ -410,7 +411,7 @@ namespace Lucene.Net.Codecs.Memory
                     buffer = ArrayUtil.Grow(buffer, bufferIn.Length);
                 }
                 @in.Reset(buffer, 0, bufferIn.Length);
-                Array.Copy(bufferIn.Bytes, bufferIn.Offset, buffer, 0, bufferIn.Length);
+                Arrays.Copy(bufferIn.Bytes, bufferIn.Offset, buffer, 0, bufferIn.Length);
                 this.liveDocs = liveDocs;
                 docID = -1;
                 accum = 0;
@@ -569,7 +570,7 @@ namespace Lucene.Net.Codecs.Memory
                     buffer = ArrayUtil.Grow(buffer, bufferIn.Length);
                 }
                 @in.Reset(buffer, 0, bufferIn.Length - bufferIn.Offset);
-                Array.Copy(bufferIn.Bytes, bufferIn.Offset, buffer, 0, bufferIn.Length);
+                Arrays.Copy(bufferIn.Bytes, bufferIn.Offset, buffer, 0, bufferIn.Length);
                 this.liveDocs = liveDocs;
                 docID = -1;
                 accum = 0;
@@ -979,7 +980,7 @@ namespace Lucene.Net.Codecs.Memory
             return new FieldsProducerAnonymousClass(fields);
         }
 
-        private class FieldsProducerAnonymousClass : FieldsProducer
+        private sealed class FieldsProducerAnonymousClass : FieldsProducer
         {
             private readonly IDictionary<string, TermsReader> _fields;
 

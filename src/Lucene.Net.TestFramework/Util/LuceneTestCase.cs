@@ -2018,7 +2018,7 @@ namespace Lucene.Net.Util
                     {
                         Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
                     }
-                    r.AddReaderClosedListener(new ReaderClosedListenerAnonymousClass(ex));
+                    r.AddReaderDisposedListener(new ReaderClosedListenerAnonymousClass(ex));
                 }
                 IndexSearcher ret;
                 if (wrapWithAssertions)
@@ -2511,7 +2511,7 @@ namespace Lucene.Net.Util
                     {
                         // term, but ensure a non-zero offset
                         var newbytes = new byte[term.Length + 5];
-                        Array.Copy(term.Bytes, term.Offset, newbytes, 5, term.Length);
+                        Arrays.Copy(term.Bytes, term.Offset, newbytes, 5, term.Length);
                         tests.Add(new BytesRef(newbytes, 5, term.Length));
                     }
                     else if (code == 3)
@@ -3166,12 +3166,12 @@ namespace Lucene.Net.Util
         // LUCENENET specific - moved this here so we can reference it more readily (similar to how Spatial does it).
         // However, this is also available as an extension method of the System.Random class in RandomizedTesting.Generators.
         // This method was originally in carrotsearch.randomizedtesting.RandomizedTest.
-        public double RandomGaussian()
+        public static double RandomGaussian() // LUCENENET: CA1822: Mark members as static
         {
             return Random.NextGaussian();
         }
 
-        private class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass : IReaderDisposedListener
         {
             private readonly LimitedConcurrencyLevelTaskScheduler ex;
 
@@ -3180,7 +3180,7 @@ namespace Lucene.Net.Util
                 this.ex = ex;
             }
 
-            public void OnClose(IndexReader reader)
+            public void OnDispose(IndexReader reader)
             {
                 ex?.Shutdown();
                 //TestUtil.ShutdownExecutorService(ex);

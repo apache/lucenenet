@@ -39,8 +39,8 @@ namespace Lucene.Net.Analysis.Ja
             tokenizerFactory.Inform(new StringMockResourceLoader(""));
             TokenStream ts = tokenizerFactory.Create(new StringReader("私は制限スピードを超える。"));
             IDictionary<String, String> args = new Dictionary<String, String>();
-            args.Put("luceneMatchVersion", TEST_VERSION_CURRENT.toString());
-            args.Put("tags", "stoptags.txt");
+            args["luceneMatchVersion"] = TEST_VERSION_CURRENT.ToString();
+            args["tags"] = "stoptags.txt";
             JapanesePartOfSpeechStopFilterFactory factory = new JapanesePartOfSpeechStopFilterFactory(args);
             factory.Inform(new StringMockResourceLoader(tags));
             ts = factory.Create(ts);

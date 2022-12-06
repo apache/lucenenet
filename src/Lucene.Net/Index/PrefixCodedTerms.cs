@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
             public void Dispose()
             {
                 Dispose(true);
-                GC.SuppressFinalize(true);
+                GC.SuppressFinalize(this);
             }
 
             protected virtual void Dispose(bool disposing)
@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            private int SharedPrefix(BytesRef term1, BytesRef term2)
+            private static int SharedPrefix(BytesRef term1, BytesRef term2) // LUCENENET: CA1822: Mark members as static
             {
                 int pos1 = 0;
                 int pos1End = pos1 + Math.Min(term1.Length, term2.Length);

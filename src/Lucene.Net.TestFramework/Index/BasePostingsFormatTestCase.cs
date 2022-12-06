@@ -4,6 +4,7 @@ using Lucene.Net.Codecs;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
@@ -1256,7 +1257,7 @@ namespace Lucene.Net.Index
             // LUCENENET: A bit of extra work required since we don't have an easy way to filter out
             // the "NONE" option we added to avoid having to use null
             IndexOptions[] allOptions = new IndexOptions[ALL_INDEX_OPTIONS.Length - 1];
-            Array.Copy(ALL_INDEX_OPTIONS, 1, allOptions, 0, allOptions.Length); // LUCENENET: Skip our NONE option
+            Arrays.Copy(ALL_INDEX_OPTIONS, 1, allOptions, 0, allOptions.Length); // LUCENENET: Skip our NONE option
             int maxIndexOption = Array.IndexOf(allOptions, options);
 
             ISet<Option> allOptionsHashSet = new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option)));

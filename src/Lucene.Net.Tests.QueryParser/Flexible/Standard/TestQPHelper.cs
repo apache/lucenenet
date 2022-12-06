@@ -802,7 +802,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             IDictionary<string, DateResolution> dateRes = new Dictionary<string, DateResolution>();
 
             // set a field specific date resolution    
-            dateRes.Put(monthField, DateResolution.MONTH);
+            dateRes[monthField] = DateResolution.MONTH;
 #pragma warning disable 612, 618
             qp.SetDateResolution(dateRes);
 #pragma warning restore 612, 618
@@ -811,7 +811,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             qp.SetDateResolution(DateResolution.MILLISECOND);
 
             // set second field specific date resolution
-            dateRes.Put(hourField, DateResolution.HOUR);
+            dateRes[hourField] = DateResolution.HOUR;
 #pragma warning disable 612, 618
             qp.SetDateResolution(dateRes);
 #pragma warning restore 612, 618
@@ -1394,22 +1394,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 if (upto == 0)
                 {
                     posIncr.PositionIncrement = (1);
-                    term.SetEmpty().Append("a");
+                    term.SetEmpty().Append('a');
                 }
                 else if (upto == 1)
                 {
                     posIncr.PositionIncrement = (1);
-                    term.SetEmpty().Append("b");
+                    term.SetEmpty().Append('b');
                 }
                 else if (upto == 2)
                 {
                     posIncr.PositionIncrement = (0);
-                    term.SetEmpty().Append("c");
+                    term.SetEmpty().Append('c');
                 }
                 else
                 {
                     posIncr.PositionIncrement = (0);
-                    term.SetEmpty().Append("d");
+                    term.SetEmpty().Append('d');
                 }
                 upto++;
                 return true;

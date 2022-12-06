@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (minPrefixChars < 0)
             {
-                throw new ArgumentOutOfRangeException("minPrefixChars must be >= 0; got: " + minPrefixChars);// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentOutOfRangeException(nameof(minPrefixChars), "minPrefixChars must be >= 0; got: " + minPrefixChars);// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             this.m_queryAnalyzer = queryAnalyzer;
@@ -290,7 +290,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private Analyzer GetGramAnalyzer()
             => new AnalyzerWrapperAnonymousClass(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 
-        private class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
+        private sealed class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             private readonly AnalyzingInfixSuggester outerInstance;
 
@@ -783,11 +783,19 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // TODO: apps can try to invert their analysis logic
             // here, e.g. downcase the two before checking prefix:
             sb.Append("<b>");
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+            sb.Append(surface.AsSpan(0, prefixToken.Length - 0));
+#else
             sb.Append(surface.Substring(0, prefixToken.Length - 0));
+#endif
             sb.Append("</b>");
             if (prefixToken.Length < surface.Length)
             {
+#if FEATURE_STRINGBUILDER_APPEND_READONLYSPAN
+                sb.Append(surface.AsSpan(prefixToken.Length));
+#else
                 sb.Append(surface.Substring(prefixToken.Length));
+#endif
             }
         }
 

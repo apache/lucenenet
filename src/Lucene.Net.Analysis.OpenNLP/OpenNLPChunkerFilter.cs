@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.OpenNlp
 
     /// <summary>
     /// Run OpenNLP chunker. Prerequisite: the <see cref="OpenNLPTokenizer"/> and <see cref="OpenNLPPOSFilter"/> must precede this filter.
-    /// Tags terms in the TypeAttribute, replacing the POS tags previously put there by <see cref="OpenNLPPOSFilter"/>.
+    /// Tags terms in the <see cref="ITypeAttribute"/>, replacing the POS tags previously put there by <see cref="OpenNLPPOSFilter"/>.
     /// </summary>
     public sealed class OpenNLPChunkerFilter : TokenFilter
     {

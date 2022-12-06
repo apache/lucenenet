@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,9 @@ namespace Lucene.Net.Cli.CommandLine
      * limitations under the License.
      */
 
+    [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+    [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "This was part of the original design")]
+    [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "This was part of the original design")]
     public class CommandLineApplication
     {
         // Indicates whether the parser should throw an exception when it runs into an unexpected argument.
@@ -516,7 +520,7 @@ namespace Lucene.Net.Cli.CommandLine
             Out.WriteLine();
         }
 
-        private void HandleUnexpectedArg(CommandLineApplication command, string[] args, int index, string argTypeName)
+        private static void HandleUnexpectedArg(CommandLineApplication command, string[] args, int index, string argTypeName) // LUCENENET: CA1822: Mark members as static
         {
             if (command._throwOnUnexpectedArg)
             {
@@ -530,7 +534,7 @@ namespace Lucene.Net.Cli.CommandLine
             }
         }
 
-        private class CommandArgumentEnumerator : IEnumerator<CommandArgument>
+        private sealed class CommandArgumentEnumerator : IEnumerator<CommandArgument>
         {
             private readonly IEnumerator<CommandArgument> _enumerator;
 

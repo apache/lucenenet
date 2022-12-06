@@ -2,6 +2,8 @@
 using J2N;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -30687,13 +30689,13 @@ namespace Lucene.Net.Analysis.CharFilters
                 {"amp", "AMP" },
             };
 
-        private static readonly CharArrayMap<char> entityValues = LoadEntityValues();
+        private static readonly CharArrayDictionary<char> entityValues = LoadEntityValues();
 
-        private static CharArrayMap<char> LoadEntityValues() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static CharArrayDictionary<char> LoadEntityValues() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            CharArrayMap<char> entityValues
+            CharArrayDictionary<char> entityValues
 #pragma warning disable 612, 618
-            = new CharArrayMap<char>(LuceneVersion.LUCENE_CURRENT, 253, false);
+            = new CharArrayDictionary<char>(LuceneVersion.LUCENE_CURRENT, 253, false);
 #pragma warning restore 612, 618
             string[] entities = {
                 "AElig", "\u00C6", "Aacute", "\u00C1", "Acirc", "\u00C2",
@@ -30773,10 +30775,10 @@ namespace Lucene.Net.Analysis.CharFilters
             for (int i = 0; i < entities.Length; i += 2)
             {
                 var value = entities[i + 1][0];
-                entityValues.Put(entities[i], value);
+                entityValues[entities[i]] = value;
                 if (upperCaseVariantsAccepted.TryGetValue(entities[i], out string upperCaseVariant) && upperCaseVariant != null)
                 {
-                    entityValues.Put(upperCaseVariant, value);
+                    entityValues[upperCaseVariant] = value;
                 }
             }
             return entityValues;
@@ -30993,7 +30995,7 @@ namespace Lucene.Net.Analysis.CharFilters
             /* first: make room (if you can) */
             if (zzStartRead > 0)
             {
-                Array.Copy(zzBuffer, zzStartRead,
+                Arrays.Copy(zzBuffer, zzStartRead,
                                  zzBuffer, 0,
                                  zzEndRead - zzStartRead);
 
@@ -31009,7 +31011,7 @@ namespace Lucene.Net.Analysis.CharFilters
             {
                 /* if not: blow it up */
                 char[] newBuffer = new char[zzCurrentPos * 2];
-                Array.Copy(zzBuffer, 0, newBuffer, 0, zzBuffer.Length);
+                Arrays.Copy(zzBuffer, 0, newBuffer, 0, zzBuffer.Length);
                 zzBuffer = newBuffer;
             }
 
@@ -31094,15 +31096,12 @@ namespace Lucene.Net.Analysis.CharFilters
             zzLexicalState = newState;
         }
 
-
-        /// <summary>
-        /// Returns the text matched by the current regular expression.
-        /// </summary>
-        /// <returns>Returns the text matched by the current regular expression.</returns>
-        private string YyText()
-        {
-            return new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
-        }
+        // LUCENENET: Not used - refactored to read the array directly to avoid allocations
+        ///// <summary>
+        ///// Returns the text matched by the current regular expression.
+        ///// </summary>
+        ///// <returns>Returns the text matched by the current regular expression.</returns>
+        //private string YyText => new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
 
         /// <summary>
         /// Returns the character at position <tt>pos</tt> from the 
@@ -31134,7 +31133,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// in error fallback rules.
         /// </summary>
         /// <param name="errorCode">the code of the errormessage to display</param>
-        private void ZzScanError(int errorCode)
+        private static void ZzScanError(int errorCode) // LUCENENET: CA1822: Mark members as static
         {
             string message;
             // LUCENENET specific: Defensive check so we don't have to catch IndexOutOfRangeException
@@ -31371,10 +31370,11 @@ namespace Lucene.Net.Analysis.CharFilters
                             inputSegment.Write(zzBuffer, zzStartRead, matchLength);
                             if (matchLength <= 7)
                             { // 0x10FFFF = 1114111: max 7 decimal chars
-                                string decimalCharRef = YyText();
-                                if (!int.TryParse(decimalCharRef, NumberStyles.Integer, CultureInfo.InvariantCulture, out int codePoint))
+                                // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                                // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                                if (!Integer.TryParse(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead, radix: 10, out int codePoint))
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing code point '{0}'", decimalCharRef);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing code point '{0}'", new CharArrayFormatter(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead));
                                 }
                                 if (codePoint <= 0x10FFFF)
                                 {
@@ -31612,7 +31612,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             int length = YyLength;
                             inputSegment.Write(zzBuffer, zzStartRead, length);
                             entitySegment.Clear();
-                            char ch = entityValues.Get(zzBuffer, zzStartRead, length);
+                            char ch = entityValues[zzBuffer, zzStartRead, length];
                             entitySegment.Append(ch);
                             outputSegment = entitySegment;
                             YyBegin(CHARACTER_REFERENCE_TAIL);
@@ -31625,11 +31625,11 @@ namespace Lucene.Net.Analysis.CharFilters
                             inputSegment.Write(zzBuffer, zzStartRead, matchLength);
                             if (matchLength <= 6)
                             { // 10FFFF: max 6 hex chars
-                                string hexCharRef
-                                    = new string(zzBuffer, zzStartRead + 1, matchLength - 1);
-                                if (!int.TryParse(hexCharRef, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int codePoint))
+                                // LUCENENET: Originally, we got the value of new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead), which allocates.
+                                // We can eliminate the allocation by grabbing the values YyText converts to a string via index and length.
+                                if (!Integer.TryParse(zzBuffer, zzStartRead + 1, matchLength - 1, radix: 16, out int codePoint))
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing hex code point '{0}'", hexCharRef);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing hex code point '{0}'", new CharArrayFormatter(zzBuffer, zzStartRead + 1, matchLength - 1));
                                 }
                                 if (codePoint <= 0x10FFFF)
                                 {
@@ -31666,7 +31666,9 @@ namespace Lucene.Net.Analysis.CharFilters
                         {
                             if (inputSegment.Length > 2)
                             { // Chars between "<!" and "--" - this is not a comment
-                                inputSegment.Append(YyText());
+                                // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                                // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                                inputSegment.Append(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
                             }
                             else
                             {
@@ -31812,7 +31814,9 @@ namespace Lucene.Net.Analysis.CharFilters
                         {
                             if (inputSegment.Length > 2)
                             { // Chars between "<!" and "[CDATA[" - this is not a CDATA section
-                                inputSegment.Append(YyText());
+                                // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                                // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                                inputSegment.Append(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
                             }
                             else
                             {
@@ -31884,27 +31888,33 @@ namespace Lucene.Net.Analysis.CharFilters
                         { // Handle paired UTF-16 surrogates.
                             outputSegment = entitySegment;
                             outputSegment.Clear();
-                            string surrogatePair = YyText();
-                            char highSurrogate = '\u0000';
-                            // LUCENENET: Optimized parse so we don't allocate a substring.
-                            if (Integer.TryParse(surrogatePair, 2, 6 - 2, 16, out int highSurrogateInt32))
+                            //string surrogatePair = YyText; // LUCENENET: Refactored to use the underlying array directly instead of allocating substrings
+                            int highSurrogate = '\u0000'; // LUCENENET: Use int to allow out parameters to use without casting.
+
+                            // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                            // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                            int startIndex = zzStartRead + 2;
+                            int length = 4; // (6 - 2)
+
+                            // High surrogates are in decimal range [55296, 56319]
+                            if (!Integer.TryParse(zzBuffer, startIndex, length, radix: 16, out highSurrogate))
                             {
-                                highSurrogate = (char)highSurrogateInt32;
-                            }
-                            else // should never happen
-                            {
-                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", surrogatePair.Substring(2, 6 - 2));
-                            }
-                            try
-                            {
-                                // LUCENENET: Optimized parse so we don't allocate a substring
-                                outputSegment.UnsafeWrite((char)Integer.Parse(surrogatePair, 10, 14 - 10, 16));
-                            }
-                            catch (Exception e) when (e.IsException())
-                            { // should never happen
-                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", surrogatePair.Substring(10, 14 - 10));
+                                // should never happen
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", new CharArrayFormatter(zzBuffer, startIndex, length));
                             }
 
+                            // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                            // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                            startIndex = zzStartRead + 10;
+                            length = 4; // (14 - 10)
+
+                            // Low surrogates are in decimal range [56320, 57343]
+                            if (!Integer.TryParse(zzBuffer, startIndex, length, radix: 16, out int lowSurrogate))
+                            {
+                                // should never happen
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", new CharArrayFormatter(zzBuffer, startIndex, length));
+                            }
+                            outputSegment.UnsafeWrite((char)lowSurrogate);
                             // add (previously matched input length) + (this match length) - (substitution length)
                             cumulativeDiff += inputSegment.Length + YyLength - 2;
                             // position the correction at (already output length) + (substitution length)
@@ -31916,32 +31926,38 @@ namespace Lucene.Net.Analysis.CharFilters
                     case 103: break;
                     case 51:
                         { // Handle paired UTF-16 surrogates.
-                            string surrogatePair = YyText();
-                            char highSurrogate = '\u0000';
-                            char lowSurrogate = '\u0000';
-                            // LUCENENET: Optimized parse so we don't allocate a substring.
-                            if (Integer.TryParse(surrogatePair, 2, 6 - 2, 16, out int highSurrogateInt32))
+                            // string surrogatePair = YyText; // LUCENENET: Refactored to use the underlying array directly instead of allocating substrings
+                            int highSurrogate = '\u0000'; // LUCENENET: Use int to allow out parameters to use without casting.
+                            int lowSurrogate = '\u0000'; // LUCENENET: Use int to allow out parameters to use without casting.
+
+                            // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                            // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                            int startIndex = zzStartRead + 2;
+                            int length = 4; // (6 - 2)
+
+                            // High surrogates are in decimal range [55296, 56319]
+                            if (!Integer.TryParse(zzBuffer, startIndex, length, radix: 16, out highSurrogate))
                             {
-                                highSurrogate = (char)highSurrogateInt32;
+                                // should never happen
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", new CharArrayFormatter(zzBuffer, startIndex, length));
                             }
-                            else // should never happen
+
+                            // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                            // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                            startIndex = zzStartRead + 9;
+                            length = 5; // (14 - 9)
+
+                            // Low surrogates are in decimal range [56320, 57343]
+                            if (!Integer.TryParse(zzBuffer, startIndex, length, radix: 10, out lowSurrogate))
                             {
-                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", surrogatePair.Substring(2, 6 - 2));
+                                // should never happen
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", new CharArrayFormatter(zzBuffer, startIndex, length));
                             }
-                            try
-                            { // Low surrogates are in decimal range [56320, 57343]
-                                // LUCENENET: Optimized parse so we don't allocate a substring
-                                lowSurrogate = (char)Integer.Parse(surrogatePair, 9, 14 - 9, 10);
-                            }
-                            catch (Exception e) when (e.IsException())
-                            { // should never happen
-                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", surrogatePair.Substring(9, 14 - 9));
-                            }
-                            if (char.IsLowSurrogate(lowSurrogate))
+                            if (char.IsLowSurrogate((char)lowSurrogate))
                             {
                                 outputSegment = entitySegment;
                                 outputSegment.Clear();
-                                outputSegment.UnsafeWrite(lowSurrogate);
+                                outputSegment.UnsafeWrite((char)lowSurrogate);
                                 // add (previously matched input length) + (this match length) - (substitution length)
                                 cumulativeDiff += inputSegment.Length + YyLength - 2;
                                 // position the correction at (already output length) + (substitution length)
@@ -31950,7 +31966,9 @@ namespace Lucene.Net.Analysis.CharFilters
                                 YyBegin(YYINITIAL);
                                 return highSurrogate;
                             }
-                            YyPushBack(surrogatePair.Length - 1); // Consume only '#'
+                            // LUCENENET: Using the underlying array to parse, so need to calculate surrogatePair.Length as (zzMarkedPos - zzStartRead)
+                            // which would be the length of YyText, if allocated.
+                            YyPushBack((zzMarkedPos - zzStartRead) - 1); // Consume only '#'
                             inputSegment.Append('#');
                             YyBegin(NUMERIC_CHARACTER);
                         }
@@ -31958,30 +31976,37 @@ namespace Lucene.Net.Analysis.CharFilters
                     case 104: break;
                     case 52:
                         { // Handle paired UTF-16 surrogates.
-                            string surrogatePair = YyText();
-                            char highSurrogate = '\u0000';
-                            // LUCENENET: Optimized parse so we don't allocate a substring.
-                            if (Integer.TryParse(surrogatePair, 1, 6 - 1, 10, out int highSurrogateInt32))
-                            { // High surrogates are in decimal range [55296, 56319]
-                                highSurrogate = (char)highSurrogateInt32;
-                            }
-                            else // should never happen
+                            //string surrogatePair = YyText; // LUCENENET: Refactored to use the underlying array directly instead of allocating substrings
+                            int highSurrogate = '\u0000'; // LUCENENET: Use int to allow out parameters to use without casting.
+
+                            // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                            // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                            int startIndex = zzStartRead + 1;
+                            int length = 5; // (6 - 1)
+
+                            // High surrogates are in decimal range [55296, 56319]
+                            if (!Integer.TryParse(zzBuffer, startIndex, length, radix: 10, out highSurrogate))
                             {
-                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", surrogatePair.Substring(1, 6 - 1));
+                                // should never happen
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", new CharArrayFormatter(zzBuffer, startIndex, length));
                             }
-                            if (char.IsHighSurrogate(highSurrogate))
+                            if (char.IsHighSurrogate((char)highSurrogate))
                             {
                                 outputSegment = entitySegment;
                                 outputSegment.Clear();
-                                try
+
+                                // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                                // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                                startIndex = zzStartRead + 10;
+                                length = 4; // (14 - 10)
+
+                                // Low surrogates are in decimal range [56320, 57343]
+                                if (!Integer.TryParse(zzBuffer, startIndex, length, radix: 16, out int lowSurrogate))
                                 {
-                                    // LUCENENET: Optimized parse so we don't allocate a substring.
-                                    outputSegment.UnsafeWrite((char)Integer.Parse(surrogatePair, 10, 14 - 10, 16));
+                                    // should never happen
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", new CharArrayFormatter(zzBuffer, startIndex, length));
                                 }
-                                catch (Exception e) when (e.IsException())
-                                { // should never happen
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", surrogatePair.Substring(10, 14 - 10));
-                                }
+                                outputSegment.UnsafeWrite((char)lowSurrogate);
                                 // add (previously matched input length) + (this match length) - (substitution length)
                                 cumulativeDiff += inputSegment.Length + YyLength - 2;
                                 // position the correction at (already output length) + (substitution length)
@@ -31990,7 +32015,9 @@ namespace Lucene.Net.Analysis.CharFilters
                                 YyBegin(YYINITIAL);
                                 return highSurrogate;
                             }
-                            YyPushBack(surrogatePair.Length - 1); // Consume only '#'
+                            // LUCENENET: Using the underlying array to parse, so need to calculate surrogatePair.Length as (zzMarkedPos - zzStartRead)
+                            // which would be the length of YyText, if allocated.
+                            YyPushBack((zzMarkedPos - zzStartRead) - 1); // Consume only '#'
                             inputSegment.Append('#');
                             YyBegin(NUMERIC_CHARACTER);
                         }
@@ -31998,34 +32025,40 @@ namespace Lucene.Net.Analysis.CharFilters
                     case 105: break;
                     case 53:
                         { // Handle paired UTF-16 surrogates.
-                            string surrogatePair = YyText();
-                            char highSurrogate = '\u0000';
-                            // LUCENENET: Optimized parse so we don't allocate a substring.
-                            if (Integer.TryParse(surrogatePair, 1, 6 - 1, 10, out int highSurrogateInt32))
-                            { // High surrogates are in decimal range [55296, 56319]
-                                highSurrogate = (char)highSurrogateInt32;
-                            }
-                            else // should never happen
+                            //string surrogatePair = YyText(); // LUCENENET: Refactored to use the underlying array directly instead of allocating substrings
+                            int highSurrogate = '\u0000'; // LUCENENET: Use int to allow out parameters to use without casting.
+
+                            // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                            // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                            int startIndex = zzStartRead + 1;
+                            int length = 5; // (6 - 1)
+
+                            // High surrogates are in decimal range [55296, 56319]
+                            if (!Integer.TryParse(zzBuffer, startIndex, length, radix: 10, out highSurrogate))
                             {
-                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", surrogatePair.Substring(1, 6 - 1));
+                                // should never happen
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing high surrogate '{0}'", new CharArrayFormatter(zzBuffer, startIndex, length));
                             }
-                            if (char.IsHighSurrogate(highSurrogate))
+                            if (char.IsHighSurrogate((char)highSurrogate))
                             {
-                                char lowSurrogate = '\u0000';
-                                // LUCENENET: Optimized parse so we don't allocate a substring.
-                                if (Integer.TryParse(surrogatePair, 9, 14 - 9, 10, out int lowSurrogateInt32))
-                                { // Low surrogates are in decimal range [56320, 57343]
-                                    lowSurrogate = (char)lowSurrogateInt32;
-                                }
-                                else // should never happen
+                                int lowSurrogate = '\u0000'; // LUCENENET: Use int to allow out parameters to use without casting.
+
+                                // LUCENENET: Originally, we got the value of YyText property, which allocates. We can eliminate the allocation
+                                // by grabbing the values YyText converts to a string: new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
+                                startIndex = zzStartRead + 9;
+                                length = 5; // (14 - 9)
+
+                                // Low surrogates are in decimal range [56320, 57343]
+                                if (!Integer.TryParse(zzBuffer, startIndex, length, radix: 10, out lowSurrogate))
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", surrogatePair.Substring(9, 14 - 9));
+                                    // should never happen
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing low surrogate '{0}'", new CharArrayFormatter(zzBuffer, startIndex, length));
                                 }
-                                if (char.IsLowSurrogate(lowSurrogate))
+                                if (char.IsLowSurrogate((char)lowSurrogate))
                                 {
                                     outputSegment = entitySegment;
                                     outputSegment.Clear();
-                                    outputSegment.UnsafeWrite(lowSurrogate);
+                                    outputSegment.UnsafeWrite((char)lowSurrogate);
                                     // add (previously matched input length) + (this match length) - (substitution length)
                                     cumulativeDiff += inputSegment.Length + YyLength - 2;
                                     // position the correction at (already output length) + (substitution length)
@@ -32035,7 +32068,9 @@ namespace Lucene.Net.Analysis.CharFilters
                                     return highSurrogate;
                                 }
                             }
-                            YyPushBack(surrogatePair.Length - 1); // Consume only '#'
+                            // LUCENENET: Using the underlying array to parse, so need to calculate surrogatePair.Length as (zzMarkedPos - zzStartRead)
+                            // which would be the length of YyText, if allocated.
+                            YyPushBack((zzMarkedPos - zzStartRead) - 1); // Consume only '#'
                             inputSegment.Append('#');
                             YyBegin(NUMERIC_CHARACTER);
                         }

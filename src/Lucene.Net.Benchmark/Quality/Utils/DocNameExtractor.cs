@@ -55,7 +55,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             return name.Count > 0 ? name[0] : null;
         }
 
-        private class StoredFieldVisitorAnonymousClass : StoredFieldVisitor
+        private sealed class StoredFieldVisitorAnonymousClass : StoredFieldVisitor
         {
             private readonly DocNameExtractor outerInstance;
             private readonly IList<string> name;

@@ -381,7 +381,7 @@ namespace Lucene.Net.Search
             if (field is null || !field.Equals(f, StringComparison.Ordinal))
             {
                 buffer.Append(field);
-                buffer.Append(":");
+                buffer.Append(':');
             }
 
             buffer.Append("\"");
@@ -397,7 +397,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    buffer.Append(" ");
+                    buffer.Append(' ');
                     for (int j = 1; j < (position - lastPos); j++)
                     {
                         buffer.Append("? ");
@@ -405,16 +405,16 @@ namespace Lucene.Net.Search
                 }
                 if (terms.Length > 1)
                 {
-                    buffer.Append("(");
+                    buffer.Append('(');
                     for (int j = 0; j < terms.Length; j++)
                     {
                         buffer.Append(terms[j].Text);
                         if (j < terms.Length - 1)
                         {
-                            buffer.Append(" ");
+                            buffer.Append(' ');
                         }
                     }
-                    buffer.Append(")");
+                    buffer.Append(')');
                 }
                 else
                 {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Search
 
             if (slop != 0)
             {
-                buffer.Append("~");
+                buffer.Append('~');
                 buffer.Append(slop);
             }
 
@@ -477,7 +477,7 @@ namespace Lucene.Net.Search
         }
 
         // Breakout calculation of the termArrays equals
-        private bool TermArraysEquals(IList<Term[]> termArrays1, IList<Term[]> termArrays2)
+        private static bool TermArraysEquals(IList<Term[]> termArrays1, IList<Term[]> termArrays2) // LUCENENET: CA1822: Mark members as static
         {
             if (termArrays1.Count != termArrays2.Count)
             {
@@ -594,7 +594,7 @@ namespace Lucene.Net.Search
             private void GrowArray()
             {
                 var newArray = new int[_arraySize * 2];
-                Array.Copy(_array, 0, newArray, 0, _arraySize);
+                Arrays.Copy(_array, 0, newArray, 0, _arraySize);
                 _array = newArray;
                 _arraySize *= 2;
             }

@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        internal TermGroupFacetCollector(string groupField, string facetField, BytesRef facetPrefix, int initialSize)
+        private protected TermGroupFacetCollector(string groupField, string facetField, BytesRef facetPrefix, int initialSize) // LUCENENET: Changed from internal to private protected
             : base(groupField, facetField, facetPrefix)
         {
             groupedFacetHits = new JCG.List<GroupedFacetHit>(initialSize);

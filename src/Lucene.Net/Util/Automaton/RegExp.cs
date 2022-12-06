@@ -663,11 +663,11 @@ namespace Lucene.Net.Util.Automaton
             switch (kind)
             {
                 case Kind.REGEXP_UNION:
-                    b.Append("(");
+                    b.Append('(');
                     exp1.ToStringBuilder(b);
-                    b.Append("|");
+                    b.Append('|');
                     exp2.ToStringBuilder(b);
-                    b.Append(")");
+                    b.Append(')');
                     break;
 
                 case Kind.REGEXP_CONCATENATION:
@@ -676,75 +676,75 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_INTERSECTION:
-                    b.Append("(");
+                    b.Append('(');
                     exp1.ToStringBuilder(b);
-                    b.Append("&");
+                    b.Append('&');
                     exp2.ToStringBuilder(b);
-                    b.Append(")");
+                    b.Append(')');
                     break;
 
                 case Kind.REGEXP_OPTIONAL:
-                    b.Append("(");
+                    b.Append('(');
                     exp1.ToStringBuilder(b);
                     b.Append(")?");
                     break;
 
                 case Kind.REGEXP_REPEAT:
-                    b.Append("(");
+                    b.Append('(');
                     exp1.ToStringBuilder(b);
                     b.Append(")*");
                     break;
 
                 case Kind.REGEXP_REPEAT_MIN:
-                    b.Append("(");
+                    b.Append('(');
                     exp1.ToStringBuilder(b);
                     b.Append("){").Append(min).Append(",}");
                     break;
 
                 case Kind.REGEXP_REPEAT_MINMAX:
-                    b.Append("(");
+                    b.Append('(');
                     exp1.ToStringBuilder(b);
-                    b.Append("){").Append(min).Append(",").Append(max).Append("}");
+                    b.Append("){").Append(min).Append(',').Append(max).Append('}');
                     break;
 
                 case Kind.REGEXP_COMPLEMENT:
                     b.Append("~(");
                     exp1.ToStringBuilder(b);
-                    b.Append(")");
+                    b.Append(')');
                     break;
 
                 case Kind.REGEXP_CHAR:
-                    b.Append("\\").AppendCodePoint(c);
+                    b.Append('\\').AppendCodePoint(c);
                     break;
 
                 case Kind.REGEXP_CHAR_RANGE:
-                    b.Append("[\\").AppendCodePoint(from).Append("-\\").AppendCodePoint(to).Append("]");
+                    b.Append("[\\").AppendCodePoint(from).Append("-\\").AppendCodePoint(to).Append(']');
                     break;
 
                 case Kind.REGEXP_ANYCHAR:
-                    b.Append(".");
+                    b.Append('.');
                     break;
 
                 case Kind.REGEXP_EMPTY:
-                    b.Append("#");
+                    b.Append('#');
                     break;
 
                 case Kind.REGEXP_STRING:
-                    b.Append("\"").Append(s).Append("\"");
+                    b.Append('\"').Append(s).Append('\"');
                     break;
 
                 case Kind.REGEXP_ANYSTRING:
-                    b.Append("@");
+                    b.Append('@');
                     break;
 
                 case Kind.REGEXP_AUTOMATON:
-                    b.Append("<").Append(s).Append(">");
+                    b.Append('<').Append(s).Append('>');
                     break;
 
                 case Kind.REGEXP_INTERVAL:
                     string s1 = Convert.ToString(min, CultureInfo.InvariantCulture);
                     string s2 = Convert.ToString(max, CultureInfo.InvariantCulture);
-                    b.Append("<");
+                    b.Append('<');
                     if (digits > 0)
                     {
                         for (int i = s1.Length; i < digits; i++)
@@ -752,7 +752,7 @@ namespace Lucene.Net.Util.Automaton
                             b.Append('0');
                         }
                     }
-                    b.Append(s1).Append("-");
+                    b.Append(s1).Append('-');
                     if (digits > 0)
                     {
                         for (int i = s2.Length; i < digits; i++)
@@ -760,7 +760,7 @@ namespace Lucene.Net.Util.Automaton
                             b.Append('0');
                         }
                     }
-                    b.Append(s2).Append(">");
+                    b.Append(s2).Append('>');
                     break;
             }
             return b;

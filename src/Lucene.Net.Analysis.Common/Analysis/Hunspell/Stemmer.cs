@@ -1,8 +1,10 @@
 ﻿// Lucene version compatibility level 4.10.4
 using J2N.Numerics;
+using J2N.Text;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
@@ -173,7 +175,7 @@ namespace Lucene.Net.Analysis.Hunspell
         private void CaseFoldTitle(char[] word, int length)
         {
             titleBuffer = ArrayUtil.Grow(titleBuffer, length);
-            System.Array.Copy(word, 0, titleBuffer, 0, length);
+            Arrays.Copy(word, 0, titleBuffer, 0, length);
             for (int i = 1; i < length; i++)
             {
                 titleBuffer[i] = dictionary.CaseFold(titleBuffer[i]);
@@ -184,7 +186,7 @@ namespace Lucene.Net.Analysis.Hunspell
         private void CaseFoldLower(char[] word, int length)
         {
             lowerBuffer = ArrayUtil.Grow(lowerBuffer, length);
-            System.Array.Copy(word, 0, lowerBuffer, 0, length);
+            Arrays.Copy(word, 0, lowerBuffer, 0, length);
             lowerBuffer[0] = dictionary.CaseFold(lowerBuffer[0]);
         }
 
@@ -253,10 +255,10 @@ namespace Lucene.Net.Analysis.Hunspell
             IList<CharsRef> deduped = new JCG.List<CharsRef>();
             foreach (CharsRef s in stems)
             {
-                if (!terms.Contains(s))
+                if (!terms.Contains((ICharSequence)s)) // LUCENENET: Cast to get to ICharSequence overload
                 {
                     deduped.Add(s);
-                    terms.Add(s);
+                    terms.Add((ICharSequence)s); // LUCENENET: Cast to get to ICharSequence overload
                 }
             }
             return deduped;
@@ -444,8 +446,8 @@ namespace Lucene.Net.Analysis.Hunspell
                             }
 
                             char[] strippedWord = new char[stripLength + deAffixedLength];
-                            Array.Copy(dictionary.stripData, stripStart, strippedWord, 0, stripLength);
-                            Array.Copy(word, deAffixedStart, strippedWord, stripLength, deAffixedLength);
+                            Arrays.Copy(dictionary.stripData, stripStart, strippedWord, 0, stripLength);
+                            Arrays.Copy(word, deAffixedStart, strippedWord, stripLength, deAffixedLength);
 
                             IList<CharsRef> stemList = ApplyAffix(strippedWord, strippedWord.Length, prefix, -1, recursionDepth, true, circumfix, caseVariant);
 
@@ -549,8 +551,8 @@ namespace Lucene.Net.Analysis.Hunspell
                             }
 
                             char[] strippedWord = new char[stripLength + deAffixedLength];
-                            Array.Copy(word, 0, strippedWord, 0, deAffixedLength);
-                            Array.Copy(dictionary.stripData, stripStart, strippedWord, deAffixedLength, stripLength);
+                            Arrays.Copy(word, 0, strippedWord, 0, deAffixedLength);
+                            Arrays.Copy(dictionary.stripData, stripStart, strippedWord, deAffixedLength, stripLength);
 
                             IList<CharsRef> stemList = ApplyAffix(strippedWord, strippedWord.Length, suffix, prefixFlag, recursionDepth, false, circumfix, caseVariant);
 
@@ -724,7 +726,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="flags"> Array of flags to cross check against.  Can be <c>null</c> </param>
         /// <param name="matchEmpty"> If true, will match a zero length flags array. </param>
         /// <returns> <c>true</c> if the flag is found in the array or the array is <c>null</c>, <c>false</c> otherwise </returns>
-        private bool HasCrossCheckedFlag(char flag, char[] flags, bool matchEmpty)
+        private static bool HasCrossCheckedFlag(char flag, char[] flags, bool matchEmpty) // LUCENENET: CA1822: Mark members as static
         {
             return (flags.Length == 0 && matchEmpty) || Array.BinarySearch(flags, flag) >= 0;
         }

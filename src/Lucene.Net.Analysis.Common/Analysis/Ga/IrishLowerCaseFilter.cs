@@ -1,6 +1,8 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
+using System;
 using System.Globalization;
 
 namespace Lucene.Net.Analysis.Ga
@@ -62,10 +64,13 @@ namespace Lucene.Net.Analysis.Ga
                     chLen = chLen + 1;
                 }
 
-                for (int i = idx; i < chLen;)
-                {
-                    i += Character.ToChars(Character.ToLower(chArray[i], culture), chArray, i); // LUCENENET specific - use Irish culture when lowercasing
-                }
+                // LUCENENET: Reduce allocations by using the stack and spans
+                var source = new ReadOnlySpan<char>(chArray, idx, chLen);
+                var destination = chArray.AsSpan(idx, chLen);
+                var spare = chLen * sizeof(char) <= Constants.MaxStackByteLimit ? stackalloc char[chLen] : new char[chLen];
+                source.ToLower(spare, culture); // LUCENENET specific - use Irish culture when lowercasing
+                spare.CopyTo(destination);
+
                 return true;
             }
             else
@@ -74,7 +79,7 @@ namespace Lucene.Net.Analysis.Ga
             }
         }
 
-        private bool IsUpperVowel(int v)
+        private static bool IsUpperVowel(int v) // LUCENENET: CA1822: Mark members as static
         {
             switch (v)
             {

@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -44,7 +45,7 @@ namespace Lucene.Net.Util
         /// <param name="seed">The random seed for a new <see cref="Random"/> instance.
         /// Note this is a subclass of <see cref="Random"/>, since the default doesn't produce consistent results across platforms.</param>
         /// <returns><c>true</c> if the seed was found in context; <c>false</c> if the seed was generated.</returns>
-        private bool TryGetRandomSeedsFromContext(Test test, out long seed, out long? testSeed)
+        private static bool TryGetRandomSeedsFromContext(Test test, out long seed, out long? testSeed)
         {
             //bool generate;
             seed = default;
@@ -140,6 +141,7 @@ namespace Lucene.Net.Util
         /// <param name="fixture">The test fixture.</param>
         /// <param name="randomizedContext">The randomized context to associate with the fixture.</param>
         /// <returns>The randomized context.</returns>
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         public RandomizedContext InitializeTestFixture(Test fixture, RandomizedContext randomizedContext)
         {
             if (fixture is null)

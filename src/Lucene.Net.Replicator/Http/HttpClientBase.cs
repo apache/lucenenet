@@ -440,7 +440,7 @@ namespace Lucene.Net.Replicator.Http
                 return res;
             }
 
-#if FEATURE_SPAN
+#if FEATURE_STREAM_READ_SPAN
             public override int Read(Span<byte> buffer)
             {
                 int res = input.Read(buffer);
@@ -463,7 +463,7 @@ namespace Lucene.Net.Replicator.Http
             }
             public override long Seek(long offset, SeekOrigin origin) => input.Seek(offset, origin);
             public override void SetLength(long value) => input.SetLength(value);
-            public override void Write(byte[] buffer, int offset, int count) => Write(buffer, offset, count);
+            public override void Write(byte[] buffer, int offset, int count) => input.Write(buffer, offset, count);
 
             private void Consume(int zeroOrMinusOne)
             {

@@ -191,7 +191,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
         }
 
-        private XmlReaderSettings GetXmlReaderSettings()
+        private static XmlReaderSettings GetXmlReaderSettings() // LUCENENET: CA1822: Mark members as static
         {
             return
 
@@ -202,7 +202,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 };
         }
 
-        private IDictionary<string, string> GetAttributes(XmlReader node)
+        private static IDictionary<string, string> GetAttributes(XmlReader node) // LUCENENET: CA1822: Mark members as static
         {
             var result = new Dictionary<string, string>();
             if (node.HasAttributes)
@@ -270,7 +270,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 token.Length = 0;
                 return word;
             }
-            token.Append(chars.ToString());
+            token.Append(chars); // LUCENENET: CA1830: Prefer strongly-typed Append and Insert method overloads on StringBuilder
             return null;
         }
 

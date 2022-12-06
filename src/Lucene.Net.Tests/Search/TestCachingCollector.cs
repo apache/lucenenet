@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly TestCachingCollector outerInstance;
 
@@ -116,21 +116,21 @@ namespace Lucene.Net.Search
 
             internal int prevDocID;
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 Assert.AreEqual(prevDocID + 1, doc);
                 prevDocID = doc;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => false;
+            public bool AcceptsDocsOutOfOrder => false;
         }
 
         [Test]

@@ -1,6 +1,7 @@
 ﻿using J2N;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -123,11 +124,108 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Encode characters from a <see cref="T:char[]"/> <paramref name="source"/>, starting at
+        /// and ending at <paramref name="result"/>. After encoding, <c>result.Offset</c> will always be 0.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="result"/> is <c>null</c>.</exception>
+        // TODO: broken if incoming result.offset != 0
+        // LUCENENET specific overload
+        public static void UTF16toUTF8(Span<char> source, BytesRef result)
+        {
+            // LUCENENET: Added guard clause
+            if (result is null)
+                throw new ArgumentNullException(nameof(result));
+
+            int length = source.Length;
+
+            int upto = 0;
+            int i = 0;
+            int end = source.Length;
+            var @out = result.Bytes;
+
+            // Pre-allocate for worst case 4-for-1
+            int maxLen = length * 4;
+            if (@out.Length < maxLen)
+            {
+                @out = result.Bytes = new byte[maxLen];
+            }
+            result.Offset = 0;
+
+            while (i < end)
+            {
+                int code = (int)source[i++];
+
+                if (code < 0x80)
+                {
+                    @out[upto++] = (byte)code;
+                }
+                else if (code < 0x800)
+                {
+                    @out[upto++] = (byte)(0xC0 | (code >> 6));
+                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
+                }
+                else if (code < 0xD800 || code > 0xDFFF)
+                {
+                    @out[upto++] = (byte)(0xE0 | (code >> 12));
+                    @out[upto++] = (byte)(0x80 | ((code >> 6) & 0x3F));
+                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
+                }
+                else
+                {
+                    // surrogate pair
+                    // confirm valid high surrogate
+                    if (code < 0xDC00 && i < end)
+                    {
+                        var utf32 = (int)source[i];
+                        // confirm valid low surrogate and write pair
+                        if (utf32 >= 0xDC00 && utf32 <= 0xDFFF)
+                        {
+                            utf32 = (code << 10) + utf32 + SURROGATE_OFFSET;
+                            i++;
+                            @out[upto++] = (byte)(0xF0 | (utf32 >> 18));
+                            @out[upto++] = (byte)(0x80 | ((utf32 >> 12) & 0x3F));
+                            @out[upto++] = (byte)(0x80 | ((utf32 >> 6) & 0x3F));
+                            @out[upto++] = (byte)(0x80 | (utf32 & 0x3F));
+                            continue;
+                        }
+                    }
+                    // replace unpaired surrogate or out-of-order low surrogate
+                    // with substitution character
+                    @out[upto++] = 0xEF;
+                    @out[upto++] = 0xBF;
+                    @out[upto++] = 0xBD;
+                }
+            }
+            //assert matches(source, offset, length, out, upto);
+            result.Length = upto;
+        }
+
+        /// <summary>
+        /// Encode characters from a <see cref="T:char[]"/> <paramref name="source"/>, starting at
         /// <paramref name="offset"/> for <paramref name="length"/> chars. After encoding, <c>result.Offset</c> will always be 0.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="result"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="offset"/> or <paramref name="length"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="offset"/> and <paramref name="length"/> refer to a location outside of <paramref name="source"/>.
+        /// </exception>
         // TODO: broken if incoming result.offset != 0
         public static void UTF16toUTF8(char[] source, int offset, int length, BytesRef result)
         {
+            // LUCENENET: Added guard clauses
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+            if (result is null)
+                throw new ArgumentNullException(nameof(result));
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must not be negative.");
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
+            if (offset > source.Length - length) // Checks for int overflow
+                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
+
             int upto = 0;
             int i = offset;
             int end = offset + length;
@@ -193,9 +291,29 @@ namespace Lucene.Net.Util
         /// Encode characters from this <see cref="ICharSequence"/>, starting at <paramref name="offset"/>
         /// for <paramref name="length"/> characters. After encoding, <c>result.Offset</c> will always be 0.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="result"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="offset"/> or <paramref name="length"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="offset"/> and <paramref name="length"/> refer to a location outside of <paramref name="source"/>.
+        /// </exception>
         // TODO: broken if incoming result.offset != 0
-        public static void UTF16toUTF8(ICharSequence s, int offset, int length, BytesRef result)
+        public static void UTF16toUTF8(ICharSequence source, int offset, int length, BytesRef result)
         {
+            // LUCENENET: Added guard clauses
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+            if (result is null)
+                throw new ArgumentNullException(nameof(result));
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must not be negative.");
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
+            if (offset > source.Length - length) // Checks for int overflow
+                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
+
             int end = offset + length;
 
             var @out = result.Bytes;
@@ -210,7 +328,7 @@ namespace Lucene.Net.Util
             int upto = 0;
             for (int i = offset; i < end; i++)
             {
-                var code = (int)s[i];
+                var code = (int)source[i];
                 if (code < 0x80)
                 {
                     @out[upto++] = (byte)code;
@@ -232,7 +350,7 @@ namespace Lucene.Net.Util
                     // confirm valid high surrogate
                     if (code < 0xDC00 && (i < end - 1))
                     {
-                        int utf32 = (int)s[i + 1];
+                        int utf32 = (int)source[i + 1];
                         // confirm valid low surrogate and write pair
                         if (utf32 >= 0xDC00 && utf32 <= 0xDFFF)
                         {
@@ -262,9 +380,29 @@ namespace Lucene.Net.Util
         /// <para/>
         /// LUCENENET specific.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="result"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="offset"/> or <paramref name="length"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="offset"/> and <paramref name="length"/> refer to a location outside of <paramref name="source"/>.
+        /// </exception>
         // TODO: broken if incoming result.offset != 0
-        public static void UTF16toUTF8(string s, int offset, int length, BytesRef result)
+        public static void UTF16toUTF8(string source, int offset, int length, BytesRef result)
         {
+            // LUCENENET: Added guard clauses
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+            if (result is null)
+                throw new ArgumentNullException(nameof(result));
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must not be negative.");
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
+            if (offset > source.Length - length) // Checks for int overflow
+                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
+
             int end = offset + length;
 
             var @out = result.Bytes;
@@ -279,7 +417,7 @@ namespace Lucene.Net.Util
             int upto = 0;
             for (int i = offset; i < end; i++)
             {
-                var code = (int)s[i];
+                var code = (int)source[i];
                 if (code < 0x80)
                 {
                     @out[upto++] = (byte)code;
@@ -301,7 +439,7 @@ namespace Lucene.Net.Util
                     // confirm valid high surrogate
                     if (code < 0xDC00 && (i < end - 1))
                     {
-                        int utf32 = (int)s[i + 1];
+                        int utf32 = (int)source[i + 1];
                         // confirm valid low surrogate and write pair
                         if (utf32 >= 0xDC00 && utf32 <= 0xDFFF)
                         {
@@ -765,7 +903,7 @@ namespace Lucene.Net.Util
             }
 
             var result = new char[w];
-            Array.Copy(chars, result, w);
+            Arrays.Copy(chars, result, w);
             return result;
         }
 

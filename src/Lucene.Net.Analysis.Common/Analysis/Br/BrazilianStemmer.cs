@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Br
         /// Checks a term if it can be processed correctly.
         /// </summary>
         /// <returns>  true if, and only if, the given term consists in letters. </returns>
-        private bool IsStemmable(string term)
+        private static bool IsStemmable(string term) // LUCENENET: CA1822: Mark members as static
         {
             for (int c = 0; c < term.Length; c++)
             {
@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Br
         /// Checks a term if it can be processed indexed.
         /// </summary>
         /// <returns> true if it can be indexed </returns>
-        private bool IsIndexable(string term)
+        private static bool IsIndexable(string term) // LUCENENET: CA1822: Mark members as static
         {
             return (term.Length < 30) && (term.Length > 2);
         }
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Br
         /// See if string is 'a','e','i','o','u'
         /// </summary>
         /// <returns> true if is vowel </returns>
-        private bool IsVowel(char value)
+        private static bool IsVowel(char value) // LUCENENET: CA1822: Mark members as static
         {
             return (value == 'a') || (value == 'e') || (value == 'i') || (value == 'o') || (value == 'u');
         }
@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Br
         ///      no such non-vowel.
         /// </summary>
         /// <returns> null or a string representing R1 </returns>
-        private string GetR1(string value)
+        private static string GetR1(string value) // LUCENENET: CA1822: Mark members as static
         {
             int i;
             int j;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.Br
         ///      found.
         /// </summary>
         /// <returns> null or a string representing RV </returns>
-        private string GetRV(string value)
+        private static string GetRV(string value) // LUCENENET: CA1822: Mark members as static
         {
             int i;
             int j;
@@ -259,7 +259,7 @@ namespace Lucene.Net.Analysis.Br
         /// 4) ç -> c
         /// </summary>
         /// <returns> null or a string transformed </returns>
-        private string ChangeTerm(string value)
+        private static string ChangeTerm(string value) // LUCENENET: CA1822: Mark members as static
         {
             int j;
             string r = "";
@@ -319,7 +319,7 @@ namespace Lucene.Net.Analysis.Br
         /// Check if a string ends with a suffix
         /// </summary>
         /// <returns> true if the string ends with the specified suffix </returns>
-        private bool Suffix(string value, string suffix)
+        private static bool Suffix(string value, string suffix) // LUCENENET: CA1822: Mark members as static
         {
 
             // be-safe !!!
@@ -340,7 +340,7 @@ namespace Lucene.Net.Analysis.Br
         /// Replace a <see cref="string"/> suffix by another
         /// </summary>
         /// <returns> the replaced <see cref="string"/> </returns>
-        private string ReplaceSuffix(string value, string toReplace, string changeTo)
+        private static string ReplaceSuffix(string value, string toReplace, string changeTo) // LUCENENET: CA1822: Mark members as static
         {
             string vvalue;
 
@@ -366,7 +366,7 @@ namespace Lucene.Net.Analysis.Br
         /// Remove a <see cref="string"/> suffix
         /// </summary>
         /// <returns> the <see cref="string"/> without the suffix </returns>
-        private string RemoveSuffix(string value, string toRemove)
+        private static string RemoveSuffix(string value, string toRemove) // LUCENENET: CA1822: Mark members as static
         {
             // be-safe !!!
             if ((value is null) || (toRemove is null) || !Suffix(value, toRemove))
@@ -381,7 +381,7 @@ namespace Lucene.Net.Analysis.Br
         /// See if a suffix is preceded by a <see cref="string"/>
         /// </summary>
         /// <returns> true if the suffix is preceded </returns>
-        private bool SuffixPreceded(string value, string suffix, string preceded)
+        private static bool SuffixPreceded(string value, string suffix, string preceded) // LUCENENET: CA1822: Mark members as static
         {
             // be-safe !!!
             if ((value is null) || (suffix is null) || (preceded is null) || !Suffix(value, suffix))
@@ -1340,7 +1340,7 @@ namespace Lucene.Net.Analysis.Br
             if (Suffix(RV, "o"))
             {
                 CT = RemoveSuffix(CT, "o");
-                return;
+                //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
 
         }
@@ -1376,7 +1376,7 @@ namespace Lucene.Net.Analysis.Br
                 }
 
                 CT = RemoveSuffix(CT, "e");
-                return;
+                //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
         }
 

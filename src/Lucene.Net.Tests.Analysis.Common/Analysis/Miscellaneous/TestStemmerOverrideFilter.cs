@@ -4,6 +4,7 @@ using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.En;
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -59,6 +60,32 @@ namespace Lucene.Net.Analysis.Miscellaneous
             AssertTokenStreamContents(stream, new string[] { "books" });
         }
 
+        [Test, LuceneNetSpecific]
+        public virtual void TestIgnoreCase_CharArray()
+        {
+            // lets make booked stem to books
+            // the override filter will convert "booked" to "books",
+            // but also mark it with KeywordAttribute so Porter will not change it.
+            StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(true);
+            builder.Add("boOkEd".ToCharArray(), "books");
+            Tokenizer tokenizer = new KeywordTokenizer(new StringReader("BooKeD"));
+            TokenStream stream = new PorterStemFilter(new StemmerOverrideFilter(tokenizer, builder.Build()));
+            AssertTokenStreamContents(stream, new string[] { "books" });
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestIgnoreCase_CharSequence()
+        {
+            // lets make booked stem to books
+            // the override filter will convert "booked" to "books",
+            // but also mark it with KeywordAttribute so Porter will not change it.
+            StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(true);
+            builder.Add("boOkEd".AsCharSequence(), "books");
+            Tokenizer tokenizer = new KeywordTokenizer(new StringReader("BooKeD"));
+            TokenStream stream = new PorterStemFilter(new StemmerOverrideFilter(tokenizer, builder.Build()));
+            AssertTokenStreamContents(stream, new string[] { "books" });
+        }
+
         [Test]
         public virtual void TestNoOverrides()
         {
@@ -107,7 +134,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 builder.Add(entry.Key, entry.Value);
                 if (Random.nextBoolean() || output.Count == 0)
                 {
-                    input.Append(entry.Key).Append(" ");
+                    input.Append(entry.Key).Append(' ');
                     output.Add(entry.Value);
                 }
             }

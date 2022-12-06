@@ -1,7 +1,6 @@
 ﻿// Lucene version compatibility level 9.2
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
-using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System.IO;
@@ -25,14 +24,20 @@ namespace Lucene.Net.Analysis.Fa
      * limitations under the License.
      */
 
-    /// <summary>
-    /// Test the Persian Normalization Filter
-    /// 
-    /// </summary>
-
+    /// <summary>Test the Persian Normalization Filter</summary>
     public class TestPersianStemFilter : BaseTokenStreamTestCase
     {
-        internal PersianAnalyzer a = new PersianAnalyzer(TEST_VERSION_CURRENT);
+        private Analyzer a;
+
+        public override void SetUp()
+        {
+            base.SetUp();
+            a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer source = new MockTokenizer(reader);
+                return new TokenStreamComponents(source, new PersianStemFilter(source));
+            });
+        }
 
         [Test]
         public virtual void TestAnSuffix()
@@ -94,9 +99,7 @@ namespace Lucene.Net.Analysis.Fa
         {
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
             set.Add("ساهدهات");
-#pragma warning disable 612, 618
-            StandardTokenizer tokenStream = new StandardTokenizer(TEST_VERSION_CURRENT, new StringReader("ساهدهات"));
-#pragma warning restore 612, 618
+            MockTokenizer tokenStream = new MockTokenizer(new StringReader("ساهدهات"));
 
             PersianStemFilter filter = new PersianStemFilter(new SetKeywordMarkerFilter(tokenStream, set));
             AssertTokenStreamContents(filter, new string[] { "ساهدهات" });

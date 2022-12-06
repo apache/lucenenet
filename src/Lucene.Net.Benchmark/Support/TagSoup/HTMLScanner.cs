@@ -1,4 +1,4 @@
-// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+﻿// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
 //
 // TagSoup is licensed under the Apache License,
 // Version 2.0.  You may obtain a copy of this license at
@@ -13,11 +13,11 @@
 // 
 // 
 
+using Lucene;
+using Lucene.Net.Support;
 using Sax;
 using System;
-using System.Globalization;
 using System.IO;
-using System.Text;
 
 namespace TagSoup
 {
@@ -267,10 +267,11 @@ namespace TagSoup
         private char[] theOutputBuffer = new char[200]; // Output buffer
         private int theSize;                    // Current buffer size
         private readonly int[] theWinMap = {    // Windows chars map // LUCENENET: marked readonly
-        0x20AC, 0xFFFD, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
-        0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0xFFFD, 0x017D, 0xFFFD,
-        0xFFFD, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
-        0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0xFFFD, 0x017E, 0x0178};
+            0x20AC, 0xFFFD, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
+            0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0xFFFD, 0x017D, 0xFFFD,
+            0xFFFD, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
+            0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0xFFFD, 0x017E, 0x0178
+        };
 
         /// <summary>
         ///   Index into the state table for [state][input character - 2].
@@ -297,16 +298,18 @@ namespace TagSoup
         ///   next state = statetable[value + 3]. That is, the value points
         ///   to the start of the answer 4-tuple in the statetable.
         /// </summary>
-        private static short[][] statetableIndex;
+        private static readonly short[][] statetableIndex;
 
         /// <summary>
         ///   The highest character value seen in the statetable.
         ///   See the doc comment for statetableIndex to see how this
         ///   is used.
         /// </summary>
-        private static int statetableIndexMaxChar;
-        public HTMLScanner()
+        private static readonly int statetableIndexMaxChar = LoadStateTableIndexMaxChar(out statetableIndex); // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+
+        private static int LoadStateTableIndexMaxChar(out short[][] statetableIndexOut)
         {
+            int statetableIndexMaxCharResult;
             int maxState = -1;
             int maxChar = -1;
             for (int i = 0; i < statetable.Length; i += 4)
@@ -320,13 +323,13 @@ namespace TagSoup
                     maxChar = statetable[i + 1];
                 }
             }
-            statetableIndexMaxChar = maxChar + 1;
+            statetableIndexMaxCharResult = maxChar + 1;
 
-            statetableIndex = new short[maxState + 1][];
+            statetableIndexOut = new short[maxState + 1][];
 
             for (int i = 0; i <= maxState; i++)
             {
-                statetableIndex[i] = new short[maxChar + 3];
+                statetableIndexOut[i] = new short[maxChar + 3];
             }
             for (int theState = 0; theState <= maxState; ++theState)
             {
@@ -353,9 +356,10 @@ namespace TagSoup
                             break;
                         }
                     }
-                    statetableIndex[theState][ch + 2] = (short)hit;
+                    statetableIndexOut[theState][ch + 2] = (short)hit;
                 }
             }
+            return statetableIndexMaxCharResult;
         }
 
         // Locator implementation
@@ -372,14 +376,14 @@ namespace TagSoup
         // Scanner implementation
 
         /// <summary>
-        /// Reset document locator, supplying systemid and publicid.
+        /// Reset document locator, supplying systemId and publicId.
         /// </summary>
-        /// <param name="systemid">System id</param>
-        /// <param name="publicid">Public id</param>
-        public virtual void ResetDocumentLocator(string publicid, string systemid)
+        /// <param name="systemId">System id</param>
+        /// <param name="publicId">Public id</param>
+        public virtual void ResetDocumentLocator(string publicId, string systemId)
         {
-            thePublicid = publicid;
-            theSystemid = systemid;
+            thePublicid = publicId;
+            theSystemid = systemId;
             theLastLine = theLastColumn = theCurrentLine = theCurrentColumn = 0;
         }
 
@@ -440,9 +444,9 @@ namespace TagSoup
                 switch (action)
                 {
                     case 0:
-                        throw new Exception(
-                            "HTMLScanner can't cope with " + (int)ch + " in state " +
-                            (int)theState);
+                        throw Error.Create(
+                            "HTMLScanner can't cope with " + ch + " in state " +
+                            theState);
                     case A_ADUP:
                         h.Adup(theOutputBuffer, 0, theSize);
                         theSize = 0;
@@ -668,7 +672,7 @@ namespace TagSoup
                         theSize = 0;
                         break;
                     default:
-                        throw new Exception("Can't process state " + action);
+                        throw Error.Create("Can't process state " + action);
                 }
                 if (!unread)
                 {
@@ -710,7 +714,7 @@ namespace TagSoup
                 {
                     // Grow the buffer size
                     char[] newOutputBuffer = new char[theOutputBuffer.Length * 2];
-                    Array.Copy(theOutputBuffer, 0, newOutputBuffer, 0, theSize + 1);
+                    Arrays.Copy(theOutputBuffer, 0, newOutputBuffer, 0, theSize + 1);
                     theOutputBuffer = newOutputBuffer;
                 }
             }

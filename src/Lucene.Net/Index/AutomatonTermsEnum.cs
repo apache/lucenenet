@@ -1,4 +1,5 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -187,7 +188,7 @@ namespace Lucene.Net.Index
             {
                 linearUpperBound.Bytes = new byte[length];
             }
-            Array.Copy(seekBytesRef.Bytes, 0, linearUpperBound.Bytes, 0, position);
+            Arrays.Copy(seekBytesRef.Bytes, 0, linearUpperBound.Bytes, 0, position);
             linearUpperBound.Bytes[position] = (byte)maxInterval;
             linearUpperBound.Length = length;
 

@@ -218,7 +218,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class FilterAnonymousClass : Filter
+        private sealed class FilterAnonymousClass : Filter
         {
             private readonly TestCachingWrapperFilter outerInstance;
 
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class FilterAnonymousClass2 : Filter
+        private sealed class FilterAnonymousClass2 : Filter
         {
             private readonly TestCachingWrapperFilter outerInstance;
 
@@ -273,7 +273,7 @@ namespace Lucene.Net.Search
                 return new DocIdSetAnonymousClass(this);
             }
 
-            private class DocIdSetAnonymousClass : DocIdSet
+            private sealed class DocIdSetAnonymousClass : DocIdSet
             {
                 private readonly FilterAnonymousClass2 outerInstance;
 
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class FilterAnonymousClass3 : Filter
+        private sealed class FilterAnonymousClass3 : Filter
         {
             private readonly TestCachingWrapperFilter outerInstance;
 

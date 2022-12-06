@@ -320,7 +320,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < 30; i++)
             {
                 Document doc = new Document();
-                sb.Append(term).Append(" ");
+                sb.Append(term).Append(' ');
                 string content = sb.ToString();
                 Field noTf = NewField("noTf", content + (i % 2 == 0 ? "" : " notf"), omitType);
                 doc.Add(noTf);
@@ -397,7 +397,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class CountingHitCollectorAnonymousClass : CountingHitCollector
+        private sealed class CountingHitCollectorAnonymousClass : CountingHitCollector
         {
             private readonly TestOmitTf outerInstance;
 
@@ -422,7 +422,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class CountingHitCollectorAnonymousClass2 : CountingHitCollector
+        private sealed class CountingHitCollectorAnonymousClass2 : CountingHitCollector
         {
             private readonly TestOmitTf outerInstance;
 
@@ -447,7 +447,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class CountingHitCollectorAnonymousClass3 : CountingHitCollector
+        private sealed class CountingHitCollectorAnonymousClass3 : CountingHitCollector
         {
             private readonly TestOmitTf outerInstance;
 
@@ -473,7 +473,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class CountingHitCollectorAnonymousClass4 : CountingHitCollector
+        private sealed class CountingHitCollectorAnonymousClass4 : CountingHitCollector
         {
             private readonly TestOmitTf outerInstance;
 
@@ -499,7 +499,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class CountingHitCollectorAnonymousClass5 : CountingHitCollector
+        private sealed class CountingHitCollectorAnonymousClass5 : CountingHitCollector
         {
             private readonly TestOmitTf outerInstance;
 

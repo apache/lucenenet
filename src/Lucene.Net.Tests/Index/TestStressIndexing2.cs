@@ -843,7 +843,7 @@ namespace Lucene.Net.Index
                 if (buffer.Length < 1 + end)
                 {
                     char[] newBuffer = new char[(int)((1 + end) * 1.25)];
-                    Array.Copy(buffer, 0, newBuffer, 0, buffer.Length);
+                    Arrays.Copy(buffer, 0, newBuffer, 0, buffer.Length);
                     buffer = newBuffer;
                 }
 

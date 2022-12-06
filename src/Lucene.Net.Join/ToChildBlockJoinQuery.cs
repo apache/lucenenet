@@ -30,14 +30,14 @@ namespace Lucene.Net.Search.Join
     /// query joins in reverse: you provide a <see cref="Query"/> matching
     /// parent documents and it joins down to child
     /// documents.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class ToChildBlockJoinQuery : Query
     {
         /// <summary>
         /// Message thrown from <see cref="ToChildBlockJoinScorer.ValidateParentDoc"/>
-        /// on mis-use, when the parent query incorrectly returns child docs. 
+        /// on mis-use, when the parent query incorrectly returns child docs.
         /// </summary>
         internal const string INVALID_QUERY_MESSAGE = "Parent query yields document which is not matched by parents filter, docID=";
 
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Join
         /// Create a <see cref="ToChildBlockJoinQuery"/>.
         /// </summary>
         /// <param name="parentQuery"><see cref="Query"/> that matches parent documents</param>
-        /// <param name="parentsFilter"><see cref="Filter"/> (must produce FixedBitSet per-segment, like <see cref="FixedBitSetCachingWrapperFilter"/>) 
+        /// <param name="parentsFilter"><see cref="Filter"/> (must produce FixedBitSet per-segment, like <see cref="FixedBitSetCachingWrapperFilter"/>)
         /// identifying the parent documents.</param>
         /// <param name="doScores">True if parent scores should be calculated.</param>
         public ToChildBlockJoinQuery(Query parentQuery, Filter parentsFilter, bool doScores)
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search.Join
             _doScores = doScores;
         }
 
-        private ToChildBlockJoinQuery(Query origParentQuery, Query parentQuery, Filter parentsFilter, bool doScores) 
+        private ToChildBlockJoinQuery(Query origParentQuery, Query parentQuery, Filter parentsFilter, bool doScores)
             : base()
         {
             _origParentQuery = origParentQuery;
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Join
             _parentsFilter = parentsFilter;
             _doScores = doScores;
         }
-        
+
         public override Weight CreateWeight(IndexSearcher searcher)
         {
             return new ToChildBlockJoinWeight(this, _parentQuery.CreateWeight(searcher), _parentsFilter, _doScores);
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.Join
             private readonly Filter _parentsFilter;
             private readonly bool _doScores;
 
-            public ToChildBlockJoinWeight(Query joinQuery, Weight parentWeight, Filter parentsFilter, bool doScores) 
+            public ToChildBlockJoinWeight(Query joinQuery, Weight parentWeight, Filter parentsFilter, bool doScores)
                 : base()
             {
                 _joinQuery = joinQuery;
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Join
 
                 return new ToChildBlockJoinScorer(this, parentScorer, (FixedBitSet)parents, _doScores, acceptDocs);
             }
-            
+
             public override Explanation Explain(AtomicReaderContext reader, int doc)
             {
                 // TODO
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search.Join
             private int _childDoc = -1;
             private int _parentDoc;
 
-            public ToChildBlockJoinScorer(Weight weight, Scorer parentScorer, FixedBitSet parentBits, bool doScores, IBits acceptDocs) 
+            public ToChildBlockJoinScorer(Weight weight, Scorer parentScorer, FixedBitSet parentBits, bool doScores, IBits acceptDocs)
                 : base(weight)
             {
                 _doScores = doScores;
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search.Join
             {
                 return new JCG.List<ChildScorer> { new ChildScorer(_parentScorer, "BLOCK_JOIN") };
             }
-            
+
             public override int NextDoc()
             {
                 //System.out.println("Q.nextDoc() parentDoc=" + parentDoc + " childDoc=" + childDoc);
@@ -254,12 +254,12 @@ namespace Lucene.Net.Search.Join
                     }
                     //System.out.println("  " + childDoc);
                     return _childDoc;
-                    nextChildDocContinue:;
+                    nextChildDocContinue: {/* LUCENENET: intentionally blank */}
                 }
             }
 
             /// <summary>
-            /// Detect mis-use, where provided parent query in fact sometimes returns child documents.  
+            /// Detect mis-use, where provided parent query in fact sometimes returns child documents.
             /// </summary>
             private void ValidateParentDoc()
             {
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search.Join
             {
                 return _parentScore;
             }
-            
+
             public override int Freq => _parentFreq;
 
             public override int Advance(int childTarget)
@@ -334,7 +334,7 @@ namespace Lucene.Net.Search.Join
         {
             _parentQuery.ExtractTerms(terms);
         }
-        
+
         public override Query Rewrite(IndexReader reader)
         {
             Query parentRewrite = _parentQuery.Rewrite(reader);

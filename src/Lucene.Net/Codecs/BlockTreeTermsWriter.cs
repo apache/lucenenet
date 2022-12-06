@@ -936,7 +936,7 @@ namespace Lucene.Net.Codecs
 
             // for debugging
 #pragma warning disable IDE0051 // Remove unused private members
-            private string ToString(BytesRef b)
+            private static string ToString(BytesRef b) // LUCENENET: CA1822: Mark members as static
 #pragma warning restore IDE0051 // Remove unused private members
             {
                 try

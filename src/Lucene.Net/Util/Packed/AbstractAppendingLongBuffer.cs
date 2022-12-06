@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Packed
         internal int pendingOff;
         internal float acceptableOverheadRatio;
 
-        internal AbstractAppendingInt64Buffer(int initialBlockCount, int pageSize, float acceptableOverheadRatio)
+        private protected AbstractAppendingInt64Buffer(int initialBlockCount, int pageSize, float acceptableOverheadRatio) // LUCENENET: Changed from internal to private protected
         {
             values = new PackedInt32s.Reader[initialBlockCount];
             pending = new long[pageSize];

@@ -548,7 +548,7 @@ namespace Lucene.Net.Index
             return new MergeScoreAnonymousClass(skew, nonDelRatio, finalMergeScore);
         }
 
-        private class MergeScoreAnonymousClass : MergeScore
+        private sealed class MergeScoreAnonymousClass : MergeScore
         {
             private readonly double skew;
             private readonly double nonDelRatio;

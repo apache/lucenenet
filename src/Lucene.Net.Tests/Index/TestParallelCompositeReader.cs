@@ -31,7 +31,6 @@ namespace Lucene.Net.Index
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Occur = Lucene.Net.Search.Occur;
-    using IReaderClosedListener = Lucene.Net.Index.IndexReader.IReaderClosedListener;
 
     [TestFixture]
     public class TestParallelCompositeReader : LuceneTestCase
@@ -161,7 +160,7 @@ namespace Lucene.Net.Index
 
             foreach (AtomicReaderContext cxt in pr.Leaves)
             {
-                cxt.Reader.AddReaderClosedListener(new ReaderClosedListenerAnonymousClass(this, listenerClosedCount));
+                cxt.Reader.AddReaderDisposedListener(new ReaderClosedListenerAnonymousClass(this, listenerClosedCount));
             }
             pr.Dispose();
             ir1.Dispose();
@@ -169,7 +168,7 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousClass : IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass : IReaderDisposedListener
         {
             private readonly TestParallelCompositeReader outerInstance;
 
@@ -181,7 +180,7 @@ namespace Lucene.Net.Index
                 this.listenerClosedCount = listenerClosedCount;
             }
 
-            public void OnClose(IndexReader reader)
+            public void OnDispose(IndexReader reader)
             {
                 listenerClosedCount[0]++;
             }
@@ -203,14 +202,14 @@ namespace Lucene.Net.Index
 
             foreach (AtomicReaderContext cxt in pr.Leaves)
             {
-                cxt.Reader.AddReaderClosedListener(new ReaderClosedListenerAnonymousClass2(this, listenerClosedCount));
+                cxt.Reader.AddReaderDisposedListener(new ReaderClosedListenerAnonymousClass2(this, listenerClosedCount));
             }
             pr.Dispose();
             Assert.AreEqual(3, listenerClosedCount[0]);
             dir1.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousClass2 : IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass2 : IReaderDisposedListener
         {
             private readonly TestParallelCompositeReader outerInstance;
 
@@ -222,7 +221,7 @@ namespace Lucene.Net.Index
                 this.listenerClosedCount = listenerClosedCount;
             }
 
-            public void OnClose(IndexReader reader)
+            public void OnDispose(IndexReader reader)
             {
                 listenerClosedCount[0]++;
             }

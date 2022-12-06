@@ -41,6 +41,9 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// An empty character array for convenience </summary>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
+        [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
         public static readonly char[] EMPTY_CHARS = Arrays.Empty<char>();
 
         bool ICharSequence.HasValue => true;
@@ -239,7 +242,7 @@ namespace Lucene.Net.Util
                 chars = new char[otherLength];
                 Offset = 0;
             }
-            Array.Copy(otherChars, otherOffset, chars, Offset, otherLength);
+            Arrays.Copy(otherChars, otherOffset, chars, Offset, otherLength);
             Length = otherLength;
         }
 
@@ -252,11 +255,11 @@ namespace Lucene.Net.Util
             if (chars.Length - Offset < newLen)
             {
                 var newChars = new char[newLen];
-                Array.Copy(chars, Offset, newChars, 0, Length);
+                Arrays.Copy(chars, Offset, newChars, 0, Length);
                 Offset = 0;
                 chars = newChars;
             }
-            Array.Copy(otherChars, otherOffset, chars, Length + Offset, otherLength);
+            Arrays.Copy(otherChars, otherOffset, chars, Length + Offset, otherLength);
             Length = newLen;
         }
 
@@ -307,8 +310,8 @@ namespace Lucene.Net.Util
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length));
-            if (startIndex + length > Length)
-                throw new ArgumentOutOfRangeException("", $"{nameof(startIndex)} + {nameof(length)} > {nameof(Length)}");
+            if (startIndex > Length - length) // LUCENENET: Checks for int overflow
+                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
 
             return new CharsRef(chars, Offset + startIndex, length);
         }

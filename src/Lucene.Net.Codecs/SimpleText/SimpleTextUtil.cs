@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public static void Write(DataOutput output, string s, BytesRef scratch)
         {
-            UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, scratch);
+            UnicodeUtil.UTF16toUTF8(s, 0, s.Length, scratch);
             Write(output, scratch);
         }
 

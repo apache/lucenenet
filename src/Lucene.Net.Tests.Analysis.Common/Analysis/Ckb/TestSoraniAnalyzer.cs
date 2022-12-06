@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Ckb
         [Test]
         public virtual void TestCustomStopwords()
         {
-            Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+            Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty);
             AssertAnalyzesTo(a, "ئەم پیاوە", new string[] { "ئەم", "پیاو" });
         }
 
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Ckb
         {
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
             set.add("پیاوە");
-            Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            Analyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, set);
             AssertAnalyzesTo(a, "پیاوە", new string[] { "پیاوە" });
         }
 

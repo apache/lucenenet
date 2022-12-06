@@ -251,7 +251,7 @@ namespace Lucene.Net.Search
         ///     <item><description>no repetitions: <b>"ho my"~2</b></description></item>
         ///     <item><description>>repetitions: <b>"ho my my"~2</b></description></item>
         ///     <item><description>repetitions: <b>"my ho my"~2</b></description></item>
-        /// </list> 
+        /// </list>
         /// </summary>
         /// <returns> <c>false</c> if PPs are exhausted (and so current doc will not be a match)  </returns>
         private bool InitPhrasePositions()
@@ -449,7 +449,7 @@ namespace Lucene.Net.Search
                 }
             }
         }
-        
+
         /// <summary>
         /// Detect repetition groups. Done once - for first doc. </summary>
         private IList<IList<PhrasePositions>> GatherRptGroups(JCG.LinkedDictionary<Term, int> rptTerms)
@@ -542,7 +542,6 @@ namespace Lucene.Net.Search
             {
                 foreach (Term t in pp.terms)
                 {
-                    ;
                     int cnt = !tcnt.TryGetValue(t, out int cnt0) ? 1 : 1 + cnt0;
                     tcnt[t] = cnt;
                     if (cnt == 2)

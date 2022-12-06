@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.Sinks
             AttributeSource.State finalState = CaptureState();
             foreach (WeakReference<SinkTokenStream> @ref in sinks)
             {
-                SinkTokenStream sink; ;
+                SinkTokenStream sink;
                 if (@ref.TryGetTarget(out sink))
                 {
                     sink.SetFinalState(finalState);
@@ -263,7 +263,7 @@ namespace Lucene.Net.Analysis.Sinks
 
         private static readonly SinkFilter ACCEPT_ALL_FILTER = new SinkFilterAnonymousClass();
 
-        private class SinkFilterAnonymousClass : SinkFilter
+        private sealed class SinkFilterAnonymousClass : SinkFilter
         {
             public override bool Accept(AttributeSource source)
             {

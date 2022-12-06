@@ -122,7 +122,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         }
 
         // read until finding a line that starts with the specified prefix
-        private StringBuilder Read(TextReader reader, string prefix, StringBuilder sb, bool collectMatchLine, bool collectAll)
+        private static StringBuilder Read(TextReader reader, string prefix, StringBuilder sb, bool collectMatchLine, bool collectAll) // LUCENENET: CA1822: Mark members as static
         {
             sb = sb ?? new StringBuilder();
             string sep = "";

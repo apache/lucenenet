@@ -1,4 +1,4 @@
-# Licensed to the Apache Software Foundation (ASF) under one
+﻿# Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -73,12 +73,16 @@ steps:
                     if ($reader.Name -eq 'RunInfos') {
                         $inRunInfos = $true
                     }
-                    if ($inRunInfos -and !$crashed -and $reader.Name -eq 'Text' -and $reader.ReadInnerXml().Contains('Test host process crashed')) {
-                        Write-Host "##vso[task.setvariable variable=HostCrashed;]true"
-                        # Report all of the test projects that crashed
-                        $crashedRuns = "$env:CRASHEDRUNS,$testProjectName".TrimStart(',')
-                        Write-Host "##vso[task.setvariable variable=CrashedRuns;]$crashedRuns"
-                        $crashed = $true
+                    if ($inRunInfos -and !$crashed -and $reader.Name -eq 'Text') {
+                        $innerXml = $reader.ReadInnerXml()
+                        # Test for specific error messages - we may need to adjust this, as needed
+                        if ($innerXml -and ($innerXml.Contains('Test host process crashed') -or $innerXml.Contains('Could not load file or assembly'))) {
+                            Write-Host "##vso[task.setvariable variable=HostCrashed;]true"
+                            # Report all of the test projects that crashed
+                            $crashedRuns = "$env:CRASHEDRUNS,$testProjectName".TrimStart(',')
+                            Write-Host "##vso[task.setvariable variable=CrashedRuns;]$crashedRuns"
+                            $crashed = $true
+                        }
                     }
                 }
                 if ($reader.NodeType -eq [System.Xml.XmlNodeType]::EndElement -and $reader.Name -eq 'RunInfos') {

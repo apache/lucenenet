@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class RollingBufferAnonymousClass : RollingBuffer<Position>
+        private sealed class RollingBufferAnonymousClass : RollingBuffer<Position>
         {
             public RollingBufferAnonymousClass()
                 : base(NewInstanceFunc)

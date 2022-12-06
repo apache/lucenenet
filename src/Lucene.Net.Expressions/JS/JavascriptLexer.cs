@@ -148,7 +148,7 @@ namespace Lucene.Net.Expressions.JS
         public override string GrammarFileName => "";
 
         // $ANTLR start "AT_ADD"
-        
+
         public void MAT_ADD()
         {
             try
@@ -798,9 +798,9 @@ namespace Lucene.Net.Expressions.JS
                                 goto loop1_break;
                             }
                         }
-//loop1_continue: ; // LUCENENET NOTE: Not used
+//loop1_continue: // LUCENENET NOTE: Not used
                     }
-loop1_break: ;
+loop1_break: {/* LUCENENET: intentionally blank */}
                 }
                 state.type = _type;
                 state.channel = _channel;
@@ -866,9 +866,9 @@ loop1_break: ;
                                 goto loop2_break;
                             }
                         }
-//loop2_continue: ; // LUCENENET NOTE: Not used
+//loop2_continue: // LUCENENET NOTE: Not used
                     }
-loop2_break: ;
+loop2_break: {/* LUCENENET: intentionally blank */}
                 }
             }
             finally
@@ -929,9 +929,9 @@ loop2_break: ;
                             }
                         }
                         cnt3++;
-                        //loop3_continue: ; // LUCENENET NOTE: Not used
+                        //loop3_continue: // LUCENENET NOTE: Not used
                     }
-                    loop3_break: ;
+                    loop3_break:
                     Skip();
                 }
                 state.type = _type;
@@ -993,9 +993,9 @@ loop2_break: ;
                                     goto loop4_break;
                                 }
                             }
-                                //loop4_continue: ; // LUCENENET NOTE: Not used
+                                //loop4_continue: // LUCENENET NOTE: Not used
                         }
-                        loop4_break: ;
+                        loop4_break:
                         // src/java/org/apache/lucene/expressions/js/Javascript.g:347:43: ( EXPONENT )?
                         int alt5 = 2;
                         int LA5_0 = input.LA(1);
@@ -1058,9 +1058,9 @@ loop2_break: ;
                                 }
                             }
                             cnt6++;
-                                //loop6_continue: ; // LUCENENET NOTE: Not used
+                                //loop6_continue: // LUCENENET NOTE: Not used
                             }
-                            loop6_break: ;
+                            loop6_break:
                         // src/java/org/apache/lucene/expressions/js/Javascript.g:348:28: ( EXPONENT )?
                         int alt7 = 2;
                         int LA7_0 = input.LA(1);
@@ -1164,9 +1164,9 @@ loop2_break: ;
                             }
                         }
                         cnt10++;
-                        //loop10_continue: ; // LUCENENET NOTE: Not used
+                        //loop10_continue: // LUCENENET NOTE: Not used
                     }
-                    loop10_break: ;
+                    loop10_break: {/* LUCENENET: intentionally blank */}
                 }
                 state.type = _type;
                 state.channel = _channel;
@@ -1283,9 +1283,9 @@ loop2_break: ;
                             }
                         }
                         cnt12++;
-                        //loop12_continue: ; // LUCENENET NOTE: Not used
+                        //loop12_continue: // LUCENENET NOTE: Not used
                     }
-                    loop12_break: ;
+                    loop12_break: {/* LUCENENET: intentionally blank */}
                 }
                 state.type = _type;
                 state.channel = _channel;
@@ -1367,9 +1367,9 @@ loop2_break: ;
                                     goto loop13_break;
                                 }
                             }
-                                //loop13_continue: ; // LUCENENET NOTE: Not used
+                                //loop13_continue: // LUCENENET NOTE: Not used
                             }
-                            loop13_break: ;
+                            loop13_break:
                         break;
                     }
                 }
@@ -1464,9 +1464,9 @@ loop2_break: ;
                             }
                         }
                         cnt16++;
-                        //loop16_continue: ; // LUCENENET NOTE: Not used
+                        //loop16_continue: // LUCENENET NOTE: Not used
                     }
-                    loop16_break: ;
+                    loop16_break: {/* LUCENENET: intentionally blank */}
                 }
             }
             finally
@@ -1561,7 +1561,7 @@ loop2_break: ;
 
         // do for sure before leaving
         // $ANTLR end "OCTALDIGIT"
-        
+
         public override void mTokens()
         {
             // src/java/org/apache/lucene/expressions/js/Javascript.g:1:8: ( AT_ADD | AT_BIT_AND | AT_BIT_NOT | AT_BIT_OR | AT_BIT_SHL | AT_BIT_SHR | AT_BIT_SHU | AT_BIT_XOR | AT_BOOL_AND | AT_BOOL_NOT | AT_BOOL_OR | AT_COLON | AT_COMMA | AT_COMP_EQ | AT_COMP_GT | AT_COMP_GTE | AT_COMP_LT | AT_COMP_LTE | AT_COMP_NEQ | AT_COND_QUE | AT_DIVIDE | AT_DOT | AT_LPAREN | AT_MODULO | AT_MULTIPLY | AT_RPAREN | AT_SUBTRACT | NAMESPACE_ID | WS | DECIMAL | OCTAL | HEX )

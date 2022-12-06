@@ -54,11 +54,11 @@ namespace Lucene.Net.Store
 
         // LUCENENET specific - added constructor overload so FSDirectory can still subclass BufferedIndexOutput, but
         // utilize its own buffer, since FileStream is already buffered in .NET.
-        internal BufferedIndexOutput(int bufferSize, CRC32 crc)
+        private protected BufferedIndexOutput(int bufferSize, CRC32 crc)
         {
             if (bufferSize <= 0)
             {
-                throw new ArgumentOutOfRangeException("bufferSize must be greater than 0 (got " + bufferSize + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentOutOfRangeException(nameof(bufferSize), "bufferSize must be greater than 0 (got " + bufferSize + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.bufferSize = bufferSize;
             // LUCENENET: We lazy-load the buffer, so we don't force all subclasses to allocate it
@@ -83,7 +83,7 @@ namespace Lucene.Net.Store
             if (bytesLeft >= length)
             {
                 // we add the data to the end of the buffer
-                System.Buffer.BlockCopy(b, offset, buffer, bufferPosition, length);
+                Arrays.Copy(b, offset, buffer, bufferPosition, length);
                 bufferPosition += length;
                 // if the buffer is full, flush it
                 if (bufferSize - bufferPosition == 0)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Store
                     while (pos < length)
                     {
                         pieceLength = (length - pos < bytesLeft) ? length - pos : bytesLeft;
-                        System.Buffer.BlockCopy(b, pos + offset, buffer, bufferPosition, pieceLength);
+                        Arrays.Copy(b, pos + offset, buffer, bufferPosition, pieceLength);
                         pos += pieceLength;
                         bufferPosition += pieceLength;
                         // if the buffer is full, flush it

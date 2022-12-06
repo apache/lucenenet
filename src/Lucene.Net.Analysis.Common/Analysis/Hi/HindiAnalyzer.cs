@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.Hi
         /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Hi
             {
                 try
                 {
-                    return LoadStopwordSet(false, typeof(HindiAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT);
+                    return LoadStopwordSet(false, typeof(HindiAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Hi
         public HindiAnalyzer(LuceneVersion version, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(version, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(m_matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.Copy(m_matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Hi
         /// <param name="version"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public HindiAnalyzer(LuceneVersion version, CharArraySet stopwords)
-            : this(version, stopwords, CharArraySet.EMPTY_SET)
+            : this(version, stopwords, CharArraySet.Empty)
         {
         }
 

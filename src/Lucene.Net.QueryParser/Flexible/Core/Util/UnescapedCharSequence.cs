@@ -1,4 +1,5 @@
 ﻿using J2N.Text;
+using Lucene.Net.Support;
 using System.Globalization;
 using System.Text;
 
@@ -38,8 +39,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
         {
             this.chars = new char[length];
             this.wasEscaped = new bool[length];
-            System.Array.Copy(chars, offset, this.chars, 0, length);
-            System.Array.Copy(wasEscaped, offset, this.wasEscaped, 0, length);
+            Arrays.Copy(chars, offset, this.chars, 0, length);
+            Arrays.Copy(wasEscaped, offset, this.wasEscaped, 0, length);
         }
 
         /// <summary>

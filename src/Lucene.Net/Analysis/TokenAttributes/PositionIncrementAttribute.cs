@@ -1,4 +1,5 @@
-﻿using System;
+using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -19,63 +20,38 @@ namespace Lucene.Net.Analysis.TokenAttributes
      * limitations under the License.
      */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
-
     /// <summary>
-    /// Default implementation of <see cref="IPositionIncrementAttribute"/>. </summary>
-    public class PositionIncrementAttribute : Attribute, IPositionIncrementAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    /// Determines the position of this token
+    /// relative to the previous <see cref="Token"/> in a <see cref="TokenStream"/>, used in phrase
+    /// searching.
+    ///
+    /// <para/>The default value is one.
+    ///
+    /// <para/>Some common uses for this are:
+    /// 
+    /// <list type="bullet">
+    /// <item><description>Set it to zero to put multiple terms in the same position.  this is
+    /// useful if, e.g., a word has multiple stems.  Searches for phrases
+    /// including either stem will match.  In this case, all but the first stem's
+    /// increment should be set to zero: the increment of the first instance
+    /// should be one.  Repeating a token with an increment of zero can also be
+    /// used to boost the scores of matches on that token.</description></item>
+    ///
+    /// <item><description>Set it to values greater than one to inhibit exact phrase matches.
+    /// If, for example, one does not want phrases to match across removed stop
+    /// words, then one could build a stop word filter that removes stop words and
+    /// also sets the increment to the number of stop words removed before each
+    /// non-stop word.  Then exact phrase queries will only match when the terms
+    /// occur with no intervening stop words.</description></item>
+    /// </list>
+    /// </summary>
+    /// <seealso cref="Lucene.Net.Index.DocsAndPositionsEnum"/>
+    public interface IPositionIncrementAttribute : IAttribute
     {
-        private int positionIncrement = 1;
-
         /// <summary>
-        /// Initialize this attribute with position increment of 1 </summary>
-        public PositionIncrementAttribute()
-        {
-        }
-
-        public virtual int PositionIncrement
-        {
-            get => positionIncrement;
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(PositionIncrement), "Increment must be zero or greater: got " + value); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
-                }
-                this.positionIncrement = value;
-            }
-        }
-
-        public override void Clear()
-        {
-            this.positionIncrement = 1;
-        }
-
-        public override bool Equals(object other)
-        {
-            if (other == this)
-            {
-                return true;
-            }
-
-            if (other is PositionIncrementAttribute _other)
-            {
-                return positionIncrement == _other.positionIncrement;
-            }
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return positionIncrement;
-        }
-
-        public override void CopyTo(IAttribute target)
-        {
-            PositionIncrementAttribute t = (PositionIncrementAttribute)target;
-            t.PositionIncrement = positionIncrement;
-        }
+        /// Gets or Sets the position increment (the distance from the prior term). The default value is one.
+        /// </summary>
+        /// <exception cref="ArgumentException"> if value is set to a negative value. </exception>
+        int PositionIncrement { set; get; }
     }
 }

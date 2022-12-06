@@ -749,7 +749,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// NOTE: This was getLongEnumerable() in Lucene
         /// </summary>
-        private IEnumerable<long?> GetInt64Enumerable(SegmentReader reader, string field, NumericDocValuesFieldUpdates fieldUpdates)
+        private static IEnumerable<long?> GetInt64Enumerable(SegmentReader reader, string field, NumericDocValuesFieldUpdates fieldUpdates) // LUCENENET: CA1822: Mark members as static
         {
             int maxDoc = reader.MaxDoc;
             IBits DocsWithField = reader.GetDocsWithField(field);
@@ -781,7 +781,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private IEnumerable<BytesRef> GetBytesRefEnumerable(SegmentReader reader, string field, BinaryDocValuesFieldUpdates fieldUpdates)
+        private static IEnumerable<BytesRef> GetBytesRefEnumerable(SegmentReader reader, string field, BinaryDocValuesFieldUpdates fieldUpdates) // LUCENENET: CA1822: Mark members as static
         {
             BinaryDocValues currentValues = reader.GetBinaryDocValues(field);
             IBits DocsWithField = reader.GetDocsWithField(field);

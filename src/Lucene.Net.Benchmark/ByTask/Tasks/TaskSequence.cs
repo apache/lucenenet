@@ -76,6 +76,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 RunData.DocMaker.Dispose();
             }
+            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
 
         private void InitTasksArray()

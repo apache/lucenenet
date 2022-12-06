@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
@@ -42,29 +42,20 @@ namespace Lucene.Net.Analysis.In
 
         private class ScriptData
         {
+            internal readonly Regex block;
             internal readonly UnicodeBlock flag;
             internal readonly int @base;
             internal OpenBitSet decompMask;
 
-            internal ScriptData(UnicodeBlock flag, int @base)
+            internal ScriptData(Regex block, UnicodeBlock flag, int @base)
             {
+                this.block = block;
                 this.flag = flag;
                 this.@base = @base;
             }
         }
 
-        private static readonly IDictionary<Regex, ScriptData> scripts = new Dictionary<Regex, ScriptData>() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
-        {
-            { new Regex(@"\p{IsDevanagari}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.DEVANAGARI, 0x0900) },
-            { new Regex(@"\p{IsBengali}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.BENGALI, 0x0980) },
-            { new Regex(@"\p{IsGurmukhi}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.GURMUKHI, 0x0A00) },
-            { new Regex(@"\p{IsGujarati}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.GUJARATI, 0x0A80) },
-            { new Regex(@"\p{IsOriya}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.ORIYA, 0x0B00) },
-            { new Regex(@"\p{IsTamil}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.TAMIL, 0x0B80) },
-            { new Regex(@"\p{IsTelugu}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.TELUGU, 0x0C00) },
-            { new Regex(@"\p{IsKannada}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.KANNADA, 0x0C80) },
-            { new Regex(@"\p{IsMalayalam}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.MALAYALAM, 0x0D00) },
-        };
+        // LUCENENET: scripts moved below declaration of decompositions so it can be populated inline
 
         [Flags]
         internal enum UnicodeBlock
@@ -80,22 +71,7 @@ namespace Lucene.Net.Analysis.In
             MALAYALAM = 256
         }
 
-        static IndicNormalizer()
-        {
-            foreach (ScriptData sd in scripts.Values)
-            {
-                sd.decompMask = new OpenBitSet(0x7F);
-                for (int i = 0; i < decompositions.Length; i++)
-                {
-                    int ch = decompositions[i][0];
-                    int flags = decompositions[i][4];
-                    if ((flags & (int)sd.flag) != 0)
-                    {
-                        sd.decompMask.Set(ch);
-                    }
-                }
-            }
-        }
+        // LUCENENET: static initialization done inline instead of in constructor
 
         /// <summary>
         /// Decompositions according to Unicode 5.2, 
@@ -258,6 +234,39 @@ namespace Lucene.Net.Analysis.In
             new int[] { 0x73, 0x4B,   -1, 0x13, (int)UnicodeBlock.GURMUKHI }
         };
 
+        private static readonly IList<ScriptData> scripts = LoadScripts(); // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+
+        private static IList<ScriptData> LoadScripts()
+        {
+            IList<ScriptData> result = new List<ScriptData>(capacity: 9)
+            {
+                new ScriptData(new Regex(@"\p{IsDevanagari}",  RegexOptions.Compiled),  UnicodeBlock.DEVANAGARI,  0x0900),
+                new ScriptData(new Regex(@"\p{IsBengali}",     RegexOptions.Compiled),  UnicodeBlock.BENGALI,     0x0980),
+                new ScriptData(new Regex(@"\p{IsGurmukhi}",    RegexOptions.Compiled),  UnicodeBlock.GURMUKHI,    0x0A00),
+                new ScriptData(new Regex(@"\p{IsGujarati}",    RegexOptions.Compiled),  UnicodeBlock.GUJARATI,    0x0A80),
+                new ScriptData(new Regex(@"\p{IsOriya}",       RegexOptions.Compiled),  UnicodeBlock.ORIYA,       0x0B00),
+                new ScriptData(new Regex(@"\p{IsTamil}",       RegexOptions.Compiled),  UnicodeBlock.TAMIL,       0x0B80),
+                new ScriptData(new Regex(@"\p{IsTelugu}",      RegexOptions.Compiled),  UnicodeBlock.TELUGU,      0x0C00),
+                new ScriptData(new Regex(@"\p{IsKannada}",     RegexOptions.Compiled),  UnicodeBlock.KANNADA,     0x0C80),
+                new ScriptData(new Regex(@"\p{IsMalayalam}",   RegexOptions.Compiled),  UnicodeBlock.MALAYALAM,   0x0D00),
+            };
+
+            foreach (ScriptData sd in result)
+            {
+                sd.decompMask = new OpenBitSet(0x7F);
+                for (int i = 0; i < decompositions.Length; i++)
+                {
+                    int ch = decompositions[i][0];
+                    int flags = decompositions[i][4];
+                    if ((flags & (int)sd.flag) != 0)
+                    {
+                        sd.decompMask.Set(ch);
+                    }
+                }
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Normalizes input text, and returns the new length.
@@ -270,9 +279,8 @@ namespace Lucene.Net.Analysis.In
         {
             for (int i = 0; i < len; i++)
             {
-                var block = GetBlockForChar(text[i]);
-                ScriptData sd;
-                if (scripts.TryGetValue(block, out sd) && sd != null)
+                Regex block;
+                if ((block = GetBlockForChar(text[i], out ScriptData sd)) != unknownScript)
                 {
                     int ch = text[i] - sd.@base;
                     if (sd.decompMask.Get(ch))
@@ -287,7 +295,7 @@ namespace Lucene.Net.Analysis.In
         /// <summary>
         /// Compose into standard form any compositions in the decompositions table.
         /// </summary>
-        private int Compose(int ch0, Regex block0, ScriptData sd, char[] text, int pos, int len)
+        private static int Compose(int ch0, Regex block0, ScriptData sd, char[] text, int pos, int len) // LUCENENET: CA1822: Mark members as static
         {
             if (pos + 1 >= len) // need at least 2 chars!
             {
@@ -295,7 +303,7 @@ namespace Lucene.Net.Analysis.In
             }
 
             int ch1 = text[pos + 1] - sd.@base;
-            var block1 = GetBlockForChar(text[pos + 1]);
+            var block1 = GetBlockForChar(text[pos + 1], out _);
             if (block1 != block0) // needs to be the same writing system
             {
                 return len;
@@ -306,7 +314,7 @@ namespace Lucene.Net.Analysis.In
             if (pos + 2 < len)
             {
                 ch2 = text[pos + 2] - sd.@base;
-                var block2 = GetBlockForChar(text[pos + 2]);
+                var block2 = GetBlockForChar(text[pos + 2], out _);
                 if (text[pos + 2] == '\u200D') // ZWJ
                 {
                     ch2 = 0xFF;
@@ -337,22 +345,49 @@ namespace Lucene.Net.Analysis.In
             return len;
         }
 
+        // LUCENENET: Never matches - we just use this as a placeholder
+        private static readonly Regex unknownScript = new Regex(@"[^\S\s]", RegexOptions.Compiled);
+        [ThreadStatic]
+        private static ScriptData previousScriptData;
+
         /// <summary>
-        /// LUCENENET: Returns the unicode block for the specified character
+        /// LUCENENET: Returns the unicode block for the specified character. Caches the
+        /// last script and script data used on the current thread to optimize performance
+        /// when not switching between scripts.
         /// </summary>
-        private Regex GetBlockForChar(char c)
+        private static Regex GetBlockForChar(char c, out ScriptData scriptData) // LUCENENET: CA1822: Mark members as static
         {
             string charAsString = c.ToString();
-            foreach (var block in scripts.Keys)
+            // Store reference locally to avoid threading issues
+            ScriptData previousScriptDataLocal = previousScriptData;
+            Regex previousScript = previousScriptDataLocal?.block;
+
+            // Optimize to try the most recent script first.
+            if (previousScript?.IsMatch(charAsString) ?? false)
             {
-                if (block.IsMatch(charAsString))
-                {
-                    return block;
-                }
+                scriptData = previousScriptDataLocal;
+                return previousScript;
             }
 
-            // return a regex that never matches, nor is in our scripts dictionary
-            return new Regex(@"[^\S\s]");
+            return GetBlockForCharSlow(previousScript, charAsString, out scriptData);
+
+            static Regex GetBlockForCharSlow(Regex previousScript, string charAsString, out ScriptData scriptData)
+            { 
+                foreach (var script in scripts)
+                {
+                    Regex block = script.block;
+                    if (block != previousScript && block.IsMatch(charAsString))
+                    {
+                        previousScriptData = script;
+                        scriptData = script;
+                        return block;
+                    }
+                }
+
+                scriptData = null;
+                // return a regex that never matches, nor is in our scripts dictionary
+                return unknownScript;
+            }
         }
     }
 }

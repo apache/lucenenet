@@ -46,9 +46,9 @@ namespace Lucene.Net.Analysis.Ca
         /// File containing default Catalan stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
 
-        private static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(
+        private static readonly CharArraySet DEFAULT_ARTICLES = 
 #pragma warning disable 612, 618
-            new CharArraySet(LuceneVersion.LUCENE_CURRENT, new string[] { "d", "l", "m", "n", "s", "t" }, true));
+            new CharArraySet(LuceneVersion.LUCENE_CURRENT, new string[] { "d", "l", "m", "n", "s", "t" }, true).AsReadOnly();
 #pragma warning restore 612, 618
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Ca
         /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
         /// accesses the static final set the first time.;
         /// </summary>
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Ca
             {
                 try
                 {
-                    return LoadStopwordSet(false, typeof(CatalanAnalyzer), DEFAULT_STOPWORD_FILE, "#");
+                    return LoadStopwordSet(false, typeof(CatalanAnalyzer), DEFAULT_STOPWORD_FILE, "#").AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Ca
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public CatalanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.EMPTY_SET)
+              : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Ca
         public CatalanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
               : base(matchVersion, stopwords)
         {
-            this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
+            this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
 
         /// <summary>

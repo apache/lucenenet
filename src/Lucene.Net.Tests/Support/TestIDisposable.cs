@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.Core;
+﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Support
                     {
                     }
 
-                    Assert.Throws<ObjectDisposedException>(() => reader.RemoveReaderClosedListener(null), "IndexReader shouldn't be open here");
+                    Assert.Throws<ObjectDisposedException>(() => reader.RemoveReaderDisposedListener(null), "IndexReader shouldn't be open here");
                 }
                 
                 Assert.Throws<ObjectDisposedException>(() => writer.AddDocument(doc), "IndexWriter shouldn't be open here");

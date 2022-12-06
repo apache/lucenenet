@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         {
             offset += usableLength;
             int leftover = length - usableLength;
-            System.Array.Copy(buffer, usableLength, buffer, 0, leftover);
+            Arrays.Copy(buffer, usableLength, buffer, 0, leftover);
             int requested = buffer.Length - leftover;
             int returned = Read(m_input, buffer, leftover, requested);
             length = returned + leftover;

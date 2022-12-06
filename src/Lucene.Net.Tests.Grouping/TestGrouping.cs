@@ -588,7 +588,7 @@ namespace Lucene.Net.Search.Grouping
                         sortedGroupFields.Add(FillFields(d, groupSort));
                     }
                     l = new JCG.List<GroupDoc>();
-                    groups.Put(d.group, l);
+                    groups[d.group] = l;
                 }
                 l.Add(d);
             }
@@ -907,7 +907,7 @@ namespace Lucene.Net.Search.Grouping
                 }
 
                 GroupDoc[] groupDocsByID = new GroupDoc[groupDocs.Length];
-                System.Array.Copy(groupDocs, 0, groupDocsByID, 0, groupDocs.Length);
+                Arrays.Copy(groupDocs, 0, groupDocsByID, 0, groupDocs.Length);
 
                 DirectoryReader r = w.GetReader();
                 w.Dispose();
@@ -974,7 +974,7 @@ namespace Lucene.Net.Search.Grouping
                     {
                         //Console.WriteLine("  term=real" + contentID);
                         IDictionary<float, J2N.Numerics.Single> termScoreMap = new Dictionary<float, J2N.Numerics.Single>();
-                        scoreMap.Put("real" + contentID, termScoreMap);
+                        scoreMap["real" + contentID] = termScoreMap;
                         //Console.WriteLine("term=real" + contentID + " dfold=" + s.docFreq(new Term("content", "real"+contentID)) +
                         //" dfnew=" + sBlocks.docFreq(new Term("content", "real"+contentID)));
                         ScoreDoc[] hits = sBlocks.Search(new TermQuery(new Term("content", "real" + contentID)), numDocs).ScoreDocs;
@@ -985,7 +985,7 @@ namespace Lucene.Net.Search.Grouping
                             gd.score2 = hit.Score;
                             assertEquals(gd.id, docIDToIDBlocks.Get(hit.Doc));
                             //Console.WriteLine("    score=" + gd.score + " score2=" + hit.score + " id=" + docIDToIDBlocks.get(hit.doc));
-                            termScoreMap.Put(gd.score, gd.score2);
+                            termScoreMap[gd.score] = gd.score2;
                         }
                     }
 

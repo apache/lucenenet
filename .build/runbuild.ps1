@@ -27,7 +27,7 @@ properties {
     [string]$testResultsDirectory = "$artifactsDirectory/TestResults"
     [string]$publishDirectory = "$artifactsDirectory/Publish"
     [string]$solutionFile = "$baseDirectory/Lucene.Net.sln"
-    [string]$minimumSdkVersion = "6.0.100"
+    [string]$minimumSdkVersion = "7.0.100"
     [string]$globalJsonFile = "$baseDirectory/global.json"
     [string]$versionPropsFile = "$baseDirectory/version.props"
     [string]$luceneReadmeFile = "$baseDirectory/src/Lucene.Net/readme-nuget.md"
@@ -50,6 +50,7 @@ properties {
     [int]$maximumParallelJobs = 8
     
     #test parameters
+    #The build uses Lucene.Net.Tests.Analysis.Common to determine all of the targets for the solution:
     [string]$projectWithAllTestFrameworks = "$baseDirectory/src/Lucene.Net.Tests.Analysis.Common/Lucene.Net.Tests.Analysis.Common.csproj"
     [string]$where = ""
 }
@@ -172,6 +173,9 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
         if (-Not (Test-Path 'env:SYSTEM_DEFAULTWORKINGDIRECTORY')) {
             $env:SYSTEM_DEFAULTWORKINGDIRECTORY = "$baseDirectory"
         }
+
+        Write-Host ""
+        Write-Host "\nSYSTEM_DEFAULTWORKINGDIRECTORY is $env:SYSTEM_DEFAULTWORKINGDIRECTORY (for lucene-cli installation tests)" -ForegroundColor Yellow
 
         $success = $true
     } finally {

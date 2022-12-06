@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
             dir2.Dispose();
         }
 
-        private class TestReopenAnonymousClass : TestReopen
+        private sealed class TestReopenAnonymousClass : TestReopen
         {
             private readonly TestDirectoryReaderReopen outerInstance;
 
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class TestReopenAnonymousClass2 : TestReopen
+        private sealed class TestReopenAnonymousClass2 : TestReopen
         {
             private readonly TestDirectoryReaderReopen outerInstance;
 
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TestReopenAnonymousClass3 : TestReopen
+        private sealed class TestReopenAnonymousClass3 : TestReopen
         {
             private readonly TestDirectoryReaderReopen outerInstance;
 
@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ReaderThreadTaskAnonymousClass : ReaderThreadTask
+        private sealed class ReaderThreadTaskAnonymousClass : ReaderThreadTask
         {
             private readonly TestDirectoryReaderReopen outerInstance;
 
@@ -433,7 +433,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ReaderThreadTaskAnonymousClass2 : ReaderThreadTask
+        private sealed class ReaderThreadTaskAnonymousClass2 : ReaderThreadTask
         {
             private readonly TestDirectoryReaderReopen outerInstance;
 
@@ -624,7 +624,7 @@ namespace Lucene.Net.Index
         {
             StringBuilder sb = new StringBuilder();
             Document doc = new Document();
-            sb.Append("a");
+            sb.Append('a');
             sb.Append(n);
             FieldType customType2 = new FieldType(TextField.TYPE_STORED);
             customType2.IsTokenized = false;

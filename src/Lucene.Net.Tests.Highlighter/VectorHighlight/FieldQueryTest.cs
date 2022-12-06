@@ -990,7 +990,7 @@ namespace Lucene.Net.Search.VectorHighlight
             phraseCandidate.Add(new TermInfo("defg", 0, 12, 0, 1));
             assertNotNull(fq.SearchPhrase(F, phraseCandidate));
         }
-        private class TestStopRewriteQueryAnonymousClass : Query
+        private sealed class TestStopRewriteQueryAnonymousClass : Query
         {
             public override string ToString(string field)
             {
@@ -1007,7 +1007,7 @@ namespace Lucene.Net.Search.VectorHighlight
             new FieldQuery(q, reader, true, true);
         }
 
-        private class TestFlattenFilteredQueryFilterAnonymousClass : Filter
+        private sealed class TestFlattenFilteredQueryFilterAnonymousClass : Filter
         {
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {

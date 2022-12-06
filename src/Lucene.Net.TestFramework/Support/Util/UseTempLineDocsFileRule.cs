@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     {
         private bool lineFileDocsExtracted;
 
-        private bool IsEnabled()
+        private static bool IsEnabled() // LUCENENET: CA1822: Mark members as static
         {
             bool enabled = false;
             Assembly assembly = RandomizedContext.CurrentContext.CurrentTestAssembly;

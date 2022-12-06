@@ -122,7 +122,7 @@ namespace Lucene.Net.Facet.Taxonomy
             return new OrdinalsSegmentReaderAnonymousClass(cachedOrds);
         }
 
-        private class OrdinalsSegmentReaderAnonymousClass : OrdinalsSegmentReader
+        private sealed class OrdinalsSegmentReaderAnonymousClass : OrdinalsSegmentReader
         {
             private readonly CachedOrds cachedOrds;
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         }
                         ords = ArrayUtil.Grow(ords, (int)nextLength);
                     }
-                    Array.Copy(values.Int32s, 0, ords, (int)totOrds, values.Length);
+                    Arrays.Copy(values.Int32s, 0, ords, (int)totOrds, values.Length);
                     totOrds = nextLength;
                 }
                 Offsets[maxDoc] = (int)totOrds;
@@ -192,7 +192,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 if ((double)totOrds / ords.Length < 0.9)
                 {
                     this.Ordinals = new int[(int)totOrds];
-                    Array.Copy(ords, 0, this.Ordinals, 0, (int)totOrds);
+                    Arrays.Copy(ords, 0, this.Ordinals, 0, (int)totOrds);
                 }
                 else
                 {

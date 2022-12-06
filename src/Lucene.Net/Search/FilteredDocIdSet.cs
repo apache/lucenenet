@@ -1,4 +1,4 @@
-namespace Lucene.Net.Search
+﻿namespace Lucene.Net.Search
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class BitsAnonymousClass : IBits
+        private sealed class BitsAnonymousClass : IBits
         {
             private readonly FilteredDocIdSet outerInstance;
 
@@ -73,12 +73,12 @@ namespace Lucene.Net.Search
                 this.bits = bits;
             }
 
-            public virtual bool Get(int docid)
+            public bool Get(int docid)
             {
                 return bits.Get(docid) && outerInstance.Match(docid);
             }
 
-            public virtual int Length => bits.Length;
+            public int Length => bits.Length;
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
             return new FilteredDocIdSetIteratorAnonymousClass(this, iterator);
         }
 
-        private class FilteredDocIdSetIteratorAnonymousClass : FilteredDocIdSetIterator
+        private sealed class FilteredDocIdSetIteratorAnonymousClass : FilteredDocIdSetIterator
         {
             private readonly FilteredDocIdSet outerInstance;
 

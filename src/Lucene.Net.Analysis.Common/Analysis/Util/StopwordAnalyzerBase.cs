@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Util;
 using System;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Util
         {
             m_matchVersion = version;
             // analyzers should use char array set for stopwords!
-            this.m_stopwords = stopwords is null ? CharArraySet.EMPTY_SET : CharArraySet.UnmodifiableSet(CharArraySet.Copy(version, stopwords));
+            this.m_stopwords = stopwords is null ? CharArraySet.Empty : CharArraySet.Copy(version, stopwords).AsReadOnly();
         }
 
         /// <summary>

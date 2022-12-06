@@ -490,7 +490,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 savedBuffer = new char[ArrayUtil.Oversize(termAttribute.Length, RamUsageEstimator.NUM_BYTES_CHAR)];
             }
 
-            Array.Copy(termAttribute.Buffer, 0, savedBuffer, 0, termAttribute.Length);
+            Arrays.Copy(termAttribute.Buffer, 0, savedBuffer, 0, termAttribute.Length);
             iterator.text = savedBuffer;
 
             hasSavedState = true;

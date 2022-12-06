@@ -270,18 +270,18 @@ namespace Lucene.Net.Analysis.Ja.Dict
             { // All features
                 foreach (string feature in allFeatures)
                 {
-                    sb.Append(CSVUtil.QuoteEscape(feature)).Append(",");
+                    sb.Append(CSVUtil.QuoteEscape(feature)).Append(',');
                 }
             }
             else if (fields.Length == 1)
             { // One feature doesn't need to escape value
-                sb.Append(allFeatures[fields[0]]).Append(",");
+                sb.Append(allFeatures[fields[0]]).Append(',');
             }
             else
             {
                 foreach (int field in fields)
                 {
-                    sb.Append(CSVUtil.QuoteEscape(allFeatures[field])).Append(",");
+                    sb.Append(CSVUtil.QuoteEscape(allFeatures[field])).Append(',');
                 }
             }
             return sb.Remove(sb.Length - 1, 1).ToString();

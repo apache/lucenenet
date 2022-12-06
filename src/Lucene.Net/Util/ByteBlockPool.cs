@@ -257,7 +257,7 @@ namespace Lucene.Net.Util
             if (1 + bufferUpto == buffers.Length)
             {
                 var newBuffers = new byte[ArrayUtil.Oversize(buffers.Length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
-                Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
+                Arrays.Copy(buffers, 0, newBuffers, 0, buffers.Length);
                 buffers = newBuffers;
             }
             buffer = buffers[1 + bufferUpto] = allocator.GetByteBlock();
@@ -380,7 +380,7 @@ namespace Lucene.Net.Util
             {
                 if (overflow <= 0)
                 {
-                    Array.Copy(bytes.Bytes, offset, buffer, ByteUpto, length);
+                    Arrays.Copy(bytes.Bytes, offset, buffer, ByteUpto, length);
                     ByteUpto += length;
                     break;
                 }
@@ -389,7 +389,7 @@ namespace Lucene.Net.Util
                     int bytesToCopy = length - overflow;
                     if (bytesToCopy > 0)
                     {
-                        Array.Copy(bytes.Bytes, offset, buffer, ByteUpto, bytesToCopy);
+                        Arrays.Copy(bytes.Bytes, offset, buffer, ByteUpto, bytesToCopy);
                         offset += bytesToCopy;
                         length -= bytesToCopy;
                     }
@@ -420,13 +420,13 @@ namespace Lucene.Net.Util
             {
                 if (overflow <= 0)
                 {
-                    Array.Copy(buffer, pos, bytes, bytesOffset, bytesLength);
+                    Arrays.Copy(buffer, pos, bytes, bytesOffset, bytesLength);
                     break;
                 }
                 else
                 {
                     int bytesToCopy = length - overflow;
-                    Array.Copy(buffer, pos, bytes, bytesOffset, bytesToCopy);
+                    Arrays.Copy(buffer, pos, bytes, bytesOffset, bytesToCopy);
                     pos = 0;
                     bytesLength -= bytesToCopy;
                     bytesOffset += bytesToCopy;

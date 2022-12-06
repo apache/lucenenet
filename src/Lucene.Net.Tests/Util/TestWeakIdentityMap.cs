@@ -273,7 +273,7 @@
 //            }
 //        }
 
-//        private class RunnableAnonymousClass : ThreadJob
+//        private sealed class RunnableAnonymousClass : ThreadJob
 //        {
 //            private readonly TestWeakIdentityMap outerInstance;
 

@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
             return new DocTermOrdsRangeFilterAnonymousClass(field, lowerVal, upperVal, includeLower, includeUpper);
         }
 
-        private class DocTermOrdsRangeFilterAnonymousClass : DocTermOrdsRangeFilter
+        private sealed class DocTermOrdsRangeFilterAnonymousClass : DocTermOrdsRangeFilter
         {
             public DocTermOrdsRangeFilterAnonymousClass(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
                 : base(field, lowerVal, upperVal, includeLower, includeUpper)
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
 
         public override sealed string ToString()
         {
-            StringBuilder sb = (new StringBuilder(field)).Append(":");
+            StringBuilder sb = (new StringBuilder(field)).Append(':');
             return sb.Append(includeLower ? '[' : '{')
                 .Append((lowerVal is null) ? "*" : lowerVal.ToString())
                 .Append(" TO ")

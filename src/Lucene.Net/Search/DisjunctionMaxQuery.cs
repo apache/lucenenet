@@ -312,16 +312,16 @@ namespace Lucene.Net.Search
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            buffer.Append("(");
+            buffer.Append('(');
             int numDisjunctions = disjuncts.Count;
             for (int i = 0; i < numDisjunctions; i++)
             {
                 Query subquery = disjuncts[i];
                 if (subquery is BooleanQuery) // wrap sub-bools in parens
                 {
-                    buffer.Append("(");
+                    buffer.Append('(');
                     buffer.Append(subquery.ToString(field));
-                    buffer.Append(")");
+                    buffer.Append(')');
                 }
                 else
                 {
@@ -332,15 +332,15 @@ namespace Lucene.Net.Search
                     buffer.Append(" | ");
                 }
             }
-            buffer.Append(")");
+            buffer.Append(')');
             if (tieBreakerMultiplier != 0.0f)
             {
-                buffer.Append("~");
+                buffer.Append('~');
                 buffer.Append(tieBreakerMultiplier);
             }
             if (Boost != 1.0)
             {
-                buffer.Append("^");
+                buffer.Append('^');
                 buffer.Append(Boost);
             }
             return buffer.ToString();

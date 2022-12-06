@@ -379,7 +379,7 @@ namespace Lucene.Net.Search
             return Create(other, cacheScores, maxRAMMB);
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly bool acceptDocsOutOfOrder;
 
@@ -388,17 +388,17 @@ namespace Lucene.Net.Search
                 this.acceptDocsOutOfOrder = acceptDocsOutOfOrder;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => acceptDocsOutOfOrder;
+            public bool AcceptsDocsOutOfOrder => acceptDocsOutOfOrder;
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
             }
         }

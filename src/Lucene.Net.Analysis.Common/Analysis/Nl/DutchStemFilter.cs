@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using System;
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Nl
     /// <para>
     /// To prevent terms from being stemmed use an instance of
     /// <see cref="Miscellaneous.KeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
-    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
+    /// the <see cref="IKeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para> 
     /// </summary>
     /// <seealso cref="Miscellaneous.KeywordMarkerFilter"/>
@@ -113,13 +113,13 @@ namespace Lucene.Net.Analysis.Nl
         /// Set dictionary for stemming, this dictionary overrules the algorithm,
         /// so you can correct for a particular unwanted word-stem pair.
         /// </summary>
-        public CharArrayMap<string> StemDictionary
+        public CharArrayDictionary<string> StemDictionary
         {
             get // LUCENENET NOTE: Added getter per MSDN guidelines
             {
                 if (stemmer != null)
                 {
-                    return stemmer.StemDictionary as CharArrayMap<string>;
+                    return stemmer.StemDictionary as CharArrayDictionary<string>;
                 }
                 return null;
             }

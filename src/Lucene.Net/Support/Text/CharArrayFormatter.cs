@@ -1,6 +1,4 @@
-using Lucene.Net.Util;
-
-namespace Lucene.Net.Analysis.TokenAttributes
+﻿namespace Lucene.Net.Support.Text
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,18 +18,25 @@ namespace Lucene.Net.Analysis.TokenAttributes
      */
 
     /// <summary>
-    /// This attribute can be used to mark a token as a keyword. Keyword aware
-    /// <see cref="TokenStream"/>s can decide to modify a token based on the return value
-    /// of <see cref="IsKeyword"/> if the token is modified. Stemming filters for
-    /// instance can use this attribute to conditionally skip a term if
-    /// <see cref="IsKeyword"/> returns <c>true</c>.
+    /// LUCENENET specific simple formatter to pass a value to
+    /// <see cref="Lucene.Net.Diagnostics.Debugging.Assert{T0}(bool, string, T0)"/>
+    /// in order to defer allocating until the assert fails.
     /// </summary>
-    public interface IKeywordAttribute : IAttribute
+    internal struct CharArrayFormatter
     {
-        /// <summary>
-        /// Gets or Sets whether the current token is a keyword. <c>true</c> if the current token is a keyword, otherwise
-        /// <c>false</c>.
-        /// </summary>
-        bool IsKeyword { get; set; }
+        private char[] value;
+        private int startIndex;
+        private int length;
+        public CharArrayFormatter(char[] value, int startIndex, int length)
+        {
+            this.value = value;
+            this.startIndex = startIndex;
+            this.length = length;
+        }
+
+        public override string ToString()
+        {
+            return new string(value, startIndex, length);
+        }
     }
 }

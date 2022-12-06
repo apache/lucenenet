@@ -104,6 +104,14 @@ steps:
     performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
   condition: and(succeeded(), contains('${{ parameters.framework }}', 'net5.'))
 
+- task: UseDotNet@2
+  displayName: 'Use .NET sdk 6.0.403'
+  inputs:
+    packageType: 'sdk'
+    version: '5.0.403'
+    performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net6.'))
+
 #- template: 'show-all-files.yml' # Uncomment for debugging
 - pwsh: |
     $framework = '${{ parameters.framework }}'
@@ -251,7 +259,8 @@ steps:
 - pwsh: |
     $failed = $false
     if ($env:HOSTCRASHED -eq 'true') {
-        Write-Host "##vso[task.logissue type=error;]Test host process(es) crashed:  $($env:CRASHEDRUNS)."
+        $runsExpanded = "$($env:CRASHEDRUNS)" -replace ',',"`r`n"
+        Write-Host "##vso[task.logissue type=error;]Test host process(es) crashed, hung, or failed to load assemblies. Review the testresults artifacts for details. (click here to view the projects that failed)`r`n$runsExpanded"
         $failed = $true
     }
     $maximumAllowedFailures = '${{ parameters.maximumAllowedFailures }}'

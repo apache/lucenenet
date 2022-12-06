@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.Cjk
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenFilter filter = new FakeStandardTokenizer(tokenizer);
-                filter = new StopFilter(TEST_VERSION_CURRENT, filter, CharArraySet.EMPTY_SET);
+                filter = new StopFilter(TEST_VERSION_CURRENT, filter, CharArraySet.Empty);
                 filter = new CJKBigramFilter(filter);
                 return new TokenStreamComponents(tokenizer, filter);
             });

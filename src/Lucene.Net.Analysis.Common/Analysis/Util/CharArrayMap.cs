@@ -3,13 +3,21 @@ using J2N;
 using J2N.Globalization;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
+using JCG = J2N.Collections.Generic;
+#nullable enable
+
+// LUCENENET specific - this class was significantly refactored from its Java counterpart to look and act more like collections in .NET.
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -31,17 +39,17 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// A simple class that stores key <see cref="string"/>s as <see cref="T:char[]"/>'s in a
+    /// A simple class that stores text <see cref="string"/>s as <see cref="T:char[]"/>'s in a
     /// hash table. Note that this is not a general purpose
     /// class.  For example, it cannot remove items from the
-    /// map, nor does it resize its hash table to be smaller,
+    /// dictionary, nor does it resize its hash table to be smaller,
     /// etc.  It is designed to be quick to retrieve items
     /// by <see cref="T:char[]"/> keys without the necessity of converting
     /// to a <see cref="string"/> first.
     /// 
     /// <a name="version"></a>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
-    /// compatibility when creating <see cref="CharArrayMap"/>:
+    /// compatibility when creating <see cref="CharArrayDictionary{TValue}"/>:
     /// <list type="bullet">
     ///   <item><description> As of 3.1, supplementary characters are
     ///       properly lowercased.</description></item>
@@ -49,14 +57,23 @@ namespace Lucene.Net.Analysis.Util
     /// Before 3.1 supplementary characters could not be
     /// lowercased correctly due to the lack of Unicode 4
     /// support in JDK 1.4. To use instances of
-    /// <see cref="CharArrayMap"/> with the behavior before Lucene
+    /// <see cref="CharArrayDictionary{TValue}"/> with the behavior before Lucene
     /// 3.1 pass a <see cref="LuceneVersion"/> &lt; 3.1 to the constructors.
     /// </para>
     /// </summary>
-    public class CharArrayMap<TValue> : ICharArrayMap, IDictionary<string, TValue>
+    [DebuggerDisplay("Count = {Count}, Values = {ToString()}")]
+    [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+    [SuppressMessage("CodeQuality", "S3218:Inner class members should not shadow outer class \"static\" or type members", Justification = "Following Microsoft's code style for collections")]
+    [SuppressMessage("CodeQuality", "S1939:Inheritance list should not be redundant", Justification = "Following Microsoft's code style for collections")]
+    public class CharArrayDictionary<TValue> : ICharArrayDictionary, IDictionary<string, TValue>, IDictionary, IReadOnlyDictionary<string, TValue>
     {
-        // private only because missing generics
-        private static readonly CharArrayMap<TValue> EMPTY_MAP = new CharArrayMap.EmptyCharArrayMap<TValue>();
+        // LUCENENET: Made public, renamed Empty
+        /// <summary>
+        /// Returns an empty, read-only dictionary. </summary>
+        [SuppressMessage("Performance", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
+        [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
+        public static readonly CharArrayDictionary<TValue> Empty = new CharArrayDictionary.EmptyCharArrayDictionary<TValue>();
 
         private const int INIT_SIZE = 8;
         private readonly CharacterUtils charUtils;
@@ -66,10 +83,14 @@ namespace Lucene.Net.Analysis.Util
         internal char[][] keys; // package private because used in CharArraySet's non Set-conform CharArraySetIterator
         internal MapValue[] values; // package private because used in CharArraySet's non Set-conform CharArraySetIterator
 
+        private int version; // LUCENENET specific - protection so mutating the state of the collection causes enumerators to throw exceptions.
+
         /// <summary>
-        /// LUCENENET: Moved this from CharArraySet so it doesn't need to know the generic type of CharArrayMap
+        /// LUCENENET: Moved this from CharArraySet so it doesn't need to know the generic type of CharArrayDictionary
         /// </summary>
         internal static readonly MapValue PLACEHOLDER = new MapValue();
+
+        bool ICharArrayDictionary.IgnoreCase => ignoreCase;
 
         /// <summary>
         /// LUCENENET SPECIFIC type used to act as a placeholder. Since <c>null</c>
@@ -87,37 +108,45 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         internal class MapValue
         {
+            [AllowNull]
             private TValue value = default;
+
+            [AllowNull]
             public TValue Value
             {
-                get => value;
+                get => value!; // We are lying here - if this is a reference type, it could be null. But we don't care because IDictionary<TKey, TValue> doesn't care.
                 set => this.value = value;
             }
 
             public MapValue()
             { }
 
-            public MapValue(TValue value)
+            public MapValue([AllowNull] TValue value)
             {
                 this.value = value;
             }
         }
 
         /// <summary>
-        /// Create map with enough capacity to hold <paramref name="startSize"/> terms
+        /// Create dictionary with enough capacity to hold <paramref name="capacity"/> terms.
         /// </summary>
         /// <param name="matchVersion">
-        ///          lucene compatibility version - see <see cref="CharArrayMap{TValue}"/> for details. </param>
-        /// <param name="startSize">
+        ///          lucene compatibility version - see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
+        /// <param name="capacity">
         ///          the initial capacity </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
-        public CharArrayMap(LuceneVersion matchVersion, int startSize, bool ignoreCase)
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="capacity"/> is less than zero.</exception>
+        public CharArrayDictionary(LuceneVersion matchVersion, int capacity, bool ignoreCase)
         {
+            // LUCENENET: Added guard clause
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), SR.ArgumentOutOfRange_NeedNonNegNum);
+
             this.ignoreCase = ignoreCase;
             var size = INIT_SIZE;
-            while (startSize + (startSize >> 2) > size)
+            while (capacity + (capacity >> 2) > size)
             {
                 size <<= 1;
             }
@@ -128,29 +157,96 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a map from the mappings in another map. 
+        /// Creates a dictionary from the mappings in another dictionary.
         /// </summary>
         /// <param name="matchVersion">
-        ///          compatibility match version see <a href="#version">Version
-        ///          note</a> above for details. </param>
-        /// <param name="c">
-        ///          a map (<see cref="T:IDictionary{string, V}"/>) whose mappings to be copied </param>
+        ///          compatibility match version see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
+        /// <param name="collection">
+        ///          a dictionary (<see cref="T:IDictionary{string, V}"/>) whose mappings to be copied. </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
-        public CharArrayMap(LuceneVersion matchVersion, IDictionary<string, TValue> c, bool ignoreCase)
-            : this(matchVersion, c.Count, ignoreCase)
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public CharArrayDictionary(LuceneVersion matchVersion, IDictionary<string, TValue> collection, bool ignoreCase)
+            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
         {
-            foreach (var v in c)
+            // LUCENENET: Added guard clause
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
+            foreach (var v in collection)
             {
-                Add(v);
+                // LUCENENET: S1699: Don't call call protected members in the constructor
+                if (keys[GetSlot(v.Key)] != null) // ContainsKey
+                {
+                    throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, v.Key));
+                }
+                SetImpl(v.Key, new MapValue(v.Value));
             }
         }
 
         /// <summary>
-        /// Create set from the supplied map (used internally for readonly maps...)
+        /// Creates a dictionary from the mappings in another dictionary.
         /// </summary>
-        internal CharArrayMap(CharArrayMap<TValue> toCopy)
+        /// <param name="matchVersion">
+        ///          compatibility match version see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
+        /// <param name="collection">
+        ///          a dictionary (<see cref="T:IDictionary{char[], V}"/>) whose mappings to be copied. </param>
+        /// <param name="ignoreCase">
+        ///          <c>false</c> if and only if the set should be case sensitive;
+        ///          otherwise <c>true</c>. </param>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public CharArrayDictionary(LuceneVersion matchVersion, IDictionary<char[], TValue> collection, bool ignoreCase)
+            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
+        {
+            // LUCENENET: Added guard clause
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
+            foreach (var v in collection)
+            {
+                // LUCENENET: S1699: Don't call call protected members in the constructor
+                if (keys[GetSlot(v.Key!, 0, v.Key?.Length ?? 0)] != null) // ContainsKey
+                {
+                    throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, v.Key));
+                }
+                SetImpl(v.Key!, new MapValue(v.Value));
+            }
+        }
+
+        /// <summary>
+        /// Creates a dictionary from the mappings in another dictionary.
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          compatibility match version see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
+        /// <param name="collection">
+        ///          a dictionary (<see cref="T:IDictionary{ICharSequence, V}"/>) whose mappings to be copied. </param>
+        /// <param name="ignoreCase">
+        ///          <c>false</c> if and only if the set should be case sensitive;
+        ///          otherwise <c>true</c>. </param>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c>.</exception>
+        public CharArrayDictionary(LuceneVersion matchVersion, IDictionary<ICharSequence, TValue> collection, bool ignoreCase)
+            : this(matchVersion, collection?.Count ?? 0, ignoreCase)
+        {
+            // LUCENENET: Added guard clause
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
+            foreach (var v in collection)
+            {
+                // LUCENENET: S1699: Don't call call protected members in the constructor
+                if (keys[GetSlot(v.Key)] != null) // ContainsKey
+                {
+                    throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, v.Key));
+                }
+                SetImpl(v.Key, new MapValue(v.Value));
+            }
+        }
+
+        /// <summary>
+        /// Create set from the supplied dictionary (used internally for readonly maps...)
+        /// </summary>
+        internal CharArrayDictionary(CharArrayDictionary<TValue> toCopy)
         {
             this.keys = toCopy.keys;
             this.values = toCopy.values;
@@ -166,43 +262,110 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="item">A <see cref="T:KeyValuePair{string, V}"/> whose <see cref="T:KeyValuePair{string, V}.Value"/> 
         /// will be added for the corresponding <see cref="T:KeyValuePair{string, V}.Key"/>. </param>
-        public virtual void Add(KeyValuePair<string, TValue> item)
+        void ICollection<KeyValuePair<string, TValue>>.Add(KeyValuePair<string, TValue> item)
         {
             Add(item.Key, item.Value);
         }
 
         /// <summary>
-        /// Adds the <paramref name="value"/> for the passed in <paramref name="key"/>.
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="text"/>.
         /// </summary>
-        /// <param name="key">The string-able type to be added/updated in the dictionary.</param>
-        /// <param name="value">The corresponding value for the given <paramref name="key"/>.</param>
-        public virtual void Add(string key, TValue value)
+        /// <param name="text">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">An element with <paramref name="text"/> already exists in the dictionary.</exception>
+        public virtual void Add(string text, TValue value)
         {
-            if (ContainsKey(key))
+            if (ContainsKey(text))
             {
-                throw new ArgumentException("The key " + key + " already exists in the dictionary");
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, text), nameof(text));
             }
-            Put(key, value);
+            Set(text, value);
         }
 
         /// <summary>
-        /// Clears all entries in this map. This method is supported for reusing, but not 
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="text"/>.
+        /// </summary>
+        /// <param name="text">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">An element with <paramref name="text"/> already exists in the dictionary.</exception>
+        public virtual void Add(char[] text, TValue value)
+        {
+            if (ContainsKey(text))
+            {
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, text), nameof(text));
+            }
+            Set(text, value);
+        }
+
+        /// <summary>
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="text"/>.
+        /// </summary>
+        /// <param name="text">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// </exception>
+        /// <exception cref="ArgumentException">An element with <paramref name="text"/> already exists in the dictionary.</exception>
+        public virtual void Add(ICharSequence text, TValue value)
+        {
+            if (ContainsKey(text))
+            {
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, text), nameof(text));
+            }
+            Set(text, value);
+        }
+
+        /// <summary>
+        /// Adds the <paramref name="value"/> for the passed in <paramref name="text"/>.
+        /// </summary>
+        /// <param name="text">The string-able type to be added/updated in the dictionary.</param>
+        /// <param name="value">The corresponding value for the given <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">An element with <paramref name="text"/> already exists in the dictionary.</exception>
+        public virtual void Add<T>(T text, TValue value)
+        {
+            if (ContainsKey(text))
+            {
+                throw new ArgumentException(string.Format(SR.Argument_AddingDuplicate, text), nameof(text));
+            }
+            Set(text, value);
+        }
+
+        /// <summary>
+        /// Returns an unmodifiable <see cref="CharArrayDictionary{TValue}"/>. This allows to provide
+        /// unmodifiable views of internal dictionary for "read-only" use.
+        /// </summary>
+        /// <returns> an new unmodifiable <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for creating immutable collections
+        public CharArrayDictionary<TValue> AsReadOnly() => AsReadOnlyImpl();
+
+        private protected virtual CharArrayDictionary<TValue> AsReadOnlyImpl() // Hack so we can make it virtual
+        {
+            return new CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>(this);
+        }
+
+        /// <summary>
+        /// Clears all entries in this dictionary. This method is supported for reusing, but not 
         /// <see cref="IDictionary{TKey, TValue}.Remove(TKey)"/>. 
         /// </summary>
         public virtual void Clear()
         {
+            version++;
             count = 0;
-            keys.Fill(null);
-            values.Fill(null);
+            Arrays.Fill(keys, null);
+            Arrays.Fill(values, null);
         }
 
         /// <summary>
-        /// Not supported. 
+        /// Not supported.
         /// </summary>
-        [Obsolete("Not applicable in this class.")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool Contains(KeyValuePair<string, TValue> item) // LUCENENET TODO: API - rather than marking this DesignerSerializationVisibility.Hidden, it would be better to make an explicit implementation that isn't public
+        bool ICollection<KeyValuePair<string, TValue>>.Contains(KeyValuePair<string, TValue> item)
         {
             throw UnsupportedOperationException.Create();
         }
@@ -214,36 +377,95 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="array">The array to copy the items into.</param>
         /// <param name="arrayIndex">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
-        public virtual void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException">The number of elements in the source is greater
+        /// than the available space from <paramref name="arrayIndex"/> to the end of the destination array.</exception>
+        // LUCENENET: Generally, it makes more sense to use the Enuerator explicitly so we have access to the underling char[] and so
+        // we don't have to new up a KeyValuePair<string, TValue> just for the sake of reading data.
+        private void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
         {
-            using var iter = (EntryIterator)EntrySet().GetEnumerator();
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (count > array.Length - arrayIndex)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+
+            using var iter = GetEnumerator();
             for (int i = arrayIndex; iter.MoveNext(); i++)
             {
-                array[i] = new KeyValuePair<string, TValue>(iter.Current.Key, iter.CurrentValue);
+                array[i] = new KeyValuePair<string, TValue>(iter.CurrentKeyString, iter.CurrentValue!);
             }
         }
 
+        void ICollection<KeyValuePair<string, TValue>>.CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex) => CopyTo(array, arrayIndex);
+
+
         /// <summary>
-        /// Copies all items in the current <see cref="CharArrayMap{TValue}"/> to the passed in
-        /// <see cref="CharArrayMap{TValue}"/>.
+        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="index"/>.
+        /// The array is assumed to already be dimensioned to fit the elements in this dictionary; otherwise a <see cref="ArgumentOutOfRangeException"/>
+        /// will be thrown.
         /// </summary>
-        /// <param name="map"></param>
-        public virtual void CopyTo(CharArrayMap<TValue> map)
+        /// <param name="array">The array to copy the items into.</param>
+        /// <param name="index">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException">The number of elements in the source is greater
+        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
+        internal void CopyTo(KeyValuePair<char[], TValue>[] array, int index) // internal for testing
         {
-            using var iter = (EntryIterator)EntrySet().GetEnumerator();
-            while (iter.MoveNext())
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (count > array.Length - index)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+
+            using var iter = GetEnumerator();
+            for (int i = index; iter.MoveNext(); i++)
             {
-                map.Put(iter.Current.Key, iter.CurrentValue);
+                array[i] = new KeyValuePair<char[], TValue>((char[])iter.CurrentKey.Clone(), iter.CurrentValue!);
             }
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="length"/> chars of <paramref name="text"/> starting at <paramref name="offset"/>
+        /// Copies all items in the current dictionary the <paramref name="array"/> starting at the <paramref name="index"/>.
+        /// The array is assumed to already be dimensioned to fit the elements in this dictionary; otherwise a <see cref="ArgumentOutOfRangeException"/>
+        /// will be thrown.
+        /// </summary>
+        /// <param name="array">The array to copy the items into.</param>
+        /// <param name="index">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException">The number of elements in the source is greater
+        /// than the available space from <paramref name="index"/> to the end of the destination array.</exception>
+        internal void CopyTo(KeyValuePair<ICharSequence, TValue>[] array, int index) // internal for testing
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (count > array.Length - index)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+
+            using var iter = GetEnumerator();
+            for (int i = index; iter.MoveNext(); i++)
+            {
+                array[i] = new KeyValuePair<ICharSequence, TValue>(((char[])iter.CurrentKey.Clone()).AsCharSequence(), iter.CurrentValue!);
+            }
+        }
+
+        /// <summary>
+        /// <c>true</c> if the <paramref name="length"/> chars of <paramref name="text"/> starting at <paramref name="startIndex"/>
         /// are in the <see cref="Keys"/> 
         /// </summary>
-        public virtual bool ContainsKey(char[] text, int offset, int length)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual bool ContainsKey(char[] text, int startIndex, int length)
         {
-            return keys[GetSlot(text, offset, length)] != null;
+            return keys[GetSlot(text, startIndex, length)] != null;
         }
 
         /// <summary>
@@ -251,8 +473,12 @@ namespace Lucene.Net.Analysis.Util
         /// <paramref name="text"/> <see cref="T:char[]"/> being passed in; 
         /// otherwise <c>false</c>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool ContainsKey(char[] text)
         {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             return keys[GetSlot(text, 0, text.Length)] != null;
         }
 
@@ -260,6 +486,7 @@ namespace Lucene.Net.Analysis.Util
         /// <c>true</c> if the <paramref name="text"/> <see cref="string"/> is in the <see cref="Keys"/>; 
         /// otherwise <c>false</c>
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool ContainsKey(string text)
         {
             return keys[GetSlot(text)] != null;
@@ -269,91 +496,180 @@ namespace Lucene.Net.Analysis.Util
         /// <c>true</c> if the <paramref name="text"/> <see cref="ICharSequence"/> is in the <see cref="Keys"/>; 
         /// otherwise <c>false</c>
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// </exception>
         public virtual bool ContainsKey(ICharSequence text)
         {
+            if (text is null || !text.HasValue)
+                throw new ArgumentNullException(nameof(text));
+
+            if (text is CharArrayCharSequence charArrayCs)
+                return ContainsKey(charArrayCs.Value!);
+            if (text is StringBuilderCharSequence stringBuilderCs)
+                return ContainsKey(stringBuilderCs.Value!.ToString()); // LUCENENET: Indexing into a StringBuilder is slow, so materialize
+
             return keys[GetSlot(text)] != null;
         }
 
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="o"/> <see cref="object.ToString()"/> is in the <see cref="Keys"/>; 
-        /// otherwise <c>false</c>
+        /// <c>true</c> if the <paramref name="text"/> <see cref="object.ToString()"/> (in the invariant culture)
+        /// is in the <see cref="Keys"/>;  otherwise <c>false</c>
         /// </summary>
-        public virtual bool ContainsKey(object o)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool ContainsKey<T>(T text)
         {
-            if (o is null)
+            if (text is null)
+                throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+
+            if (text is string str)
+                return ContainsKey(str);
+            if (text is char[] charArray)
+                return ContainsKey(charArray, 0, charArray.Length);
+            if (text is ICharSequence cs)
+                return ContainsKey(cs);
+
+            var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
+            if (returnType == CharArrayDictionary.CharReturnType.String)
+                return ContainsKey(s);
+            else
+                return ContainsKey(chars);
+        }
+
+        #region Get
+
+        /// <summary>
+        /// Returns the value of the mapping of <paramref name="length"/> chars of <paramref name="text"/>
+        /// starting at <paramref name="startIndex"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        /// <exception cref="KeyNotFoundException">The effective text is not found in the dictionary.</exception>
+        internal virtual TValue Get(char[] text, int startIndex, int length, bool throwIfNotFound = true)
+        {
+            MapValue? value = values[GetSlot(text, startIndex, length)];
+            if (value is not null)
             {
-                throw new ArgumentNullException(nameof(o), "o can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                return value.Value;
             }
+            if (throwIfNotFound)
+                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text, startIndex, length)));
+            return default!;
+        }
 
-            var c = o as char[];
-            if (c != null)
+        /// <summary>
+        /// Returns the value of the mapping of the chars inside this <paramref name="text"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
+        internal virtual TValue Get(char[] text, bool throwIfNotFound = true)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            MapValue? value = values[GetSlot(text, 0, text.Length)];
+            if (value is not null)
             {
-                var text = c;
-                return ContainsKey(text, 0, text.Length);
+                return value.Value;
             }
-            return ContainsKey(o.ToString());
+            if (throwIfNotFound)
+                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text)));
+            return default!;
         }
 
         /// <summary>
-        /// returns the value of the mapping of <paramref name="length"/> chars of <paramref name="text"/>
-        /// starting at <paramref name="offset"/>
+        /// Returns the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
         /// </summary>
-        public virtual TValue Get(char[] text, int offset, int length)
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// </exception>
+        /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
+        internal virtual TValue Get(ICharSequence text, bool throwIfNotFound = true)
         {
-            var value = values[GetSlot(text, offset, length)];
-            return (value != null) ? value.Value : default;
+            if (text is null || !text.HasValue)
+                throw new ArgumentNullException(nameof(text));
+
+            if (text is StringCharSequence strCs)
+                return Get(strCs.Value!, throwIfNotFound);
+            if (text is CharArrayCharSequence charArrayCs)
+                return Get(charArrayCs.Value!, throwIfNotFound);
+            if (text is StringBuilderCharSequence stringBuilderCs)
+                return Get(stringBuilderCs.Value!.ToString(), throwIfNotFound); // LUCENENET: Indexing into a StringBuilder is slow, so materialize
+
+            var value = values[GetSlot(text)];
+            if (value is not null)
+            {
+                return value.Value;
+            }
+            if (throwIfNotFound)
+                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
+            return default!;
         }
 
         /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
+        /// Returns the value of the mapping of the chars inside this <see cref="string"/>.
         /// </summary>
-        public virtual TValue Get(char[] text)
-        {
-            var value = values[GetSlot(text, 0, text.Length)];
-            return (value != null) ? value.Value : default;
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <see cref="ICharSequence"/>
-        /// </summary>
-        public virtual TValue Get(ICharSequence text)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
+        internal virtual TValue Get(string text, bool throwIfNotFound = true)
         {
             var value = values[GetSlot(text)];
-            return (value != null) ? value.Value : default;
+            if (value is not null)
+            {
+                return value.Value;
+            }
+            if (throwIfNotFound)
+                throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
+            return default!;
         }
 
         /// <summary>
-        /// returns the value of the mapping of the chars inside this <see cref="string"/>
+        /// Returns the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
         /// </summary>
-        public virtual TValue Get(string text)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="KeyNotFoundException"><paramref name="text"/> is not found in the dictionary.</exception>
+        internal virtual TValue Get<T>(T text, bool throwIfNotFound = true)
         {
-            var value = values[GetSlot(text)];
-            return (value != null) ? value.Value : default;
-        }
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <see cref="object.ToString()"/>
-        /// </summary>
-        public virtual TValue Get(object o)
-        {
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
-            if (o is char[])
-            {
-                var text = o as char[];
-                return Get(text, 0, text.Length);
-            }
-            return Get(o.ToString());
+            if (text is string str)
+                return Get(str, throwIfNotFound);
+            if (text is char[] charArray)
+                return Get(charArray, 0, charArray.Length, throwIfNotFound);
+            if (text is ICharSequence cs)
+                return Get(cs, throwIfNotFound);
+
+            var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
+            if (returnType == CharArrayDictionary.CharReturnType.String)
+                return Get(s, throwIfNotFound);
+            else
+                return Get(chars, throwIfNotFound);
         }
 
-        private int GetSlot(char[] text, int offset, int length)
+        #endregion Get
+
+        #region GetSlot
+
+        private int GetSlot(char[] text, int startIndex, int length)
         {
-            int code = GetHashCode(text, offset, length);
+            int code = GetHashCode(text, startIndex, length);
             int pos = code & (keys.Length - 1);
             char[] text2 = keys[pos];
-            if (text2 != null && !Equals(text, offset, length, text2))
+            if (text2 != null && !Equals(text, startIndex, length, text2))
             {
                 int inc = ((code >> 8) + code) | 1;
                 do
@@ -361,14 +677,21 @@ namespace Lucene.Net.Analysis.Util
                     code += inc;
                     pos = code & (keys.Length - 1);
                     text2 = keys[pos];
-                } while (text2 != null && !Equals(text, offset, length, text2));
+                } while (text2 != null && !Equals(text, startIndex, length, text2));
             }
             return pos;
         }
 
         /// <summary>
-        /// Returns true if the <see cref="ICharSequence"/> is in the set
+        /// Returns <c>true</c> if the <see cref="ICharSequence"/> is in the set.
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// </exception>
         private int GetSlot(ICharSequence text)
         {
             int code = GetHashCode(text);
@@ -388,8 +711,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns true if the <see cref="string"/> is in the set
+        /// Returns <c>true</c> if the <see cref="string"/> is in the set.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         private int GetSlot(string text)
         {
             int code = GetHashCode(text);
@@ -408,84 +732,289 @@ namespace Lucene.Net.Analysis.Util
             return pos;
         }
 
+        #endregion GetSlot
+
+        #region Put (value)
+
         /// <summary>
         /// Add the given mapping.
+        /// If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[char[]]"/> setter is more efficient than this method if
+        /// the <paramref name="previousValue"/> is not required.
         /// </summary>
-        public virtual TValue Put(ICharSequence text, TValue value)
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
+        /// will be populated if the result is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual bool Put(char[] text, int startIndex, int length, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
         {
-            MapValue oldValue = PutImpl(text, new MapValue(value)); // could be more efficient
-            return (oldValue != null) ? oldValue.Value : default;
+            MapValue? oldValue = PutImpl(text, startIndex, length, new MapValue(value));
+            if (oldValue is not null)
+            {
+                previousValue = oldValue.Value;
+                return false;
+            }
+            previousValue = default;
+            return true;
+        }
+
+        /// <summary>
+        /// Add the given mapping.
+        /// If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
+        /// The user should never modify this text array after calling this method.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[char[]]"/> setter is more efficient than this method if
+        /// the <paramref name="previousValue"/> is not required.
+        /// </summary>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
+        /// will be populated if the result is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Put(char[] text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
+        {
+            MapValue? oldValue = PutImpl(text, new MapValue(value));
+            if (oldValue is not null)
+            {
+                previousValue = oldValue.Value;
+                return false;
+            }
+            previousValue = default;
+            return true;
+        }
+
+        /// <summary>
+        /// Add the given mapping.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[string]"/> setter is more efficient than this method if
+        /// the <paramref name="previousValue"/> is not required.
+        /// </summary>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
+        /// will be populated if the result is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Put(string text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
+        {
+            MapValue? oldValue = PutImpl(text, new MapValue(value));
+            if (oldValue is not null)
+            {
+                previousValue = oldValue.Value;
+                return false;
+            }
+            previousValue = default;
+            return true;
+        }
+
+        /// <summary>
+        /// Add the given mapping.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[ICharSequence]"/> setter is more efficient than this method if
+        /// the <paramref name="previousValue"/> is not required.
+        /// </summary>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
+        /// will be populated if the result is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// </exception>
+        public virtual bool Put(ICharSequence text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
+        {
+            MapValue? oldValue = PutImpl(text, new MapValue(value));
+            if (oldValue is not null)
+            {
+                previousValue = oldValue.Value;
+                return false;
+            }
+            previousValue = default;
+            return true;
         }
 
         /// <summary>
         /// Add the given mapping using the <see cref="object.ToString()"/> representation
-        /// of <paramref name="o"/> in the <see cref="CultureInfo.InvariantCulture"/>.
+        /// of <paramref name="text"/> in the <see cref="CultureInfo.InvariantCulture"/>.
+        /// <para/>
+        /// <b>Note:</b> The <see cref="this[object]"/> setter is more efficient than this method if
+        /// the <paramref name="previousValue"/> is not required.
         /// </summary>
-        public virtual TValue Put(object o, TValue value)
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <param name="previousValue">The previous value associated with the text, or the default for the type of <paramref name="value"/>
+        /// parameter if there was no mapping for <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the mapping was added, <c>false</c> if the text already existed. The <paramref name="previousValue"/>
+        /// will be populated if the result is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool Put<T>(T text, TValue value, [MaybeNullWhen(returnValue: true)] out TValue previousValue) // LUCENENET: Refactored to use out value to support value types
         {
-            MapValue oldValue = PutImpl(o, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default;
+            MapValue? oldValue = PutImpl(text, new MapValue(value));
+            if (oldValue is not null)
+            {
+                previousValue = oldValue.Value;
+                return false;
+            }
+            previousValue = default;
+            return true;
+        }
+
+        #endregion Put (value)
+
+        #region PutImpl
+
+        /// <summary>
+        /// Add the given mapping.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private MapValue? PutImpl(ICharSequence text, MapValue value)
+        {
+            // LUCENENET: Added guard clause
+            if (text is null || !text.HasValue)
+                throw new ArgumentNullException(nameof(text));
+
+            if (text is CharArrayCharSequence charArrayCs)
+                return PutImpl(charArrayCs.Value ?? Arrays.Empty<char>(), value);
+            if (text is StringBuilderCharSequence stringBuilderCs) // LUCENENET: Indexing into a StringBuilder is slow, so materialize
+            {
+                var sb = stringBuilderCs.Value!;
+                char[] result = new char[sb.Length];
+                sb.CopyTo(sourceIndex: 0, result, destinationIndex: 0, sb.Length);
+                return PutImpl(result, value);
+            }
+
+            int length = text.Length;
+            char[] buffer = new char[length];
+            for (int i = 0; i < length; i++)
+            {
+                buffer[i] = text[i];
+            }
+            return PutImpl(buffer, value);
         }
 
         /// <summary>
         /// Add the given mapping.
         /// </summary>
-        public virtual TValue Put(string text, TValue value)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private MapValue? PutImpl<T>(T text, MapValue value)
         {
-            MapValue oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default;
-        }
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
-        /// <summary>
-        /// Add the given mapping.
-        /// If ignoreCase is true for this Set, the text array will be directly modified.
-        /// The user should never modify this text array after calling this method.
-        /// </summary>
-        public virtual TValue Put(char[] text, TValue value)
-        {
-            MapValue oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default;
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        private MapValue PutImpl(ICharSequence text, MapValue value)
-        {
-            return PutImpl(text.ToString(), value); // could be more efficient
-        }
-
-        private MapValue PutImpl(object o, MapValue value)
-        {
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087 
-            if (o is char[])
-            {
-                var c = o as char[];
-                return PutImpl(c, value);
-            }
-            // LUCENENET: We need value types to be represented using the invariant
-            // culture, so it is consistent regardless of the current culture. 
-            // It's easy to work out if this is a value type, but difficult
-            // to get to the ToString(IFormatProvider) overload of the type without
-            // a lot of special cases. It's easier just to change the culture of the 
-            // thread before calling ToString(), but we don't want that behavior to
-            // bleed into PutImpl.
-            string s;
-            using (var context = new CultureContext(CultureInfo.InvariantCulture))
-            {
-                s = o.ToString();
-            }
-            return PutImpl(s, value);
+            if (text is string str)
+                return PutImpl(str, value);
+            if (text is char[] charArray)
+                return PutImpl(charArray, value);
+            if (text is ICharSequence cs)
+                return PutImpl(cs, value);
+
+            var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
+            if (returnType == CharArrayDictionary.CharReturnType.String)
+                return PutImpl(s, value);
+            else
+                return PutImpl(chars, value);
         }
 
         /// <summary>
         /// Add the given mapping.
         /// </summary>
-        private MapValue PutImpl(string text, MapValue value)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private MapValue? PutImpl(string text, MapValue value)
         {
-            return PutImpl(text.ToCharArray(), value);
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            // LUCENENET specific - only allocate char array if it is required.
+            if (ignoreCase)
+            {
+                return PutImpl(text.ToCharArray(), value);
+            }
+            version++;
+            int slot = GetSlot(text);
+            if (keys[slot] != null)
+            {
+                MapValue oldValue = values[slot];
+                values[slot] = value;
+                return oldValue;
+            }
+            keys[slot] = text.ToCharArray();
+            values[slot] = value;
+            count++;
+
+            if (count + (count >> 2) > keys.Length)
+            {
+                Rehash();
+            }
+
+            return null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private MapValue? PutImpl(char[] text, int startIndex, int length, MapValue value)
+        {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (startIndex > text.Length - length) // Checks for int overflow
+                throw new ArgumentException(SR.ArgumentOutOfRange_IndexLength);
+
+            version++;
+
+            if (ignoreCase)
+            {
+                charUtils.ToLower(text, startIndex, length);
+            }
+            int slot = GetSlot(text, startIndex, length);
+            if (keys[slot] != null)
+            {
+                MapValue oldValue = values[slot];
+                values[slot] = value;
+                return oldValue;
+            }
+            keys[slot] = text.AsSpan(startIndex, length).ToArray();
+            values[slot] = value;
+            count++;
+
+            if (count + (count >> 2) > keys.Length)
+            {
+                Rehash();
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -494,8 +1023,16 @@ namespace Lucene.Net.Analysis.Util
         /// so we know whether or not the value was set, since we can't reliably do
         /// a check for <c>null</c> on the <typeparamref name="TValue"/> type.
         /// </summary>
-        private MapValue PutImpl(char[] text, MapValue value)
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private MapValue? PutImpl(char[] text, MapValue value)
         {
+            // LUCENENET: Added guard clause
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            version++;
+
             if (ignoreCase)
             {
                 charUtils.ToLower(text, 0, text.Length);
@@ -519,114 +1056,579 @@ namespace Lucene.Net.Analysis.Util
             return null;
         }
 
+        #endregion PutImpl
+
+        #region Set
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <paramref name="text"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal virtual void Set(char[] text, int startIndex, int length)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, startIndex, length, PLACEHOLDER);
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <paramref name="text"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal virtual void Set(char[] text)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, PLACEHOLDER);
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal virtual void Set(ICharSequence text)
+        {
+            if (text is null || !text.HasValue)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, PLACEHOLDER);
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <see cref="string"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal virtual void Set(string text)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, PLACEHOLDER);
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        internal virtual void Set<T>(T text)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            // LUCENENET NOTE: Testing for *is* is at least 10x faster
+            // than casting using *as* and then checking for null.
+            // http://stackoverflow.com/q/1583050/181087
+            if (text is string str)
+            {
+                Set(str);
+                return;
+            }
+            if (text is char[] charArray)
+            {
+                Set(charArray);
+                return;
+            }
+            if (text is ICharSequence cs)
+            {
+                Set(cs);
+                return;
+            }
+
+            var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
+            if (returnType == CharArrayDictionary.CharReturnType.String)
+            {
+                Set(s);
+                return;
+            }
+
+            Set(chars);
+        }
+
+        void ICharArrayDictionary.Set(char[] text, int startIndex, int length) => Set(text, startIndex, length);
+        void ICharArrayDictionary.Set(char[] text) => Set(text);
+        void ICharArrayDictionary.Set(ICharSequence text) => Set(text);
+        void ICharArrayDictionary.Set<T>(T text) => Set(text);
+        void ICharArrayDictionary.Set(string text) => Set(text);
+
+        #endregion Set
+
+        #region Set (value)
+
+        /// <summary>
+        /// Sets the value of the mapping of <paramref name="length"/> chars of <paramref name="text"/>
+        /// starting at <paramref name="startIndex"/>.
+        /// <para/>
+        /// If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
+        /// </summary>
+        /// <param name="text">A text with which the specified <paramref name="value"/> is associated.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <param name="value">The value to be associated with the specified <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal virtual void Set(char[] text, int startIndex, int length, TValue? value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, startIndex, length, new MapValue(value));
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <paramref name="text"/>.
+        /// <para/>
+        /// If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
+        /// The user should never modify this text array after calling this method.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal virtual void Set(char[] text, TValue? value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, new MapValue(value));
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <see cref="ICharSequence"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal virtual void Set(ICharSequence text, TValue? value)
+        {
+            if (text is null || !text.HasValue)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, new MapValue(value));
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <see cref="string"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal virtual void Set(string text, TValue? value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            SetImpl(text, new MapValue(value));
+        }
+
+        /// <summary>
+        /// Sets the value of the mapping of the chars inside this <see cref="object.ToString()"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal virtual void Set<T>(T text, TValue? value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            // LUCENENET NOTE: Testing for *is* is at least 10x faster
+            // than casting using *as* and then checking for null.
+            // http://stackoverflow.com/q/1583050/181087
+            if (text is string str)
+            {
+                Set(str, value);
+                return;
+            }
+            if (text is char[] charArray)
+            {
+                Set(charArray, 0, charArray.Length, value);
+                return;
+            }
+            if (text is ICharSequence cs)
+            {
+                Set(cs, value);
+                return;
+            }
+
+            var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
+            if (returnType == CharArrayDictionary.CharReturnType.String)
+            {
+                Set(s, value);
+                return;
+            }
+
+            Set(chars, value);
+        }
+
+        #endregion Set (value)
+
+        #region SetImpl
+
+        /// <summary>
+        /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetImpl(ICharSequence text, MapValue value)
+        {
+            // LUCENENET: Added guard clause
+            if (text is null || !text.HasValue)
+                throw new ArgumentNullException(nameof(text));
+
+            if (text is CharArrayCharSequence charArrayCs)
+            {
+                SetImpl(charArrayCs.Value ?? Arrays.Empty<char>(), value);
+                return;
+            }
+            if (text is StringBuilderCharSequence stringBuilderCs) // LUCENENET: Indexing into a StringBuilder is slow, so materialize
+            {
+                var sb = stringBuilderCs.Value!;
+                char[] result = new char[sb.Length];
+                sb.CopyTo(sourceIndex: 0, result, destinationIndex: 0, sb.Length);
+                SetImpl(result, value);
+                return;
+            }
+
+            int length = text.Length;
+            char[] buffer = new char[length];
+            for (int i = 0; i < length; i++)
+            {
+                buffer[i] = text[i];
+            }
+
+            SetImpl(buffer, value);
+        }
+
+        /// <summary>
+        /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetImpl(string text, MapValue value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            // LUCENENET specific - only allocate char array if it is required.
+            if (ignoreCase)
+            {
+                SetImpl(text.ToCharArray(), value);
+                return;
+            }
+            version++;
+            int slot = GetSlot(text);
+            if (keys[slot] != null)
+            {
+                values[slot] = value;
+                return;
+            }
+            keys[slot] = text.ToCharArray();
+            values[slot] = value;
+            count++;
+
+            if (count + (count >> 2) > keys.Length)
+            {
+                Rehash();
+            }
+        }
+
+        /// <summary>
+        /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetImpl(char[] text, MapValue value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            version++;
+            if (ignoreCase)
+            {
+                charUtils.ToLower(text, 0, text.Length);
+            }
+            int slot = GetSlot(text, 0, text.Length);
+            if (keys[slot] != null)
+            {
+                values[slot] = value;
+                return;
+            }
+            keys[slot] = text;
+            values[slot] = value;
+            count++;
+
+            if (count + (count >> 2) > keys.Length)
+            {
+                Rehash();
+            }
+        }
+
+        /// <summary>
+        /// LUCENENET specific. Like PutImpl, but doesn't have a return value or lookup to get the old value.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetImpl(char[] text, int startIndex, int length, MapValue value)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (startIndex > text.Length - length) // Checks for int overflow
+                throw new ArgumentException(SR.ArgumentOutOfRange_IndexLength);
+
+            version++;
+            if (ignoreCase)
+            {
+                charUtils.ToLower(text, startIndex, length);
+            }
+            int slot = GetSlot(text, startIndex, length);
+            if (keys[slot] != null)
+            {
+                values[slot] = value;
+                return;
+            }
+            keys[slot] = text.AsSpan(startIndex, length).ToArray();
+            values[slot] = value;
+            count++;
+
+            if (count + (count >> 2) > keys.Length)
+            {
+                Rehash();
+            }
+        }
+
+        #endregion SetImpl
+
         #region PutAll
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{char[],TValue}"/>'s
-        /// entries, and calls this map's <see cref="Put(char[], TValue)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(char[], TValue?)"/> operation once for each entry.
+        /// <para/>
+        /// If ignoreCase is <c>true</c> for this dictionary, the text arrays will be directly modified.
+        /// The user should never modify the text arrays after calling this method.
         /// </summary>
-        /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// An element in the collection is <c>null</c>.
+        /// </exception>
         public virtual void PutAll(IDictionary<char[], TValue> collection)
         {
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{string,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(string, TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// An element in the collection is <c>null</c>.
+        /// </exception>
         public virtual void PutAll(IDictionary<string, TValue> collection)
         {
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IDictionary{ICharSequence,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Put(ICharSequence, TValue)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(ICharSequence, TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">A dictionary of values to add/update in the current map.</param>
+        /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// An element in the collection has a <c>null</c> text.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The text's <see cref="ICharSequence.HasValue"/> property for a given element in the collection returns <c>false</c>.
+        /// </exception>
         public virtual void PutAll(IDictionary<ICharSequence, TValue> collection)
         {
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
-        /// This implementation enumerates over the specified <see cref="T:IDictionary{object,TValue}"/>'s
-        /// entries, and calls this map's <see cref="Put(object, TValue)"/> operation once for each entry.
+        /// This implementation enumerates over the specified <see cref="T:IDictionary{T,TValue}"/>'s
+        /// entries, and calls this dictionary's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">A dictionary of values to add/update in the current map.</param>
-        public virtual void PutAll(IDictionary<object, TValue> collection)
+        /// <param name="collection">A dictionary of values to add/update in the current dictionary.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// An element in the collection is <c>null</c>.
+        /// </exception>
+        public virtual void PutAll<T>(IDictionary<T, TValue> collection)
         {
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{char[],TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Put(char[], TValue)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(char[], TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">The values to add/update in the current map.</param>
+        /// <param name="collection">The values to add/update in the current dictionary.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// An element in the collection is <c>null</c>.
+        /// </exception>
         public virtual void PutAll(IEnumerable<KeyValuePair<char[], TValue>> collection)
         {
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{string,TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Put(string, TValue)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(string, TValue)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">The values to add/update in the current map.</param>
+        /// <param name="collection">The values to add/update in the current dictionary.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// An element in the collection is <c>null</c>.
+        /// </exception>
         public virtual void PutAll(IEnumerable<KeyValuePair<string, TValue>> collection)
         {
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
         /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{ICharSequence,TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Put(ICharSequence, TValue)"/> operation once for each entry.
+        /// entries, and calls this dictionary's <see cref="Set(ICharSequence, TValue)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">The values to add/update in the current map.</param>
+        /// <param name="collection">The values to add/update in the current dictionary.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// An element in the collection has a <c>null</c> text.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The text's <see cref="ICharSequence.HasValue"/> property for a given element in the collection returns <c>false</c>.
+        /// </exception>
         public virtual void PutAll(IEnumerable<KeyValuePair<ICharSequence, TValue>> collection)
         {
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                Set(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
-        /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{object,TValue}}"/>'s
-        /// entries, and calls this map's <see cref="Put(object, TValue)"/> operation once for each entry.
+        /// This implementation enumerates over the specified <see cref="T:IEnumerable{KeyValuePair{TKey,TValue}}"/>'s
+        /// entries, and calls this dictionary's <see cref="Set{T}(T, TValue?)"/> operation once for each entry.
         /// </summary>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        public virtual void PutAll(IEnumerable<KeyValuePair<object, TValue>> collection)
+        /// <param name="collection">The values to add/update in the current dictionary.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="collection"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// An element in the collection is <c>null</c>.
+        /// </exception>
+        public virtual void PutAll<T>(IEnumerable<KeyValuePair<T, TValue>> collection)
         {
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
+#if FEATURE_SPANFORMATTABLE
+            Span<char> buffer = stackalloc char[256];
+#else
+            Span<char> buffer = stackalloc char[1];
+#endif
+
             foreach (var kvp in collection)
             {
-                Put(kvp.Key, kvp.Value);
+                // Convert the item to chars in the invariant culture
+                var returnType = CharArrayDictionary.ConvertObjectToChars(kvp.Key, out char[] chars, out string s, buffer);
+                if (returnType == CharArrayDictionary.CharReturnType.String)
+                    Set(s, kvp.Value);
+                else
+                    Set(chars, kvp.Value);
             }
         }
 
         #endregion
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Rehash()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(keys.Length == values.Length);
@@ -649,18 +1651,19 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        private bool Equals(char[] text1, int offset, int length, char[] text2)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool Equals(char[] text1, int startIndex, int length, char[] text2)
         {
             if (length != text2.Length)
             {
                 return false;
             }
-            int limit = offset + length;
+            int limit = startIndex + length;
             if (ignoreCase)
             {
                 for (int i = 0; i < length;)
                 {
-                    var codePointAt = charUtils.CodePointAt(text1, offset + i, limit);
+                    var codePointAt = charUtils.CodePointAt(text1, startIndex + i, limit);
                     if (Character.ToLower(codePointAt, CultureInfo.InvariantCulture) != charUtils.CodePointAt(text2, i, text2.Length)) // LUCENENET specific - need to use invariant culture to match Java
                     {
                         return false;
@@ -672,7 +1675,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 for (int i = 0; i < length; i++)
                 {
-                    if (text1[offset + i] != text2[i])
+                    if (text1[startIndex + i] != text2[i])
                     {
                         return false;
                     }
@@ -681,6 +1684,7 @@ namespace Lucene.Net.Analysis.Util
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool Equals(ICharSequence text1, char[] text2)
         {
             int length = text1.Length;
@@ -713,6 +1717,7 @@ namespace Lucene.Net.Analysis.Util
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool Equals(string text1, char[] text2)
         {
             int length = text1.Length;
@@ -750,24 +1755,37 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="obj">Another dictionary to test the values of</param>
         /// <returns><c>true</c> if the given object is an <see cref="T:IDictionary{object, V}"/> that contains
-        /// the same key value pairs as the current map</returns>
-        public override bool Equals(object obj)
+        /// the same text value pairs as the current dictionary</returns>
+        public override bool Equals(object? obj)
         {
-            var other = obj as IDictionary<string, TValue>;
-            if (other is null)
+            if (obj is null)
                 return false;
-
+            if (obj is not IDictionary<string, TValue> other)
+                return false;
             if (this.Count != other.Count)
                 return false;
 
-            using (var iter = other.GetEnumerator())
+            if (obj is CharArrayDictionary<TValue> charArrayDictionary)
             {
+                using var iter = charArrayDictionary.GetEnumerator();
                 while (iter.MoveNext())
                 {
-                    if (!this.TryGetValue(iter.Current.Key, out TValue value))
+                    if (!this.TryGetValue(iter.CurrentKey, out TValue? value))
                         return false;
 
-                    if (!EqualityComparer<TValue>.Default.Equals(value, iter.Current.Value))
+                    if (!JCG.EqualityComparer<TValue>.Default.Equals(value!, iter.Current.Value))
+                        return false;
+                }
+            }
+            else
+            {
+                using var iter = other.GetEnumerator();
+                while (iter.MoveNext())
+                {
+                    if (!this.TryGetValue(iter.Current.Key, out TValue? value))
+                        return false;
+
+                    if (!JCG.EqualityComparer<TValue>.Default.Equals(value!, iter.Current.Value))
                         return false;
                 }
             }
@@ -784,28 +1802,35 @@ namespace Lucene.Net.Analysis.Util
         {
             const int PRIME = 31; // arbitrary prime
             int hash = PRIME;
-            using (var iter = (EntryIterator)EntrySet().GetEnumerator())
+            using (var iter = GetEnumerator())
             {
                 while (iter.MoveNext())
                 {
-                    hash = (hash * PRIME) ^ iter.Current.Key.GetHashCode();
-                    hash = (hash * PRIME) ^ iter.Current.Value.GetHashCode();
+                    hash = (hash * PRIME) ^ iter.CurrentKeyString.GetHashCode();
+                    TValue? value = iter.CurrentValue;
+                    hash = (hash * PRIME) ^ (value is null ? 0 : JCG.EqualityComparer<TValue>.Default.GetHashCode(value));
                 }
             }
             return hash;
         }
 
-        private int GetHashCode(char[] text, int offset, int length)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int GetHashCode(char[] text, int startIndex, int length)
         {
             if (text is null)
-            {
-                throw new ArgumentNullException(nameof(text), "text can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-            }
+                throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (startIndex > text.Length - length) // Checks for int overflow
+                throw new ArgumentException(SR.ArgumentOutOfRange_IndexLength);
+
             int code = 0;
-            int stop = offset + length;
+            int stop = startIndex + length;
             if (ignoreCase)
             {
-                for (int i = offset; i < stop;)
+                for (int i = startIndex; i < stop;)
                 {
                     int codePointAt = charUtils.CodePointAt(text, i, stop);
                     code = code * 31 + Character.ToLower(codePointAt, CultureInfo.InvariantCulture); // LUCENENET specific - need to use invariant culture to match Java
@@ -814,7 +1839,7 @@ namespace Lucene.Net.Analysis.Util
             }
             else
             {
-                for (int i = offset; i < stop; i++)
+                for (int i = startIndex; i < stop; i++)
                 {
                     code = code * 31 + text[i];
                 }
@@ -822,12 +1847,11 @@ namespace Lucene.Net.Analysis.Util
             return code;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetHashCode(ICharSequence text)
         {
-            if (text is null)
-            {
-                throw new ArgumentNullException(nameof(text), "text can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-            }
+            if (text is null || !text.HasValue)
+                throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
 
             int code = 0;
             int length = text.Length;
@@ -850,12 +1874,11 @@ namespace Lucene.Net.Analysis.Util
             return code;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetHashCode(string text)
         {
             if (text is null)
-            {
-                throw new ArgumentNullException(nameof(text), "text can't be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-            }
+                throw new ArgumentNullException(nameof(text)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
 
             int code = 0;
             int length = text.Length;
@@ -887,54 +1910,137 @@ namespace Lucene.Net.Analysis.Util
         public virtual LuceneVersion MatchVersion => matchVersion;
 
         /// <summary>
-        /// Adds a placeholder with the given <paramref name="text"/> as the key.
+        /// Adds a placeholder with the given <paramref name="text"/> as the text.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
+        /// <para/>
+        /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArrayDictionary{TValue}"/>, the text array will be directly modified.
         /// </summary>
-        public virtual bool Put(char[] text)
+        /// <param name="text">A key with which the placeholder is associated.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        internal virtual bool Put(char[] text, int startIndex, int length)
+        {
+            return PutImpl(text, startIndex, length, PLACEHOLDER) is null;
+        }
+
+        /// <summary>
+        /// Adds a placeholder with the given <paramref name="text"/> as the text.
+        /// Primarily for internal use by <see cref="CharArraySet"/>.
+        /// <para/>
+        /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArrayDictionary{TValue}"/>, the text array will be directly modified.
+        /// The user should never modify this text array after calling this method.
+        /// </summary>
+        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        internal virtual bool Put(char[] text)
         {
             return PutImpl(text, PLACEHOLDER) is null;
         }
 
         /// <summary>
-        /// Adds a placeholder with the given <paramref name="text"/> as the key.
+        /// Adds a placeholder with the given <paramref name="text"/> as the text.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
-        public virtual bool Put(ICharSequence text)
+        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.</exception>
+        internal virtual bool Put(ICharSequence text)
         {
             return PutImpl(text, PLACEHOLDER) is null;
         }
 
         /// <summary>
-        /// Adds a placeholder with the given <paramref name="text"/> as the key.
+        /// Adds a placeholder with the given <paramref name="text"/> as the text.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
-        public virtual bool Put(string text)
+        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        internal virtual bool Put(string text)
         {
             return PutImpl(text, PLACEHOLDER) is null;
         }
 
         /// <summary>
-        /// Adds a placeholder with the given <paramref name="o"/> as the key.
+        /// Adds a placeholder with the given <paramref name="text"/> as the text.
         /// Primarily for internal use by <see cref="CharArraySet"/>.
         /// </summary>
-        public virtual bool Put(object o)
+        /// <returns><c>true</c> if the text was added, <c>false</c> if the text already existed.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        internal virtual bool Put<T>(T text)
         {
-            return PutImpl(o, PLACEHOLDER) is null;
+            return PutImpl(text, PLACEHOLDER) is null;
+        }
+
+        bool ICharArrayDictionary.Put(char[] text, int startIndex, int length) => Put(text, startIndex, length);
+        bool ICharArrayDictionary.Put(char[] text) => Put(text);
+        bool ICharArrayDictionary.Put(string text) => Put(text);
+        bool ICharArrayDictionary.Put(ICharSequence text) => Put(text);
+        bool ICharArrayDictionary.Put<T>(T text) => Put(text);
+
+        /// <summary>
+        /// Returns a copy of the current <see cref="CharArrayDictionary{TValue}"/> as a new instance of <see cref="CharArrayDictionary{TValue}"/>.
+        /// Preserves the value of <c>matchVersion</c> and <c>ignoreCase</c> from the current instance.
+        /// </summary>
+        /// <returns> A copy of the current <see cref="CharArrayDictionary{TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
+        public virtual CharArrayDictionary<TValue> ToCharArrayDictionary()
+        {
+            return CharArrayDictionary.Copy(this.matchVersion, (IDictionary<string, TValue>)this);
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Returns a copy of the current <see cref="CharArrayDictionary{TValue}"/> as a new instance of <see cref="CharArrayDictionary{TValue}"/>
+        /// using the specified <paramref name="matchVersion"/> value. Preserves the value of <c>ignoreCase</c> from the current instance.
         /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="offset">The position of the <paramref name="key"/> where the target key begins.</param>
-        /// <param name="length">The total length of the <paramref name="key"/>.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public virtual bool TryGetValue(char[] key, int offset, int length, out TValue value)
+        /// <param name="matchVersion">
+        ///          compatibility match version see <a href="#version">Version
+        ///          note</a> above for details. </param>
+        /// <returns> A copy of the current <see cref="CharArrayDictionary{TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
+        public virtual CharArrayDictionary<TValue> ToCharArrayDictionary(LuceneVersion matchVersion)
         {
-            var val = values[GetSlot(key, offset, length)];
+            return CharArrayDictionary.Copy(matchVersion, (IDictionary<string, TValue>)this);
+        }
+
+        /// <summary>
+        /// Returns a copy of the current <see cref="CharArrayDictionary{TValue}"/> as a new instance of <see cref="CharArrayDictionary{TValue}"/>
+        /// using the specified <paramref name="matchVersion"/> and <paramref name="ignoreCase"/> values.
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          compatibility match version see <a href="#version">Version
+        ///          note</a> above for details. </param>
+        /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
+        /// <returns> A copy of the current <see cref="CharArrayDictionary{TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
+        public virtual CharArrayDictionary<TValue> ToCharArrayDictionary(LuceneVersion matchVersion, bool ignoreCase)
+        {
+            return new CharArrayDictionary<TValue>(matchVersion, this, ignoreCase);
+        }
+
+        /// <summary>
+        /// Gets the value associated with the specified text.
+        /// </summary>
+        /// <param name="text">The text of the value to get.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified text, 
+        /// if the text is found; otherwise, the default value for the type of the value parameter. 
+        /// This parameter is passed uninitialized.</param>
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual bool TryGetValue(char[] text, int startIndex, int length, [MaybeNullWhen(returnValue: false)] out TValue value)
+        {
+            var val = values[GetSlot(text, startIndex, length)];
             if (val != null)
             {
                 value = val.Value;
@@ -945,16 +2051,20 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Gets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="text">The text of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified text, 
+        /// if the text is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public virtual bool TryGetValue(char[] key, out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool TryGetValue(char[] text, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
-            var val = values[GetSlot(key, 0, key.Length)];
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            var val = values[GetSlot(text, 0, text.Length)];
             if (val != null)
             {
                 value = val.Value;
@@ -965,16 +2075,33 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Gets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="text">The text of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified text, 
+        /// if the text is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public virtual bool TryGetValue(ICharSequence key, out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// </exception>
+        public virtual bool TryGetValue(ICharSequence text, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
-            var val = values[GetSlot(key)];
+            if (text is null || !text.HasValue)
+                throw new ArgumentNullException(nameof(text));
+
+            if (text is StringCharSequence strCs)
+                return TryGetValue(strCs.Value!, out value);
+            if (text is CharArrayCharSequence charArrayCs)
+                return TryGetValue(charArrayCs.Value!, out value);
+            if (text is StringBuilderCharSequence stringBuilderCs) // LUCENENET: Indexing into a StringBuilder is slow, so materialize
+                return TryGetValue(stringBuilderCs.Value!.ToString(), out value);
+
+            var val = values[GetSlot(text)];
             if (val != null)
             {
                 value = val.Value;
@@ -985,113 +2112,146 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Gets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="text">The text of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified text, 
+        /// if the text is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public virtual bool TryGetValue(string key, out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool TryGetValue(string text, [NotNullWhen(returnValue: false)] out TValue value)
         {
-            var val = values[GetSlot(key)];
+            var val = values[GetSlot(text)];
             if (val != null)
             {
-                value = val.Value;
+                value = val.Value!;
                 return true;
             }
-            value = default;
+            value = default!;
             return false;
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key.
+        /// Gets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="text">The text of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified text, 
+        /// if the text is found; otherwise, the default value for the type of the value parameter. 
         /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public virtual bool TryGetValue(object key, out TValue value)
+        /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual bool TryGetValue<T>(T text, [MaybeNullWhen(returnValue: false)] out TValue value)
         {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
             // http://stackoverflow.com/q/1583050/181087
-            if (key is char[])
-            {
-                var text = key as char[];
-                return TryGetValue(text, 0, text.Length, out value);
-            }
-            return TryGetValue(key.ToString(), out value);
+            if (text is string str)
+                return TryGetValue(str, out value);
+            if (text is char[] charArray)
+                return TryGetValue(charArray, 0, charArray.Length, out value);
+            if (text is ICharSequence cs)
+                return TryGetValue(cs, out value);
+
+            var returnType = CharArrayDictionary.ConvertObjectToChars(text, out char[] chars, out string s);
+            if (returnType == CharArrayDictionary.CharReturnType.String)
+                return TryGetValue(s, out value);
+            else
+                return TryGetValue(chars, out value);
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified text.
+        /// <para/>
+        /// <b>Note:</b> If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
         /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
-        /// <param name="offset">The position of the <paramref name="key"/> where the target key begins.</param>
-        /// <param name="length">The total length of the <paramref name="key"/>.</param>
-        public virtual TValue this[char[] key, int offset, int length]
+        /// <param name="text">The text of the value to get or set.</param>
+        /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
+        /// <param name="length">The total length of the <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
+        /// <exception cref="ArgumentException"><paramref name="startIndex"/> and <paramref name="length"/> refer to a position outside of <paramref name="text"/>.</exception>
+        public virtual TValue this[char[] text, int startIndex, int length]
         {
-            get => Get(key, offset, length);
-            set => Put(key, value);
+            get => Get(text, startIndex, length, throwIfNotFound: true);
+            set => Set(text, startIndex, length, value);
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified text.
+        /// <para/>
+        /// <b>Note:</b> If ignoreCase is <c>true</c> for this dictionary, the text array will be directly modified.
+        /// The user should never modify this text array after calling this setter.
         /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
-        public virtual TValue this[char[] key]
+        /// <param name="text">The text of the value to get or set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual TValue this[char[] text]
         {
-            get => Get(key);
-            set => Put(key, value);
+            get => Get(text, throwIfNotFound: true);
+            set => Set(text, value);
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
-        public virtual TValue this[ICharSequence key]
+        /// <param name="text">The text of the value to get or set.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <c>null</c>.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// The <paramref name="text"/>'s <see cref="ICharSequence.HasValue"/> property returns <c>false</c>.
+        /// </exception>
+        public virtual TValue this[ICharSequence text]
         {
-            get => Get(key);
-            set => Put(key, value);
+            get => Get(text, throwIfNotFound: true);
+            set => Set(text, value);
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
-        public virtual TValue this[string key]
+        /// <param name="text">The text of the value to get or set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual TValue this[string text]
         {
-            get => Get(key);
-            set => Put(key, value);
+            get => Get(text, throwIfNotFound: true);
+            set => Set(text, value);
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the value associated with the specified text.
         /// </summary>
-        /// <param name="key">The key of the value to get or set.</param>
-        public virtual TValue this[object key]
+        /// <param name="text">The text of the value to get or set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
+        public virtual TValue this[object text]
         {
-            get => Get(key);
-            set => Put(key, value);
+            get => Get(text, throwIfNotFound: true);
+            set => Set(text, value);
         }
 
         /// <summary>
-        /// Gets a collection containing the keys in the <see cref="CharArrayMap{TValue}"/>.
+        /// Gets a collection containing the keys in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
-        public virtual ICollection<string> Keys => KeySet;
+        public virtual CharArraySet Keys => KeySet;
+
+        ICollection<string> IDictionary<string, TValue>.Keys => KeySet;
+
+        IEnumerable<string> IReadOnlyDictionary<string, TValue>.Keys => KeySet;
 
 
-        private volatile ICollection<TValue> valueSet;
+        private volatile ValueCollection? valueSet;
 
         /// <summary>
-        /// Gets a collection containing the values in the <see cref="CharArrayMap{TValue}"/>.
+        /// Gets a collection containing the values in the <see cref="CharArrayDictionary{TValue}"/>.
         /// This specialized collection can be enumerated in order to read its values and 
         /// overrides <see cref="object.ToString()"/> in order to display a string 
         /// representation of the values.
         /// </summary>
-        public ICollection<TValue> Values
+        public ValueCollection Values
         {
             get
             {
@@ -1103,159 +2263,172 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
+        ICollection<TValue> IDictionary<string, TValue>.Values => Values;
+
+        IEnumerable<TValue> IReadOnlyDictionary<string, TValue>.Values => Values;
+
+        #region Nested Class: ValueCollection
+
         /// <summary>
-        /// LUCENENET specific class used to break the infinite recursion when the
-        /// CharArraySet iterates the keys of this dictionary via <see cref="OriginalKeySet"/>. 
-        /// In Java, the keyset of the abstract base class was used to break the infinite recursion, 
-        /// however this class doesn't have an abstract base class so that is not an option. 
-        /// This class is just a facade around the keys (not another collection of keys), so it 
-        /// doesn't consume any additional RAM while providing another "virtual" collection to iterate over.
+        /// Class that represents the values in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
-        internal class KeyCollection : ICollection<string>
+        // LUCENENET specific
+        [DebuggerDisplay("Count = {Count}, Values = {ToString()}")]
+        public sealed class ValueCollection : ICollection<TValue>, ICollection, IReadOnlyCollection<TValue>
         {
-            private readonly CharArrayMap<TValue> outerInstance;
+            private readonly CharArrayDictionary<TValue> dictionary;
 
-            public KeyCollection(CharArrayMap<TValue> outerInstance)
+            /// <summary>
+            /// Initializes a new instance of <see cref="ValueCollection"/> for the provided <see cref="CharArrayDictionary{TValue}"/>.
+            /// </summary>
+            /// <param name="dictionary">The dictionary to read the values from.</param>
+            /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
+            public ValueCollection(CharArrayDictionary<TValue> dictionary)
             {
-                this.outerInstance = outerInstance;
-            }
-
-            public int Count => outerInstance.Count;
-
-            public bool IsReadOnly => outerInstance.IsReadOnly;
-
-            public void Add(string item) // LUCENENET TODO: API - make an explicit implementation that isn't public
-            {
-                throw UnsupportedOperationException.Create();
-            }
-
-            public void Clear()
-            {
-                outerInstance.Clear();
-            }
-
-            public bool Contains(string item)
-            {
-                return outerInstance.ContainsKey(item);
-            }
-
-            public void CopyTo(string[] array, int arrayIndex)
-            {
-                using var iter = GetEnumerator();
-                for (int i = arrayIndex; iter.MoveNext(); i++)
-                {
-                    array[i] = iter.Current;
-                }
-            }
-
-            public IEnumerator<string> GetEnumerator()
-            {
-                return new KeyEnumerator(outerInstance);
-            }
-
-            public bool Remove(string item) // LUCENENET TODO: API - make an explicit implementation that isn't public
-            {
-                throw UnsupportedOperationException.Create();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
+                this.dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
             }
 
             /// <summary>
-            /// LUCENENET specific class to iterate the values in the <see cref="KeyCollection"/>.
+            /// Gets the number of elements contained in the <see cref="ValueCollection"/>.
             /// </summary>
-            private class KeyEnumerator : IEnumerator<string>
+            /// <remarks>
+            /// Retrieving the value of this property is an O(1) operation.
+            /// </remarks>
+            public int Count => dictionary.Count;
+
+            bool ICollection<TValue>.IsReadOnly => true;
+
+            bool ICollection.IsSynchronized => false;
+
+            object ICollection.SyncRoot => ((ICollection)dictionary).SyncRoot;
+
+            void ICollection<TValue>.Add(TValue item)
             {
-                private readonly EntryIterator entryIterator;
-
-                public KeyEnumerator(CharArrayMap<TValue> outerInstance)
-                {
-                    this.entryIterator = new EntryIterator(outerInstance, !outerInstance.IsReadOnly);
-                }
-
-                public string Current => entryIterator.Current.Key;
-
-                object IEnumerator.Current => Current;
-
-                public void Dispose()
-                {
-                    // nothing to do
-                }
-
-                public bool MoveNext()
-                {
-                    return entryIterator.MoveNext();
-                }
-
-                public void Reset()
-                {
-                    entryIterator.Reset();
-                }
-            }
-        }
-
-        /// <summary>
-        /// LUCENENET specific class that represents the values in the <see cref="CharArrayMap{TValue}"/>.
-        /// </summary>
-        internal class ValueCollection : ICollection<TValue>
-        {
-            private readonly CharArrayMap<TValue> outerInstance;
-
-            public ValueCollection(CharArrayMap<TValue> outerInstance)
-            {
-                this.outerInstance = outerInstance;
+                throw UnsupportedOperationException.Create(SR.NotSupported_ValueCollectionSet);
             }
 
-            public int Count => outerInstance.Count;
-
-            public bool IsReadOnly => outerInstance.IsReadOnly;
-
-            public void Add(TValue item) // LUCENENET TODO: API - make an explicit implementation that isn't public
+            void ICollection<TValue>.Clear()
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ValueCollectionSet);
             }
 
-            public void Clear()
-            {
-                outerInstance.Clear();
-            }
-
+            /// <summary>
+            /// Determines whether the set contains a specific element.
+            /// </summary>
+            /// <param name="item">The element to locate in the set.</param>
+            /// <returns><c>true</c> if the set contains item; otherwise, <c>false</c>.</returns>
+            [SuppressMessage("Style", "IDE0002:Name can be simplified", Justification = "This is a false warning.")]
             public bool Contains(TValue item)
             {
-                for (int i = 0; i < outerInstance.values.Length; i++)
+                for (int i = 0; i < dictionary.values.Length; i++)
                 {
-                    var value = outerInstance.values[i];
-                    if (J2N.Collections.Generic.EqualityComparer<TValue>.Equals(value, item))
+                    var value = dictionary.values[i];
+                    if (JCG.EqualityComparer<TValue>.Equals(value, item))
                         return true;
                 }
                 return false;
             }
 
-            public void CopyTo(TValue[] array, int arrayIndex) // LUCENENET TODO: API - make an explicit implementation that isn't public
+            /// <summary>
+            /// Copies the <see cref="ValueCollection"/> elements to an existing one-dimensional
+            /// array, starting at the specified array index.
+            /// </summary>
+            /// <param name="array">The one-dimensional array that is the destination of the elements copied from
+            /// the <see cref="ValueCollection"/>. The array must have zero-based indexing.</param>
+            /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
+            /// <exception cref="ArgumentNullException"><paramref name="array"/> is <c>null</c>.</exception>
+            /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> is less than 0.</exception>
+            /// <exception cref="ArgumentException">The number of elements in the source <see cref="ValueCollection"/>
+            /// is greater than the available space from <paramref name="arrayIndex"/> to the end of the destination
+            /// <paramref name="array"/>.</exception>
+            /// <remarks>
+            /// The elements are copied to the array in the same order in which the enumerator iterates through the
+            /// <see cref="ValueCollection"/>.
+            /// <para/>
+            /// This method is an O(<c>n</c>) operation, where <c>n</c> is <see cref="Count"/>.
+            /// </remarks>
+            public void CopyTo(TValue[] array, int arrayIndex)
             {
-                throw UnsupportedOperationException.Create();
+                if (array is null)
+                    throw new ArgumentNullException(nameof(array));
+                if (arrayIndex < 0)
+                    throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, SR.ArgumentOutOfRange_NeedNonNegNum);
+                if (arrayIndex > array.Length || dictionary.Count > array.Length - arrayIndex)
+                    throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+
+                foreach (var entry in this)
+                    array[arrayIndex++] = entry!;
             }
 
-            public IEnumerator<TValue> GetEnumerator()
+            void ICollection.CopyTo(Array array, int index)
             {
-                return new ValueEnumerator(outerInstance);
+                if (array is null)
+                    throw new ArgumentNullException(nameof(array));
+                if (array.Rank != 1)
+                    throw new ArgumentException(SR.Arg_RankMultiDimNotSupported, nameof(array));
+                if (array.GetLowerBound(0) != 0)
+                    throw new ArgumentException(SR.Arg_NonZeroLowerBound, nameof(array));
+                if (index < 0)
+                    throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+                if (array.Length - index < dictionary.Count)
+                    throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+
+                if (array is TValue[] values)
+                {
+                    CopyTo(values, index);
+                }
+                else
+                {
+                    try
+                    {
+                        object?[] objects = (object?[])array;
+                        foreach (var entry in this)
+                            objects[index++] = entry;
+                    }
+                    catch (ArrayTypeMismatchException)
+                    {
+                        throw new ArgumentException(SR.Argument_InvalidArrayType, nameof(array));
+                    }
+                }
             }
 
-            public bool Remove(TValue item) // LUCENENET TODO: API - make an explicit implementation that isn't public
+            /// <summary>
+            /// Returns an enumerator that iterates through the <see cref="ValueCollection"/>.
+            /// </summary>
+            /// <returns>An enumerator that iterates through the <see cref="ValueCollection"/>.</returns>
+            /// <remarks>
+            /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to
+            /// the collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably
+            /// invalidated and the next call to <see cref="Enumerator.MoveNext()"/> or <see cref="IEnumerator.Reset()"/>
+            /// throws an <see cref="InvalidOperationException"/>.
+            /// <para/>
+            /// This method is an <c>O(log n)</c> operation.
+            /// </remarks>
+            public Enumerator GetEnumerator()
             {
-                throw UnsupportedOperationException.Create();
+                return new Enumerator(dictionary);
             }
 
-            IEnumerator IEnumerable.GetEnumerator()
+            IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() => GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+            bool ICollection<TValue>.Remove(TValue item)
             {
-                return GetEnumerator();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ValueCollectionSet);
             }
 
+            /// <summary>
+            /// Returns a string that represents the current collection.
+            /// <para/>
+            /// The presentation has a specific format. It is enclosed by square
+            /// brackets ("[]"). Elements are separated by ', ' (comma and space).
+            /// <c>null</c> values are represented as the string "null".
+            /// </summary>
+            /// <returns>A string that represents the current collection.</returns>
             public override string ToString()
             {
-                using var i = (ValueEnumerator)GetEnumerator();
+                using var i = GetEnumerator();
                 if (!i.HasNext)
                     return "[]";
 
@@ -1263,93 +2436,349 @@ namespace Lucene.Net.Analysis.Util
                 sb.Append('[');
                 while (i.MoveNext())
                 {
-                    TValue value = i.Current;
+                    TValue? value = i.Current;
                     if (sb.Length > 1)
                     {
                         sb.Append(',').Append(' ');
                     }
-                    sb.Append(value.ToString());
+                    if (value is not null)
+                        sb.Append(value.ToString());
+                    else
+                        sb.Append("null");
                 }
 
                 return sb.Append(']').ToString();
             }
 
-            /// <summary>
-            /// LUCENENET specific class to enumerate the values in the <see cref="ValueCollection"/>.
-            /// </summary>
-            private class ValueEnumerator : IEnumerator<TValue>
-            {
-                private readonly EntryIterator entryIterator;
+            #region Nested Struct: Enumerator
 
-                public ValueEnumerator(CharArrayMap<TValue> outerInstance)
+            /// <summary>
+            /// Enumerates the elements of a <see cref="ValueCollection"/>.
+            /// </summary>
+            /// <remarks>
+            /// The <c>foreach</c> statement of the C# language (<c>for each</c> in C++, <c>For Each</c> in Visual Basic)
+            /// hides the complexity of enumerators. Therefore, using <c>foreach</c> is recommended instead of directly manipulating the enumerator.
+            /// <para/>
+            /// Enumerators can be used to read the data in the collection, but they cannot be used to modify the underlying collection.
+            /// <para/>
+            /// Initially, the enumerator is positioned before the first element in the collection. At this position, the
+            /// <see cref="Current"/> property is undefined. Therefore, you must call the
+            /// <see cref="MoveNext()"/> method to advance the enumerator to the first element
+            /// of the collection before reading the value of <see cref="Current"/>.
+            /// <para/>
+            /// The <see cref="Current"/> property returns the same object until
+            /// <see cref="MoveNext()"/> is called. <see cref="MoveNext()"/>
+            /// sets <see cref="Current"/> to the next element.
+            /// <para/>
+            /// If <see cref="MoveNext()"/> passes the end of the collection, the enumerator is
+            /// positioned after the last element in the collection and <see cref="MoveNext()"/>
+            /// returns <c>false</c>. When the enumerator is at this position, subsequent calls to <see cref="MoveNext()"/>
+            /// also return <c>false</c>. If the last call to <see cref="MoveNext()"/> returned <c>false</c>,
+            /// <see cref="Current"/> is undefined. You cannot set <see cref="Current"/>
+            /// to the first element of the collection again; you must create a new enumerator object instead.
+            /// <para/>
+            /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection,
+            /// such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated and the next call
+            /// to <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+            /// <see cref="InvalidOperationException"/>.
+            /// <para/>
+            /// The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is
+            /// intrinsically not a thread-safe procedure. To guarantee thread safety during enumeration, you can lock the
+            /// collection during the entire enumeration. To allow the collection to be accessed by multiple threads for
+            /// reading and writing, you must implement your own synchronization.
+            /// </remarks>
+            // LUCENENET specific
+            public readonly struct Enumerator : IEnumerator<TValue>, IEnumerator
+            {
+                private readonly CharArrayDictionary<TValue>.Enumerator entryIterator;
+
+                internal Enumerator(CharArrayDictionary<TValue> dictionary) // LUCENENET specific - marked internal to match .NET collections
                 {
-                    this.entryIterator = new EntryIterator(outerInstance, !outerInstance.IsReadOnly);
+                    this.entryIterator = dictionary.GetEnumerator();
                 }
 
-                public TValue Current => entryIterator.CurrentValue;
+                /// <summary>
+                /// Gets the element at the current position of the enumerator.
+                /// </summary>
+                /// <remarks>
+                /// <see cref="Current"/> is undefined under any of the following conditions:
+                /// <list type="bullet">
+                ///     <item><description>
+                ///         The enumerator is positioned before the first element of the collection. That happens after an
+                ///         enumerator is created or after the <see cref="IEnumerator.Reset()"/> method is called. The <see cref="MoveNext()"/>
+                ///         method must be called to advance the enumerator to the first element of the collection before reading the value of
+                ///         the <see cref="Current"/> property.
+                ///     </description></item>
+                ///     <item><description>
+                ///         The last call to <see cref="MoveNext()"/> returned <c>false</c>, which indicates the end of the collection and that the
+                ///         enumerator is positioned after the last element of the collection.
+                ///     </description></item>
+                ///     <item><description>
+                ///         The enumerator is invalidated due to changes made in the collection, such as adding, modifying, or deleting elements.
+                ///     </description></item>
+                /// </list>
+                /// <para/>
+                /// <see cref="Current"/> does not move the position of the enumerator, and consecutive calls to <see cref="Current"/> return
+                /// the same object until either <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> is called.
+                /// </remarks>
+                public TValue Current => entryIterator.CurrentValue!;
 
-                object IEnumerator.Current => Current;
+                object IEnumerator.Current => entryIterator.CurrentValue!;
 
+                /// <summary>
+                /// Releases all resources used by the <see cref="Enumerator"/>.
+                /// </summary>
                 public void Dispose()
                 {
                     entryIterator.Dispose();
                 }
 
+                /// <summary>
+                /// Advances the enumerator to the next element of the <see cref="ValueCollection"/>.
+                /// </summary>
+                /// <returns><c>true</c> if the enumerator was successfully advanced to the next element;
+                /// <c>false</c> if the enumerator has passed the end of the collection.</returns>
+                /// <exception cref="InvalidOperationException">The collection was modified after the enumerator was created.</exception>
+                /// <remarks>
+                /// After an enumerator is created, the enumerator is positioned before the first element in the collection,
+                /// and the first call to the <see cref="MoveNext()"/> method advances the enumerator to the first element
+                /// of the collection.
+                /// <para/>
+                /// If MoveNext passes the end of the collection, the enumerator is positioned after the last element in the
+                /// collection and <see cref="MoveNext()"/> returns <c>false</c>. When the enumerator is at this position,
+                /// subsequent calls to <see cref="MoveNext()"/> also return <c>false</c>.
+                /// <para/>
+                /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the
+                /// collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated
+                /// and the next call to <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+                /// <see cref="InvalidOperationException"/>.
+                /// </remarks>
                 public bool MoveNext()
                 {
                     return entryIterator.MoveNext();
                 }
 
-                public void Reset()
+                private void Reset()
                 {
-                    entryIterator.Reset();
+                    ((IEnumerator)entryIterator).Reset();
                 }
 
-                public bool HasNext => entryIterator.HasNext;
+                void IEnumerator.Reset() => Reset();
+
+                internal bool HasNext => entryIterator.HasNext;
+            }
+
+            #endregion
+        }
+
+        #endregion Nested Class: ValueCollection
+
+        /// <summary>
+        /// <c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> is read-only; otherwise <c>false</c>.
+        /// </summary>
+        public virtual bool IsReadOnly => false;
+
+        #endregion For .NET Support LUCENENET
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="CharArrayDictionary{TValue}"/>.
+        /// </summary>
+        /// <returns>A <see cref="CharArrayDictionary{TValue}.Enumerator"/> for the
+        /// <see cref="CharArrayDictionary{TValue}"/>.</returns>
+        /// <remarks>
+        /// For purposes of enumeration, each item is a <see cref="KeyValuePair{TKey, TValue}"/> structure
+        /// representing a value and its text. There are also properties allowing direct access
+        /// to the <see cref="T:char[]"/> array of each element and quick conversions to <see cref="string"/> or <see cref="ICharSequence"/>.
+        /// <para/>
+        /// The <c>foreach</c> statement of the C# language (<c>for each</c> in C++, <c>For Each</c> in Visual Basic)
+        /// hides the complexity of enumerators. Therefore, using <c>foreach</c> is recommended instead of directly manipulating the enumerator.
+        /// <para/>
+        /// This enumerator can be used to read the data in the collection, or modify the corresponding value at the current position.
+        /// <para/>
+        /// Initially, the enumerator is positioned before the first element in the collection. At this position, the
+        /// <see cref="Enumerator.Current"/> property is undefined. Therefore, you must call the
+        /// <see cref="Enumerator.MoveNext()"/> method to advance the enumerator to the first element
+        /// of the collection before reading the value of <see cref="Enumerator.Current"/>.
+        /// <para/>
+        /// The <see cref="Enumerator.Current"/> property returns the same object until
+        /// <see cref="Enumerator.MoveNext()"/> is called. <see cref="Enumerator.MoveNext()"/>
+        /// sets <see cref="Enumerator.Current"/> to the next element.
+        /// <para/>
+        /// If <see cref="Enumerator.MoveNext()"/> passes the end of the collection, the enumerator is
+        /// positioned after the last element in the collection and <see cref="Enumerator.MoveNext()"/>
+        /// returns <c>false</c>. When the enumerator is at this position, subsequent calls to <see cref="Enumerator.MoveNext()"/>
+        /// also return <c>false</c>. If the last call to <see cref="Enumerator.MoveNext()"/> returned <c>false</c>,
+        /// <see cref="Enumerator.Current"/> is undefined. You cannot set <see cref="Enumerator.Current"/>
+        /// to the first element of the collection again; you must create a new enumerator object instead.
+        /// <para/>
+        /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection,
+        /// such as adding, modifying, or deleting elements (other than through the <see cref="Enumerator.SetValue(TValue)"/> method),
+        /// the enumerator is irrecoverably invalidated and the next call
+        /// to <see cref="Enumerator.MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+        /// <see cref="InvalidOperationException"/>.
+        /// <para/>
+        /// The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is
+        /// intrinsically not a thread-safe procedure. To guarantee thread safety during enumeration, you can lock the
+        /// collection during the entire enumeration. To allow the collection to be accessed by multiple threads for
+        /// reading and writing, you must implement your own synchronization.
+        /// <para/>
+        /// Default implementations of collections in the <see cref="J2N.Collections.Generic"/> namespace are not synchronized.
+        /// <para/>
+        /// This method is an O(1) operation.
+        /// </remarks>
+        public Enumerator GetEnumerator()
+        {
+            return new Enumerator(this, Enumerator.KeyValuePair);
+        }
+
+        IEnumerator<KeyValuePair<string, TValue>> IEnumerable<KeyValuePair<string, TValue>>.GetEnumerator() => GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        ICharArrayDictionaryEnumerator ICharArrayDictionary.GetEnumerator() => GetEnumerator();
+
+        IDictionaryEnumerator IDictionary.GetEnumerator()
+        {
+            return new Enumerator(this, Enumerator.DictEntry);
+        }
+
+        void IDictionary.Remove(object key)
+        {
+            throw UnsupportedOperationException.Create();
+        }
+
+        bool IDictionary<string, TValue>.Remove(string key)
+        {
+            throw UnsupportedOperationException.Create();
+        }
+
+        bool ICollection<KeyValuePair<string, TValue>>.Remove(KeyValuePair<string, TValue> item)
+        {
+            throw UnsupportedOperationException.Create();
+        }
+
+        [SuppressMessage("Style", "IDE0083:Use pattern matching", Justification = "Following Microsoft's coding style")]
+        void ICollection.CopyTo(Array array, int index)
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+            if (array.Rank != 1)
+                throw new ArgumentException(SR.Arg_RankMultiDimNotSupported);
+            if (array.GetLowerBound(0) != 0)
+                throw new ArgumentException(SR.Arg_NonZeroLowerBound);
+            if (index < 0 || index > array.Length)
+                throw new ArgumentOutOfRangeException(nameof(index), index, SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (array.Length - index < Count)
+                throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
+
+            if (array is KeyValuePair<string, TValue>[] strings)
+            {
+                CopyTo(strings, index);
+            }
+            else if (array is KeyValuePair<char[], TValue>[] chars)
+            {
+                CopyTo(chars, index);
+            }
+            else if (array is KeyValuePair<ICharSequence, TValue>[] charSequences)
+            {
+                CopyTo(charSequences, index);
+            }
+            else if (array is DictionaryEntry[] dictEntryArray)
+            {
+                foreach (var item in this)
+                    dictEntryArray[index++] = new DictionaryEntry(item.Key, item.Value);
+            }
+            else
+            {
+                if (!(array is object[] objects))
+                {
+                    throw new ArgumentException(SR.Argument_InvalidArrayType);
+                }
+                try
+                {
+                    foreach (var item in this)
+                        objects[index++] = item;
+                }
+                catch (ArrayTypeMismatchException)
+                {
+                    throw new ArgumentException(SR.Argument_InvalidArrayType);
+                }
             }
         }
 
-        #endregion
+        bool IDictionary.IsFixedSize => false;
 
-        /// <summary>
-        /// <c>true</c> if the <see cref="CharArrayMap{TValue}"/> is read-only; otherwise <c>false</c>.
-        /// </summary>
-        public virtual bool IsReadOnly { get; private set; }
+        bool IDictionary.IsReadOnly => IsReadOnly;
 
-        /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="CharArrayMap{TValue}"/>.
-        /// </summary>
-        public virtual IEnumerator<KeyValuePair<string, TValue>> GetEnumerator()
+        ICollection IDictionary.Keys => Keys;
+
+        ICollection IDictionary.Values => Values;
+
+        bool ICollection.IsSynchronized => false;
+
+        object ICollection.SyncRoot => this;
+
+        object? IDictionary.this[object key]
         {
-            return new EntryIterator(this, false);
+            get => Get(key, throwIfNotFound: false);
+            set
+            {
+                if (key is null)
+                    throw new ArgumentNullException(nameof(key));
+
+                if (value is null && default(TValue) != null)
+                    throw new ArgumentNullException(nameof(value));
+
+                TValue val;
+                try
+                {
+                    val = (TValue)value!;
+                }
+                catch (InvalidCastException)
+                {
+                    throw new ArgumentException(string.Format(SR.Arg_WrongType, value, typeof(TValue)), nameof(value));
+                }
+                var returnType = CharArrayDictionary.ConvertObjectToChars(key, out char[] chars, out string s);
+                if (returnType == CharArrayDictionary.CharReturnType.String)
+                {
+                    Set(s, val);
+                }
+                else
+                {
+                    Set(chars, val);
+                }
+            }
         }
 
+        void IDictionary.Add(object key, object? value)
+        {
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
+            TValue val;
+            try
+            {
+                val = (TValue)value!;
+            }
+            catch (InvalidCastException)
+            {
+                throw new ArgumentException(string.Format(SR.Arg_WrongType, value, typeof(TValue)), nameof(value));
+            }
+            var returnType = CharArrayDictionary.ConvertObjectToChars(key, out char[] chars, out string s);
+            if (returnType == CharArrayDictionary.CharReturnType.String)
+            {
+                Add(s, val);
+            }
+            else
+            {
+                Add(chars, val);
+            }
+        }
+
+        bool IDictionary.Contains(object key) => ContainsKey(key);
+
         /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="CharArrayMap{TValue}"/>.
-        /// </summary>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        [Obsolete("Not applicable in this class.")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool Remove(string key) // LUCENENET TODO: API - make an explicit implementation that isn't public
-        {
-            throw UnsupportedOperationException.Create();
-        }
-
-        [Obsolete("Not applicable in this class.")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool Remove(KeyValuePair<string, TValue> item) // LUCENENET TODO: API - make an explicit implementation that isn't public
-        {
-            throw UnsupportedOperationException.Create();
-        }
-
-        /// <summary>
-        /// Gets the number of key/value pairs contained in the <see cref="CharArrayMap{TValue}"/>.
+        /// Gets the number of text/value pairs contained in the <see cref="CharArrayDictionary{TValue}"/>.
         /// </summary>
         public virtual int Count => count;
 
@@ -1358,67 +2787,44 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public override string ToString()
         {
+            if (count == 0)
+                return "{}";
+
             var sb = new StringBuilder("{");
 
             using (var iter1 = this.GetEnumerator())
             {
                 while (iter1.MoveNext())
                 {
-                    KeyValuePair<string, TValue> entry = iter1.Current;
                     if (sb.Length > 1)
                     {
                         sb.Append(", ");
                     }
-                    sb.Append(entry.Key);
-                    sb.Append("=");
-                    sb.Append(entry.Value);
+                    sb.Append(iter1.CurrentKey);
+                    sb.Append('=');
+                    if (iter1.CurrentValue is not null)
+                        sb.Append(iter1.CurrentValue);
+                    else
+                        sb.Append("null");
                 }
             }
 
             return sb.Append('}').ToString();
         }
 
-        private EntrySet_ entrySet = null;
-        private CharArraySet keySet = null;
-        private KeyCollection originalKeySet = null;
+   
 
-        internal virtual EntrySet_ CreateEntrySet()
-        {
-            return new EntrySet_(this, true);
-        }
+        // LUCENENET: Removed entrySet because in .NET we use the collection itself as the IEnumerable
+        private CharArraySet? keySet = null;
 
-        // LUCENENET NOTE: This MUST be a method, since there is an
-        // extension method that this class needs to override the behavior of.
-        public EntrySet_ EntrySet()
-        {
-            if (entrySet is null)
-            {
-                entrySet = CreateEntrySet();
-            }
-            return entrySet;
-        }
+        // LUCENENET: Removed entrySet(), createEntrySet() because in .NET we use the collection itself as the IEnumerable
+
+        // LUCENENET: Removed originalKeySet() because we fixed infinite recursion
+        // by adding a custom enumerator for KeyCollection.
 
         /// <summary>
-        /// helper for <see cref="CharArraySet"/> to not produce endless recursion
-        /// </summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public ICollection<string> OriginalKeySet
-        {
-            get
-            {
-                if (originalKeySet is null)
-                {
-                    // prevent adding of entries
-                    originalKeySet = new KeyCollection(this);
-                }
-                return originalKeySet;
-            }
-        }
-
-        /// <summary>
-        /// Returns an <see cref="CharArraySet"/> view on the map's keys.
-        /// The set will use the same <see cref="matchVersion"/> as this map. 
+        /// Returns an <see cref="CharArraySet"/> view on the dictionary's keys.
+        /// The set will use the same <see cref="matchVersion"/> as this dictionary. 
         /// </summary>
         private CharArraySet KeySet
         {
@@ -1427,1528 +2833,1068 @@ namespace Lucene.Net.Analysis.Util
                 if (keySet is null)
                 {
                     // prevent adding of entries
-                    keySet = new UnmodifiableCharArraySet(this);
+                    keySet = new KeyCollection(this);
                 }
                 return keySet;
             }
         }
 
-        private sealed class UnmodifiableCharArraySet : CharArraySet
+        #region Nested Class: KeyCollection
+
+        // LUCENENET: This was an anonymous class in Java
+        [DebuggerDisplay("Count = {Count}, Values = {ToString()}")]
+        private sealed class KeyCollection : CharArraySet
         {
-            internal UnmodifiableCharArraySet(ICharArrayMap map) 
+            internal KeyCollection(CharArrayDictionary<TValue> map)
                 : base(map)
             {
             }
 
-            public override bool Add(object o) // LUCENENET TODO: API - make an explicit implementation that isn't public
+            public override bool IsReadOnly => true;
+
+            public override bool Add<T>(T text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
             }
-            public override bool Add(ICharSequence text) // LUCENENET TODO: API - make an explicit implementation that isn't public
+            public override bool Add(ICharSequence text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
             }
-            public override bool Add(string text) // LUCENENET TODO: API - make an explicit implementation that isn't public
+            public override bool Add(string text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
             }
-            public override bool Add(char[] text) // LUCENENET TODO: API - make an explicit implementation that isn't public
+            public override bool Add(char[] text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_KeyCollectionSet);
             }
         }
 
+        #endregion Nested Class: KeyCollection
+
+        #region Nested Class: Enumerator
+
         /// <summary>
-        /// public iterator class so efficient methods are exposed to users
+        /// Enumerates the elements of a <see cref="CharArrayDictionary{TValue}"/>.
+        /// <para/>
+        /// This enumerator exposes <see cref="CurrentKey"/> efficient access to the
+        /// underlying <see cref="T:char[]"/>. It also has <see cref="CurrentKeyString"/>,
+        /// <see cref="CurrentKeyCharSequence"/>, and <see cref="CurrentValue"/> properties for
+        /// convenience.
         /// </summary>
-        public class EntryIterator : IEnumerator<KeyValuePair<string, TValue>>
+        /// <remarks>
+        /// The <c>foreach</c> statement of the C# language (<c>for each</c> in C++, <c>For Each</c> in Visual Basic)
+        /// hides the complexity of enumerators. Therefore, using <c>foreach</c> is recommended instead of directly manipulating the enumerator.
+        /// <para/>
+        /// This enumerator can be used to read the data in the collection, or modify the corresponding value at the current position.
+        /// <para/>
+        /// Initially, the enumerator is positioned before the first element in the collection. At this position, the
+        /// <see cref="Current"/> property is undefined. Therefore, you must call the
+        /// <see cref="MoveNext()"/> method to advance the enumerator to the first element
+        /// of the collection before reading the value of <see cref="Current"/>.
+        /// <para/>
+        /// The <see cref="Current"/> property returns the same object until
+        /// <see cref="MoveNext()"/> is called. <see cref="MoveNext()"/>
+        /// sets <see cref="Current"/> to the next element.
+        /// <para/>
+        /// If <see cref="MoveNext()"/> passes the end of the collection, the enumerator is
+        /// positioned after the last element in the collection and <see cref="MoveNext()"/>
+        /// returns <c>false</c>. When the enumerator is at this position, subsequent calls to <see cref="MoveNext()"/>
+        /// also return <c>false</c>. If the last call to <see cref="MoveNext()"/> returned <c>false</c>,
+        /// <see cref="Current"/> is undefined. You cannot set <see cref="Current"/>
+        /// to the first element of the collection again; you must create a new enumerator object instead.
+        /// <para/>
+        /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection,
+        /// such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated and the next call
+        /// to <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+        /// <see cref="InvalidOperationException"/>.
+        /// <para/>
+        /// The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is
+        /// intrinsically not a thread-safe procedure. To guarantee thread safety during enumeration, you can lock the
+        /// collection during the entire enumeration. To allow the collection to be accessed by multiple threads for
+        /// reading and writing, you must implement your own synchronization.
+        /// </remarks>
+        // LUCENENET: An attempt was made to make this into a struct, but since it has mutable state that didn't work. So, this should remain a class.
+        public sealed class Enumerator : IEnumerator<KeyValuePair<string, TValue>>, IDictionaryEnumerator, ICharArrayDictionaryEnumerator
         {
-            private readonly CharArrayMap<TValue> outerInstance;
+            private readonly CharArrayDictionary<TValue> dictionary;
+            private readonly int getEnumeratorRetType;  // What should Enumerator.Current return?
+
+            internal const int KeyValuePair = 1;
+            internal const int DictEntry = 2;
 
             internal int pos = -1;
             internal int lastPos;
             internal readonly bool allowModify;
 
-            internal EntryIterator(CharArrayMap<TValue> outerInstance, bool allowModify)
+            private int version; // LUCENENET specific - track when the enumerator is broken by mutating the state of the original collection
+            private bool notStartedOrEnded; // LUCENENET specific
+
+            internal Enumerator(CharArrayDictionary<TValue> dictionary, int getEnumeratorRetType)
             {
-                this.outerInstance = outerInstance;
-                this.allowModify = allowModify;
+                this.dictionary = dictionary;
+                this.getEnumeratorRetType = getEnumeratorRetType;
+                this.version = dictionary.version;
+                this.allowModify = !dictionary.IsReadOnly;
+                this.notStartedOrEnded = true;
                 GoNext();
             }
 
-            internal void GoNext()
+            private void GoNext()
             {
                 lastPos = pos;
                 pos++;
-                while (pos < outerInstance.keys.Length && outerInstance.keys[pos] is null)
+                while (pos < dictionary.keys.Length && dictionary.keys[pos] is null)
                 {
                     pos++;
                 }
             }
 
-            public virtual bool HasNext => pos < outerInstance.keys.Length;
+            internal bool HasNext => pos < dictionary.keys.Length;
 
             /// <summary>
-            /// gets the next key... do not modify the returned char[]
+            /// Gets the current text as a <see cref="CharArrayCharSequence"/>.
             /// </summary>
-            public virtual char[] NextKey()
-            {
-                GoNext();
-                return outerInstance.keys[lastPos];
-            }
-
-            /// <summary>
-            /// gets the next key as a newly created <see cref="string"/> object
-            /// </summary>
-            public virtual string NextKeyString()
-            {
-                return new string(NextKey());
-            }
-
-            /// <summary>
-            /// returns the value associated with the current key
-            /// </summary>
-            public virtual TValue CurrentValue
+            // LUCENENET specific - quick access to ICharSequence interface
+            public ICharSequence CurrentKeyCharSequence
             {
                 get
                 {
-                    var val = outerInstance.values[lastPos];
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    char[] key = dictionary.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+                    return key.AsCharSequence();
+                }
+            }
+
+            /// <summary>
+            /// Gets the current text... do not modify the returned char[].
+            /// </summary>
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+            [WritableArray]
+            public char[] CurrentKey
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    char[] key = dictionary.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+                    return key;
+                }
+            }
+
+            /// <summary>
+            /// Gets the current text as a newly created <see cref="string"/> object.
+            /// </summary>
+            public string CurrentKeyString
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    char[] key = dictionary.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+                    return new string(key);
+                }
+            }
+
+            /// <summary>
+            /// Gets the value associated with the current text.
+            /// </summary>
+            [MaybeNull]
+            public TValue CurrentValue
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+                    char[] key = dictionary.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+
+                    var val = dictionary.values[lastPos];
                     return val != null ? val.Value : default;
                 }
             }
 
             /// <summary>
-            /// sets the value associated with the last key returned
+            /// Sets the value associated with the current text.
             /// </summary>
-            public virtual TValue SetValue(TValue value)
+            /// <returns>Returns the value prior to the update.</returns>
+            [return: MaybeNull]
+            public TValue SetValue(TValue value)
             {
+                if (notStartedOrEnded)
+                    throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
                 if (!allowModify)
-                {
-                    throw UnsupportedOperationException.Create();
-                }
-                TValue old = outerInstance.values[lastPos].Value;
-                outerInstance.values[lastPos].Value = value;
+                    throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+
+                MapValue current = dictionary.values[lastPos];
+                if (current is null)
+                    throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+
+                TValue? old = current.Value;
+                // LUCENENET specific - increment the versions of both this enumerator
+                // and the original collection so only this enumerator instance isn't broken.
+                dictionary.version++;
+                version++;
+                current.Value = value;
                 return old;
             }
 
             // LUCENENET: Next() and Remove() methods eliminated here
 
             #region Added for better .NET support LUCENENET
-            public void Dispose()
-            {
-                Dispose(true);
-                GC.SuppressFinalize(this);
-            }
 
-            protected virtual void Dispose(bool disposing)
+            /// <summary>
+            /// Releases all resources used by the <see cref="Enumerator"/>.
+            /// </summary>
+            public void Dispose()
             {
                 // nothing to do
             }
 
-            public virtual bool MoveNext()
+            /// <summary>
+            /// Advances the enumerator to the next element of the <see cref="CharArrayDictionary{TValue}"/>.
+            /// </summary>
+            /// <returns><c>true</c> if the enumerator was successfully advanced to the next element;
+            /// <c>false</c> if the enumerator has passed the end of the collection.</returns>
+            /// <exception cref="InvalidOperationException">The collection was modified after the enumerator was created.</exception>
+            /// <remarks>
+            /// After an enumerator is created, the enumerator is positioned before the first element in the collection,
+            /// and the first call to the <see cref="MoveNext()"/> method advances the enumerator to the first element
+            /// of the collection.
+            /// <para/>
+            /// If <see cref="MoveNext()"/> passes the end of the collection, the enumerator is positioned after the last element in the
+            /// collection and <see cref="MoveNext()"/> returns <c>false</c>. When the enumerator is at this position,
+            /// subsequent calls to <see cref="MoveNext()"/> also return <c>false</c>.
+            /// <para/>
+            /// An enumerator remains valid as long as the collection remains unchanged. If changes are made to the
+            /// collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated
+            /// and the next call to <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> throws an
+            /// <see cref="InvalidOperationException"/>.
+            /// </remarks>
+            public bool MoveNext()
             {
-                if (!HasNext) return false;
+                if (version != dictionary.version)
+                    throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+
+                if (!HasNext)
+                {
+                    notStartedOrEnded = true;
+                    return false;
+                }
+                notStartedOrEnded = false;
                 GoNext();
                 return true;
             }
 
-            public virtual void Reset()
+            private void Reset()
             {
+                if (version != dictionary.version)
+                    throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+
                 pos = -1;
+                notStartedOrEnded = true;
                 GoNext();
             }
 
-            public virtual KeyValuePair<string, TValue> Current
+            void IEnumerator.Reset() => Reset();
+
+            void ICharArrayDictionaryEnumerator.Reset() => Reset();
+
+            /// <summary>
+            /// Gets the element at the current position of the enumerator.
+            /// </summary>
+            /// <remarks>
+            /// <see cref="Current"/> is undefined under any of the following conditions:
+            /// <list type="bullet">
+            ///     <item><description>
+            ///         The enumerator is positioned before the first element of the collection. That happens after an
+            ///         enumerator is created or after the <see cref="IEnumerator.Reset()"/> method is called. The <see cref="MoveNext()"/>
+            ///         method must be called to advance the enumerator to the first element of the collection before reading the value of
+            ///         the <see cref="Current"/> property.
+            ///     </description></item>
+            ///     <item><description>
+            ///         The last call to <see cref="MoveNext()"/> returned <c>false</c>, which indicates the end of the collection and that the
+            ///         enumerator is positioned after the last element of the collection.
+            ///     </description></item>
+            ///     <item><description>
+            ///         The enumerator is invalidated due to changes made in the collection, such as adding, modifying, or deleting elements.
+            ///     </description></item>
+            /// </list>
+            /// <para/>
+            /// <see cref="Current"/> does not move the position of the enumerator, and consecutive calls to <see cref="Current"/> return
+            /// the same object until either <see cref="MoveNext()"/> or <see cref="IEnumerator.Reset()"/> is called.
+            /// </remarks>
+            public KeyValuePair<string, TValue> Current
             {
                 get
                 {
-                    var val = outerInstance.values[lastPos];
-                    return new KeyValuePair<string, TValue>(
-                        new string(outerInstance.keys[lastPos]), 
-                        val != null ? val.Value : default);
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    char[] key = dictionary.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+                    MapValue value = dictionary.values[lastPos];
+                    return new KeyValuePair<string, TValue>(new string(key), value.Value!);
                 }
             }
 
-            object IEnumerator.Current => Current;
+            object IEnumerator.Current
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    char[] key = dictionary.keys[lastPos];
+                    if (key is null)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+                    MapValue value = dictionary.values[lastPos];
+
+                    if (getEnumeratorRetType == DictEntry)
+                    {
+                        return new DictionaryEntry(new string(key), value.Value);
+                    }
+                    else
+                    {
+                        return new KeyValuePair<string, TValue>(new string(key), value.Value!);
+                    }
+                }
+            }
+
+            object IDictionaryEnumerator.Key
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    return Current.Key;
+                }
+            }
+
+            object? IDictionaryEnumerator.Value
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    return Current.Value;
+                }
+            }
+
+            DictionaryEntry IDictionaryEnumerator.Entry
+            {
+                get
+                {
+                    if (notStartedOrEnded)
+                        throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+
+                    return new DictionaryEntry(Current.Key, Current.Value);
+                }
+            }
+
+            bool ICharArrayDictionaryEnumerator.NotStartedOrEnded => notStartedOrEnded;
 
             #endregion
         }
+
+        #endregion Nested Class: Enumerator
 
         // LUCENENET NOTE: The Java Lucene type MapEntry was removed here because it is not possible 
         // to inherit the value type KeyValuePair{TKey, TValue} in .NET.
 
-        /// <summary>
-        /// public EntrySet_ class so efficient methods are exposed to users
-        /// 
-        /// NOTE: In .NET this was renamed to EntrySet_ because it conflicted with the
-        /// method EntrySet(). Since there is also an extension method named <see cref="T:IDictionary{K,V}.EntrySet()"/> 
-        /// that this class needs to override, changing the name of the method was not
-        /// possible because the extension method would produce incorrect results if it were
-        /// inadvertently called, leading to hard-to-diagnose bugs.
-        /// 
-        /// Another difference between this set and the Java counterpart is that it implements
-        /// <see cref="ICollection{T}"/> rather than <see cref="ISet{T}"/> so we don't have to implement
-        /// a bunch of methods that we aren't really interested in. The <see cref="Keys"/> and <see cref="Values"/>
-        /// properties both return <see cref="ICollection{T}"/>, and while there is no <see cref="EntrySet()"/> method
-        /// or property in .NET, if there were it would certainly return <see cref="ICollection{T}"/>.
-        /// </summary>
-        public sealed class EntrySet_ : ICollection<KeyValuePair<string, TValue>>
-        {
-            private readonly CharArrayMap<TValue> outerInstance;
+        // LUCENENET: EntrySet class removed because in .NET we get the entries by calling GetEnumerator() on the dictionary.
 
-            internal readonly bool allowModify;
+        // LUCENENET: Moved UnmodifiableMap static methods to CharArrayDictionary class
 
-            internal EntrySet_(CharArrayMap<TValue> outerInstance, bool allowModify)
-            {
-                this.outerInstance = outerInstance;
-                this.allowModify = allowModify;
-            }
+        // LUCENENET: Moved Copy static methods to CharArrayDictionary class
 
-            public IEnumerator GetEnumerator()
-            {
-                return new EntryIterator(outerInstance, allowModify);
-            }
+        // LUCENENET: Removed EmptyMap() - use Empty instead
 
-            IEnumerator<KeyValuePair<string, TValue>> IEnumerable<KeyValuePair<string, TValue>>.GetEnumerator()
-            {
-                return (IEnumerator<KeyValuePair<string, TValue>>)GetEnumerator();
-            }
+        // LUCENENET: Moved UnmodifiableCharArraymap to CharArrayDictionary class
 
-            public bool Contains(object o)
-            {
-                if (!(o is KeyValuePair<string, TValue>))
-                {
-                    return false;
-                }
-                var e = (KeyValuePair<string, TValue>)o;
-                string key = e.Key;
-                TValue val = e.Value;
-                TValue v = outerInstance.Get(key);
-                return v is null ? val is null : v.Equals(val);
-            }
-
-            [Obsolete("Not applicable in this class.")]
-            [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-            [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-            public bool Remove(KeyValuePair<string, TValue> item) // LUCENENET TODO: API - make an explicit implementation that isn't public
-            {
-                throw UnsupportedOperationException.Create();
-            }
-
-            public int Count => outerInstance.count;
-
-            public void Clear()
-            {
-                if (!allowModify)
-                {
-                    throw UnsupportedOperationException.Create();
-                }
-                outerInstance.Clear();
-            }
-
-            #region LUCENENET Added for better .NET support
-
-            public void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
-            {
-                outerInstance.CopyTo(array, arrayIndex);
-            }
-
-            [Obsolete("Not applicable in this class.")]
-            [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-            [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-            public bool Contains(KeyValuePair<string, TValue> item)
-            {
-                return outerInstance.Contains(item);
-            }
-
-            public void Add(KeyValuePair<string, TValue> item)
-            {
-                outerInstance.Add(item);
-            }
-
-            public bool IsReadOnly => !allowModify;
-
-            public override string ToString()
-            {
-                var sb = new StringBuilder("[");
-
-                IEnumerator<KeyValuePair<string, TValue>> iter1 = new EntryIterator(this.outerInstance, false);
-                while (iter1.MoveNext())
-                {
-                    KeyValuePair<string, TValue> entry = iter1.Current;
-                    if (sb.Length > 1)
-                    {
-                        sb.Append(", ");
-                    }
-                    sb.Append(entry.Key);
-                    sb.Append("=");
-                    sb.Append(entry.Value);
-                }
-
-                return sb.Append(']').ToString();
-            }
-            #endregion
-        }
-
-        // LUCENENET: Moved UnmodifiableMap static methods to CharArrayMap class
-
-        // LUCENENET: Moved Copy static methods to CharArrayMap class
-
-        /// <summary>
-        /// Returns an empty, unmodifiable map. </summary>
-        public static CharArrayMap<TValue> EmptyMap()
-        {
-            return EMPTY_MAP;
-        }
-
-        // LUCENENET: Moved UnmodifiableCharArraymap to CharArrayMap class
-
-        // LUCENENET: Moved EmptyCharArrayMap to CharArrayMap class
+        // LUCENENET: Moved EmptyCharArrayDictionary to CharArrayDictionary class
     }
 
     /// <summary>
     /// LUCENENET specific interface used so <see cref="CharArraySet"/>
-    /// can hold a reference to <see cref="CharArrayMap{TValue}"/> without
-    /// knowing its generic type.
+    /// can hold a reference to <see cref="CharArrayDictionary{TValue}"/> without
+    /// knowing its generic closing type for TValue.
     /// </summary>
-    internal interface ICharArrayMap
+    internal interface ICharArrayDictionary
     {
         void Clear();
-        bool ContainsKey(char[] text, int offset, int length);
+        bool ContainsKey(char[] text, int startIndex, int length);
         bool ContainsKey(char[] text);
-        bool ContainsKey(object o);
+        bool ContainsKey<T>(T text);
         bool ContainsKey(string text);
         bool ContainsKey(ICharSequence text);
         int Count { get; }
+        bool IgnoreCase { get; }
+        bool IsReadOnly { get; }
         LuceneVersion MatchVersion { get; }
-        ICollection<string> OriginalKeySet { get; }
+        bool Put(char[] text, int startIndex, int length);
         bool Put(char[] text);
         bool Put(ICharSequence text);
-        bool Put(object o);
+        bool Put<T>(T text);
         bool Put(string text);
+        void Set(char[] text, int startIndex, int length);
+        void Set(char[] text);
+        void Set(ICharSequence text);
+        void Set<T>(T text);
+        void Set(string text);
+        ICharArrayDictionaryEnumerator GetEnumerator();
     }
 
-    public static class CharArrayMap // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
+    /// <summary>
+    /// LUCENENET specific interface used so <see cref="CharArraySet"/> can
+    /// iterate the keys of <see cref="CharArrayDictionary{TValue}"/> without
+    /// knowing its generic closing type for TValue.
+    /// </summary>
+    internal interface ICharArrayDictionaryEnumerator : IDisposable
+    {
+        bool NotStartedOrEnded { get; }
+        bool MoveNext();
+        ICharSequence CurrentKeyCharSequence { get; }
+        string CurrentKeyString { get; }
+        char[] CurrentKey { get; }
+        void Reset();
+    }
+
+    public static class CharArrayDictionary // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
-        /// Returns a copy of the given map as a <see cref="CharArrayMap{TValue}"/>. If the given map
-        /// is a <see cref="CharArrayMap{TValue}"/> the ignoreCase property will be preserved.
+        /// Returns a copy of the given dictionary as a <see cref="CharArrayDictionary{TValue}"/>. If the given dictionary
+        /// is a <see cref="CharArrayDictionary{TValue}"/> the ignoreCase property will be preserved.
         /// <para>
-        /// <b>Note:</b> If you intend to create a copy of another <see cref="CharArrayMap{TValue}"/> where
-        /// the <see cref="LuceneVersion"/> of the source map differs from its copy
-        /// <see cref="CharArrayMap{TValue}.CharArrayMap(LuceneVersion, IDictionary{string, TValue}, bool)"/> should be used instead.
+        /// <b>Note:</b> If you intend to create a copy of another <see cref="CharArrayDictionary{TValue}"/> where
+        /// the <see cref="LuceneVersion"/> of the source dictionary differs from its copy
+        /// <see cref="CharArrayDictionary{TValue}.CharArrayDictionary(LuceneVersion, IDictionary{string, TValue}, bool)"/> should be used instead.
         /// The <see cref="Copy{TValue}(LuceneVersion, IDictionary{string, TValue})"/> will preserve the <see cref="LuceneVersion"/> of the
-        /// source map if it is an instance of <see cref="CharArrayMap{TValue}"/>.
+        /// source dictionary if it is an instance of <see cref="CharArrayDictionary{TValue}"/>.
         /// </para>
         /// </summary>
         /// <param name="matchVersion">
         ///          compatibility match version see <a href="#version">Version
         ///          note</a> above for details. This argument will be ignored if the
-        ///          given map is a <see cref="CharArrayMap{TValue}"/>. </param>
-        /// <param name="map">
-        ///          a map to copy </param>
-        /// <returns> a copy of the given map as a <see cref="CharArrayMap{TValue}"/>. If the given map
-        ///         is a <see cref="CharArrayMap{TValue}"/> the ignoreCase property as well as the
-        ///         <paramref name="matchVersion"/> will be of the given map will be preserved. </returns>
-        public static CharArrayMap<TValue> Copy<TValue>(LuceneVersion matchVersion, IDictionary<string, TValue> map)
+        ///          given dictionary is a <see cref="CharArrayDictionary{TValue}"/>. </param>
+        /// <param name="dictionary">
+        ///          a dictionary to copy </param>
+        /// <returns> a copy of the given dictionary as a <see cref="CharArrayDictionary{TValue}"/>. If the given dictionary
+        ///         is a <see cref="CharArrayDictionary{TValue}"/> the ignoreCase property as well as the
+        ///         <paramref name="matchVersion"/> will be of the given dictionary will be preserved. </returns>
+        public static CharArrayDictionary<TValue> Copy<TValue>(LuceneVersion matchVersion, IDictionary<string, TValue> dictionary)
         {
-            if (map == CharArrayMap<TValue>.EmptyMap())
+            if (dictionary == CharArrayDictionary<TValue>.Empty)
             {
-                return CharArrayMap<TValue>.EmptyMap();
+                return CharArrayDictionary<TValue>.Empty;
             }
 
-            if (map is CharArrayMap<TValue>)
+            if (dictionary is CharArrayDictionary<TValue> m)
             {
-                var m = map as CharArrayMap<TValue>;
                 // use fast path instead of iterating all values
                 // this is even on very small sets ~10 times faster than iterating
                 var keys = new char[m.keys.Length][];
-                Array.Copy(m.keys, 0, keys, 0, keys.Length);
-                var values = new CharArrayMap<TValue>.MapValue[m.values.Length];
-                Array.Copy(m.values, 0, values, 0, values.Length);
-                m = new CharArrayMap<TValue>(m) { keys = keys, values = values };
+                Arrays.Copy(m.keys, 0, keys, 0, keys.Length);
+                var values = new CharArrayDictionary<TValue>.MapValue[m.values.Length];
+                Arrays.Copy(m.values, 0, values, 0, values.Length);
+                m = new CharArrayDictionary<TValue>(m) { keys = keys, values = values };
                 return m;
             }
-            return new CharArrayMap<TValue>(matchVersion, map, false);
+            return new CharArrayDictionary<TValue>(matchVersion, dictionary, false);
         }
 
         /// <summary>
-        /// Used by <see cref="CharArraySet"/> to copy <see cref="CharArrayMap{TValue}"/> without knowing 
+        /// Used by <see cref="CharArraySet"/> to copy <see cref="CharArrayDictionary{TValue}"/> without knowing 
         /// its generic type.
         /// </summary>
-        internal static CharArrayMap<TValue> Copy<TValue>(LuceneVersion matchVersion, ICharArrayMap map)
+        internal static CharArrayDictionary<TValue> Copy<TValue>(LuceneVersion matchVersion, [DisallowNull] ICharArrayDictionary map)
         {
-            return Copy(matchVersion, map as IDictionary<string, TValue>);
+            return Copy(matchVersion, (IDictionary<string, TValue>)map);
         }
 
         /// <summary>
-        /// Returns an unmodifiable <see cref="CharArrayMap{TValue}"/>. This allows to provide
-        /// unmodifiable views of internal map for "read-only" use.
+        /// Returns an unmodifiable <see cref="CharArrayDictionary{TValue}"/>. This allows to provide
+        /// unmodifiable views of internal dictionary for "read-only" use.
         /// </summary>
         /// <param name="map">
-        ///          a map for which the unmodifiable map is returned. </param>
-        /// <returns> an new unmodifiable <see cref="CharArrayMap{TValue}"/>. </returns>
+        ///          a dictionary for which the unmodifiable dictionary is returned. </param>
+        /// <returns> an new unmodifiable <see cref="CharArrayDictionary{TValue}"/>. </returns>
         /// <exception cref="ArgumentException">
-        ///           if the given map is <c>null</c>. </exception>
-        public static CharArrayMap<TValue> UnmodifiableMap<TValue>(CharArrayMap<TValue> map) // LUCENENET TODO: API - Rename AsReadOnly() to match .NET convention
+        ///           if the given dictionary is <c>null</c>. </exception>
+        [Obsolete("Use the CharArrayDictionary<TValue>.AsReadOnly() instance method instead. This method will be removed in 4.8.0 release candidate."), EditorBrowsable(EditorBrowsableState.Never)]
+        public static CharArrayDictionary<TValue> UnmodifiableMap<TValue>(CharArrayDictionary<TValue> map)
         {
             if (map is null)
             {
-                throw new ArgumentNullException(nameof(map), "Given map is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(map)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            if (map == CharArrayMap<TValue>.EmptyMap() || map.Count == 0)
+            if (map == CharArrayDictionary<TValue>.Empty || map.Count == 0)
             {
-                return CharArrayMap<TValue>.EmptyMap();
+                return CharArrayDictionary<TValue>.Empty;
             }
-            if (map is CharArrayMap.UnmodifiableCharArrayMap<TValue>)
+            if (map is CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>)
             {
                 return map;
             }
-            return new CharArrayMap.UnmodifiableCharArrayMap<TValue>(map);
+            return new CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>(map);
         }
 
         /// <summary>
-        /// Used by <see cref="CharArraySet"/> to create an <see cref="UnmodifiableCharArrayMap{TValue}"/> instance
+        /// Used by <see cref="CharArraySet"/> to create an <see cref="ReadOnlyCharArrayDictionary{TValue}"/> instance
         /// without knowing the type of <typeparamref name="TValue"/>.
         /// </summary>
-        internal static ICharArrayMap UnmodifiableMap<TValue>(ICharArrayMap map)
+        internal static ICharArrayDictionary UnmodifiableMap<TValue>(ICharArrayDictionary map)
         {
             if (map is null)
             {
-                throw new ArgumentNullException(nameof(map), "Given map is null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(map)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            if (map == CharArrayMap<TValue>.EmptyMap() || map.Count == 0)
+            if (map == CharArrayDictionary<TValue>.Empty || map.Count == 0)
             {
-                return CharArrayMap<TValue>.EmptyMap();
+                return CharArrayDictionary<TValue>.Empty;
             }
-            if (map is CharArrayMap.UnmodifiableCharArrayMap<TValue>)
+            if (map is CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>)
             {
                 return map;
             }
-            return new CharArrayMap.UnmodifiableCharArrayMap<TValue>(map);
+            return new CharArrayDictionary.ReadOnlyCharArrayDictionary<TValue>(map);
         }
 
+        #region Nested Class: ReadOnlyCharArrayDictionary<TValue>
+
         // package private CharArraySet instanceof check in CharArraySet
-        internal class UnmodifiableCharArrayMap<TValue> : CharArrayMap<TValue>
+        internal class ReadOnlyCharArrayDictionary<TValue> : CharArrayDictionary<TValue>
         {
-            public UnmodifiableCharArrayMap(CharArrayMap<TValue> map)
+            public ReadOnlyCharArrayDictionary([DisallowNull] CharArrayDictionary<TValue> map)
                 : base(map)
             { }
 
-            public UnmodifiableCharArrayMap(ICharArrayMap map)
-                : base(map as CharArrayMap<TValue>)
+            public ReadOnlyCharArrayDictionary([DisallowNull] ICharArrayDictionary map)
+                : base((CharArrayDictionary<TValue>)map)
             { }
+
+            private protected override CharArrayDictionary<TValue> AsReadOnlyImpl() => this;
 
             public override void Clear()
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue Put(char[] text, TValue val)
+            public override bool Put(char[] text, int startIndex, int length, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue Put(ICharSequence text, TValue val)
+            public override bool Put(char[] text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue Put(string text, TValue val)
+            public override bool Put(ICharSequence text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override TValue Put(object o, TValue val)
+            public override bool Put(string text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(char[] text)
+            public override bool Put<T>(T text, TValue value, [MaybeNullWhen(true)] out TValue previousValue)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(ICharSequence text)
+            internal override bool Put(char[] text, int startIndex, int length)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(string text)
+            internal override bool Put(char[] text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            public override bool Put(object o)
+            internal override bool Put(ICharSequence text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            [Obsolete("Not applicable in this class.")]
-            [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-            [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-            public override bool Remove(string key)
+            internal override bool Put(string text)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            internal override EntrySet_ CreateEntrySet()
+            internal override bool Put<T>(T text)
             {
-                return new EntrySet_(this, false);
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
+
+            // LUCENENET: Removed CreateEntrySet() method - we use IsReadOnly to control whether it can be written to
 
             #region Added for better .NET support LUCENENET
-            public override void Add(string key, TValue value)
+
+            public override bool IsReadOnly => true;
+
+            public override void Add(string text, TValue value)
             {
-                throw UnsupportedOperationException.Create();
-            }
-            public override void Add(KeyValuePair<string, TValue> item)
-            {
-                throw UnsupportedOperationException.Create();
-            }
-            public override TValue this[char[] key, int offset, int length]
-            {
-                get => base[key, offset, length];
-                set => throw UnsupportedOperationException.Create();
-            }
-            public override TValue this[char[] key]
-            {
-                get => base[key];
-                set => throw UnsupportedOperationException.Create();
-            }
-            public override TValue this[ICharSequence key]
-            {
-                get => base[key];
-                set => throw UnsupportedOperationException.Create();
-            }
-            public override TValue this[string key]
-            {
-                get => base[key];
-                set => throw UnsupportedOperationException.Create();
-            }
-            public override TValue this[object key]
-            {
-                get => base[key];
-                set => throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
 
-            [Obsolete("Not applicable in this class.")]
-            [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-            [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-            public override bool Remove(KeyValuePair<string, TValue> item)
+            public override void Add(char[] text, TValue value)
             {
-                throw UnsupportedOperationException.Create();
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
             }
+
+            public override void Add(ICharSequence text, TValue value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void Add<T>(T text, TValue value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override TValue this[char[] text, int startIndex, int length]
+            {
+                get => base[text, startIndex, length];
+                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override TValue this[char[] text]
+            {
+                get => base[text];
+                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override TValue this[ICharSequence text]
+            {
+                get => base[text];
+                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override TValue this[string text]
+            {
+                get => base[text];
+                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override TValue this[object text]
+            {
+                get => base[text];
+                set => throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IDictionary<string, TValue> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IDictionary<char[], TValue> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IDictionary<ICharSequence, TValue> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll<T>(IDictionary<T, TValue> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IEnumerable<KeyValuePair<string, TValue>> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IEnumerable<KeyValuePair<char[], TValue>> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll(IEnumerable<KeyValuePair<ICharSequence, TValue>> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            public override void PutAll<T>(IEnumerable<KeyValuePair<T, TValue>> collection)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(char[] text)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(char[] text, TValue? value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(char[] text, int startIndex, int length)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(char[] text, int startIndex, int length, TValue? value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(ICharSequence text)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(ICharSequence text, TValue? value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(string text)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set(string text, TValue? value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set<T>(T text)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
+            internal override void Set<T>(T text, TValue? value)
+            {
+                throw UnsupportedOperationException.Create(SR.NotSupported_ReadOnlyCollection);
+            }
+
             #endregion
         }
 
+        #endregion
+
+        #region Nested Class: EmptyCharArrayDictionary<V>
+
         /// <summary>
-        /// Empty <see cref="UnmodifiableCharArrayMap{V}"/> optimized for speed.
+        /// Empty <see cref="ReadOnlyCharArrayDictionary{V}"/> optimized for speed.
         /// Contains checks will always return <c>false</c> or throw
         /// NPE if necessary.
         /// </summary>
-        internal class EmptyCharArrayMap<V> : UnmodifiableCharArrayMap<V>
+        internal class EmptyCharArrayDictionary<V> : ReadOnlyCharArrayDictionary<V>
         {
-            public EmptyCharArrayMap()
-#pragma warning disable 612, 618
-                : base(new CharArrayMap<V>(LuceneVersion.LUCENE_CURRENT, 0, false))
-#pragma warning restore 612, 618
+            [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Clearly a bug with code analysis - we need the suppression to stop the obsolete warning")]
+            public EmptyCharArrayDictionary()
+#pragma warning disable CS0618 // Type or member is obsolete
+                : base(new CharArrayDictionary<V>(LuceneVersion.LUCENE_CURRENT, 0, false))
+#pragma warning restore CS0618 // Type or member is obsolete
             {
             }
 
-            public override bool ContainsKey(char[] text, int offset, int length)
+            public override bool ContainsKey(char[] text, int startIndex, int length)
             {
                 if (text is null)
-                {
                     throw new ArgumentNullException(nameof(text));
-                }
+
                 return false;
             }
 
             public override bool ContainsKey(char[] text)
             {
                 if (text is null)
-                {
                     throw new ArgumentNullException(nameof(text));
-                }
+
                 return false;
             }
 
             public override bool ContainsKey(ICharSequence text)
             {
                 if (text is null)
-                {
                     throw new ArgumentNullException(nameof(text));
-                }
+
                 return false;
             }
 
-            public override bool ContainsKey(object o)
+            public override bool ContainsKey<T>(T text)
             {
-                if (o is null)
-                {
-                    throw new ArgumentNullException(nameof(o));
-                }
+                if (text is null)
+                    throw new ArgumentNullException(nameof(text));
+
                 return false;
             }
 
-            public override V Get(char[] text, int offset, int length)
+            internal override V Get(char[] text, int startIndex, int length, bool throwIfNotFound = true)
             {
                 if (text is null)
-                {
                     throw new ArgumentNullException(nameof(text));
-                }
-                return default;
+
+                if (throwIfNotFound)
+                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text, startIndex, length)));
+                return default!;
             }
 
-            public override V Get(char[] text)
+            internal override V Get(char[] text, bool throwIfNotFound = true)
             {
                 if (text is null)
-                {
                     throw new ArgumentNullException(nameof(text));
-                }
-                return default;
+
+                if (throwIfNotFound)
+                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, new string(text)));
+                return default!;
             }
 
-            public override V Get(ICharSequence text)
+            internal override V Get(ICharSequence text, bool throwIfNotFound = true)
             {
                 if (text is null)
-                {
                     throw new ArgumentNullException(nameof(text));
-                }
-                return default;
+
+                if (throwIfNotFound)
+                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
+                return default!;
             }
 
-            public override V Get(object o)
+            internal override V Get<T>(T text, bool throwIfNotFound = true)
             {
-                if (o is null)
-                {
-                    throw new ArgumentNullException(nameof(o));
-                }
-                return default;
+                if (text is null)
+                    throw new ArgumentNullException(nameof(text));
+
+                if (throwIfNotFound)
+                    throw new KeyNotFoundException(string.Format(SR.Arg_KeyNotFoundWithKey, text));
+                return default!;
             }
+        }
+
+        #endregion
+
+        private readonly static CultureInfo invariant = CultureInfo.InvariantCulture;
+        private const string TrueString = "true";
+        private const string FalseString = "false";
+
+
+        internal enum CharReturnType
+        {
+            String = 0,
+            CharArray = 1,
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static CharReturnType ConvertObjectToChars<T>(T key, out char[] chars, out string str)
+        {
+#if FEATURE_SPANFORMATTABLE
+            Span<char> buffer = stackalloc char[256];
+#else
+            Span<char> buffer = stackalloc char[1];
+#endif
+            return ConvertObjectToChars(key, out chars, out str, buffer);
+        }
+
+
+        // LUCENENET: We need value types to be represented using the invariant
+        // culture, so it is consistent regardless of the current culture.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static CharReturnType ConvertObjectToChars<T>(T key, out char[] chars, out string str, Span<char> reuse)
+        {
+            chars = Arrays.Empty<char>();
+            str = string.Empty;
+
+            if (key is null)
+            {
+                return CharReturnType.CharArray;
+            }
+
+            // Handle special cases
+            if (key is string strResult)
+            {
+                str = strResult;
+                return CharReturnType.String;
+            }
+            else if (key is char[] charArray)
+            {
+                chars = charArray;
+                return CharReturnType.CharArray;
+            }
+            else if (key is IList<char> charList)
+            {
+                char[] result = new char[charList.Count];
+                charList.CopyTo(result, arrayIndex: 0);
+                chars = result;
+                return CharReturnType.CharArray;
+            }
+            else if (key is StringBuilder stringBuilder)
+            {
+                char[] result = new char[stringBuilder.Length];
+                stringBuilder.CopyTo(sourceIndex: 0, result, destinationIndex: 0, stringBuilder.Length);
+                chars = result;
+                return CharReturnType.CharArray;
+            }
+
+            // ICharSequence types
+            else if (key is StringCharSequence strCs)
+            {
+                str = strCs.Value ?? string.Empty;
+                return CharReturnType.String;
+            }
+            else if (key is CharArrayCharSequence charArrayCs)
+            {
+                chars = charArrayCs.Value ?? Arrays.Empty<char>();
+                return CharReturnType.CharArray;
+            }
+            else if (key is StringBuilderCharSequence stringBuilderCs && stringBuilderCs.HasValue)
+            {
+                var sb = stringBuilderCs.Value!;
+                char[] result = new char[sb.Length];
+                sb.CopyTo(sourceIndex: 0, result, destinationIndex: 0, sb.Length);
+                chars = result;
+                return CharReturnType.CharArray;
+            }
+            else if (key is ICharSequence cs && cs.HasValue)
+            {
+                int length = cs.Length;
+                char[] result = new char[length];
+                for (int i = 0; i < length; i++)
+                {
+                    result[i] = cs[i];
+                }
+                chars = result;
+                return CharReturnType.CharArray;
+            }
+
+            // These must be done prior to checking ISpanFormattable and IFormattable
+            else if (key is bool b)
+            {
+                str = b ? TrueString : FalseString;
+                return CharReturnType.String;
+            }
+            else if (key is double d)
+            {
+                str = J2N.Numerics.Double.ToString(d, invariant);
+                return CharReturnType.String;
+            }
+            else if (key is float f)
+            {
+                str = J2N.Numerics.Single.ToString(f, invariant);
+                return CharReturnType.String;
+            }
+            else if (key is J2N.Numerics.Number number)
+            {
+                str = number.ToString(invariant);
+                return CharReturnType.String;
+            }
+
+#if FEATURE_SPANFORMATTABLE
+            else if (key is ISpanFormattable spanFormattable &&
+                spanFormattable.TryFormat(reuse, out int charsWritten, string.Empty.AsSpan(), invariant))
+            {
+                chars = reuse.Slice(0, charsWritten).ToArray();
+                return CharReturnType.CharArray;
+            }
+#endif
+            else if (key is IFormattable formattable)
+            {
+                str = formattable.ToString(string.Empty, invariant);
+                return CharReturnType.String;
+            }
+
+            using var context = new CultureContext(invariant);
+            str = key.ToString() ?? string.Empty;
+            return CharReturnType.String;
         }
     }
 
     /// <summary>
-    /// LUCENENET specific extension methods for CharArrayMap
+    /// Extensions to <see cref="IDictionary{TKey, TValue}"/> for <see cref="CharArrayDictionary{TValue}"/>.
     /// </summary>
-    public static class CharArrayMapExtensions
+    // LUCENENET specific - allow .NET-like syntax for copying CharArrayDictionary
+    public static class DictionaryExtensions
     {
-        #region ContainsKey
-
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="bool"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
+        /// Returns a copy of the current <see cref="IDictionary{TKey, TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>
+        /// using the specified <paramref name="matchVersion"/> value.
         /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, bool key)
+        /// <typeparam name="TValue">The type of dictionary value.</typeparam>
+        /// <param name="dictionary">
+        ///          A <see cref="IDictionary{TKey, TValue}"/> to copy. </param>
+        /// <param name="matchVersion">
+        ///          compatibility match version see <a href="#version">Version
+        ///          note</a> above for details. </param>
+        /// <returns> A copy of the current dictionary as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
+        public static CharArrayDictionary<TValue> ToCharArrayDictionary<TValue>(this IDictionary<string, TValue> dictionary, LuceneVersion matchVersion)
         {
-            return map.ContainsKey(key.ToString());
+            if (dictionary is null)
+                throw new ArgumentNullException(nameof(dictionary));
+
+            return CharArrayDictionary.Copy<TValue>(matchVersion, dictionary);
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="byte"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
+        /// Returns a copy of the current <see cref="IDictionary{TKey, TValue}"/> as a <see cref="CharArrayDictionary{TValue}"/>
+        /// using the specified <paramref name="matchVersion"/> and <paramref name="ignoreCase"/> values.
         /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, byte key)
+        /// <typeparam name="TValue">The type of dictionary value.</typeparam>
+        /// <param name="dictionary">
+        ///          A <see cref="IDictionary{TKey, TValue}"/> to copy. </param>
+        /// <param name="matchVersion">
+        ///          compatibility match version see <a href="#version">Version
+        ///          note</a> above for details. </param>
+        /// <param name="ignoreCase"><c>false</c> if and only if the set should be case sensitive otherwise <c>true</c>.</param>
+        /// <returns> A copy of the current dictionary as a <see cref="CharArrayDictionary{TValue}"/>. </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
+        public static CharArrayDictionary<TValue> ToCharArrayDictionary<TValue>(this IDictionary<string, TValue> dictionary, LuceneVersion matchVersion, bool ignoreCase)
         {
-            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
+            if (dictionary is null)
+                throw new ArgumentNullException(nameof(dictionary));
+
+            return new CharArrayDictionary<TValue>(matchVersion, dictionary.Count, ignoreCase);
         }
-
-        /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="char"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
-        /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, char key)
-        {
-            return map.ContainsKey("" + key);
-        }
-
-        ///// <summary>
-        ///// <c>true</c> if the <paramref name="key"/> <see cref="decimal"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        ///// otherwise <c>false</c>
-        ///// </summary>
-        //public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, decimal key)
-        //{
-        //    return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        //}
-
-        ///// <summary>
-        ///// <c>true</c> if the <paramref name="key"/> <see cref="double"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        ///// otherwise <c>false</c>
-        ///// </summary>
-        //public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, double key)
-        //{
-        //    return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        //}
-
-        ///// <summary>
-        ///// <c>true</c> if the <paramref name="key"/> <see cref="float"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        ///// otherwise <c>false</c>
-        ///// </summary>
-        //public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, float key)
-        //{
-        //    return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        //}
-
-        /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="int"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
-        /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, int key)
-        {
-            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="long"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
-        /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, long key)
-        {
-            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="sbyte"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
-        /// </summary>
-        [CLSCompliant(false)]
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, sbyte key)
-        {
-            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="short"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
-        /// </summary>
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, short key)
-        {
-            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="uint"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
-        /// </summary>
-        [CLSCompliant(false)]
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, uint key)
-        {
-            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="ulong"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
-        /// </summary>
-        [CLSCompliant(false)]
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, ulong key)
-        {
-            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// <c>true</c> if the <paramref name="key"/> <see cref="ushort"/> is in the <see cref="CharArrayMap{TValue}.KeySet"/>; 
-        /// otherwise <c>false</c>
-        /// </summary>
-        [CLSCompliant(false)]
-        public static bool ContainsKey<TValue>(this CharArrayMap<TValue> map, ushort key)
-        {
-            return map.ContainsKey(key.ToString(CultureInfo.InvariantCulture));
-        }
-
-        #endregion
-
-        #region Get
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, bool text)
-        {
-            return map.Get(text.ToString());
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, byte text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, char text)
-        {
-            return map.Get("" + text);
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, decimal text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, double text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, float text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, int text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, long text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, sbyte text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, short text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, uint text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, ulong text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// returns the value of the mapping of the chars inside this <paramref name="text"/>
-        /// </summary>
-        [CLSCompliant(false)]
-        public static TValue Get<TValue>(this CharArrayMap<TValue> map, ushort text)
-        {
-            return map.Get(text.ToString(CultureInfo.InvariantCulture));
-        }
-
-        #endregion
-
-        #region Put
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, bool text, TValue value)
-        {
-            return map.Put(text.ToString(), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, byte text, TValue value)
-        {
-            return map.Put(text.ToString(), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, char text, TValue value)
-        {
-            return map.Put(text.ToString(), value);
-        }
-
-        ///// <summary>
-        ///// Add the given mapping.
-        ///// </summary>
-        //public static TValue Put<TValue>(this CharArrayMap<TValue> map, decimal text, TValue value)
-        //{
-        //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        //}
-
-        ///// <summary>
-        ///// Add the given mapping.
-        ///// </summary>
-        //public static TValue Put<TValue>(this CharArrayMap<TValue> map, double text, TValue value)
-        //{
-        //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        //}
-
-        ///// <summary>
-        ///// Add the given mapping.
-        ///// </summary>
-        //public static TValue Put<TValue>(this CharArrayMap<TValue> map, float text, TValue value)
-        //{
-        //    return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        //}
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, int text, TValue value)
-        {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, long text, TValue value)
-        {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        [CLSCompliant(false)]
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, sbyte text, TValue value)
-        {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, short text, TValue value)
-        {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        [CLSCompliant(false)]
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, uint text, TValue value)
-        {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        [CLSCompliant(false)]
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, ulong text, TValue value)
-        {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        /// <summary>
-        /// Add the given mapping.
-        /// </summary>
-        [CLSCompliant(false)]
-        public static TValue Put<TValue>(this CharArrayMap<TValue> map, ushort text, TValue value)
-        {
-            return map.Put(text.ToString(CultureInfo.InvariantCulture), value);
-        }
-
-        #endregion
-
-        #region PutAll
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<bool, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put(kvp.Key.ToString(), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<byte, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<char, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put("" + kvp.Key, kvp.Value);
-            }
-        }
-
-        ///// <summary>
-        ///// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        ///// </summary>
-        ///// <param name="map">this map</param>
-        ///// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<decimal, TValue> dictionary)
-        //{
-        //    foreach (var kvp in dictionary)
-        //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        ///// </summary>
-        ///// <param name="map">this map</param>
-        ///// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<double, TValue> dictionary)
-        //{
-        //    foreach (var kvp in dictionary)
-        //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        ///// </summary>
-        ///// <param name="map">this map</param>
-        ///// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<float, TValue> dictionary)
-        //{
-        //    foreach (var kvp in dictionary)
-        //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-        //    }
-        //}
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<int, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<long, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<sbyte, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<short, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<uint, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<ulong, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="dictionary"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="dictionary">A dictionary of values to add/update in the current map.</param>
-        [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IDictionary<ushort, TValue> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<bool, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put(kvp.Key.ToString(), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<byte, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<char, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put("" + kvp.Key, kvp.Value);
-            }
-        }
-
-        ///// <summary>
-        ///// This implementation enumerates over the specified <paramref name="collection"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        ///// </summary>
-        ///// <param name="map">this map</param>
-        ///// <param name="collection">The values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<decimal, TValue>> collection)
-        //{
-        //    foreach (var kvp in collection)
-        //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// This implementation enumerates over the specified <paramref name="collection"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        ///// </summary>
-        ///// <param name="map">this map</param>
-        ///// <param name="collection">The values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<double, TValue>> collection)
-        //{
-        //    foreach (var kvp in collection)
-        //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// This implementation enumerates over the specified <paramref name="collection"/>'s
-        ///// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        ///// </summary>
-        ///// <param name="map">this map</param>
-        ///// <param name="collection">The values to add/update in the current map.</param>
-        //public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<float, TValue>> collection)
-        //{
-        //    foreach (var kvp in collection)
-        //    {
-        //        map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-        //    }
-        //}
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<int, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<long, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<sbyte, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<short, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<uint, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<ulong, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// This implementation enumerates over the specified <paramref name="collection"/>'s
-        /// entries, and calls this map's <see cref="CharArrayMap{TValue}.Put(string, TValue)"/> operation once for each entry.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="collection">The values to add/update in the current map.</param>
-        [CLSCompliant(false)]
-        public static void PutAll<TValue>(this CharArrayMap<TValue> map, IEnumerable<KeyValuePair<ushort, TValue>> collection)
-        {
-            foreach (var kvp in collection)
-            {
-                map.Put(kvp.Key.ToString(CultureInfo.InvariantCulture), kvp.Value);
-            }
-        }
-
-        #endregion
-
-        #region TryGetValue
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, bool key, out TValue value)
-        {
-            return map.TryGetValue(key.ToString(), out value);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, byte key, out TValue value)
-        {
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, char key, out TValue value)
-        {
-            return map.TryGetValue("" + key, out value);
-        }
-
-        ///// <summary>
-        ///// Gets the value associated with the specified key.
-        ///// </summary>
-        ///// <param name="map">this map</param>
-        ///// <param name="key">The key of the value to get.</param>
-        ///// <param name="value">When this method returns, contains the value associated with the specified key, 
-        ///// if the key is found; otherwise, the default value for the type of the value parameter. 
-        ///// This parameter is passed uninitialized.</param>
-        ///// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        //public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, decimal key, out TValue value)
-        //{
-        //    return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        //}
-
-        ///// <summary>
-        ///// Gets the value associated with the specified key.
-        ///// </summary>
-        ///// <param name="map">this map</param>
-        ///// <param name="key">The key of the value to get.</param>
-        ///// <param name="value">When this method returns, contains the value associated with the specified key, 
-        ///// if the key is found; otherwise, the default value for the type of the value parameter. 
-        ///// This parameter is passed uninitialized.</param>
-        ///// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        //public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, double key, out TValue value)
-        //{
-        //    return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        //}
-
-        ///// <summary>
-        ///// Gets the value associated with the specified key.
-        ///// </summary>
-        ///// <param name="map">this map</param>
-        ///// <param name="key">The key of the value to get.</param>
-        ///// <param name="value">When this method returns, contains the value associated with the specified key, 
-        ///// if the key is found; otherwise, the default value for the type of the value parameter. 
-        ///// This parameter is passed uninitialized.</param>
-        ///// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        //public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, float key, out TValue value)
-        //{
-        //    return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        //}
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, int key, out TValue value)
-        {
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, long key, out TValue value)
-        {
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, sbyte key, out TValue value)
-        {
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, short key, out TValue value)
-        {
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, uint key, out TValue value)
-        {
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, ulong key, out TValue value)
-        {
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        }
-
-        /// <summary>
-        /// Gets the value associated with the specified key.
-        /// </summary>
-        /// <param name="map">this map</param>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
-        /// This parameter is passed uninitialized.</param>
-        /// <returns><c>true</c> if the <see cref="CharArrayMap{TValue}"/> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        [CLSCompliant(false)]
-        public static bool TryGetValue<TValue>(this CharArrayMap<TValue> map, ushort key, out TValue value)
-        {
-            return map.TryGetValue(key.ToString(CultureInfo.InvariantCulture), out value);
-        }
-
-#endregion
+    }
+
+    /// <summary>
+    /// LUCENENET specific. Just a class to make error messages easier to manage in one place.
+    /// Ideally, these would be in resources so they can be localized (eventually), but at least
+    /// this half-measure will make that somewhat easier to do and is guaranteed not to cause
+    /// performance issues.
+    /// </summary>
+    internal static class SR
+    {
+        public const string Arg_ArrayPlusOffTooSmall = "Destination array is not long enough to copy all the items in the collection. Check array index and length.";
+        public const string Arg_KeyNotFoundWithKey = "The given text '{0}' was not present in the dictionary.";
+        public const string Arg_NonZeroLowerBound = "The lower bound of target array must be zero.";
+        public const string Arg_RankMultiDimNotSupported = "Only single dimensional arrays are supported for the requested action.";
+        public const string Arg_WrongType = "The value '{0}' is not of type '{1}' and cannot be used in this generic collection.";
+
+        public const string Argument_AddingDuplicate = "An item with the same text has already been added. Key: {0}";
+        public const string Argument_InvalidArrayType = "Target array type is not compatible with the type of items in the collection.";
+
+        public const string ArgumentOutOfRange_IndexLength = "Index and length must refer to a location within the string.";
+        public const string ArgumentOutOfRange_NeedNonNegNum = "Non-negative number required.";
+
+        public const string InvalidOperation_EnumFailedVersion = "Collection was modified after the enumerator was instantiated.";
+        public const string InvalidOperation_EnumOpCantHappen = "Enumeration has either not started or has already finished.";
+
+        public const string NotSupported_KeyCollectionSet = "Mutating a text collection derived from a dictionary is not allowed.";
+        public const string NotSupported_ReadOnlyCollection = "Collection is read-only.";
+        public const string NotSupported_ValueCollectionSet = "Mutating a value collection derived from a dictionary is not allowed.";
     }
 }

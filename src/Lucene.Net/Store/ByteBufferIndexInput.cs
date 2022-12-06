@@ -75,7 +75,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        internal ByteBufferIndexInput(string resourceDescription, ByteBuffer[] buffers, long length, int chunkSizePower, bool trackClones)
+        private protected ByteBufferIndexInput(string resourceDescription, ByteBuffer[] buffers, long length, int chunkSizePower, bool trackClones) // LUCENENET: Changed from internal to private protected
             : base(resourceDescription)
         {
             //this.buffers = buffers; // LUCENENET: this is set in SetBuffers()
@@ -225,7 +225,7 @@ namespace Lucene.Net.Store
             // necessary in case offset != 0 and pos < 0, but pos >= -offset
             if (pos < 0L)
             {
-                throw new ArgumentOutOfRangeException("Seeking to negative position: " + this); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentOutOfRangeException(nameof(pos), "Seeking to negative position: " + this); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             pos += offset;
             // we use >> here to preserve negative, so we will catch AIOOBE,
@@ -307,7 +307,7 @@ namespace Lucene.Net.Store
                 throw new ArgumentOutOfRangeException(nameof(offset), "offset may not be negative.");
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length), "length may not be negative.");
-            if (offset + length > this.length)
+            if (offset > this.length - length) // LUCENENET: Checks for int overflow
             {
                 throw new ArgumentException("slice() " + sliceDescription + " out of bounds: offset=" + offset + ",length=" + length + ",fileLength=" + this.length + ": " + this);
             }
@@ -389,10 +389,7 @@ namespace Lucene.Net.Store
                     // make local copy, then un-set early
                     ByteBuffer[] bufs = buffers;
                     UnsetBuffers();
-                    if (clones != null)
-                    {
-                        clones.Remove(this);
-                    }
+                    clones?.Remove(this);
 
                     if (isClone)
                     {

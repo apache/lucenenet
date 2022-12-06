@@ -113,7 +113,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;
-            qp.DateResolutionMap.Put(field, value);
+            qp.DateResolutionMap[field] = value;
         }
 
 

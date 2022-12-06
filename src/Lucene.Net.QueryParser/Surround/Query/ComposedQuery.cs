@@ -101,9 +101,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 r.Append(sqi.Current.ToString());
                 while (sqi.MoveNext())
                 {
-                    r.Append(" ");
+                    r.Append(' ');
                     r.Append(OperatorName); /* infix operator */
-                    r.Append(" ");
+                    r.Append(' ');
                     r.Append(sqi.Current.ToString());
                 }
             }

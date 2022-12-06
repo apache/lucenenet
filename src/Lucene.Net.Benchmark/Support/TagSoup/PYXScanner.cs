@@ -38,7 +38,7 @@ namespace TagSoup
     /// </summary>
     public class PYXScanner : IScanner
     {
-        public virtual void ResetDocumentLocator(string publicid, string systemid)
+        public virtual void ResetDocumentLocator(string publicId, string systemId)
         {
             // Need this method for interface compatibility, but note
             // that PyxScanner does not implement Locator.
@@ -46,74 +46,80 @@ namespace TagSoup
 
         public virtual void Scan(TextReader br, IScanHandler h)
         {
+            // LUCENENET: Added guard clauses
+            if (br is null)
+                throw new ArgumentNullException(nameof(br));
+            if (h is null)
+                throw new ArgumentNullException(nameof(h));
+
             string s;
-            char[] buff = null;
+            char[] buffer = null;
             bool instag = false;
             while ((s = br.ReadLine()) != null)
             {
                 int size = s.Length;
-                buff = s.ToCharArray(0, size);
-                if (buff.Length < size)
+                buffer = s.ToCharArray(0, size);
+                if (buffer.Length < size)
                 {
-                    buff = new char[size];
+                    buffer = new char[size];
                 }
-                switch (buff[0])
+                switch (buffer[0])
                 {
                     case '(':
                         if (instag)
                         {
-                            h.STagC(buff, 0, 0);
+                            h.STagC(buffer, 0, 0);
                             //instag = false; // LUCENENET: IDE0059: Remove unnecessary value assignment
                         }
-                        h.GI(buff, 1, size - 1);
+                        h.GI(buffer, 1, size - 1);
                         instag = true;
                         break;
                     case ')':
                         if (instag)
                         {
-                            h.STagC(buff, 0, 0);
+                            h.STagC(buffer, 0, 0);
                             instag = false;
                         }
-                        h.ETag(buff, 1, size - 1);
+                        h.ETag(buffer, 1, size - 1);
                         break;
                     case '?':
                         if (instag)
                         {
-                            h.STagC(buff, 0, 0);
+                            h.STagC(buffer, 0, 0);
                             instag = false;
                         }
-                        h.PI(buff, 1, size - 1);
+                        h.PI(buffer, 1, size - 1);
                         break;
                     case 'A':
                         int sp = s.IndexOf(' ');
-                        h.Aname(buff, 1, sp - 1);
-                        h.Aval(buff, sp + 1, size - sp - 1);
+                        h.Aname(buffer, 1, sp - 1);
+                        h.Aval(buffer, sp + 1, size - sp - 1);
                         break;
                     case '-':
                         if (instag)
                         {
-                            h.STagC(buff, 0, 0);
+                            h.STagC(buffer, 0, 0);
                             instag = false;
                         }
                         if (s.Equals("-\\n", StringComparison.Ordinal))
                         {
-                            buff[0] = '\n';
-                            h.PCDATA(buff, 0, 1);
+                            buffer[0] = '\n';
+                            h.PCDATA(buffer, 0, 1);
                         }
                         else
                         {
                             // FIXME:
                             // Does not decode \t and \\ in input
-                            h.PCDATA(buff, 1, size - 1);
+                            h.PCDATA(buffer, 1, size - 1);
                         }
                         break;
                     case 'E':
                         if (instag)
                         {
-                            h.STagC(buff, 0, 0);
+                            h.STagC(buffer, 0, 0);
                             instag = false;
                         }
-                        h.Entity(buff, 1, size - 1);
+                        h.Entity(buffer, 1, size - 1);
                         break;
                     default:
                         //				System.err.print("Gotcha ");
@@ -122,11 +128,12 @@ namespace TagSoup
                         break;
                 }
             }
-            h.EOF(buff, 0, 0);
+            h.EOF(buffer, 0, 0);
         }
 
-        public void StartCDATA()
+        public virtual void StartCDATA()
         {
+            // LUCENENET: Intentionally blank
         }
 
         //public static void main(string[] argv)  {

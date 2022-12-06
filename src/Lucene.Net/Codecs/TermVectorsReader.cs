@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs
 
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum; // javadocs
     using Fields = Lucene.Net.Index.Fields;
-    using OffsetAttribute = Lucene.Net.Analysis.TokenAttributes.OffsetAttribute; // javadocs
+    using IOffsetAttribute = Lucene.Net.Analysis.TokenAttributes.IOffsetAttribute; // javadocs
 
     /// <summary>
     /// Codec API for reading term vectors:
@@ -34,14 +34,14 @@ namespace Lucene.Net.Codecs
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        protected internal TermVectorsReader()
+        protected TermVectorsReader()
         {
         }
 
         /// <summary>
         /// Returns term vectors for this document, or <c>null</c> if
         /// term vectors were not indexed. If offsets are
-        /// available they are in an <see cref="OffsetAttribute"/>
+        /// available they are in an <see cref="IOffsetAttribute"/>
         /// available from the <see cref="DocsAndPositionsEnum"/>.
         /// </summary>
         public abstract Fields Get(int doc);

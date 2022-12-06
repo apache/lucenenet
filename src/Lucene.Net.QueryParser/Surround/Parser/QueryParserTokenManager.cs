@@ -484,7 +484,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 else if (m_curChar < 128)
                 {
                     //long l = 1L << (curChar & 077);
-                    ulong l = (ulong)(1L << (m_curChar & 63)); 
+                    ulong l = (ulong)(1L << (m_curChar & 63));
                     do
                     {
                         switch (jjstateSet[--i])
@@ -524,8 +524,8 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             }
         }
         internal static readonly int[] jjnextStates = {
-            32, 33, 34, 35, 37, 24, 27, 28, 20, 17, 21, 18, 27, 28, 30, 24, 
-            25, 0, 1, 
+            32, 33, 34, 35, 37, 24, 27, 28, 20, 17, 21, 18, 27, 28, 30, 24,
+            25, 0, 1,
         };
         private static bool JjCanMove_0(int hiByte, int i1, int i2, ulong l1, ulong l2)
         {
@@ -542,14 +542,14 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
 
         ////** Token literal values. */
         ////public static readonly string[] jjstrLiteralImages = {
-        ////    "", null, null, null, null, null, null, null, null, null, null, null, null, 
-        ////    "\50", "\51", "\54", "\72", "\136", null, null, null, null, null, null 
+        ////    "", null, null, null, null, null, null, null, null, null, null, null, null,
+        ////    "\50", "\51", "\54", "\72", "\136", null, null, null, null, null, null
         ////};
 
         /// <summary>Token literal values.</summary>
         public static readonly string[] jjstrLiteralImages = {
-            "", null, null, null, null, null, null, null, null, null, null, null, null, 
-            "\x0028" /*"\50"*/, "\x0029" /*"\51"*/, "\x002C" /*"\54"*/, "\x003A" /*"\72"*/, "\x005E" /*"\136"*/, null, null, null, null, null, null 
+            "", null, null, null, null, null, null, null, null, null, null, null, null,
+            "\x0028" /*"\50"*/, "\x0029" /*"\51"*/, "\x002C" /*"\54"*/, "\x003A" /*"\72"*/, "\x005E" /*"\136"*/, null, null, null, null, null, null
         };
 
         /// <summary>Lexer state names.</summary>
@@ -560,13 +560,13 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
 
         /// <summary>Lex State array.</summary>
         public static readonly int[] jjnewLexState = {
-           -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, 1, 
+           -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, 1,
         };
         internal static readonly long[] jjtoToken = {
-           0xffff01L, 
+           0xffff01L,
         };
         internal static readonly long[] jjtoSkip = {
-           0x80L, 
+           0x80L,
         };
         protected ICharStream m_input_stream;
         private readonly uint[] jjrounds = new uint[38];
@@ -723,7 +723,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                     error_after = curPos <= 1 ? "" : m_input_stream.Image;
                 }
                 throw new TokenMgrError(EOFSeen, curLexState, error_line, error_column, error_after, m_curChar, TokenMgrError.LEXICAL_ERROR);
-            EOFLoop: ;
+            EOFLoop: {/* LUCENENET: intentionally blank */}
             }
         }
 

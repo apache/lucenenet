@@ -106,7 +106,7 @@ namespace Lucene.Net.Cli.SourceCode
                     if (COMMENT_END.IsMatch(line))
                     {
                         inComment = false;
-                        continue; // Skip this line
+                        // continue; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                     }
                 }
                 else
@@ -150,6 +150,7 @@ namespace Lucene.Net.Cli.SourceCode
             {
                 this.reader?.Dispose();
             }
+            base.Dispose(disposing);
         }
     }
 }

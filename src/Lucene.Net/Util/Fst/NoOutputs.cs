@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
@@ -33,7 +33,7 @@ namespace Lucene.Net.Util.Fst
     {
         internal static readonly object NO_OUTPUT = new ObjectAnonymousClass();
 
-        private class ObjectAnonymousClass : object
+        private sealed class ObjectAnonymousClass : object
         {
             public ObjectAnonymousClass()
             {

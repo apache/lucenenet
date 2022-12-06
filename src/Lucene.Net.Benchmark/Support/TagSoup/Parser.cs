@@ -21,7 +21,7 @@ using Sax;
 using Sax.Ext;
 using Sax.Helpers;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
@@ -256,7 +256,7 @@ namespace TagSoup
         // the corresponding instance variables, but care must be taken
         // to keep them in sync.
 
-        private readonly Hashtable features = new Hashtable {
+        private readonly IDictionary<string, bool> features = new Dictionary<string, bool> {
             { NAMESPACES_FEATURE, DEFAULT_NAMESPACES },
             { NAMESPACE_PREFIXES_FEATURE, false },
             { EXTERNAL_GENERAL_ENTITIES_FEATURE, false },
@@ -283,9 +283,9 @@ namespace TagSoup
 
         public virtual bool GetFeature(string name)
         {
-            if (features.ContainsKey(name))
+            if (features.TryGetValue(name, out bool value))
             {
-                return (bool)features[name];
+                return value;
             }
             throw new SAXNotRecognizedException("Unknown feature " + name);
         }
@@ -338,6 +338,10 @@ namespace TagSoup
 
         public virtual object GetProperty(string name)
         {
+            // LUCENENET: Added guard clause
+            if (name is null)
+                throw new ArgumentNullException(nameof(name));
+
             if (name.Equals(LEXICAL_HANDLER_PROPERTY, StringComparison.Ordinal))
             {
                 return theLexicalHandler == this ? null : theLexicalHandler;
@@ -359,6 +363,10 @@ namespace TagSoup
 
         public virtual void SetProperty(string name, object value)
         {
+            // LUCENENET: Added guard clauses
+            if (name is null)
+                throw new ArgumentNullException(nameof(name));
+
             if (name.Equals(LEXICAL_HANDLER_PROPERTY, StringComparison.Ordinal))
             {
                 if (value is null)
@@ -442,6 +450,10 @@ namespace TagSoup
 
         public virtual void Parse(InputSource input)
         {
+            // LUCENENET: Added guard clause
+            if (input is null)
+                throw new ArgumentNullException(nameof(input));
+
             Setup();
             TextReader r = GetReader(input);
             theContentHandler.StartDocument();
@@ -457,9 +469,13 @@ namespace TagSoup
             theScanner.Scan(r, this);
         }
 
-        public virtual void Parse(string systemid)
+        public virtual void Parse(string systemId)
         {
-            Parse(new InputSource(systemid));
+            // LUCENENET: Added guard clause
+            if (systemId is null)
+                throw new ArgumentNullException(nameof(systemId));
+
+            Parse(new InputSource(systemId));
         }
 
         // Sets up instance variables that haven't been set by setFeature
@@ -499,13 +515,13 @@ namespace TagSoup
             TextReader r = s.TextReader;
             Stream i = s.Stream;
             Encoding encoding = s.Encoding;
-            string publicid = s.PublicId;
-            string systemid = s.SystemId;
+            string publicId = s.PublicId;
+            string systemId = s.SystemId;
             if (r is null)
             {
                 if (i is null)
                 {
-                    i = GetInputStream(publicid, systemid);
+                    i = GetInputStream(publicId, systemId);
                 }
                 if (!(i is BufferedStream))
                 {
@@ -531,18 +547,22 @@ namespace TagSoup
         }
 
         /// <summary>
-        ///   Get an Stream based on a publicid and a systemid
+        ///   Get an Stream based on a publicId and a systemId
         ///   We don't process publicids (who uses them anyhow?)
         /// </summary>
-        /// <param name="publicid"></param>
-        /// <param name="systemid"></param>
+        /// <param name="publicId"></param>
+        /// <param name="systemId"></param>
         /// <returns></returns>
 #pragma warning disable IDE0060 // Remove unused parameter
-        private static Stream GetInputStream(string publicid, string systemid) // LUCENENET: CA1822: Mark members as static
+        private static Stream GetInputStream(string publicId, string systemId) // LUCENENET: CA1822: Mark members as static
 #pragma warning restore IDE0060 // Remove unused parameter
         {
+            // LUCENENET: Added guard clause
+            if (systemId is null)
+                throw new ArgumentNullException(nameof(systemId));
+
             var basis = new Uri("file://" + Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
-            var url = new Uri(basis, systemid);
+            var url = new Uri(basis, systemId);
             return new FileStream(url.LocalPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
@@ -561,7 +581,7 @@ namespace TagSoup
         private int theEntity; // needs to support chars past U+FFFF
 
 
-        public virtual void Adup(char[] buff, int offset, int length)
+        public virtual void Adup(char[] buffer, int startIndex, int length)
         {
             if (theNewElement is null || theAttributeName is null)
             {
@@ -571,25 +591,31 @@ namespace TagSoup
             theAttributeName = null;
         }
 
-        public virtual void Aname(char[] buff, int offset, int length)
+        public virtual void Aname(char[] buffer, int startIndex, int length)
         {
             if (theNewElement is null)
             {
                 return;
             }
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             // Currently we don't rely on Schema to canonicalize
             // attribute names.
-            theAttributeName = MakeName(buff, offset, length).ToLowerInvariant();
+            theAttributeName = MakeName(buffer, startIndex, length).ToLowerInvariant();
             //		System.err.println("%% Attribute name " + theAttributeName);
         }
 
-        public virtual void Aval(char[] buff, int offset, int length)
+        public virtual void Aval(char[] buffer, int startIndex, int length)
         {
             if (theNewElement is null || theAttributeName is null)
             {
                 return;
             }
-            var value = new string(buff, offset, length);
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            var value = new string(buffer, startIndex, length);
             //		System.err.println("%% Attribute value [" + value + "]");
             value = ExpandEntities(value);
             theNewElement.SetAttribute(theAttributeName, null, value);
@@ -661,54 +687,54 @@ namespace TagSoup
             return new string(dst, 0, dstlen);
         }
 
-        public virtual void Entity(char[] buff, int offset, int length)
+        public virtual void Entity(char[] buffer, int startIndex, int length)
         {
-            theEntity = LookupEntity(buff, offset, length);
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            theEntity = LookupEntity(buffer, startIndex, length);
         }
 
         /// <summary>
         ///   Process numeric character references,
         ///   deferring to the schema for named ones.
         /// </summary>
-        /// <param name="buff"></param>
-        /// <param name="offset"></param>
+        /// <param name="buffer"></param>
+        /// <param name="startIndex"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        private int LookupEntity(char[] buff, int offset, int length)
+        private int LookupEntity(char[] buffer, int startIndex, int length)
         {
             int result = 0;
             if (length < 1)
             {
                 return result;
             }
-            //		System.err.println("%% Entity at " + offset + " " + length);
-            //		System.err.println("%% Got entity [" + new string(buff, offset, length) + "]");
-            if (buff[offset] == '#')
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            //		System.err.println("%% Entity at " + startIndex + " " + length);
+            //		System.err.println("%% Got entity [" + new string(buffer, startIndex, length) + "]");
+            if (buffer[startIndex] == '#')
             {
-                if (length > 1 && (buff[offset + 1] == 'x' || buff[offset + 1] == 'X'))
+                if (length > 1 && (buffer[startIndex + 1] == 'x' || buffer[startIndex + 1] == 'X'))
                 {
-                    try
-                    {
-                        return Convert.ToInt32(new string(buff, offset + 2, length - 2), 16);
-                    }
-                    catch (FormatException)
-                    {
-                        return 0;
-                    }
-                }
-                try
-                {
-                    return Convert.ToInt32(new string(buff, offset + 1, length - 1), 10);
-                }
-                catch (FormatException)
-                {
+                    // LUCENENET: don't allow int parsing to throw exceptions
+                    if (J2N.Numerics.Int32.TryParse(buffer, startIndex + 2, length - 2, 16, out result))
+                        return result;
+
                     return 0;
                 }
+                // LUCENENET: don't allow int parsing to throw exceptions
+                if (J2N.Numerics.Int32.TryParse(buffer, startIndex + 1, length - 1, 10, out result))
+                    return result;
+
+                return 0;
             }
-            return theSchema.GetEntity(new string(buff, offset, length));
+            return theSchema.GetEntity(new string(buffer, startIndex, length));
         }
 
-        public virtual void EOF(char[] buff, int offset, int length)
+        public virtual void EOF(char[] buffer, int startIndex, int length)
         {
             if (virginStack)
             {
@@ -725,18 +751,24 @@ namespace TagSoup
             theContentHandler.EndDocument();
         }
 
-        public virtual void ETag(char[] buff, int offset, int length)
+        public virtual void ETag(char[] buffer, int startIndex, int length)
         {
-            if (ETagCdata(buff, offset, length))
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            if (ETagCdata(buffer, startIndex, length))
             {
                 return;
             }
-            ETagBasic(buff, offset, length);
+            ETagBasic(buffer, startIndex, length);
         }
 
         private static readonly char[] etagchars = { '<', '/', '>' };
-        public virtual bool ETagCdata(char[] buff, int offset, int length)
+        public virtual bool ETagCdata(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             string currentName = theStack.Name;
             // If this is a CDATA element and the tag doesn't match,
             // or isn't properly formed (junk after the name),
@@ -748,7 +780,7 @@ namespace TagSoup
                 {
                     for (int i = 0; i < length; i++)
                     {
-                        if (char.ToLowerInvariant(buff[offset + i]) != char.ToLowerInvariant(currentName[i]))
+                        if (char.ToLowerInvariant(buffer[startIndex + i]) != char.ToLowerInvariant(currentName[i]))
                         {
                             realTag = false;
                             break;
@@ -758,7 +790,7 @@ namespace TagSoup
                 if (!realTag)
                 {
                     theContentHandler.Characters(etagchars, 0, 2);
-                    theContentHandler.Characters(buff, offset, length);
+                    theContentHandler.Characters(buffer, startIndex, length);
                     theContentHandler.Characters(etagchars, 2, 1);
                     theScanner.StartCDATA();
                     return true;
@@ -767,14 +799,17 @@ namespace TagSoup
             return false;
         }
 
-        public virtual void ETagBasic(char[] buff, int offset, int length)
+        public virtual void ETagBasic(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             theNewElement = null;
             string name;
             if (length != 0)
             {
                 // Canonicalize case of name
-                name = MakeName(buff, offset, length);
+                name = MakeName(buffer, startIndex, length);
                 //			System.err.println("got etag [" + name + "]");
                 ElementType type = theSchema.GetElementType(name);
                 if (type is null)
@@ -994,15 +1029,18 @@ namespace TagSoup
         ///   markupdecl ::= elementdecl | AttlistDecl | EntityDecl | NotationDecl | PI | Comment
         ///   ExternalID ::= 'SYSTEM' S SystemLiteral | 'PUBLIC' S PubidLiteral S SystemLiteral
         /// </summary>
-        /// <param name="buff"></param>
-        /// <param name="offset"></param>
+        /// <param name="buffer"></param>
+        /// <param name="startIndex"></param>
         /// <param name="length"></param>
-        public virtual void Decl(char[] buff, int offset, int length)
+        public virtual void Decl(char[] buffer, int startIndex, int length)
         {
-            var s = new string(buff, offset, length);
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            var s = new string(buffer, startIndex, length);
             string name = null;
-            string systemid = null;
-            string publicid = null;
+            string systemId = null;
+            string publicId = null;
             string[] v = Split(s);
             if (v.Length > 0 && "DOCTYPE".Equals(v[0], StringComparison.OrdinalIgnoreCase))
             {
@@ -1016,40 +1054,40 @@ namespace TagSoup
                     name = v[1];
                     if (v.Length > 3 && "SYSTEM".Equals(v[2], StringComparison.Ordinal))
                     {
-                        systemid = v[3];
+                        systemId = v[3];
                     }
                     else if (v.Length > 3 && "PUBLIC".Equals(v[2], StringComparison.Ordinal))
                     {
-                        publicid = v[3];
+                        publicId = v[3];
                         if (v.Length > 4)
                         {
-                            systemid = v[4];
+                            systemId = v[4];
                         }
                         else
                         {
-                            systemid = "";
+                            systemId = "";
                         }
                     }
                 }
             }
-            publicid = TrimQuotes(publicid);
-            systemid = TrimQuotes(systemid);
+            publicId = TrimQuotes(publicId);
+            systemId = TrimQuotes(systemId);
             if (name != null)
             {
-                publicid = CleanPublicId(publicid);
-                theLexicalHandler.StartDTD(name, publicid, systemid);
+                publicId = CleanPublicId(publicId);
+                theLexicalHandler.StartDTD(name, publicId, systemId);
                 theLexicalHandler.EndDTD();
                 theDoctypeName = name;
-                theDoctypePublicId = publicid;
+                theDoctypePublicId = publicId;
                 if (theScanner is ILocator locator)
                 {
-                    // Must resolve systemid
+                    // Must resolve systemId
                     theDoctypeSystemId = locator.SystemId;
                     try
                     {
                         if (Uri.IsWellFormedUriString(theDoctypeSystemId, UriKind.Absolute))
                         {
-                            theDoctypeSystemId = new Uri(new Uri(theDoctypeSystemId), systemid).ToString();
+                            theDoctypeSystemId = new Uri(new Uri(theDoctypeSystemId), systemId).ToString();
                         }
                     }
                     catch (Exception)
@@ -1147,7 +1185,7 @@ namespace TagSoup
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        private string CleanPublicId(string src)
+        private static string CleanPublicId(string src) // LUCENENET: CA1822: Mark members as static
         {
             if (src is null)
             {
@@ -1179,13 +1217,16 @@ namespace TagSoup
             return dst.ToString().Trim(); // trim any final junk whitespace
         }
 
-        public virtual void GI(char[] buff, int offset, int length)
+        public virtual void GI(char[] buffer, int startIndex, int length)
         {
             if (theNewElement != null)
             {
                 return;
             }
-            string name = MakeName(buff, offset, length);
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            string name = MakeName(buffer, startIndex, length);
             if (name is null)
             {
                 return;
@@ -1212,51 +1253,62 @@ namespace TagSoup
             //		System.err.println("%% Got GI " + theNewElement.name());
         }
 
-        public virtual void CDSect(char[] buff, int offset, int length)
+        public virtual void CDSect(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             theLexicalHandler.StartCDATA();
-            PCDATA(buff, offset, length);
+            PCDATA(buffer, startIndex, length);
             theLexicalHandler.EndCDATA();
         }
 
-        public virtual void PCDATA(char[] buff, int offset, int length)
+        public virtual void PCDATA(char[] buffer, int startIndex, int length)
         {
             if (length == 0)
             {
                 return;
             }
+
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             bool allWhite = true;
             for (int i = 0; i < length; i++)
             {
-                if (!char.IsWhiteSpace(buff[offset + i]))
+                if (!char.IsWhiteSpace(buffer[startIndex + i]))
                 {
                     allWhite = false;
+                    break; // LUCENENET: No need to check the rest
                 }
             }
             if (allWhite && !theStack.CanContain(thePCDATA))
             {
                 if (ignorableWhitespace)
                 {
-                    theContentHandler.IgnorableWhitespace(buff, offset, length);
+                    theContentHandler.IgnorableWhitespace(buffer, startIndex, length);
                 }
             }
             else
             {
                 Rectify(thePCDATA);
-                theContentHandler.Characters(buff, offset, length);
+                theContentHandler.Characters(buffer, startIndex, length);
             }
         }
 
-        public virtual void PITarget(char[] buff, int offset, int length)
+        public virtual void PITarget(char[] buffer, int startIndex, int length)
         {
             if (theNewElement != null)
             {
                 return;
             }
-            thePITarget = MakeName(buff, offset, length).Replace(':', '_');
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            thePITarget = MakeName(buffer, startIndex, length).Replace(':', '_');
         }
 
-        public virtual void PI(char[] buff, int offset, int length)
+        public virtual void PI(char[] buffer, int startIndex, int length)
         {
             if (theNewElement != null || thePITarget is null)
             {
@@ -1266,46 +1318,61 @@ namespace TagSoup
             {
                 return;
             }
-            //		if (length > 0 && buff[length - 1] == '?') System.err.println("%% Removing ? from PI");
-            if (length > 0 && buff[length - 1] == '?')
+
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            //		if (length > 0 && buffer[length - 1] == '?') System.err.println("%% Removing ? from PI");
+            if (length > 0 && buffer[length - 1] == '?')
             {
                 length--; // remove trailing ?
             }
-            theContentHandler.ProcessingInstruction(thePITarget, new string(buff, offset, length));
+            theContentHandler.ProcessingInstruction(thePITarget, new string(buffer, startIndex, length));
             thePITarget = null;
         }
 
-        public virtual void STagC(char[] buff, int offset, int length)
+        public virtual void STagC(char[] buffer, int startIndex, int length)
         {
             //		System.err.println("%% Start-tag");
             if (theNewElement is null)
             {
                 return;
             }
+
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             Rectify(theNewElement);
             if (theStack.Model == Schema.M_EMPTY)
             {
                 // Force an immediate end tag
-                ETagBasic(buff, offset, length);
+                ETagBasic(buffer, startIndex, length);
             }
         }
 
-        public virtual void STagE(char[] buff, int offset, int length)
+        public virtual void STagE(char[] buffer, int startIndex, int length)
         {
             //		System.err.println("%% Empty-tag");
             if (theNewElement is null)
             {
                 return;
             }
+
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             Rectify(theNewElement);
             // Force an immediate end tag
-            ETagBasic(buff, offset, length);
+            ETagBasic(buffer, startIndex, length);
         }
 
         //private char[] theCommentBuffer = new char[2000]; // LUCENENET: Never read
-        public virtual void Cmnt(char[] buff, int offset, int length)
+        public virtual void Cmnt(char[] buffer, int startIndex, int length)
         {
-            theLexicalHandler.Comment(buff, offset, length);
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
+            theLexicalHandler.Comment(buffer, startIndex, length);
         }
 
         /// <summary>
@@ -1374,19 +1441,22 @@ namespace TagSoup
         ///   This no longer lowercases the result: we depend on Schema to
         ///   canonicalize case.
         /// </summary>
-        /// <param name="buff"></param>
-        /// <param name="offset"></param>
+        /// <param name="buffer"></param>
+        /// <param name="startIndex"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        private string MakeName(char[] buff, int offset, int length)
+        private string MakeName(char[] buffer, int startIndex, int length)
         {
+            // LUCENENET: Added guard clauses
+            Guard.BufferAndRangeCheck(buffer, startIndex, length);
+
             var dst = new StringBuilder(length + 2);
             bool seenColon = false;
             bool start = true;
-            //		string src = new string(buff, offset, length); // DEBUG
-            for (; length-- > 0; offset++)
+            //		string src = new string(buffer, startIndex, length); // DEBUG
+            for (; length-- > 0; startIndex++)
             {
-                char ch = buff[offset];
+                char ch = buffer[startIndex];
                 if (char.IsLetter(ch) || ch == '_')
                 {
                     start = false;
@@ -1458,7 +1528,7 @@ namespace TagSoup
         {
         }
 
-        public virtual void StartDTD(string name, string publicid, string systemid)
+        public virtual void StartDTD(string name, string publicId, string systemId)
         {
         }
 

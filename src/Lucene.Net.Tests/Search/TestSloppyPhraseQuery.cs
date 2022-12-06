@@ -243,7 +243,7 @@ namespace Lucene.Net.Search
             QueryUtils.Check(Random, pq, searcher);
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly TestSloppyPhraseQuery outerInstance;
 
@@ -254,23 +254,23 @@ namespace Lucene.Net.Search
 
             internal Scorer scorer;
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 Assert.IsFalse(float.IsInfinity(scorer.Freq));
                 Assert.IsFalse(float.IsInfinity(scorer.GetScore()));
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
                 // do nothing
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => false;
+            public bool AcceptsDocsOutOfOrder => false;
         }
 
         // LUCENE-3215

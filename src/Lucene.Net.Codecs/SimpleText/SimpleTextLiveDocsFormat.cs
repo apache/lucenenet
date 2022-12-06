@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.SimpleText
         /// <summary>
         /// NOTE: This was parseIntAt() in Lucene.
         /// </summary>
-        private int ParseInt32At(BytesRef bytes, int offset, CharsRef scratch)
+        private static int ParseInt32At(BytesRef bytes, int offset, CharsRef scratch) // LUCENENET: CA1822: Mark members as static
         {
             UnicodeUtil.UTF8toUTF16(bytes.Bytes, bytes.Offset + offset, bytes.Length - offset, scratch);
             return ArrayUtil.ParseInt32(scratch.Chars, 0, scratch.Length);

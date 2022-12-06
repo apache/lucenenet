@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -165,7 +166,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     var termLength = _scratch.Length - SimpleTextTermVectorsWriter.TERMTEXT.Length;
                     term.Grow(termLength);
                     term.Length = termLength;
-                    Array.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextTermVectorsWriter.TERMTEXT.Length, term.Bytes, term.Offset, termLength);
+                    Arrays.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextTermVectorsWriter.TERMTEXT.Length, term.Bytes, term.Offset, termLength);
 
                     var postings = new SimpleTVPostings();
                     terms.terms.Add(term, postings);
@@ -209,7 +210,7 @@ namespace Lucene.Net.Codecs.SimpleText
                                 else
                                 {
                                     var payloadBytes = new byte[_scratch.Length - SimpleTextTermVectorsWriter.PAYLOAD.Length];
-                                    Array.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextTermVectorsWriter.PAYLOAD.Length, payloadBytes, 0,
+                                    Arrays.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextTermVectorsWriter.PAYLOAD.Length, payloadBytes, 0,
                                         payloadBytes.Length);
                                     postings.payloads[k] = new BytesRef(payloadBytes);
                                 }

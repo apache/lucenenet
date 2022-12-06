@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -135,10 +135,10 @@ namespace Lucene.Net.Analysis.Fr
         {
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
             set.add("habitable");
-            FrenchAnalyzer fa = new FrenchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            FrenchAnalyzer fa = new FrenchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, set);
             AssertAnalyzesTo(fa, "habitable chiste", new string[] { "habitable", "chist" });
 
-            fa = new FrenchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            fa = new FrenchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, set);
             AssertAnalyzesTo(fa, "habitable chiste", new string[] { "habitable", "chist" });
         }
 

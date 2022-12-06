@@ -442,7 +442,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        private class DefaultSimilarityAnonymousClass : DefaultSimilarity
+        private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
             private readonly TestSpans outerInstance;
 

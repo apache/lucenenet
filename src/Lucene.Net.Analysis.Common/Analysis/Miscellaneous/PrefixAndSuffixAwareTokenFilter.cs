@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 namespace Lucene.Net.Analysis.Miscellaneous
 {
     /*
@@ -96,6 +96,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 suffix.Dispose();
             }
+            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
 
         public override void End()

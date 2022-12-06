@@ -748,7 +748,7 @@ namespace Lucene.Net.Index
             sb.Append("maxMergeDocs=").Append(m_maxMergeDocs).Append(", ");
             sb.Append("maxCFSSegmentSizeMB=").Append(MaxCFSSegmentSizeMB).Append(", ");
             sb.Append("noCFSRatio=").Append(m_noCFSRatio);
-            sb.Append("]");
+            sb.Append(']');
             return sb.ToString();
         }
     }

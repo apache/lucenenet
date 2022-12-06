@@ -1,6 +1,6 @@
 # Lucene.NET Contributor's Guide
 
-You have found a bug or you have an idea for a cool new enhancement? Contributing code is a great way to give something back to the open source community. Before you dig right into the code there are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
+Have you found a bug or do you have an idea for a cool new enhancement? Contributing code is a great way to give something back to the open-source community. Before you dig right into the code there are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
 
 ## Getting Started
 
@@ -23,7 +23,7 @@ There are several [**Open Issues on GitHub**](https://github.com/apache/lucenene
 
 * Be a power beta tester. Make it your mission to track down bugs and report them to us on [GitHub](https://github.com/apache/lucenenet/issues).
 * Optimizing code. During porting we have ended up with some code that is less than optimal. We could use a hand getting everything up to speed (pun intended).
-* Helping update the API, or at least just providing feedback on which API changes are affecting usability. There are several things on our radar, like integrating something like [Lucene.Net.Linq](https://github.com/themotleyfool/Lucene.Net.Linq) directly into our project, [converting the remaining public-facing iterator classes into `IEnumerator<T>`](https://issues.apache.org/jira/projects/LUCENENET/issues/LUCENENET-469?filter=allopenissues) so they can be used with foreach loops, adding extension methods to remove the need for casting, etc.
+* Helping update the API, or at least just providing feedback on which API changes are affecting the usability. There are several things on our radar, like integrating something like [Lucene.Net.Linq](https://github.com/themotleyfool/Lucene.Net.Linq) directly into our project, [converting the remaining public-facing iterator classes into `IEnumerator<T>`](https://issues.apache.org/jira/projects/LUCENENET/issues/LUCENENET-469?filter=allopenissues) so they can be used with foreach loops, adding extension methods to remove the need for casting, etc.
 * Making demos and tutorials, blogging about Lucene.Net, etc. (and providing feedback on how we can make the API better!). If you write a helpful Lucene.Net post on your blog, be sure to let us know so we can link to it.
 * Helping out with documentation. We are still trying to make the API docs easily navigable (see #206), and there are many files that are not formatted correctly (links not appearing, tables not very readable, etc). Also, we need help getting all of the Java-related documentation converted to use .NET methodologies.
 * Fixing TODOs. There are several TODOs throughout the code that need to be reviewed and action taken, if necessary. Search for `LUCENENET TODO|LUCENE TO-DO` using the regular expression option in Visual Studio to find them. Do note there are a lot of TODOs left over from Java Lucene that are safe to ignore.

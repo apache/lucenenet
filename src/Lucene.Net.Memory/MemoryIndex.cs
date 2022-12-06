@@ -578,7 +578,7 @@ namespace Lucene.Net.Index.Memory
             }
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly float[] scores;
 
@@ -589,19 +589,19 @@ namespace Lucene.Net.Index.Memory
 
             private Scorer scorer;
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 scores[0] = scorer.GetScore();
             }
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => true;
+            public bool AcceptsDocsOutOfOrder => true;
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
             }
         }
@@ -682,7 +682,7 @@ namespace Lucene.Net.Index.Memory
                     int iters = storeOffsets ? 3 : 1;
                     while (!postingsReader.IsEndOfSlice)
                     {
-                        result.Append("(");
+                        result.Append('(');
 
                         for (int k = 0; k < iters; k++)
                         {
@@ -692,22 +692,22 @@ namespace Lucene.Net.Index.Memory
                                 result.Append(", ");
                             }
                         }
-                        result.Append(")");
+                        result.Append(')');
                         if (!postingsReader.IsEndOfSlice)
                         {
-                            result.Append(",");
+                            result.Append(',');
                         }
 
                     }
-                    result.Append("]");
-                    result.Append("\n");
+                    result.Append(']');
+                    result.Append('\n');
                     numPositions += freq;
                 }
 
                 result.Append("\tterms=" + info.terms.Count);
                 result.Append(", positions=" + numPositions);
                 result.Append(", memory=" + RamUsageEstimator.HumanReadableUnits(RamUsageEstimator.SizeOf(info)));
-                result.Append("\n");
+                result.Append('\n');
                 sumPositions += numPositions;
                 sumTerms += info.terms.Count;
             }

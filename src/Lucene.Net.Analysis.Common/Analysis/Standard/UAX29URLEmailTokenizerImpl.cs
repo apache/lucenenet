@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
 using System;
 using System.IO;
 
@@ -9194,7 +9195,7 @@ namespace Lucene.Net.Analysis.Standard
             /* first: make room (if you can) */
             if (zzStartRead > 0)
             {
-                System.Array.Copy(zzBuffer, zzStartRead,
+                Arrays.Copy(zzBuffer, zzStartRead,
                                  zzBuffer, 0,
                                  zzEndRead - zzStartRead);
 
@@ -9210,7 +9211,7 @@ namespace Lucene.Net.Analysis.Standard
             {
                 /* if not: blow it up */
                 char[] newBuffer = new char[zzCurrentPos * 2];
-                System.Array.Copy(zzBuffer, 0, newBuffer, 0, zzBuffer.Length);
+                Arrays.Copy(zzBuffer, 0, newBuffer, 0, zzBuffer.Length);
                 zzBuffer = newBuffer;
             }
 
@@ -9343,7 +9344,7 @@ namespace Lucene.Net.Analysis.Standard
         /// in error fallback rules.
         /// </summary>
         /// <param name="errorCode">the code of the errormessage to display</param>
-        private void ZzScanError(int errorCode)
+        private static void ZzScanError(int errorCode) // LUCENENET: CA1822: Mark members as static
         {
             string message;
             // LUCENENET specific: Defensive check so we don't have to catch IndexOutOfRangeException

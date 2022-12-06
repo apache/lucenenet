@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
      */
 
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
+    using ICharTermAttribute = Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;

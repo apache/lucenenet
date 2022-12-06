@@ -216,7 +216,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(mgr, tw, w, taxoDir, dir);
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly AtomicBoolean stop;
             private readonly SearcherTaxonomyManager mgr;

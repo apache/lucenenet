@@ -3,6 +3,7 @@
 // Public Domain: no warranty.
 // $Id: Attributes2Impl.java,v 1.5 2004/03/08 13:01:01 dmegginson Exp $
 
+using Lucene.Net.Support;
 using Sax.Helpers;
 using System;
 
@@ -218,11 +219,11 @@ namespace Sax.Ext
                 bool[] newFlags;
 
                 newFlags = new bool[length];
-                System.Array.Copy(declared, 0, newFlags, 0, declared.Length);
+                Arrays.Copy(declared, 0, newFlags, 0, declared.Length);
                 declared = newFlags;
 
                 newFlags = new bool[length];
-                System.Array.Copy(specified, 0, newFlags, 0, specified.Length);
+                Arrays.Copy(specified, 0, newFlags, 0, specified.Length);
                 specified = newFlags;
             }
 
@@ -238,9 +239,9 @@ namespace Sax.Ext
             base.RemoveAttribute(index);
             if (index != origMax)
             {
-                System.Array.Copy(declared, index + 1, declared, index,
+                Arrays.Copy(declared, index + 1, declared, index,
                     origMax - index);
-                System.Array.Copy(specified, index + 1, specified, index,
+                Arrays.Copy(specified, index + 1, specified, index,
                     origMax - index);
             }
         }

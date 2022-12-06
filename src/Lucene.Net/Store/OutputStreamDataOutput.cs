@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 
 namespace Lucene.Net.Store
@@ -25,21 +25,21 @@ namespace Lucene.Net.Store
     /// </summary>
     public class OutputStreamDataOutput : DataOutput, IDisposable
     {
-        private readonly BinaryWriter _writer;
+        private readonly Stream _os;
 
         public OutputStreamDataOutput(Stream os)
         {
-            this._writer = new BinaryWriter(os);
+            this._os = os ?? throw new ArgumentNullException(nameof(os)); // LUCENENET specific - added null guard clause
         }
 
         public override void WriteByte(byte b)
         {
-            _writer.Write(b);
+            _os.WriteByte(b);
         }
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
-            _writer.Write(b, offset, length);
+            _os.Write(b, offset, length);
         }
 
         /// <summary>
@@ -57,13 +57,12 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
         /// <c>false</c> to release only unmanaged resources.</param>
-
         // LUCENENET specific - implemented proper dispose pattern
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _writer.Dispose();
+                _os.Dispose();
             }
         }
     }

@@ -151,12 +151,11 @@ namespace Lucene.Net.Analysis.Ja
                     int bgCost = costs.Get(backPosData.lastRightID[posData.backIndex[idx]],
                                                  dict.GetLeftId(posData.backID[idx]));
 
-                    string surfaceForm = new string(fragment,
-                                                          posData.backPos[idx] - startPos,
-                                                          pos - posData.backPos[idx]);
+                    // LUCENENET: Removed unnecessary surfaceForm allocation and appended
+                    // the chars directly to the StringBuilder below.
 
                     sb.Append(" [label=\"");
-                    sb.Append(surfaceForm);
+                    sb.Append(fragment, posData.backPos[idx] - startPos, pos - posData.backPos[idx]); 
                     sb.Append(' ');
                     sb.Append(wordCost);
                     if (bgCost >= 0)
@@ -164,7 +163,7 @@ namespace Lucene.Net.Analysis.Ja
                         sb.Append('+');
                     }
                     sb.Append(bgCost);
-                    sb.Append("\"");
+                    sb.Append('\"');
                     sb.Append(attrs);
                     sb.Append("]\n");
                 }
@@ -172,7 +171,7 @@ namespace Lucene.Net.Analysis.Ja
             return sb.ToString();
         }
 
-        private string FormatHeader()
+        private static string FormatHeader() // LUCENENET: CA1822: Mark members as static
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("digraph viterbi {\n");
@@ -187,7 +186,7 @@ namespace Lucene.Net.Analysis.Ja
             return sb.ToString();
         }
 
-        private string FormatTrailer()
+        private static string FormatTrailer() // LUCENENET: CA1822: Mark members as static
         {
             return "}";
         }

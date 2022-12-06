@@ -206,23 +206,23 @@ namespace Lucene.Net.Analysis
             Search.Query queryY = new TermQuery(new Term("contents", "y"));
 
             sort.SetSort(new SortField("US", SortFieldType.STRING));
-            this.AssertMatches(searcher, queryY, sort, usResult);
+            AssertMatches(searcher, queryY, sort, usResult);
 
             sort.SetSort(new SortField("France", SortFieldType.STRING));
-            this.AssertMatches(searcher, queryX, sort, frResult);
+            AssertMatches(searcher, queryX, sort, frResult);
 
             sort.SetSort(new SortField("Sweden", SortFieldType.STRING));
-            this.AssertMatches(searcher, queryY, sort, svResult);
+            AssertMatches(searcher, queryY, sort, svResult);
 
             sort.SetSort(new SortField("Denmark", SortFieldType.STRING));
-            this.AssertMatches(searcher, queryY, sort, dkResult);
+            AssertMatches(searcher, queryY, sort, dkResult);
         }
 
         /// <summary>
         /// Make sure the documents returned by the search match the expected list
         /// </summary>
         // Copied from TestSort.java
-        private void AssertMatches(IndexSearcher searcher, Search.Query query, Sort sort, string expectedResult)
+        private static void AssertMatches(IndexSearcher searcher, Search.Query query, Sort sort, string expectedResult) // LUCENENET: CA1822: Mark members as static
         {
             ScoreDoc[] result = searcher.Search(query, null, 1000, sort).ScoreDocs;
             StringBuilder buff = new StringBuilder(10);
@@ -291,7 +291,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private class ThreadAnonymousClass : ThreadJob
+        private sealed class ThreadAnonymousClass : ThreadJob
         {
             private readonly Analyzer analyzer;
             private readonly IDictionary<string, BytesRef> map;

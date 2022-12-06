@@ -237,7 +237,12 @@ namespace Lucene.Net.Expressions.JS
                 StringWriter sw = new StringWriter();
                 e.printStackTrace();
                 //.NET Port
-                Assert.IsTrue(e.StackTrace.Contains("Lucene.Net.Expressions.CompiledExpression.Evaluate(Int32 , FunctionValues[] )"));
+                Assert.IsTrue(
+                    // LUCENENET: Apparently in .NET 7, they finally fixed this weird display issue with spaces before the comma
+                    // and closing parenthesis. It is a pass.
+                    e.StackTrace.Contains("Lucene.Net.Expressions.CompiledExpression.Evaluate(Int32, FunctionValues[])") ||
+                    e.StackTrace.Contains("Lucene.Net.Expressions.CompiledExpression.Evaluate(Int32 , FunctionValues[] )")
+                    );
             }
         }
 

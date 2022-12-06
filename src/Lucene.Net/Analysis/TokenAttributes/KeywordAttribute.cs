@@ -1,3 +1,5 @@
+using Lucene.Net.Util;
+
 namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
@@ -17,55 +19,19 @@ namespace Lucene.Net.Analysis.TokenAttributes
      * limitations under the License.
      */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
-
     /// <summary>
-    /// Default implementation of <see cref="IKeywordAttribute"/>. </summary>
-    public sealed class KeywordAttribute : Attribute, IKeywordAttribute
+    /// This attribute can be used to mark a token as a keyword. Keyword aware
+    /// <see cref="TokenStream"/>s can decide to modify a token based on the return value
+    /// of <see cref="IsKeyword"/> if the token is modified. Stemming filters for
+    /// instance can use this attribute to conditionally skip a term if
+    /// <see cref="IsKeyword"/> returns <c>true</c>.
+    /// </summary>
+    public interface IKeywordAttribute : IAttribute
     {
-        private bool keyword;
-
         /// <summary>
-        /// Initialize this attribute with the keyword value as false. </summary>
-        public KeywordAttribute()
-        {
-        }
-
-        public override void Clear()
-        {
-            keyword = false;
-        }
-
-        public override void CopyTo(IAttribute target)
-        {
-            KeywordAttribute attr = (KeywordAttribute)target;
-            attr.IsKeyword = keyword;
-        }
-
-        public override int GetHashCode()
-        {
-            return keyword ? 31 : 37;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (this == obj)
-            {
-                return true;
-            }
-            if (this.GetType() != obj.GetType())
-            {
-                return false;
-            }
-            KeywordAttribute other = (KeywordAttribute)obj;
-            return keyword == other.keyword;
-        }
-
-        public bool IsKeyword
-        {
-            get => keyword;
-            set => keyword = value;
-        }
+        /// Gets or Sets whether the current token is a keyword. <c>true</c> if the current token is a keyword, otherwise
+        /// <c>false</c>.
+        /// </summary>
+        bool IsKeyword { get; set; }
     }
 }

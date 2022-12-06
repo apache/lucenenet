@@ -808,7 +808,7 @@ namespace Lucene.Net.Facet
             IOUtils.Dispose(r, tr, w, tw, d, td);
         }
 
-        private class FilterAnonymousClass : Filter
+        private sealed class FilterAnonymousClass : Filter
         {
             private readonly TestDrillSideways outerInstance;
 
@@ -833,7 +833,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        private class CollectorAnonymousClass : ICollector
+        private sealed class CollectorAnonymousClass : ICollector
         {
             private readonly TestDrillSideways outerInstance;
 
@@ -844,25 +844,25 @@ namespace Lucene.Net.Facet
 
             internal int lastDocID;
 
-            public virtual void SetScorer(Scorer scorer)
+            public void SetScorer(Scorer scorer)
             {
             }
 
-            public virtual void Collect(int doc)
+            public void Collect(int doc)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(doc > lastDocID);
                 lastDocID = doc;
             }
 
-            public virtual void SetNextReader(AtomicReaderContext context)
+            public void SetNextReader(AtomicReaderContext context)
             {
                 lastDocID = -1;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder => false;
+            public bool AcceptsDocsOutOfOrder => false;
         }
 
-        private class DrillSidewaysAnonymousClass : DrillSideways
+        private sealed class DrillSidewaysAnonymousClass : DrillSideways
         {
             private readonly TestDrillSideways outerInstance;
 
@@ -875,7 +875,7 @@ namespace Lucene.Net.Facet
             protected override bool ScoreSubDocsAtOnce => true;
         }
 
-        private class DrillSidewaysAnonymousClass2 : DrillSideways
+        private sealed class DrillSidewaysAnonymousClass2 : DrillSideways
         {
             private readonly TestDrillSideways outerInstance;
 
@@ -985,11 +985,11 @@ namespace Lucene.Net.Facet
             }
 
             int[] topNIDs = new int[numSet];
-            Array.Copy(ids, 0, topNIDs, 0, topNIDs.Length);
+            Arrays.Copy(ids, 0, topNIDs, 0, topNIDs.Length);
             return topNIDs;
         }
 
-        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
+        private sealed class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly TestDrillSideways outerInstance;
 

@@ -70,7 +70,7 @@ steps:
 #  displayName: 'Validate Template Parameters'
 
 
-# Special case: Only supports .NET Standard 2.0
+# Special case: Only supports .NET Standard 1.3
 - template: publish-test-results.yml
   parameters:
     testProjectName: 'Lucene.Net.Tests.CodeAnalysis'
@@ -81,31 +81,21 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
-# Special case: Only supports net6.0, net5.0, and netcoreapp3.1
+# Special case: Only supports net7.0 and net6.0
+- template: publish-test-results.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Cli'
+    framework: 'net7.0' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
+    vsTestPlatform: '${{ parameters.vsTestPlatform }}'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
 - template: publish-test-results.yml
   parameters:
     testProjectName: 'Lucene.Net.Tests.Cli'
     framework: 'net6.0' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
-    vsTestPlatform: '${{ parameters.vsTestPlatform }}'
-    osName: '${{ parameters.osName }}'
-    testResultsFormat: '${{ parameters.testResultsFormat }}'
-    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
-    testResultsFileName: '${{ parameters.testResultsFileName }}'
-
-- template: publish-test-results.yml
-  parameters:
-    testProjectName: 'Lucene.Net.Tests.Cli'
-    framework: 'net5.0' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
-    vsTestPlatform: '${{ parameters.vsTestPlatform }}'
-    osName: '${{ parameters.osName }}'
-    testResultsFormat: '${{ parameters.testResultsFormat }}'
-    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
-    testResultsFileName: '${{ parameters.testResultsFileName }}'
-
-- template: publish-test-results.yml
-  parameters:
-    testProjectName: 'Lucene.Net.Tests.Cli'
-    framework: 'netcoreapp3.1' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
     vsTestPlatform: '${{ parameters.vsTestPlatform }}'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'

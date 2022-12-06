@@ -30,7 +30,7 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net451</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Benchmark</AssemblyTitle>
     <PackageTags>$(PackageTags);benchmark</PackageTags>
@@ -54,23 +54,8 @@
   <ItemGroup>
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
     <PackageReference Include="ICU4N.Collation" Version="$(ICU4NCollationPackageVersion)" />
+    <PackageReference Include="SharpZipLib" Version="$(SharpZipLibPackageVersion)" />
     <PackageReference Include="Spatial4n" Version="$(Spatial4nPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="SharpZipLib" Version="$(SharpZipLibPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-    <PackageReference Include="SharpZipLib" Version="$(SharpZipLibPackageVersion)" />
-  </ItemGroup>
-  
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="SharpZipLib" Version="$(SharpZipLibPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
-    <PackageReference Include="SharpZipLib" Version="$(SharpZipLibPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup>

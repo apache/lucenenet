@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
             return new DocIdSetAnonymousClass(acceptDocs, privateContext, weight);
         }
 
-        private class DocIdSetAnonymousClass : DocIdSet
+        private sealed class DocIdSetAnonymousClass : DocIdSet
         {
             private readonly IBits acceptDocs;
             private readonly AtomicReaderContext privateContext;

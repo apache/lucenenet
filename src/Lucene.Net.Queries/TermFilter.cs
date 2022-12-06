@@ -63,7 +63,7 @@ namespace Lucene.Net.Queries
             return new DocIdSetAnonymousClass(acceptDocs, termsEnum);
         }
 
-        private class DocIdSetAnonymousClass : DocIdSet
+        private sealed class DocIdSetAnonymousClass : DocIdSet
         {
             private readonly IBits acceptDocs;
             private readonly TermsEnum termsEnum;

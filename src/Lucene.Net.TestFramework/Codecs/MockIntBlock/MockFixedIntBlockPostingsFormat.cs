@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                 return new FixedInt32BlockIndexInputAnonymousClass(dir.OpenInput(fileName, context));
             }
 
-            private class FixedInt32BlockIndexInputAnonymousClass : FixedInt32BlockIndexInput
+            private sealed class FixedInt32BlockIndexInputAnonymousClass : FixedInt32BlockIndexInput
             {
                 public FixedInt32BlockIndexInputAnonymousClass(IndexInput input)
                     : base(input)
@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                     return new BlockReaderAnonymousClass(@in, buffer);
                 }
 
-                private class BlockReaderAnonymousClass : FixedInt32BlockIndexInput.IBlockReader
+                private sealed class BlockReaderAnonymousClass : FixedInt32BlockIndexInput.IBlockReader
                 {
                     private readonly IndexInput @in;
                     private readonly int[] buffer;
@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                 }
             }
 
-            private class FixedInt32BlockIndexOutputAnonymousClass : FixedInt32BlockIndexOutput
+            private sealed class FixedInt32BlockIndexOutputAnonymousClass : FixedInt32BlockIndexOutput
             {
                 public FixedInt32BlockIndexOutputAnonymousClass(IndexOutput output, int blockSize)
                     : base(output, blockSize)

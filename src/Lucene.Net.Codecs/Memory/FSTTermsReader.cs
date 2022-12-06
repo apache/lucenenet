@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace Lucene.Net.Codecs.Memory
     /// <summary>
     /// FST-based terms dictionary reader.
     /// <para/>
-    /// The FST directly maps each term and its metadata, 
+    /// The FST directly maps each term and its metadata,
     /// it is memory resident.
     /// <para/>
     /// @lucene.experimental
@@ -116,7 +117,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private int ReadHeader(IndexInput @in)
+        private static int ReadHeader(IndexInput @in) // LUCENENET: CA1822: Mark members as static
         {
             return CodecUtil.CheckHeader(@in, FSTTermsWriter.TERMS_CODEC_NAME, FSTTermsWriter.TERMS_VERSION_START, FSTTermsWriter.TERMS_VERSION_CURRENT);
         }
@@ -135,7 +136,7 @@ namespace Lucene.Net.Codecs.Memory
         }
 
 
-        private void CheckFieldSummary(SegmentInfo info, IndexInput @in, TermsReader field, TermsReader previous)
+        private static void CheckFieldSummary(SegmentInfo info, IndexInput @in, TermsReader field, TermsReader previous) // LUCENENET: CA1822: Mark members as static
         {
             // #docs with field must be <= #docs
             if (field.docCount < 0 || field.docCount > info.DocCount)
@@ -259,7 +260,7 @@ namespace Lucene.Net.Codecs.Memory
                 /// Decodes metadata into customized term state. </summary>
                 internal abstract void DecodeMetaData();
 
-                internal BaseTermsEnum(FSTTermsReader.TermsReader outerInstance)
+                private protected BaseTermsEnum(FSTTermsReader.TermsReader outerInstance) // LUCENENET: Changed from internal to private protected
                 {
                     this.outerInstance = outerInstance;
                     this.state = outerInstance.outerInstance.postingsReader.NewTermState();
@@ -612,7 +613,7 @@ namespace Lucene.Net.Codecs.Memory
                             frame = PopFrame();
                         }
                         return false;
-                    DFSContinue:;
+                    DFSContinue: {/* LUCENENET: intentionally blank */}
                     }
                 DFSBreak:
                     LoadMetaData();
@@ -730,8 +731,8 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Load frame for target arc(node) on fst, so that 
-                /// arc.label >= label and !fsa.reject(arc.label) 
+                /// Load frame for target arc(node) on fst, so that
+                /// arc.label >= label and !fsa.reject(arc.label)
                 /// </summary>
                 private Frame LoadCeilFrame(int label, Frame top, Frame frame)
                 {
@@ -795,7 +796,7 @@ namespace Lucene.Net.Codecs.Memory
                     if (level + 1 == stack.Length)
                     {
                         Frame[] temp = new Frame[ArrayUtil.Oversize(level + 2, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                        Array.Copy(stack, 0, temp, 0, stack.Length);
+                        Arrays.Copy(stack, 0, temp, 0, stack.Length);
                         for (int i = stack.Length; i < temp.Length; i++)
                         {
                             temp[i] = new Frame();

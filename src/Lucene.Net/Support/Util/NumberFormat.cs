@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
         //private int maximumFractionDigits;
         //private int minimumFractionDigits;
 
-        public NumberFormat(IFormatProvider formatProvider)
+        protected NumberFormat(IFormatProvider formatProvider) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.formatProvider = formatProvider;
         }

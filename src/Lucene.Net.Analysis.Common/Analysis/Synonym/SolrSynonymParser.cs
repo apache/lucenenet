@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.Synonym
             return list.ToArray();
         }
 
-        private string Unescape(string s)
+        private static string Unescape(string s) // LUCENENET: CA1822: Mark members as static
         {
             if (s.IndexOf("\\", StringComparison.Ordinal) >= 0)
             {

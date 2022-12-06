@@ -46,7 +46,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Sole constructor. </summary>
-        protected internal BaseDirectory()
+        protected BaseDirectory()
             : base()
         {
         }
@@ -58,10 +58,7 @@ namespace Lucene.Net.Store
 
         public override void ClearLock(string name)
         {
-            if (m_lockFactory != null)
-            {
-                m_lockFactory.ClearLock(name);
-            }
+            m_lockFactory?.ClearLock(name);
         }
 
         public override void SetLockFactory(LockFactory lockFactory)

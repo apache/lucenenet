@@ -1,5 +1,6 @@
 ﻿#if FEATURE_BREAKITERATOR
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -50,9 +51,9 @@ namespace Lucene.Net.Search.PostingsHighlight
                 int[] newMatchStarts = new int[newLength];
                 int[] newMatchEnds = new int[newLength];
                 BytesRef[] newMatchTerms = new BytesRef[newLength];
-                System.Array.Copy(matchStarts, 0, newMatchStarts, 0, numMatches);
-                System.Array.Copy(matchEnds, 0, newMatchEnds, 0, numMatches);
-                System.Array.Copy(matchTerms, 0, newMatchTerms, 0, numMatches);
+                Arrays.Copy(matchStarts, 0, newMatchStarts, 0, numMatches);
+                Arrays.Copy(matchEnds, 0, newMatchEnds, 0, numMatches);
+                Arrays.Copy(matchTerms, 0, newMatchTerms, 0, numMatches);
                 matchStarts = newMatchStarts;
                 matchEnds = newMatchEnds;
                 matchTerms = newMatchTerms;
@@ -64,7 +65,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             numMatches++;
         }
 
-        private class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
+        private sealed class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
             private readonly int[] starts;
             private readonly int[] ends;

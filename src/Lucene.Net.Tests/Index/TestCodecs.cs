@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
                 Array.Sort(terms);
             }
 
-            private class IndexableFieldTypeAnonymousClass : IIndexableFieldType
+            private sealed class IndexableFieldTypeAnonymousClass : IIndexableFieldType
             {
                 private readonly FieldData outerInstance;
                 private readonly bool omitTF;

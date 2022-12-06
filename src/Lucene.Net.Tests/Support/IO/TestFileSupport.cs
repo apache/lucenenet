@@ -60,6 +60,18 @@ namespace Lucene.Net.Support.IO
         }
 
         [Test, LuceneNetSpecific]
+        public void TestCreateRandomFileAsStream()
+        {
+            var dir = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "testrandomfile"));
+
+            using (var file1 = FileSupport.CreateTempFileAsStream("foo", "bar", dir, new FileStreamOptions { Access = FileAccess.Write }))
+            using (var file2 = FileSupport.CreateTempFileAsStream("foo", "bar", dir, new FileStreamOptions { Access = FileAccess.Write }))
+            {
+                Assert.AreNotEqual(file1.Name, file2.Name);
+            } 
+        }
+
+        [Test, LuceneNetSpecific]
         public void TestGetCanonicalPath()
         {
             // Should work for Unix/Windows.

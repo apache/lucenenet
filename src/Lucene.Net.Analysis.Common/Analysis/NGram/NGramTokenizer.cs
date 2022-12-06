@@ -3,6 +3,7 @@ using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
@@ -216,7 +217,7 @@ namespace Lucene.Net.Analysis.NGram
                 // compact
                 if (bufferStart >= bufferEnd - maxGram - 1 && !exhausted)
                 {
-                    Array.Copy(buffer, bufferStart, buffer, 0, bufferEnd - bufferStart);
+                    Arrays.Copy(buffer, bufferStart, buffer, 0, bufferEnd - bufferStart);
                     bufferEnd -= bufferStart;
                     lastCheckedChar -= bufferStart;
                     lastNonTokenChar -= bufferStart;

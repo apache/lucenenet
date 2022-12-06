@@ -171,7 +171,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             foreach (QueryText pathelement in values)
             {
-                path.Append("/").Append(pathelement.Value);
+                path.Append('/').Append(pathelement.Value);
             }
             return path.ToString();
         }
@@ -180,7 +180,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public override string ToQueryString(IEscapeQuerySyntax escaper)
         {
             StringBuilder path = new StringBuilder();
-            path.Append("/").Append(GetFirstPathElement());
+            path.Append('/').Append(GetFirstPathElement());
 
             foreach (QueryText pathelement in GetPathElements(1))
             {

@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.IntBlock
         private readonly IndexInput input;
         protected readonly int m_maxBlockSize;
 
-        protected internal VariableInt32BlockIndexInput(IndexInput input)
+        protected VariableInt32BlockIndexInput(IndexInput input)
         {
             this.input = input;
             m_maxBlockSize = input.ReadInt32();

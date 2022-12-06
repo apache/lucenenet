@@ -76,7 +76,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Sole constructor. 
         /// </summary>
-        protected internal TaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
+        protected TaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
         {
             this.m_indexFieldName = indexFieldName;
             this.m_taxoReader = taxoReader;

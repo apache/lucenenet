@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
                 return new SimWeightAnonymousClass(this);
             }
 
-            private class SimWeightAnonymousClass : SimWeight
+            private sealed class SimWeightAnonymousClass : SimWeight
             {
                 private readonly TFSimilarity outerInstance;
 
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search
                 return new SimScorerAnonymousClass(this);
             }
 
-            private class SimScorerAnonymousClass : SimScorer
+            private sealed class SimScorerAnonymousClass : SimScorer
             {
                 private readonly TFSimilarity outerInstance;
 

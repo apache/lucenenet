@@ -1,4 +1,5 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
@@ -73,7 +74,7 @@ namespace Lucene.Net.Store
         public override void WriteBytes(byte[] b, int offset, int length)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(pos + length <= limit);
-            System.Buffer.BlockCopy(b, offset, bytes, pos, length);
+            Arrays.Copy(b, offset, bytes, pos, length);
             pos += length;
         }
     }

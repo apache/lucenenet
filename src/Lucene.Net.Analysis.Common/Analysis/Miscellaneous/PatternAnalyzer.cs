@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -69,7 +70,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public static readonly Regex WHITESPACE_PATTERN = new Regex("\\s+", RegexOptions.Compiled);
 
         private static readonly CharArraySet EXTENDED_ENGLISH_STOP_WORDS =
-            CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT,
+            new CharArraySet(LuceneVersion.LUCENE_CURRENT,
                 new string[] {
                     "a", "about", "above", "across", "adj", "after", "afterwards",
                     "again", "against", "albeit", "all", "almost", "alone", "along",
@@ -112,7 +113,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     "with", "within", "without", "would", "xsubj", "xcal", "xauthor",
                     "xother ", "xnote", "yet", "you", "your", "yours", "yourself",
                     "yourselves"
-                    }, true));
+                    }, true).AsReadOnly();
 
         /// <summary>
         /// A lower-casing word analyzer with English stop words (can be shared
@@ -323,14 +324,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     if (len + n > output.Length) // grow capacity
                     {
                         char[] tmp = new char[Math.Max(output.Length << 1, len + n)];
-                        Array.Copy(output, 0, tmp, 0, len);
-                        Array.Copy(buffer, 0, tmp, len, n);
+                        Arrays.Copy(output, 0, tmp, 0, len);
+                        Arrays.Copy(buffer, 0, tmp, len, n);
                         buffer = output; // use larger buffer for future larger bulk reads
                         output = tmp;
                     }
                     else
                     {
-                        Array.Copy(buffer, 0, output, len, n);
+                        Arrays.Copy(buffer, 0, output, len, n);
                     }
                     len += n;
                 }

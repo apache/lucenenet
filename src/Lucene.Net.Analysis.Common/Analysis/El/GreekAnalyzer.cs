@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.El
         /// <returns> a set of default Greek-stopwords  </returns>
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_SET;
 
-        private class DefaultSetHolder
+        private static class DefaultSetHolder
         {
             internal static readonly CharArraySet DEFAULT_SET = LoadDefaultSet();
 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.El
             {
                 try
                 {
-                    return LoadStopwordSet(false, typeof(GreekAnalyzer), DEFAULT_STOPWORD_FILE, "#");
+                    return LoadStopwordSet(false, typeof(GreekAnalyzer), DEFAULT_STOPWORD_FILE, "#").AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {

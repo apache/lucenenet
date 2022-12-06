@@ -90,7 +90,7 @@
 //            }
 //        }
 
-//        private class ThreadAnonymousClass : ThreadJob
+//        private sealed class ThreadAnonymousClass : ThreadJob
 //        {
 //            private readonly TestIndexWriterOnJRECrash outerInstance;
 
@@ -165,7 +165,7 @@
 //                return t;
 //            }
 
-//            private class ThreadAnonymousClass2 : ThreadJob
+//            private sealed class ThreadAnonymousClass2 : ThreadJob
 //            {
 //                private InputStream From;
 //                private OutputStream To;

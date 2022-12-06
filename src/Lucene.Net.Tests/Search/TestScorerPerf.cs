@@ -180,7 +180,7 @@ namespace Lucene.Net.Search
             return result;
         }
 
-        private class FilterAnonymousClass : Filter
+        private sealed class FilterAnonymousClass : Filter
         {
             private readonly BitSet rnd;
 

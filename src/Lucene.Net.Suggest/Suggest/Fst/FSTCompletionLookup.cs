@@ -153,8 +153,8 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
-            FileInfo tempInput = FileSupport.CreateTempFile(typeof(FSTCompletionLookup).Name, ".input", OfflineSorter.DefaultTempDir());
-            FileInfo tempSorted = FileSupport.CreateTempFile(typeof(FSTCompletionLookup).Name, ".sorted", OfflineSorter.DefaultTempDir());
+            using FileStream tempInput = FileSupport.CreateTempFileAsStream(typeof(FSTCompletionLookup).Name, ".input", OfflineSorter.DefaultTempDir);
+            using FileStream tempSorted = FileSupport.CreateTempFileAsStream(typeof(FSTCompletionLookup).Name, ".sorted", OfflineSorter.DefaultTempDir);
 
             OfflineSorter.ByteSequencesWriter writer = new OfflineSorter.ByteSequencesWriter(tempInput);
             OfflineSorter.ByteSequencesReader reader = null;
@@ -182,12 +182,13 @@ namespace Lucene.Net.Search.Suggest.Fst
                     output.WriteBytes(spare.Bytes, spare.Offset, spare.Length);
                     writer.Write(buffer, 0, output.Position);
                 }
-                writer.Dispose();
+                tempInput.Position = 0;
 
                 // We don't know the distribution of scores and we need to bucket them, so we'll sort
                 // and divide into equal buckets.
                 OfflineSorter.SortInfo info = (new OfflineSorter()).Sort(tempInput, tempSorted);
-                tempInput.Delete();
+                // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
+                writer.Dispose();
                 FSTCompletionBuilder builder = new FSTCompletionBuilder(buckets, sorter = new ExternalRefSorter(new OfflineSorter()), sharedTailLength);
 
                 int inputLines = info.Lines;
@@ -241,9 +242,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 {
                     IOUtils.DisposeWhileHandlingException(reader, writer, sorter);
                 }
-
-                tempInput.Delete();
-                tempSorted.Delete();
+                // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
             }
         }
 

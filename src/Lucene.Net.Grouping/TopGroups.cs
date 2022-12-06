@@ -228,7 +228,7 @@ namespace Lucene.Net.Search.Grouping
                 else
                 {
                     mergedScoreDocs = new ScoreDoc[mergedTopDocs.ScoreDocs.Length - docOffset];
-                    Array.Copy(mergedTopDocs.ScoreDocs, docOffset, mergedScoreDocs, 0, mergedTopDocs.ScoreDocs.Length - docOffset);
+                    Arrays.Copy(mergedTopDocs.ScoreDocs, docOffset, mergedScoreDocs, 0, mergedTopDocs.ScoreDocs.Length - docOffset);
                 }
 
                 float groupScore;

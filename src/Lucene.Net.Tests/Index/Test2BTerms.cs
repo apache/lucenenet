@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
                     {
                         return new MyTermAttributeImpl();
                     }
-                    if (attClass.IsSubclassOf(typeof(CharTermAttribute)))
+                    if (typeof(ICharTermAttribute).IsAssignableFrom(attClass))
                     {
                         throw new ArgumentException("no");
                     }

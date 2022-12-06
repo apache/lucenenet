@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
             searcher = NewSearcher(reader);
         }
 
-        private class AnalyzerAnonymousClass : Analyzer
+        private sealed class AnalyzerAnonymousClass : Analyzer
         {
             public AnalyzerAnonymousClass()
             {

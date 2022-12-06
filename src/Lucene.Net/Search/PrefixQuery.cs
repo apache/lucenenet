@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
             if (!Field.Equals(field, StringComparison.Ordinal))
             {
                 buffer.Append(Field);
-                buffer.Append(":");
+                buffer.Append(':');
             }
             buffer.Append(_prefix.Text);
             buffer.Append('*');

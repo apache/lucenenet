@@ -426,7 +426,7 @@ namespace Lucene.Net.Util
         public Int64BitSet Clone()
         {
             long[] bits = new long[this.bits.Length];
-            Array.Copy(this.bits, 0, bits, 0, bits.Length);
+            Arrays.Copy(this.bits, 0, bits, 0, bits.Length);
             return new Int64BitSet(bits, numBits);
         }
 

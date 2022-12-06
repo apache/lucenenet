@@ -1,8 +1,8 @@
-﻿using J2N.Text;
+using J2N.Text;
+using Lucene.Net.Util;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -23,474 +23,266 @@ namespace Lucene.Net.Analysis.TokenAttributes
     * limitations under the License.
     */
 
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using Attribute = Lucene.Net.Util.Attribute;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IAttribute = Lucene.Net.Util.IAttribute;
-    using IAttributeReflector = Lucene.Net.Util.IAttributeReflector;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
-
     /// <summary>
-    /// Default implementation of <see cref="ICharTermAttribute"/>. </summary>
-    public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute, IAppendable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    /// The term text of a <see cref="Token"/>.
+    /// </summary>
+    public interface ICharTermAttribute : IAttribute, ICharSequence, IAppendable
     {
-        private const int MIN_BUFFER_SIZE = 10;
+        /// <summary>
+        /// Copies the contents of buffer, starting at offset for
+        /// length characters, into the termBuffer array. </summary>
+        /// <param name="buffer"> the buffer to copy </param>
+        /// <param name="offset"> the index in the buffer of the first character to copy </param>
+        /// <param name="length"> the number of characters to copy </param>
+        void CopyBuffer(char[] buffer, int offset, int length);
 
-        private char[] termBuffer = CreateBuffer(MIN_BUFFER_SIZE);
-        private int termLength = 0;
 
         /// <summary>
-        /// Initialize this attribute with empty term text </summary>
-        public CharTermAttribute()
-        {
-        }
-
-        // LUCENENET specific - ICharSequence member from J2N
-        bool ICharSequence.HasValue => termBuffer != null;
-
-        public void CopyBuffer(char[] buffer, int offset, int length)
-        {
-            GrowTermBuffer(length);
-            Array.Copy(buffer, offset, termBuffer, 0, length);
-            termLength = length;
-        }
-
-        char[] ICharTermAttribute.Buffer => termBuffer;
-
-        [WritableArray]
-        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public char[] Buffer => termBuffer;
-
-        public char[] ResizeBuffer(int newSize)
-        {
-            if (termBuffer.Length < newSize)
-            {
-                // Not big enough; create a new array with slight
-                // over allocation and preserve content
-                
-                // LUCENENET: Resize rather than copy
-                Array.Resize(ref termBuffer, ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR));
-            }
-            return termBuffer;
-        }
-
-        private void GrowTermBuffer(int newSize)
-        {
-            if (termBuffer.Length < newSize)
-            {
-                // Not big enough; create a new array with slight
-                // over allocation:
-                termBuffer = new char[ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR)];
-            }
-        }
-
-        int ICharTermAttribute.Length { get => Length; set => SetLength(value); }
-
-        int ICharSequence.Length => Length;
-
-        public int Length
-        {
-            get => termLength;
-            set => SetLength(value);
-        }
-
-        public CharTermAttribute SetLength(int length)
-        {
-            if (length > termBuffer.Length)
-            {
-                throw new ArgumentException("length " + length + " exceeds the size of the termBuffer (" + termBuffer.Length + ")");
-            }
-            termLength = length;
-            return this;
-        }
-
-        public CharTermAttribute SetEmpty()
-        {
-            termLength = 0;
-            return this;
-        }
-
-        // *** TermToBytesRefAttribute interface ***
-        private BytesRef bytes = new BytesRef(MIN_BUFFER_SIZE);
-
-        public virtual void FillBytesRef()
-        {
-            UnicodeUtil.UTF16toUTF8(termBuffer, 0, termLength, bytes);
-        }
-
-        public virtual BytesRef BytesRef => bytes;
-
-        // *** CharSequence interface ***
-
-        // LUCENENET specific: Replaced CharAt(int) with this[int] to .NETify
-
-        char ICharSequence.this[int index] => this[index];
-
-        char ICharTermAttribute.this[int index] { get => this[index]; set => this[index] = value; }
-
-        // LUCENENET specific indexer to make CharTermAttribute act more like a .NET type
-        public char this[int index]
-        {
-            get
-            {
-                if (index < 0 || index >= termLength) // LUCENENET: Added better bounds checking
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index));
-                }
-
-                return termBuffer[index];
-            }
-            set
-            {
-                if (index < 0 || index >= termLength)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index)); // LUCENENET: Added better bounds checking
-                }
-
-                termBuffer[index] = value;
-            }
-        }
-
-        public ICharSequence Subsequence(int startIndex, int length)
-        {
-            // From Apache Harmony String class
-            if (termBuffer is null || (startIndex == 0 && length == termBuffer.Length))
-            {
-                return new CharArrayCharSequence(termBuffer);
-            }
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length));
-            if (startIndex + length > Length)
-                throw new ArgumentOutOfRangeException("", $"{nameof(startIndex)} + {nameof(length)} > {nameof(Length)}");
-
-            char[] result = new char[length];
-            for (int i = 0, j = startIndex; i < length; i++, j++)
-                result[i] = termBuffer[j];
-
-            return new CharArrayCharSequence(result);
-        }
-
-        // *** Appendable interface ***
-
-
-        public CharTermAttribute Append(string value, int startIndex, int charCount)
-        {
-            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
-            if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount));
-
-            if (value is null)
-            {
-                if (startIndex == 0 && charCount == 0)
-                    return this;
-                throw new ArgumentNullException(nameof(value));
-            }
-            if (charCount == 0)
-                return this;
-            if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
-
-            value.CopyTo(startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
-            Length += charCount;
-
-            return this;
-        }
-
-        public CharTermAttribute Append(char value)
-        {
-            ResizeBuffer(termLength + 1)[termLength++] = value;
-            return this;
-        }
-
-        public CharTermAttribute Append(char[] value)
-        {
-            if (value is null)
-                //return AppendNull();
-                return this; // No-op
-
-            int len = value.Length;
-            value.CopyTo(InternalResizeBuffer(termLength + len), termLength);
-            Length += len;
-
-            return this;
-        }
-
-        public CharTermAttribute Append(char[] value, int startIndex, int charCount)
-        {
-            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
-            if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount));
-
-            if (value is null)
-            {
-                if (startIndex == 0 && charCount == 0)
-                    return this;
-                throw new ArgumentNullException(nameof(value));
-            }
-            if (charCount == 0)
-                return this;
-            if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
-
-            Array.Copy(value, startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
-            Length += charCount;
-
-            return this;
-        }
-
-        public CharTermAttribute Append(string value)
-        {
-            return Append(value, 0, value is null ? 0 : value.Length);
-        }
-
-        public CharTermAttribute Append(StringBuilder value)
-        {
-            if (value is null) // needed for Appendable compliance
-            {
-                //return AppendNull();
-                return this; // No-op
-            }
-
-            return Append(value.ToString());
-        }
-
-        public CharTermAttribute Append(StringBuilder value, int startIndex, int charCount)
-        {
-            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
-            if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount));
-
-            if (value is null)
-            {
-                if (startIndex == 0 && charCount == 0)
-                    return this;
-                throw new ArgumentNullException(nameof(value));
-            }
-            if (charCount == 0)
-                return this;
-            if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
-
-            return Append(value.ToString(startIndex, charCount));
-        }
-
-        public CharTermAttribute Append(ICharTermAttribute value)
-        {
-            if (value is null) // needed for Appendable compliance
-            {
-                //return AppendNull();
-                return this; // No-op
-            }
-            int len = value.Length;
-            Array.Copy(value.Buffer, 0, ResizeBuffer(termLength + len), termLength, len);
-            termLength += len;
-            return this;
-        }
-
-        public CharTermAttribute Append(ICharSequence value)
-        {
-            if (value is null)
-                //return AppendNull();
-                return this; // No-op
-
-            return Append(value, 0, value.Length);
-        }
-
-        public CharTermAttribute Append(ICharSequence value, int startIndex, int charCount)
-        {
-            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
-            if (startIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
-            if (charCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(charCount));
-
-            if (value is null)
-            {
-                if (startIndex == 0 && charCount == 0)
-                    return this;
-                throw new ArgumentNullException(nameof(value));
-            }
-            if (charCount == 0)
-                return this;
-            if (startIndex > value.Length - charCount)
-                throw new ArgumentOutOfRangeException(nameof(startIndex));
-
-            ResizeBuffer(termLength + charCount);
-
-            for (int i = 0; i < charCount; i++)
-                termBuffer[termLength++] = value[startIndex + i];
-
-            return this;
-        }
-
-        private char[] InternalResizeBuffer(int length)
-        {
-            if (termBuffer.Length < length)
-            {
-                char[] newBuffer = CreateBuffer(length);
-                Array.Copy(termBuffer, 0, newBuffer, 0, termBuffer.Length);
-                this.termBuffer = newBuffer;
-            }
-
-            return termBuffer;
-        }
-
-        private static char[] CreateBuffer(int length)
-        {
-            return new char[ArrayUtil.Oversize(length, RamUsageEstimator.NUM_BYTES_CHAR)];
-        }
-
-        // LUCENENET: Not used - we are doing a no-op when the value is null
-        //private CharTermAttribute AppendNull()
-        //{
-        //    ResizeBuffer(termLength + 4);
-        //    termBuffer[termLength++] = 'n';
-        //    termBuffer[termLength++] = 'u';
-        //    termBuffer[termLength++] = 'l';
-        //    termBuffer[termLength++] = 'l';
-        //    return this;
-        //}
-
-        // *** Attribute ***
-
-        public override int GetHashCode()
-        {
-            int code = termLength;
-            code = code * 31 + ArrayUtil.GetHashCode(termBuffer, 0, termLength);
-            return code;
-        }
-
-        public override void Clear()
-        {
-            termLength = 0;
-        }
-
-        public override object Clone()
-        {
-            CharTermAttribute t = (CharTermAttribute)base.Clone();
-            // Do a deep clone
-            t.termBuffer = new char[this.termLength];
-            Array.Copy(this.termBuffer, 0, t.termBuffer, 0, this.termLength);
-            t.bytes = BytesRef.DeepCopyOf(bytes);
-            return t;
-        }
-
-        public override bool Equals(object other)
-        {
-            if (other == this)
-            {
-                return true;
-            }
-
-            if (other is CharTermAttribute o)
-            {
-                if (termLength != o.termLength)
-                {
-                    return false;
-                }
-                for (int i = 0; i < termLength; i++)
-                {
-                    if (termBuffer[i] != o.termBuffer[i])
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Returns solely the term text as specified by the
-        /// <see cref="ICharSequence"/> interface.
-        /// <para/>
-        /// this method changed the behavior with Lucene 3.1,
-        /// before it returned a String representation of the whole
-        /// term with all attributes.
-        /// this affects especially the
-        /// <see cref="Lucene.Net.Analysis.Token"/> subclass.
+        /// Returns the internal termBuffer character array which
+        /// you can then directly alter.  If the array is too
+        /// small for your token, use <see cref="ResizeBuffer(int)"/>
+        /// to increase it.  After
+        /// altering the buffer be sure to call <see cref="SetLength(int)"/> 
+        /// to record the number of valid
+        /// characters that were placed into the termBuffer.
+        /// <para>
+        /// <b>NOTE</b>: The returned buffer may be larger than
+        /// the valid <see cref="Length"/>.
+        /// </para>
         /// </summary>
-        public override string ToString()
-        {
-            return new string(termBuffer, 0, termLength);
-        }
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
+        char[] Buffer { get; }
 
-        public override void ReflectWith(IAttributeReflector reflector)
-        {
-            reflector.Reflect(typeof(ICharTermAttribute), "term", ToString());
-            FillBytesRef();
-            reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(bytes));
-        }
+        /// <summary>
+        /// Grows the termBuffer to at least size <paramref name="newSize"/>, preserving the
+        /// existing content. </summary>
+        /// <param name="newSize"> minimum size of the new termBuffer </param>
+        /// <returns> newly created termBuffer with length >= newSize </returns>
+        char[] ResizeBuffer(int newSize);
 
-        public override void CopyTo(IAttribute target)
-        {
-            CharTermAttribute t = (CharTermAttribute)target;
-            t.CopyBuffer(termBuffer, 0, termLength);
-        }
+        /// <summary>
+        /// Gets or Sets the number of valid characters (in
+        /// the termBuffer array.
+        /// <seealso cref="SetLength(int)"/>
+        /// </summary>
+        new int Length { get; set; } // LUCENENET: To mimic StringBuilder, we allow this to be settable.
 
-        #region ICharTermAttribute Members
+        // LUCENENET specific: Redefining this[] to make it settable
+        new char this[int index] { get; set; }
 
-        void ICharTermAttribute.CopyBuffer(char[] buffer, int offset, int length) => CopyBuffer(buffer, offset, length);
+        /// <summary>
+        /// Set number of valid characters (length of the term) in
+        /// the termBuffer array. Use this to truncate the termBuffer
+        /// or to synchronize with external manipulation of the termBuffer.
+        /// Note: to grow the size of the array,
+        /// use <see cref="ResizeBuffer(int)"/> first. 
+        /// NOTE: This is exactly the same operation as calling the <see cref="Length"/> setter, the primary 
+        /// difference is that this method returns a reference to the current object so it can be chained.
+        /// <code>
+        /// obj.SetLength(30).Append("hey you");
+        /// </code>
+        /// </summary>
+        /// <param name="length"> the truncated length </param>
+        ICharTermAttribute SetLength(int length); 
 
-        char[] ICharTermAttribute.ResizeBuffer(int newSize) => ResizeBuffer(newSize);
+        /// <summary>
+        /// Sets the length of the termBuffer to zero.
+        /// Use this method before appending contents.
+        /// </summary>
+        ICharTermAttribute SetEmpty();
 
-        ICharTermAttribute ICharTermAttribute.SetLength(int length) => SetLength(length);
+        // the following methods are redefined to get rid of IOException declaration:
 
-        ICharTermAttribute ICharTermAttribute.SetEmpty() => SetEmpty();
+        /// <summary>
+        /// Appends the contents of the <see cref="ICharSequence"/> to this character sequence.
+        /// <para/>
+        /// The characters of the <see cref="ICharSequence"/> argument are appended, in order, increasing the length of
+        /// this sequence by the length of the argument. If <paramref name="value"/> is <c>null</c>, this method is a no-op.
+        /// <para/>
+        /// IMPORTANT: This method uses .NET semantics. In Lucene, a <c>null</c> <paramref name="value"/> would append the
+        /// string <c>"null"</c> to the instance, but in Lucene.NET a <c>null</c> value will be ignored.
+        /// </summary>
+        new ICharTermAttribute Append(ICharSequence value);
 
-        ICharTermAttribute ICharTermAttribute.Append(ICharSequence value) => Append(value);
+        /// <summary>
+        /// Appends the a string representation of the specified <see cref="ICharSequence"/> to this instance.
+        /// <para>
+        /// The characters of the <see cref="ICharSequence"/> argument are appended, in order, increasing the length of
+        /// this sequence by the length of <paramref name="count"/>. If <paramref name="value"/> is <c>null</c>
+        /// and <paramref name="startIndex"/> and <paramref name="count"/> are not 0, an
+        /// <see cref="ArgumentNullException"/> is thrown.
+        /// </para>
+        /// </summary>
+        /// <param name="value">The sequence of characters to append.</param>
+        /// <param name="startIndex">The start index of the <see cref="ICharSequence"/> to begin copying characters.</param>
+        /// <param name="count">The number of characters to append.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <c>null</c>, and
+        /// <paramref name="startIndex"/> and <paramref name="count"/> are not zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="count"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
+        /// </exception>
+        new ICharTermAttribute Append(ICharSequence value, int startIndex, int count); // LUCENENET: changed to startIndex/length to match .NET
 
-        ICharTermAttribute ICharTermAttribute.Append(ICharSequence value, int startIndex, int count) => Append(value, startIndex, count);
+        /// <summary>
+        /// Appends the supplied <see cref="char"/> to this character sequence.
+        /// </summary>
+        /// <param name="value">The <see cref="char"/> to append.</param>
+        new ICharTermAttribute Append(char value);
 
-        ICharTermAttribute ICharTermAttribute.Append(char value) => Append(value);
+        /// <summary>
+        /// Appends the contents of the <see cref="T:char[]"/> array to this character sequence.
+        /// <para/>
+        /// The characters of the <see cref="T:char[]"/> argument are appended, in order, increasing the length of
+        /// this sequence by the length of the <paramref name="value"/>.
+        /// If <paramref name="value"/> is <c>null</c>, this method is a no-op.
+        /// <para/>
+        /// This method uses .NET semantics. In Lucene, a <c>null</c> <paramref name="value"/> would append the
+        /// string <c>"null"</c> to the instance, but in Lucene.NET a <c>null</c> value will be safely ignored.
+        /// </summary>
+        /// <param name="value">The <see cref="T:char[]"/> array to append.</param>
+        /// <remarks>
+        /// LUCENENET specific method, added to simulate using the CharBuffer class in Java.
+        /// </remarks>
+        new ICharTermAttribute Append(char[] value);
 
-        ICharTermAttribute ICharTermAttribute.Append(char[] value) => Append(value);
+        /// <summary>
+        /// Appends the string representation of the <see cref="T:char[]"/> array to this instance.
+        /// <para>
+        /// The characters of the <see cref="T:char[]"/> argument are appended, in order, increasing the length of
+        /// this sequence by the length of the <paramref name="value"/>. If <paramref name="value"/> is <c>null</c>
+        /// and <paramref name="startIndex"/> and <paramref name="count"/> are not 0, an
+        /// <see cref="ArgumentNullException"/> is thrown.
+        /// </para>
+        /// </summary>
+        /// <param name="value">The sequence of characters to append.</param>
+        /// <param name="startIndex">The start index of the <see cref="T:char[]"/> to begin copying characters.</param>
+        /// <param name="count">The number of characters to append.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <c>null</c>, and
+        /// <paramref name="startIndex"/> and <paramref name="count"/> are not zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="count"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
+        /// </exception>
+        /// <remarks>
+        /// LUCENENET specific method, added to simulate using the CharBuffer class in Java. Note that
+        /// the <see cref="CopyBuffer(char[], int, int)"/> method provides similar functionality.
+        /// </remarks>
+        new ICharTermAttribute Append(char[] value, int startIndex, int count); // LUCENENET: changed to startIndex/length to match .NET
 
-        ICharTermAttribute ICharTermAttribute.Append(char[] value, int startIndex, int count) => Append(value, startIndex, count);
+        /// <summary>
+        /// Appends the specified <see cref="string"/> to this character sequence.
+        /// <para>
+        /// The characters of the <see cref="string"/> argument are appended, in order, increasing the length of
+        /// this sequence by the length of the argument. If argument is <c>null</c>, this method is a no-op.
+        /// <para/>
+        /// This method uses .NET semantics. In Lucene, a <c>null</c> <paramref name="value"/> would append the
+        /// string <c>"null"</c> to the instance, but in Lucene.NET a <c>null</c> value will be safely ignored.
+        /// </para>
+        /// </summary>
+        /// <param name="value">The sequence of characters to append.</param>
+        /// <remarks>
+        /// LUCENENET specific method, added because the .NET <see cref="string"/> data type 
+        /// doesn't implement <see cref="ICharSequence"/>. 
+        /// </remarks>
+        new ICharTermAttribute Append(string value);
 
-        ICharTermAttribute ICharTermAttribute.Append(string value) => Append(value);
+        /// <summary>
+        /// Appends the contents of the <see cref="string"/> to this character sequence.
+        /// <para>
+        /// The characters of the <see cref="string"/> argument are appended, in order, increasing the length of
+        /// this sequence by the length of <paramref name="value"/>. If <paramref name="value"/> is <c>null</c>
+        /// and <paramref name="startIndex"/> and <paramref name="count"/> are not 0, an
+        /// <see cref="ArgumentNullException"/> is thrown.
+        /// </para>
+        /// </summary>
+        /// <param name="value">The sequence of characters to append.</param>
+        /// <param name="startIndex">The start index of the <see cref="string"/> to begin copying characters.</param>
+        /// <param name="count">The number of characters to append.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <c>null</c>, and
+        /// <paramref name="startIndex"/> and <paramref name="count"/> are not zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="count"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
+        /// </exception>
+        /// <remarks>
+        /// LUCENENET specific method, added because the .NET <see cref="string"/> data type 
+        /// doesn't implement <see cref="ICharSequence"/>. 
+        /// </remarks>
+        new ICharTermAttribute Append(string value, int startIndex, int count); // LUCENENET TODO: API - change to startIndex/length to match .NET
 
-        ICharTermAttribute ICharTermAttribute.Append(string value, int startIndex, int count) => Append(value, startIndex, count);
 
-        ICharTermAttribute ICharTermAttribute.Append(StringBuilder value) => Append(value);
+        /// <summary>
+        /// Appends a string representation of the specified <see cref="StringBuilder"/> to this character sequence.
+        /// <para>
+        /// The characters of the <see cref="StringBuilder"/> argument are appended, in order, increasing the length of
+        /// this sequence by the length of the argument. If argument is <c>null</c>, this method is a no-op.
+        /// <para/>
+        /// This method uses .NET semantics. In Lucene, a <c>null</c> <paramref name="value"/> would append the
+        /// string <c>"null"</c> to the instance, but in Lucene.NET a <c>null</c> value will be safely ignored.
+        /// </para>
+        /// </summary>
+        new ICharTermAttribute Append(StringBuilder value);
 
-        ICharTermAttribute ICharTermAttribute.Append(StringBuilder value, int startIndex, int count) => Append(value, startIndex, count);
+        /// <summary>
+        /// Appends a string representation of the specified <see cref="StringBuilder"/> to this character sequence.
+        /// <para/>The characters of the <see cref="StringBuilder"/> argument are appended, in order, increasing the length of
+        /// this sequence by the length of the argument. If <paramref name="value"/> is <c>null</c>
+        /// and <paramref name="startIndex"/> and <paramref name="count"/> are not 0, an
+        /// <see cref="ArgumentNullException"/> is thrown.
+        /// </summary>
+        /// <param name="value">The sequence of characters to append.</param>
+        /// <param name="startIndex">The start index of the <see cref="StringBuilder"/> to begin copying characters.</param>
+        /// <param name="count">The number of characters to append.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <c>null</c>, and
+        /// <paramref name="startIndex"/> and <paramref name="count"/> are not zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="count"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
+        /// </exception>
+        /// <remarks>
+        /// LUCENENET specific method, added because the .NET <see cref="StringBuilder"/> data type 
+        /// doesn't implement <see cref="ICharSequence"/>.
+        /// </remarks>
+        new ICharTermAttribute Append(StringBuilder value, int startIndex, int count);
 
-        ICharTermAttribute ICharTermAttribute.Append(ICharTermAttribute value) => Append(value);
-
-        #endregion
-
-        #region IAppendable Members
-
-        IAppendable IAppendable.Append(char value) => Append(value);
-
-        IAppendable IAppendable.Append(string value) => Append(value);
-
-        IAppendable IAppendable.Append(string value, int startIndex, int count) => Append(value, startIndex, count);
-
-        IAppendable IAppendable.Append(StringBuilder value) => Append(value);
-
-        IAppendable IAppendable.Append(StringBuilder value, int startIndex, int count) => Append(value, startIndex, count);
-
-        IAppendable IAppendable.Append(char[] value) => Append(value);
-
-        IAppendable IAppendable.Append(char[] value, int startIndex, int count) => Append(value, startIndex, count);
-
-        IAppendable IAppendable.Append(ICharSequence value) => Append(value);
-
-        IAppendable IAppendable.Append(ICharSequence value, int startIndex, int count) => Append(value, startIndex, count);
-
-
-        #endregion
+        /// <summary>
+        /// Appends the contents of the other <see cref="ICharTermAttribute"/> to this character sequence.
+        /// <para/>The characters of the <see cref="ICharTermAttribute"/> argument are appended, in order, increasing the length of
+        /// this sequence by the length of the argument. If argument is <c>null</c>, this method is a no-op.
+        /// <para/>
+        /// This method uses .NET semantics. In Lucene, a <c>null</c> <paramref name="value"/> would append the
+        /// string <c>"null"</c> to the instance, but in Lucene.NET a <c>null</c> value will be safely ignored.
+        /// </summary>
+        /// <param name="value">The sequence of characters to append.</param>
+        ICharTermAttribute Append(ICharTermAttribute value);
     }
 }

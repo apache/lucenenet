@@ -114,7 +114,7 @@ namespace Lucene.Net.Store
             return new IndexInputSlicerAnonymousClass(context, path, fc);
         }
 
-        private class IndexInputSlicerAnonymousClass : IndexInputSlicer
+        private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly IOContext context;
             private readonly FileInfo path;

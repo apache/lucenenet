@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             return new Lucene3xFieldsAnonymousClass(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, state.TermsIndexDivisor);
         }
 
-        private class Lucene3xFieldsAnonymousClass : Lucene3xFields
+        private sealed class Lucene3xFieldsAnonymousClass : Lucene3xFields
         {
             public Lucene3xFieldsAnonymousClass(Store.Directory directory, FieldInfos fieldInfos, SegmentInfo segmentInfo, Store.IOContext context, int termsIndexDivisor)
                 : base(directory, fieldInfos, segmentInfo, context, termsIndexDivisor)

@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
             if (!Field.Equals(field, StringComparison.Ordinal))
             {
                 buffer.Append(Field);
-                buffer.Append(":");
+                buffer.Append(':');
             }
             buffer.Append(includeLower ? '[' : '{');
             // TODO: all these toStrings for queries should just output the bytes, it might not be UTF-8!

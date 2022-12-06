@@ -2,7 +2,6 @@
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Text;
-using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
 {
@@ -24,81 +23,22 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
      */
 
     /// <summary>
-    /// Morphosyntactic annotations for surface forms.
+    /// Morfologik provides morphosyntactic annotations for
+    /// surface forms. For the exact format and description of these,
+    /// see the project's documentation.
     /// </summary>
-    /// <seealso cref="IMorphosyntacticTagsAttribute"/>
-    public class MorphosyntacticTagsAttribute : Attribute, IMorphosyntacticTagsAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public interface IMorphosyntacticTagsAttribute : IAttribute
     {
-        /// <summary>Initializes this attribute with no tags</summary>
-        public MorphosyntacticTagsAttribute() { }
-
         /// <summary>
-        /// A list of potential tag variants for the current token.
+        /// Gets or sets the POS tag of the term. A single word may have multiple POS tags,
+        /// depending on the interpretation (context disambiguation is typically needed
+        /// to determine which particular tag is appropriate).
+        /// <para/>
+        /// The default value (no-value) is null. Returns a list of POS tags corresponding to current lemma.
         /// </summary>
-        private IList<StringBuilder> tags;
+        IList<StringBuilder> Tags { get; set; }
 
-        /// <summary>
-        /// Gets or sets the POS tag of the term. If you need a copy of this char sequence, copy
-        /// its contents (and clone <see cref="StringBuilder"/>s) because it changes with
-        /// each new term to avoid unnecessary memory allocations.
-        /// </summary>
-        public virtual IList<StringBuilder> Tags
-        {
-            get => tags;
-            set => tags = value;
-        }
-
-
-        public override void Clear()
-        {
-            tags = null;
-        }
-
-
-        public override bool Equals(object other)
-        {
-            if (other is null) return false;
-            if (other is IMorphosyntacticTagsAttribute morphosyntacticTagsAttribute)
-            {
-                return Equal(this.Tags, morphosyntacticTagsAttribute.Tags);
-            }
-            return false;
-        }
-
-        private bool Equal(object l1, object l2)
-        {
-            return l1 is null ? (l2 is null) : (l1.Equals(l2));
-        }
-
-        public override int GetHashCode()
-        {
-            return this.tags is null ? 0 : tags.GetHashCode();
-        }
-
-        public override void CopyTo(IAttribute target)
-        {
-            IList<StringBuilder> cloned = null;
-            if (tags != null)
-            {
-                cloned = new JCG.List<StringBuilder>(tags.Count);
-                foreach (StringBuilder b in tags)
-                {
-                    cloned.Add(new StringBuilder(b.ToString()));
-                }
-            }
-            ((IMorphosyntacticTagsAttribute)target).Tags = cloned;
-        }
-
-        public override object Clone()
-        {
-            MorphosyntacticTagsAttribute cloned = new MorphosyntacticTagsAttribute();
-            this.CopyTo(cloned);
-            return cloned;
-        }
-
-        public override void ReflectWith(IAttributeReflector reflector)
-        {
-            reflector.Reflect(typeof(MorphosyntacticTagsAttribute), "tags", tags);
-        }
+        /// <summary>Clear to default value.</summary>
+        void Clear();
     }
 }

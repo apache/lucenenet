@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             TextReader reader = new StringReader
                 ("  Don't,break.at?/(punct)!  \u201Cnice\u201D\r\n\r\n85_At:all; `really\" +2=3$5,&813 !@#%$^)(*@#$   ");
             IDictionary<string, string> args = new Dictionary<string, string>();
-            args.Put(ICUTokenizerFactory.RULEFILES, "Latn:Latin-break-only-on-whitespace.rbbi");
+            args[ICUTokenizerFactory.RULEFILES] = "Latn:Latin-break-only-on-whitespace.rbbi";
             ICUTokenizerFactory factory = new ICUTokenizerFactory(args);
             factory.Inform(new ClasspathResourceLoader(this.GetType()));
             TokenStream stream = factory.Create(reader);
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             TextReader reader = new StringReader
                 ("One-two punch.  Brang-, not brung-it.  This one--not that one--is the right one, -ish.");
             IDictionary<string, string> args = new Dictionary<string, string>();
-            args.Put(ICUTokenizerFactory.RULEFILES, "Latn:Latin-dont-break-on-hyphens.rbbi");
+            args[ICUTokenizerFactory.RULEFILES] = "Latn:Latin-dont-break-on-hyphens.rbbi";
             ICUTokenizerFactory factory = new ICUTokenizerFactory(args);
             factory.Inform(new ClasspathResourceLoader(GetType()));
             TokenStream stream = factory.Create(reader);
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             TextReader reader = new StringReader
                 ("Some English.  Немного русский.  ข้อความภาษาไทยเล็ก ๆ น้อย ๆ  More English.");
             IDictionary<string, string> args = new Dictionary<string, string>();
-            args.Put(ICUTokenizerFactory.RULEFILES, "Cyrl:KeywordTokenizer.rbbi,Thai:KeywordTokenizer.rbbi");
+            args[ICUTokenizerFactory.RULEFILES] = "Cyrl:KeywordTokenizer.rbbi,Thai:KeywordTokenizer.rbbi";
             ICUTokenizerFactory factory = new ICUTokenizerFactory(args);
             factory.Inform(new ClasspathResourceLoader(GetType()));
             TokenStream stream = factory.Create(reader);

@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Construct a token stream processing the given input. </summary>
-        protected internal Tokenizer(TextReader input)
+        protected Tokenizer(TextReader input)
         {
             this.inputPending = input ?? throw new ArgumentNullException(nameof(input), "input must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
         }
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Construct a token stream processing the given input using the given <see cref="Util.AttributeSource.AttributeFactory"/>.
         /// </summary>
-        protected internal Tokenizer(AttributeFactory factory, TextReader input)
+        protected Tokenizer(AttributeFactory factory, TextReader input)
             : base(factory)
         {
             this.inputPending = input ?? throw new ArgumentNullException(nameof(input), "input must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
@@ -79,6 +79,7 @@ namespace Lucene.Net.Analysis
                 inputPending = ILLEGAL_STATE_READER;
                 m_input = ILLEGAL_STATE_READER;
             }
+            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
 
         /// <summary>
@@ -126,7 +127,7 @@ namespace Lucene.Net.Analysis
 
         private static readonly TextReader ILLEGAL_STATE_READER = new ReaderAnonymousClass();
 
-        private class ReaderAnonymousClass : TextReader
+        private sealed class ReaderAnonymousClass : TextReader
         {
             public override int Read(char[] cbuf, int off, int len)
             {
@@ -137,6 +138,7 @@ namespace Lucene.Net.Analysis
 
             protected override void Dispose(bool disposing)
             {
+                // LUCENENET: Intentionally blank
             }
         }
     }

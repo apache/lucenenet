@@ -1089,9 +1089,9 @@ namespace Lucene.Net.Index
             writer.Commit();
             DirectoryReader reader = writer.GetReader();
             int[] closeCount = new int[1];
-            IndexReader.IReaderClosedListener listener = new ReaderClosedListenerAnonymousClass(this, reader, closeCount);
+            IReaderDisposedListener listener = new ReaderClosedListenerAnonymousClass(this, reader, closeCount);
 
-            reader.AddReaderClosedListener(listener);
+            reader.AddReaderDisposedListener(listener);
 
             reader.Dispose();
 
@@ -1100,7 +1100,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             DirectoryReader reader2 = DirectoryReader.Open(dir);
-            reader2.AddReaderClosedListener(listener);
+            reader2.AddReaderDisposedListener(listener);
 
             closeCount[0] = 0;
             reader2.Dispose();
@@ -1108,7 +1108,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ReaderClosedListenerAnonymousClass : IndexReader.IReaderClosedListener
+        private sealed class ReaderClosedListenerAnonymousClass : IReaderDisposedListener
         {
             private readonly TestDirectoryReader outerInstance;
 
@@ -1122,7 +1122,7 @@ namespace Lucene.Net.Index
                 this.closeCount = closeCount;
             }
 
-            public void OnClose(IndexReader reader)
+            public void OnDispose(IndexReader reader)
             {
                 closeCount[0]++;
             }

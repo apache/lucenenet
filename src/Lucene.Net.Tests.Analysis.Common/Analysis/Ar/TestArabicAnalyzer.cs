@@ -96,12 +96,12 @@ namespace Lucene.Net.Analysis.Ar
         public virtual void TestWithStemExclusionSet()
         {
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, AsSet("ساهدهات"), false);
-            ArabicAnalyzer a = new ArabicAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            ArabicAnalyzer a = new ArabicAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, set);
             AssertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] { "كبير", "the", "quick", "ساهدهات" });
             AssertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] { "كبير", "the", "quick", "ساهدهات" });
 
 
-            a = new ArabicAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, CharArraySet.EMPTY_SET);
+            a = new ArabicAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, CharArraySet.Empty);
             AssertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] { "كبير", "the", "quick", "ساهد" });
             AssertAnalyzesTo(a, "كبيرة the quick ساهدهات", new string[] { "كبير", "the", "quick", "ساهد" });
         }

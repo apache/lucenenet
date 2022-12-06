@@ -114,22 +114,28 @@ namespace Lucene.Net.Analysis.NGram
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        private class PositionIncrementAttributeAnonymousClass : PositionIncrementAttribute
+        private sealed class PositionIncrementAttributeAnonymousClass : IPositionIncrementAttribute
         {
-            public override int PositionIncrement
+            public int PositionIncrement
             {
                 get => 0;
-                set { }
+                set => _ = value;
             }
+
+            // LUCENENET specific - The interface requires this to be implemented, since we added it to avoid casts.
+            public void CopyTo(IAttribute target) => _ = target;
         }
 
-        private class PositionLengthAttributeAnonymousClass : PositionLengthAttribute
+        private sealed class PositionLengthAttributeAnonymousClass : IPositionLengthAttribute
         {
-            public override int PositionLength
+            public int PositionLength
             {
                 get => 0;
-                set { }
+                set => _ = value;
             }
+
+            // LUCENENET specific - The interface requires this to be implemented, since we added it to avoid casts.
+            public void CopyTo(IAttribute target) => _ = target;
         }
 
         /// <summary>

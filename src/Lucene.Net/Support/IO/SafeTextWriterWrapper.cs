@@ -93,6 +93,8 @@ namespace Lucene.Net.Support.IO
         }
 
 #if FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE
+        // LUCENENET: We don't override this on .NET Core, it throws a
+        // PlatformNotSupportedException, which is the behavior we want.
         public override object InitializeLifetimeService()
         {
             return Run(() => textWriter.InitializeLifetimeService());
@@ -358,6 +360,7 @@ namespace Lucene.Net.Support.IO
             {
                 textWriter.Dispose();
             }
+            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
     }
 }

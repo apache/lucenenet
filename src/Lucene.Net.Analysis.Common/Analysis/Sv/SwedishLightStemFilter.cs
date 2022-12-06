@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Sv
@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Sv
     /// <para>
     /// To prevent terms from being stemmed use an instance of
     /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
-    /// the <see cref="KeywordAttribute"/> before this <see cref="TokenStream"/>.
+    /// the <see cref="IKeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
     /// </summary>
     public sealed class SwedishLightStemFilter : TokenFilter

@@ -34,5 +34,13 @@ namespace Lucene.Net.Configuration
             Assert.AreEqual("barValue", ConfigurationSettings.CurrentConfiguration["bar"]);
             Assert.AreEqual("bazValue", ConfigurationSettings.CurrentConfiguration["baz"]);
         }
+
+        [Test]
+        public void TestCustomMaxStackByteLimit()
+        {
+            // This custom value is configured in Startup.cs.
+            // 5000 chosen because it is not likely to ever be made a default.
+            Assert.AreEqual(5000, Constants.MaxStackByteLimit);
+        }
     }
 }

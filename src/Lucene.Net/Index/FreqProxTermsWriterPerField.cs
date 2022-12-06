@@ -347,22 +347,22 @@ namespace Lucene.Net.Index
 
                 base.CopyTo(toArray, numToCopy);
 
-                Array.Copy(lastDocIDs, 0, to.lastDocIDs, 0, numToCopy);
-                Array.Copy(lastDocCodes, 0, to.lastDocCodes, 0, numToCopy);
+                Arrays.Copy(lastDocIDs, 0, to.lastDocIDs, 0, numToCopy);
+                Arrays.Copy(lastDocCodes, 0, to.lastDocCodes, 0, numToCopy);
                 if (lastPositions != null)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(to.lastPositions != null);
-                    Array.Copy(lastPositions, 0, to.lastPositions, 0, numToCopy);
+                    Arrays.Copy(lastPositions, 0, to.lastPositions, 0, numToCopy);
                 }
                 if (lastOffsets != null)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(to.lastOffsets != null);
-                    Array.Copy(lastOffsets, 0, to.lastOffsets, 0, numToCopy);
+                    Arrays.Copy(lastOffsets, 0, to.lastOffsets, 0, numToCopy);
                 }
                 if (termFreqs != null)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(to.termFreqs != null);
-                    Array.Copy(termFreqs, 0, to.termFreqs, 0, numToCopy);
+                    Arrays.Copy(termFreqs, 0, to.termFreqs, 0, numToCopy);
                 }
             }
 
@@ -386,10 +386,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public void Abort()
-        {
-        }
+        // LUCENENET: Removed Abort() method because it is not in use.
 
         internal BytesRef payload;
 

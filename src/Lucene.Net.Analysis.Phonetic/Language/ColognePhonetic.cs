@@ -1,4 +1,5 @@
 ﻿// commons-codec version compatibility level: 1.9
+using Lucene.Net.Support;
 using System;
 using System.Globalization;
 
@@ -193,13 +194,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
             protected int m_length = 0;
 
-            public CologneBuffer(char[] data)
+            protected CologneBuffer(char[] data) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.m_data = data;
                 this.m_length = data.Length;
             }
 
-            public CologneBuffer(int buffSize)
+            protected CologneBuffer(int buffSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.m_data = new char[buffSize];
                 this.m_length = 0;
@@ -231,7 +232,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             protected override char[] CopyData(int start, int length)
             {
                 char[] newData = new char[length];
-                System.Array.Copy(m_data, start, newData, 0, length);
+                Arrays.Copy(m_data, start, newData, 0, length);
                 return newData;
             }
         }
@@ -252,7 +253,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             protected override char[] CopyData(int start, int length)
             {
                 char[] newData = new char[length];
-                System.Array.Copy(m_data, m_data.Length - this.m_length + start, newData, 0, length);
+                Arrays.Copy(m_data, m_data.Length - this.m_length + start, newData, 0, length);
                 return newData;
             }
 
@@ -475,7 +476,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Converts the string to upper case and replaces germanic characters as defined in <see cref="PREPROCESS_MAP"/>.
         /// </summary>
-        private string Preprocess(string text)
+        private static string Preprocess(string text) // LUCENENET: CA1822: Mark members as static
         {
             text = LOCALE_GERMAN.TextInfo.ToUpper(text);
 

@@ -44,6 +44,9 @@ namespace Lucene.Net.Util
         /// <para/>
         /// NOTE: This was EMPTY_LONGS in Lucene
         /// </summary>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
+        [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
         public static readonly long[] EMPTY_INT64S = Arrays.Empty<long>();
 
         /// <summary>
@@ -202,7 +205,7 @@ namespace Lucene.Net.Util
                 longs = new long[other.Length];
                 Offset = 0;
             }
-            Array.Copy(other.longs, other.Offset, longs, Offset, other.Length);
+            Arrays.Copy(other.longs, other.Offset, longs, Offset, other.Length);
             Length = other.Length;
         }
 

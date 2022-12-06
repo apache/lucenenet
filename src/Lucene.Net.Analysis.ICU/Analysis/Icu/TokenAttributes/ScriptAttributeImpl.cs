@@ -1,6 +1,8 @@
 ﻿using ICU4N.Globalization;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis.Icu.TokenAttributes
 {
@@ -56,9 +58,13 @@ namespace Lucene.Net.Analysis.Icu.TokenAttributes
             code = UScript.Common;
         }
 
-        public override void CopyTo(IAttribute target)
+        public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
         {
-            ScriptAttribute t = (ScriptAttribute)target;
+            // LUCENENET: Added guard clauses
+            if (target is null)
+                throw new ArgumentNullException(nameof(target));
+            if (target is not IScriptAttribute t)
+                throw new ArgumentException($"Argument type {target.GetType().FullName} must implement {nameof(IScriptAttribute)}", nameof(target));
             t.Code = code;
         }
 
@@ -84,6 +90,10 @@ namespace Lucene.Net.Analysis.Icu.TokenAttributes
 
         public override void ReflectWith(IAttributeReflector reflector)
         {
+            // LUCENENET: Added guard clause
+            if (reflector is null)
+                throw new ArgumentNullException(nameof(reflector));
+
             // when wordbreaking CJK, we use the 15924 code Japanese (Han+Hiragana+Katakana) to 
             // mark runs of Chinese/Japanese. our use is correct (as for chinese Han is a subset), 
             // but this is just to help prevent confusion.

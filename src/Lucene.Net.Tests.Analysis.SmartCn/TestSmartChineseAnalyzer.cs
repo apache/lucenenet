@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
 #pragma warning disable 612, 618
                 LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-                SmartChineseAnalyzer.GetDefaultStopSet());
+                SmartChineseAnalyzer.DefaultStopSet);
             AssertAnalyzesTo(ca, sentence, result);
         }
 

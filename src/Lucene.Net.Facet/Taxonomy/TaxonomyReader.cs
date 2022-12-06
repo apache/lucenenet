@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
@@ -274,7 +275,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             string[] fullPath = new string[path.Length + 1];
             fullPath[0] = dim;
-            Array.Copy(path, 0, fullPath, 1, path.Length);
+            Arrays.Copy(path, 0, fullPath, 1, path.Length);
             return GetOrdinal(new FacetLabel(fullPath));
         }
 

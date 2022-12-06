@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 if (PostingsSize != -1)
                 {
                     clone.Postings = new byte[PostingsSize];
-                    Array.Copy(Postings, 0, clone.Postings, 0, PostingsSize);
+                    Arrays.Copy(Postings, 0, clone.Postings, 0, PostingsSize);
                 }
                 else
                 {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     if (Int64s is null) return clone;
 
                     clone.Int64s = new long[Int64s.Length];
-                    Array.Copy(Int64s, 0, clone.Int64s, 0, Int64s.Length);
+                    Arrays.Copy(Int64s, 0, clone.Int64s, 0, Int64s.Length);
                 }
                 return clone;
             }
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     {
                         Postings = new byte[ArrayUtil.Oversize(_other.PostingsSize, 1)];
                     }
-                    Array.Copy(_other.Postings, 0, Postings, 0, _other.PostingsSize);
+                    Arrays.Copy(_other.Postings, 0, Postings, 0, _other.PostingsSize);
                 }
                 else
                 {
@@ -351,7 +351,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 {
                     _postingsBytes = ArrayUtil.Grow(_postingsBytes, termState.PostingsSize);
                 }
-                System.Array.Copy(termState.Postings, 0, _postingsBytes, 0, termState.PostingsSize);
+                Arrays.Copy(termState.Postings, 0, _postingsBytes, 0, termState.PostingsSize);
                 _postings.Reset(_postingsBytes, 0, termState.PostingsSize);
                 _docId = -1;
                 _accum = 0;
@@ -381,7 +381,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     }
                     else
                     {
-                        _accum += code.TripleShift(1); ; // shift off low bit
+                        _accum += code.TripleShift(1); // shift off low bit
                         _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt32();
 
                         // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
@@ -494,7 +494,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     _postingsBytes = ArrayUtil.Grow(_postingsBytes, termState.PostingsSize);
                 }
 
-                Array.Copy(termState.Postings, 0, _postingsBytes, 0, termState.PostingsSize);
+                Arrays.Copy(termState.Postings, 0, _postingsBytes, 0, termState.PostingsSize);
                 _postings.Reset(_postingsBytes, 0, termState.PostingsSize);
                 this._liveDocs = liveDocs;
                 _payloadLength = 0;
@@ -701,7 +701,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 // and is calling clearAttributes(), so they don't nuke the reuse information!
             }
 
-            public override void CopyTo(Util.IAttribute target)
+            public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute
             {
                 // this makes no sense for us, because our state is per-docsenum.
                 // we don't want to copy any stuff over to another docsenum ever!

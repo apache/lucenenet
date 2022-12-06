@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Cz
         {
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
             set.add("hole");
-            CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
+            CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT, CharArraySet.Empty, set);
             AssertAnalyzesTo(cz, "hole desek", new string[] { "hole", "desk" });
         }
 

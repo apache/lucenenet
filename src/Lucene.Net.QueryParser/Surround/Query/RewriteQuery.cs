@@ -26,10 +26,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         protected readonly string m_fieldName;
         protected readonly BasicQueryFactory m_qf;
 
-        public RewriteQuery(
+        protected RewriteQuery(
             SQ srndQuery,
             string fieldName,
-            BasicQueryFactory qf)
+            BasicQueryFactory qf) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_srndQuery = srndQuery;
             this.m_fieldName = fieldName;

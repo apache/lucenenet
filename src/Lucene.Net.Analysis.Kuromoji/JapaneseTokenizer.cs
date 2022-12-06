@@ -1305,7 +1305,7 @@ namespace Lucene.Net.Analysis.Ja
             // ArrayUtil.grow will otherwise pick a different
             // length than the int[]s we just grew:
             JapaneseTokenizerType[] newBackType = new JapaneseTokenizerType[backID.Length];
-            System.Array.Copy(backType, 0, newBackType, 0, backType.Length);
+            Arrays.Copy(backType, 0, newBackType, 0, backType.Length);
             backType = newBackType;
         }
 
@@ -1319,7 +1319,7 @@ namespace Lucene.Net.Analysis.Ja
             // ArrayUtil.grow will otherwise pick a different
             // length than the int[]s we just grew:
             JapaneseTokenizerType[] newForwardType = new JapaneseTokenizerType[forwardPos.Length];
-            System.Array.Copy(forwardType, 0, newForwardType, 0, forwardType.Length);
+            Arrays.Copy(forwardType, 0, newForwardType, 0, forwardType.Length);
             forwardType = newForwardType;
         }
 
@@ -1426,8 +1426,8 @@ namespace Lucene.Net.Analysis.Ja
                 {
                     Position[] newPositions = new Position[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
                     //System.out.println("grow positions " + newPositions.length);
-                    System.Array.Copy(positions, nextWrite, newPositions, 0, positions.Length - nextWrite);
-                    System.Array.Copy(positions, 0, newPositions, positions.Length - nextWrite, nextWrite);
+                    Arrays.Copy(positions, nextWrite, newPositions, 0, positions.Length - nextWrite);
+                    Arrays.Copy(positions, 0, newPositions, positions.Length - nextWrite, nextWrite);
                     for (int i = positions.Length; i < newPositions.Length; i++)
                     {
                         newPositions[i] = new Position();

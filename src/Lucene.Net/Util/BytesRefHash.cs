@@ -178,7 +178,7 @@ namespace Lucene.Net.Util
             return compact;
         }
 
-        private class IntroSorterAnonymousClass : IntroSorter
+        private sealed class IntroSorterAnonymousClass : IntroSorter
         {
             private readonly BytesRefHash outerInstance;
 
@@ -349,7 +349,7 @@ namespace Lucene.Net.Util
                     buffer[bufferUpto] = (byte)length;
                     pool.ByteUpto += length + 1;
                     if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0,"Length must be positive: {0}", length);
-                    System.Buffer.BlockCopy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 1, length);
+                    Arrays.Copy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 1, length);
                 }
                 else
                 {
@@ -357,7 +357,7 @@ namespace Lucene.Net.Util
                     buffer[bufferUpto] = (byte)(0x80 | (length & 0x7f));
                     buffer[bufferUpto + 1] = (byte)((length >> 7) & 0xff);
                     pool.ByteUpto += length + 2;
-                    System.Buffer.BlockCopy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 2, length);
+                    Arrays.Copy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 2, length);
                 }
                 if (Debugging.AssertsEnabled) Debugging.Assert(ids[hashPos] == -1);
                 ids[hashPos] = e;

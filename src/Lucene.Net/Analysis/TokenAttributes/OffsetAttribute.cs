@@ -1,4 +1,5 @@
-﻿using System;
+using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -19,77 +20,38 @@ namespace Lucene.Net.Analysis.TokenAttributes
      * limitations under the License.
      */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
-
     /// <summary>
-    /// Default implementation of <see cref="IOffsetAttribute"/>. </summary>
-    public class OffsetAttribute : Attribute, IOffsetAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    /// The start and end character offset of a <see cref="Token"/>.
+    /// </summary>
+    public interface IOffsetAttribute : IAttribute
     {
-        private int startOffset;
-        private int endOffset;
+        /// <summary>
+        /// Returns this <see cref="Token"/>'s starting offset, the position of the first character
+        /// corresponding to this token in the source text.
+        /// <para/>
+        /// Note that the difference between <see cref="EndOffset"/> and <see cref="StartOffset"/>
+        /// may not be equal to termText.Length, as the term text may have been altered by a
+        /// stemmer or some other filter.
+        /// </summary>
+        /// <seealso cref="SetOffset(int, int)"/>
+        int StartOffset { get; } // LUCENENET TODO: API - add a setter ? It seems the SetOffset only sets two properties at once...
 
         /// <summary>
-        /// Initialize this attribute with startOffset and endOffset of 0. </summary>
-        public OffsetAttribute()
-        {
-        }
+        /// Set the starting and ending offset.
+        /// </summary>
+        /// <exception cref="ArgumentException"> If <paramref name="startOffset"/> or <paramref name="endOffset"/>
+        ///         are negative, or if <paramref name="startOffset"/> is greater than
+        ///         <paramref name="endOffset"/> </exception>
+        /// <seealso cref="StartOffset"/>
+        /// <seealso cref="EndOffset"/>
+        void SetOffset(int startOffset, int endOffset);
 
-        public virtual int StartOffset => startOffset;
-
-        public virtual void SetOffset(int startOffset, int endOffset)
-        {
-            // TODO: we could assert that this is set-once, ie,
-            // current values are -1?  Very few token filters should
-            // change offsets once set by the tokenizer... and
-            // tokenizer should call clearAtts before re-using
-            // OffsetAtt
-
-            if (startOffset < 0 || endOffset < startOffset)
-            {
-                throw new ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset);
-            }
-
-            this.startOffset = startOffset;
-            this.endOffset = endOffset;
-        }
-
-        public virtual int EndOffset => endOffset;
-
-        public override void Clear()
-        {
-            // TODO: we could use -1 as default here?  Then we can
-            // assert in setOffset...
-            startOffset = 0;
-            endOffset = 0;
-        }
-
-        public override bool Equals(object other)
-        {
-            if (other == this)
-            {
-                return true;
-            }
-
-            if (other is OffsetAttribute o)
-            {
-                return o.startOffset == startOffset && o.endOffset == endOffset;
-            }
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            int code = startOffset;
-            code = code * 31 + endOffset;
-            return code;
-        }
-
-        public override void CopyTo(IAttribute target)
-        {
-            OffsetAttribute t = (OffsetAttribute)target;
-            t.SetOffset(startOffset, endOffset);
-        }
+        /// <summary>
+        /// Returns this <see cref="Token"/>'s ending offset, one greater than the position of the
+        /// last character corresponding to this token in the source text. The length
+        /// of the token in the source text is (<code>EndOffset</code> - <see cref="StartOffset"/>).
+        /// </summary>
+        /// <seealso cref="SetOffset(int, int)"/>
+        int EndOffset { get; } // LUCENENET TODO: API - add a setter ? It seems the SetOffset only sets two properties at once...
     }
 }

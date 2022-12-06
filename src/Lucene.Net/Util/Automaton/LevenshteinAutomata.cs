@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Util.Automaton
             protected readonly int m_n;
             private readonly int[] minErrors;
 
-            internal ParametricDescription(int w, int n, int[] minErrors)
+            private protected ParametricDescription(int w, int n, int[] minErrors) // LUCENENET: Changed from internal to private protected
             {
                 this.m_w = w;
                 this.m_n = n;

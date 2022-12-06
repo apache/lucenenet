@@ -3,6 +3,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -45,13 +46,13 @@ namespace Lucene.Net.Codecs.RAMOnly
         private static readonly IComparer<BytesRef> reverseUnicodeComparer = new ComparerAnonymousClass();
 
 #pragma warning disable 659 // LUCENENET: Overrides Equals but not GetHashCode
-        private class ComparerAnonymousClass : IComparer<BytesRef>
+        private sealed class ComparerAnonymousClass : IComparer<BytesRef>
 #pragma warning restore 659
         {
             public ComparerAnonymousClass()
             { }
 
-            public virtual int Compare(BytesRef t1, BytesRef t2)
+            public int Compare(BytesRef t1, BytesRef t2)
             {
                 var b1 = t1.Bytes;
                 var b2 = t2.Bytes;
@@ -336,7 +337,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                         current.payloads = new byte[current.positions.Length][];
                     }
                     var bytes = current.payloads[posUpto] = new byte[payload.Length];
-                    Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
+                    Arrays.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
                 }
                 posUpto++;
             }

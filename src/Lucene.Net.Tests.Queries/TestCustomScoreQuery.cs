@@ -102,7 +102,7 @@ namespace Lucene.Net.Tests.Queries
                 return new CustomScoreProviderAnonymousClass(context);
             }
 
-            private class CustomScoreProviderAnonymousClass : CustomScoreProvider
+            private sealed class CustomScoreProviderAnonymousClass : CustomScoreProvider
             {
                 public CustomScoreProviderAnonymousClass(AtomicReaderContext context) : base(context)
                 {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Tests.Queries
                 return new CustomScoreProviderAnonymousClass(context);
             }
 
-            private class CustomScoreProviderAnonymousClass : CustomScoreProvider
+            private sealed class CustomScoreProviderAnonymousClass : CustomScoreProvider
             {
                 public CustomScoreProviderAnonymousClass(AtomicReaderContext context) : base(context)
                 {
@@ -194,7 +194,7 @@ namespace Lucene.Net.Tests.Queries
                 return new CustomScoreProviderAnonymousClass(context, values);
             }
             
-            private class CustomScoreProviderAnonymousClass : CustomScoreProvider
+            private sealed class CustomScoreProviderAnonymousClass : CustomScoreProvider
             {
                 private FieldCache.Int32s values;
 

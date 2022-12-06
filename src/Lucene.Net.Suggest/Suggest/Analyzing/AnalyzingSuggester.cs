@@ -9,10 +9,8 @@ using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using JCG = J2N.Collections.Generic;
 using Int64 = J2N.Numerics.Int64;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -405,9 +403,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
             string prefix = this.GetType().Name;
-            var directory = OfflineSorter.DefaultTempDir();
-            var tempInput = FileSupport.CreateTempFile(prefix, ".input", directory);
-            var tempSorted = FileSupport.CreateTempFile(prefix, ".sorted", directory);
+            var directory = OfflineSorter.DefaultTempDir;
+            // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
+            using var tempInput = FileSupport.CreateTempFileAsStream(prefix, ".input", directory);
+            using var tempSorted = FileSupport.CreateTempFileAsStream(prefix, ".sorted", directory);
 
             hasPayloads = enumerator.HasPayloads;
 
@@ -502,13 +501,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     count++;
                 }
-                writer.Dispose();
+
+                tempInput.Position = 0;
 
                 // Sort all input/output pairs (required by FST.Builder):
                 (new OfflineSorter(new AnalyzingComparer(hasPayloads))).Sort(tempInput, tempSorted);
 
                 // Free disk space:
-                tempInput.Delete();
+                writer.Dispose(); // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
 
                 reader = new OfflineSorter.ByteSequencesReader(tempSorted);
 
@@ -604,9 +604,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         int payloadOffset = input.Position + surface.Length;
                         int payloadLength = scratch.Length - payloadOffset;
                         BytesRef br = new BytesRef(surface.Length + 1 + payloadLength);
-                        Array.Copy(surface.Bytes, surface.Offset, br.Bytes, 0, surface.Length);
+                        Arrays.Copy(surface.Bytes, surface.Offset, br.Bytes, 0, surface.Length);
                         br.Bytes[surface.Length] = PAYLOAD_SEP;
-                        Array.Copy(scratch.Bytes, payloadOffset, br.Bytes, surface.Length + 1, payloadLength);
+                        Arrays.Copy(scratch.Bytes, payloadOffset, br.Bytes, surface.Length + 1, payloadLength);
                         br.Length = br.Bytes.Length;
                         builder.Add(scratchInts, outputs.NewPair(cost, br));
                     }
@@ -627,9 +627,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     IOUtils.DisposeWhileHandlingException(reader, writer);
                 }
-
-                tempInput.Delete();
-                tempSorted.Delete();
+                // LUCENENET specific - we are using the FileOptions.DeleteOnClose FileStream option to delete the file when it is disposed.
             }
         }
 
@@ -676,7 +674,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 int payloadLen = output2.Length - sepIndex - 1;
                 UnicodeUtil.UTF8toUTF16(output2.Bytes, output2.Offset, sepIndex, spare);
                 BytesRef payload = new BytesRef(payloadLen);
-                Array.Copy(output2.Bytes, sepIndex + 1, payload.Bytes, 0, payloadLen);
+                Arrays.Copy(output2.Bytes, sepIndex + 1, payload.Bytes, 0, payloadLen);
                 payload.Length = payloadLen;
                 result = new LookupResult(spare.ToString(), DecodeWeight(output1.GetValueOrDefault()), payload);
             }
@@ -884,7 +882,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<PairOutputs<Int64, BytesRef>.Pair>
+        private sealed class TopNSearcherAnonymousClass : Util.Fst.Util.TopNSearcher<PairOutputs<Int64, BytesRef>.Pair>
         {
             private readonly AnalyzingSuggester outerInstance;
 

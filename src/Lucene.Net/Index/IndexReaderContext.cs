@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
         /// the ord for this reader in the parent, <c>0</c> if parent is <c>null</c> </summary>
         public int OrdInParent { get; private set; }
 
-        internal IndexReaderContext(CompositeReaderContext parent, int ordInParent, int docBaseInParent)
+        private protected IndexReaderContext(CompositeReaderContext parent, int ordInParent, int docBaseInParent) // LUCENENET: Changed from internal to private protected
         {
             if (!(this is CompositeReaderContext || this is AtomicReaderContext))
             {

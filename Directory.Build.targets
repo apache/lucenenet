@@ -22,23 +22,32 @@
 
   <Import Project=".build/dependencies.props" Condition="Exists('.build/dependencies.props')" />
 
-  <!-- Features in .NET 5.x and .NET 6.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) ">
+  <!-- Features in .NET 6.x and .NET 7.x only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) ">
+
+    <DefineConstants>$(DefineConstants);FEATURE_SPANFORMATTABLE</DefineConstants>
+
+  </PropertyGroup>
+
+  <!-- Features in .NET 5.x, .NET 6.x, and .NET 7.x only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ASPNETCORE_ENDPOINT_CONFIG</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_READONLYSET</DefineConstants>
 
   </PropertyGroup>
   
-  <!-- Features in .NET Core 3.x, .NET 5.x, and .NET 6.x only -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or '$(TargetFramework)' == 'net6.0' ">
+  <!-- Features in .NET Core 3.x, .NET 5.x, .NET 6.x, and .NET 7.x only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_STRING_CONCAT_READONLYSPAN</DefineConstants>
 
   </PropertyGroup>
   
   <!-- Features in .NET Standard, .NET Core, .NET 5.x, and .NET 6.x only (no .NET Framework support) -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0' ">
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) ">
     
     <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ARRAYEMPTY</DefineConstants>
@@ -48,24 +57,27 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 2.1, .NET 5.x, and .NET 6.x only -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0' ">
+  <!-- Features in .NET Standard 2.1, .NET 5.x, .NET 6.x, and .NET 7.x only -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) ">
 
+    <DefineConstants>$(DefineConstants);FEATURE_ARRAY_FILL</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_SPAN</DefineConstants>
-    
+    <DefineConstants>$(DefineConstants);FEATURE_NUMBER_PARSE_READONLYSPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_STREAM_READ_SPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_STRINGBUILDER_APPEND_READONLYSPAN</DefineConstants>
+
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, and .NET 6.x -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0' ">
+  <!-- Features in .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, .NET 6.x, and .NET 7.x -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
 
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, and .NET 6.x  -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'net6.0' ">
+  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x, .NET 6.x, and .NET 7.x  -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ASSEMBLY_GETCALLINGASSEMBLY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
@@ -77,9 +89,11 @@
 
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, .NET 5.x (No .NET 6.x support) -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' ">
+  <!-- Features in .NET Framework 4.5+ and .NET Standard 2.x only (No .NET Core support) -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) ">
 
+    <!-- NOTE: The API for this exists in .NET Core, but it throws a PlatformNotSupportedException.
+         We simply don't override this to get the same behavior. -->
     <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE</DefineConstants>
 
   </PropertyGroup>
@@ -148,6 +162,26 @@
     <Message Text="$(OutputTargetFrameworks)" Importance="high"/>
   </Target>
 
+
+  <!-- Disable Json Source Generator from being added to projects. This is being done to work around a bug in VS 2022
+    which appeared around VS2022 7.3.6 which causes StackOverflowExceptions when compiling the solution.
+	see: https://developercommunity.visualstudio.com/t/VS-2022-1736-Process-is-terminated-due/10173885#T-ND10184855
+	for more details.  Once a fix is rolled out for VS2022, this block can be removed -->
+  <Target Name="RemoveJsonSourceGenerator" BeforeTargets="CoreCompile">
+	<ItemGroup>
+		<AnalyzersByFileName Include="@(Analyzer -> '%(FileName)')">
+			<OriginalIdentity>%(Identity)</OriginalIdentity>
+		</AnalyzersByFileName>
+		<AnalyzersToRemoveByFileName Include="System.Text.Json.SourceGeneration" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AnalyzersToRemove Include="@(AnalyzersByFileName)" Condition="'@(AnalyzersToRemoveByFileName)' == '@(AnalyzersByFileName)' and '%(Identity)' != ''" />
+		<Analyzer Remove="%(AnalyzersToRemove.OriginalIdentity)" />
+	</ItemGroup>
+  </Target>
+
+	
   <!-- Global PackageReferences -->
   <ItemGroup>
     <!-- This is to allow the .NET Framework references to be machine-indepenedent so builds can happen without installing prerequisites -->
