@@ -46,13 +46,13 @@ namespace Lucene.Net.Analysis.Ja
     ///     <item><description><see cref="IInflectionAttribute"/> containing additional part-of-speech information for inflected forms.</description></item>
     /// </list>
     /// <para/>
-    /// This tokenizer uses a rolling Viterbi search to find the 
+    /// This tokenizer uses a rolling Viterbi search to find the
     /// least cost segmentation (path) of the incoming characters.
     /// For tokens that appear to be compound (> length 2 for all
     /// Kanji, or > length 7 for non-Kanji), we see if there is a
     /// 2nd best segmentation of that token after applying
     /// penalties to the long tokens.  If so, and the Mode is
-    /// <see cref="JapaneseTokenizerMode.SEARCH"/>, we output the alternate segmentation 
+    /// <see cref="JapaneseTokenizerMode.SEARCH"/>, we output the alternate segmentation
     /// as well.
     /// </remarks>
     public sealed class JapaneseTokenizer : Tokenizer
@@ -883,6 +883,10 @@ namespace Lucene.Net.Analysis.Ja
         {
             int endPos = endPosData.pos;
 
+            if (endPos == lastBackTracePos) {
+                return;
+            }
+
             if (VERBOSE)
             {
                 Console.WriteLine("\n  backtrace: endPos=" + endPos + " pos=" + this.pos + "; " + (this.pos - lastBackTracePos) + " characters; last=" + lastBackTracePos + " cost=" + endPosData.costs[fromIDX]);
@@ -1227,7 +1231,7 @@ namespace Lucene.Net.Analysis.Ja
         NORMAL,
 
         /// <summary>
-        /// Segmentation geared towards search: this includes a 
+        /// Segmentation geared towards search: this includes a
         /// decompounding process for long nouns, also including
         /// the full compound token as a synonym.
         /// </summary>
