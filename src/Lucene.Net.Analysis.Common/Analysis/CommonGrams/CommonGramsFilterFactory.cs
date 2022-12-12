@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.CommonGrams
     /// </summary>
     public class CommonGramsFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
-        // TODO: shared base class for Stop/Keep/CommonGrams? 
+        // TODO: shared base class for Stop/Keep/CommonGrams?
         private CharArraySet commonWords;
         private readonly string commonWordFiles;
         private readonly string format;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             }
             else
             {
-                commonWords = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
+                commonWords = new CharArraySet(m_luceneMatchVersion,StopAnalyzer.ENGLISH_STOP_WORDS_SET, ignoreCase);
             }
         }
 

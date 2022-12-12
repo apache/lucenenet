@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.CommonGrams
     /// Tests pretty much copied from StopFilterFactoryTest We use the test files
     /// used by the StopFilterFactoryTest TODO: consider creating separate test files
     /// so this won't break if stop filter test files change
-    /// 
+    ///
     /// </summary>
     public class TestCommonGramsFilterFactory : BaseTokenStreamFactoryTestCase
     {
@@ -79,6 +79,22 @@ namespace Lucene.Net.Analysis.CommonGrams
             AssertTokenStreamContents(stream, new string[] { "testing", "testing_the", "the", "the_factory", "factory" });
         }
 
+        [Test]
+        public void TestIgnoreCase()
+        {
+            IResourceLoader loader = new ClasspathResourceLoader(typeof(TestAnalyzers));
+            CommonGramsFilterFactory factory =
+                (CommonGramsFilterFactory)
+                TokenFilterFactory("CommonGrams", TEST_VERSION_CURRENT, loader, "ignoreCase", "true");
+            CharArraySet words = factory.CommonWords;
+            assertTrue("words is null and it shouldn't be", words != null);
+            assertTrue(words.contains("the"));
+            assertTrue(words.contains("The"));
+            Tokenizer tokenizer = new MockTokenizer(new StringReader("testing The factory"),MockTokenizer.WHITESPACE, false);
+            TokenStream stream = factory.Create(tokenizer);
+            AssertTokenStreamContents(
+                stream, new String[] {"testing", "testing_The", "The", "The_factory", "factory"});
+        }
         /// <summary>
         /// Test that bogus arguments result in exception </summary>
         [Test]
