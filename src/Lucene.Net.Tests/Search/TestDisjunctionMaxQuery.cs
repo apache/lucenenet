@@ -2,7 +2,9 @@
 using System.Globalization;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
 using NUnit.Framework;
+using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -533,6 +535,17 @@ namespace Lucene.Net.Search
             indexReader.Dispose();
             Assert.AreEqual(hits, 1);
             directory.Dispose();
+        }
+
+        [Test]
+        public void TestDisjunctOrderAndEquals()
+        {
+            // the order that disjuncts are provided in should not matter for equals() comparisons
+            Query sub1 = Tq("hed", "albino");
+            Query sub2 = Tq("hed", "elephant");
+            Query q1 = new DisjunctionMaxQuery(new List<Query>{sub1, sub2}, 1.0f);
+            Query q2 = new DisjunctionMaxQuery(new List<Query>{sub2, sub1}, 1.0f);
+            assertEquals(q1, q2);
         }
 
         /// <summary>
