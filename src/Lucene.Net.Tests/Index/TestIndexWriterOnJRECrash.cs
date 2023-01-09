@@ -41,12 +41,14 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support.IO;
     using System.Diagnostics;
     using System.Reflection;
+    using Lucene.Net.Util;
 
     /// <summary>
     /// Runs TestNRTThreads in a separate process, crashes the JRE in the middle
     /// of execution, then runs checkindex to make sure its not corrupt.
     /// </summary>
     [TestFixture]
+    [Category("CrashTest")]
     public class TestIndexWriterOnJRECrash : TestNRTThreads
     {
         private DirectoryInfo TempDir;
@@ -55,16 +57,25 @@ namespace Lucene.Net.Index
         public override void SetUp()
         {
             base.SetUp();
-            TempDir = CreateTempDir("netcrash");
-            TempDir.Delete();
-            TempDir.Create();
+            var tempDir = Environment.GetEnvironmentVariable("tempDir");
+            if (tempDir is null)
+            {
+                TempDir = CreateTempDir("netcrash");
+                TempDir.Delete();
+                TempDir.Create();
+            }
+            else
+            {
+                TempDir = new DirectoryInfo(tempDir);
+            }
         }
 
-        [Test]
+
+        [Test, Property("Name", "TestNRTTThreadsMem")]
         public override void TestNRTThreads_Mem()
         {
             // if we are not the fork
-            if (Environment.GetEnvironmentVariable("tests.crashmode") is null)
+            if (Environment.GetEnvironmentVariable("tempDir") is null)
             {
                 // try up to 10 times to create an index
                 for (int i = 0; i < 10; i++)
@@ -130,9 +141,12 @@ namespace Lucene.Net.Index
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = String.Join(" ", new[] { "test", "--work", "--filter", "TestName=TestIndexWriterOnJRECrash" }),
-                WorkingDirectory = theDirectory,
-                EnvironmentVariables = { { "tempDir", theDirectory } },
+                Arguments = String.Join(" ", new[] { "test", "--framework net7.0", "--filter", "FullyQualifiedName~TestIndexWriterOnJRECrash.cs", $"C:\\\\Users\\\\admin\\\\Projects\\\\Dotnet Projects local Repo\\\\lucenenet\\\\src\\\\Lucene.Net.Tests._I-J\\\\Lucene.Net.Tests._I-J.csproj\"" }),
+                WorkingDirectory = "C:\\Users\\admin\\Projects\\Dotnet Projects local Repo\\lucenenet\\src\\Lucene.Net.Tests._I-J",
+                EnvironmentVariables =  {
+        { "lucene:tests:seed", RandomizedContext.CurrentContext.RandomSeedAsHex },
+        { "lucene:tests:culture", Thread.CurrentThread.CurrentCulture.Name },
+        { "tests:crashmode", "true" } },
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false
@@ -258,7 +272,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Couldn't kill the JVM via Unsafe.");
+                        Console.WriteLine("Couldn't kill the NetFramwork via Unsafe.");
                         Console.WriteLine(e.StackTrace);
                     }
                 }
@@ -268,7 +282,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception e)
             {
-                Console.WriteLine("Couldn't kill the JVM.");
+                Console.WriteLine("Couldn't kill the NetFramwork.");
                 Console.WriteLine(e.StackTrace);
             }
 
