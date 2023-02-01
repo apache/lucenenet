@@ -224,7 +224,7 @@ IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
 Then in the next block we add three documents to the index.  In this example we happen to specify that each document has two fields: title and domain. A document however could have as many fields as we like.
 
-We also specify here that title is a `TextField` which means that want the field to support full text searches, and we specify domain as a `StringField` which means we what to do exact match searches against that field.
+We also specify here that title is a `TextField` which means that we want the field to support full text searches, and we specify domain as a `StringField` which means we want to do exact match searches against that field.
 
 It's worth noting that the documents are buffered in RAM initially and are not written to the index in the `Directory` until we call `writer.Commit();`
 
