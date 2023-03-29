@@ -43,9 +43,9 @@ namespace Lucene.Net.Search.Highlight
             protected internal set => score = value;
         }
 
-        // LUCENENET specific - made these fields into properties, since they are for internal consumption
-        internal int TextEndPos { get; set; }
-        internal int TextStartPos { get; set; }
+        // LUCENENET specific
+        public int TextEndPos { get; internal set; }
+        public int TextStartPos { get; internal set; }
 
         /// <summary>
         /// the fragment sequence number
