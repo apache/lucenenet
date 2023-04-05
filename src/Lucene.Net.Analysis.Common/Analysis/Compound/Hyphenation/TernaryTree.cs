@@ -131,16 +131,21 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         protected void EnsureInitialized()
         {
             LazyInitializer.EnsureInitialized(ref nullIfNotInitialized, () => {
-                m_root = (char)0;
-                m_freenode = (char)1;
-                m_length = 0;
-                m_lo = new char[BLOCK_SIZE];
-                m_hi = new char[BLOCK_SIZE];
-                m_eq = new char[BLOCK_SIZE];
-                m_sc = new char[BLOCK_SIZE];
-                m_kv = new CharVector();
+                InitInternal();
                 return new object();
             });
+        }
+
+        private void InitInternal()
+        {
+            m_root = (char)0;
+            m_freenode = (char)1;
+            m_length = 0;
+            m_lo = new char[BLOCK_SIZE];
+            m_hi = new char[BLOCK_SIZE];
+            m_eq = new char[BLOCK_SIZE];
+            m_sc = new char[BLOCK_SIZE];
+            m_kv = new CharVector();
         }
 
         /// <summary>
@@ -475,7 +480,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     k[i++] = iter.Current;
                 }
             }
-            // Init(); // LUCENENET specific - changes replacing calling virtual member from constructor
+            InitInternal(); // LUCENENET specific - changes replacing calling virtual member from constructor
             InsertBalanced(k, v, 0, n);
 
             // With uniform letter distribution sc[root] should be around 'm'
