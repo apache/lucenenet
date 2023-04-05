@@ -475,7 +475,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     k[i++] = iter.Current;
                 }
             }
-            Init();
+            // Init(); // LUCENENET specific - changes replacing calling virtual member from constructor
             InsertBalanced(k, v, 0, n);
 
             // With uniform letter distribution sc[root] should be around 'm'
@@ -624,7 +624,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             public virtual void Rewind()
             {
-                EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
                 ns.Clear();
                 ks.Length = 0;
                 cur = outerInstance.m_root;
@@ -635,7 +634,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 get
                 {
-                    EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
                     if (cur >= 0)
                     {
                         return outerInstance.m_eq[cur];
