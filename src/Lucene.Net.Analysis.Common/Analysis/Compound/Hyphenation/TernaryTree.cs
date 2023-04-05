@@ -1,11 +1,10 @@
-﻿// Lucene version compatibility level 4.8.1
+﻿﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Threading;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -123,20 +122,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         internal TernaryTree()
         {
-            // Init();  // LUCENENET specific - changes replacing calling virtual member from constructor
+            Init();
         }
 
-        // LUCENENET specific - changes replacing calling virtual member from constructor
-        private object nullIfNotInitialized;
-        protected void EnsureInitialized()
-        {
-            LazyInitializer.EnsureInitialized(ref nullIfNotInitialized, () => {
-                InitInternal();
-                return new object();
-            });
-        }
-
-        private void InitInternal()
+        protected virtual void Init()
         {
             m_root = (char)0;
             m_freenode = (char)1;
@@ -156,7 +145,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         public virtual void Insert(string key, char val)
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             // make sure we have enough room in the arrays
             int len = key.Length + 1; // maximum number of nodes that may be generated
             if (m_freenode + len > m_eq.Length)
@@ -171,7 +159,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual void Insert(char[] key, int start, char val)
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             int len = StrLen(key) + 1;
             if (m_freenode + len > m_eq.Length)
             {
@@ -339,7 +326,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual int Find(string key)
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             int len = key.Length;
             char[] strkey = new char[len + 1];
             key.CopyTo(0, strkey, 0, len - 0);
@@ -350,7 +336,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual int Find(char[] key, int start)
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             int d;
             char p = m_root;
             int i = start;
@@ -394,7 +379,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual bool Knows(string key)
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             return (Find(key) >= 0);
         }
 
@@ -416,18 +400,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             m_sc = na;
         }
 
-        public virtual int Length
-        {
-            get
-            {
-                EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
-                return m_length;
-            }
-        }
+        public virtual int Length => m_length;
 
         public virtual object Clone()
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             TernaryTree t = new TernaryTree();
             t.m_lo = (char[])this.m_lo.Clone();
             t.m_hi = (char[])this.m_hi.Clone();
@@ -448,7 +424,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         protected virtual void InsertBalanced(string[] k, char[] v, int offset, int n)
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             int m;
             if (n < 1)
             {
@@ -467,7 +442,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         public virtual void Balance()
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             // System.out.print("Before root splitchar = ");
             // System.out.println(sc[root]);
 
@@ -482,7 +456,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     k[i++] = iter.Current;
                 }
             }
-            InitInternal(); // LUCENENET specific - changes replacing calling virtual member from constructor
+            Init();
             InsertBalanced(k, v, 0, n);
 
             // With uniform letter distribution sc[root] should be around 'm'
@@ -503,7 +477,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         public virtual void TrimToSize()
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             // first balance the tree for best performance
             Balance();
 
@@ -556,7 +529,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <returns>An enumerator over the keys of this <see cref="TernaryTree"/>.</returns>
         public virtual IEnumerator<string> GetEnumerator()
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             return new Enumerator(this);
         }
 
@@ -812,7 +784,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual void PrintStats(TextWriter @out)
         {
-            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             @out.WriteLine("Number of keys = " + Convert.ToString(m_length)); // LUCENENET: Intentionally using current culture
             @out.WriteLine("Node count = " + Convert.ToString(m_freenode)); // LUCENENET: Intentionally using current culture
             // System.out.println("Array length = " + Integer.toString(eq.length));
