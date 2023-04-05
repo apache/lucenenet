@@ -339,6 +339,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual int Find(string key)
         {
+            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             int len = key.Length;
             char[] strkey = new char[len + 1];
             key.CopyTo(0, strkey, 0, len - 0);
@@ -349,6 +350,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual int Find(char[] key, int start)
         {
+            EnsureInitialized(); // LUCENENET specific - changes replacing calling virtual member from constructor
             int d;
             char p = m_root;
             int i = start;
