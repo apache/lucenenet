@@ -638,8 +638,11 @@ namespace Lucene.Net.Analysis.Shingle
             /// <see cref="outputUnigrams"/> = true.
             /// </para>
             /// </summary>
-            public virtual void Reset()
+            public void Reset()
             {
+                // LUCENENET specific - S1699 - marked non-virtual because calling
+                // virtual members from the constructor is not a safe operation in .NET.
+                
                 previousValue = value = minValue;
             }
 
