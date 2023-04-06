@@ -219,7 +219,9 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Reads terms file header. </summary>
-        protected virtual int ReadHeader(IndexInput input)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected int ReadHeader(IndexInput input)
         {
             int version = CodecUtil.CheckHeader(input, BlockTreeTermsWriter.TERMS_CODEC_NAME, BlockTreeTermsWriter.VERSION_START, BlockTreeTermsWriter.VERSION_CURRENT);
             if (version < BlockTreeTermsWriter.VERSION_APPEND_ONLY)
@@ -231,7 +233,9 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Reads index file header. </summary>
-        protected virtual int ReadIndexHeader(IndexInput input)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected int ReadIndexHeader(IndexInput input)
         {
             int version = CodecUtil.CheckHeader(input, BlockTreeTermsWriter.TERMS_INDEX_CODEC_NAME, BlockTreeTermsWriter.VERSION_START, BlockTreeTermsWriter.VERSION_CURRENT);
             if (version < BlockTreeTermsWriter.VERSION_APPEND_ONLY)
@@ -243,7 +247,9 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Seek <paramref name="input"/> to the directory offset. </summary>
-        protected virtual void SeekDir(IndexInput input, long dirOffset)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected void SeekDir(IndexInput input, long dirOffset)
         {
             if (version >= BlockTreeTermsWriter.VERSION_CHECKSUM)
             {

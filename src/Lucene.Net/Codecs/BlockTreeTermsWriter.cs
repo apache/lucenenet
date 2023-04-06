@@ -343,7 +343,9 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Writes the terms file header. </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal virtual void WriteHeader(IndexOutput @out)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected void WriteHeader(IndexOutput @out)
         {
             CodecUtil.WriteHeader(@out, TERMS_CODEC_NAME, VERSION_CURRENT);
         }
@@ -351,7 +353,9 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Writes the index file header. </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal virtual void WriteIndexHeader(IndexOutput @out)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected internal void WriteIndexHeader(IndexOutput @out)
         {
             CodecUtil.WriteHeader(@out, TERMS_INDEX_CODEC_NAME, VERSION_CURRENT);
         }
