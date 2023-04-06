@@ -53,9 +53,7 @@ namespace Lucene.Net.Util
         /// These doc ids should be smaller than the maximum size passed to the
         /// constructor.
         /// </summary>
-        // LUCENENET specific - S1699 - marked non-virtual because calling
-        // virtual members from the constructor is not a safe operation in .NET
-        public void InPlaceOr(DocIdSetIterator disi)
+        public virtual void InPlaceOr(DocIdSetIterator disi)
         {
             int doc;
             long size = Length; // LUCENENET specific - using Length in place of Size (since they are the same)
