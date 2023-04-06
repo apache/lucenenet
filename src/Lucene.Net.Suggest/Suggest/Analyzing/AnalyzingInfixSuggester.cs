@@ -188,7 +188,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Override this to customize index settings, e.g. which
         /// codec to use. 
         /// </summary>
-        protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion,
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected internal IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion,
             Analyzer indexAnalyzer, OpenMode openMode)
         {
             IndexWriterConfig iwc = new IndexWriterConfig(matchVersion, indexAnalyzer)

@@ -175,7 +175,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public virtual bool IsLeaf => m_leaf;
 
         /// <summary>Note: not supported at level 0.</summary>
-        public virtual void SetLeaf()
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void SetLeaf()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Level != 0);
             m_leaf = true;

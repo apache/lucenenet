@@ -618,7 +618,9 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///              If the key is <c>null</c>. </exception>
         /// <exception cref="ArgumentException">
         ///              If the key is an empty <see cref="string"/>. </exception>
-        protected internal virtual TSTNode GetOrCreateNode(string key)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected internal TSTNode GetOrCreateNode(string key)
         {
             if (key is null)
             {

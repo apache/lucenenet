@@ -67,7 +67,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 re.Append(c);
         }
 
-        protected virtual void TruncatedToPrefixAndPattern()
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected void TruncatedToPrefixAndPattern()
         {
             int i = 0;
             while ((i < truncated.Length) && MatchingChar(truncated[i]))

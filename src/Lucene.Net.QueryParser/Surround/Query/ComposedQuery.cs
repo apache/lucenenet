@@ -34,8 +34,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             this.operatorInfix = operatorInfix;
             this.m_opName = opName;
         }
-
-        protected virtual void Recompose(IList<SrndQuery> queries)
+        
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected void Recompose(IList<SrndQuery> queries)
         {
             if (queries.Count < 2) throw AssertionError.Create("Too few subqueries");
             this.m_queries = new JCG.List<SrndQuery>(queries);

@@ -75,7 +75,9 @@ namespace Lucene.Net.Spatial.Prefix
         /// <summary>
         /// Returns a new shape that is larger than shape by at distErr.
         /// </summary>
-        protected virtual IShape BufferShape(IShape shape, double distErr)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected IShape BufferShape(IShape shape, double distErr)
         {
             // LUCENENET specific - added guard clause
             if (shape is null)

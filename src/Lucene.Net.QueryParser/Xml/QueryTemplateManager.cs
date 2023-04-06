@@ -45,7 +45,9 @@ namespace Lucene.Net.QueryParsers.Xml
             AddDefaultQueryTemplate(xslIs);
         }
 
-        public virtual void AddDefaultQueryTemplate(Stream xslIs)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void AddDefaultQueryTemplate(Stream xslIs)
         {
             defaultCompiledTemplates = GetTemplates(xslIs);
         }
