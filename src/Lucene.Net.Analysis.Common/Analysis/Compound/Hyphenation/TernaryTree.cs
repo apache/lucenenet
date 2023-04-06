@@ -125,7 +125,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             Init();
         }
 
-        protected virtual void Init()
+         // LUCENENET specific - S1699 - marked non-virtual because calling
+         // virtual members from the constructor is not a safe operation in .NET
+        protected void Init()
         {
             m_root = (char)0;
             m_freenode = (char)1;
