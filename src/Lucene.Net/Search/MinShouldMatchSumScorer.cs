@@ -451,7 +451,9 @@ namespace Lucene.Net.Search
             return false; // scorer already exhausted
         }
 
-        internal virtual bool MinheapCheck()
+        // LUCENENET specific - S1699 - marked non-virtual because calling virtual members
+        // from the constructor is not a safe operation in .NET
+        private bool MinheapCheck()
         {
             return MinheapCheck(0);
         }
