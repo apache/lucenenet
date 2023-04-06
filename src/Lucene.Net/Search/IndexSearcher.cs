@@ -161,7 +161,9 @@ namespace Lucene.Net.Search
         /// Each <see cref="LeafSlice"/> is executed in a single thread. By default there
         /// will be one <see cref="LeafSlice"/> per leaf (<see cref="AtomicReaderContext"/>).
         /// </summary>
-        protected virtual LeafSlice[] Slices(IList<AtomicReaderContext> leaves)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected LeafSlice[] Slices(IList<AtomicReaderContext> leaves)
         {
             LeafSlice[] slices = new LeafSlice[leaves.Count];
             for (int i = 0; i < slices.Length; i++)

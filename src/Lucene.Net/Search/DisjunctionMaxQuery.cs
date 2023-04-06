@@ -92,7 +92,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Add a subquery to this disjunction </summary>
         /// <param name="query"> The disjunct added </param>
-        public virtual void Add(Query query)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void Add(Query query)
         {
             disjuncts.Add(query);
         }

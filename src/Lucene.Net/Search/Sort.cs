@@ -139,13 +139,17 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>Sets the sort to the given criteria. </summary>
-        public virtual void SetSort(SortField field)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void SetSort(SortField field)
         {
             this.fields = new SortField[] { field };
         }
 
         /// <summary>Sets the sort to the given criteria in succession. </summary>
-        public virtual void SetSort(params SortField[] fields)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void SetSort(params SortField[] fields)
         {
             this.fields = fields;
         }
