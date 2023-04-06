@@ -241,7 +241,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Open the <see cref="DirectoryReader"/> from this <see cref="Directory"/>. 
         /// </summary>
-        protected virtual DirectoryReader OpenIndexReader(Directory directory)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected DirectoryReader OpenIndexReader(Directory directory)
         {
             return DirectoryReader.Open(directory);
         }
@@ -249,7 +251,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Open the <see cref="DirectoryReader"/> from this <see cref="IndexWriter"/>. 
         /// </summary>
-        protected virtual DirectoryReader OpenIndexReader(IndexWriter writer)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected DirectoryReader OpenIndexReader(IndexWriter writer)
         {
             return DirectoryReader.Open(writer, false);
         }

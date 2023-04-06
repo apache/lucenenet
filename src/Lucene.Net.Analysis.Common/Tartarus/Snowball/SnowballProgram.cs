@@ -63,7 +63,9 @@ namespace Lucene.Net.Tartarus.Snowball
         /// <summary>
         /// Set the current string.
         /// </summary>
-        public virtual void SetCurrent(string value)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void SetCurrent(string value)
         {
             m_current = value.ToCharArray();
             m_cursor = 0;

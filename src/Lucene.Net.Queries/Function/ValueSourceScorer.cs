@@ -48,7 +48,9 @@ namespace Lucene.Net.Queries.Function
 
         public virtual IndexReader Reader => m_reader;
 
-        public virtual void SetCheckDeletes(bool checkDeletes)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void SetCheckDeletes(bool checkDeletes)
         {
             this.m_checkDeletes = checkDeletes && m_reader.HasDeletions;
         }

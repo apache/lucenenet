@@ -206,7 +206,9 @@ namespace Lucene.Net.Search.VectorHighlight
             }
         }
 
-        public virtual void AddIfNoOverlap(WeightedPhraseInfo wpi)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void AddIfNoOverlap(WeightedPhraseInfo wpi)
         {
             foreach (WeightedPhraseInfo existWpi in PhraseList)
             {

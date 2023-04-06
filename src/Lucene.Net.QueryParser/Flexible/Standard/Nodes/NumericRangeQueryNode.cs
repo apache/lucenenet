@@ -87,7 +87,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// <param name="lowerInclusive"><c>true</c> if the lower bound is inclusive, otherwise, <c>false</c></param>
         /// <param name="upperInclusive"><c>true</c> if the upper bound is inclusive, otherwise, <c>false</c></param>
         /// <param name="numericConfig">the <see cref="Config.NumericConfig"/> that represents associated with the upper and lower bounds</param>
-        public virtual void SetBounds(NumericQueryNode lower, NumericQueryNode upper,
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void SetBounds(NumericQueryNode lower, NumericQueryNode upper,
             bool lowerInclusive, bool upperInclusive, NumericConfig numericConfig)
         {
             if (numericConfig is null)

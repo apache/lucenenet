@@ -56,7 +56,9 @@ namespace Lucene.Net.Analysis.Util
             set => m_len = value;
         }
 
-        public virtual void Set(char[] arr, int end)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void Set(char[] arr, int end)
         {
             this.m_buf = arr;
             this.m_len = end;
