@@ -327,9 +327,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Call this only once (if you subclass!) </summary>
-        // LUCENENET specific - S1699 - marked non-virtual because calling
-        // virtual members from the constructor is not a safe operation in .NET
-        protected void Uninvert(AtomicReader reader, IBits liveDocs, BytesRef termPrefix)
+        protected virtual void Uninvert(AtomicReader reader, IBits liveDocs, BytesRef termPrefix)
         {
             FieldInfo info = reader.FieldInfos.FieldInfo(m_field);
             if (info != null && info.HasDocValues)

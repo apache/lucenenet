@@ -57,7 +57,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             return (c != unlimited) && (c != mask);
         }
 
-        protected virtual void AppendRegExpForChar(char c, StringBuilder re)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        protected void AppendRegExpForChar(char c, StringBuilder re)
         {
             if (c == unlimited)
                 re.Append(".*");

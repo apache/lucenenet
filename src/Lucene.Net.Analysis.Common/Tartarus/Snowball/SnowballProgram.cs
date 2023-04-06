@@ -85,7 +85,11 @@ namespace Lucene.Net.Tartarus.Snowball
         /// </summary>
         /// <param name="text">character array containing input</param>
         /// <param name="length">valid length of text.</param>
-        public virtual void SetCurrent(char[] text, int length)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        // this one specifically is not called from constructor, the other overload is, but to be
+        // consistent, marking this as non-virtual as well.
+        public void SetCurrent(char[] text, int length)
         {
             m_current = text;
             m_cursor = 0;
