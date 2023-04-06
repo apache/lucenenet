@@ -129,24 +129,32 @@ namespace Lucene.Net.Analysis.Util
             throw new ArgumentException($"Configuration Error: '{name}' value must be one of {Collections.ToString(allowedValues)}");
         }
 
-        public virtual string Get(IDictionary<string, string> args, string name, string defaultVal = null)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public string Get(IDictionary<string, string> args, string name, string defaultVal = null)
         {
             if (args.TryGetValue(name, out string s))
                 args.Remove(name);
             return s ?? defaultVal;
         }
 
-        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
         {
             return Get(args, name, allowedValues, defaultVal: null);
         }
 
-        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal)
         {
             return Get(args, name, allowedValues, defaultVal, caseSensitive: true);
         }
 
-        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal, bool caseSensitive)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal, bool caseSensitive)
         {
             if (!args.TryGetValue(name, out string s) || s is null)
             {
