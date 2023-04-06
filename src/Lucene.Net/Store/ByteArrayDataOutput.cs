@@ -51,12 +51,16 @@ namespace Lucene.Net.Store
             Reset(BytesRef.EMPTY_BYTES);
         }
 
-        public virtual void Reset(byte[] bytes)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void Reset(byte[] bytes)
         {
             Reset(bytes, 0, bytes.Length);
         }
 
-        public virtual void Reset(byte[] bytes, int offset, int len)
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void Reset(byte[] bytes, int offset, int len)
         {
             this.bytes = bytes;
             pos = offset;

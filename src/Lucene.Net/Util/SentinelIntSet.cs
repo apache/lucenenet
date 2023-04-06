@@ -89,7 +89,9 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Clear()
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
+        public void Clear()
         {
             Arrays.Fill(keys, EmptyVal);
             Count = 0;
