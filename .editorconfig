@@ -184,3 +184,9 @@ dotnet_diagnostic.IDE0057.severity = none
 
 # IDE0070: Use 'System.HashCode.Combine'
 dotnet_diagnostic.IDE0070.severity = none
+
+
+### SonarCloud Issues ###
+
+# S907: Remove this use of 'goto'
+dotnet_diagnostic.S907.severity = none
