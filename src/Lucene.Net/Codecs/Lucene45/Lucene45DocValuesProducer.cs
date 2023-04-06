@@ -1067,7 +1067,8 @@ namespace Lucene.Net.Codecs.Lucene45
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            internal virtual TermsEnum GetTermsEnum()
+            // LUCENENET specific - S1699 - marked non-virtual because calling virtual members from the constructor is not a safe operation in .NET
+            internal TermsEnum GetTermsEnum()
             {
                 try
                 {
@@ -1080,7 +1081,8 @@ namespace Lucene.Net.Codecs.Lucene45
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            internal virtual TermsEnum GetTermsEnum(IndexInput input)
+            // LUCENENET specific - S1699 - marked non-virtual because calling virtual members from the constructor is not a safe operation in .NET
+            internal TermsEnum GetTermsEnum(IndexInput input)
             {
                 input.Seek(bytes.offset);
 
