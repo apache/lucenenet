@@ -47,6 +47,7 @@ namespace Lucene.Net.Analysis.Util
 
         public OpenStringBuilder(char[] arr, int len)
         {
+            // LUCENENET specific - calling private method instead of public virtual
             SetInternal(arr, len);
         }
 
