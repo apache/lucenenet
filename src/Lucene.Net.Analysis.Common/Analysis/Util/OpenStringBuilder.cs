@@ -47,7 +47,8 @@ namespace Lucene.Net.Analysis.Util
 
         public OpenStringBuilder(char[] arr, int len)
         {
-            Set(arr, len);
+            // LUCENENET specific - calling private method instead of public virtual
+            SetInternal(arr, len);
         }
 
         public virtual int Length
@@ -56,7 +57,12 @@ namespace Lucene.Net.Analysis.Util
             set => m_len = value;
         }
 
-        public virtual void Set(char[] arr, int end)
+        public virtual void Set(char[] arr, int end) => SetInternal(arr, end);
+
+        // LUCENENET specific - S1699 - introduced this to allow the constructor to
+        // still call "Set" functionality without having to call the virtual method
+        // that could be overridden by a subclass and don't have the state it expects
+        private void SetInternal(char[] arr, int end)
         {
             this.m_buf = arr;
             this.m_len = end;
