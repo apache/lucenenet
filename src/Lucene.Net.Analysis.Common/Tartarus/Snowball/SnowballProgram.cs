@@ -55,7 +55,8 @@ namespace Lucene.Net.Tartarus.Snowball
         protected SnowballProgram()
         {
             m_current = new char[8];
-            SetCurrent("");
+            // LUCENENET specific - calling private method instead of public virtual
+            SetCurrentInternal("");
         }
 
         public abstract bool Stem();
@@ -64,10 +65,27 @@ namespace Lucene.Net.Tartarus.Snowball
         /// Set the current string.
         /// </summary>
         public virtual void SetCurrent(string value)
+            => SetCurrentInternal(value);
+
+        /// <summary>
+        /// Set the current string.
+        /// </summary>
+        /// <param name="text">character array containing input</param>
+        /// <param name="length">valid length of text.</param>
+        public virtual void SetCurrent(char[] text, int length) =>
+            SetCurrentInternal(text, length);
+
+        private void SetCurrentInternal(string value)
+            => SetCurrentInternal(value.ToCharArray(), value.Length);
+
+        // LUCENENET specific - S1699 - introduced this to allow the constructor to
+        // still call "SetCurrent" functionality without having to call the virtual method
+        // that could be overridden by a subclass and don't have the state it expects
+        private void SetCurrentInternal(char[] value, int length)
         {
-            m_current = value.ToCharArray();
+            m_current = value;
             m_cursor = 0;
-            m_limit = value.Length;
+            m_limit = length;
             m_limit_backward = 0;
             m_bra = m_cursor;
             m_ket = m_limit;
@@ -77,21 +95,6 @@ namespace Lucene.Net.Tartarus.Snowball
         /// Get the current string.
         /// </summary>
         public virtual string Current => new string(m_current, 0, m_limit);
-
-        /// <summary>
-        /// Set the current string.
-        /// </summary>
-        /// <param name="text">character array containing input</param>
-        /// <param name="length">valid length of text.</param>
-        public virtual void SetCurrent(char[] text, int length)
-        {
-            m_current = text;
-            m_cursor = 0;
-            m_limit = length;
-            m_limit_backward = 0;
-            m_bra = m_cursor;
-            m_ket = m_limit;
-        }
 
         /// <summary>
         /// Get the current buffer containing the stem.
