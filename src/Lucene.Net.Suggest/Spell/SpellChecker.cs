@@ -142,6 +142,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="spellIndexDir"> the spell directory to use </param>
         /// <exception cref="ObjectDisposedException"> if the Spellchecker is already closed </exception>
         /// <exception cref="IOException"> if spellchecker can not open the directory </exception>
+        // TODO: we should make this final as it is called in the constructor
         // LUCENENET specific - S1699 - marked non-virtual because calling
         // virtual members from the constructor is not a safe operation in .NET
         public void SetSpellIndex(Directory spellIndexDir)
