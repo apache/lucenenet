@@ -43,14 +43,10 @@ namespace Lucene.Net.Analysis
 
         private sealed class NeverPeeksLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
         {
+            // LUCENENET specific - removed NewPosition override and using factory instead
             public NeverPeeksLookaheadTokenFilter(TokenStream input)
-                : base(input)
+                : base(input, () => new Position())
             {
-            }
-
-            protected override Position NewPosition()
-            {
-                return new Position();
             }
 
             public override bool IncrementToken()

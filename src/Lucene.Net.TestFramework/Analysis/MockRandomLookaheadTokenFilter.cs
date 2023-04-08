@@ -32,17 +32,13 @@ namespace Lucene.Net.Analysis
         private readonly J2N.Randomizer random;
         private readonly long seed;
 
+        // LUCENENET specific - removed NewPosition override and using factory instead
         public MockRandomLookaheadTokenFilter(Random random, TokenStream @in)
-            : base(@in)
+            : base(@in, () => new Position())
         {
             this.termAtt = AddAttribute<ICharTermAttribute>();
             this.seed = random.NextInt64();
             this.random = new J2N.Randomizer(seed);
-        }
-
-        protected override Position NewPosition()
-        {
-            return new Position();
         }
 
         protected override void AfterPosition()

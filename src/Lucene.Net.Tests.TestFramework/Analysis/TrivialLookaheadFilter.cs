@@ -34,17 +34,13 @@ namespace Lucene.Net.Analysis
 
         private int insertUpto;
 
+        // LUCENENET specific - removed NewPosition override and using factory instead
         public TrivialLookaheadFilter(TokenStream input)
-            : base(input)
+            : base(input, () => new TestPosition())
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
-        }
-
-        protected override TestPosition NewPosition()
-        {
-            return new TestPosition();
         }
 
         public override bool IncrementToken()

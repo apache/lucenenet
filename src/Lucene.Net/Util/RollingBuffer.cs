@@ -43,6 +43,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
+    // LUCENENET specific - removed NewInstance override and using NewPosition as factory
     public abstract class RollingBuffer<T>
         where T : RollingBuffer.IResettable
     {
@@ -57,24 +58,16 @@ namespace Lucene.Net.Util
         // How many valid Position are held in the
         // array:
         private int count;
-
-        protected RollingBuffer()
-        {
-            for (var idx = 0; idx < buffer.Length; idx++)
-            {
-                buffer[idx] = NewInstance(); // TODO GIVE ROLLING BUFFER A DELEGATE FOR NEW INSTANCE
-            }
-        }
+        private Func<T> factory;
 
         protected RollingBuffer(Func<T> factory)
         {
+            this.factory = factory; // LUCENENET specific - storing factory for usage in class
             for (int idx = 0; idx < buffer.Length; idx++)
             {
                 buffer[idx] = factory();
             }
         }
-
-        protected abstract T NewInstance();
 
         public virtual void Reset()
         {
@@ -127,7 +120,7 @@ namespace Lucene.Net.Util
                     Arrays.Copy(buffer, 0, newBuffer, buffer.Length - nextWrite, nextWrite);
                     for (int i = buffer.Length; i < newBuffer.Length; i++)
                     {
-                        newBuffer[i] = NewInstance();
+                        newBuffer[i] = this.factory(); // LUCENENET specific - using factory to create new instance
                     }
                     nextWrite = buffer.Length;
                     buffer = newBuffer;
