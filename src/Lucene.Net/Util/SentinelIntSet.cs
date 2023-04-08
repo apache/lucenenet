@@ -43,6 +43,11 @@ namespace Lucene.Net.Util
     /// <para/>
     /// NOTE: This was SentinelIntSet in Lucene
     /// <para/>
+    ///
+    /// If you need to extend this class and subclass it, keep in mind that constructor
+    /// calls a private "ClearInternal" method and not virtual Clear. So if you need
+    /// to do some specific initialization in subclass constructor, call your own private
+    /// method with whatever custom initialization you need.
     /// @lucene.internal
     /// </summary>
     public class SentinelInt32Set
@@ -84,12 +89,15 @@ namespace Lucene.Net.Util
             keys = new int[tsize];
             if (emptyVal != 0)
             {
-                Clear();
+                ClearInternal(); // LUCENENET specific - calling private and not virtual method
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Clear()
+        public virtual void Clear() => ClearInternal();
+        // LUCENENET specific - S1699 - non-virtual method that can be
+        // called from the constructor
+        private void ClearInternal()
         {
             Arrays.Fill(keys, EmptyVal);
             Count = 0;
