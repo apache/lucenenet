@@ -26,6 +26,11 @@ namespace Lucene.Net.Queries.Function
     /// <summary>
     /// <see cref="Scorer"/> which returns the result of <see cref="FunctionValues.SingleVal(int)"/> as
     /// the score for a document.
+    /// 
+    /// When overriding this class, be aware that ValueSourceScorer constructor is calling
+    /// its private SetCheckDeletesInternal method as opposed to virtual SetCheckDeletes method.
+    /// This is done to avoid virtual call in constructor. You can call your own private
+    /// method for CheckDeletes initialization in your constructor if you need to.
     /// </summary>
     public class ValueSourceScorer : Scorer
     {
@@ -42,13 +47,17 @@ namespace Lucene.Net.Queries.Function
             this.m_reader = reader;
             this.m_maxDoc = reader.MaxDoc;
             this.m_values = values;
-            SetCheckDeletes(true);
+            SetCheckDeletesInternal(true); // LUCENENET specific - calling internal method instead of virtual
             this.liveDocs = MultiFields.GetLiveDocs(reader);
         }
 
         public virtual IndexReader Reader => m_reader;
 
-        public virtual void SetCheckDeletes(bool checkDeletes)
+        public virtual void SetCheckDeletes(bool checkDeletes) =>
+            SetCheckDeletesInternal(checkDeletes);
+
+        // LUCENENET specific - S1699 - introduced private method to avoid virtual call in constructor
+        private void SetCheckDeletesInternal(bool checkDeletes)
         {
             this.m_checkDeletes = checkDeletes && m_reader.HasDeletions;
         }
