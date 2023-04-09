@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestRollingBuffer : LuceneTestCase
     {
-        private class Position : RollingBuffer.IResettable
+        private class Position : IResettable
         {
             public int Pos { get; set; }
 
@@ -92,13 +92,13 @@ namespace Lucene.Net.Util
         {
             // LUCENENET specific - removed NewPosition override and using factory instead
             public RollingBufferAnonymousClass()
-                : base(RollingBufferAnonymousClassFactory.Default)
+                : base(PositionFactory.Default)
             {
             }
 
-            private class RollingBufferAnonymousClassFactory : IRollingBufferItemFactory<Position>
+            private class PositionFactory : IRollingBufferItemFactory<Position>
             {
-                public static readonly RollingBufferAnonymousClassFactory Default = new RollingBufferAnonymousClassFactory();
+                public static readonly PositionFactory Default = new PositionFactory();
 
                 public Position Create(object rollingBuffer)
                 {

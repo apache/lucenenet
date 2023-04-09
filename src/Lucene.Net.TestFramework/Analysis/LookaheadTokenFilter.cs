@@ -165,8 +165,8 @@ namespace Lucene.Net.Analysis
         {
             // LUCENENET specific - adjusted to accept factory as a parameter
             // instead of using NewInstance virtual
-            public RollingBufferAnonymousClass(IRollingBufferItemFactory<T> factory)
-                : base(factory)
+            public RollingBufferAnonymousClass(IRollingBufferItemFactory<T> itemFactory)
+                : base(itemFactory)
             {
             }
         }
