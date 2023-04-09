@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
@@ -38,6 +37,24 @@ namespace Lucene.Net.Util
     }
 
     /// <summary>
+    /// LUCENENET specific interface to allow overriding rolling buffer item creation
+    /// without having to call virtual methods from the constructor
+    /// </summary>
+    public interface IRollingBufferItemFactory<out T>
+    {
+        T Create(object rollingBuffer);
+    }
+
+    public class RollingBufferItemFactory<T> : IRollingBufferItemFactory<T> where T : new()
+    {
+        public static readonly RollingBufferItemFactory<T> Default = new RollingBufferItemFactory<T>();
+        public virtual T Create(object rollingBuffer)
+        {
+            return new T();
+        }
+    }
+
+    /// <summary>
     /// Acts like forever growing <see cref="T:T[]"/>, but internally uses a
     /// circular buffer to reuse instances of <typeparam name="T"/>.
     /// <para/>
@@ -58,14 +75,14 @@ namespace Lucene.Net.Util
         // How many valid Position are held in the
         // array:
         private int count;
-        private Func<T> factory;
+        private IRollingBufferItemFactory<T> factory;
 
-        protected RollingBuffer(Func<T> factory)
+        protected RollingBuffer(IRollingBufferItemFactory<T> factory)
         {
             this.factory = factory; // LUCENENET specific - storing factory for usage in class
             for (int idx = 0; idx < buffer.Length; idx++)
             {
-                buffer[idx] = factory();
+                buffer[idx] = factory.Create(this);
             }
         }
 
@@ -120,7 +137,7 @@ namespace Lucene.Net.Util
                     Arrays.Copy(buffer, 0, newBuffer, buffer.Length - nextWrite, nextWrite);
                     for (int i = buffer.Length; i < newBuffer.Length; i++)
                     {
-                        newBuffer[i] = this.factory(); // LUCENENET specific - using factory to create new instance
+                        newBuffer[i] = this.factory.Create(this); // LUCENENET specific - using factory to create new instance
                     }
                     nextWrite = buffer.Length;
                     buffer = newBuffer;

@@ -85,16 +85,11 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        /// LUCENENET specific - removed NewInstance override and using NewPosition as factory
         private class Positions : RollingBuffer<Position>
         {
+            // LUCENENET specific - removed NewInstance override and using PositionsFactory to create instances
             public Positions()
-                : base(NewPosition) { }
-
-            private static Position NewPosition()
-            {
-                return new Position();
-            }
+                : base(RollingBufferItemFactory<Position>.Default) { }
         }
 
         /// <summary>

@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis
         // it without referring to the generic closing type.
         // removed virtual NewPosition() method and added factory in the constructor
 
-        protected internal LookaheadTokenFilter(TokenStream input, Func<T> factory)
+        protected internal LookaheadTokenFilter(TokenStream input, IRollingBufferItemFactory<T> factory)
             : base(input)
         {
             m_positions = new RollingBufferAnonymousClass(factory);
@@ -165,7 +165,7 @@ namespace Lucene.Net.Analysis
         {
             // LUCENENET specific - adjusted to accept factory as a parameter
             // instead of using NewInstance virtual
-            public RollingBufferAnonymousClass(Func<T> factory)
+            public RollingBufferAnonymousClass(IRollingBufferItemFactory<T> factory)
                 : base(factory)
             {
             }

@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
 using Test = NUnit.Framework.TestAttribute;
@@ -45,7 +46,7 @@ namespace Lucene.Net.Analysis
         {
             // LUCENENET specific - removed NewPosition override and using factory instead
             public NeverPeeksLookaheadTokenFilter(TokenStream input)
-                : base(input, () => new Position())
+                : base(input, RollingBufferItemFactory<LookaheadTokenFilter.Position>.Default)
             {
             }
 

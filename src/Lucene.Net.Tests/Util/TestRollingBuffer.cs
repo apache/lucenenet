@@ -90,16 +90,22 @@ namespace Lucene.Net.Util
 
         private sealed class RollingBufferAnonymousClass : RollingBuffer<Position>
         {
+            // LUCENENET specific - removed NewPosition override and using factory instead
             public RollingBufferAnonymousClass()
-                : base(NewInstanceFunc)
+                : base(RollingBufferAnonymousClassFactory.Default)
             {
             }
 
-            public static Position NewInstanceFunc()
+            private class RollingBufferAnonymousClassFactory : IRollingBufferItemFactory<Position>
             {
-                Position pos = new Position();
-                pos.Pos = -1;
-                return pos;
+                public static readonly RollingBufferAnonymousClassFactory Default = new RollingBufferAnonymousClassFactory();
+
+                public Position Create(object rollingBuffer)
+                {
+                    Position pos = new Position();
+                    pos.Pos = -1;
+                    return pos;
+                }
             }
         }
     }

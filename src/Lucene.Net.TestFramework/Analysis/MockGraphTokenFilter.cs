@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
 
         // LUCENENET specific - removed NewPosition override and using factory instead
         public MockGraphTokenFilter(Random random, TokenStream input)
-            : base(input, () => new Position())
+            : base(input, RollingBufferItemFactory<LookaheadTokenFilter.Position>.Default)
         {
             seed = random.NextInt64();
             termAtt = AddAttribute<ICharTermAttribute>();

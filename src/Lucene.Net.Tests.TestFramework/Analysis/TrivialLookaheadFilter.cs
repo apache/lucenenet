@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 8.2.0
 
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 using JCG = J2N.Collections.Generic;
 
@@ -36,7 +37,7 @@ namespace Lucene.Net.Analysis
 
         // LUCENENET specific - removed NewPosition override and using factory instead
         public TrivialLookaheadFilter(TokenStream input)
-            : base(input, () => new TestPosition())
+            : base(input, RollingBufferItemFactory<TestPosition>.Default)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             posIncAtt = AddAttribute<IPositionIncrementAttribute>();
