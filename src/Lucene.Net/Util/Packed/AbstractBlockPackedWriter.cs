@@ -72,9 +72,12 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Reset this writer to wrap <paramref name="out"/>. The block size remains unchanged. </summary>
+        /// Reset this writer to wrap <paramref name="out"/>. The block size remains unchanged.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Reset(DataOutput @out)
+        public virtual void Reset(DataOutput @out) => ResetInternal(@out);
+
+        private void ResetInternal(DataOutput @out)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(@out != null);
             this.m_out = @out;
