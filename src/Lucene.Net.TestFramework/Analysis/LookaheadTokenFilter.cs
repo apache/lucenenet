@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         // LUCENENET NOTE: This class was originally marked protected, but was made public because of
         // inconsistent accessibility issues with using it as a generic constraint.
-        public class Position : RollingBuffer.IResettable
+        public class Position : IResettable
         {
             // Buffered input tokens at this position:
             public IList<AttributeSource.State> InputTokens { get; private set; } = new JCG.List<AttributeSource.State>();
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis
     /// position, restoring them, providing access to them, etc.
     /// </summary>
     public abstract class LookaheadTokenFilter<T> : LookaheadTokenFilter
-        where T : LookaheadTokenFilter.Position
+        where T : LookaheadTokenFilter.Position, IResettable
     {
         protected readonly static bool DEBUG = 
 #if VERBOSE_TEST_LOGGING
@@ -123,10 +123,10 @@ namespace Lucene.Net.Analysis
         // it without referring to the generic closing type.
         // removed virtual NewPosition() method and added factory in the constructor
 
-        protected internal LookaheadTokenFilter(TokenStream input, IRollingBufferItemFactory<T> factory)
+        protected internal LookaheadTokenFilter(TokenStream input, IRollingBufferItemFactory<T> itemFactory)
             : base(input)
         {
-            m_positions = new RollingBufferAnonymousClass(factory);
+            m_positions = new RollingBufferAnonymousClass(itemFactory);
             m_posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             m_posLenAtt = AddAttribute<IPositionLengthAttribute>();
             m_offsetAtt = AddAttribute<IOffsetAttribute>();

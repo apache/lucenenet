@@ -72,14 +72,14 @@ namespace Lucene.Net.Util
         // How many valid Position are held in the
         // array:
         private int count;
-        private IRollingBufferItemFactory<T> factory;
+        private IRollingBufferItemFactory<T> itemFactory;
 
-        protected RollingBuffer(IRollingBufferItemFactory<T> factory)
+        protected RollingBuffer(IRollingBufferItemFactory<T> itemFactory)
         {
-            this.factory = factory; // LUCENENET specific - storing factory for usage in class
+            this.itemFactory = itemFactory; // LUCENENET specific - storing factory for usage in class
             for (int idx = 0; idx < buffer.Length; idx++)
             {
-                buffer[idx] = factory.Create(this);
+                buffer[idx] = itemFactory.Create(this);
             }
         }
 
@@ -134,7 +134,7 @@ namespace Lucene.Net.Util
                     Arrays.Copy(buffer, 0, newBuffer, buffer.Length - nextWrite, nextWrite);
                     for (int i = buffer.Length; i < newBuffer.Length; i++)
                     {
-                        newBuffer[i] = this.factory.Create(this); // LUCENENET specific - using factory to create new instance
+                        newBuffer[i] = this.itemFactory.Create(this); // LUCENENET specific - using factory to create new instance
                     }
                     nextWrite = buffer.Length;
                     buffer = newBuffer;
