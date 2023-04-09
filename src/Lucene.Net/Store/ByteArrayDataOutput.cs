@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Store
 {
@@ -38,26 +39,57 @@ namespace Lucene.Net.Store
 
         public ByteArrayDataOutput(byte[] bytes)
         {
-            Reset(bytes);
+            // LUCENENET: Changed to call private method to avoid virtual method call in constructor
+            ResetInternal(bytes, 0, bytes?.Length ?? 0);
         }
 
         public ByteArrayDataOutput(byte[] bytes, int offset, int len)
         {
-            Reset(bytes, offset, len);
+            // LUCENENET: Changed to call private method to avoid virtual method call in constructor
+            ResetInternal(bytes, offset, len);
         }
 
         public ByteArrayDataOutput()
         {
-            Reset(BytesRef.EMPTY_BYTES);
+            // LUCENENET: Changed to call private method to avoid virtual method call in constructor
+            ResetInternal(BytesRef.EMPTY_BYTES, 0, BytesRef.EMPTY_BYTES.Length);
         }
 
-        public virtual void Reset(byte[] bytes)
-        {
-            Reset(bytes, 0, bytes.Length);
-        }
+        /// <summary>
+        /// 
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// a private method and not this virtual method. So if you need to override
+        /// the behavior during the initialization, call your own private method from the constructor
+        /// with whatever custom behavior you need.
+        /// </summary>
+        public virtual void Reset(byte[] bytes) =>
+            ResetInternal(bytes, 0, bytes?.Length ?? 0);
 
-        public virtual void Reset(byte[] bytes, int offset, int len)
+        /// <summary>
+        /// 
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// a private method and not this virtual method. So if you need to override
+        /// the behavior during the initialization, call your own private method from the constructor
+        /// with whatever custom behavior you need.
+        /// </summary>
+        public virtual void Reset(byte[] bytes, int offset, int len) =>
+            ResetInternal(bytes, offset, len);
+
+        // LUCENENET specific - created a private method that can be called
+        // from the constructor and the Reset methods to avoid virtual method
+        // calls in the constructor.
+        private void ResetInternal(byte[] bytes, int offset, int len)
         {
+            // LUCENENET: Added guard clauses
+            if (bytes is null)
+                throw new ArgumentNullException(nameof(bytes));
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), offset, "Non-negative number required.");
+            if (len < 0)
+                throw new ArgumentOutOfRangeException(nameof(len), len, "Non-negative number required.");
+            if (bytes.Length - offset < len)
+                throw new ArgumentException("Offset and length were out of bounds for the array or length is greater than the number of elements from index to the end of the source array.");
+                
             this.bytes = bytes;
             pos = offset;
             limit = offset + len;
