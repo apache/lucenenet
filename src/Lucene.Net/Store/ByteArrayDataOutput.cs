@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
         public ByteArrayDataOutput(byte[] bytes)
         {
             // LUCENENET: Changed to call private method to avoid virtual method call in constructor
-            ResetInternal(bytes, 0, bytes.Length);
+            ResetInternal(bytes, 0, bytes?.Length ?? 0);
         }
 
         public ByteArrayDataOutput(byte[] bytes, int offset, int len)
