@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
     /// </summary>
     public class RollingBufferItemFactory<T> : IRollingBufferItemFactory<T> where T : new()
     {
-        public static readonly RollingBufferItemFactory<T> Default = new RollingBufferItemFactory<T>();
+        public static RollingBufferItemFactory<T> Default { get; } = new RollingBufferItemFactory<T>();
         public virtual T Create(object rollingBuffer)
         {
             return new T();
