@@ -47,7 +47,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         public NumericRangeQueryNode(NumericQueryNode lower, NumericQueryNode upper,
             bool lowerInclusive, bool upperInclusive, NumericConfig numericConfig)
         {
-            SetBounds(lower, upper, lowerInclusive, upperInclusive, numericConfig);
+            SetBoundsInternal(lower, upper, lowerInclusive, upperInclusive, numericConfig);
         }
 
         private static NumericType GetNumericDataType(J2N.Numerics.Number number)
@@ -81,6 +81,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// <summary>
         /// Sets the upper and lower bounds of this range query node and the
         /// <see cref="Config.NumericConfig"/> associated with these bounds.
+        ///
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// a private method and not this virtual method. So if you need to override
+        /// the behavior during the initialization, call your own private method from the constructor
+        /// with whatever custom behavior you need.
         /// </summary>
         /// <param name="lower">the lower bound</param>
         /// <param name="upper">the upper bound</param>
@@ -88,6 +93,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// <param name="upperInclusive"><c>true</c> if the upper bound is inclusive, otherwise, <c>false</c></param>
         /// <param name="numericConfig">the <see cref="Config.NumericConfig"/> that represents associated with the upper and lower bounds</param>
         public virtual void SetBounds(NumericQueryNode lower, NumericQueryNode upper,
+            bool lowerInclusive, bool upperInclusive, NumericConfig numericConfig) =>
+                SetBoundsInternal(lower, upper, lowerInclusive, upperInclusive, numericConfig);
+
+        // LUCENENET specific - created a private method that can be called from SetBounds
+        // in order to avoid calling virtual methods from the constructor.
+        private void SetBoundsInternal(NumericQueryNode lower, NumericQueryNode upper,
             bool lowerInclusive, bool upperInclusive, NumericConfig numericConfig)
         {
             if (numericConfig is null)
