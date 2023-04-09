@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.VectorHighlight
                             fieldTermStack.Push(ti);
                         if (currMap.IsValidTermOrPhrase(phraseCandidate))
                         {
-                            AddIfNoOverlap(new WeightedPhraseInfo(phraseCandidate, currMap.Boost, currMap.TermOrPhraseNumber));
+                            AddIfNoOverlapInternal(new WeightedPhraseInfo(phraseCandidate, currMap.Boost, currMap.TermOrPhraseNumber));
                         }
                         else
                         {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.VectorHighlight
                                 currMap = fieldQuery.SearchPhrase(field, phraseCandidate);
                                 if (currMap != null)
                                 {
-                                    AddIfNoOverlap(new WeightedPhraseInfo(phraseCandidate, currMap.Boost, currMap.TermOrPhraseNumber));
+                                    AddIfNoOverlapInternal(new WeightedPhraseInfo(phraseCandidate, currMap.Boost, currMap.TermOrPhraseNumber));
                                     break;
                                 }
                             }
@@ -206,7 +206,19 @@ namespace Lucene.Net.Search.VectorHighlight
             }
         }
 
-        public virtual void AddIfNoOverlap(WeightedPhraseInfo wpi)
+        /// <summary>
+        ///
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// a private method and not this virtual method. So if you need to override
+        /// the behavior during the initialization, call your own private method from the constructor
+        /// with whatever custom behavior you need.
+        /// </summary>
+        public virtual void AddIfNoOverlap(WeightedPhraseInfo wpi) =>
+            AddIfNoOverlapInternal(wpi);
+
+        // LUCENENET specific - created a private method that can be called from AddIfNoOverlap
+        // in order to avoid calling virtual methods from the constructor.
+        private void AddIfNoOverlapInternal(WeightedPhraseInfo wpi)
         {
             foreach (WeightedPhraseInfo existWpi in PhraseList)
             {
