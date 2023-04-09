@@ -67,12 +67,17 @@ namespace Lucene.Net.Util.Packed
         protected AbstractBlockPackedWriter(DataOutput @out, int blockSize) // LUCENENET specific - marked protected instead of public
         {
             PackedInt32s.CheckBlockSize(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
-            Reset(@out);
+            ResetInternal(@out); // LUCENENET specific - calling private method instead of virtual Reset
             m_values = new long[blockSize];
         }
 
         /// <summary>
         /// Reset this writer to wrap <paramref name="out"/>. The block size remains unchanged.
+        ///
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// a private method and not this virtual method. So if you need to override
+        /// the behavior during the initialization, call your own private method from the constructor
+        /// with whatever custom behavior you need.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Reset(DataOutput @out) => ResetInternal(@out);
