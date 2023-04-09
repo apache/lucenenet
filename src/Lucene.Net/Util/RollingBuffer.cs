@@ -22,18 +22,11 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// LUCENENET specific class to allow referencing static members of
-    /// <see cref="RollingBuffer{T}"/> without referencing its generic closing type.
+    /// Implement to reset an instance
     /// </summary>
-    public static class RollingBuffer
+    public interface IResettable
     {
-        /// <summary>
-        /// Implement to reset an instance
-        /// </summary>
-        public interface IResettable
-        {
-            void Reset();
-        }
+        void Reset();
     }
 
     /// <summary>
@@ -66,7 +59,7 @@ namespace Lucene.Net.Util
     /// </summary>
     // LUCENENET specific - removed NewInstance override and using NewPosition as factory
     public abstract class RollingBuffer<T>
-        where T : RollingBuffer.IResettable
+        where T : IResettable
     {
         private T[] buffer = new T[8];
 
