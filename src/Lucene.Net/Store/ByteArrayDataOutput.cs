@@ -63,7 +63,7 @@ namespace Lucene.Net.Store
         /// with whatever custom behavior you need.
         /// </summary>
         public virtual void Reset(byte[] bytes) =>
-            ResetInternal(bytes, 0, bytes.Length);
+            ResetInternal(bytes, 0, bytes?.Length ?? 0);
 
         /// <summary>
         /// 
@@ -80,9 +80,15 @@ namespace Lucene.Net.Store
         // calls in the constructor.
         private void ResetInternal(byte[] bytes, int offset, int len)
         {
-            // LUCENENET: Added guard clause
+            // LUCENENET: Added guard clauses
             if (bytes is null)
                 throw new ArgumentNullException(nameof(bytes));
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), offset, "Non-negative number required.");
+            if (len < 0)
+                throw new ArgumentOutOfRangeException(nameof(len), len, "Non-negative number required.");
+            if (bytes.Length - offset < len)
+                throw new ArgumentException("Offset and length were out of bounds for the array or length is greater than the number of elements from index to the end of the source array.");
                 
             this.bytes = bytes;
             pos = offset;
