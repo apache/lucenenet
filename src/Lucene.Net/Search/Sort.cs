@@ -128,27 +128,38 @@ namespace Lucene.Net.Search
         /// Sorts by the criteria in the given <see cref="SortField"/>. </summary>
         public Sort(SortField field)
         {
-            SetSort(field);
+            SetSortInternal(field); // LUCENENET specific - calling private instead of virtual method
         }
 
         /// <summary>
-        /// Sorts in succession by the criteria in each <see cref="SortField"/>. </summary>
+        /// Sorts in succession by the criteria in each <see cref="SortField"/>.
+        /// </summary>
         public Sort(params SortField[] fields)
         {
-            SetSort(fields);
+            SetSortInternal(fields); // LUCENENET specific - calling private instead of virtual method
         }
 
-        /// <summary>Sets the sort to the given criteria. </summary>
-        public virtual void SetSort(SortField field)
-        {
-            this.fields = new SortField[] { field };
-        }
+        /// <summary>
+        /// Sets the sort to the given criteria.
+        ///
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// a private method and not this virtual method. So if you need to override
+        /// the behavior during the initialization, call your own private method from the constructor
+        /// with whatever custom behavior you need.
+        /// </summary>
+        public virtual void SetSort(SortField field) => SetSortInternal(field);
 
-        /// <summary>Sets the sort to the given criteria in succession. </summary>
-        public virtual void SetSort(params SortField[] fields)
-        {
-            this.fields = fields;
-        }
+        /// <summary>
+        /// Sets the sort to the given criteria in succession.
+        ///
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// a private method and not this virtual method. So if you need to override
+        /// the behavior during the initialization, call your own private method from the constructor
+        /// with whatever custom behavior you need.
+        /// </summary>
+        public virtual void SetSort(params SortField[] fields) => SetSortInternal(fields);
+
+        private void SetSortInternal(params SortField[] fields) => this.fields = fields;
 
         /// <summary> Representation of the sort criteria.</summary>
         /// <returns> Array of <see cref="SortField"/> objects used in this sort criteria
