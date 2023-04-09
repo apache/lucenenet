@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis
     /// position, restoring them, providing access to them, etc.
     /// </summary>
     public abstract class LookaheadTokenFilter<T> : LookaheadTokenFilter
-        where T : LookaheadTokenFilter.Position, IResettable
+        where T : LookaheadTokenFilter.Position
     {
         protected readonly static bool DEBUG = 
 #if VERBOSE_TEST_LOGGING
