@@ -45,6 +45,10 @@ namespace Lucene.Net.Util
         T Create(object rollingBuffer);
     }
 
+    /// <summary>
+    /// LUCENENET specific class that provides default implementation for
+    /// <see cref="IRollingBufferItemFactory{T}"/>.
+    /// </summary>
     public class RollingBufferItemFactory<T> : IRollingBufferItemFactory<T> where T : new()
     {
         public static readonly RollingBufferItemFactory<T> Default = new RollingBufferItemFactory<T>();
