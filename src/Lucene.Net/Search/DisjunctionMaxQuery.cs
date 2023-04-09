@@ -99,7 +99,13 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Add a collection of disjuncts to this disjunction
-        /// via <see cref="T:IEnumerable{Query}"/> </summary>
+        /// via <see cref="T:IEnumerable{Query}"/> 
+        ///
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// a private method and not this virtual method. So if you need to override
+        /// the behavior during the initialization, call your own private method from the constructor
+        /// with whatever custom behavior you need.
+        /// </summary>
         /// <param name="disjuncts"> A collection of queries to add as disjuncts. </param>
         public virtual void Add(ICollection<Query> disjuncts) =>
             AddInternal(disjuncts);

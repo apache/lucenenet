@@ -177,7 +177,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// </remarks>
         public virtual bool IsLeaf => m_leaf;
 
-        /// <summary>Note: not supported at level 0.</summary>
+        /// <summary>Note: not supported at level 0.
+        /// 
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// a private method and not this virtual method. So if you need to override
+        /// the behavior during the initialization, call your own private method from the constructor
+        /// with whatever custom behavior you need.
+        /// </summary>
         public virtual void SetLeaf() => SetLeafInternal();
 
         // LUCENENET specific - S1699 - private method that can be called
