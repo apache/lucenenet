@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Util;
+using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 
@@ -40,14 +41,10 @@ namespace Lucene.Net.Analysis
 
         private class NeverPeeksLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
         {
+            // LUCENENET specific - removed NewPosition override and using factory instead
             public NeverPeeksLookaheadTokenFilter(TokenStream input)
-                : base(input)
+                : base(input, RollingBufferItemFactory<LookaheadTokenFilter.Position>.Default)
             {
-            }
-
-            protected override Position NewPosition()
-            {
-                return new Position();
             }
 
             public sealed override bool IncrementToken()

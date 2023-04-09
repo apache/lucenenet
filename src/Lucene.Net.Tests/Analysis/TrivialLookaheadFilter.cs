@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -33,17 +34,13 @@ namespace Lucene.Net.Analysis
 
         private int insertUpto;
 
+        // LUCENENET specific - removed NewPosition override and using factory instead
         internal TrivialLookaheadFilter(TokenStream input)
-            : base(input)
+            : base(input, RollingBufferItemFactory<TestPosition>.Default)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
-        }
-
-        protected override TestPosition NewPosition()
-        {
-            return new TestPosition();
         }
 
         public override bool IncrementToken()

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
 using System.Threading;
@@ -32,17 +33,13 @@ namespace Lucene.Net.Analysis
         private readonly J2N.Randomizer random;
         private readonly long seed;
 
+        // LUCENENET specific - removed NewPosition override and using factory instead
         public MockRandomLookaheadTokenFilter(Random random, TokenStream @in)
-            : base(@in)
+            : base(@in, RollingBufferItemFactory<LookaheadTokenFilter.Position>.Default)
         {
             this.termAtt = AddAttribute<ICharTermAttribute>();
             this.seed = random.NextInt64();
             this.random = new J2N.Randomizer(seed);
-        }
-
-        protected override Position NewPosition()
-        {
-            return new Position();
         }
 
         protected override void AfterPosition()

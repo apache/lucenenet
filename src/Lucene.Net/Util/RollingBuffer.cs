@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
@@ -23,17 +22,32 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// LUCENENET specific class to allow referencing static members of
-    /// <see cref="RollingBuffer{T}"/> without referencing its generic closing type.
+    /// Implement to reset an instance
     /// </summary>
-    public static class RollingBuffer
+    public interface IResettable
     {
-        /// <summary>
-        /// Implement to reset an instance
-        /// </summary>
-        public interface IResettable
+        void Reset();
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface to allow overriding rolling buffer item creation
+    /// without having to call virtual methods from the constructor
+    /// </summary>
+    public interface IRollingBufferItemFactory<out T>
+    {
+        T Create(object rollingBuffer);
+    }
+
+    /// <summary>
+    /// LUCENENET specific class that provides default implementation for
+    /// <see cref="IRollingBufferItemFactory{T}"/>.
+    /// </summary>
+    public class RollingBufferItemFactory<T> : IRollingBufferItemFactory<T> where T : new()
+    {
+        public static RollingBufferItemFactory<T> Default { get; } = new RollingBufferItemFactory<T>();
+        public virtual T Create(object rollingBuffer)
         {
-            void Reset();
+            return new T();
         }
     }
 
@@ -43,8 +57,9 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
+    // LUCENENET specific - removed NewInstance override and using NewPosition as factory
     public abstract class RollingBuffer<T>
-        where T : RollingBuffer.IResettable
+        where T : IResettable
     {
         private T[] buffer = new T[8];
 
@@ -57,24 +72,16 @@ namespace Lucene.Net.Util
         // How many valid Position are held in the
         // array:
         private int count;
+        private IRollingBufferItemFactory<T> itemFactory;
 
-        protected RollingBuffer()
+        protected RollingBuffer(IRollingBufferItemFactory<T> itemFactory)
         {
-            for (var idx = 0; idx < buffer.Length; idx++)
-            {
-                buffer[idx] = NewInstance(); // TODO GIVE ROLLING BUFFER A DELEGATE FOR NEW INSTANCE
-            }
-        }
-
-        protected RollingBuffer(Func<T> factory)
-        {
+            this.itemFactory = itemFactory; // LUCENENET specific - storing factory for usage in class
             for (int idx = 0; idx < buffer.Length; idx++)
             {
-                buffer[idx] = factory();
+                buffer[idx] = itemFactory.Create(this);
             }
         }
-
-        protected abstract T NewInstance();
 
         public virtual void Reset()
         {
@@ -127,7 +134,7 @@ namespace Lucene.Net.Util
                     Arrays.Copy(buffer, 0, newBuffer, buffer.Length - nextWrite, nextWrite);
                     for (int i = buffer.Length; i < newBuffer.Length; i++)
                     {
-                        newBuffer[i] = NewInstance();
+                        newBuffer[i] = this.itemFactory.Create(this); // LUCENENET specific - using factory to create new instance
                     }
                     nextWrite = buffer.Length;
                     buffer = newBuffer;

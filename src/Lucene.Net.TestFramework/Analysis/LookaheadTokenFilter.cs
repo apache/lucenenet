@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
@@ -50,7 +51,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         // LUCENENET NOTE: This class was originally marked protected, but was made public because of
         // inconsistent accessibility issues with using it as a generic constraint.
-        public class Position : RollingBuffer.IResettable
+        public class Position : IResettable
         {
             // Buffered input tokens at this position:
             public IList<AttributeSource.State> InputTokens { get; private set; } = new JCG.List<AttributeSource.State>();
@@ -120,11 +121,12 @@ namespace Lucene.Net.Analysis
 
         // LUCENENET specific - moved Position class to a non-generic class named LookaheadTokenFilter so we can refer to
         // it without referring to the generic closing type.
+        // removed virtual NewPosition() method and added factory in the constructor
 
-        protected internal LookaheadTokenFilter(TokenStream input)
+        protected internal LookaheadTokenFilter(TokenStream input, IRollingBufferItemFactory<T> itemFactory)
             : base(input)
         {
-            m_positions = new RollingBufferAnonymousClass(this);
+            m_positions = new RollingBufferAnonymousClass(itemFactory);
             m_posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             m_posLenAtt = AddAttribute<IPositionLengthAttribute>();
             m_offsetAtt = AddAttribute<IOffsetAttribute>();
@@ -157,23 +159,15 @@ namespace Lucene.Net.Analysis
         {
         }
 
-        protected abstract T NewPosition();
-
         protected readonly RollingBuffer<T> m_positions;
 
         private sealed class RollingBufferAnonymousClass : RollingBuffer<T>
         {
-            private readonly LookaheadTokenFilter<T> outerInstance;
-
-            public RollingBufferAnonymousClass(LookaheadTokenFilter<T> outerInstance)
-                : base(outerInstance.NewPosition)
+            // LUCENENET specific - adjusted to accept factory as a parameter
+            // instead of using NewInstance virtual
+            public RollingBufferAnonymousClass(IRollingBufferItemFactory<T> itemFactory)
+                : base(itemFactory)
             {
-                this.outerInstance = outerInstance;
-            }
-
-            protected override T NewInstance()
-            {
-                return outerInstance.NewPosition();
             }
         }
 
