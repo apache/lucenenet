@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis
             set => this.unicodeArcs = value;
         }
 
-        private class Position : RollingBuffer.IResettable
+        private class Position : IResettable
         {
             // Any tokens that ended at our position arrive to this state:
             internal State arriving;
