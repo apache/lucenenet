@@ -82,6 +82,7 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Reset(DataOutput @out) => ResetInternal(@out);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ResetInternal(DataOutput @out)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(@out != null);
