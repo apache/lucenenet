@@ -1,4 +1,6 @@
-﻿using J2N;
+﻿// Lucene version compatibility level 4.8.1 + LUCENE-10059 (https://github.com/apache/lucene/pull/254 only)
+
+using J2N;
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis.Ja.Dict;
@@ -60,27 +62,27 @@ namespace Lucene.Net.Analysis.Ja
             }
         }
 
-        private Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+        private readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
             Tokenizer tokenizer = new JapaneseTokenizer(reader, ReadDict(), false, JapaneseTokenizerMode.SEARCH);
             return new TokenStreamComponents(tokenizer, tokenizer);
         });
 
 
-        private Analyzer analyzerNormal = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+        private readonly Analyzer analyzerNormal = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
             Tokenizer tokenizer = new JapaneseTokenizer(reader, ReadDict(), false, JapaneseTokenizerMode.NORMAL);
             return new TokenStreamComponents(tokenizer, tokenizer);
         });
 
-        private Analyzer analyzerNoPunct = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+        private readonly Analyzer analyzerNoPunct = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
             Tokenizer tokenizer = new JapaneseTokenizer(reader, ReadDict(), true, JapaneseTokenizerMode.SEARCH);
             return new TokenStreamComponents(tokenizer, tokenizer);
         });
 
 
-        private Analyzer extendedModeAnalyzerNoPunct = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+        private readonly Analyzer extendedModeAnalyzerNoPunct = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
             Tokenizer tokenizer = new JapaneseTokenizer(reader, ReadDict(), true, JapaneseTokenizerMode.EXTENDED);
             return new TokenStreamComponents(tokenizer, tokenizer);
@@ -850,6 +852,9 @@ namespace Lucene.Net.Analysis.Ja
         }
 
         // LUCENENET: ported from LUCENE-10059
+        // Note that these are only the changes from https://github.com/apache/lucene/pull/254.
+        // The NBest feature doesn't yet exist in Lucene 4.8.0, so the changes from
+        // https://github.com/apache/lucene/pull/284 will need to be added here when that feature is ported.
         [Test]
         public void TestEmptyBacktrace()
         {
