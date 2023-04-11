@@ -162,17 +162,26 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public sealed class LookupPriorityQueue : PriorityQueue<LookupResult>
         {
+#nullable enable
             // TODO: should we move this out of the interface into a utility class?
             /// <summary>
-            /// Creates a new priority queue of the specified size.
+            /// Creates a new priority queue of the specified <paramref name="size"/>.
             /// </summary>
             public LookupPriorityQueue(int size)
                 : base(size)
             {
             }
 
+#nullable restore
+
             protected internal override bool LessThan(LookupResult a, LookupResult b)
             {
+                // LUCENENET: Added guard clauses
+                if (a is null)
+                    throw new ArgumentNullException(nameof(a));
+                if (b is null)
+                    throw new ArgumentNullException(nameof(b));
+
                 return a.Value < b.Value;
             }
 

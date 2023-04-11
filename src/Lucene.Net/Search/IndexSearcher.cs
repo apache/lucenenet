@@ -460,7 +460,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                HitQueue hq = new HitQueue(nDocs, false);
+                HitQueue hq = new HitQueue(nDocs, prePopulate: false);
                 ReentrantLock @lock = new ReentrantLock();
                 ExecutionHelper<TopDocs> runner = new ExecutionHelper<TopDocs>(executor);
 
@@ -538,7 +538,7 @@ namespace Lucene.Net.Search
         {
             if (sort is null)
             {
-                throw new ArgumentNullException("Sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(sort), "Sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             int limit = reader.MaxDoc;

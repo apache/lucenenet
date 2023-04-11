@@ -89,15 +89,20 @@ namespace Lucene.Net.Search
             }
         }
 
+#nullable enable
+
         // Specialized MergeSortQueue that just merges by
         // relevance score, descending:
-        private class ScoreMergeSortQueue : Util.PriorityQueue<ShardRef>
+        private sealed class ScoreMergeSortQueue : PriorityQueue<ShardRef> // LUCENENET specific - marked sealed
         {
             internal readonly ScoreDoc[][] shardHits;
 
             public ScoreMergeSortQueue(TopDocs[] shardHits)
-                : base(shardHits.Length)
+                : base(shardHits?.Length ?? 0)
             {
+                if (shardHits is null)
+                    throw new ArgumentNullException(nameof(shardHits));
+
                 this.shardHits = new ScoreDoc[shardHits.Length][];
                 for (int shardIDX = 0; shardIDX < shardHits.Length; shardIDX++)
                 {
@@ -108,6 +113,12 @@ namespace Lucene.Net.Search
             // Returns true if first is < second
             protected internal override bool LessThan(ShardRef first, ShardRef second)
             {
+                // LUCENENET specific - added guard clauses
+                if (first is null)
+                    throw new ArgumentNullException(nameof(first));
+                if (second is null)
+                    throw new ArgumentNullException(nameof(second));
+
                 if (Debugging.AssertsEnabled) Debugging.Assert(first != second);
                 float firstScore = shardHits[first.ShardIndex][first.HitIndex].Score;
                 float secondScore = shardHits[second.ShardIndex][second.HitIndex].Score;
@@ -143,7 +154,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class MergeSortQueue : Util.PriorityQueue<ShardRef>
+        private sealed class MergeSortQueue : PriorityQueue<ShardRef> // LUCENENET specific - marked sealed
         {
             // These are really FieldDoc instances:
             internal readonly ScoreDoc[][] shardHits;
@@ -152,8 +163,11 @@ namespace Lucene.Net.Search
             internal readonly int[] reverseMul;
 
             public MergeSortQueue(Sort sort, TopDocs[] shardHits)
-                : base(shardHits.Length)
+                : base(shardHits?.Length ?? 0)
             {
+                if (shardHits is null)
+                    throw new ArgumentNullException(nameof(shardHits));
+
                 this.shardHits = new ScoreDoc[shardHits.Length][];
                 for (int shardIDX = 0; shardIDX < shardHits.Length; shardIDX++)
                 {
@@ -190,9 +204,17 @@ namespace Lucene.Net.Search
                 }
             }
 
+
+
             // Returns true if first is < second
             protected internal override bool LessThan(ShardRef first, ShardRef second)
             {
+                // LUCENENET specific - added guard clauses
+                if (first is null)
+                    throw new ArgumentNullException(nameof(first));
+                if (second is null)
+                    throw new ArgumentNullException(nameof(second));
+
                 if (Debugging.AssertsEnabled) Debugging.Assert(first != second);
                 FieldDoc firstFD = (FieldDoc)shardHits[first.ShardIndex][first.HitIndex];
                 FieldDoc secondFD = (FieldDoc)shardHits[second.ShardIndex][second.HitIndex];
@@ -247,8 +269,9 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="shardHits"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static TopDocs Merge(Sort sort, int topN, TopDocs[] shardHits)
+        public static TopDocs Merge(Sort? sort, int topN, TopDocs[] shardHits)
         {
             return Merge(sort, 0, topN, shardHits);
         }
@@ -258,10 +281,15 @@ namespace Lucene.Net.Search
         /// on the provided start and size. The return <c>TopDocs</c> will always have a scoreDocs with length of 
         /// at most <see cref="Util.PriorityQueue{T}.Count"/>.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="shardHits"/> is <c>null</c>.</exception>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static TopDocs Merge(Sort sort, int start, int size, TopDocs[] shardHits)
+        public static TopDocs Merge(Sort? sort, int start, int size, TopDocs[] shardHits)
         {
-            Util.PriorityQueue<ShardRef> queue;
+            // LUCENENET specific - added guard clause.
+            if (shardHits is null)
+                throw new ArgumentNullException(nameof(shardHits));
+
+            PriorityQueue<ShardRef> queue;
             if (sort is null)
             {
                 queue = new ScoreMergeSortQueue(shardHits);

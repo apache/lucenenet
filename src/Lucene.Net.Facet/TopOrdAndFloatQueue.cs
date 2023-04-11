@@ -33,15 +33,26 @@ namespace Lucene.Net.Facet
         // LUCENENET specific - de-nested OrdAndValue and made it into a generic struct
         // so it can be used with this class and TopOrdAndInt32Queue
 
+#nullable enable
+
         /// <summary>
-        /// Sole constructor.
+        /// Initializes a new instance of <see cref="TopOrdAndSingleQueue"/> with the
+        /// specified <paramref name="topN"/> size.
         /// </summary>
-        public TopOrdAndSingleQueue(int topN) : base(topN, false)
+        public TopOrdAndSingleQueue(int topN) : base(topN) // LUCENENET NOTE: Doesn't pre-populate because sentinelFactory is null
         {
         }
 
+#nullable restore
+
         protected internal override bool LessThan(OrdAndValue<float> a, OrdAndValue<float> b)
         {
+            // LUCENENET specific - added guard clauses
+            if (a is null)
+                throw new ArgumentNullException(nameof(a));
+            if (b is null)
+                throw new ArgumentNullException(nameof(b));
+
             if (a.Value < b.Value)
             {
                 return true;

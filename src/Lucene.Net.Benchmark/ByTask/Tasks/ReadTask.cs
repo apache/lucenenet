@@ -205,7 +205,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         protected virtual ICollector CreateCollector()
         {
-            return TopScoreDocCollector.Create(NumHits, true);
+            return TopScoreDocCollector.Create(NumHits, docsScoredInOrder: true);
         }
 
 
