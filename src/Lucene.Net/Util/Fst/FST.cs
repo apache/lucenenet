@@ -2321,7 +2321,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        internal class NodeAndInCount : IComparable<NodeAndInCount>
+        internal class NodeAndInCount : IComparable<NodeAndInCount> // LUCENENET TODO: This is a candidate for a struct
         {
             internal int Node { get; private set; }
             internal int Count { get; private set; }
@@ -2350,16 +2350,23 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+#nullable enable
         internal class NodeQueue : PriorityQueue<NodeAndInCount>
         {
             public NodeQueue(int topN)
-                : base(topN, false)
+                : base(topN) // LUCENENET NOTE: Doesn't pre-populate because sentinelFactory is null
             {
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected internal override bool LessThan(NodeAndInCount a, NodeAndInCount b)
             {
+                // LUCENENET specific - added guard clauses
+                if (a is null)
+                    throw new ArgumentNullException(nameof(a));
+                if (b is null)
+                    throw new ArgumentNullException(nameof(b));
+
                 int cmp = a.CompareTo(b);
                 if (Debugging.AssertsEnabled) Debugging.Assert(cmp != 0);
                 return cmp < 0;

@@ -2,6 +2,7 @@
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Search
 {
@@ -40,12 +41,14 @@ namespace Lucene.Net.Search
     public abstract class TopScoreDocCollector : TopDocsCollector<ScoreDoc>
     {
         // Assumes docs are scored in order.
-        private class InOrderTopScoreDocCollector : TopScoreDocCollector
+        private sealed class InOrderTopScoreDocCollector : TopScoreDocCollector // LUCENENET specific - marked sealed
         {
+#nullable enable
             internal InOrderTopScoreDocCollector(int numHits)
                 : base(numHits)
             {
             }
+#nullable restore
 
             public override void Collect(int doc)
             {
@@ -76,7 +79,7 @@ namespace Lucene.Net.Search
         }
 
         // Assumes docs are scored in order.
-        private class InOrderPagingScoreDocCollector : TopScoreDocCollector
+        private sealed class InOrderPagingScoreDocCollector : TopScoreDocCollector // LUCENENET specific - marked sealed
         {
             internal readonly ScoreDoc after;
 
@@ -84,13 +87,13 @@ namespace Lucene.Net.Search
             internal int afterDoc;
 
             internal int collectedHits;
-
+#nullable enable
             internal InOrderPagingScoreDocCollector(ScoreDoc after, int numHits)
                 : base(numHits)
             {
                 this.after = after;
             }
-
+#nullable restore
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
@@ -145,12 +148,16 @@ namespace Lucene.Net.Search
         }
 
         // Assumes docs are scored out of order.
-        private class OutOfOrderTopScoreDocCollector : TopScoreDocCollector
+        private sealed class OutOfOrderTopScoreDocCollector : TopScoreDocCollector // LUCENENET specific - marked sealed
         {
+#nullable enable
+
             internal OutOfOrderTopScoreDocCollector(int numHits)
                 : base(numHits)
             {
             }
+
+#nullable restore
 
             public override void Collect(int doc)
             {
@@ -184,7 +191,7 @@ namespace Lucene.Net.Search
         }
 
         // Assumes docs are scored out of order.
-        private class OutOfOrderPagingScoreDocCollector : TopScoreDocCollector
+        private sealed class OutOfOrderPagingScoreDocCollector : TopScoreDocCollector // LUCENENET specific - marked sealed
         {
             internal readonly ScoreDoc after;
 
@@ -192,12 +199,13 @@ namespace Lucene.Net.Search
             internal int afterDoc;
 
             internal int collectedHits;
-
+#nullable enable
             internal OutOfOrderPagingScoreDocCollector(ScoreDoc after, int numHits)
                 : base(numHits)
             {
                 this.after = after;
             }
+#nullable restore
 
             public override void Collect(int doc)
             {
@@ -250,6 +258,8 @@ namespace Lucene.Net.Search
             }
         }
 
+#nullable enable
+
         /// <summary>
         /// Creates a new <see cref="TopScoreDocCollector"/> given the number of hits to
         /// collect and whether documents are scored in order by the input
@@ -262,7 +272,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static TopScoreDocCollector Create(int numHits, bool docsScoredInOrder)
         {
-            return Create(numHits, null, docsScoredInOrder);
+            return Create(numHits, after: null, docsScoredInOrder);
         }
 
         /// <summary>
@@ -275,7 +285,7 @@ namespace Lucene.Net.Search
         /// <paramref name="numHits"/>, and fill the array with sentinel
         /// objects.
         /// </summary>
-        public static TopScoreDocCollector Create(int numHits, ScoreDoc after, bool docsScoredInOrder)
+        public static TopScoreDocCollector Create(int numHits, ScoreDoc? after, bool docsScoredInOrder)
         {
             if (numHits <= 0)
             {
@@ -284,28 +294,29 @@ namespace Lucene.Net.Search
 
             if (docsScoredInOrder)
             {
-                return after is null ? (TopScoreDocCollector)new InOrderTopScoreDocCollector(numHits) : new InOrderPagingScoreDocCollector(after, numHits);
+                return after is null ? new InOrderTopScoreDocCollector(numHits) : new InOrderPagingScoreDocCollector(after, numHits);
             }
             else
             {
-                return after is null ? (TopScoreDocCollector)new OutOfOrderTopScoreDocCollector(numHits) : new OutOfOrderPagingScoreDocCollector(after, numHits);
+                return after is null ? new OutOfOrderTopScoreDocCollector(numHits) : new OutOfOrderPagingScoreDocCollector(after, numHits);
             }
         }
 
         internal ScoreDoc pqTop;
         internal int docBase = 0;
-        internal Scorer scorer;
+        internal Scorer? scorer;
 
         // prevents instantiation
         private TopScoreDocCollector(int numHits)
-            : base(new HitQueue(numHits, true))
+            : base(new HitQueue(numHits, prePopulate: true))
         {
-            // HitQueue implements getSentinelObject to return a ScoreDoc, so we know
-            // that at this point top() is already initialized.
-            pqTop = m_pq.Top;
+            // HitQueue.SentinelFactory implements Create() to return a ScoreDoc, so we know
+            // that at this point Top is already initialized.
+            pqTop = m_pq.Top!;
         }
 
-        protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
+
+        protected override TopDocs NewTopDocs(ScoreDoc[]? results, int start)
         {
             if (results is null)
             {
@@ -327,7 +338,7 @@ namespace Lucene.Net.Search
                 {
                     m_pq.Pop();
                 }
-                maxScore = m_pq.Pop().Score;
+                maxScore = m_pq.Pop()!.Score;
             }
 
             return new TopDocs(m_totalHits, results, maxScore);
@@ -335,6 +346,10 @@ namespace Lucene.Net.Search
 
         public override void SetNextReader(AtomicReaderContext context)
         {
+            // LUCENENET: Added guard clause
+            if (context is null)
+                throw new ArgumentNullException(nameof(context));
+
             docBase = context.DocBase;
         }
 

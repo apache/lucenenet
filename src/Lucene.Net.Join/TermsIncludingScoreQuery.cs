@@ -3,6 +3,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search.Join
 {
@@ -360,6 +361,8 @@ namespace Lucene.Net.Search.Join
 
             internal int currentDoc = -1;
             
+            [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+            [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Internal class")]
             internal SVInOrderScorer(TermsIncludingScoreQuery outerInstance, Weight weight, IBits acceptDocs,
                 TermsEnum termsEnum, int maxDoc, long cost) 
                 : base(weight)

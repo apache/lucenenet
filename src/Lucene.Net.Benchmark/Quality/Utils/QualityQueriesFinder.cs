@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -94,7 +95,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
 
         private string[] BestTerms(string field, int numTerms)
         {
-            Util.PriorityQueue<TermDf> pq = new TermsDfQueue(numTerms);
+            PriorityQueue<TermDf> pq = new TermsDfQueue(numTerms);
             IndexReader ir = DirectoryReader.Open(dir);
             try
             {
@@ -140,10 +141,10 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             }
         }
 
-        private class TermsDfQueue : Util.PriorityQueue<TermDf>
+        private class TermsDfQueue : PriorityQueue<TermDf>
         {
             internal TermsDfQueue(int maxSize)
-                    : base(maxSize)
+                : base(maxSize)
             {
             }
 

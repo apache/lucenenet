@@ -45,8 +45,17 @@ namespace Lucene.Net.Util
             }
 
             public IntegerQueue(int count, bool prepopulate)
-                : base(count, prepopulate)
+                : base(count, prepopulate ? SentinelFactory.Default : null)
             {
+            }
+
+            // LUCENENET specific - "prepopulate" is now controlled by whether
+            // or not SentinelFactory is null.
+            private class SentinelFactory : SentinelFactory<int?, IntegerQueue>
+            {
+                public static SentinelFactory Default { get; } = new SentinelFactory();
+
+                public override int? Create(IntegerQueue integerQueue) => int.MaxValue;
             }
 
             protected internal override bool LessThan(int? a, int? b)
@@ -157,19 +166,6 @@ namespace Lucene.Net.Util
 
         #region LUCENENET SPECIFIC TESTS
 
-        private class IntegerQueueWithSentinel : IntegerQueue
-        {
-            public IntegerQueueWithSentinel(int count, bool prepopulate)
-                : base(count, prepopulate)
-            {
-            }
-
-            protected override int? GetSentinelObject()
-            {
-                return int.MaxValue;
-            }
-        }
-
         private class MyType
         {
             public MyType(int field)
@@ -272,7 +268,7 @@ namespace Lucene.Net.Util
         {
             int maxSize = 10;
             // Populates the internal array
-            PriorityQueue<int?> pq = new IntegerQueueWithSentinel(maxSize, true);
+            PriorityQueue<int?> pq = new IntegerQueue(maxSize, true);
             Assert.AreEqual(pq.Top, int.MaxValue);
             Assert.AreEqual(pq.Count, 10);
 
@@ -435,7 +431,7 @@ namespace Lucene.Net.Util
             
             // Add an element to a prepopulated queue
             int maxSize = 10;
-            PriorityQueue<int?> pq = new IntegerQueueWithSentinel(maxSize, true);
+            PriorityQueue<int?> pq = new IntegerQueue(maxSize, true);
 
             try
             {

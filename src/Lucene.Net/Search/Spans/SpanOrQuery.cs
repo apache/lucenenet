@@ -177,7 +177,7 @@ namespace Lucene.Net.Search.Spans
             return h;
         }
 
-        private class SpanQueue : Util.PriorityQueue<Spans>
+        private class SpanQueue : PriorityQueue<Spans>
         {
             public SpanQueue(int size)
                 : base(size)

@@ -79,11 +79,15 @@ namespace Lucene.Net.Index
         public TermsEnumWithSlice[] MatchArray => top;
 
         /// <summary>
-        /// Sole constructor. </summary>
-        /// <param name="slices"> Which sub-reader slices we should
-        /// merge.</param>
+        /// Initializes a new instance of <see cref="MultiTermsEnum"/> with the specified <paramref name="slices"/>. </summary>
+        /// <param name="slices"> Which sub-reader slices we should merge.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="slices"/> is <c>null</c>.</exception>
         public MultiTermsEnum(ReaderSlice[] slices)
         {
+            // LUCENENET: Added guard clause
+            if (slices is null)
+                throw new ArgumentNullException(nameof(slices));
+
             queue = new TermMergeQueue(slices.Length);
             top = new TermsEnumWithSlice[slices.Length];
             subs = new TermsEnumWithSlice[slices.Length];
