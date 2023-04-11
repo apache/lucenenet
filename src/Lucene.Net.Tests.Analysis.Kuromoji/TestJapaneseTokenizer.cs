@@ -849,6 +849,7 @@ namespace Lucene.Net.Analysis.Ja
                                       new int[] { 1, 1, 1, 1, 1 });
         }
 
+        // LUCENENET: ported from LUCENE-10059
         [Test]
         public void TestEmptyBacktrace()
         {
