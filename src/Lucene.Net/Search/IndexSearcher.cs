@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
             this.executor = executor;
             this.m_readerContext = context;
             m_leafContexts = context.Leaves;
-            this.m_leafSlices = executor is null ? null : SlicesInternal(m_leafContexts);
+            this.m_leafSlices = executor is null ? null : GetSlicesInternal(m_leafContexts);
         }
 
         /// <summary>
@@ -166,11 +166,12 @@ namespace Lucene.Net.Search
         /// the behavior during the initialization, call your own private method from the constructor
         /// with whatever custom behavior you need.
         /// </summary>
-        protected virtual LeafSlice[] Slices(IList<AtomicReaderContext> leaves)
-            => SlicesInternal(leaves);
+        // LUCENENET specific - renamed to GetSlices to better indicate the purpose of this method
+        protected virtual LeafSlice[] GetSlices(IList<AtomicReaderContext> leaves)
+            => GetSlicesInternal(leaves);
 
         // LUCENENET specific - creating this so that we can call it from the constructor
-        protected LeafSlice[] SlicesInternal(IList<AtomicReaderContext> leaves)
+        protected LeafSlice[] GetSlicesInternal(IList<AtomicReaderContext> leaves)
         {
             LeafSlice[] slices = new LeafSlice[leaves.Count];
             for (int i = 0; i < slices.Length; i++)
