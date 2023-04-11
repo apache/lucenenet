@@ -114,13 +114,18 @@ namespace Lucene.Net.Codecs
 
         private readonly int version;
 
-        protected readonly object subclassState;
+        protected readonly object m_subclassState;
 
         /// <summary>
         /// Sole constructor. </summary>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Internal class")]
         public BlockTreeTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info, PostingsReaderBase postingsReader, IOContext ioContext, string segmentSuffix, int indexDivisor, object subclassState = default)
         {
-            this.subclassState = subclassState;
+            // LUCENENET specific - added state parameter that subclasses
+            // can use to keep track of state and use it in their own virtual
+            // methods that are called by this constructor
+            this.m_subclassState = subclassState;
 
             NO_OUTPUT = fstOutputs.NoOutput;
             this.postingsReader = postingsReader;
