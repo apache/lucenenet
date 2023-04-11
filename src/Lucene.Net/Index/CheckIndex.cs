@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using BlockTreeTermsReader = Lucene.Net.Codecs.BlockTreeTermsReader;
+    using BlockTreeTermsReader = Lucene.Net.Codecs.BlockTreeTermsReader<object>;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;

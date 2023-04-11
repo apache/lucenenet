@@ -76,12 +76,13 @@ namespace Lucene.Net.Codecs.NestedPulsing
                 docsReader = new Lucene41PostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, state.SegmentSuffix);
                 pulsingReaderInner = new PulsingPostingsReader(state, docsReader);
                 pulsingReader = new PulsingPostingsReader(state, pulsingReaderInner);
-                FieldsProducer ret = new BlockTreeTermsReader(
+                FieldsProducer ret = new BlockTreeTermsReader<object>(
                                                               state.Directory, state.FieldInfos, state.SegmentInfo,
                                                               pulsingReader,
                                                               state.Context,
                                                               state.SegmentSuffix,
-                                                              state.TermsIndexDivisor);
+                                                              state.TermsIndexDivisor,
+                                                              subclassState: null);
                 success = true;
                 return ret;
             }

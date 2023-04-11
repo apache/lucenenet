@@ -250,7 +250,7 @@ namespace Lucene.Net.Codecs.Lucene40
             bool success = false;
             try
             {
-                FieldsProducer ret = new BlockTreeTermsReader(state.Directory, state.FieldInfos, state.SegmentInfo, postings, state.Context, state.SegmentSuffix, state.TermsIndexDivisor);
+                FieldsProducer ret = new BlockTreeTermsReader<object>(state.Directory, state.FieldInfos, state.SegmentInfo, postings, state.Context, state.SegmentSuffix, state.TermsIndexDivisor, subclassState: null);
                 success = true;
                 return ret;
             }

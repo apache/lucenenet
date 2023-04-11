@@ -100,12 +100,13 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 docsReader = _wrappedPostingsBaseFormat.PostingsReaderBase(state);
                 pulsingReader = new PulsingPostingsReader(state, docsReader);
-                FieldsProducer ret = new BlockTreeTermsReader(
+                FieldsProducer ret = new BlockTreeTermsReader<object>(
                     state.Directory, state.FieldInfos, state.SegmentInfo,
                     pulsingReader,
                     state.Context,
                     state.SegmentSuffix,
-                    state.TermsIndexDivisor);
+                    state.TermsIndexDivisor,
+                    subclassState: null);
                 success = true;
                 return ret;
             }

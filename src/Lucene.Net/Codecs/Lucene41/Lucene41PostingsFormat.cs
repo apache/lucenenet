@@ -387,7 +387,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// Creates <see cref="Lucene41PostingsFormat"/> with custom
         /// values for <paramref name="minTermBlockSize"/> and 
         /// <paramref name="maxTermBlockSize"/> passed to block terms dictionary. </summary>
-        /// <seealso cref="BlockTreeTermsWriter.BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)"/>
+        /// <seealso cref="BlockTreeTermsWriter.BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int,object)"/>
         public Lucene41PostingsFormat(int minTermBlockSize, int maxTermBlockSize)
             : base()
         {
@@ -428,7 +428,7 @@ namespace Lucene.Net.Codecs.Lucene41
             bool success = false;
             try
             {
-                FieldsProducer ret = new BlockTreeTermsReader(state.Directory, state.FieldInfos, state.SegmentInfo, postingsReader, state.Context, state.SegmentSuffix, state.TermsIndexDivisor);
+                FieldsProducer ret = new BlockTreeTermsReader<object>(state.Directory, state.FieldInfos, state.SegmentInfo, postingsReader, state.Context, state.SegmentSuffix, state.TermsIndexDivisor, subclassState: null);
                 success = true;
                 return ret;
             }

@@ -451,13 +451,14 @@ namespace Lucene.Net.Codecs.MockRandom
                 bool success = false;
                 try
                 {
-                    fields = new BlockTreeTermsReader(state.Directory,
+                    fields = new BlockTreeTermsReader<object>(state.Directory,
                                                       state.FieldInfos,
                                                       state.SegmentInfo,
                                                       postingsReader,
                                                       state.Context,
                                                       state.SegmentSuffix,
-                                                      state.TermsIndexDivisor);
+                                                      state.TermsIndexDivisor,
+                                                      subclassState: null);
                     success = true;
                 }
                 finally
