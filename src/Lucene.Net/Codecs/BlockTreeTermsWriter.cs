@@ -184,14 +184,14 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Suggested default value for the 
         /// <c>minItemsInBlock</c> parameter to 
-        /// <see cref="BlockTreeTermsWriter(SegmentWriteState, PostingsWriterBase, int, int)"/>.
+        /// <see cref="BlockTreeTermsWriter(SegmentWriteState, PostingsWriterBase, int, int, object)"/>.
         /// </summary>
         public const int DEFAULT_MIN_BLOCK_SIZE = 25;
 
         /// <summary>
         /// Suggested default value for the 
         /// <c>maxItemsInBlock</c> parameter to 
-        /// <see cref="BlockTreeTermsWriter(SegmentWriteState, PostingsWriterBase, int, int)"/>.
+        /// <see cref="BlockTreeTermsWriter(SegmentWriteState, PostingsWriterBase, int, int, object)"/>.
         /// </summary>
         public const int DEFAULT_MAX_BLOCK_SIZE = 48;
 
@@ -290,7 +290,7 @@ namespace Lucene.Net.Codecs
         public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock, object subclassState = default)
         {
             this.subclassState = subclassState;
-            
+
             if (minItemsInBlock <= 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(minItemsInBlock), "minItemsInBlock must be >= 2; got " + minItemsInBlock); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
