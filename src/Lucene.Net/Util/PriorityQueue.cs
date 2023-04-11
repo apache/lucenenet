@@ -1,9 +1,9 @@
 ﻿using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+#nullable enable
 
 namespace Lucene.Net.Util
 {
@@ -25,15 +25,135 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
+    /// Provides the sentinel instances of <typeparamref name="T"/> to a
+    /// <see cref="PriorityQueue{T}"/>.
+    /// </summary>
+    /// <remarks>
+    /// This interface can be implemented to provide sentinel
+    /// instances. The implementation of this interface can be passed to
+    /// a constructor of <see cref="PriorityQueue{T}"/>. If an instance
+    /// is provided, the <see cref="PriorityQueue{T}"/> constructor will use
+    /// the <see cref="Create{TQueue}(TQueue)"/> method to fill the queue,
+    /// so that code which uses the queue can always assume it is full and only
+    /// change the top without attempting to insert any new items.
+    /// <para/>
+    /// Those sentinel values should always compare worse than any non-sentinel
+    /// value (i.e., <see cref="PriorityQueue{T}.LessThan(T, T)"/> should always favor the
+    /// non-sentinel values).
+    /// <para/>
+    /// When using a <see cref="ISentinelFactory{T}"/>, the following usage pattern
+    /// is recommended:
+    /// <code>
+    /// // Implements ISentinelFactory&lt;T&gt;.Create(PriorityQueue&lt;T&gt;)
+    /// var sentinelFactory = new MySentinelFactory&lt;MyObject&gt;();
+    /// PriorityQueue&lt;MyObject&gt; pq = new MyQueue&lt;MyObject&gt;(sentinelFactory);
+    /// // save the 'top' element, which is guaranteed to not be <c>default</c>.
+    /// MyObject pqTop = pq.Top;
+    /// &lt;...&gt;
+    /// // now in order to add a new element, which is 'better' than top (after
+    /// // you've verified it is better), it is as simple as:
+    /// pqTop.Change();
+    /// pqTop = pq.UpdateTop();
+    /// </code>
+    /// <b>NOTE:</b> <see cref="Create{TQueue}(TQueue)"/> will be called by the
+    /// <see cref="PriorityQueue{T}"/> constructor <see cref="PriorityQueue{T}.Count"/>
+    /// times, relying on a new instance to be returned. Therefore you should ensure any call to this
+    /// <see cref="Create{TQueue}(TQueue)"/> creates a new instance and behaves consistently, e.g., it cannot
+    /// return <c>null</c> if it previously returned non-<c>null</c>.
+    /// <para/>
+    /// To make implementing this interface easier, it is recommended to use the
+    /// <see cref="SentinelFactory{T, TPriorityQueue}"/> abstract class.
+    /// </remarks>
+    /// <typeparam name="T">The type of sentinel instance to create.</typeparam>
+    /// <seealso cref="SentinelFactory{T, TPriorityQueue}"/>
+    // LUCENENET specific interface to eliminate the virtual method call in the PriorityQueue<T> constructor.
+    public interface ISentinelFactory<T>
+    {
+        /// <summary>
+        /// Creates a sentinel instance of <typeparamref name="T"/> to fill an element
+        /// of a <see cref="PriorityQueue{T}"/>.
+        /// </summary>
+        /// <typeparam name="TQueue">The type of priority queue that is calling this method.</typeparam>
+        /// <param name="priorityQueue">The <see cref="PriorityQueue{T}"/> instance that is calling this method.
+        /// <para/>
+        /// <b>NOTE:</b> The call to this method happens in the constructor, so it occurs prior to any
+        /// subclass construtor state being set. If you need to access state from your subclass, you should
+        /// pass that state into the constructor of the implementation of this interface.</param>
+        /// <returns>A newly created sentinel instance for use in a single element of <see cref="PriorityQueue{T}"/>.</returns>
+        T Create<TQueue>(TQueue priorityQueue) where TQueue : PriorityQueue<T>;
+    }
+
+    /// <summary>
+    /// Provides the sentinel instances of <typeparamref name="T"/> to a
+    /// <see cref="PriorityQueue{T}"/>.
+    /// </summary>
+    /// <remarks>
+    /// This class can be extended to provide sentinel
+    /// instances. The concrete class instance can be passed to
+    /// a constructor of <see cref="PriorityQueue{T}"/>. If an instance
+    /// is provided, the <see cref="PriorityQueue{T}"/> constructor will use
+    /// the <see cref="Create(TPriorityQueue)"/> method to fill the queue,
+    /// so that code which uses the queue can always assume it is full and only
+    /// change the top without attempting to insert any new items.
+    /// <para/>
+    /// Those sentinel values should always compare worse than any non-sentinel
+    /// value (i.e., <see cref="PriorityQueue{T}.LessThan(T, T)"/> should always favor the
+    /// non-sentinel values).
+    /// <para/>
+    /// When using a <see cref="ISentinelFactory{T}"/>, the following usage pattern
+    /// is recommended:
+    /// <code>
+    /// // Implements ISentinelFactory&lt;T&gt;.Create(PriorityQueue&lt;T&gt;)
+    /// var sentinelFactory = new MySentinelFactory&lt;MyObject&gt;();
+    /// PriorityQueue&lt;MyObject&gt; pq = new MyQueue&lt;MyObject&gt;(sentinelFactory);
+    /// // save the 'top' element, which is guaranteed to not be <c>default</c>.
+    /// MyObject pqTop = pq.Top;
+    /// &lt;...&gt;
+    /// // now in order to add a new element, which is 'better' than top (after
+    /// // you've verified it is better), it is as simple as:
+    /// pqTop.Change();
+    /// pqTop = pq.UpdateTop();
+    /// </code>
+    /// <b>NOTE:</b> <see cref="Create(TPriorityQueue)"/> will be called by the
+    /// <see cref="PriorityQueue{T}"/> constructor <see cref="PriorityQueue{T}.Count"/>
+    /// times, relying on a new instance to be returned. Therefore you should ensure any call to this
+    /// <see cref="Create(TPriorityQueue)"/> creates a new instance and behaves consistently, e.g., it cannot
+    /// return <c>null</c> if it previously returned non-<c>null</c>.
+    /// </remarks>
+    /// <typeparam name="T">The type of sentinel instance to create.</typeparam>
+    /// <typeparam name="TPriorityQueue"></typeparam>
+    // LUCENENET specific class to eliminate the virtual method call in the PriorityQueue<T> constructor.
+    public abstract class SentinelFactory<T, TPriorityQueue> : ISentinelFactory<T>
+        where TPriorityQueue : PriorityQueue<T>
+    {
+        /// <summary>
+        /// Creates a sentinel instance of <typeparamref name="T"/> to fill an element
+        /// of a <see cref="PriorityQueue{T}"/>.
+        /// </summary>
+        /// <param name="priorityQueue">The <see cref="PriorityQueue{T}"/> instance that is calling this method.
+        /// <para/>
+        /// <b>NOTE:</b> The call to this method happens in the constructor, so it occurs prior to any
+        /// subclass construtor state being set. If you need to access state from your subclass, you should
+        /// pass that state into the constructor of the implementation of this interface.</param>
+        /// <returns></returns>
+        public abstract T Create(TPriorityQueue priorityQueue);
+        T ISentinelFactory<T>.Create<TQueue>(TQueue priorityQueue)
+            => Create((TPriorityQueue)(object)priorityQueue);
+    }
+
+    /// <summary>
     /// A <see cref="PriorityQueue{T}"/> maintains a partial ordering of its elements such that the
     /// element with least priority can always be found in constant time. Put()'s and Pop()'s
     /// require log(size) time.
     ///
     /// <para/><b>NOTE</b>: this class will pre-allocate a full array of
-    /// length <c>maxSize+1</c> if instantiated via the
-    /// <see cref="PriorityQueue(int, bool)"/> constructor with
-    /// <c>prepopulate</c> set to <c>true</c>. That maximum
-    /// size can grow as we insert elements over the time.
+    /// length <c>maxSize+1</c> if instantiated with a constructor that
+    /// accepts a <see cref="ISentinelFactory{T}"/>. That maximum size can
+    /// grow as we insert elements over time.
+    /// <para/>
+    /// <b>NOTE</b>: The type of <typeparamref name="T"/> must be either a class
+    /// or a nullable value type. Non-nullable value types are not supported and may
+    /// produce undefined behavior.
     /// <para/>
     /// @lucene.internal
     /// </summary>
@@ -44,14 +164,29 @@ namespace Lucene.Net.Util
     {
         private int size = 0;
         internal readonly int maxSize; // LUCENENET: Internal for testing
-        internal readonly T[] heap; // LUCENENET: Internal for testing
+        internal T?[] heap; // LUCENENET: Internal for testing
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="PriorityQueue{T}"/> with the
+        /// specified <paramref name="maxSize"/>.
+        /// </summary>
+        /// <param name="maxSize">The maximum number of elements this queue can hold.</param>
         protected PriorityQueue(int maxSize) // LUCENENET specific - made protected instead of public
-            : this(maxSize, true)
+            : this(maxSize, sentinelFactory: null)
         {
         }
 
-        protected PriorityQueue(int maxSize, bool prepopulate) // LUCENENET specific - made protected instead of public
+        /// <summary>
+        /// Initializes a new instance of <see cref="PriorityQueue{T}"/> with the
+        /// specified <paramref name="maxSize"/> and <paramref name="sentinelFactory"/>.
+        /// </summary>
+        /// <param name="maxSize">The maximum number of elements this queue can hold.</param>
+        /// <param name="sentinelFactory">If not <c>null</c>, the queue will be pre-populated.
+        /// This factory will be called <paramref name="maxSize"/> times to get an instance
+        /// to provide to each element in the queue.</param>
+        /// <seealso cref="ISentinelFactory{T}"/>
+        /// <seealso cref="SentinelFactory{T, TPriorityQueue}"/>
+        protected PriorityQueue(int maxSize, ISentinelFactory<T>? sentinelFactory)
         {
             int heapSize;
             if (0 == maxSize)
@@ -81,24 +216,17 @@ namespace Lucene.Net.Util
                     heapSize = maxSize + 1;
                 }
             }
-            // T is unbounded type, so this unchecked cast works always:
-            T[] h = new T[heapSize];
-            this.heap = h;
             this.maxSize = maxSize;
-
-            if (prepopulate)
+            this.heap = new T[heapSize];
+            // LUCENENET: If we have a sentinel factory, it means we should pre-populate the array
+            // with sentinel values.
+            if (sentinelFactory is not null)
             {
-                // If sentinel objects are supported, populate the queue with them
-                T sentinel = GetSentinelObject();
-                if (!EqualityComparer<T>.Default.Equals(sentinel, default))
+                for (int i = 1; i < heap.Length; i++)
                 {
-                    heap[1] = sentinel;
-                    for (int i = 2; i < heap.Length; i++)
-                    {
-                        heap[i] = GetSentinelObject();
-                    }
-                    size = maxSize;
+                    heap[i] = sentinelFactory.Create(this);
                 }
+                size = maxSize;
             }
         }
 
@@ -108,50 +236,10 @@ namespace Lucene.Net.Util
         /// <returns> <c>true</c> if parameter <paramref name="a"/> is less than parameter <paramref name="b"/>. </returns>
         protected internal abstract bool LessThan(T a, T b); // LUCENENET: Internal for testing
 
-        /// <summary>
-        /// This method can be overridden by extending classes to return a sentinel
-        /// object which will be used by the <see cref="PriorityQueue(int, bool)"/>
-        /// constructor to fill the queue, so that the code which uses that queue can always
-        /// assume it's full and only change the top without attempting to insert any new
-        /// object.
-        /// <para/>
-        /// Those sentinel values should always compare worse than any non-sentinel
-        /// value (i.e., <see cref="LessThan(T, T)"/> should always favor the
-        /// non-sentinel values).
-        /// <para/>
-        /// By default, this method returns <c>false</c>, which means the queue will not be
-        /// filled with sentinel values. Otherwise, the value returned will be used to
-        /// pre-populate the queue. Adds sentinel values to the queue.
-        /// <para/>
-        /// If this method is extended to return a non-null value, then the following
-        /// usage pattern is recommended:
-        ///
-        /// <code>
-        /// // extends GetSentinelObject() to return a non-null value.
-        /// PriorityQueue&lt;MyObject&gt; pq = new MyQueue&lt;MyObject&gt;(numHits);
-        /// // save the 'top' element, which is guaranteed to not be null.
-        /// MyObject pqTop = pq.Top;
-        /// &lt;...&gt;
-        /// // now in order to add a new element, which is 'better' than top (after
-        /// // you've verified it is better), it is as simple as:
-        /// pqTop.Change().
-        /// pqTop = pq.UpdateTop();
-        /// </code>
-        /// <para/>
-        /// <b>NOTE:</b> if this method returns a non-<c>null</c> value, it will be called by
-        /// the <see cref="PriorityQueue(int, bool)"/> constructor
-        /// <see cref="Count"/> times, relying on a new object to be returned and will not
-        /// check if it's <c>null</c> again. Therefore you should ensure any call to this
-        /// method creates a new instance and behaves consistently, e.g., it cannot
-        /// return <c>null</c> if it previously returned non-<c>null</c>.
-        /// </summary>
-        /// <returns> The sentinel object to use to pre-populate the queue, or <c>null</c> if
-        ///         sentinel objects are not supported. </returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected virtual T GetSentinelObject()
-        {
-            return default;
-        }
+        // LUCENENET specific - refactored getSentinelObject() method into ISentinelFactory<T> and
+        // SentinelFactory<T, TPriorityQueue>
+
+#nullable restore
 
         /// <summary>
         /// Adds an Object to a <see cref="PriorityQueue{T}"/> in log(size) time. If one tries to add
@@ -327,12 +415,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// This method returns the internal heap array as T[].
+        /// Gets the internal heap array as T[].
         /// <para/>
         /// @lucene.internal
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        protected T[] HeapArray => heap;
+        protected internal T[] HeapArray => heap;
     }
 }

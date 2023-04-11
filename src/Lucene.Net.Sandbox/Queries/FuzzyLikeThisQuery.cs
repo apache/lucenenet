@@ -352,7 +352,7 @@ namespace Lucene.Net.Sandbox.Queries
             }
         }
 
-        internal class ScoreTermQueue : Util.PriorityQueue<ScoreTerm>
+        internal class ScoreTermQueue : PriorityQueue<ScoreTerm>
         {
             public ScoreTermQueue(int size)
                 : base(size)
@@ -361,7 +361,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             /// <summary>
             /// (non-Javadoc)
-            /// <see cref="Util.PriorityQueue{T}.LessThan(T, T)"/>
+            /// <see cref="PriorityQueue{T}.LessThan(T, T)"/>
             /// </summary>
             protected internal override bool LessThan(ScoreTerm termA, ScoreTerm termB)
             {

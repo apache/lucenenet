@@ -1,4 +1,8 @@
-﻿namespace Lucene.Net.Search
+﻿using Lucene.Net.Util;
+using System;
+#nullable enable
+
+namespace Lucene.Net.Search
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -16,8 +20,6 @@
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Util;
 
     internal sealed class HitQueue : PriorityQueue<ScoreDoc>
     {
@@ -53,29 +55,44 @@
         /// }
         /// </code>
         ///
-        /// <para/><b>NOTE</b>: this class pre-allocate a full array of
+        /// <para/><b>NOTE</b>: this overload will pre-allocate a full array of
         /// length <paramref name="size"/>.
         /// </summary>
         /// <param name="size">
         ///          The requested size of this queue. </param>
         /// <param name="prePopulate">
         ///          Specifies whether to pre-populate the queue with sentinel values. </param>
-        /// <seealso cref="GetSentinelObject()"/>
+        /// <seealso cref="SentinelFactory"/>
         internal HitQueue(int size, bool prePopulate)
-            : base(size, prePopulate)
+            : base(size, prePopulate ? SentinelFactory.Default : null)
         {
         }
 
-        protected override ScoreDoc GetSentinelObject()
+        // LUCENENET specific - Rather than having a GetSentinelObject() method on PriorityQueue<T>,
+        // and a "prePopulate" boolean value, population is controlled by whether ISentinelFactory<T>
+        // has an instance or is null. This is the singleton instance that is injected when "prePopulate"
+        // is true.
+        internal sealed class SentinelFactory : SentinelFactory<ScoreDoc, HitQueue>
         {
-            // Always set the doc Id to MAX_VALUE so that it won't be favored by
-            // lessThan. this generally should not happen since if score is not NEG_INF,
-            // TopScoreDocCollector will always add the object to the queue.
-            return new ScoreDoc(int.MaxValue, float.NegativeInfinity);
+            public static SentinelFactory Default { get; } = new SentinelFactory();
+
+            public override ScoreDoc Create(HitQueue priorityQueue)
+            {
+                // Always set the doc Id to MAX_VALUE so that it won't be favored by
+                // lessThan. this generally should not happen since if score is not NEG_INF,
+                // TopScoreDocCollector will always add the object to the queue.
+                return new ScoreDoc(int.MaxValue, float.NegativeInfinity);
+            }
         }
 
         protected internal override sealed bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
         {
+            // LUCENENET: Added guard clauses
+            if (hitA is null)
+                throw new ArgumentNullException(nameof(hitA));
+            if (hitB is null)
+                throw new ArgumentNullException(nameof(hitB));
+
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
             if (NumericUtils.SingleToSortableInt32(hitA.Score) == NumericUtils.SingleToSortableInt32(hitB.Score))
             {

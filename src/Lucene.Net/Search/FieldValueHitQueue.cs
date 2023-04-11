@@ -1,7 +1,10 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.IO;
 
 namespace Lucene.Net.Search
@@ -51,13 +54,14 @@ namespace Lucene.Net.Search
         {
             private readonly int oneReverseMul; // LUCENENET: marked readonly
 
+#nullable enable
             public OneComparerFieldValueHitQueue(SortField[] fields, int size)
                 : base(fields, size)
             {
+                if (fields is null)
+                    throw new ArgumentNullException(nameof(fields)); // LUCENENET: Added guard clause
                 if (fields.Length == 0)
-                {
                     throw new ArgumentException("Sort must contain at least one field");
-                }
 
                 SortField field = fields[0];
                 SetComparer(0, field.GetComparer(size, 0));
@@ -65,6 +69,7 @@ namespace Lucene.Net.Search
 
                 ReverseMul[0] = oneReverseMul;
             }
+#nullable restore
 
             /// <summary> Returns whether <c>a</c> is less relevant than <c>b</c>.</summary>
             /// <param name="hitA">ScoreDoc</param>
@@ -72,6 +77,12 @@ namespace Lucene.Net.Search
             /// <returns><c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.</returns>
             protected internal override bool LessThan(T hitA, T hitB)
             {
+                // LUCENENET specific - added null guard clauses
+                if (hitA is null)
+                    throw new ArgumentNullException(nameof(hitA));
+                if (hitB is null)
+                    throw new ArgumentNullException(nameof(hitB));
+
                 if (Debugging.AssertsEnabled)
                 {
                     Debugging.Assert(hitA != hitB);
@@ -95,9 +106,14 @@ namespace Lucene.Net.Search
         internal sealed class MultiComparersFieldValueHitQueue<T> : FieldValueHitQueue<T>
             where T : FieldValueHitQueue.Entry
         {
+#nullable enable
             public MultiComparersFieldValueHitQueue(SortField[] fields, int size)
                 : base(fields, size)
             {
+                // LUCENENET specific - added null guard clause
+                if (fields is null)
+                    throw new ArgumentNullException(nameof(fields));
+
                 int numComparers = m_comparers.Length;
                 for (int i = 0; i < numComparers; ++i)
                 {
@@ -110,6 +126,12 @@ namespace Lucene.Net.Search
 
             protected internal override bool LessThan(T hitA, T hitB)
             {
+                // LUCENENET specific - added null guard clauses
+                if (hitA is null)
+                    throw new ArgumentNullException(nameof(hitA));
+                if (hitB is null)
+                    throw new ArgumentNullException(nameof(hitB));
+
                 if (Debugging.AssertsEnabled)
                 {
                     Debugging.Assert(hitA != hitB);
@@ -145,6 +167,10 @@ namespace Lucene.Net.Search
         public static FieldValueHitQueue<T> Create<T>(SortField[] fields, int size)
             where T : FieldValueHitQueue.Entry
         {
+            // LUCENENET specific - added null guard clause
+            if (fields is null)
+                throw new ArgumentNullException(nameof(fields));
+
             if (fields.Length == 0)
             {
                 throw new ArgumentException("Sort must contain at least one field");
@@ -159,6 +185,8 @@ namespace Lucene.Net.Search
                 return new FieldValueHitQueue.MultiComparersFieldValueHitQueue<T>(fields, size);
             }
         }
+
+#nullable restore
     }
 
     /// <summary>
@@ -170,9 +198,10 @@ namespace Lucene.Net.Search
     /// @since 2.9 </summary>
     /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort)"/>
     /// <seealso cref="FieldCache"/>
-    public abstract class FieldValueHitQueue<T> : Util.PriorityQueue<T>
+    public abstract class FieldValueHitQueue<T> : PriorityQueue<T>
         where T : FieldValueHitQueue.Entry
     {
+#nullable enable
         // prevent instantiation and extension.
         private protected FieldValueHitQueue(SortField[] fields, int size) // LUCENENET: Changed from private to private protected
             : base(size)
@@ -188,6 +217,7 @@ namespace Lucene.Net.Search
             m_comparers = new FieldComparer[numComparers];
             m_reverseMul = new int[numComparers];
         }
+#nullable restore
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]

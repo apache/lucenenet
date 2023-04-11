@@ -1161,6 +1161,8 @@ namespace Lucene.Net.Search
             this.fillFields = fillFields;
         }
 
+#nullable enable
+
         /// <summary>
         /// Creates a new <see cref="TopFieldCollector"/> from the given
         /// arguments.
@@ -1196,9 +1198,10 @@ namespace Lucene.Net.Search
         /// <returns> A <see cref="TopFieldCollector"/> instance which will sort the results by
         ///         the sort criteria. </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="sort"/> is <c>null</c>.</exception>
         public static TopFieldCollector Create(Sort sort, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
         {
-            return Create(sort, numHits, null, fillFields, trackDocScores, trackMaxScore, docsScoredInOrder);
+            return Create(sort, numHits, after: null, fillFields, trackDocScores, trackMaxScore, docsScoredInOrder);
         }
 
         /// <summary>
@@ -1238,7 +1241,8 @@ namespace Lucene.Net.Search
         /// <returns> A <see cref="TopFieldCollector"/> instance which will sort the results by
         ///         the sort criteria. </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        public static TopFieldCollector Create(Sort sort, int numHits, FieldDoc after, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
+        /// <exception cref="ArgumentNullException"><paramref name="sort"/> is <c>null</c>.</exception>
+        public static TopFieldCollector Create(Sort sort, int numHits, FieldDoc? after, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
         {
             // LUCENENET specific: Added guard clause for null
             if (sort is null)
@@ -1353,6 +1357,10 @@ namespace Lucene.Net.Search
 
         protected override void PopulateResults(ScoreDoc[] results, int howMany)
         {
+            // LUCENENET specific - Added guard clause
+            if (results is null)
+                throw new ArgumentNullException(nameof(results));
+
             if (fillFields)
             {
                 // avoid casting if unnecessary.
@@ -1372,7 +1380,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
+        protected override TopDocs NewTopDocs(ScoreDoc[]? results, int start)
         {
             if (results is null)
             {

@@ -191,15 +191,17 @@ namespace Lucene.Net.Misc
         /// Priority queue for <see cref="TermStats"/> objects
         /// 
         /// </summary>
-        internal sealed class TermStatsQueue : Util.PriorityQueue<TermStats>
+        internal sealed class TermStatsQueue : PriorityQueue<TermStats>
         {
             internal readonly IComparer<TermStats> comparer;
 
+#nullable enable
             internal TermStatsQueue(int size, IComparer<TermStats> comparer) 
                 : base(size)
             {
-                this.comparer = comparer;
+                this.comparer = comparer ?? throw new ArgumentNullException(nameof(comparer)); // LUCENENET: Added null guard clause
             }
+#nullable restore
 
             protected internal override bool LessThan(TermStats termInfoA, TermStats termInfoB)
             {
