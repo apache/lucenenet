@@ -5,6 +5,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -279,7 +280,7 @@ namespace Lucene.Net.Codecs
         private readonly IList<FieldMetaData> fields = new JCG.List<FieldMetaData>();
         // private final String segment;
 
-        protected object subclassState = null;
+        protected object m_subclassState = null;
 
         /// <summary>
         /// Create a new writer.  The number of items (terms or
@@ -287,9 +288,14 @@ namespace Lucene.Net.Codecs
         /// <paramref name="minItemsInBlock"/> and <paramref name="maxItemsInBlock"/>, though in some
         /// cases the blocks may be smaller than the min.
         /// </summary>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Internal class")]
         public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock, object subclassState = default)
         {
-            this.subclassState = subclassState;
+            // LUCENENET specific - added state parameter that subclasses
+            // can use to keep track of state and use it in their own virtual
+            // methods that are called by this constructor
+            this.m_subclassState = subclassState;
 
             if (minItemsInBlock <= 1)
             {
