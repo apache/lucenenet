@@ -1,4 +1,7 @@
-﻿using J2N;
+﻿// Lucene version compatibility level 4.8.1 + LUCENE-10059 (https://github.com/apache/lucene/pull/254 only)
+
+using J2N;
+using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Analysis.Ja.TokenAttributes;
@@ -6,6 +9,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -58,27 +62,27 @@ namespace Lucene.Net.Analysis.Ja
             }
         }
 
-        private Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+        private readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
             Tokenizer tokenizer = new JapaneseTokenizer(reader, ReadDict(), false, JapaneseTokenizerMode.SEARCH);
             return new TokenStreamComponents(tokenizer, tokenizer);
         });
 
 
-        private Analyzer analyzerNormal = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+        private readonly Analyzer analyzerNormal = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
             Tokenizer tokenizer = new JapaneseTokenizer(reader, ReadDict(), false, JapaneseTokenizerMode.NORMAL);
             return new TokenStreamComponents(tokenizer, tokenizer);
         });
 
-        private Analyzer analyzerNoPunct = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+        private readonly Analyzer analyzerNoPunct = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
             Tokenizer tokenizer = new JapaneseTokenizer(reader, ReadDict(), true, JapaneseTokenizerMode.SEARCH);
             return new TokenStreamComponents(tokenizer, tokenizer);
         });
 
 
-        private Analyzer extendedModeAnalyzerNoPunct = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+        private readonly Analyzer extendedModeAnalyzerNoPunct = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
             Tokenizer tokenizer = new JapaneseTokenizer(reader, ReadDict(), true, JapaneseTokenizerMode.EXTENDED);
             return new TokenStreamComponents(tokenizer, tokenizer);
@@ -845,6 +849,38 @@ namespace Lucene.Net.Analysis.Ja
                                       new String[] { "d", "ε", "ε", "ϢϏΎϷΞͺ", "羽田" },
                                       new int[] { 1, 1, 1, 1, 1 },
                                       new int[] { 1, 1, 1, 1, 1 });
+        }
+
+        // LUCENENET: ported from LUCENE-10059
+        // Note that these are only the changes from https://github.com/apache/lucene/pull/254.
+        // The NBest feature doesn't yet exist in Lucene 4.8.0, so the changes from
+        // https://github.com/apache/lucene/pull/284 will need to be added here when that feature is ported.
+        [Test]
+        public void TestEmptyBacktrace()
+        {
+            String text = "";
+
+            // since the max backtrace gap ({@link JapaneseTokenizer#MAX_BACKTRACE_GAP)
+            // is set to 1024, we want the first 1023 characters to generate multiple paths
+            // so that the regular backtrace is not executed.
+            for (int i = 0; i < 1023; i++)
+            {
+                text += "あ";
+            }
+
+            // and the last 2 characters to be a valid word so that they
+            // will end-up together
+            text += "手紙";
+
+            IList<String> outputs = new List<String>();
+            for (int i = 0; i < 511; i++)
+            {
+                outputs.Add("ああ");
+            }
+            outputs.Add("あ");
+            outputs.Add("手紙");
+
+            AssertAnalyzesTo(analyzer, text, outputs.ToArray());
         }
     }
 }
