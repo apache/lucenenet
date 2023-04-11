@@ -850,13 +850,15 @@ namespace Lucene.Net.Analysis.Ja
         }
 
         [Test]
-        public void TestEmptyBacktrace()  {
+        public void TestEmptyBacktrace()
+        {
             String text = "";
 
             // since the max backtrace gap ({@link JapaneseTokenizer#MAX_BACKTRACE_GAP)
             // is set to 1024, we want the first 1023 characters to generate multiple paths
             // so that the regular backtrace is not executed.
-            for (int i = 0; i < 1023; i++) {
+            for (int i = 0; i < 1023; i++)
+            {
                 text += "あ";
             }
 
@@ -865,7 +867,8 @@ namespace Lucene.Net.Analysis.Ja
             text += "手紙";
 
             IList<String> outputs = new List<String>();
-            for (int i = 0; i < 511; i++) {
+            for (int i = 0; i < 511; i++)
+            {
                 outputs.Add("ああ");
             }
             outputs.Add("あ");

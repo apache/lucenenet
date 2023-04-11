@@ -883,7 +883,13 @@ namespace Lucene.Net.Analysis.Ja
         {
             int endPos = endPosData.pos;
 
-            if (endPos == lastBackTracePos) {
+            /*
+             * LUCENE-10059: If the endPos is the same as lastBackTracePos, we don't want to backtrace to
+             * avoid an assertion error {@link RollingCharBuffer#get(int)} when it tries to generate an
+             * empty buffer
+             */
+            if (endPos == lastBackTracePos)
+            {
                 return;
             }
 
