@@ -114,10 +114,14 @@ namespace Lucene.Net.Codecs
 
         private readonly int version;
 
+        protected readonly object subclassState;
+
         /// <summary>
         /// Sole constructor. </summary>
-        public BlockTreeTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info, PostingsReaderBase postingsReader, IOContext ioContext, string segmentSuffix, int indexDivisor)
+        public BlockTreeTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info, PostingsReaderBase postingsReader, IOContext ioContext, string segmentSuffix, int indexDivisor, object subclassState = default)
         {
+            this.subclassState = subclassState;
+
             NO_OUTPUT = fstOutputs.NoOutput;
             this.postingsReader = postingsReader;
 

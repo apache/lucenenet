@@ -279,14 +279,18 @@ namespace Lucene.Net.Codecs
         private readonly IList<FieldMetaData> fields = new JCG.List<FieldMetaData>();
         // private final String segment;
 
+        protected object subclassState = null;
+
         /// <summary>
         /// Create a new writer.  The number of items (terms or
         /// sub-blocks) per block will aim to be between
         /// <paramref name="minItemsInBlock"/> and <paramref name="maxItemsInBlock"/>, though in some
         /// cases the blocks may be smaller than the min.
         /// </summary>
-        public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock)
+        public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock, object subclassState = default)
         {
+            this.subclassState = subclassState;
+            
             if (minItemsInBlock <= 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(minItemsInBlock), "minItemsInBlock must be >= 2; got " + minItemsInBlock); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
