@@ -179,7 +179,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             if (DirectoryReader.IndexExists(dir))
             {
                 // Already built; open it:
-                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.APPEND));
+                // LUCENENET specific, deleted writer = new IndexWriter based on LUCENE-7670
                 m_searcherMgr = new SearcherManager(writer, true, null);
             }
         }
