@@ -180,7 +180,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 // Already built; open it:
                 // LUCENENET specific, deleted writer = new IndexWriter based on LUCENE-7670
-                m_searcherMgr = new SearcherManager(writer, true, null);
+                m_searcherMgr = new SearcherManager(dir, null);
             }
         }
 
