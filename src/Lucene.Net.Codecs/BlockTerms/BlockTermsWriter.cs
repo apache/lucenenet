@@ -6,6 +6,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.BlockTerms
@@ -36,7 +37,7 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class BlockTermsWriter : FieldsConsumer
+    public class BlockTermsWriter<TSubclassState> : FieldsConsumer
     {
         internal const string CODEC_NAME = "BLOCK_TERMS_DICT";
 
@@ -90,8 +91,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         // private final String segment;
 
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Internal class")]
         public BlockTermsWriter(TermsIndexWriterBase termsIndexWriter,
-            SegmentWriteState state, PostingsWriterBase postingsWriter)
+            SegmentWriteState state, PostingsWriterBase postingsWriter,
+            TSubclassState subclassState)
         {
             string termsFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, TERMS_EXTENSION);
             this.termsIndexWriter = termsIndexWriter;
@@ -190,7 +194,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         internal class TermsWriter : TermsConsumer
         {
-            private readonly BlockTermsWriter outerInstance;
+            private readonly BlockTermsWriter<TSubclassState> outerInstance;
 
             private readonly FieldInfo fieldInfo;
             private readonly PostingsWriterBase postingsWriter;
@@ -207,7 +211,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             private int pendingCount;
 
             internal TermsWriter(
-                BlockTermsWriter outerInstance,
+                BlockTermsWriter<TSubclassState> outerInstance,
                 TermsIndexWriterBase.FieldWriter fieldIndexWriter,
                 FieldInfo fieldInfo,
                 PostingsWriterBase postingsWriter)

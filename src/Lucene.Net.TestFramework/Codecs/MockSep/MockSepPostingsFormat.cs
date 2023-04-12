@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.MockSep
             success = false;
             try
             {
-                FieldsConsumer ret = new BlockTermsWriter(indexWriter, state, postingsWriter);
+                FieldsConsumer ret = new BlockTermsWriter<object>(indexWriter, state, postingsWriter, null);
                 success = true;
                 return ret;
             }

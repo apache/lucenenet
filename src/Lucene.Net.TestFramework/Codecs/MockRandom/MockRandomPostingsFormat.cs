@@ -334,7 +334,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 success = false;
                 try
                 {
-                    fields = new BlockTermsWriter(indexWriter, state, postingsWriter);
+                    fields = new BlockTermsWriter<object>(indexWriter, state, postingsWriter, null);
                     success = true;
                 }
                 finally

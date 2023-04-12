@@ -1,7 +1,6 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
-using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Pulsing
 {
