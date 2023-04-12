@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs
         /// so the overrides of those methods won't specifically need to use this field (although they could for consistency).
         /// </param>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
-        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Internal class")]
+        [SuppressMessage("CodeQuality", "S1699:Required for continuity with Lucene's design", Justification = "Internal class")]
         public BlockTreeTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info, PostingsReaderBase postingsReader, IOContext ioContext, string segmentSuffix, int indexDivisor, TSubclassState subclassState)
         {
             // LUCENENET specific - added state parameter that subclasses
