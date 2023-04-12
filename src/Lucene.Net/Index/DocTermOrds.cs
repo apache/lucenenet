@@ -3,6 +3,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -241,6 +242,8 @@ namespace Lucene.Net.Index
         /// &lt;=  <paramref name="maxTermDocFreq"/>, with a custom indexing interval
         /// (default is every 128nd term).
         /// </summary>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "A workaround exists that involves using a protected constructor")]
         public DocTermOrds(AtomicReader reader, IBits liveDocs, string field, BytesRef termPrefix, int maxTermDocFreq, int indexIntervalBits)
             : this(field, maxTermDocFreq, indexIntervalBits)
         {
