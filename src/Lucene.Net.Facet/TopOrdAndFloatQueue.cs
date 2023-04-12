@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using System;
 using System.Runtime.InteropServices;
+#nullable enable
 
 namespace Lucene.Net.Facet
 {
@@ -28,12 +29,14 @@ namespace Lucene.Net.Facet
     /// <para/>
     /// NOTE: This was TopOrdAndFloatQueue in Lucene
     /// </summary>
+
+    // LUCENENET NOTE: Keeping this around because it is public. Although,
+    // we don't use it internally anymore, we use TopOrdAndSingleComparer
+    // with ValuePriorityQueue instead.
     public class TopOrdAndSingleQueue : PriorityQueue<OrdAndValue<float>>
     {
         // LUCENENET specific - de-nested OrdAndValue and made it into a generic struct
         // so it can be used with this class and TopOrdAndInt32Queue
-
-#nullable enable
 
         /// <summary>
         /// Initializes a new instance of <see cref="TopOrdAndSingleQueue"/> with the
@@ -43,16 +46,29 @@ namespace Lucene.Net.Facet
         {
         }
 
-#nullable restore
-
         protected internal override bool LessThan(OrdAndValue<float> a, OrdAndValue<float> b)
-        {
-            // LUCENENET specific - added guard clauses
-            if (a is null)
-                throw new ArgumentNullException(nameof(a));
-            if (b is null)
-                throw new ArgumentNullException(nameof(b));
+            => TopOrdAndSingleComparer.Default.LessThan(a, b);
+    }
 
+    /// <summary>
+    /// Keeps highest results, first by largest <see cref="float"/> value,
+    /// then tie break by smallest ord.
+    /// <para/>
+    /// NOTE: This is a refactoring of TopOrdAndFloatQueue in Lucene
+    /// </summary>
+    // LUCENENET: Refactored PriorityQueue<T> subclass into IPriorityComparer<T>
+    // implementation, which can be passed into ValuePriorityQueue.
+    public sealed class TopOrdAndSingleComparer : IPriorityComparer<OrdAndValue<float>>
+    {
+        /// <summary>
+        /// Returns a default sort order comparer for <see cref="OrdAndValue{Single}"/>.
+        /// Keeps highest results, first by largest <see cref="float"/> value,
+        /// then tie break by smallest ord.
+        /// </summary>
+        public static TopOrdAndSingleComparer Default { get; } = new TopOrdAndSingleComparer();
+
+        internal bool LessThan(OrdAndValue<float> a, OrdAndValue<float> b)
+        {
             if (a.Value < b.Value)
             {
                 return true;
@@ -66,30 +82,37 @@ namespace Lucene.Net.Facet
                 return a.Ord > b.Ord;
             }
         }
+
+        bool IPriorityComparer<OrdAndValue<float>>.LessThan(OrdAndValue<float> a, OrdAndValue<float> b)
+            => LessThan(a, b);
     }
 
     /// <summary>
     /// Holds a single entry.
     /// </summary>
     // LUCENENET specific - de-nested this and made it into a struct so it can be shared
+    // and stack allocated.
     [StructLayout(LayoutKind.Sequential)]
-    public sealed class OrdAndValue<T> : IEquatable<OrdAndValue<T>>
+    public struct OrdAndValue<T> : IEquatable<OrdAndValue<T>>
     {
+        private int ord;
+        private T value;
+
         /// <summary>
         /// Ordinal of the entry. </summary>
-        public int Ord;
+        public int Ord => ord;
 
         /// <summary>
         /// Value associated with the ordinal. </summary>
-        public T Value;
+        public T Value => value;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         public OrdAndValue(int ord, T value)
         {
-            Ord = ord;
-            Value = value;
+            this.ord = ord;
+            this.value = value;
         }
 
         #region Added for better .NET support
@@ -100,12 +123,12 @@ namespace Lucene.Net.Facet
 
         public bool Equals(OrdAndValue<T> other)
         {
-            return this.Ord == other.Ord && this.Value.Equals(other.Value);
+            return this.ord == other.ord && this.value.Equals(other.value);
         }
 
         public override int GetHashCode()
         {
-            return this.Ord.GetHashCode() ^ this.Value.GetHashCode();
+            return this.ord.GetHashCode() ^ this.value.GetHashCode();
         }
 
         public static bool operator ==(OrdAndValue<T> left, OrdAndValue<T> right)
