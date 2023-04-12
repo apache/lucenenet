@@ -285,9 +285,19 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Create a new writer.  The number of items (terms or
         /// sub-blocks) per block will aim to be between
-        /// <paramref name="minItemsInBlock"/> and <paramref name="maxItemsInBlock"/>, though in some
-        /// cases the blocks may be smaller than the min.
         /// </summary>
+        /// <param name="subclassState">LUCENENET specific parameter which allows a subclass
+        /// to set state. It is *optional* and can be used when overriding the WriteHeader(),
+        /// WriteIndexHeader(). It only matters in the case where the state
+        /// is required inside of any of those methods that is passed in to the subclass constructor.
+        /// 
+        /// When passed to the constructor, it is set to the protected field m_subclassState before
+        /// any of the above methods are called where it is available for reading when overriding the above methods.
+        /// 
+        /// If your subclass needs to pass more than one piece of data, you can create a class or struct to do so.
+        /// All other virtual members of BlockTreeTermsWriter are not called in the constructor, 
+        /// so the overrides of those methods won't specifically need to use this field (although they could for consistency).
+        /// </param>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Internal class")]
         public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock, TSubclassState subclassState)

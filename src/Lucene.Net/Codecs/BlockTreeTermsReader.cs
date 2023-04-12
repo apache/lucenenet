@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Sole constructor. </summary>
         /// <param name="subclassState">LUCENENET specific parameter which allows a subclass
-        /// to can set state. It is *optional* and can be used when overriding the ReadHeader(),
+        /// to set state. It is *optional* and can be used when overriding the ReadHeader(),
         /// ReadIndexHeader() and SeekDir() methods. It only matters in the case where the state
         /// is required inside of any of those methods that is passed in to the subclass constructor.
         /// 
