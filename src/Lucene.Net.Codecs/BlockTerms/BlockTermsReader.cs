@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             this.postingsReader = postingsReader;
 
             // this.segment = segment;
-            input = dir.OpenInput(IndexFileNames.SegmentFileName(info.Name, segmentSuffix, BlockTermsWriter<object>.TERMS_EXTENSION),
+            input = dir.OpenInput(IndexFileNames.SegmentFileName(info.Name, segmentSuffix, BlockTermsWriter.TERMS_EXTENSION),
                                context);
 
             bool success = false;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? -1 : input.ReadVInt64();
                     long sumDocFreq = input.ReadVInt64();
                     int docCount = input.ReadVInt32();
-                    int longsSize = version >= BlockTermsWriter<object>.VERSION_META_ARRAY ? input.ReadVInt32() : 0;
+                    int longsSize = version >= BlockTermsWriter.VERSION_META_ARRAY ? input.ReadVInt32() : 0;
                     if (docCount < 0 || docCount > info.DocCount)
                     { // #docs with field must be <= #docs
                         throw new CorruptIndexException("invalid docCount: " + docCount + " maxDoc: " + info.DocCount + " (resource=" + input + ")");
@@ -166,10 +166,10 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private int ReadHeader(DataInput input)
         {
-            int version = CodecUtil.CheckHeader(input, BlockTermsWriter<object>.CODEC_NAME,
-                          BlockTermsWriter<object>.VERSION_START,
-                          BlockTermsWriter<object>.VERSION_CURRENT);
-            if (version < BlockTermsWriter<object>.VERSION_APPEND_ONLY)
+            int version = CodecUtil.CheckHeader(input, BlockTermsWriter.CODEC_NAME,
+                          BlockTermsWriter.VERSION_START,
+                          BlockTermsWriter.VERSION_CURRENT);
+            if (version < BlockTermsWriter.VERSION_APPEND_ONLY)
             {
                 dirOffset = input.ReadInt64();
             }
@@ -178,12 +178,12 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private void SeekDir(IndexInput input, long dirOffset)
         {
-            if (version >= BlockTermsWriter<object>.VERSION_CHECKSUM)
+            if (version >= BlockTermsWriter.VERSION_CHECKSUM)
             {
                 input.Seek(input.Length - CodecUtil.FooterLength() - 8);
                 dirOffset = input.ReadInt64();
             }
-            else if (version >= BlockTermsWriter<object>.VERSION_APPEND_ONLY)
+            else if (version >= BlockTermsWriter.VERSION_APPEND_ONLY)
             {
                 input.Seek(input.Length - 8);
                 dirOffset = input.ReadInt64();
@@ -1006,7 +1006,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public override void CheckIntegrity()
         {
             // verify terms
-            if (version >= BlockTermsWriter<object>.VERSION_CHECKSUM)
+            if (version >= BlockTermsWriter.VERSION_CHECKSUM)
             {
                 CodecUtil.ChecksumEntireFile(input);
             }

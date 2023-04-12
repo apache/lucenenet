@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// The core terms dictionaries (BlockTermsReader,
-    /// <see cref="BlockTreeTermsReader"/>) interact with a single instance
+    /// <see cref="BlockTreeTermsReader{T}"/>) interact with a single instance
     /// of this class to manage creation of <see cref="DocsEnum"/> and
     /// <see cref="DocsAndPositionsEnum"/> instances.  It provides an
     /// <see cref="IndexInput"/> (termsIn) where this class may read any

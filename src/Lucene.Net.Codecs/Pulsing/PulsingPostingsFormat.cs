@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Pulsing
 {
@@ -99,13 +100,12 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 docsReader = _wrappedPostingsBaseFormat.PostingsReaderBase(state);
                 pulsingReader = new PulsingPostingsReader(state, docsReader);
-                FieldsProducer ret = new BlockTreeTermsReader<object>(
+                FieldsProducer ret = new BlockTreeTermsReader(
                     state.Directory, state.FieldInfos, state.SegmentInfo,
                     pulsingReader,
                     state.Context,
                     state.SegmentSuffix,
-                    state.TermsIndexDivisor,
-                    subclassState: null);
+                    state.TermsIndexDivisor);
                 success = true;
                 return ret;
             }

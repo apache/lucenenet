@@ -179,7 +179,7 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    /// <seealso cref="BlockTreeTermsReader"/>
+    /// <seealso cref="BlockTreeTermsReader{T}"/>
     public class BlockTreeTermsWriter : FieldsConsumer
     {
         /// <summary>
