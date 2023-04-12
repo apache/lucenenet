@@ -82,11 +82,11 @@ namespace Lucene.Net.Codecs
     /// option to see summary statistics on the blocks in the
     /// dictionary.</para>
     ///
-    /// See <see cref="BlockTreeTermsWriter"/>.
+    /// See <see cref="BlockTreeTermsWriter{TSubclassState}"/>.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class BlockTreeTermsReader : FieldsProducer
+    public class BlockTreeTermsReader<TSubclassState> : FieldsProducer
     {
         // Open input to the main terms dict file (_X.tib)
 #pragma warning disable CA2213 // Disposable fields should be disposed
@@ -114,10 +114,31 @@ namespace Lucene.Net.Codecs
 
         private readonly int version;
 
+        protected readonly TSubclassState m_subclassState;
+
         /// <summary>
         /// Sole constructor. </summary>
-        public BlockTreeTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info, PostingsReaderBase postingsReader, IOContext ioContext, string segmentSuffix, int indexDivisor)
+        /// <param name="subclassState">LUCENENET specific parameter which allows a subclass
+        /// to set state. It is *optional* and can be used when overriding the ReadHeader(),
+        /// ReadIndexHeader() and SeekDir() methods. It only matters in the case where the state
+        /// is required inside of any of those methods that is passed in to the subclass constructor.
+        /// 
+        /// When passed to the constructor, it is set to the protected field m_subclassState before
+        /// any of the above methods are called where it is available for reading when overriding the above methods.
+        /// 
+        /// If your subclass needs to pass more than one piece of data, you can create a class or struct to do so.
+        /// All other virtual members of BlockTreeTermsReader are not called in the constructor, 
+        /// so the overrides of those methods won't specifically need to use this field (although they could for consistency).
+        /// </param>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
+        public BlockTreeTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info, PostingsReaderBase postingsReader, IOContext ioContext, string segmentSuffix, int indexDivisor, TSubclassState subclassState)
         {
+            // LUCENENET specific - added state parameter that subclasses
+            // can use to keep track of state and use it in their own virtual
+            // methods that are called by this constructor
+            this.m_subclassState = subclassState;
+
             NO_OUTPUT = fstOutputs.NoOutput;
             this.postingsReader = postingsReader;
 
@@ -543,7 +564,7 @@ namespace Lucene.Net.Codecs
         /// BlockTree's implementation of <see cref="GetTerms(string)"/>. </summary>
         public sealed class FieldReader : Terms
         {
-            private readonly BlockTreeTermsReader outerInstance;
+            private readonly BlockTreeTermsReader<TSubclassState> outerInstance;
 
             internal readonly long numTerms;
             internal readonly FieldInfo fieldInfo;
@@ -558,7 +579,7 @@ namespace Lucene.Net.Codecs
             internal readonly FST<BytesRef> index;
             //private boolean DEBUG;
 
-            internal FieldReader(BlockTreeTermsReader outerInstance, FieldInfo fieldInfo, long numTerms, BytesRef rootCode, long sumTotalTermFreq, long sumDocFreq, int docCount, long indexStartFP, int longsSize, IndexInput indexIn)
+            internal FieldReader(BlockTreeTermsReader<TSubclassState> outerInstance, FieldInfo fieldInfo, long numTerms, BytesRef rootCode, long sumTotalTermFreq, long sumDocFreq, int docCount, long indexStartFP, int longsSize, IndexInput indexIn)
             {
                 this.outerInstance = outerInstance;
                 if (Debugging.AssertsEnabled) Debugging.Assert(numTerms > 0);
@@ -652,7 +673,7 @@ namespace Lucene.Net.Codecs
             // NOTE: cannot seek!
             private sealed class IntersectEnum : TermsEnum
             {
-                private readonly BlockTreeTermsReader.FieldReader outerInstance;
+                private readonly BlockTreeTermsReader<TSubclassState>.FieldReader outerInstance;
 
                 private readonly IndexInput @in;
 
@@ -672,7 +693,7 @@ namespace Lucene.Net.Codecs
                 // TODO: can we share this with the frame in STE?
                 private sealed class Frame
                 {
-                    private readonly BlockTreeTermsReader.FieldReader.IntersectEnum outerInstance;
+                    private readonly BlockTreeTermsReader<TSubclassState>.FieldReader.IntersectEnum outerInstance;
 
                     internal readonly int ord;
                     internal long fp;
@@ -752,7 +773,7 @@ namespace Lucene.Net.Codecs
                     internal int startBytePos;
                     internal int suffix;
 
-                    public Frame(BlockTreeTermsReader.FieldReader.IntersectEnum outerInstance, int ord)
+                    public Frame(BlockTreeTermsReader<TSubclassState>.FieldReader.IntersectEnum outerInstance, int ord)
                     {
                         this.outerInstance = outerInstance;
                         this.ord = ord;
@@ -987,7 +1008,7 @@ namespace Lucene.Net.Codecs
 
                 // TODO: in some cases we can filter by length?  eg
                 // regexp foo*bar must be at least length 6 bytes
-                public IntersectEnum(BlockTreeTermsReader.FieldReader outerInstance, CompiledAutomaton compiled, BytesRef startTerm)
+                public IntersectEnum(BlockTreeTermsReader<TSubclassState>.FieldReader outerInstance, CompiledAutomaton compiled, BytesRef startTerm)
                 {
                     this.outerInstance = outerInstance;
                     // if (DEBUG) {
@@ -1491,7 +1512,7 @@ namespace Lucene.Net.Codecs
             // Iterates through terms in this field
             internal sealed class SegmentTermsEnum : TermsEnum
             {
-                private readonly BlockTreeTermsReader.FieldReader outerInstance;
+                private readonly BlockTreeTermsReader<TSubclassState>.FieldReader outerInstance;
 
                 private IndexInput @in;
 
@@ -1518,7 +1539,7 @@ namespace Lucene.Net.Codecs
                 // LUCENENET specific - optimized empty array creation
                 private static readonly Frame[] EMPTY_FRAMES = Arrays.Empty<Frame>();
 
-                public SegmentTermsEnum(BlockTreeTermsReader.FieldReader outerInstance)
+                public SegmentTermsEnum(BlockTreeTermsReader<TSubclassState>.FieldReader outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     //if (DEBUG) System.out.println("BTTR.init seg=" + segment);
@@ -2591,7 +2612,7 @@ namespace Lucene.Net.Codecs
                 // fieldInfo, in
                 internal sealed class Frame
                 {
-                    private readonly BlockTreeTermsReader.FieldReader.SegmentTermsEnum outerInstance;
+                    private readonly BlockTreeTermsReader<TSubclassState>.FieldReader.SegmentTermsEnum outerInstance;
 
                     // Our index in stack[]:
                     internal readonly int ord;
@@ -2673,7 +2694,7 @@ namespace Lucene.Net.Codecs
 
                     internal ByteArrayDataInput bytesReader;
 
-                    public Frame(BlockTreeTermsReader.FieldReader.SegmentTermsEnum outerInstance, int ord)
+                    public Frame(BlockTreeTermsReader<TSubclassState>.FieldReader.SegmentTermsEnum outerInstance, int ord)
                     {
                         this.outerInstance = outerInstance;
                         this.ord = ord;

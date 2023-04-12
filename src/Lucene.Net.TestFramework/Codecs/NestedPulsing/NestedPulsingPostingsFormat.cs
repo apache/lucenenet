@@ -51,8 +51,8 @@ namespace Lucene.Net.Codecs.NestedPulsing
 
                 pulsingWriterInner = new PulsingPostingsWriter(state, 2, docsWriter);
                 pulsingWriter = new PulsingPostingsWriter(state, 1, pulsingWriterInner);
-                FieldsConsumer ret = new BlockTreeTermsWriter(state, pulsingWriter,
-                    BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE, BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE);
+                FieldsConsumer ret = new BlockTreeTermsWriter<object>(state, pulsingWriter,
+                    BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE, BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE, subclassState:null);
                 success = true;
                 return ret;
             }
@@ -76,12 +76,13 @@ namespace Lucene.Net.Codecs.NestedPulsing
                 docsReader = new Lucene41PostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, state.SegmentSuffix);
                 pulsingReaderInner = new PulsingPostingsReader(state, docsReader);
                 pulsingReader = new PulsingPostingsReader(state, pulsingReaderInner);
-                FieldsProducer ret = new BlockTreeTermsReader(
+                FieldsProducer ret = new BlockTreeTermsReader<object>(
                                                               state.Directory, state.FieldInfos, state.SegmentInfo,
                                                               pulsingReader,
                                                               state.Context,
                                                               state.SegmentSuffix,
-                                                              state.TermsIndexDivisor);
+                                                              state.TermsIndexDivisor,
+                                                              subclassState: null);
                 success = true;
                 return ret;
             }

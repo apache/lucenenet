@@ -42,7 +42,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// field along with per-term statistics (such as docfreq)
     /// and pointers to the frequencies, positions and
     /// skip data in the .frq and .prx files.
-    /// See <see cref="BlockTreeTermsWriter"/> for more details on the format.
+    /// See <see cref="BlockTreeTermsWriter{TSubclassState}"/> for more details on the format.
     /// </para>
     ///
     /// <para>NOTE: The term dictionary can plug into different postings implementations:
@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// <a name="Termindex" id="Termindex"></a>
     /// <h3>Term Index</h3>
     /// <para>The .tip file contains an index into the term dictionary, so that it can be
-    /// accessed randomly.  See <see cref="BlockTreeTermsWriter"/> for more details on the format.</para>
+    /// accessed randomly.  See <see cref="BlockTreeTermsWriter{TSubclassState}"/> for more details on the format.</para>
     /// <a name="Frequencies" id="Frequencies"></a>
     /// <h3>Frequencies</h3>
     /// <para>The .frq file contains the lists of documents which contain each term, along
@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Creates <see cref="Lucene40PostingsFormat"/> with custom
         /// values for <paramref name="minBlockSize"/> and 
         /// <paramref name="maxBlockSize"/> passed to block terms dictionary. </summary>
-        ///  <seealso cref="BlockTreeTermsWriter.BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)"/>
+        ///  <seealso cref="BlockTreeTermsWriter{TSubclassState}.BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int,TSubclassState)"/>
         private Lucene40PostingsFormat(int minBlockSize, int maxBlockSize)
             : base()
         {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Codecs.Lucene40
             bool success = false;
             try
             {
-                FieldsProducer ret = new BlockTreeTermsReader(state.Directory, state.FieldInfos, state.SegmentInfo, postings, state.Context, state.SegmentSuffix, state.TermsIndexDivisor);
+                FieldsProducer ret = new BlockTreeTermsReader<object>(state.Directory, state.FieldInfos, state.SegmentInfo, postings, state.Context, state.SegmentSuffix, state.TermsIndexDivisor, subclassState: null);
                 success = true;
                 return ret;
             }

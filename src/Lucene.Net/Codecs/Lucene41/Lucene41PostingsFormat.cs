@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.Lucene41
     /// field along with per-term statistics (such as docfreq)
     /// and pointers to the frequencies, positions, payload and
     /// skip data in the .doc, .pos, and .pay files.
-    /// See <see cref="BlockTreeTermsWriter"/> for more details on the format.
+    /// See <see cref="BlockTreeTermsWriter{TSubclassState}"/> for more details on the format.
     /// </para>
     ///
     /// <para>NOTE: The term dictionary can plug into different postings implementations:
@@ -161,7 +161,7 @@ namespace Lucene.Net.Codecs.Lucene41
     /// <dd>
     /// <b>Term Index</b>
     /// <para>The .tip file contains an index into the term dictionary, so that it can be
-    /// accessed randomly.  See <see cref="BlockTreeTermsWriter"/> for more details on the format.</para>
+    /// accessed randomly.  See <see cref="BlockTreeTermsWriter{TSubclassState}"/> for more details on the format.</para>
     /// </dd>
     /// </dl>
     ///
@@ -387,7 +387,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// Creates <see cref="Lucene41PostingsFormat"/> with custom
         /// values for <paramref name="minTermBlockSize"/> and 
         /// <paramref name="maxTermBlockSize"/> passed to block terms dictionary. </summary>
-        /// <seealso cref="BlockTreeTermsWriter.BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)"/>
+        /// <seealso cref="BlockTreeTermsWriter{TSubclassState}.BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int,TSubclassState)"/>
         public Lucene41PostingsFormat(int minTermBlockSize, int maxTermBlockSize)
             : base()
         {
@@ -409,7 +409,7 @@ namespace Lucene.Net.Codecs.Lucene41
             bool success = false;
             try
             {
-                FieldsConsumer ret = new BlockTreeTermsWriter(state, postingsWriter, minTermBlockSize, maxTermBlockSize);
+                FieldsConsumer ret = new BlockTreeTermsWriter<object>(state, postingsWriter, minTermBlockSize, maxTermBlockSize, subclassState: null);
                 success = true;
                 return ret;
             }
@@ -428,7 +428,7 @@ namespace Lucene.Net.Codecs.Lucene41
             bool success = false;
             try
             {
-                FieldsProducer ret = new BlockTreeTermsReader(state.Directory, state.FieldInfos, state.SegmentInfo, postingsReader, state.Context, state.SegmentSuffix, state.TermsIndexDivisor);
+                FieldsProducer ret = new BlockTreeTermsReader<object>(state.Directory, state.FieldInfos, state.SegmentInfo, postingsReader, state.Context, state.SegmentSuffix, state.TermsIndexDivisor, subclassState: null);
                 success = true;
                 return ret;
             }

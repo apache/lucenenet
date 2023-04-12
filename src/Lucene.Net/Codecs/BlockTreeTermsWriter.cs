@@ -5,6 +5,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -44,6 +45,64 @@ namespace Lucene.Net.Codecs
     using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
     using Util = Lucene.Net.Util.Fst.Util;
+
+    // LUCENENET specific - moved out constants from generic class
+    public static class BlockTreeTermsWriter
+    {
+        /// <summary>
+        /// Suggested default value for the 
+        /// <c>minItemsInBlock</c> parameter to 
+        /// <see cref="BlockTreeTermsWriter{TSubclassState}(SegmentWriteState, PostingsWriterBase, int, int, TSubclassState)"/>.
+        /// </summary>
+        public const int DEFAULT_MIN_BLOCK_SIZE = 25;
+
+        /// <summary>
+        /// Suggested default value for the 
+        /// <c>maxItemsInBlock</c> parameter to 
+        /// <see cref="BlockTreeTermsWriter{TSubclassState}(SegmentWriteState, PostingsWriterBase, int, int, TSubclassState)"/>.
+        /// </summary>
+        public const int DEFAULT_MAX_BLOCK_SIZE = 48;
+
+        //public final static boolean DEBUG = false;
+        //private final static boolean SAVE_DOT_FILES = false;
+
+        internal const int OUTPUT_FLAGS_NUM_BITS = 2;
+        internal const int OUTPUT_FLAGS_MASK = 0x3;
+        internal const int OUTPUT_FLAG_IS_FLOOR = 0x1;
+        internal const int OUTPUT_FLAG_HAS_TERMS = 0x2;
+
+        /// <summary>
+        /// Extension of terms file. </summary>
+        internal const string TERMS_EXTENSION = "tim";
+
+        internal const string TERMS_CODEC_NAME = "BLOCK_TREE_TERMS_DICT";
+
+        /// <summary>
+        /// Initial terms format. </summary>
+        public const int VERSION_START = 0;
+
+        /// <summary>
+        /// Append-only </summary>
+        public const int VERSION_APPEND_ONLY = 1;
+
+        /// <summary>
+        /// Meta data as array. </summary>
+        public const int VERSION_META_ARRAY = 2;
+
+        /// <summary>
+        /// Checksums. </summary>
+        public const int VERSION_CHECKSUM = 3;
+
+        /// <summary>
+        /// Current terms format. </summary>
+        public const int VERSION_CURRENT = VERSION_CHECKSUM;
+
+        /// <summary>
+        /// Extension of terms index file. </summary>
+        internal const string TERMS_INDEX_EXTENSION = "tip";
+
+        internal const string TERMS_INDEX_CODEC_NAME = "BLOCK_TREE_TERMS_INDEX";
+    }
 
     /*
       TODO:
@@ -178,62 +237,10 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    /// <seealso cref="BlockTreeTermsReader"/>
-    public class BlockTreeTermsWriter : FieldsConsumer
+    /// <seealso cref="BlockTreeTermsReader{TSubclassState}"/>
+    public class BlockTreeTermsWriter<TSubclassState> : FieldsConsumer
     {
-        /// <summary>
-        /// Suggested default value for the 
-        /// <c>minItemsInBlock</c> parameter to 
-        /// <see cref="BlockTreeTermsWriter(SegmentWriteState, PostingsWriterBase, int, int)"/>.
-        /// </summary>
-        public const int DEFAULT_MIN_BLOCK_SIZE = 25;
-
-        /// <summary>
-        /// Suggested default value for the 
-        /// <c>maxItemsInBlock</c> parameter to 
-        /// <see cref="BlockTreeTermsWriter(SegmentWriteState, PostingsWriterBase, int, int)"/>.
-        /// </summary>
-        public const int DEFAULT_MAX_BLOCK_SIZE = 48;
-
-        //public final static boolean DEBUG = false;
-        //private final static boolean SAVE_DOT_FILES = false;
-
-        internal const int OUTPUT_FLAGS_NUM_BITS = 2;
-        internal const int OUTPUT_FLAGS_MASK = 0x3;
-        internal const int OUTPUT_FLAG_IS_FLOOR = 0x1;
-        internal const int OUTPUT_FLAG_HAS_TERMS = 0x2;
-
-        /// <summary>
-        /// Extension of terms file. </summary>
-        internal const string TERMS_EXTENSION = "tim";
-
-        internal const string TERMS_CODEC_NAME = "BLOCK_TREE_TERMS_DICT";
-
-        /// <summary>
-        /// Initial terms format. </summary>
-        public const int VERSION_START = 0;
-
-        /// <summary>
-        /// Append-only </summary>
-        public const int VERSION_APPEND_ONLY = 1;
-
-        /// <summary>
-        /// Meta data as array. </summary>
-        public const int VERSION_META_ARRAY = 2;
-
-        /// <summary>
-        /// Checksums. </summary>
-        public const int VERSION_CHECKSUM = 3;
-
-        /// <summary>
-        /// Current terms format. </summary>
-        public const int VERSION_CURRENT = VERSION_CHECKSUM;
-
-        /// <summary>
-        /// Extension of terms index file. </summary>
-        internal const string TERMS_INDEX_EXTENSION = "tip";
-
-        internal const string TERMS_INDEX_CODEC_NAME = "BLOCK_TREE_TERMS_INDEX";
+        // LUCENENET specific - moved constants from this generic class to static BlockTreeTermsWriter
 
 #pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexOutput @out;
@@ -279,14 +286,33 @@ namespace Lucene.Net.Codecs
         private readonly IList<FieldMetaData> fields = new JCG.List<FieldMetaData>();
         // private final String segment;
 
+        protected object m_subclassState = null;
+
         /// <summary>
         /// Create a new writer.  The number of items (terms or
         /// sub-blocks) per block will aim to be between
-        /// <paramref name="minItemsInBlock"/> and <paramref name="maxItemsInBlock"/>, though in some
-        /// cases the blocks may be smaller than the min.
         /// </summary>
-        public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock)
+        /// <param name="subclassState">LUCENENET specific parameter which allows a subclass
+        /// to set state. It is *optional* and can be used when overriding the WriteHeader(),
+        /// WriteIndexHeader(). It only matters in the case where the state
+        /// is required inside of any of those methods that is passed in to the subclass constructor.
+        /// 
+        /// When passed to the constructor, it is set to the protected field m_subclassState before
+        /// any of the above methods are called where it is available for reading when overriding the above methods.
+        /// 
+        /// If your subclass needs to pass more than one piece of data, you can create a class or struct to do so.
+        /// All other virtual members of BlockTreeTermsWriter are not called in the constructor, 
+        /// so the overrides of those methods won't specifically need to use this field (although they could for consistency).
+        /// </param>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
+        public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock, TSubclassState subclassState)
         {
+            // LUCENENET specific - added state parameter that subclasses
+            // can use to keep track of state and use it in their own virtual
+            // methods that are called by this constructor
+            this.m_subclassState = subclassState;
+
             if (minItemsInBlock <= 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(minItemsInBlock), "minItemsInBlock must be >= 2; got " + minItemsInBlock); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
@@ -304,7 +330,7 @@ namespace Lucene.Net.Codecs
                 throw new ArgumentException("maxItemsInBlock must be at least 2*(minItemsInBlock-1); got maxItemsInBlock=" + maxItemsInBlock + " minItemsInBlock=" + minItemsInBlock);
             }
 
-            string termsFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, TERMS_EXTENSION);
+            string termsFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, BlockTreeTermsWriter.TERMS_EXTENSION);
             @out = state.Directory.CreateOutput(termsFileName, state.Context);
             bool success = false;
             IndexOutput indexOut = null;
@@ -317,7 +343,7 @@ namespace Lucene.Net.Codecs
 
                 //DEBUG = state.segmentName.Equals("_4a", StringComparison.Ordinal);
 
-                string termsIndexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, TERMS_INDEX_EXTENSION);
+                string termsIndexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, BlockTreeTermsWriter.TERMS_INDEX_EXTENSION);
                 indexOut = state.Directory.CreateOutput(termsIndexFileName, state.Context);
                 WriteIndexHeader(indexOut);
 
@@ -345,7 +371,7 @@ namespace Lucene.Net.Codecs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteHeader(IndexOutput @out)
         {
-            CodecUtil.WriteHeader(@out, TERMS_CODEC_NAME, VERSION_CURRENT);
+            CodecUtil.WriteHeader(@out, BlockTreeTermsWriter.TERMS_CODEC_NAME, BlockTreeTermsWriter.VERSION_CURRENT);
         }
 
         /// <summary>
@@ -353,7 +379,7 @@ namespace Lucene.Net.Codecs
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteIndexHeader(IndexOutput @out)
         {
-            CodecUtil.WriteHeader(@out, TERMS_INDEX_CODEC_NAME, VERSION_CURRENT);
+            CodecUtil.WriteHeader(@out, BlockTreeTermsWriter.TERMS_INDEX_CODEC_NAME, BlockTreeTermsWriter.VERSION_CURRENT);
         }
 
         /// <summary>
@@ -385,7 +411,7 @@ namespace Lucene.Net.Codecs
         internal static long EncodeOutput(long fp, bool hasTerms, bool isFloor)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(fp < (1L << 62));
-            return (fp << 2) | (uint)(hasTerms ? OUTPUT_FLAG_HAS_TERMS : 0) | (uint)(isFloor ? OUTPUT_FLAG_IS_FLOOR : 0);
+            return (fp << 2) | (uint)(hasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS : 0) | (uint)(isFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR : 0);
         }
 
         private class PendingEntry
@@ -593,7 +619,7 @@ namespace Lucene.Net.Codecs
 
         internal class TermsWriter : TermsConsumer
         {
-            private readonly BlockTreeTermsWriter outerInstance;
+            private readonly BlockTreeTermsWriter<TSubclassState> outerInstance;
 
             private readonly FieldInfo fieldInfo;
             private readonly int longsSize;
@@ -627,9 +653,9 @@ namespace Lucene.Net.Codecs
             // that we encounter:
             private class FindBlocks : Builder.FreezeTail<object>
             {
-                private readonly BlockTreeTermsWriter.TermsWriter outerInstance;
+                private readonly BlockTreeTermsWriter<TSubclassState>.TermsWriter outerInstance;
 
-                public FindBlocks(BlockTreeTermsWriter.TermsWriter outerInstance)
+                public FindBlocks(BlockTreeTermsWriter<TSubclassState>.TermsWriter outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -1176,7 +1202,7 @@ namespace Lucene.Net.Codecs
                 return new PendingBlock(prefix, startFP, termCount != 0, isFloor, floorLeadByte, subIndices);
             }
 
-            internal TermsWriter(BlockTreeTermsWriter outerInstance, FieldInfo fieldInfo)
+            internal TermsWriter(BlockTreeTermsWriter<TSubclassState> outerInstance, FieldInfo fieldInfo)
             {
                 this.outerInstance = outerInstance;
                 this.fieldInfo = fieldInfo;
