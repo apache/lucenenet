@@ -2,8 +2,10 @@
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Search
 {
@@ -69,36 +71,76 @@ namespace Lucene.Net.Search
             this.maxScore = maxScore;
         }
 
+#nullable enable
+
+        private static readonly int ShardByteSize = Marshal.SizeOf(typeof(Shard)); // LUCENENET specific so we can calculate stack size
+
+        // LUCENENET specific - Renamed ShardRef to Shard and made it into a struct
+        // so we can allocate arrays of them on the stack.
         // Refers to one hit:
-        private class ShardRef
+        [StructLayout(LayoutKind.Sequential)]
+        private struct Shard : IEquatable<Shard>
         {
+            [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+            [SuppressMessage("Major Code Smell", "S2933:Fields that are only assigned in the constructor should be \"readonly\"", Justification = "Structs are known to have performance issues with readonly fields")]
+            [SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "Structs are known to have performance issues with readonly fields")]
+            private int shardIndex;
+            private int hitIndex;
+
             // Which shard (index into shardHits[]):
-            internal int ShardIndex { get; private set; }
+            internal int ShardIndex => shardIndex;
 
             // Which hit within the shard:
-            internal int HitIndex { get; set; }
-
-            public ShardRef(int shardIndex)
+            internal int HitIndex
             {
-                this.ShardIndex = shardIndex;
+                get => hitIndex;
+                set => hitIndex = value;
             }
+
+            public Shard(int shardIndex)
+            {
+                this.shardIndex = shardIndex;
+                this.hitIndex = 0;
+            }
+
+            public bool Equals(Shard other)
+            {
+                return shardIndex == other.shardIndex && hitIndex == other.hitIndex;
+            }
+
+            public override bool Equals(object? obj)
+            {
+                if (obj is Shard shard)
+                    return Equals(shard);
+                return false;
+            }
+
+            public override int GetHashCode()
+                => shardIndex.GetHashCode() ^ hitIndex.GetHashCode();
 
             public override string ToString()
             {
-                return "ShardRef(shardIndex=" + ShardIndex + " hitIndex=" + HitIndex + ")";
+                return $"{nameof(Shard)}({nameof(shardIndex)}={shardIndex} {nameof(hitIndex)}={hitIndex})";
             }
+
+            public static bool operator ==(Shard shard1, Shard shard2)
+            {
+                return shard1.Equals(shard2);
+            }
+
+            public static bool operator !=(Shard shard1, Shard shard2)
+                => !(shard1 == shard2);
         }
 
-#nullable enable
+        // LUCENENET specific - refactored ScoreMergeSortQueue into ScoreMergeSortComparer so it can be passed into a ValuePriorityQueue
 
-        // Specialized MergeSortQueue that just merges by
+        // Specialized MergeSortComparer that just merges by
         // relevance score, descending:
-        private sealed class ScoreMergeSortQueue : PriorityQueue<ShardRef> // LUCENENET specific - marked sealed
+        private sealed class ScoreMergeSortComparer : IPriorityComparer<Shard> // LUCENENET specific - marked sealed
         {
             internal readonly ScoreDoc[][] shardHits;
 
-            public ScoreMergeSortQueue(TopDocs[] shardHits)
-                : base(shardHits?.Length ?? 0)
+            public ScoreMergeSortComparer(TopDocs[] shardHits)
             {
                 if (shardHits is null)
                     throw new ArgumentNullException(nameof(shardHits));
@@ -111,14 +153,8 @@ namespace Lucene.Net.Search
             }
 
             // Returns true if first is < second
-            protected internal override bool LessThan(ShardRef first, ShardRef second)
+            bool IPriorityComparer<Shard>.LessThan(Shard first, Shard second)
             {
-                // LUCENENET specific - added guard clauses
-                if (first is null)
-                    throw new ArgumentNullException(nameof(first));
-                if (second is null)
-                    throw new ArgumentNullException(nameof(second));
-
                 if (Debugging.AssertsEnabled) Debugging.Assert(first != second);
                 float firstScore = shardHits[first.ShardIndex][first.HitIndex].Score;
                 float secondScore = shardHits[second.ShardIndex][second.HitIndex].Score;
@@ -154,7 +190,8 @@ namespace Lucene.Net.Search
             }
         }
 
-        private sealed class MergeSortQueue : PriorityQueue<ShardRef> // LUCENENET specific - marked sealed
+        // LUCENENET specific - refactored MergeSortQueue into MergeSortComparer so it can be passed into a ValuePriorityQueue
+        private sealed class MergeSortComparer : IPriorityComparer<Shard> // LUCENENET specific - marked sealed
         {
             // These are really FieldDoc instances:
             internal readonly ScoreDoc[][] shardHits;
@@ -162,8 +199,7 @@ namespace Lucene.Net.Search
             internal readonly FieldComparer[] comparers;
             internal readonly int[] reverseMul;
 
-            public MergeSortQueue(Sort sort, TopDocs[] shardHits)
-                : base(shardHits?.Length ?? 0)
+            public MergeSortComparer(Sort sort, TopDocs[] shardHits)
             {
                 if (shardHits is null)
                     throw new ArgumentNullException(nameof(shardHits));
@@ -204,17 +240,9 @@ namespace Lucene.Net.Search
                 }
             }
 
-
-
             // Returns true if first is < second
-            protected internal override bool LessThan(ShardRef first, ShardRef second)
+            bool IPriorityComparer<Shard>.LessThan(Shard first, Shard second)
             {
-                // LUCENENET specific - added guard clauses
-                if (first is null)
-                    throw new ArgumentNullException(nameof(first));
-                if (second is null)
-                    throw new ArgumentNullException(nameof(second));
-
                 if (Debugging.AssertsEnabled) Debugging.Assert(first != second);
                 FieldDoc firstFD = (FieldDoc)shardHits[first.ShardIndex][first.HitIndex];
                 FieldDoc secondFD = (FieldDoc)shardHits[second.ShardIndex][second.HitIndex];
@@ -289,82 +317,102 @@ namespace Lucene.Net.Search
             if (shardHits is null)
                 throw new ArgumentNullException(nameof(shardHits));
 
-            PriorityQueue<ShardRef> queue;
+            // LUCENENET: Refactored PriorityQueue<T> subclasses into IPriorityComparer<T>
+            // implementations, which can be passed into ValuePriorityQueue. ValuePriorityQueue
+            // lives on the stack, and if the array size is small enough, we also allocate the
+            // array on the stack. Fallback to the array pool if it is beyond MaxStackByteLimit.
+            IPriorityComparer<Shard> comparer;
             if (sort is null)
             {
-                queue = new ScoreMergeSortQueue(shardHits);
+                comparer = new ScoreMergeSortComparer(shardHits);
             }
             else
             {
-                queue = new MergeSortQueue(sort, shardHits);
+                comparer = new MergeSortComparer(sort, shardHits);
             }
-
-            int totalHitCount = 0;
-            int availHitCount = 0;
-            float maxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
-            for (int shardIDX = 0; shardIDX < shardHits.Length; shardIDX++)
+            int bufferSize = PriorityQueue.GetArrayHeapSize(shardHits.Length);
+            bool usePool = ShardByteSize * bufferSize > Constants.MaxStackByteLimit;
+            Shard[]? arrayToReturnToPool = usePool ? ArrayPool<Shard>.Shared.Rent(bufferSize) : null;
+            try
             {
-                TopDocs shard = shardHits[shardIDX];
-                // totalHits can be non-zero even if no hits were
-                // collected, when searchAfter was used:
-                totalHitCount += shard.TotalHits;
-                if (shard.ScoreDocs != null && shard.ScoreDocs.Length > 0)
+                Span<Shard> buffer = usePool ? arrayToReturnToPool : stackalloc Shard[bufferSize];
+                ValuePriorityQueue<Shard> queue = new ValuePriorityQueue<Shard>(buffer, comparer);
+
+                int totalHitCount = 0;
+                int availHitCount = 0;
+                float maxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
+                for (int shardIDX = 0; shardIDX < shardHits.Length; shardIDX++)
                 {
-                    availHitCount += shard.ScoreDocs.Length;
-                    queue.Add(new ShardRef(shardIDX));
-                    maxScore = Math.Max(maxScore, shard.MaxScore);
-                    //System.out.println("  maxScore now " + maxScore + " vs " + shard.getMaxScore());
-                }
-            }
-
-            if (availHitCount == 0)
-            {
-                maxScore = float.NaN;
-            }
-
-            ScoreDoc[] hits;
-            if (availHitCount <= start)
-            {
-                hits = Arrays.Empty<ScoreDoc>();
-            }
-            else
-            {
-                hits = new ScoreDoc[Math.Min(size, availHitCount - start)];
-                int requestedResultWindow = start + size;
-                int numIterOnHits = Math.Min(availHitCount, requestedResultWindow);
-                int hitUpto = 0;
-                while (hitUpto < numIterOnHits)
-                {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(queue.Count > 0);
-                    ShardRef @ref = queue.Pop();
-                    ScoreDoc hit = shardHits[@ref.ShardIndex].ScoreDocs[@ref.HitIndex++];
-                    hit.ShardIndex = @ref.ShardIndex;
-                    if (hitUpto >= start)
+                    TopDocs shard = shardHits[shardIDX];
+                    // totalHits can be non-zero even if no hits were
+                    // collected, when searchAfter was used:
+                    totalHitCount += shard.TotalHits;
+                    if (shard.ScoreDocs != null && shard.ScoreDocs.Length > 0)
                     {
-                        hits[hitUpto - start] = hit;
-                    }
-
-                    //System.out.println("  hitUpto=" + hitUpto);
-                    //System.out.println("    doc=" + hits[hitUpto].doc + " score=" + hits[hitUpto].score);
-
-                    hitUpto++;
-
-                    if (@ref.HitIndex < shardHits[@ref.ShardIndex].ScoreDocs.Length)
-                    {
-                        // Not done with this these TopDocs yet:
-                        queue.Add(@ref);
+                        availHitCount += shard.ScoreDocs.Length;
+                        queue.Add(new Shard(shardIDX));
+                        maxScore = Math.Max(maxScore, shard.MaxScore);
+                        //System.out.println("  maxScore now " + maxScore + " vs " + shard.getMaxScore());
                     }
                 }
+
+                if (availHitCount == 0)
+                {
+                    maxScore = float.NaN;
+                }
+
+                ScoreDoc[] hits;
+                if (availHitCount <= start)
+                {
+                    hits = Arrays.Empty<ScoreDoc>();
+                }
+                else
+                {
+                    hits = new ScoreDoc[Math.Min(size, availHitCount - start)];
+                    int requestedResultWindow = start + size;
+                    int numIterOnHits = Math.Min(availHitCount, requestedResultWindow);
+                    int hitUpto = 0;
+                    while (hitUpto < numIterOnHits)
+                    {
+                        if (Debugging.AssertsEnabled) Debugging.Assert(queue.Count > 0);
+                        // LUCENENET NOTE: Since we are popping this from the queue and then
+                        // adding it back, we properly get our updated HitIndex into the queue.
+                        Shard @ref = queue.Pop();
+                        ScoreDoc hit = shardHits[@ref.ShardIndex].ScoreDocs[@ref.HitIndex++];
+                        hit.ShardIndex = @ref.ShardIndex;
+                        if (hitUpto >= start)
+                        {
+                            hits[hitUpto - start] = hit;
+                        }
+
+                        //System.out.println("  hitUpto=" + hitUpto);
+                        //System.out.println("    doc=" + hits[hitUpto].doc + " score=" + hits[hitUpto].score);
+
+                        hitUpto++;
+
+                        if (@ref.HitIndex < shardHits[@ref.ShardIndex].ScoreDocs.Length)
+                        {
+                            // Not done with this these TopDocs yet:
+                            queue.Add(@ref);
+                        }
+                    }
+                }
+
+                if (sort is null)
+                {
+                    return new TopDocs(totalHitCount, hits, maxScore);
+                }
+                else
+                {
+                    return new TopFieldDocs(totalHitCount, hits, sort.GetSort(), maxScore);
+                }
+            }
+            finally
+            {
+                if (arrayToReturnToPool is not null)
+                    ArrayPool<Shard>.Shared.Return(arrayToReturnToPool);
             }
 
-            if (sort is null)
-            {
-                return new TopDocs(totalHitCount, hits, maxScore);
-            }
-            else
-            {
-                return new TopFieldDocs(totalHitCount, hits, sort.GetSort(), maxScore);
-            }
         }
     }
 }
