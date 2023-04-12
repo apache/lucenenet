@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs
     /// option to see summary statistics on the blocks in the
     /// dictionary.</para>
     ///
-    /// See <see cref="BlockTreeTermsWriter"/>.
+    /// See <see cref="BlockTreeTermsWriter{T}"/>.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
@@ -143,7 +143,7 @@ namespace Lucene.Net.Codecs
             this.postingsReader = postingsReader;
 
             this.segment = info.Name;
-            @in = dir.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, BlockTreeTermsWriter.TERMS_EXTENSION), ioContext);
+            @in = dir.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, BlockTreeTermsWriter<TSubclassState>.TERMS_EXTENSION), ioContext);
 
             bool success = false;
             IndexInput indexIn = null;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs
                 version = ReadHeader(@in);
                 if (indexDivisor != -1)
                 {
-                    indexIn = dir.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, BlockTreeTermsWriter.TERMS_INDEX_EXTENSION), ioContext);
+                    indexIn = dir.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, BlockTreeTermsWriter<TSubclassState>.TERMS_INDEX_EXTENSION), ioContext);
                     int indexVersion = ReadIndexHeader(indexIn);
                     if (indexVersion != version)
                     {
@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs
                 }
 
                 // verify
-                if (indexIn != null && version >= BlockTreeTermsWriter.VERSION_CHECKSUM)
+                if (indexIn != null && version >= BlockTreeTermsWriter<TSubclassState>.VERSION_CHECKSUM)
                 {
                     CodecUtil.ChecksumEntireFile(indexIn);
                 }
@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs
                     long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? -1 : @in.ReadVInt64();
                     long sumDocFreq = @in.ReadVInt64();
                     int docCount = @in.ReadVInt32();
-                    int longsSize = version >= BlockTreeTermsWriter.VERSION_META_ARRAY ? @in.ReadVInt32() : 0;
+                    int longsSize = version >= BlockTreeTermsWriter<TSubclassState>.VERSION_META_ARRAY ? @in.ReadVInt32() : 0;
                     if (docCount < 0 || docCount > info.DocCount) // #docs with field must be <= #docs
                     {
                         throw new CorruptIndexException("invalid docCount: " + docCount + " maxDoc: " + info.DocCount + " (resource=" + @in + ")");
@@ -242,8 +242,8 @@ namespace Lucene.Net.Codecs
         /// Reads terms file header. </summary>
         protected virtual int ReadHeader(IndexInput input)
         {
-            int version = CodecUtil.CheckHeader(input, BlockTreeTermsWriter.TERMS_CODEC_NAME, BlockTreeTermsWriter.VERSION_START, BlockTreeTermsWriter.VERSION_CURRENT);
-            if (version < BlockTreeTermsWriter.VERSION_APPEND_ONLY)
+            int version = CodecUtil.CheckHeader(input, BlockTreeTermsWriter<TSubclassState>.TERMS_CODEC_NAME, BlockTreeTermsWriter<TSubclassState>.VERSION_START, BlockTreeTermsWriter<TSubclassState>.VERSION_CURRENT);
+            if (version < BlockTreeTermsWriter<TSubclassState>.VERSION_APPEND_ONLY)
             {
                 dirOffset = input.ReadInt64();
             }
@@ -254,8 +254,8 @@ namespace Lucene.Net.Codecs
         /// Reads index file header. </summary>
         protected virtual int ReadIndexHeader(IndexInput input)
         {
-            int version = CodecUtil.CheckHeader(input, BlockTreeTermsWriter.TERMS_INDEX_CODEC_NAME, BlockTreeTermsWriter.VERSION_START, BlockTreeTermsWriter.VERSION_CURRENT);
-            if (version < BlockTreeTermsWriter.VERSION_APPEND_ONLY)
+            int version = CodecUtil.CheckHeader(input, BlockTreeTermsWriter<TSubclassState>.TERMS_INDEX_CODEC_NAME, BlockTreeTermsWriter<TSubclassState>.VERSION_START, BlockTreeTermsWriter<TSubclassState>.VERSION_CURRENT);
+            if (version < BlockTreeTermsWriter<TSubclassState>.VERSION_APPEND_ONLY)
             {
                 indexDirOffset = input.ReadInt64();
             }
@@ -266,12 +266,12 @@ namespace Lucene.Net.Codecs
         /// Seek <paramref name="input"/> to the directory offset. </summary>
         protected virtual void SeekDir(IndexInput input, long dirOffset)
         {
-            if (version >= BlockTreeTermsWriter.VERSION_CHECKSUM)
+            if (version >= BlockTreeTermsWriter<object>.VERSION_CHECKSUM)
             {
                 input.Seek(input.Length - CodecUtil.FooterLength() - 8);
                 dirOffset = input.ReadInt64();
             }
-            else if (version >= BlockTreeTermsWriter.VERSION_APPEND_ONLY)
+            else if (version >= BlockTreeTermsWriter<object>.VERSION_APPEND_ONLY)
             {
                 input.Seek(input.Length - 8);
                 dirOffset = input.ReadInt64();
@@ -596,7 +596,7 @@ namespace Lucene.Net.Codecs
                 //   System.out.println("BTTR: seg=" + segment + " field=" + fieldInfo.name + " rootBlockCode=" + rootCode + " divisor=" + indexDivisor);
                 // }
 
-                rootBlockFP = new ByteArrayDataInput(rootCode.Bytes, rootCode.Offset, rootCode.Length).ReadVInt64().TripleShift(BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
+                rootBlockFP = new ByteArrayDataInput(rootCode.Bytes, rootCode.Offset, rootCode.Length).ReadVInt64().TripleShift(BlockTreeTermsWriter<TSubclassState>.OUTPUT_FLAGS_NUM_BITS);
 
                 if (indexIn != null)
                 {
@@ -837,7 +837,7 @@ namespace Lucene.Net.Codecs
                             // Skip first long -- has redundant fp, hasTerms
                             // flag, isFloor flag
                             long code = floorDataReader.ReadVInt64();
-                            if ((code & BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR) != 0)
+                            if ((code & BlockTreeTermsWriter<TSubclassState>.OUTPUT_FLAG_IS_FLOOR) != 0)
                             {
                                 numFollowFloorBlocks = floorDataReader.ReadVInt32();
                                 nextFloorLabel = floorDataReader.ReadByte() & 0xff;
@@ -1747,11 +1747,11 @@ namespace Lucene.Net.Codecs
                 {
                     scratchReader.Reset(frameData.Bytes, frameData.Offset, frameData.Length);
                     long code = scratchReader.ReadVInt64();
-                    long fpSeek = code.TripleShift(BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
+                    long fpSeek = code.TripleShift(BlockTreeTermsWriter<TSubclassState>.OUTPUT_FLAGS_NUM_BITS);
                     Frame f = GetFrame(1 + currentFrame.ord);
-                    f.hasTerms = (code & BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS) != 0;
+                    f.hasTerms = (code & BlockTreeTermsWriter<TSubclassState>.OUTPUT_FLAG_HAS_TERMS) != 0;
                     f.hasTermsOrig = f.hasTerms;
-                    f.isFloor = (code & BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR) != 0;
+                    f.isFloor = (code & BlockTreeTermsWriter<TSubclassState>.OUTPUT_FLAG_IS_FLOOR) != 0;
                     if (f.isFloor)
                     {
                         f.SetFloorData(scratchReader, frameData);
@@ -3451,7 +3451,7 @@ namespace Lucene.Net.Codecs
 
         public override void CheckIntegrity()
         {
-            if (version >= BlockTreeTermsWriter.VERSION_CHECKSUM)
+            if (version >= BlockTreeTermsWriter<TSubclassState>.VERSION_CHECKSUM)
             {
                 // term dictionary
                 CodecUtil.ChecksumEntireFile(@in);

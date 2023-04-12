@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Appending
     /// @lucene.experimental
     /// </summary>
     [Obsolete("Only for reading old Appending segments")]
-    public class AppendingTermsReader : BlockTreeTermsReader
+    public class AppendingTermsReader : BlockTreeTermsReader<object>
     {
         private const string APPENDING_TERMS_CODEC_NAME = "APPENDING_TERMS_DICT";
         private const string APPENDING_TERMS_INDEX_CODEC_NAME = "APPENDING_TERMS_INDEX";
@@ -35,22 +35,22 @@ namespace Lucene.Net.Codecs.Appending
         public AppendingTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info,
             PostingsReaderBase postingsReader,
             IOContext ioContext, string segmentSuffix, int indexDivisor)
-            : base(dir, fieldInfos, info, postingsReader, ioContext, segmentSuffix, indexDivisor)
+            : base(dir, fieldInfos, info, postingsReader, ioContext, segmentSuffix, indexDivisor, subclassState: null)
         {
         }
 
         protected override int ReadHeader(IndexInput input)
         {
             return CodecUtil.CheckHeader(input, APPENDING_TERMS_CODEC_NAME,
-                BlockTreeTermsWriter.VERSION_START,
-                BlockTreeTermsWriter.VERSION_CURRENT);
+                BlockTreeTermsWriter<object>.VERSION_START,
+                BlockTreeTermsWriter<object>.VERSION_CURRENT);
         }
 
         protected override int ReadIndexHeader(IndexInput input)
         {
             return CodecUtil.CheckHeader(input, APPENDING_TERMS_INDEX_CODEC_NAME,
-                BlockTreeTermsWriter.VERSION_START,
-                BlockTreeTermsWriter.VERSION_CURRENT);
+                BlockTreeTermsWriter<object>.VERSION_START,
+                BlockTreeTermsWriter<object>.VERSION_CURRENT);
         }
 
         protected override void SeekDir(IndexInput input, long dirOffset)

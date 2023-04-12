@@ -180,19 +180,19 @@ namespace Lucene.Net.Codecs
     /// @lucene.experimental
     /// </summary>
     /// <seealso cref="BlockTreeTermsReader{T}"/>
-    public class BlockTreeTermsWriter : FieldsConsumer
+    public class BlockTreeTermsWriter<TSubclassState> : FieldsConsumer
     {
         /// <summary>
         /// Suggested default value for the 
         /// <c>minItemsInBlock</c> parameter to 
-        /// <see cref="BlockTreeTermsWriter(SegmentWriteState, PostingsWriterBase, int, int, object)"/>.
+        /// <see cref="BlockTreeTermsWriter{T}(SegmentWriteState, PostingsWriterBase, int, int, T)"/>.
         /// </summary>
         public const int DEFAULT_MIN_BLOCK_SIZE = 25;
 
         /// <summary>
         /// Suggested default value for the 
         /// <c>maxItemsInBlock</c> parameter to 
-        /// <see cref="BlockTreeTermsWriter(SegmentWriteState, PostingsWriterBase, int, int, object)"/>.
+        /// <see cref="BlockTreeTermsWriter{T}(SegmentWriteState, PostingsWriterBase, int, int, T)"/>.
         /// </summary>
         public const int DEFAULT_MAX_BLOCK_SIZE = 48;
 
@@ -290,7 +290,7 @@ namespace Lucene.Net.Codecs
         /// </summary>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Internal class")]
-        public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock, object subclassState = default)
+        public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock, TSubclassState subclassState)
         {
             // LUCENENET specific - added state parameter that subclasses
             // can use to keep track of state and use it in their own virtual
@@ -603,7 +603,7 @@ namespace Lucene.Net.Codecs
 
         internal class TermsWriter : TermsConsumer
         {
-            private readonly BlockTreeTermsWriter outerInstance;
+            private readonly BlockTreeTermsWriter<TSubclassState> outerInstance;
 
             private readonly FieldInfo fieldInfo;
             private readonly int longsSize;
@@ -637,9 +637,9 @@ namespace Lucene.Net.Codecs
             // that we encounter:
             private class FindBlocks : Builder.FreezeTail<object>
             {
-                private readonly BlockTreeTermsWriter.TermsWriter outerInstance;
+                private readonly BlockTreeTermsWriter<TSubclassState>.TermsWriter outerInstance;
 
-                public FindBlocks(BlockTreeTermsWriter.TermsWriter outerInstance)
+                public FindBlocks(BlockTreeTermsWriter<TSubclassState>.TermsWriter outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
@@ -1186,7 +1186,7 @@ namespace Lucene.Net.Codecs
                 return new PendingBlock(prefix, startFP, termCount != 0, isFloor, floorLeadByte, subIndices);
             }
 
-            internal TermsWriter(BlockTreeTermsWriter outerInstance, FieldInfo fieldInfo)
+            internal TermsWriter(BlockTreeTermsWriter<TSubclassState> outerInstance, FieldInfo fieldInfo)
             {
                 this.outerInstance = outerInstance;
                 this.fieldInfo = fieldInfo;
