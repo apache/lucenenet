@@ -42,15 +42,15 @@ namespace Lucene.Net.Codecs.Appending
         protected override int ReadHeader(IndexInput input)
         {
             return CodecUtil.CheckHeader(input, APPENDING_TERMS_CODEC_NAME,
-                BlockTreeTermsWriter<object>.VERSION_START,
-                BlockTreeTermsWriter<object>.VERSION_CURRENT);
+                BlockTreeTermsWriter.VERSION_START,
+                BlockTreeTermsWriter.VERSION_CURRENT);
         }
 
         protected override int ReadIndexHeader(IndexInput input)
         {
             return CodecUtil.CheckHeader(input, APPENDING_TERMS_INDEX_CODEC_NAME,
-                BlockTreeTermsWriter<object>.VERSION_START,
-                BlockTreeTermsWriter<object>.VERSION_CURRENT);
+                BlockTreeTermsWriter.VERSION_START,
+                BlockTreeTermsWriter.VERSION_CURRENT);
         }
 
         protected override void SeekDir(IndexInput input, long dirOffset)

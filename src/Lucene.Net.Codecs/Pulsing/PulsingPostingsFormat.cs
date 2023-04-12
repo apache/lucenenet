@@ -37,8 +37,8 @@ namespace Lucene.Net.Codecs.Pulsing
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
 
         protected PulsingPostingsFormat(PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
-            : this(wrappedPostingsBaseFormat, freqCutoff, BlockTreeTermsWriter<object>.DEFAULT_MIN_BLOCK_SIZE,
-            BlockTreeTermsWriter<object>.DEFAULT_MAX_BLOCK_SIZE)
+            : this(wrappedPostingsBaseFormat, freqCutoff, BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE,
+            BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE)
         {
         }
 
