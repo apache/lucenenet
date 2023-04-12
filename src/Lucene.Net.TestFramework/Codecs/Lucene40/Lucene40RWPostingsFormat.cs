@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 bool success = false;
                 try
                 {
-                    FieldsConsumer ret = new BlockTreeTermsWriter(state, docs, m_minBlockSize, m_maxBlockSize);
+                    FieldsConsumer ret = new BlockTreeTermsWriter<object>(state, docs, m_minBlockSize, m_maxBlockSize, subclassState: null);
                     success = true;
                     return ret;
                 }

@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         /// <summary>Inlines docFreq=<paramref name="freqCutoff"/> terms, otherwise uses the normal "Lucene41" format.</summary>
         public Pulsing41PostingsFormat(int freqCutoff) 
-            : this(freqCutoff, BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE, BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE)
+            : this(freqCutoff, BlockTreeTermsWriter<object>.DEFAULT_MIN_BLOCK_SIZE, BlockTreeTermsWriter<object>.DEFAULT_MAX_BLOCK_SIZE)
         {
         }
 

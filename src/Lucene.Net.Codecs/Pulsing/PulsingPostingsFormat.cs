@@ -37,8 +37,8 @@ namespace Lucene.Net.Codecs.Pulsing
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
 
         protected PulsingPostingsFormat(PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
-            : this(wrappedPostingsBaseFormat, freqCutoff, BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE,
-            BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE)
+            : this(wrappedPostingsBaseFormat, freqCutoff, BlockTreeTermsWriter<object>.DEFAULT_MIN_BLOCK_SIZE,
+            BlockTreeTermsWriter<object>.DEFAULT_MAX_BLOCK_SIZE)
         {
         }
 
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 // Terms that have <= freqCutoff number of docs are
                 // "pulsed" (inlined):
                 pulsingWriter = new PulsingPostingsWriter(state, _freqCutoff, docsWriter);
-                FieldsConsumer ret = new BlockTreeTermsWriter(state, pulsingWriter, _minBlockSize, _maxBlockSize);
+                FieldsConsumer ret = new BlockTreeTermsWriter<object>(state, pulsingWriter, _minBlockSize, _maxBlockSize, subclassState: null);
                 success = true;
                 return ret;
             }
@@ -100,12 +100,13 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 docsReader = _wrappedPostingsBaseFormat.PostingsReaderBase(state);
                 pulsingReader = new PulsingPostingsReader(state, docsReader);
-                FieldsProducer ret = new BlockTreeTermsReader(
+                FieldsProducer ret = new BlockTreeTermsReader<object>(
                     state.Directory, state.FieldInfos, state.SegmentInfo,
                     pulsingReader,
                     state.Context,
                     state.SegmentSuffix,
-                    state.TermsIndexDivisor);
+                    state.TermsIndexDivisor,
+                    subclassState: null);
                 success = true;
                 return ret;
             }

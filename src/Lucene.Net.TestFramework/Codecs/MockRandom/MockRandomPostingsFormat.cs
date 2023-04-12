@@ -257,7 +257,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 bool success = false;
                 try
                 {
-                    fields = new BlockTreeTermsWriter(state, postingsWriter, minTermsInBlock, maxTermsInBlock);
+                    fields = new BlockTreeTermsWriter<object>(state, postingsWriter, minTermsInBlock, maxTermsInBlock, subclassState: null);
                     success = true;
                 }
                 finally
