@@ -7,6 +7,7 @@ using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -92,7 +93,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         private readonly object lineFileLock = new object(); // LUCENENET specific - lock to ensure writes don't collide for this instance
 
-
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         public WriteLineDocTask(PerfRunData runData)
             : base(runData)
         {

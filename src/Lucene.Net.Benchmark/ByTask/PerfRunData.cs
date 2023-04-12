@@ -11,6 +11,7 @@ using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -98,6 +99,8 @@ namespace Lucene.Net.Benchmarks.ByTask
         private readonly IDictionary<string, object> perfObjects = new Dictionary<string, object>();
 
         // constructor
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         public PerfRunData(Config config)
         {
             this.config = config;
