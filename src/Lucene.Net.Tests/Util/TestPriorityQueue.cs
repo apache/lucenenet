@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 #if FEATURE_SERIALIZABLE
 using System.Runtime.Serialization;
@@ -34,6 +35,16 @@ namespace Lucene.Net.Util
     {
         private static readonly int MAX_PQ_SIZE = ArrayUtil.MAX_ARRAY_LENGTH - 1;
 
+        private class IntegerComparer : IPriorityComparer<int?>
+        {
+            public static IntegerComparer Default { get; } = new IntegerComparer();
+
+            public bool LessThan(int? a, int? b)
+            {
+                return (a < b);
+            }
+        }
+
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -51,11 +62,11 @@ namespace Lucene.Net.Util
 
             // LUCENENET specific - "prepopulate" is now controlled by whether
             // or not SentinelFactory is null.
-            private class SentinelFactory : SentinelFactory<int?, IntegerQueue>
+            internal class SentinelFactory : ISentinelFactory<int?>
             {
                 public static SentinelFactory Default { get; } = new SentinelFactory();
 
-                public override int? Create(IntegerQueue integerQueue) => int.MaxValue;
+                public int? Create() => int.MaxValue;
             }
 
             protected internal override bool LessThan(int? a, int? b)
@@ -64,6 +75,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [Test]
         public void TestPQ()
         {
             TestPQ(AtLeast(10000), Random);
@@ -72,6 +84,48 @@ namespace Lucene.Net.Util
         public static void TestPQ(int count, Random gen)
         {
             PriorityQueue<int?> pq = new IntegerQueue(count);
+            int sum = 0, sum2 = 0;
+
+            for (int i = 0; i < count; i++)
+            {
+                int next = gen.Next();
+                sum += next;
+                pq.Add(next);
+            }
+
+            //      Date end = new Date();
+
+            //      System.out.print(((float)(end.getTime()-start.getTime()) / count) * 1000);
+            //      System.out.println(" microseconds/put");
+
+            //      start = new Date();
+
+            int last = int.MinValue;
+            for (int i = 0; i < count; i++)
+            {
+                var next = pq.Pop();
+                assertTrue(next.Value >= last);
+                last = next.Value;
+                sum2 += last;
+            }
+
+            assertEquals(sum, sum2);
+            //      end = new Date();
+
+            //      System.out.print(((float)(end.getTime()-start.getTime()) / count) * 1000);
+            //      System.out.println(" microseconds/pop");
+        }
+
+        [Test]
+        public void ValuePriorityQueue_TestPQ()
+        {
+            ValuePriorityQueue_TestPQ(AtLeast(10000), Random);
+        }
+
+        public static void ValuePriorityQueue_TestPQ(int count, Random gen)
+        {
+            Span<int?> buffer = new int?[GetArrayHeapSize(count)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
             int sum = 0, sum2 = 0;
 
             for (int i = 0; i < count; i++)
@@ -117,9 +171,37 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        public virtual void ValuePriorityQueue_TestClear()
+        {
+            Span<int?> buffer = stackalloc int?[GetArrayHeapSize(3)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+            pq.Add(2);
+            pq.Add(3);
+            pq.Add(1);
+            Assert.AreEqual(3, pq.Count);
+            pq.Clear();
+            Assert.AreEqual(0, pq.Count);
+        }
+
+        [Test]
         public void TestFixedSize()
         {
             PriorityQueue<int?> pq = new IntegerQueue(3);
+            pq.InsertWithOverflow(2);
+            pq.InsertWithOverflow(3);
+            pq.InsertWithOverflow(1);
+            pq.InsertWithOverflow(5);
+            pq.InsertWithOverflow(7);
+            pq.InsertWithOverflow(1);
+            assertEquals(3, pq.Count);
+            assertEquals((int?)3, pq.Top);
+        }
+
+        [Test]
+        public void ValuePriorityQueue_TestFixedSize()
+        {
+            Span<int?> buffer = stackalloc int?[GetArrayHeapSize(3)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
             pq.InsertWithOverflow(2);
             pq.InsertWithOverflow(3);
             pq.InsertWithOverflow(1);
@@ -138,6 +220,40 @@ namespace Lucene.Net.Util
 
             int size = 4;
             PriorityQueue<int?> pq = new IntegerQueue(size);
+            int? i1 = 2;
+            int? i2 = 3;
+            int? i3 = 1;
+            int? i4 = 5;
+            int? i5 = 7;
+            int? i6 = 1;
+
+            Assert.IsNull(pq.InsertWithOverflow(i1));
+            Assert.IsNull(pq.InsertWithOverflow(i2));
+            Assert.IsNull(pq.InsertWithOverflow(i3));
+            Assert.IsNull(pq.InsertWithOverflow(i4));
+            Assert.IsTrue(pq.InsertWithOverflow(i5) == i3); // i3 should have been dropped
+            Assert.IsTrue(pq.InsertWithOverflow(i6) == i6); // i6 should not have been inserted
+            Assert.AreEqual(size, pq.Count);
+            Assert.AreEqual((int?)2, pq.Top);
+
+            // LUCENENET SPECIFIC
+            pq.Pop();
+            Assert.AreEqual((int?)3, pq.Top);
+            pq.Pop();
+            Assert.AreEqual((int?)5, pq.Top);
+            pq.Pop();
+            Assert.AreEqual((int?)7, pq.Top);
+        }
+
+        [Test]
+        public virtual void ValuePriorityQueue_TestInsertWithOverflow()
+        {
+            // Tests that InsertWithOverflow discards the correct value,
+            // and the resulting PQ preserves its structure
+
+            int size = 4;
+            Span<int?> buffer = stackalloc int?[GetArrayHeapSize(size)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
             int? i1 = 2;
             int? i2 = 3;
             int? i3 = 1;
@@ -185,6 +301,15 @@ namespace Lucene.Net.Util
             protected internal override bool LessThan(MyType a, MyType b)
             {
                 return (a.Field < b.Field);
+            }
+        }
+
+        private class MyComparer : IPriorityComparer<MyType>
+        {
+            public static MyComparer Default { get; } = new MyComparer();
+            public bool LessThan(MyType a, MyType b)
+            {
+                return a.Field < b.Field;
             }
         }
 
@@ -278,7 +403,31 @@ namespace Lucene.Net.Util
             Assert.AreEqual(pq.Count, 0);
         }
 
+        [Test, LuceneNetSpecific]
+        public static void ValuePriorityQueue_TestPrepopulation()
+        {
+            int maxSize = 10;
+            // Populates the internal array
+            Span<int?> buffer = stackalloc int?[GetArrayHeapSize(maxSize)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default, IntegerQueue.SentinelFactory.Default);
+            Assert.AreEqual(pq.Top, int.MaxValue);
+            Assert.AreEqual(pq.Count, 10);
+
+            // Does not populate it
+            buffer = stackalloc int?[GetArrayHeapSize(maxSize)];
+            pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default, sentinelFactory: null);
+            Assert.AreEqual(pq.Top, default);
+            Assert.AreEqual(pq.Count, 0);
+        }
+
         private static void AddAndTest<T>(PriorityQueue<T> pq, T element, T expectedTop, int expectedSize)
+        {
+            pq.Add(element);
+            Assert.AreEqual(pq.Top, expectedTop);
+            Assert.AreEqual(pq.Count, expectedSize);
+        }
+
+        private static void AddAndTest<T>(ref ValuePriorityQueue<T> pq, T element, T expectedTop, int expectedSize)
         {
             pq.Add(element);
             Assert.AreEqual(pq.Top, expectedTop);
@@ -290,14 +439,14 @@ namespace Lucene.Net.Util
         {
             int maxSize = 10;
             PriorityQueue<int?> pq = new IntegerQueue(maxSize);
-            
+
             // Add mixed elements
             AddAndTest(pq, 5, 5, 1);
             AddAndTest(pq, 1, 1, 2);
             AddAndTest(pq, 3, 1, 3);
             AddAndTest(pq, -1, -1, 4);
             AddAndTest(pq, -111111, -111111, 5);
-            
+
             // Add a sorted list of elements
             pq = new IntegerQueue(maxSize);
             AddAndTest(pq, -111111, -111111, 1);
@@ -315,12 +464,69 @@ namespace Lucene.Net.Util
             AddAndTest(pq, -111111, -111111, 5);
         }
 
+
+        [Test, LuceneNetSpecific]
+        public static void ValuePriorityQueue_TestAdd()
+        {
+            int maxSize = 10;
+            Span<int?> buffer = stackalloc int?[GetArrayHeapSize(maxSize)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+
+            // Add mixed elements
+            AddAndTest(ref pq, 5, 5, 1);
+            AddAndTest(ref pq, 1, 1, 2);
+            AddAndTest(ref pq, 3, 1, 3);
+            AddAndTest(ref pq, -1, -1, 4);
+            AddAndTest(ref pq, -111111, -111111, 5);
+
+            // Add a sorted list of elements
+            buffer = stackalloc int?[GetArrayHeapSize(maxSize)];
+            pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+            AddAndTest(ref pq, -111111, -111111, 1);
+            AddAndTest(ref pq, -1, -111111, 2);
+            AddAndTest(ref pq, 1, -111111, 3);
+            AddAndTest(ref pq, 3, -111111, 4);
+            AddAndTest(ref pq, 5, -111111, 5);
+
+            // Add a reversed sorted list of elements
+            buffer = stackalloc int?[GetArrayHeapSize(maxSize)];
+            pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+            AddAndTest(ref pq, 5, 5, 1);
+            AddAndTest(ref pq, 3, 3, 2);
+            AddAndTest(ref pq, 1, 1, 3);
+            AddAndTest(ref pq, -1, -1, 4);
+            AddAndTest(ref pq, -111111, -111111, 5);
+        }
+
+
         [Test, LuceneNetSpecific]
         public static void TestDuplicates()
         {
             // Tests that the queue doesn't absorb elements with duplicate keys
             int maxSize = 10;
             PriorityQueue<int?> pq = new IntegerQueue(maxSize);
+
+            pq.Add(3);
+            pq.Add(3);
+            Assert.AreEqual(pq.Count, 2);
+
+            pq.Add(3);
+            Assert.AreEqual(pq.Count, 3);
+
+            pq.Add(17);
+            pq.Add(17);
+            pq.Add(17);
+            pq.Add(17);
+            Assert.AreEqual(pq.Count, 7);
+        }
+
+        [Test, LuceneNetSpecific]
+        public static void ValuePriorityQueue_TestDuplicates()
+        {
+            // Tests that the queue doesn't absorb elements with duplicate keys
+            int maxSize = 10;
+            Span<int?> buffer = stackalloc int?[GetArrayHeapSize(maxSize)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
 
             pq.Add(3);
             pq.Add(3);
@@ -395,11 +601,101 @@ namespace Lucene.Net.Util
         }
 
         [Test, LuceneNetSpecific]
+        public static void ValuePriorityQueue_TestPop()
+        {
+            int maxSize = 10;
+            Span<int?> buffer = stackalloc int?[GetArrayHeapSize(maxSize)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+
+            // Add one element and pop it
+            pq.Add(7);
+            pq.Pop();
+            Assert.AreEqual(pq.Count, 0);
+
+            // Add a bunch of elements, pop them all
+            pq.Add(1);
+            pq.Add(20);
+            pq.Add(1);
+            pq.Add(15);
+            pq.Add(4);
+            pq.Add(12);
+            pq.Add(1000);
+            pq.Add(-3);
+            pq.Pop();
+            Assert.AreEqual(pq.Count, 7);
+            pq.Pop();
+            pq.Pop();
+            pq.Pop();
+            pq.Pop();
+            pq.Pop();
+            pq.Pop();
+            pq.Pop();
+            Assert.AreEqual(pq.Count, 0);
+
+            // Interleaved adds and pops
+            pq.Add(1);
+            pq.Add(20);
+            pq.Pop();
+            Assert.AreEqual(pq.Count, 1);
+            pq.Add(1);
+            pq.Add(15);
+            pq.Add(4);
+            pq.Pop();
+            pq.Pop();
+            Assert.AreEqual(pq.Count, 2);
+            pq.Add(12);
+            pq.Add(1000);
+            pq.Add(-3);
+            pq.Pop();
+            pq.Pop();
+            Assert.AreEqual(pq.Count, 3);
+
+            // Pop an empty PQ
+            pq.Pop();
+            pq.Pop();
+            pq.Pop();
+            pq.Pop();
+            pq.Pop();
+            pq.Pop();
+        }
+
+
+        [Test, LuceneNetSpecific]
         public static void TestUpdateTop()
         {
             // Mostly to reflect the usage of UpdateTop
             int maxSize = 10;
             PriorityQueue<MyType> pq = new MyQueue(maxSize);
+
+            pq.Add(new MyType(1));
+            pq.Add(new MyType(20));
+            pq.Add(new MyType(1));
+            pq.Add(new MyType(15));
+            pq.Add(new MyType(4));
+            pq.Add(new MyType(12));
+            pq.Add(new MyType(1000));
+            pq.Add(new MyType(-300));
+
+            Assert.AreEqual(pq.Top.Field, -300);
+            MyType topElement = pq.Top;
+            topElement.Field = 25;  // Now this should no longer be at the top of the queue
+            pq.UpdateTop();         // Hence we need to update the top queue
+            Assert.AreEqual(pq.Top.Field, 1);
+
+            // The less eficient way to do this is the following
+            topElement = pq.Pop();
+            topElement.Field = 678;
+            pq.Add(topElement);
+            Assert.AreEqual(pq.Top.Field, 1);
+        }
+
+        [Test, LuceneNetSpecific]
+        public static void ValuePriorityQueue_TestUpdateTop()
+        {
+            // Mostly to reflect the usage of UpdateTop
+            int maxSize = 10;
+            Span<MyType> buffer = new MyType[GetArrayHeapSize(maxSize)];
+            ValuePriorityQueue<MyType> pq = new ValuePriorityQueue<MyType>(buffer, MyComparer.Default);
 
             pq.Add(new MyType(1));
             pq.Add(new MyType(20));
@@ -461,6 +757,45 @@ namespace Lucene.Net.Util
         }
 
         [Test, LuceneNetSpecific]
+        public static void ValuePriorityQueue_TestOverflow()
+        {
+            // Tests adding elements to full queues
+            // Add's documentation claims throwing an IndexOutOfRangeException in this situation
+
+            // Add an element to a prepopulated queue
+            int maxSize = 10;
+            Span<int?> buffer = stackalloc int?[GetArrayHeapSize(maxSize)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default, IntegerQueue.SentinelFactory.Default);
+
+            try
+            {
+                pq.Add(3);
+                Assert.Fail();
+            }
+            catch (Exception e) when (e.IsIndexOutOfBoundsException())
+            {
+            }
+
+            // Populate manually
+            maxSize = 5;
+            buffer = stackalloc int?[GetArrayHeapSize(maxSize)];
+            pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+            pq.Add(1);
+            pq.Add(4);
+            pq.Add(-1);
+            pq.Add(0);
+            pq.Add(10);
+
+            try
+            {
+                pq.Add(666);
+            }
+            catch (Exception e) when (e.IsIndexOutOfBoundsException())
+            {
+            }
+        }
+
+        [Test, LuceneNetSpecific]
         public virtual void TestInsertWithOverflowDoesNotOverflow()
         {
             // Tests that InsertWithOverflow does not cause overflow
@@ -476,9 +811,26 @@ namespace Lucene.Net.Util
             Assert.AreEqual((int?)3, pq.Top);
         }
 
+        [Test, LuceneNetSpecific]
+        public virtual void ValuePriorityQueue_TestInsertWithOverflowDoesNotOverflow()
+        {
+            // Tests that InsertWithOverflow does not cause overflow
+
+            Span<int?> buffer = stackalloc int?[GetArrayHeapSize(3)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+            pq.InsertWithOverflow(2);
+            pq.InsertWithOverflow(3);
+            pq.InsertWithOverflow(1);
+            pq.InsertWithOverflow(5);
+            pq.InsertWithOverflow(7);
+            pq.InsertWithOverflow(1);
+            Assert.AreEqual(3, pq.Count);
+            Assert.AreEqual((int?)3, pq.Top);
+        }
+
         private static void AddElements<T>(PriorityQueue<T> pq, T[] elements)
         {
-            int size = (int)elements.size();
+            int size = elements.Length;
 
             for (int i = 0; i < size; i++)
             {
@@ -521,7 +873,7 @@ namespace Lucene.Net.Util
 
         private static void TimedAddAndPop<T>(PriorityQueue<T> pq, T[] elements)
         {
-            int size = (int)elements.size();
+            int size = elements.Length;
             DateTime start, end;
             TimeSpan total;
 
@@ -546,6 +898,83 @@ namespace Lucene.Net.Util
             Console.WriteLine("Average time per pop: {0} ticks", total.Ticks / size);
         }
 
+
+        #region ValuePriorityQueue
+
+        private static void AddElements<T>(ref ValuePriorityQueue<T> pq, T[] elements)
+        {
+            int size = elements.Length;
+
+            for (int i = 0; i < size; i++)
+            {
+                pq.Add(elements[i]);
+            }
+        }
+
+        private static void PopElements<T>(ref ValuePriorityQueue<T> pq)
+        {
+            int size = pq.Count;
+
+            for (int i = 0; i < size; i++)
+            {
+                pq.Pop();
+            }
+        }
+
+        private static void PopAndTestElements<T>(ref ValuePriorityQueue<T> pq, T[] elements)
+        {
+            int size = pq.Count;
+
+            for (int i = 0; i < size; i++)
+            {
+                Assert.AreEqual(pq.Pop(), elements[i]);
+            }
+        }
+
+        private static void PopAndTestElements<T>(ref ValuePriorityQueue<T> pq)
+        {
+            int size = pq.Count;
+            T last = pq.Pop();
+
+            for (int i = 1; i < size; i++)
+            {
+                T next = pq.Pop();
+                Assert.IsTrue(pq.Comparer.LessThan(last, next) || last.Equals(next));
+                last = next;
+            }
+        }
+
+        private static void TimedAddAndPop<T>(ref ValuePriorityQueue<T> pq, T[] elements)
+        {
+            int size = elements.Length;
+            DateTime start, end;
+            TimeSpan total;
+
+            start = DateTime.Now;
+
+            AddElements(ref pq, elements);
+
+            end = DateTime.Now;
+            total = end - start;
+
+            Console.WriteLine("Total adding time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
+            Console.WriteLine("Average time per add: {0} ticks", total.Ticks / size);
+
+            start = DateTime.Now;
+
+            PopElements(ref pq);
+
+            end = DateTime.Now;
+            total = end - start;
+
+            Console.WriteLine("Total popping time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
+            Console.WriteLine("Average time per pop: {0} ticks", total.Ticks / size);
+        }
+
+        #endregion ValuePriorityQueue
+
+
+
         [Test, LuceneNetSpecific]
         public static void TestPersistence()
         {
@@ -566,6 +995,29 @@ namespace Lucene.Net.Util
             ArrayUtil.IntroSort(elements, Less.Default);
 
             PopAndTestElements(pq, elements);
+        }
+
+        [Test, LuceneNetSpecific]
+        public static void ValuePriorityQueue_TestPersistence()
+        {
+            // Tests that a big number of elements are added and popped (in the correct order)
+            // without losing any information
+
+            int maxSize = AtLeast(100000);
+            Span<int?> buffer = new int?[GetArrayHeapSize(maxSize)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+
+            int?[] elements = new int?[maxSize];
+            for (int i = 0; i < maxSize; i++)
+            {
+                elements[i] = Random.Next();
+            }
+
+            AddElements(ref pq, elements);
+
+            ArrayUtil.IntroSort(elements, Less.Default);
+
+            PopAndTestElements(ref pq, elements);
         }
 
         [Test, LuceneNetSpecific]
@@ -617,11 +1069,62 @@ namespace Lucene.Net.Util
             Assert.AreEqual(pq.Count, 0);
         }
 
+        [Test, LuceneNetSpecific]
+        public static void ValuePriorityQueue_TestStress()
+        {
+            int atLeast = 1000000;
+            int maxSize = AtLeast(atLeast);
+            //PriorityQueue<int?> pq = new IntegerQueue(maxSize);
+            Span<int?> buffer = new int?[GetArrayHeapSize(maxSize)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+
+            // Add a lot of elements
+            for (int i = 0; i < maxSize; i++)
+            {
+                pq.Add(Random.Next());
+            }
+
+            // Pop some of them
+            while (pq.Count > atLeast / 2)
+            {
+                pq.Pop();
+            }
+
+            // Add some more
+            while (pq.Count < (atLeast * 3) / 4)
+            {
+                pq.Add(Random.Next());
+            }
+
+            PopAndTestElements(ref pq);
+
+            Assert.AreEqual(pq.Count, 0);
+
+            // We fill it again
+            for (int i = 0; 2 * i < maxSize; i++)
+            {
+                pq.Add(Random.Next());
+            }
+
+            Assert.AreEqual(pq.Count, (maxSize + 1) / 2);
+            pq.Clear();
+            Assert.AreEqual(pq.Count, 0);
+
+            // One last time
+            for (int i = 0; 2 * i < maxSize; i++)
+            {
+                pq.Add(Random.Next());
+            }
+
+            PopAndTestElements(ref pq);
+            Assert.AreEqual(pq.Count, 0);
+        }
+
         [Test, Explicit, LuceneNetSpecific]
         public static void Benchmarks()
         {
             AssumeTrue("Turn VERBOSE on or otherwise you won't see the results.", Verbose);
-               
+
             int maxSize = AtLeast(100000);
             PriorityQueue<int?> pq = new IntegerQueue(maxSize);
             int?[] elements = new int?[maxSize];
@@ -651,6 +1154,43 @@ namespace Lucene.Net.Util
             pq.Clear();
         }
 
+        [Test, Explicit, LuceneNetSpecific]
+        public static void ValuePriorityQueue_Benchmarks()
+        {
+            AssumeTrue("Turn VERBOSE on or otherwise you won't see the results.", Verbose);
+
+            int maxSize = AtLeast(100000);
+            Span<int?> buffer = new int?[GetArrayHeapSize(maxSize)];
+            ValuePriorityQueue<int?> pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+            int?[] elements = new int?[maxSize];
+
+            for (int i = 0; i < maxSize; i++)
+            {
+                elements[i] = Random.Next();
+            }
+
+            Console.WriteLine("Random list of elements...");
+
+            TimedAddAndPop(ref pq, elements);
+            pq.Clear();
+
+            Console.WriteLine("\nSorted list of elements...");
+
+            buffer = new int?[GetArrayHeapSize(maxSize)];
+            pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+            ArrayUtil.IntroSort(elements, Less.Default);
+            TimedAddAndPop(ref pq, elements);
+            pq.Clear();
+
+            Console.WriteLine("\nReverse sorted list of elements...");
+
+            buffer = new int?[GetArrayHeapSize(maxSize)];
+            pq = new ValuePriorityQueue<int?>(buffer, IntegerComparer.Default);
+            ArrayUtil.IntroSort(elements, Greater.Default);
+            TimedAddAndPop(ref pq, elements);
+            pq.Clear();
+        }
+
 #if FEATURE_SERIALIZABLE
 
         [Test, LuceneNetSpecific]
@@ -676,6 +1216,11 @@ namespace Lucene.Net.Util
             Assert.AreEqual(10, clone.Count);
         }
 #endif
+
+        private static int GetArrayHeapSize(int maxSize)
+        {
+            return PriorityQueue.GetArrayHeapSize(maxSize);
+        }
 
 #endregion
     }
