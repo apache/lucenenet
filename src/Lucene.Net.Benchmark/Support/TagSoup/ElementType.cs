@@ -14,6 +14,7 @@
 using J2N.Text;
 using Sax.Helpers;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace TagSoup
@@ -47,6 +48,8 @@ namespace TagSoup
         /// <param name="schema">
         /// The schema with which this element type will be associated
         /// </param>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "This class gets deprecated and removed in later versions")]
         public ElementType(string name, int model, int memberOf, int flags, Schema schema)
         {
             this.name = name;
@@ -57,6 +60,26 @@ namespace TagSoup
             this.schema = schema;
             @namespace = GetNamespace(name, false);
             localName = GetLocalName(name);
+        }
+
+        /// <summary>
+        /// LUCENENET specific constructor that allows the caller to specify the namespace and local name
+        /// and is provided to subclasses as an alternative to <see cref="ElementType(string, int, int, int, Schema)"/>
+        /// in order to avoid virtual method calls.
+        /// </summary>
+        public ElementType(
+            string name, int model, int memberOf, int flags, Schema schema,
+            Func<string, bool, string> namespaceFunc,
+            Func<string, string> localNameFunc)
+        {
+            this.name = name;
+            Model = model;
+            MemberOf = memberOf;
+            Flags = flags;
+            atts = new Attributes();
+            this.schema = schema;
+            @namespace = namespaceFunc(name, false);
+            localName = localNameFunc(name);   
         }
 
         /// <summary>
