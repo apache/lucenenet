@@ -11,6 +11,7 @@ using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -98,9 +99,22 @@ namespace Lucene.Net.Benchmarks.ByTask
         private readonly IDictionary<string, object> perfObjects = new Dictionary<string, object>();
 
         // constructor
-        public PerfRunData(Config config)
+        public PerfRunData(Config config) : this(
+            config,
+            performReinit: true,
+            logQueries: string.Equals(config?.Get("log.queries", "false") ?? "false", "true", StringComparison.OrdinalIgnoreCase))
+        {    
+        }
+
+        // LUCENENET specific - added performReinit parameter to allow subclasses to skip reinit
+        // since it's a virtual method. Also added logQueries parameter to allow to skip calling
+        // virtual GetQueryMarker. Subclass can call these methods itself if needed.
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
+        protected PerfRunData(Config config, bool performReinit, bool logQueries)
         {
-            this.config = config;
+            this.config = config ?? throw new ArgumentNullException(nameof(config));
+            
             // analyzer (default is standard analyzer)
             analyzer = NewAnalyzerTask.CreateAnalyzer(config.Get("analyzer",
                 typeof(Lucene.Net.Analysis.Standard.StandardAnalyzer).AssemblyQualifiedName));
@@ -122,12 +136,15 @@ namespace Lucene.Net.Benchmarks.ByTask
             qmkrClass = Type.GetType(config.Get("query.maker", typeof(SimpleQueryMaker).AssemblyQualifiedName));
 
             // index stuff
-            Reinit(false);
+            if (performReinit)
+            {
+                Reinit(false);
+            }
 
             // statistic points
             points = new Points(config);
 
-            if (bool.Parse(config.Get("log.queries", "false")))
+            if (logQueries)
             {
                 Console.WriteLine("------------> queries:");
                 Console.WriteLine(GetQueryMaker(new SearchTask(this)).PrintQueries());

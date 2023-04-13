@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -46,10 +47,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </remarks>
     public abstract class ReadTask : PerfTask
     {
-        private readonly IQueryMaker queryMaker;
+        #nullable enable
+        private readonly IQueryMaker? queryMaker;
 
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]    
         protected ReadTask(PerfRunData runData) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
-            : base(runData)
+            : this(runData, queryMaker: null)
         {
             if (WithSearch)
             {
@@ -60,6 +64,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 queryMaker = null;
             }
         }
+        // LUCENENET specific - added this constructor to allow subclasses to initialize it
+        // without having to call constructor that makes a virtual method call
+        protected ReadTask(PerfRunData runData, IQueryMaker? queryMaker)
+            : base(runData)
+        {
+            this.queryMaker = queryMaker;
+        }
+        #nullable restore
 
         public override int DoLogic()
         {
