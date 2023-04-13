@@ -6,6 +6,7 @@
 
 using Lucene.Net.Support;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sax.Helpers
 {
@@ -59,8 +60,14 @@ namespace Sax.Helpers
         /// <para/>
         /// This constructor is especially useful inside a
         /// <see cref="IContentHandler.StartElement(string, string, string, IAttributes)"/>.
+        ///
+        /// Note, this constructor calls a virtual <see cref="SetAttributes(IAttributes)"/> to copy the attributes.
+        /// If you are subclassing this class and don't want SetAttributes to be called, you should
+        /// use the <see cref="Attributes()"/> constructor instead and call <see cref="SetAttributes(IAttributes)"/> or <see cref="AddAttribute(string,string,string,string,string)"/> yourself if needed.
         /// </summary>
         /// <param name="atts">The existing <see cref="Attributes"/> object.</param>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "There is an Attributes() constructor overload to work around the issue")]
         public Attributes(IAttributes atts)
         {
             SetAttributes(atts);
