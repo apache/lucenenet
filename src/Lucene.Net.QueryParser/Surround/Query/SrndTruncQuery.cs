@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         public SrndTruncQuery(string truncated, char unlimited, char mask)
-            : this(truncated, unlimited, mask, q: false) /* not quoted */
+            : this(truncated, unlimited, mask, quoted: false) /* not quoted */
         {
             TruncatedToPrefixAndPattern();
         }
@@ -40,8 +40,8 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         // LUCENENET specific - this is for provided for subclasses to use and avoid
         // the virtual call to TruncatedToPrefixAndPattern(), which they can do
         // in their own constructor.
-        protected SrndTruncQuery(string truncated, char unlimited, char mask, bool q)
-            : base(q)
+        protected SrndTruncQuery(string truncated, char unlimited, char mask, bool quoted)
+            : base(quoted)
         {
             this.truncated = truncated;
             this.unlimited = unlimited;
