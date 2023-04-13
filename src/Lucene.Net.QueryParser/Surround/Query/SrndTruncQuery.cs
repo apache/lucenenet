@@ -28,6 +28,8 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public class SrndTruncQuery : SimpleTerm
     {
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         public SrndTruncQuery(string truncated, char unlimited, char mask)
             : this(truncated, unlimited, mask, q: false) /* not quoted */
         {
