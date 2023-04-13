@@ -99,9 +99,15 @@ namespace Lucene.Net.Benchmarks.ByTask
         private readonly IDictionary<string, object> perfObjects = new Dictionary<string, object>();
 
         // constructor
+        public PerfRunData(Config config) : this(config, true)
+        {    
+        }
+
+        // LUCENENET specific - added performReinit parameter to allow subclasses to skip reinit
+        // since it's a virtual method. Subclass can call that method itself if needed.
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
-        public PerfRunData(Config config)
+        protected PerfRunData(Config config, bool performReinit)
         {
             this.config = config;
             // analyzer (default is standard analyzer)
@@ -125,7 +131,10 @@ namespace Lucene.Net.Benchmarks.ByTask
             qmkrClass = Type.GetType(config.Get("query.maker", typeof(SimpleQueryMaker).AssemblyQualifiedName));
 
             // index stuff
-            Reinit(false);
+            if (performReinit)
+            {
+                Reinit(false);
+            }
 
             // statistic points
             points = new Points(config);
