@@ -64,7 +64,7 @@ namespace Lucene.Net.Spatial.Prefix
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         public WithinPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
                                       int detailLevel, int prefixGridScanLevel, double queryBuffer)
-            : this(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel, bufferShape: null)
+            : this(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel, bufferedQueryShape: null)
         {
             if (queryBuffer == -1)
             {
@@ -79,10 +79,10 @@ namespace Lucene.Net.Spatial.Prefix
         // LUCENENET specific - subclasses can use this class to override the behavior of
         // BufferShape method in a way that's safe and called from the subclass constructor
         protected WithinPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
-                                      int detailLevel, int prefixGridScanLevel, IShape? bufferShape)
+                                      int detailLevel, int prefixGridScanLevel, IShape? bufferedQueryShape)
             : base(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel)
         {
-            m_bufferedQueryShape = bufferShape;
+            m_bufferedQueryShape = bufferedQueryShape;
         }
 
         /// <summary>
