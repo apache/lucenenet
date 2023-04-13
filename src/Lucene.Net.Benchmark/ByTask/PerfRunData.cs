@@ -113,7 +113,8 @@ namespace Lucene.Net.Benchmarks.ByTask
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         protected PerfRunData(Config config, bool performReinit, bool logQueries)
         {
-            this.config = config;
+            this.config = config ?? throw new ArgumentNullException(nameof(config));
+            
             // analyzer (default is standard analyzer)
             analyzer = NewAnalyzerTask.CreateAnalyzer(config.Get("analyzer",
                 typeof(Lucene.Net.Analysis.Standard.StandardAnalyzer).AssemblyQualifiedName));
