@@ -27,9 +27,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public abstract class SimpleTerm : SrndQuery, IDistanceSubQuery, IComparable<SimpleTerm>
     {
-        protected SimpleTerm(bool q) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
+        protected SimpleTerm(bool quoted) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         { 
-            quoted = q; 
+            this.quoted = quoted; 
         }
 
         private readonly bool quoted; // LUCENENET: marked readonly
