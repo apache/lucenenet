@@ -29,12 +29,20 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     public class SrndTruncQuery : SimpleTerm
     {
         public SrndTruncQuery(string truncated, char unlimited, char mask)
-            : base(false) /* not quoted */
+            : this(truncated, unlimited, mask, q: false) /* not quoted */
+        {
+            TruncatedToPrefixAndPattern();
+        }
+
+        // LUCENENET specific - this is for provided for subclasses to use and avoid
+        // the virtual call to TruncatedToPrefixAndPattern(), which they can do
+        // in their own constructor.
+        protected SrndTruncQuery(string truncated, char unlimited, char mask, bool q)
+            : base(q)
         {
             this.truncated = truncated;
             this.unlimited = unlimited;
             this.mask = mask;
-            TruncatedToPrefixAndPattern();
         }
 
         private readonly string truncated;
