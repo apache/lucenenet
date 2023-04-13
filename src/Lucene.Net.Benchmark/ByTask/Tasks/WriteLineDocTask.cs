@@ -83,7 +83,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         private int docSize = 0;
         protected readonly string m_fname;
-        private readonly TextWriter lineFileOut;
+        // LUCENENET specific - changed to protected to allow subclass access in case
+        // it needs to be used in WriteHeader from the subclass's constructor
+        protected readonly TextWriter m_lineFileOut;
         private readonly DocMaker docMaker;
         private readonly DisposableThreadLocal<StringBuilder> threadBuffer = new DisposableThreadLocal<StringBuilder>();
         private readonly DisposableThreadLocal<Regex> threadNormalizer = new DisposableThreadLocal<Regex>();
@@ -93,9 +95,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         private readonly object lineFileLock = new object(); // LUCENENET specific - lock to ensure writes don't collide for this instance
 
+        public WriteLineDocTask(PerfRunData runData)
+            : this(runData, performWriteHeader: true)
+        {
+        }
+
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
-        public WriteLineDocTask(PerfRunData runData)
+        public WriteLineDocTask(PerfRunData runData, bool performWriteHeader)
             : base(runData)
         {
             Config config = runData.Config;
@@ -105,7 +112,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 throw new ArgumentException("line.file.out must be set");
             }
             Stream @out = StreamUtils.GetOutputStream(new FileInfo(m_fname));
-            lineFileOut = new StreamWriter(@out, Encoding.UTF8);
+            m_lineFileOut = new StreamWriter(@out, Encoding.UTF8);
             docMaker = runData.DocMaker;
 
             // init fields 
@@ -143,7 +150,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
             }
 
-            WriteHeader(lineFileOut);
+            if (performWriteHeader)
+            {
+                WriteHeader(m_lineFileOut);
+            }
         }
 
         /// <summary>
@@ -230,7 +240,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// </summary>
         protected virtual TextWriter LineFileOut(Document doc)
         {
-            return lineFileOut;
+            return m_lineFileOut;
         }
 
         protected override void Dispose(bool disposing)
@@ -239,7 +249,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 threadBuffer.Dispose(); // LUCENENET specific: ThreadLocal is disposable
                 threadNormalizer.Dispose(); // LUCENENET specific: ThreadLocal is disposable
-                lineFileOut.Dispose();
+                m_lineFileOut.Dispose();
             }
             base.Dispose(disposing);
         }
