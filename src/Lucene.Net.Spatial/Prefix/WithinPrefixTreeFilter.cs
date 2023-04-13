@@ -8,6 +8,7 @@ using Spatial4n.Distance;
 using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Lucene.Net.Spatial.Prefix
@@ -50,7 +51,8 @@ namespace Lucene.Net.Spatial.Prefix
         //  minimal query buffer by looking in a DocValues cache holding a representative
         //  point of each disjoint component of a document's shape(s).
 
-        private readonly IShape? bufferedQueryShape;//if null then the whole world
+        // LUCENENET specific - made protected to allow subclasses to access if needed
+        protected readonly IShape? m_bufferedQueryShape;//if null then the whole world
 
         /// <summary>
         /// See <see cref="AbstractVisitingPrefixTreeFilter(IShape, string, SpatialPrefixTree, int, int)"/>.
@@ -58,18 +60,29 @@ namespace Lucene.Net.Spatial.Prefix
         /// where non-matching documents are looked for so they can be excluded. If
         /// -1 is used then the whole world is examined (a good default for correctness).
         /// </summary>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         public WithinPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
                                       int detailLevel, int prefixGridScanLevel, double queryBuffer)
-            : base(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel)
+            : this(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel, bufferedQueryShape: null)
         {
             if (queryBuffer == -1)
             {
-                bufferedQueryShape = null;
+                m_bufferedQueryShape = null;
             }
             else
             {
-                bufferedQueryShape = BufferShape(queryShape, queryBuffer);
+                m_bufferedQueryShape = BufferShape(queryShape, queryBuffer);
             }
+        }
+
+        // LUCENENET specific - subclasses can use this class to override the behavior of
+        // BufferShape method in a way that's safe and called from the subclass constructor
+        protected WithinPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
+                                      int detailLevel, int prefixGridScanLevel, IShape? bufferedQueryShape)
+            : base(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel)
+        {
+            m_bufferedQueryShape = bufferedQueryShape;
         }
 
         /// <summary>
@@ -179,7 +192,7 @@ namespace Lucene.Net.Spatial.Prefix
                     throw new ArgumentNullException(nameof(cell));
 
                 //use buffered query shape instead of orig.  Works with null too.
-                return cell.GetSubCells(((WithinPrefixTreeFilter)m_filter).bufferedQueryShape).GetEnumerator();
+                return cell.GetSubCells(((WithinPrefixTreeFilter)m_filter).m_bufferedQueryShape).GetEnumerator();
             }
 
             protected override bool Visit(Cell cell)
