@@ -1,6 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -28,11 +27,20 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public abstract class ComposedQuery : SrndQuery
     {
-        protected ComposedQuery(IList<SrndQuery> qs, bool operatorInfix, string opName) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
+        // LUCENENET specific - provided protected parameterless constructor to allow subclasses
+        // avoid issues with virtual Recompose method
+        protected ComposedQuery(bool operatorInfix, string opName)
         {
-            Recompose(qs);
             this.operatorInfix = operatorInfix;
             this.m_opName = opName;
+        }
+
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
+        protected ComposedQuery(IList<SrndQuery> qs, bool operatorInfix, string opName) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
+            : this(operatorInfix, opName)
+        {
+            Recompose(qs);
         }
 
         protected virtual void Recompose(IList<SrndQuery> queries)
