@@ -267,6 +267,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// the form "word TAB float".
         /// 
         /// <para>Uses the supplied culture to lowercase words before comparing.</para>
+        /// <para>NOTE for subclasses: this constructor calls a virtual method, which could
+        /// result in your override of it being called before the class is properly initialized.
+        /// To overcome the issue, you could override <see cref="JaspellTernarySearchTrie(CultureInfo)"/>
+        /// constructor and then call the logic in a way that suits your needs.
+        /// </para>
         /// </summary>
         /// <param name="file">
         ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
