@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
@@ -34,12 +35,20 @@ namespace Lucene.Net.QueryParsers.Xml
     public class QueryTemplateManager
     {
         private readonly IDictionary<string, XslCompiledTransform> compiledTemplatesCache = new Dictionary<string, XslCompiledTransform>(); // LUCENENET: marked readonly
-        private XslCompiledTransform defaultCompiledTemplates;
+        // LUCENENET specific - made protected to allow subclasses to access and initialize
+        protected XslCompiledTransform m_defaultCompiledTemplates;
 
         public QueryTemplateManager()
         {
         }
 
+        /// <summary>
+        /// This class makes a virtual AddDefaultQueryTemplate call. If you need to subclass it
+        /// and make this call at a time when it suits you, call <see cref="QueryTemplateManager()" /> and
+        /// set <see cref="m_defaultCompiledTemplates"/> from your constructor.
+        /// </summary>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         public QueryTemplateManager(Stream xslIs)
         {
             AddDefaultQueryTemplate(xslIs);
@@ -47,7 +56,7 @@ namespace Lucene.Net.QueryParsers.Xml
 
         public virtual void AddDefaultQueryTemplate(Stream xslIs)
         {
-            defaultCompiledTemplates = GetTemplates(xslIs);
+            m_defaultCompiledTemplates = GetTemplates(xslIs);
         }
 
         public virtual void AddQueryTemplate(string name, Stream xslIs)
@@ -69,12 +78,12 @@ namespace Lucene.Net.QueryParsers.Xml
 
         public virtual string GetQueryAsXmlString(IDictionary<string, string> formProperties)
         {
-            return GetQueryAsXmlString(formProperties, defaultCompiledTemplates);
+            return GetQueryAsXmlString(formProperties, m_defaultCompiledTemplates);
         }
 
         public virtual XmlDocument GetQueryAsDOM(IDictionary<string, string> formProperties)
         {
-            return GetQueryAsDOM(formProperties, defaultCompiledTemplates);
+            return GetQueryAsDOM(formProperties, m_defaultCompiledTemplates);
         }
 
         /// <summary>
