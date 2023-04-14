@@ -135,13 +135,30 @@ namespace Lucene.Net.Search
         /// <seealso cref="IndexReaderContext"/>
         /// <seealso cref="IndexReader.Context"/>
         public IndexSearcher(IndexReaderContext context, TaskScheduler executor)
+            : this(context, executor, allocateLeafSlices: executor is not null)
+        {
+        }
+
+        /// <summary>
+        /// LUCENENET specific constructor that can be used by the subclasses to
+        /// control whether or not the leaf slices are allocated.
+        /// If you choose to skip allocating the leaf slices here, you must 
+        /// call <see cref="Slices"/> in your subclass's constructor.
+        /// </summary>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
+        protected IndexSearcher(IndexReaderContext context, TaskScheduler executor, bool allocateLeafSlices)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(context.IsTopLevel,"IndexSearcher's ReaderContext must be topLevel for reader {0}", context.Reader);
             reader = context.Reader;
             this.executor = executor;
             this.m_readerContext = context;
             m_leafContexts = context.Leaves;
-            this.m_leafSlices = executor is null ? null : GetSlicesInternal(m_leafContexts);
+
+            if (allocateLeafSlices)
+            {
+                this.m_leafSlices = Slices(m_leafContexts);
+            }
         }
 
         /// <summary>
@@ -160,18 +177,8 @@ namespace Lucene.Net.Search
         /// Expert: Creates an array of leaf slices each holding a subset of the given leaves.
         /// Each <see cref="LeafSlice"/> is executed in a single thread. By default there
         /// will be one <see cref="LeafSlice"/> per leaf (<see cref="AtomicReaderContext"/>).
-        /// 
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
-        /// a private method and not this virtual method. So if you need to override
-        /// the behavior during the initialization, call your own private method from the constructor
-        /// with whatever custom behavior you need.
         /// </summary>
-        // LUCENENET specific - renamed to GetSlices to better indicate the purpose of this method
-        protected virtual LeafSlice[] GetSlices(IList<AtomicReaderContext> leaves)
-            => GetSlicesInternal(leaves);
-
-        // LUCENENET specific - creating this so that we can call it from the constructor
-        protected LeafSlice[] GetSlicesInternal(IList<AtomicReaderContext> leaves)
+        protected virtual LeafSlice[] Slices(IList<AtomicReaderContext> leaves)
         {
             LeafSlice[] slices = new LeafSlice[leaves.Count];
             for (int i = 0; i < slices.Length; i++)
@@ -460,7 +467,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                HitQueue hq = new HitQueue(nDocs, prePopulate: false);
+                HitQueue hq = new HitQueue(nDocs, false);
                 ReentrantLock @lock = new ReentrantLock();
                 ExecutionHelper<TopDocs> runner = new ExecutionHelper<TopDocs>(executor);
 
@@ -538,7 +545,7 @@ namespace Lucene.Net.Search
         {
             if (sort is null)
             {
-                throw new ArgumentNullException(nameof(sort), "Sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException("Sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             int limit = reader.MaxDoc;
