@@ -165,8 +165,7 @@ namespace Lucene.Net.Search
             if (context is null)
                 throw new ArgumentNullException(nameof(context));
 
-            if (Debugging.AssertsEnabled)
-                Debugging.Assert(context.IsTopLevel,"IndexSearcher's ReaderContext must be topLevel for reader {0}", context.Reader);
+            if (Debugging.AssertsEnabled) Debugging.Assert(context.IsTopLevel, "IndexSearcher's ReaderContext must be topLevel for reader {0}", context.Reader);
 
             reader = context.Reader;
             this.executor = executor;
@@ -230,6 +229,9 @@ namespace Lucene.Net.Search
         /// <exception cref="ArgumentNullException"><paramref name="fieldVisitor"/> is <c>null</c>.</exception>
         public virtual void Doc(int docID, StoredFieldVisitor fieldVisitor)
         {
+            if (fieldVisitor is null)
+                throw new ArgumentNullException(nameof(fieldVisitor));
+
             reader.Document(docID, fieldVisitor);
         }
 
