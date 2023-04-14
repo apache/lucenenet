@@ -142,7 +142,8 @@ namespace Lucene.Net.Search
         /// LUCENENET specific constructor that can be used by the subclasses to
         /// control whether or not the leaf slices are allocated.
         /// If you choose to skip allocating the leaf slices here, you must 
-        /// call <see cref="GetSlices"/> in your subclass's constructor.
+        /// initialize <see cref="m_leafSlices" /> in your subclass's constructor, either
+        /// by calling <see cref="GetSlices"/> or using your own logic
         /// </summary>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
@@ -472,7 +473,6 @@ namespace Lucene.Net.Search
 
                 if (m_leafSlices == null)
                     throw new InvalidOperationException("m_leafSlices must not be null and initialized in the constructor");
-            
 
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each sub
                 {
@@ -569,6 +569,9 @@ namespace Lucene.Net.Search
 
                 ReentrantLock @lock = new ReentrantLock();
                 ExecutionHelper<TopFieldDocs> runner = new ExecutionHelper<TopFieldDocs>(executor);
+
+                if (m_leafSlices == null)
+                    throw new InvalidOperationException("m_leafSlices must not be null and initialized in the constructor");
 
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each leaf slice
                 {
