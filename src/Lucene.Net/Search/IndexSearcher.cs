@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
         /// @lucene.experimental
         /// </summary>
         public IndexSearcher(IndexReader r, TaskScheduler executor)
-            : this(r.Context, executor)
+            : this(r?.Context, executor)
         {
         }
 
@@ -140,16 +140,29 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// LUCENENET specific constructor that can be used by the subclasses to
-        /// control whether or not the leaf slices are allocated.
-        /// If you choose to skip allocating the leaf slices here, you must 
-        /// initialize <see cref="m_leafSlices" /> in your subclass's constructor, either
-        /// by calling <see cref="GetSlices"/> or using your own logic
+        /// control whether the leaf slices are allocated in the base class or subclass.
         /// </summary>
+        /// <remarks>
+        /// If executor is non-<c>null</c> and you choose to skip allocating the leaf slices
+        /// (i.e. <paramref name="allocateLeafSlices"/> == <c>false</c>), you must
+        /// set the <see cref="m_leafSlices"/> field in your subclass constructor.
+        /// This is commonly done by calling <see cref="GetSlices(IList{AtomicReaderContext})"/>
+        /// and using the result to set <see cref="m_leafSlices"/>. You may wish to do this if you
+        /// have state to pass into your constructor and need to set it prior to the call to
+        /// <see cref="GetSlices(IList{AtomicReaderContext})"/> so it is available for use
+        /// as a member field or property inside a custom override of
+        /// <see cref="GetSlices(IList{AtomicReaderContext})"/>.
+        /// </remarks>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         protected IndexSearcher(IndexReaderContext context, TaskScheduler executor, bool allocateLeafSlices)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(context.IsTopLevel,"IndexSearcher's ReaderContext must be topLevel for reader {0}", context.Reader);
+            if (context is null)
+                throw new ArgumentNullException(nameof(context));
+
+            if (Debugging.AssertsEnabled)
+                Debugging.Assert(context.IsTopLevel,"IndexSearcher's ReaderContext must be topLevel for reader {0}", context.Reader);
+
             reader = context.Reader;
             this.executor = executor;
             this.m_readerContext = context;
@@ -471,8 +484,8 @@ namespace Lucene.Net.Search
                 ReentrantLock @lock = new ReentrantLock();
                 ExecutionHelper<TopDocs> runner = new ExecutionHelper<TopDocs>(executor);
 
-                if (m_leafSlices == null)
-                    throw new InvalidOperationException("m_leafSlices must not be null and initialized in the constructor");
+                if (m_leafSlices is null)
+                    throw new InvalidOperationException($"When the constructor is passed a non-null {nameof(TaskScheduler)}, {nameof(m_leafSlices)} must also be set to a non-null value in the constructor.");
 
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each sub
                 {
@@ -570,8 +583,8 @@ namespace Lucene.Net.Search
                 ReentrantLock @lock = new ReentrantLock();
                 ExecutionHelper<TopFieldDocs> runner = new ExecutionHelper<TopFieldDocs>(executor);
 
-                if (m_leafSlices == null)
-                    throw new InvalidOperationException("m_leafSlices must not be null and initialized in the constructor");
+                if (m_leafSlices is null)
+                    throw new InvalidOperationException($"When the constructor is passed a non-null {nameof(TaskScheduler)}, {nameof(m_leafSlices)} must also be set to a non-null value in the constructor.");
 
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each leaf slice
                 {
