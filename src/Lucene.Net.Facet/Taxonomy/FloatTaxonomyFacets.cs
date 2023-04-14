@@ -123,7 +123,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return null;
             }
 
-            // LUCENENET: Refactored PriorityQueue<T> subclass into IPriorityComparer<T>
+            // LUCENENET: Refactored PriorityQueue<T> subclass into PriorityComparer<T>
             // implementation, which can be passed into ValuePriorityQueue. ValuePriorityQueue
             // lives on the stack, and if the array size is small enough, we also allocate the
             // array on the stack. Fallback to the array pool if it is beyond MaxStackByteLimit.
@@ -133,7 +133,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 Span<OrdAndValue<float>> buffer = usePool ? arrayToReturnToPool : stackalloc OrdAndValue<float>[bufferSize];
-                ValuePriorityQueue<OrdAndValue<float>> q = new ValuePriorityQueue<OrdAndValue<float>>(buffer, TopOrdAndSingleComparer.Default);
+                var q = new ValuePriorityQueue<OrdAndValue<float>>(buffer, TopOrdAndSingleComparer.Default);
 
                 float bottomValue = 0;
 

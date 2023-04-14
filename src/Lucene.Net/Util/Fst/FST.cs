@@ -1688,7 +1688,7 @@ namespace Lucene.Net.Util.Fst
 
 #nullable enable
 
-            // LUCENENET: Refactored PriorityQueue<T> subclass into IPriorityComparer<T>
+            // LUCENENET: Refactored PriorityQueue<T> subclass into PriorityComparer<T>
             // implementation, which can be passed into ValuePriorityQueue. ValuePriorityQueue
             // lives on the stack, and if the array size is small enough, we also allocate the
             // array on the stack. Fallback to the array pool if it is beyond MaxStackByteLimit.
@@ -1698,7 +1698,7 @@ namespace Lucene.Net.Util.Fst
             try
             {
                 Span<FST.NodeAndInCount?> buffer = usePool ? arrayToReturnToPool : stackalloc FST.NodeAndInCount?[bufferSize];
-                ValuePriorityQueue<FST.NodeAndInCount?> q = new ValuePriorityQueue<FST.NodeAndInCount?>(buffer, FST.NodeComparer.Default);
+                var q = new ValuePriorityQueue<FST.NodeAndInCount?>(buffer, FST.NodeComparer.Default);
 #nullable restore
 
                 // TODO: we could use more RAM efficient selection algo here...
@@ -2390,11 +2390,11 @@ namespace Lucene.Net.Util.Fst
 #nullable enable
         // LUCENENET: Refactored NodeQueue into NodeComparer
         // implementation, which can be passed into ValuePriorityQueue.
-        internal class NodeComparer : IPriorityComparer<NodeAndInCount?>
+        internal class NodeComparer : PriorityComparer<NodeAndInCount?>
         {
             public static NodeComparer Default { get; } = new NodeComparer();
 
-            internal bool LessThan(NodeAndInCount? a, NodeAndInCount? b)
+            protected internal override bool LessThan(NodeAndInCount? a, NodeAndInCount? b)
             {
                     // LUCENENET specific - added guard clauses
                     if (a is null)
@@ -2406,9 +2406,6 @@ namespace Lucene.Net.Util.Fst
                 if (Debugging.AssertsEnabled) Debugging.Assert(cmp != 0);
                 return cmp < 0;
             }
-
-            bool IPriorityComparer<NodeAndInCount?>.LessThan(NodeAndInCount? a, NodeAndInCount? b)
-                => LessThan(a, b);
         }
     }
 }

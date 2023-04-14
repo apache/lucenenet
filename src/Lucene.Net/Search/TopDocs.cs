@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -136,7 +137,7 @@ namespace Lucene.Net.Search
 
         // Specialized MergeSortComparer that just merges by
         // relevance score, descending:
-        private sealed class ScoreMergeSortComparer : IPriorityComparer<Shard> // LUCENENET specific - marked sealed
+        private sealed class ScoreMergeSortComparer : PriorityComparer<Shard> // LUCENENET specific - marked sealed
         {
             internal readonly ScoreDoc[][] shardHits;
 
@@ -153,7 +154,7 @@ namespace Lucene.Net.Search
             }
 
             // Returns true if first is < second
-            bool IPriorityComparer<Shard>.LessThan(Shard first, Shard second)
+            protected internal override bool LessThan(Shard first, Shard second)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(first != second);
                 float firstScore = shardHits[first.ShardIndex][first.HitIndex].Score;
@@ -191,7 +192,7 @@ namespace Lucene.Net.Search
         }
 
         // LUCENENET specific - refactored MergeSortQueue into MergeSortComparer so it can be passed into a ValuePriorityQueue
-        private sealed class MergeSortComparer : IPriorityComparer<Shard> // LUCENENET specific - marked sealed
+        private sealed class MergeSortComparer : PriorityComparer<Shard> // LUCENENET specific - marked sealed
         {
             // These are really FieldDoc instances:
             internal readonly ScoreDoc[][] shardHits;
@@ -241,7 +242,7 @@ namespace Lucene.Net.Search
             }
 
             // Returns true if first is < second
-            bool IPriorityComparer<Shard>.LessThan(Shard first, Shard second)
+            protected internal override bool LessThan(Shard first, Shard second)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(first != second);
                 FieldDoc firstFD = (FieldDoc)shardHits[first.ShardIndex][first.HitIndex];
@@ -317,11 +318,11 @@ namespace Lucene.Net.Search
             if (shardHits is null)
                 throw new ArgumentNullException(nameof(shardHits));
 
-            // LUCENENET: Refactored PriorityQueue<T> subclasses into IPriorityComparer<T>
+            // LUCENENET: Refactored PriorityQueue<T> subclasses into PriorityComparer<T>
             // implementations, which can be passed into ValuePriorityQueue. ValuePriorityQueue
             // lives on the stack, and if the array size is small enough, we also allocate the
             // array on the stack. Fallback to the array pool if it is beyond MaxStackByteLimit.
-            IPriorityComparer<Shard> comparer;
+            IComparer<Shard> comparer;
             if (sort is null)
             {
                 comparer = new ScoreMergeSortComparer(shardHits);
@@ -336,7 +337,7 @@ namespace Lucene.Net.Search
             try
             {
                 Span<Shard> buffer = usePool ? arrayToReturnToPool : stackalloc Shard[bufferSize];
-                ValuePriorityQueue<Shard> queue = new ValuePriorityQueue<Shard>(buffer, comparer);
+                var queue = new ValuePriorityQueue<Shard>(buffer, comparer);
 
                 int totalHitCount = 0;
                 int availHitCount = 0;

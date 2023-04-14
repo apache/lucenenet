@@ -56,9 +56,9 @@ namespace Lucene.Net.Facet
     /// <para/>
     /// NOTE: This is a refactoring of TopOrdAndIntQueue in Lucene
     /// </summary>
-    // LUCENENET: Refactored PriorityQueue<T> subclass into IPriorityComparer<T>
+    // LUCENENET: Refactored PriorityQueue<T> subclass into PriorityComparer<T>
     // implementation, which can be passed into ValuePriorityQueue.
-    public sealed class TopOrdAndInt32Comparer : IPriorityComparer<OrdAndValue<int>>
+    public sealed class TopOrdAndInt32Comparer : PriorityComparer<OrdAndValue<int>>
     {
         /// <summary>
         /// Returns a default sort order comparer for <see cref="OrdAndValue{Int32}"/>.
@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         public static TopOrdAndInt32Comparer Default { get; } = new TopOrdAndInt32Comparer();
 
-        internal bool LessThan(OrdAndValue<int> a, OrdAndValue<int> b)
+        protected internal override bool LessThan(OrdAndValue<int> a, OrdAndValue<int> b)
         {
             if (a.Value < b.Value)
             {
@@ -82,7 +82,5 @@ namespace Lucene.Net.Facet
                 return a.Ord > b.Ord;
             }
         }
-        bool IPriorityComparer<OrdAndValue<int>>.LessThan(OrdAndValue<int> a, OrdAndValue<int> b)
-            => LessThan(a, b);
     }
 }

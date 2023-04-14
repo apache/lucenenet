@@ -1,6 +1,8 @@
 ﻿using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 #nullable enable
@@ -38,8 +40,9 @@ namespace Lucene.Net.Util
     /// change the top without attempting to insert any new items.
     /// <para/>
     /// Those sentinel values should always compare worse than any non-sentinel
-    /// value (i.e., <see cref="PriorityQueue{T}.LessThan(T, T)"/> or
-    /// <see cref="IPriorityComparer{T}.LessThan(T, T)"/> should always favor the
+    /// value (i.e., <see cref="PriorityQueue{T}.LessThan(T, T)"/>,
+    /// <see cref="PriorityComparer{T}.LessThan(T, T)"/>, or
+    /// <see cref="IComparer{T}.Compare(T, T)"/> should always favor the
     /// non-sentinel values).
     /// <para/>
     /// When using a <see cref="ISentinelFactory{T}"/>, the following usage pattern
@@ -76,13 +79,20 @@ namespace Lucene.Net.Util
     }
 
     /// <summary>
-    /// A comparer for use with <see cref="ValuePriorityQueue{T}"/>.
+    /// An adapter comparer for use with <see cref="ValuePriorityQueue{T}"/>.
     /// <para/>
     /// This comparer makes it easy to convert <see cref="PriorityQueue{T}"/>-derived
     /// subclasses into comparers that can be used with <see cref="ValuePriorityQueue{T}"/>.
+    /// <para/>
+    /// <b>NOTE:</b> This adapter converts the 2-state <see cref="LessThan(T, T)"/>
+    /// method to the 3-state <see cref="IComparer{T}.Compare(T, T)"/> by always assuming if
+    /// <see cref="LessThan(T, T)"/> returns <c>false</c> that the left node is greater than
+    /// the right node. This means nodes will never compare equal, even if they actually are.
+    /// Therefore, it may not work correctly for most applications of <see cref="IComparer{T}"/>,
+    /// but will work correctly with <see cref="ValuePriorityQueue{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item to compare. This may be either a value type or a reference type.</typeparam>
-    public interface IPriorityComparer<T>
+    public abstract class PriorityComparer<T> : IComparer<T>
     {
         /// <summary>
         /// Determines the ordering of objects in this priority queue.  Subclasses
@@ -91,7 +101,9 @@ namespace Lucene.Net.Util
         /// <param name="a">The left value to compare.</param>
         /// <param name="b">The right value to compare.</param>
         /// <returns> <c>true</c> if parameter <paramref name="a"/> is less than parameter <paramref name="b"/>; otherwise <c>false</c>. </returns>
-        bool LessThan(T a, T b);
+        protected internal abstract bool LessThan(T a, T b);
+
+        int IComparer<T>.Compare(T? a, T? b) => LessThan(a!, b!) ? -1 : 1;
     }
 
     /// <summary>
@@ -129,7 +141,7 @@ namespace Lucene.Net.Util
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Major Code Smell", "S2933:Fields that are only assigned in the constructor should be \"readonly\"", Justification = "Structs are known to have performance issues with readonly fields")]
         [SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "Structs are known to have performance issues with readonly fields")]
-        private IPriorityComparer<T> comparer;
+        private IComparer<T> comparer;
 
         /// <summary>
         /// Initializes a new instance of <see cref="ValuePriorityQueue{T}"/> with the specified
@@ -140,10 +152,12 @@ namespace Lucene.Net.Util
         /// To determine the correct size of buffer to allocate, use the
         /// <see cref="PriorityQueue.GetArrayHeapSize(int)"/> method.
         /// </param>
-        /// <param name="comparer">A <see cref="IPriorityComparer{T}"/> implementation that is
-        /// used to determine the order of items in the priority queue.</param>
+        /// <param name="comparer">An <see cref="IComparer{T}"/> implementation that is
+        /// used to determine the order of items in the priority queue.
+        /// Note that if the comparer returns 0, the value is treated no differently than
+        /// if it were 1 (greater than).</param>
         /// <exception cref="ArgumentNullException"><paramref name="comparer"/> is <c>null</c>.</exception>
-        public ValuePriorityQueue(Span<T> buffer, IPriorityComparer<T> comparer)
+        public ValuePriorityQueue(Span<T> buffer, IComparer<T> comparer)
             : this(buffer, comparer, sentinelFactory: null)
         {
         }
@@ -157,8 +171,10 @@ namespace Lucene.Net.Util
         /// To determine the correct size of buffer to allocate, use the
         /// <see cref="PriorityQueue.GetArrayHeapSize(int)"/> method.
         /// </param>
-        /// <param name="comparer">A <see cref="IPriorityComparer{T}"/> implementation that is
-        /// used to determine the order of items in the priority queue.</param>
+        /// <param name="comparer">An <see cref="IComparer{T}"/> implementation that is
+        /// used to determine the order of items in the priority queue.
+        /// Note that if the comparer returns 0, the value is treated no differently than
+        /// if it were 1 (greater than).</param>
         /// <param name="sentinelFactory">If not <c>null</c>, the queue will be pre-populated.
         /// This factory will be called <paramref name="buffer"/>.Length - 1 times to get an instance
         /// to provide to each element in the queue. <paramref name="sentinelFactory"/> should
@@ -166,7 +182,7 @@ namespace Lucene.Net.Util
         /// represent the same value.</param>
         /// <exception cref="ArgumentNullException"><paramref name="comparer"/> is <c>null</c>.</exception>
         /// <seealso cref="ISentinelFactory{T}"/>
-        public ValuePriorityQueue(Span<T> buffer, IPriorityComparer<T> comparer, ISentinelFactory<T>? sentinelFactory)
+        public ValuePriorityQueue(Span<T> buffer, IComparer<T> comparer, ISentinelFactory<T>? sentinelFactory)
         {
             this.comparer = comparer ?? throw new ArgumentNullException(nameof(comparer));
             heap = buffer;
@@ -189,7 +205,19 @@ namespace Lucene.Net.Util
         /// <summary>Returns the underlying storage of the queue.</summary>
         public Span<T> RawHeap => heap;
 
-        public IPriorityComparer<T> Comparer => comparer;
+        /// <summary>
+        /// Gets the comparer used to determine the order of objects in this priority queue.
+        /// </summary>
+        public IComparer<T> Comparer => comparer;
+
+        /// <summary>
+        /// Determines the ordering of objects in this priority queue.
+        /// </summary>
+        /// <returns><c>true</c> if parameter <paramref name="a"/> is less than parameter
+        /// <paramref name="b"/>; othewise, <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool LessThan(T a, T b)
+            => comparer.Compare(a, b) < 0;
 
 #nullable restore
 
@@ -220,7 +248,7 @@ namespace Lucene.Net.Util
             {
                 Add(element);
             }
-            else if (size > 0 && !comparer.LessThan(element, heap[1]))
+            else if (size > 0 && !LessThan(element, heap[1]))
             {
                 heap[1] = element;
                 UpdateTop();
@@ -245,7 +273,7 @@ namespace Lucene.Net.Util
                 Add(element);
                 return default;
             }
-            else if (size > 0 && !comparer.LessThan(element, heap[1]))
+            else if (size > 0 && !LessThan(element, heap[1]))
             {
                 T ret = heap[1];
                 heap[1] = element;
@@ -335,12 +363,13 @@ namespace Lucene.Net.Util
         }
 
         // LUCENENET: IMPORTANT - this implementation should remain in sync with PriorityQueue<T>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpHeap()
         {
             int i = size;
             T node = heap[i]; // save bottom node
             int j = i.TripleShift(1);
-            while (j > 0 && comparer.LessThan(node, heap[j]))
+            while (j > 0 && LessThan(node, heap[j]))
             {
                 heap[i] = heap[j]; // shift parents down
                 i = j;
@@ -350,23 +379,24 @@ namespace Lucene.Net.Util
         }
 
         // LUCENENET: IMPORTANT - this implementation should remain in sync with PriorityQueue<T>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void DownHeap()
         {
             int i = 1;
             T node = heap[i]; // save top node
             int j = i << 1; // find smaller child
             int k = j + 1;
-            if (k <= size && comparer.LessThan(heap[k], heap[j]))
+            if (k <= size && LessThan(heap[k], heap[j]))
             {
                 j = k;
             }
-            while (j <= size && comparer.LessThan(heap[j], node))
+            while (j <= size && LessThan(heap[j], node))
             {
                 heap[i] = heap[j]; // shift up child
                 i = j;
                 j = i << 1;
                 k = j + 1;
-                if (k <= size && comparer.LessThan(heap[k], heap[j]))
+                if (k <= size && LessThan(heap[k], heap[j]))
                 {
                     j = k;
                 }
@@ -502,7 +532,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Determines the ordering of objects in this priority queue.  Subclasses
         /// must define this one method. </summary>
-        /// <returns> <c>true</c> if parameter <paramref name="a"/> is less than parameter <paramref name="b"/>. </returns>
+        /// <returns><c>true</c> if parameter <paramref name="a"/> is less than parameter
+        /// <paramref name="b"/>; othewise, <c>false</c>.</returns>
         protected internal abstract bool LessThan(T a, T b); // LUCENENET: Internal for testing
 
         // LUCENENET specific - refactored getSentinelObject() method into ISentinelFactory<T> and
@@ -652,6 +683,7 @@ namespace Lucene.Net.Util
         }
 
         // LUCENENET: IMPORTANT - this implementation should remain in sync with ValuePriorityQueue<T>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpHeap()
         {
             int i = size;
@@ -667,6 +699,7 @@ namespace Lucene.Net.Util
         }
 
         // LUCENENET: IMPORTANT - this implementation should remain in sync with ValuePriorityQueue<T>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void DownHeap()
         {
             int i = 1;

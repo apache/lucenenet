@@ -35,11 +35,11 @@ namespace Lucene.Net.Util
     {
         private static readonly int MAX_PQ_SIZE = ArrayUtil.MAX_ARRAY_LENGTH - 1;
 
-        private class IntegerComparer : IPriorityComparer<int?>
+        private class IntegerComparer : PriorityComparer<int?>
         {
             public static IntegerComparer Default { get; } = new IntegerComparer();
 
-            public bool LessThan(int? a, int? b)
+            protected internal override bool LessThan(int? a, int? b)
             {
                 return (a < b);
             }
@@ -304,10 +304,10 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class MyComparer : IPriorityComparer<MyType>
+        private class MyComparer : PriorityComparer<MyType>
         {
             public static MyComparer Default { get; } = new MyComparer();
-            public bool LessThan(MyType a, MyType b)
+            protected internal override bool LessThan(MyType a, MyType b)
             {
                 return a.Field < b.Field;
             }
@@ -939,7 +939,7 @@ namespace Lucene.Net.Util
             for (int i = 1; i < size; i++)
             {
                 T next = pq.Pop();
-                Assert.IsTrue(pq.Comparer.LessThan(last, next) || last.Equals(next));
+                Assert.IsTrue(pq.Comparer.Compare(last, next) < 0 || last.Equals(next));
                 last = next;
             }
         }
