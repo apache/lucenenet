@@ -49,7 +49,7 @@ namespace TagSoup
         /// The schema with which this element type will be associated
         /// </param>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
-        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "This class gets deprecated and removed in later versions")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         public ElementType(string name, int model, int memberOf, int flags, Schema schema)
         {
             this.name = name;
@@ -68,9 +68,9 @@ namespace TagSoup
         /// in order to avoid virtual method calls.
         /// </summary>
         public ElementType(
-            string name, int model, int memberOf, int flags, Schema schema,
-            Func<string, bool, string> namespaceFunc,
-            Func<string, string> localNameFunc)
+            string name, string @namespace, string localName,
+            int model, int memberOf, int flags, Schema schema
+            )
         {
             this.name = name;
             Model = model;
@@ -78,8 +78,8 @@ namespace TagSoup
             Flags = flags;
             atts = new Attributes();
             this.schema = schema;
-            @namespace = namespaceFunc(name, false);
-            localName = localNameFunc(name);   
+            this.@namespace = namespaces;
+            this.localName = localName;
         }
 
         /// <summary>
