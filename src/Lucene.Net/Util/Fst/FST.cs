@@ -3,9 +3,12 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -1681,38 +1684,60 @@ namespace Lucene.Net.Util.Fst
             int topN = Math.Min(maxDerefNodes, inCounts.Count);
 
             // Find top nodes with highest number of incoming arcs:
-            FST.NodeQueue q = new FST.NodeQueue(topN);
+            IDictionary<int, int> topNodeMap = null;
 
-            // TODO: we could use more RAM efficient selection algo here...
-            FST.NodeAndInCount bottom = null;
-            for (int node = 0; node < inCounts.Count; node++)
+#nullable enable
+
+            // LUCENENET: Refactored PriorityQueue<T> subclass into PriorityComparer<T>
+            // implementation, which can be passed into ValuePriorityQueue. ValuePriorityQueue
+            // lives on the stack, and if the array size is small enough, we also allocate the
+            // array on the stack. Fallback to the array pool if it is beyond MaxStackByteLimit.
+            int bufferSize = PriorityQueue.GetArrayHeapSize(topN);
+            bool usePool = FST.NodeAndInCount.ByteSize * bufferSize > Constants.MaxStackByteLimit;
+            FST.NodeAndInCount?[]? arrayToReturnToPool = usePool ? ArrayPool<FST.NodeAndInCount?>.Shared.Rent(bufferSize) : null;
+            try
             {
-                if (inCounts.Get(node) >= minInCountDeref)
+                Span<FST.NodeAndInCount?> buffer = usePool ? arrayToReturnToPool : stackalloc FST.NodeAndInCount?[bufferSize];
+                var q = new ValuePriorityQueue<FST.NodeAndInCount?>(buffer, FST.NodeComparer.Default);
+#nullable restore
+
+                // TODO: we could use more RAM efficient selection algo here...
+                FST.NodeAndInCount? bottom = null;
+
+                for (int node = 0; node < inCounts.Count; node++)
                 {
-                    if (bottom is null)
+                    if (inCounts.Get(node) >= minInCountDeref)
                     {
-                        q.Add(new FST.NodeAndInCount(node, (int)inCounts.Get(node)));
-                        if (q.Count == topN)
+                        if (!bottom.HasValue)
                         {
-                            bottom = q.Top;
+                            q.Add(new FST.NodeAndInCount(node, (int)inCounts.Get(node)));
+                            if (q.Count == topN)
+                            {
+                                bottom = q.Top;
+                            }
+                        }
+                        else if (inCounts.Get(node) > bottom.Value.Count)
+                        {
+                            q.InsertWithOverflow(new FST.NodeAndInCount(node, (int)inCounts.Get(node)));
                         }
                     }
-                    else if (inCounts.Get(node) > bottom.Count)
-                    {
-                        q.InsertWithOverflow(new FST.NodeAndInCount(node, (int)inCounts.Get(node)));
-                    }
+                }
+
+                // Free up RAM:
+                inCounts = null;
+
+                topNodeMap = new Dictionary<int, int>(q.Count); // LUCENENET: Allocate the dictionary prior to the loop
+                for (int downTo = q.Count - 1; downTo >= 0; downTo--)
+                {
+                    FST.NodeAndInCount? n = q.Pop();
+                    topNodeMap[n.Value.Node] = downTo; // LUCENENET: we are bound in the loop by Count, so we won't go past the end and get null here.
+                    //System.out.println("map node=" + n.Node + " inCount=" + n.count + " to newID=" + downTo);
                 }
             }
-
-            // Free up RAM:
-            inCounts = null;
-
-            IDictionary<int, int> topNodeMap = new Dictionary<int, int>();
-            for (int downTo = q.Count - 1; downTo >= 0; downTo--)
+            finally
             {
-                FST.NodeAndInCount n = q.Pop();
-                topNodeMap[n.Node] = downTo;
-                //System.out.println("map node=" + n.Node + " inCount=" + n.count + " to newID=" + downTo);
+                if (arrayToReturnToPool is not null)
+                    ArrayPool<FST.NodeAndInCount?>.Shared.Return(arrayToReturnToPool);
             }
 
             // +1 because node ords start at 1 (0 is reserved as stop node):
@@ -2321,53 +2346,63 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        internal class NodeAndInCount : IComparable<NodeAndInCount> // LUCENENET TODO: This is a candidate for a struct
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct NodeAndInCount : IComparable<NodeAndInCount> // LUCENENET specific - made into a struct
         {
-            internal int Node { get; private set; }
-            internal int Count { get; private set; }
+            public const int ByteSize = sizeof(int) + sizeof(int);
+
+            [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+            [SuppressMessage("Major Code Smell", "S2933:Fields that are only assigned in the constructor should be \"readonly\"", Justification = "Structs are known to have performance issues with readonly fields")]
+            [SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "Structs are known to have performance issues with readonly fields")]
+            private int node;
+            [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+            [SuppressMessage("Major Code Smell", "S2933:Fields that are only assigned in the constructor should be \"readonly\"", Justification = "Structs are known to have performance issues with readonly fields")]
+            [SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "Structs are known to have performance issues with readonly fields")]
+            private int count;
+
+            internal int Node => node;
+            internal int Count => count;
 
             public NodeAndInCount(int node, int count)
             {
-                this.Node = node;
-                this.Count = count;
+                this.node = node;
+                this.count = count;
             }
 
-            public virtual int CompareTo(NodeAndInCount other)
+            public int CompareTo(NodeAndInCount other)
             {
-                if (Count > other.Count)
+                if (count > other.count)
                 {
                     return 1;
                 }
-                else if (Count < other.Count)
+                else if (count < other.count)
                 {
                     return -1;
                 }
                 else
                 {
                     // Tie-break: smaller node compares as greater than
-                    return other.Node - Node;
+                    return other.node - node;
                 }
             }
         }
 
 #nullable enable
-        internal class NodeQueue : PriorityQueue<NodeAndInCount>
+        // LUCENENET: Refactored NodeQueue into NodeComparer
+        // implementation, which can be passed into ValuePriorityQueue.
+        internal class NodeComparer : PriorityComparer<NodeAndInCount?>
         {
-            public NodeQueue(int topN)
-                : base(topN) // LUCENENET NOTE: Doesn't pre-populate because sentinelFactory is null
-            {
-            }
+            public static NodeComparer Default { get; } = new NodeComparer();
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            protected internal override bool LessThan(NodeAndInCount a, NodeAndInCount b)
+            protected internal override bool LessThan(NodeAndInCount? a, NodeAndInCount? b)
             {
-                // LUCENENET specific - added guard clauses
-                if (a is null)
-                    throw new ArgumentNullException(nameof(a));
-                if (b is null)
-                    throw new ArgumentNullException(nameof(b));
+                    // LUCENENET specific - added guard clauses
+                    if (a is null)
+                        throw new ArgumentNullException(nameof(a));
+                    if (b is null)
+                        throw new ArgumentNullException(nameof(b));
 
-                int cmp = a.CompareTo(b);
+                    int cmp = a.Value.CompareTo(b.Value);
                 if (Debugging.AssertsEnabled) Debugging.Assert(cmp != 0);
                 return cmp < 0;
             }

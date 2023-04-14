@@ -72,11 +72,11 @@ namespace Lucene.Net.Search
         // and a "prePopulate" boolean value, population is controlled by whether ISentinelFactory<T>
         // has an instance or is null. This is the singleton instance that is injected when "prePopulate"
         // is true.
-        internal sealed class SentinelFactory : SentinelFactory<ScoreDoc, HitQueue>
+        internal sealed class SentinelFactory : ISentinelFactory<ScoreDoc>
         {
             public static SentinelFactory Default { get; } = new SentinelFactory();
 
-            public override ScoreDoc Create(HitQueue priorityQueue)
+            public ScoreDoc Create()
             {
                 // Always set the doc Id to MAX_VALUE so that it won't be favored by
                 // lessThan. this generally should not happen since if score is not NEG_INF,

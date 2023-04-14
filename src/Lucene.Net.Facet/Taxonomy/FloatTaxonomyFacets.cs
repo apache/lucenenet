@@ -1,6 +1,8 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -33,6 +35,8 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public abstract class SingleTaxonomyFacets : TaxonomyFacets
     {
+        private const int OrdAndSingleByteSize = sizeof(int) + sizeof(float); // LUCENENET specific - so we can calculate stack size
+
         /// <summary>
         /// Per-ordinal value. </summary>
         protected readonly float[] m_values;
@@ -104,7 +108,8 @@ namespace Lucene.Net.Facet.Taxonomy
             return m_values[ord];
         }
 
-        public override FacetResult GetTopChildren(int topN, string dim, params string[] path)
+#nullable enable
+        public override FacetResult? GetTopChildren(int topN, string dim, params string[] path)
         {
             if (topN <= 0)
             {
@@ -118,64 +123,81 @@ namespace Lucene.Net.Facet.Taxonomy
                 return null;
             }
 
-            TopOrdAndSingleQueue q = new TopOrdAndSingleQueue(Math.Min(m_taxoReader.Count, topN));
-            float bottomValue = 0;
-
-            int ord = m_children[dimOrd];
-            float sumValues = 0;
-            int childCount = 0;
-
-            while (ord != TaxonomyReader.INVALID_ORDINAL)
+            // LUCENENET: Refactored PriorityQueue<T> subclass into PriorityComparer<T>
+            // implementation, which can be passed into ValuePriorityQueue. ValuePriorityQueue
+            // lives on the stack, and if the array size is small enough, we also allocate the
+            // array on the stack. Fallback to the array pool if it is beyond MaxStackByteLimit.
+            int bufferSize = PriorityQueue.GetArrayHeapSize(Math.Min(m_taxoReader.Count, topN));
+            bool usePool = OrdAndSingleByteSize * bufferSize > Constants.MaxStackByteLimit;
+            OrdAndValue<float>[]? arrayToReturnToPool = usePool ? ArrayPool<OrdAndValue<float>>.Shared.Rent(bufferSize) : null;
+            try
             {
-                if (m_values[ord] > 0)
+                Span<OrdAndValue<float>> buffer = usePool ? arrayToReturnToPool : stackalloc OrdAndValue<float>[bufferSize];
+                var q = new ValuePriorityQueue<OrdAndValue<float>>(buffer, TopOrdAndSingleComparer.Default);
+
+                float bottomValue = 0;
+
+                int ord = m_children[dimOrd];
+                float sumValues = 0;
+                int childCount = 0;
+
+                while (ord != TaxonomyReader.INVALID_ORDINAL)
                 {
-                    sumValues += m_values[ord];
-                    childCount++;
-                    if (m_values[ord] > bottomValue)
+                    if (m_values[ord] > 0)
                     {
-                        // LUCENENET specific - use struct instead of reusing class instance for better performance
-                        q.Insert(new OrdAndValue<float>(ord, m_values[ord]));
-                        if (q.Count == topN)
+                        sumValues += m_values[ord];
+                        childCount++;
+                        if (m_values[ord] > bottomValue)
                         {
-                            bottomValue = q.Top.Value;
+                            // LUCENENET specific - use struct instead of reusing class instance for better performance
+                            q.Insert(new OrdAndValue<float>(ord, m_values[ord]));
+                            if (q.Count == topN)
+                            {
+                                bottomValue = q.Top.Value;
+                            }
                         }
                     }
+
+                    ord = m_siblings[ord];
                 }
 
-                ord = m_siblings[ord];
-            }
-
-            if (sumValues == 0)
-            {
-                return null;
-            }
-
-            if (dimConfig.IsMultiValued)
-            {
-                if (dimConfig.RequireDimCount)
+                if (sumValues == 0)
                 {
-                    sumValues = m_values[dimOrd];
+                    return null;
+                }
+
+                if (dimConfig.IsMultiValued)
+                {
+                    if (dimConfig.RequireDimCount)
+                    {
+                        sumValues = m_values[dimOrd];
+                    }
+                    else
+                    {
+                        // Our sum'd count is not correct, in general:
+                        sumValues = -1;
+                    }
                 }
                 else
                 {
-                    // Our sum'd count is not correct, in general:
-                    sumValues = -1;
+                    // Our sum'd dim count is accurate, so we keep it
                 }
-            }
-            else
-            {
-                // Our sum'd dim count is accurate, so we keep it
-            }
 
-            LabelAndValue[] labelValues = new LabelAndValue[q.Count];
-            for (int i = labelValues.Length - 1; i >= 0; i--)
-            {
-                var ordAndValue = q.Pop();
-                FacetLabel child = m_taxoReader.GetPath(ordAndValue.Ord);
-                labelValues[i] = new LabelAndValue(child.Components[cp.Length], ordAndValue.Value);
-            }
+                LabelAndValue[] labelValues = new LabelAndValue[q.Count];
+                for (int i = labelValues.Length - 1; i >= 0; i--)
+                {
+                    var ordAndValue = q.Pop();
+                    FacetLabel child = m_taxoReader.GetPath(ordAndValue.Ord);
+                    labelValues[i] = new LabelAndValue(child.Components[cp.Length], ordAndValue.Value);
+                }
 
-            return new FacetResult(dim, path, sumValues, labelValues, childCount);
+                return new FacetResult(dim, path, sumValues, labelValues, childCount);
+            }
+            finally
+            {
+                if (arrayToReturnToPool is not null)
+                    ArrayPool<OrdAndValue<float>>.Shared.Return(arrayToReturnToPool);
+            }
         }
     }
 }

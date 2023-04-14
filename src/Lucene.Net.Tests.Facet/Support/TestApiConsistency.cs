@@ -38,7 +38,7 @@ namespace Lucene.Net.Tests.Facet
         [TestCase(typeof(Lucene.Net.Facet.Facets))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly);
+            base.TestPrivateFieldNames(typeFromTargetAssembly, @"^Lucene\.Net\.Facet\.Taxonomy\.(?:Single|Int32)TaxonomyFacets\.OrdAnd(?:Single|Int32)ByteSize");
         }
 
         [Test, LuceneNetSpecific]
