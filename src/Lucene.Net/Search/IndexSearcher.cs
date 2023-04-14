@@ -1,12 +1,12 @@
-﻿using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
+﻿#nullable enable
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
@@ -80,10 +80,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Used with executor - each slice holds a set of leafs executed within one thread </summary>
-        protected readonly LeafSlice[] m_leafSlices;
+        protected readonly LeafSlice[]? m_leafSlices;
 
         // These are only used for multi-threaded search
-        private readonly TaskScheduler executor;
+        private readonly TaskScheduler? executor;
 
         // the default Similarity
         private static readonly Similarity defaultSimilarity = new DefaultSimilarity();
@@ -104,8 +104,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Creates a searcher searching the provided index. </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="r"/> is <c>null</c>.</exception>
         public IndexSearcher(IndexReader r)
-            : this(r, null)
+            : this(r, executor: null)
         {
         }
 
@@ -117,8 +118,9 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public IndexSearcher(IndexReader r, TaskScheduler executor)
-            : this(r.Context, executor)
+        /// <exception cref="ArgumentNullException"><paramref name="r"/> is <c>null</c>.</exception>
+        public IndexSearcher(IndexReader r, TaskScheduler? executor)
+            : this(r?.Context!, executor)
         {
         }
 
@@ -132,16 +134,48 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental 
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="context"/> is <c>null</c>.</exception>
         /// <seealso cref="IndexReaderContext"/>
         /// <seealso cref="IndexReader.Context"/>
-        public IndexSearcher(IndexReaderContext context, TaskScheduler executor)
+        public IndexSearcher(IndexReaderContext context, TaskScheduler? executor)
+            : this(context, executor, allocateLeafSlices: executor is not null)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(context.IsTopLevel,"IndexSearcher's ReaderContext must be topLevel for reader {0}", context.Reader);
+        }
+
+        /// <summary>
+        /// LUCENENET specific constructor that can be used by the subclasses to
+        /// control whether the leaf slices are allocated in the base class or subclass.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="executor"/> is non-<c>null</c> and you choose to skip allocating the leaf slices
+        /// (i.e. <paramref name="allocateLeafSlices"/> == <c>false</c>), you must
+        /// set the <see cref="m_leafSlices"/> field in your subclass constructor.
+        /// This is commonly done by calling <see cref="GetSlices(IList{AtomicReaderContext})"/>
+        /// and using the result to set <see cref="m_leafSlices"/>. You may wish to do this if you
+        /// have state to pass into your constructor and need to set it prior to the call to
+        /// <see cref="GetSlices(IList{AtomicReaderContext})"/> so it is available for use
+        /// as a member field or property inside a custom override of
+        /// <see cref="GetSlices(IList{AtomicReaderContext})"/>.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="context"/> is <c>null</c>.</exception>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
+        protected IndexSearcher(IndexReaderContext context, TaskScheduler? executor, bool allocateLeafSlices)
+        {
+            if (context is null)
+                throw new ArgumentNullException(nameof(context));
+
+            if (Debugging.AssertsEnabled) Debugging.Assert(context.IsTopLevel, "IndexSearcher's ReaderContext must be topLevel for reader {0}", context.Reader);
+
             reader = context.Reader;
             this.executor = executor;
             this.m_readerContext = context;
             m_leafContexts = context.Leaves;
-            this.m_leafSlices = executor is null ? null : GetSlicesInternal(m_leafContexts);
+
+            if (allocateLeafSlices)
+            {
+                this.m_leafSlices = GetSlices(m_leafContexts);
+            }
         }
 
         /// <summary>
@@ -149,6 +183,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="context"/> is <c>null</c>.</exception>
         /// <seealso cref="IndexReaderContext"/>
         /// <seealso cref="IndexReader.Context"/>
         public IndexSearcher(IndexReaderContext context)
@@ -160,19 +195,14 @@ namespace Lucene.Net.Search
         /// Expert: Creates an array of leaf slices each holding a subset of the given leaves.
         /// Each <see cref="LeafSlice"/> is executed in a single thread. By default there
         /// will be one <see cref="LeafSlice"/> per leaf (<see cref="AtomicReaderContext"/>).
-        /// 
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
-        /// a private method and not this virtual method. So if you need to override
-        /// the behavior during the initialization, call your own private method from the constructor
-        /// with whatever custom behavior you need.
         /// </summary>
-        // LUCENENET specific - renamed to GetSlices to better indicate the purpose of this method
+        /// <exception cref="ArgumentNullException"><paramref name="leaves"/> is <c>null</c>.</exception>
         protected virtual LeafSlice[] GetSlices(IList<AtomicReaderContext> leaves)
-            => GetSlicesInternal(leaves);
-
-        // LUCENENET specific - creating this so that we can call it from the constructor
-        protected LeafSlice[] GetSlicesInternal(IList<AtomicReaderContext> leaves)
         {
+            // LUCENENET: Added guard clause
+            if (leaves is null)
+                throw new ArgumentNullException(nameof(leaves));
+
             LeafSlice[] slices = new LeafSlice[leaves.Count];
             for (int i = 0; i < slices.Length; i++)
             {
@@ -196,15 +226,19 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Sugar for <code>.IndexReader.Document(docID, fieldVisitor)</code> </summary>
         /// <seealso cref="IndexReader.Document(int, StoredFieldVisitor)"/>
+        /// <exception cref="ArgumentNullException"><paramref name="fieldVisitor"/> is <c>null</c>.</exception>
         public virtual void Doc(int docID, StoredFieldVisitor fieldVisitor)
         {
+            if (fieldVisitor is null)
+                throw new ArgumentNullException(nameof(fieldVisitor));
+
             reader.Document(docID, fieldVisitor);
         }
 
         /// <summary>
         /// Sugar for <code>.IndexReader.Document(docID, fieldsToLoad)</code> </summary>
         /// <seealso cref="IndexReader.Document(int, ISet{string})"/>
-        public virtual Document Doc(int docID, ISet<string> fieldsToLoad)
+        public virtual Document Doc(int docID, ISet<string>? fieldsToLoad)
         {
             return reader.Document(docID, fieldsToLoad);
         }
@@ -227,7 +261,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// @lucene.internal </summary>
-        protected virtual Query WrapFilter(Query query, Filter filter)
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
+        protected virtual Query WrapFilter(Query query, Filter? filter)
         {
             return (filter is null) ? query : new FilteredQuery(query, filter);
         }
@@ -243,7 +278,8 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual TopDocs SearchAfter(ScoreDoc after, Query query, int n)
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
+        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, int n)
         {
             return Search(CreateNormalizedWeight(query), after, n);
         }
@@ -259,7 +295,8 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n)
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
+        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), after, n);
         }
@@ -270,20 +307,21 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
         public virtual TopDocs Search(Query query, int n)
         {
-            return Search(query, null, n);
+            return Search(query, filter: null, n);
         }
 
         /// <summary>
         /// Finds the top <paramref name="n"/>
-        /// hits for <paramref name="query"/>, applying <paramref name="filter"/> if non-null.
+        /// hits for <paramref name="query"/>, applying <paramref name="filter"/> if non-<c>null</c>.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual TopDocs Search(Query query, Filter filter, int n)
+        public virtual TopDocs Search(Query query, Filter? filter, int n)
         {
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), null, n);
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), after: null, n);
         }
 
         /// <summary>
@@ -293,11 +331,13 @@ namespace Lucene.Net.Search
         /// document.
         /// </summary>
         /// <param name="query"> To match documents </param>
-        /// <param name="filter"> Ef non-null, used to permit documents to be collected. </param>
+        /// <param name="filter"> Ef non-<c>null</c>, used to permit documents to be collected. </param>
         /// <param name="results"> To receive hits </param>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual void Search(Query query, Filter filter, ICollector results)
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> or
+        ///         <paramref name="results"/> is <c>null</c>.</exception>
+        public virtual void Search(Query query, Filter? filter, ICollector results)
         {
             Search(m_leafContexts, CreateNormalizedWeight(WrapFilter(query, filter)), results);
         }
@@ -309,6 +349,8 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> or
+        ///         <paramref name="results"/> is <c>null</c>.</exception>
         public virtual void Search(Query query, ICollector results)
         {
             Search(m_leafContexts, CreateNormalizedWeight(query), results);
@@ -326,7 +368,9 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> or
+        ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        public virtual TopFieldDocs Search(Query query, Filter? filter, int n, Sort sort)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), n, sort, false, false);
         }
@@ -345,7 +389,9 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> or
+        ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        public virtual TopFieldDocs Search(Query query, Filter? filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), n, sort, doDocScores, doMaxScore);
         }
@@ -361,15 +407,27 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort)
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> or
+        ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n, Sort sort)
         {
-            if (after != null && !(after is FieldDoc))
+            FieldDoc? fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
+
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), fieldDoc, n, sort, true, false, false);
+        }
+
+        private static FieldDoc? GetScoreDocAsFieldDocIfNotNull(ScoreDoc? after)
+        {
+            FieldDoc? fieldDoc = null;
+            // LUCENENET: Simplified type check
+            if (after is not null)
             {
                 // TODO: if we fix type safety of TopFieldDocs we can
                 // remove this
-                throw new ArgumentException("after must be a FieldDoc; got " + after);
+                fieldDoc = after as FieldDoc ?? throw new ArgumentException($"{nameof(after)} must be a {nameof(FieldDoc)}; got {after}");
             }
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), (FieldDoc)after, n, sort, true, false, false);
+
+            return fieldDoc;
         }
 
         /// <summary>
@@ -379,6 +437,8 @@ namespace Lucene.Net.Search
         /// <param name="sort"> The <see cref="Lucene.Net.Search.Sort"/> object </param>
         /// <returns> The top docs, sorted according to the supplied <see cref="Lucene.Net.Search.Sort"/> instance </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> or
+        ///         <paramref name="sort"/> is <c>null</c>.</exception>
         public virtual TopFieldDocs Search(Query query, int n, Sort sort)
         {
             return Search(CreateNormalizedWeight(query), n, sort, false, false);
@@ -395,15 +455,13 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual TopDocs SearchAfter(ScoreDoc after, Query query, int n, Sort sort)
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> or
+        ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, int n, Sort sort)
         {
-            if (after != null && !(after is FieldDoc))
-            {
-                // TODO: if we fix type safety of TopFieldDocs we can
-                // remove this
-                throw new ArgumentException("after must be a FieldDoc; got " + after);
-            }
-            return Search(CreateNormalizedWeight(query), (FieldDoc)after, n, sort, true, false, false);
+            var fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
+
+            return Search(CreateNormalizedWeight(query), fieldDoc, n, sort, true, false, false);
         }
 
         /// <summary>
@@ -422,15 +480,13 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> or
+        ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
         {
-            if (after != null && !(after is FieldDoc))
-            {
-                // TODO: if we fix type safety of TopFieldDocs we can
-                // remove this
-                throw new ArgumentException("after must be a FieldDoc; got " + after);
-            }
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), (FieldDoc)after, n, sort, true, doDocScores, doMaxScore);
+            var fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
+
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), fieldDoc, n, sort, true, doDocScores, doMaxScore);
         }
 
         /// <summary>
@@ -441,7 +497,8 @@ namespace Lucene.Net.Search
         /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> instead. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        protected virtual TopDocs Search(Weight weight, ScoreDoc after, int nDocs)
+        /// <exception cref="ArgumentNullException"><paramref name="weight"/> is <c>null</c>.</exception>
+        protected virtual TopDocs Search(Weight weight, ScoreDoc? after, int nDocs)
         {
             int limit = reader.MaxDoc;
             if (limit == 0)
@@ -460,6 +517,12 @@ namespace Lucene.Net.Search
             }
             else
             {
+                // LUCENENET: Added guard clauses
+                if (weight is null)
+                    throw new ArgumentNullException(nameof(weight));
+                if (m_leafSlices is null)
+                    throw new InvalidOperationException($"When the constructor is passed a non-null {nameof(TaskScheduler)}, {nameof(m_leafSlices)} must also be set to a non-null value in the constructor.");
+
                 HitQueue hq = new HitQueue(nDocs, prePopulate: false);
                 ReentrantLock @lock = new ReentrantLock();
                 ExecutionHelper<TopDocs> runner = new ExecutionHelper<TopDocs>(executor);
@@ -498,8 +561,14 @@ namespace Lucene.Net.Search
         /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> instead. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        protected virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc after, int nDocs)
+        /// <exception cref="ArgumentNullException"><paramref name="leaves"/> or
+        ///         <paramref name="weight"/> is <c>null</c>.</exception>
+        protected virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc? after, int nDocs)
         {
+            // LUCENENET: Added guard clause
+            if (weight is null)
+                throw new ArgumentNullException(nameof(weight));
+
             // single thread
             int limit = reader.MaxDoc;
             if (limit == 0)
@@ -524,9 +593,11 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="weight"/> or
+        ///         <paramref name="sort"/> is <c>null</c>.</exception>
         protected virtual TopFieldDocs Search(Weight weight, int nDocs, Sort sort, bool doDocScores, bool doMaxScore)
         {
-            return Search(weight, null, nDocs, sort, true, doDocScores, doMaxScore);
+            return Search(weight, after: null, nDocs, sort, true, doDocScores, doMaxScore);
         }
 
         /// <summary>
@@ -534,12 +605,12 @@ namespace Lucene.Net.Search
         /// whether or not the fields in the returned <see cref="FieldDoc"/> instances should
         /// be set by specifying <paramref name="fillFields"/>.
         /// </summary>
-        protected virtual TopFieldDocs Search(Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
+        /// <exception cref="ArgumentNullException"><paramref name="weight"/> or
+        ///         <paramref name="sort"/> is <c>null</c>.</exception>
+        protected virtual TopFieldDocs Search(Weight weight, FieldDoc? after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
             if (sort is null)
-            {
                 throw new ArgumentNullException(nameof(sort), "Sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-            }
 
             int limit = reader.MaxDoc;
             if (limit == 0)
@@ -555,6 +626,12 @@ namespace Lucene.Net.Search
             }
             else
             {
+                // LUCENENET: Added guard clauses
+                if (weight is null)
+                    throw new ArgumentNullException(nameof(weight));
+                if (m_leafSlices is null)
+                    throw new InvalidOperationException($"When the constructor is passed a non-null {nameof(TaskScheduler)}, {nameof(m_leafSlices)} must also be set to a non-null value in the constructor.");
+
                 TopFieldCollector topCollector = TopFieldCollector.Create(sort, nDocs, after, fillFields, doDocScores, doMaxScore, false);
 
                 ReentrantLock @lock = new ReentrantLock();
@@ -587,8 +664,14 @@ namespace Lucene.Net.Search
         /// whether or not the fields in the returned <see cref="FieldDoc"/> instances should
         /// be set by specifying <paramref name="fillFields"/>.
         /// </summary>
-        protected virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
+        /// <exception cref="ArgumentNullException"><paramref name="leaves"/> or
+        ///          <paramref name="weight"/> is <c>null</c>.</exception>
+        protected virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc? after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
+            // LUCENENET: Added guard clause
+            if (weight is null)
+                throw new ArgumentNullException(nameof(weight));
+
             // single thread
             int limit = reader.MaxDoc;
             if (limit == 0)
@@ -620,8 +703,18 @@ namespace Lucene.Net.Search
         ///          To receive hits </param>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="leaves"/>, <paramref name="weight"/>,
+        ///         or <paramref name="collector"/> is <c>null</c>.</exception>
         protected virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
         {
+            // LUCENENET: Added guard clauses
+            if (leaves is null)
+                throw new ArgumentNullException(nameof(leaves));
+            if (weight is null)
+                throw new ArgumentNullException(nameof(weight));
+            if (collector is null)
+                throw new ArgumentNullException(nameof(collector));
+
             // TODO: should we make this
             // threaded...?  the Collector could be sync'd?
             // always use single thread:
@@ -657,9 +750,13 @@ namespace Lucene.Net.Search
         /// Expert: called to re-write queries into primitive queries. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual Query Rewrite(Query original)
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
+        public virtual Query Rewrite(Query query) // LUCENENET: renamed parameter from "original" to "query" so our exception message is consistent across the API
         {
-            Query query = original;
+            // LUCENENET: Added guard clause
+            if (query is null)
+                throw new ArgumentNullException(nameof(query));
+
             for (Query rewrittenQuery = query.Rewrite(reader); rewrittenQuery != query; rewrittenQuery = query.Rewrite(reader))
             {
                 query = rewrittenQuery;
@@ -676,6 +773,7 @@ namespace Lucene.Net.Search
         /// Computing an explanation is as expensive as executing the query over the
         /// entire index.
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
         public virtual Explanation Explain(Query query, int doc)
         {
             return Explain(CreateNormalizedWeight(query), doc);
@@ -693,8 +791,13 @@ namespace Lucene.Net.Search
         /// <para/>Applications should call <see cref="IndexSearcher.Explain(Query, int)"/>. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="weight"/> is <c>null</c>.</exception>
         protected virtual Explanation Explain(Weight weight, int doc)
         {
+            // LUCENENET: Added guard clause
+            if (weight is null)
+                throw new ArgumentNullException(nameof(weight));
+
             int n = ReaderUtil.SubIndex(doc, m_leafContexts);
             AtomicReaderContext ctx = m_leafContexts[n];
             int deBasedDoc = doc - ctx.DocBase;
@@ -710,6 +813,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.internal
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
         public virtual Weight CreateNormalizedWeight(Query query)
         {
             query = Rewrite(query);
@@ -739,12 +843,12 @@ namespace Lucene.Net.Search
             private readonly ReentrantLock @lock;
             private readonly IndexSearcher searcher;
             private readonly Weight weight;
-            private readonly ScoreDoc after;
+            private readonly ScoreDoc? after;
             private readonly int nDocs;
             private readonly HitQueue hq;
             private readonly LeafSlice slice;
 
-            public SearcherCallableNoSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, ScoreDoc after, int nDocs, HitQueue hq)
+            public SearcherCallableNoSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, ScoreDoc? after, int nDocs, HitQueue hq)
             {
                 this.@lock = @lock;
                 this.searcher = searcher;
@@ -792,11 +896,11 @@ namespace Lucene.Net.Search
             private readonly TopFieldCollector hq;
             private readonly Sort sort;
             private readonly LeafSlice slice;
-            private readonly FieldDoc after;
+            private readonly FieldDoc? after;
             private readonly bool doDocScores;
             private readonly bool doMaxScore;
 
-            public SearcherCallableWithSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, FieldDoc after, int nDocs, TopFieldCollector hq, Sort sort, bool doDocScores, bool doMaxScore)
+            public SearcherCallableWithSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, FieldDoc? after, int nDocs, TopFieldCollector hq, Sort sort, bool doDocScores, bool doMaxScore)
             {
                 this.@lock = @lock;
                 this.searcher = searcher;
@@ -845,6 +949,7 @@ namespace Lucene.Net.Search
             }
         }
 
+#nullable restore
         /// <summary>
         /// A helper class that wraps a <see cref="TaskSchedulerCompletionService{T}"/> and provides an
         /// iterable interface to the completed <see cref="Func{T}"/> delegates.
@@ -923,7 +1028,8 @@ namespace Lucene.Net.Search
                 return this;
             }
         }
-
+#nullable enable
+        
         /// <summary>
         /// A class holding a subset of the <see cref="IndexSearcher"/>s leaf contexts to be
         /// executed within a single thread.
@@ -934,9 +1040,15 @@ namespace Lucene.Net.Search
         {
             internal AtomicReaderContext[] Leaves { get; private set; }
 
+            /// <summary>
+            /// Initializes a new instance of <see cref="LeafSlice"/> with
+            /// the specified <paramref name="leaves"/>.
+            /// </summary>
+            /// <param name="leaves">The collection of leaves.</param>
+            /// <exception cref="ArgumentNullException"><paramref name="leaves"/> is <c>null</c>.</exception>
             public LeafSlice(params AtomicReaderContext[] leaves)
             {
-                this.Leaves = leaves;
+                this.Leaves = leaves ?? throw new ArgumentNullException(nameof(leaves)); // LUCENENET: Added guard clause
             }
         }
 
@@ -953,8 +1065,16 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="term"/> or
+        /// <paramref name="context"/> is <c>null</c>.</exception>
         public virtual TermStatistics TermStatistics(Term term, TermContext context)
         {
+            // LUCENENET: Added guard clauses
+            if (term is null)
+                throw new ArgumentNullException(nameof(term));
+            if (context is null)
+                throw new ArgumentNullException(nameof(context));
+
             return new TermStatistics(term.Bytes, context.DocFreq, context.TotalTermFreq);
         }
 
@@ -968,13 +1088,17 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual CollectionStatistics CollectionStatistics(string field)
         {
+            // LUCENENET: Added guard clause
+            if (field is null)
+                throw new ArgumentNullException(nameof(field));
+
             int docCount;
             long sumTotalTermFreq;
             long sumDocFreq;
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
+            // LUCENENET specific - replaced debug assert check for field being null with above guard clause
 
-            Terms terms = MultiFields.GetTerms(reader, field);
+            Terms? terms = MultiFields.GetTerms(reader, field);
             if (terms is null)
             {
                 docCount = 0;
