@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
         /// control whether the leaf slices are allocated in the base class or subclass.
         /// </summary>
         /// <remarks>
-        /// If executor is non-<c>null</c> and you choose to skip allocating the leaf slices
+        /// If <paramref name="executor"/> is non-<c>null</c> and you choose to skip allocating the leaf slices
         /// (i.e. <paramref name="allocateLeafSlices"/> == <c>false</c>), you must
         /// set the <see cref="m_leafSlices"/> field in your subclass constructor.
         /// This is commonly done by calling <see cref="GetSlices(IList{AtomicReaderContext})"/>
