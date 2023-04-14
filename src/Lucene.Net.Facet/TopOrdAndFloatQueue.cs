@@ -94,6 +94,7 @@ namespace Lucene.Net.Facet
     // and stack allocated.
     [StructLayout(LayoutKind.Sequential)]
     public struct OrdAndValue<T> : IEquatable<OrdAndValue<T>>
+        where T : struct
     {
         private int ord;
         private T value;
@@ -116,7 +117,7 @@ namespace Lucene.Net.Facet
         }
 
         #region Added for better .NET support
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is OrdAndValue<T> other && Equals(other);
         }
