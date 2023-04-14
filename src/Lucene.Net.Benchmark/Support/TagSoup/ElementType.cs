@@ -78,7 +78,7 @@ namespace TagSoup
             Flags = flags;
             atts = new Attributes();
             this.schema = schema;
-            this.@namespace = namespaces;
+            this.@namespace = @namespace;
             this.localName = localName;
         }
 
