@@ -472,6 +472,10 @@ namespace Lucene.Net.Search
                 ReentrantLock @lock = new ReentrantLock();
                 ExecutionHelper<TopDocs> runner = new ExecutionHelper<TopDocs>(executor);
 
+                if (m_leafSlices == null)
+                    throw new InvalidOperationException("m_leafSlices must not be null and initialized in the constructor");
+            
+
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each sub
                 {
                     runner.Submit(new SearcherCallableNoSort(@lock, this, m_leafSlices[i], weight, after, nDocs, hq).Call);
