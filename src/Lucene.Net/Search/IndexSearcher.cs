@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -7,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
@@ -144,7 +142,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific constructor that can be used by the subclasses to
         /// control whether or not the leaf slices are allocated.
         /// If you choose to skip allocating the leaf slices here, you must 
-        /// call <see cref="Slices"/> in your subclass's constructor.
+        /// call <see cref="GetSlices"/> in your subclass's constructor.
         /// </summary>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
@@ -158,7 +156,7 @@ namespace Lucene.Net.Search
 
             if (allocateLeafSlices)
             {
-                this.m_leafSlices = Slices(m_leafContexts);
+                this.m_leafSlices = GetSlices(m_leafContexts);
             }
         }
 
@@ -179,7 +177,7 @@ namespace Lucene.Net.Search
         /// Each <see cref="LeafSlice"/> is executed in a single thread. By default there
         /// will be one <see cref="LeafSlice"/> per leaf (<see cref="AtomicReaderContext"/>).
         /// </summary>
-        protected virtual LeafSlice[] Slices(IList<AtomicReaderContext> leaves)
+        protected virtual LeafSlice[] GetSlices(IList<AtomicReaderContext> leaves)
         {
             LeafSlice[] slices = new LeafSlice[leaves.Count];
             for (int i = 0; i < slices.Length; i++)
@@ -468,7 +466,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                HitQueue hq = new HitQueue(nDocs, false);
+                HitQueue hq = new HitQueue(nDocs, prePopulate: false);
                 ReentrantLock @lock = new ReentrantLock();
                 ExecutionHelper<TopDocs> runner = new ExecutionHelper<TopDocs>(executor);
 
@@ -550,7 +548,7 @@ namespace Lucene.Net.Search
         {
             if (sort is null)
             {
-                throw new ArgumentNullException("Sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(sort), "Sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
             int limit = reader.MaxDoc;
