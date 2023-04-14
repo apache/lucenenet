@@ -878,6 +878,7 @@ namespace Lucene.Net.Search
             }
         }
 
+        #nullable restore
         /// <summary>
         /// A helper class that wraps a <see cref="TaskSchedulerCompletionService{T}"/> and provides an
         /// iterable interface to the completed <see cref="Func{T}"/> delegates.
@@ -956,7 +957,8 @@ namespace Lucene.Net.Search
                 return this;
             }
         }
-
+        #nullable enable
+        
         /// <summary>
         /// A class holding a subset of the <see cref="IndexSearcher"/>s leaf contexts to be
         /// executed within a single thread.
