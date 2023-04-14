@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿#nullable enable
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -79,10 +80,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Used with executor - each slice holds a set of leafs executed within one thread </summary>
-        protected readonly LeafSlice[] m_leafSlices;
+        protected readonly LeafSlice[]? m_leafSlices;
 
         // These are only used for multi-threaded search
-        private readonly TaskScheduler executor;
+        private readonly TaskScheduler? executor;
 
         // the default Similarity
         private static readonly Similarity defaultSimilarity = new DefaultSimilarity();
@@ -104,7 +105,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Creates a searcher searching the provided index. </summary>
         public IndexSearcher(IndexReader r)
-            : this(r, null)
+            : this(r, executor: null)
         {
         }
 
@@ -116,8 +117,8 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public IndexSearcher(IndexReader r, TaskScheduler executor)
-            : this(r?.Context, executor)
+        public IndexSearcher(IndexReader r, TaskScheduler? executor)
+            : this(r.Context, executor)
         {
         }
 
@@ -133,7 +134,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <seealso cref="IndexReaderContext"/>
         /// <seealso cref="IndexReader.Context"/>
-        public IndexSearcher(IndexReaderContext context, TaskScheduler executor)
+        public IndexSearcher(IndexReaderContext context, TaskScheduler? executor)
             : this(context, executor, allocateLeafSlices: executor is not null)
         {
         }
@@ -155,7 +156,7 @@ namespace Lucene.Net.Search
         /// </remarks>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
-        protected IndexSearcher(IndexReaderContext context, TaskScheduler executor, bool allocateLeafSlices)
+        protected IndexSearcher(IndexReaderContext context, TaskScheduler? executor, bool allocateLeafSlices)
         {
             if (context is null)
                 throw new ArgumentNullException(nameof(context));
@@ -247,7 +248,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// @lucene.internal </summary>
-        protected virtual Query WrapFilter(Query query, Filter filter)
+        protected virtual Query WrapFilter(Query query, Filter? filter)
         {
             return (filter is null) ? query : new FilteredQuery(query, filter);
         }
@@ -292,7 +293,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs Search(Query query, int n)
         {
-            return Search(query, null, n);
+            return Search(query, filter: null, n);
         }
 
         /// <summary>
@@ -301,9 +302,9 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual TopDocs Search(Query query, Filter filter, int n)
+        public virtual TopDocs Search(Query query, Filter? filter, int n)
         {
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), null, n);
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), after: null, n);
         }
 
         /// <summary>
@@ -383,13 +384,27 @@ namespace Lucene.Net.Search
         ///         <seealso cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort)
         {
+            FieldDoc? fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
+
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), fieldDoc, n, sort, true, false, false);
+        }
+
+        private static FieldDoc? GetScoreDocAsFieldDocIfNotNull(ScoreDoc after)
+        {
+            FieldDoc? fieldDoc = null;
             if (after != null && !(after is FieldDoc))
             {
                 // TODO: if we fix type safety of TopFieldDocs we can
                 // remove this
                 throw new ArgumentException("after must be a FieldDoc; got " + after);
             }
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), (FieldDoc)after, n, sort, true, false, false);
+
+            if (after != null && after is FieldDoc)
+            {
+                fieldDoc = (FieldDoc)after;
+            }
+
+            return fieldDoc;
         }
 
         /// <summary>
@@ -417,13 +432,9 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, int n, Sort sort)
         {
-            if (after != null && !(after is FieldDoc))
-            {
-                // TODO: if we fix type safety of TopFieldDocs we can
-                // remove this
-                throw new ArgumentException("after must be a FieldDoc; got " + after);
-            }
-            return Search(CreateNormalizedWeight(query), (FieldDoc)after, n, sort, true, false, false);
+            var fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
+
+            return Search(CreateNormalizedWeight(query), fieldDoc, n, sort, true, false, false);
         }
 
         /// <summary>
@@ -444,13 +455,9 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
         {
-            if (after != null && !(after is FieldDoc))
-            {
-                // TODO: if we fix type safety of TopFieldDocs we can
-                // remove this
-                throw new ArgumentException("after must be a FieldDoc; got " + after);
-            }
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), (FieldDoc)after, n, sort, true, doDocScores, doMaxScore);
+            var fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
+
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), fieldDoc, n, sort, true, doDocScores, doMaxScore);
         }
 
         /// <summary>
@@ -461,7 +468,7 @@ namespace Lucene.Net.Search
         /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> instead. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        protected virtual TopDocs Search(Weight weight, ScoreDoc after, int nDocs)
+        protected virtual TopDocs Search(Weight weight, ScoreDoc? after, int nDocs)
         {
             int limit = reader.MaxDoc;
             if (limit == 0)
@@ -521,7 +528,7 @@ namespace Lucene.Net.Search
         /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> instead. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        protected virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc after, int nDocs)
+        protected virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc? after, int nDocs)
         {
             // single thread
             int limit = reader.MaxDoc;
@@ -549,7 +556,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         protected virtual TopFieldDocs Search(Weight weight, int nDocs, Sort sort, bool doDocScores, bool doMaxScore)
         {
-            return Search(weight, null, nDocs, sort, true, doDocScores, doMaxScore);
+            return Search(weight, after: null, nDocs, sort, true, doDocScores, doMaxScore);
         }
 
         /// <summary>
@@ -557,7 +564,7 @@ namespace Lucene.Net.Search
         /// whether or not the fields in the returned <see cref="FieldDoc"/> instances should
         /// be set by specifying <paramref name="fillFields"/>.
         /// </summary>
-        protected virtual TopFieldDocs Search(Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
+        protected virtual TopFieldDocs Search(Weight weight, FieldDoc? after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
             if (sort is null)
             {
@@ -613,7 +620,7 @@ namespace Lucene.Net.Search
         /// whether or not the fields in the returned <see cref="FieldDoc"/> instances should
         /// be set by specifying <paramref name="fillFields"/>.
         /// </summary>
-        protected virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
+        protected virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc? after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
             // single thread
             int limit = reader.MaxDoc;
@@ -765,12 +772,12 @@ namespace Lucene.Net.Search
             private readonly ReentrantLock @lock;
             private readonly IndexSearcher searcher;
             private readonly Weight weight;
-            private readonly ScoreDoc after;
+            private readonly ScoreDoc? after;
             private readonly int nDocs;
             private readonly HitQueue hq;
             private readonly LeafSlice slice;
 
-            public SearcherCallableNoSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, ScoreDoc after, int nDocs, HitQueue hq)
+            public SearcherCallableNoSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, ScoreDoc? after, int nDocs, HitQueue hq)
             {
                 this.@lock = @lock;
                 this.searcher = searcher;
@@ -818,11 +825,11 @@ namespace Lucene.Net.Search
             private readonly TopFieldCollector hq;
             private readonly Sort sort;
             private readonly LeafSlice slice;
-            private readonly FieldDoc after;
+            private readonly FieldDoc? after;
             private readonly bool doDocScores;
             private readonly bool doMaxScore;
 
-            public SearcherCallableWithSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, FieldDoc after, int nDocs, TopFieldCollector hq, Sort sort, bool doDocScores, bool doMaxScore)
+            public SearcherCallableWithSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, FieldDoc? after, int nDocs, TopFieldCollector hq, Sort sort, bool doDocScores, bool doMaxScore)
             {
                 this.@lock = @lock;
                 this.searcher = searcher;
@@ -1017,3 +1024,4 @@ namespace Lucene.Net.Search
         }
     }
 }
+#nullable restore
