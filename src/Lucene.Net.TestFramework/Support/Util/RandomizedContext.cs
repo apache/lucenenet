@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
             this.currentTest = currentTest ?? throw new ArgumentNullException(nameof(currentTest));
             this.currentTestAssembly = currentTestAssembly ?? throw new ArgumentNullException(nameof(currentTestAssembly));
             this.randomSeed = randomSeed;
-            this.randomSeedAsHex = "0x" + randomSeed.ToHexString();
+            this.randomSeedAsHex = SeedUtils.FormatSeed(randomSeed);
             this.testSeed = testSeed;
         }
 

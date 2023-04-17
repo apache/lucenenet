@@ -2919,8 +2919,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates an empty, temporary folder with the given name prefix under the
-        /// system's <see cref="Path.GetTempPath()"/>.
+        /// Creates an empty, temporary folder with the given name <paramref name="prefix"/> under the
+        /// system's <see cref="Path.GetTempPath()"/> or if supplied, the <c>tempDir</c> system property.
         /// 
         /// <para/>The folder will be automatically removed after the
         /// test class completes successfully. The test should close any file handles that would prevent
@@ -2929,6 +2929,7 @@ namespace Lucene.Net.Util
         public static DirectoryInfo CreateTempDir(string prefix)
         {
             //DirectoryInfo @base = BaseTempDirForTestClass();
+            string @base = SystemProperties.GetProperty("tempDir", System.IO.Path.GetTempPath());
 
             int attempt = 0;
             DirectoryInfo f;
@@ -2942,7 +2943,7 @@ namespace Lucene.Net.Util
                 // LUCENENET specific - need to use a random file name instead of a sequential one or two threads may attempt to do 
                 // two operations on a file at the same time.
                 //f = new DirectoryInfo(Path.Combine(System.IO.Path.GetTempPath(), "LuceneTemp", prefix + "-" + attempt));
-                f = new DirectoryInfo(Path.Combine(System.IO.Path.GetTempPath(), "LuceneTemp", prefix + "-" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName())));
+                f = new DirectoryInfo(Path.Combine(@base, "LuceneTemp", prefix + "-" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName())));
 
                 try
                 {
@@ -2963,19 +2964,20 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates an empty file with the given prefix and suffix under the
-        /// system's <see cref="Path.GetTempPath()"/>.
+        /// Creates an empty file with the given <paramref name="prefix"/> and <paramref name="suffix"/> under the
+        /// system's <see cref="Path.GetTempPath()"/> or if supplied, the <c>tempDir</c> system property.
         ///
         /// <para/>The file will be automatically removed after the
         /// test class completes successfully. The test should close any file handles that would prevent
-        /// the folder from being removed.
+        /// the file from being removed.
         /// </summary>
         public static FileInfo CreateTempFile(string prefix, string suffix)
         {
             //DirectoryInfo @base = BaseTempDirForTestClass();
+            string @base = SystemProperties.GetProperty("tempDir", System.IO.Path.GetTempPath());
 
             //int attempt = 0;
-            FileInfo f = FileSupport.CreateTempFile(prefix, suffix, new DirectoryInfo(Path.GetTempPath()));
+            FileInfo f = FileSupport.CreateTempFile(prefix, suffix, @base);
             //do
             //{
             //    if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
@@ -2992,6 +2994,10 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Creates an empty temporary file.
+        ///
+        /// <para/>The file will be automatically removed after the
+        /// test class completes successfully. The test should close any file handles that would prevent
+        /// the file from being removed.
         /// </summary>
         /// <seealso cref="CreateTempFile(string, string)"/>
         public static FileInfo CreateTempFile()

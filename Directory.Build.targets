@@ -42,6 +42,7 @@
 
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_PROCESS_KILL_ENTIREPROCESSTREE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STRING_CONCAT_READONLYSPAN</DefineConstants>
 
   </PropertyGroup>
