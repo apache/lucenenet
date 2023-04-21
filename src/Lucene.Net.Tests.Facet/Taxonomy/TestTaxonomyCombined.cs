@@ -784,7 +784,6 @@ namespace Lucene.Net.Facet.Taxonomy
 
         // Test that getParentArrays is valid when retrieved during refresh
         [Test]
-        [Slow]
         public virtual void TestTaxonomyReaderRefreshRaces()
         {
             // compute base child arrays - after first chunk, and after the other

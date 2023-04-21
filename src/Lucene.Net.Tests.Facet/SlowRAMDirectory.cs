@@ -1,7 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
-using Lucene.Net.Support.Threading;
-using RandomizedTesting.Generators;
 using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Lucene.Net.Facet
@@ -39,7 +38,7 @@ namespace Lucene.Net.Facet
 
         internal Random random;
         private int sleepMillis;
-
+        
         public virtual void SetSleepMillis(int sleepMillis)
         {
             this.sleepMillis = sleepMillis;
@@ -80,7 +79,20 @@ namespace Lucene.Net.Facet
 
             try
             {
-                Thread.Sleep(sTime);
+                // LUCENENET specific - timer resolution on windows by default is 15ms and small sleeps will end up taking
+                // 15ms instead causing certain tests to run slowly. Instead, we'll use a Stopwatch to get more accurate
+                if (sTime > 15)
+                {
+                    Thread.Sleep(sTime);
+                }
+                else
+                {
+                    var timer = Stopwatch.StartNew();
+                    while(timer.ElapsedMilliseconds < sTime)
+                    {
+                        continue;
+                    }
+                }
             }
             catch (Exception ie) when (ie.IsInterruptedException())
             {
@@ -188,7 +200,7 @@ namespace Lucene.Net.Facet
             private readonly IndexOutput io;
             private int numWrote;
             private readonly Random rand;
-
+            
             public SlowIndexOutput(SlowRAMDirectory outerInstance, IndexOutput io)
             {
                 this.outerInstance = outerInstance;
