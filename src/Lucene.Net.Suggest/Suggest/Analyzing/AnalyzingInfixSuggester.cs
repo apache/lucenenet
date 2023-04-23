@@ -179,8 +179,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             if (DirectoryReader.IndexExists(dir))
             {
                 // Already built; open it:
-                // LUCENENET specific, deleted writer = new IndexWriter based on LUCENE-7670
-                m_searcherMgr = new SearcherManager(dir, null);
+                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.APPEND));
+                m_searcherMgr = new SearcherManager(writer, true, null);
             }
         }
 
