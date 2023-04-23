@@ -1,7 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
-using Lucene.Net.Support.Threading;
 using RandomizedTesting.Generators;
 using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Lucene.Net.Facet
@@ -36,10 +36,10 @@ namespace Lucene.Net.Facet
     public class SlowRAMDirectory : RAMDirectory
     {
         private const int IO_SLEEP_THRESHOLD = 50;
-
+        
         internal Random random;
         private int sleepMillis;
-
+        
         public virtual void SetSleepMillis(int sleepMillis)
         {
             this.sleepMillis = sleepMillis;
@@ -80,11 +80,24 @@ namespace Lucene.Net.Facet
 
             try
             {
-                Thread.Sleep(sTime);
+                Sleep(sTime);
             }
             catch (Exception ie) when (ie.IsInterruptedException())
             {
                 throw new Util.ThreadInterruptedException(ie);
+            }
+        }
+
+        // LUCENENET specific - We can't use Thread.Sleep which depends on the clock
+        // interrupt frequency, and that frequency might be too low for low values like 1 millisecond.
+        private static void Sleep(int milliseconds)
+        {
+            long ticks = (long)((Stopwatch.Frequency / (double)1000) * milliseconds); // ticks per millisecond * milliseconds = total delay ticks
+            long initialTick = Stopwatch.GetTimestamp();
+            long targetTick = initialTick + ticks;
+            while (Stopwatch.GetTimestamp() < targetTick)
+            {
+                Thread.SpinWait(1);
             }
         }
 
@@ -188,7 +201,7 @@ namespace Lucene.Net.Facet
             private readonly IndexOutput io;
             private int numWrote;
             private readonly Random rand;
-
+            
             public SlowIndexOutput(SlowRAMDirectory outerInstance, IndexOutput io)
             {
                 this.outerInstance = outerInstance;

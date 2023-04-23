@@ -96,10 +96,10 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled) Debugging.Assert(previousMappings.Count < 10000, "test went insane");
             }
 
-            //if (LuceneTestCase.VERBOSE)
-            //{
-            Console.WriteLine("RandomCodec.GetPostingsFormatForField(\"" + name + "\") returned '" + codec.Name + "' with underlying type '" + codec.GetType().ToString() + "'.");
-            //}
+            if (LuceneTestCase.Verbose)
+            {
+                Console.WriteLine("RandomCodec.GetPostingsFormatForField(\"" + name + "\") returned '" + codec.Name + "' with underlying type '" + codec.GetType().ToString() + "'.");
+            }
 
             return codec;
         }
@@ -119,10 +119,10 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled) Debugging.Assert(previousDVMappings.Count < 10000, "test went insane");
             }
 
-            //if (LuceneTestCase.VERBOSE)
-            //{
+            if (LuceneTestCase.Verbose)
+            {
                 Console.WriteLine("RandomCodec.GetDocValuesFormatForField(\"" + name + "\") returned '" + codec.Name + "' with underlying type '" + codec.GetType().ToString() + "'.");
-            //}
+            }
 
             return codec;
         }
