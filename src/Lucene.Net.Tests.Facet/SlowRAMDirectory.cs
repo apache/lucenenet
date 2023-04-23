@@ -36,8 +36,7 @@ namespace Lucene.Net.Facet
     public class SlowRAMDirectory : RAMDirectory
     {
         private const int IO_SLEEP_THRESHOLD = 50;
-        private const int MINIMUM_SUPPORTED_THREAD_SLEEP_TIME = 15;
-
+        
         internal Random random;
         private int sleepMillis;
         
@@ -81,24 +80,24 @@ namespace Lucene.Net.Facet
 
             try
             {
-                // LUCENENET specific - timer resolution on windows by default is 15ms and small sleeps will end up taking
-                // 15ms instead causing certain tests to run slowly. Instead, we'll use a Stopwatch to get more accurate
-                if (sTime > MINIMUM_SUPPORTED_THREAD_SLEEP_TIME)
-                {
-                    Thread.Sleep(sTime);
-                }
-                else
-                {
-                    var timer = Stopwatch.StartNew();
-                    while(timer.ElapsedMilliseconds < sTime)
-                    {
-                        continue;
-                    }
-                }
+                Sleep(sTime);
             }
             catch (Exception ie) when (ie.IsInterruptedException())
             {
                 throw new Util.ThreadInterruptedException(ie);
+            }
+        }
+
+        // LUCENENET specific - We can't use Thread.Sleep which depends on the clock
+        // interrupt frequency, and that frequency might be too low for low values like 1 millisecond.
+        private static void Sleep(int milliseconds)
+        {
+            long ticks = (long)((Stopwatch.Frequency / (double)1000) * milliseconds); // ticks per millisecond * milliseconds = total delay ticks
+            long initialTick = Stopwatch.GetTimestamp();
+            long targetTick = initialTick + ticks;
+            while (Stopwatch.GetTimestamp() < targetTick)
+            {
+                Thread.SpinWait(1);
             }
         }
 
