@@ -2,6 +2,7 @@
 using NUnit.Framework.Internal;
 using System;
 using System.Reflection;
+using System.Threading;
 
 namespace Lucene.Net.Util
 {
@@ -30,7 +31,7 @@ namespace Lucene.Net.Util
         // LUCENENET NOTE: Using an underscore to prefix the name hides it from "traits" in Test Explorer
         internal const string RandomizedContextPropertyName = "_RandomizedContext";
 
-        private Random randomGenerator;
+        private readonly ThreadLocal<Random> randomGenerator;
         private readonly Test currentTest;
         private readonly Assembly currentTestAssembly;
         private readonly long randomSeed;
@@ -51,6 +52,7 @@ namespace Lucene.Net.Util
             this.randomSeed = randomSeed;
             this.randomSeedAsHex = SeedUtils.FormatSeed(randomSeed);
             this.testSeed = testSeed;
+            this.randomGenerator = new ThreadLocal<Random>(() => new J2N.Randomizer(this.testSeed));
         }
 
         /// <summary>
@@ -79,7 +81,7 @@ namespace Lucene.Net.Util
         public long TestSeed => testSeed;
 
         /// <summary>
-        /// Gets the RandomGenerator specific to this Test. This random generator implementatation
+        /// Gets the RandomGenerator specific to this Test and thread. This random generator implementatation
         /// is not platform specific, so random numbers generated on one operating system will work on another.
         /// <para/>
         /// NOTE: NUnit doesn't currently set the <see cref="Test.Seed"/> property for the test fixtures
@@ -90,15 +92,7 @@ namespace Lucene.Net.Util
         /// random test data in these cases. Using the <see cref="LuceneTestCase.TestFixtureAttribute"/>
         /// will set the seed properly and make it possible to repeat the result.
         /// </summary>
-        public Random RandomGenerator
-        {
-            get
-            {
-                if (randomGenerator is null)
-                    randomGenerator = new J2N.Randomizer(testSeed);
-                return randomGenerator;
-            }
-        }
+        public Random RandomGenerator => randomGenerator.Value;
 
         /// <summary>
         /// Gets the randomized context for the current test or test fixture.
