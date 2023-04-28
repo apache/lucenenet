@@ -302,7 +302,7 @@ namespace Lucene.Net.Index
         {
             if (file is DirectoryInfo directoryInfo)
             {
-                using BaseDirectoryWrapper dir = NewFSDirectory(directoryInfo);
+                BaseDirectoryWrapper dir = NewFSDirectory(directoryInfo);
                 dir.CheckIndexOnDispose = false; // don't double-checkindex
                 if (DirectoryReader.IndexExists(dir))
                 {
