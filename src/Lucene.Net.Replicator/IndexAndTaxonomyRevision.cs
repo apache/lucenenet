@@ -40,12 +40,16 @@ namespace Lucene.Net.Replicator
     /// @lucene.experimental
     /// </remarks>
     /// <seealso cref="IndexRevision"/>
-    public partial class IndexAndTaxonomyRevision : IRevision
+    public class IndexAndTaxonomyRevision : IRevision
     {
+        // LUCENENET specific - de-nested SnapshotDirectoryTaxonomyWriter and rewrote it as
+        // SnapshotDirectoryTaxonomyIndexWriterFactory
+
         public const string INDEX_SOURCE = "index";
         public const string TAXONOMY_SOURCE = "taxonomy";
 
         private readonly IndexWriter indexWriter;
+        // LUCENENET specific, storing the taxonomyWriterFactory that creates writer and policies
         private readonly SnapshotDirectoryTaxonomyIndexWriterFactory taxonomyWriterFactory;
         private readonly IndexCommit indexCommit, taxonomyCommit;
         private readonly SnapshotDeletionPolicy indexSdp, taxonomySdp;

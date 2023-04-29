@@ -181,7 +181,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <exception cref="IOException">
         ///     if another error occurred. </exception>
         public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode,
-            ITaxonomyWriterCache cache) : this(directory, openMode, cache, DirectoryTaxonomyIndexWriterFactory.Default)
+            ITaxonomyWriterCache cache) : this(DirectoryTaxonomyIndexWriterFactory.Default, directory, openMode, cache)
         {
         }
 
@@ -217,9 +217,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         ///     removed using <see cref="Unlock(Directory)"/>. </exception>
         /// <exception cref="IOException">
         ///     if another error occurred. </exception>
-        /// <exception cref="System.ArgumentNullException"> if <paramref name="indexWriterFactory"/> is <c>null</c> </exception>
-        protected DirectoryTaxonomyWriter(Directory directory, OpenMode openMode,
-            ITaxonomyWriterCache cache, DirectoryTaxonomyIndexWriterFactory indexWriterFactory)
+        /// <exception cref="ArgumentNullException"> if <paramref name="indexWriterFactory"/> is <c>null</c> </exception>
+        public DirectoryTaxonomyWriter(DirectoryTaxonomyIndexWriterFactory indexWriterFactory, Directory directory,
+            OpenMode openMode, ITaxonomyWriterCache cache)
         {
             dir = directory;
 
@@ -345,7 +345,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// cached in memory while building it.
         /// </para>
         /// </summary>
-        public static ITaxonomyWriterCache CreateDefaultTaxonomyWriterCache()
+        public static ITaxonomyWriterCache CreateDefaultTaxonomyWriterCache() // LUCENENET renamed with Create*
         {
             return new Cl2oTaxonomyWriterCache(1024, 0.15f, 3);
         }
@@ -353,13 +353,20 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Create this with <see cref="OpenMode.CREATE_OR_APPEND"/>.
         /// </summary>
+        /// <param name="directory">The <see cref="Store.Directory"/> in which to store the taxonomy. Note that
+        ///    the taxonomy is written directly to that directory (not to a
+        ///    subdirectory of it). </param>
         public DirectoryTaxonomyWriter(Directory directory) : this(directory, OpenMode.CREATE_OR_APPEND) { }
 
         /// <summary>
         /// Create this with <see cref="OpenMode.CREATE_OR_APPEND"/> and <see cref="CreateDefaultTaxonomyWriterCache()"/>.
         /// </summary>
-        public DirectoryTaxonomyWriter(Directory directory, DirectoryTaxonomyIndexWriterFactory indexWriterFactory)
-            : this(directory, OpenMode.CREATE_OR_APPEND, CreateDefaultTaxonomyWriterCache(), indexWriterFactory) { }
+        /// <param name="indexWriterFactory">The <see cref="DirectoryTaxonomyIndexWriterFactory"/> to use to create the <see cref="IndexWriter"/>.</param>
+        /// <param name="directory">The <see cref="Store.Directory"/> in which to store the taxonomy. Note that
+        ///    the taxonomy is written directly to that directory (not to a
+        ///    subdirectory of it). </param>
+        public DirectoryTaxonomyWriter(DirectoryTaxonomyIndexWriterFactory indexWriterFactory, Directory directory)
+            : this(indexWriterFactory, directory, OpenMode.CREATE_OR_APPEND, CreateDefaultTaxonomyWriterCache()) { }
 
         /// <summary>
         /// Frees used resources as well as closes the underlying <see cref="IndexWriter"/>,

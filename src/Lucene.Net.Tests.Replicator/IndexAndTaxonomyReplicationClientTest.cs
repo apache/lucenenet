@@ -124,6 +124,8 @@ namespace Lucene.Net.Replicator
         private ReplicationClient client;
         private IReplicationHandler handler;
         private IndexWriter publishIndexWriter;
+        // LUCENENET specific - we use a SnapshotDirectoryTaxonomyWriterFactory as that's
+        // what is being used to customize the taxonomy writer now.
         private DirectoryTaxonomyWriter publishTaxoWriter;
         private SnapshotDirectoryTaxonomyIndexWriterFactory publishTaxoWriterFactory;
         private FacetsConfig config;
@@ -210,7 +212,7 @@ namespace Lucene.Net.Replicator
             conf.IndexDeletionPolicy = new SnapshotDeletionPolicy(conf.IndexDeletionPolicy);
             publishIndexWriter = new IndexWriter(publishIndexDir, conf);
             publishTaxoWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
-            publishTaxoWriter = new DirectoryTaxonomyWriter(publishTaxoDir, publishTaxoWriterFactory);
+            publishTaxoWriter = new DirectoryTaxonomyWriter(publishTaxoWriterFactory, publishTaxoDir);
             config = new FacetsConfig();
             config.SetHierarchical("A", true);
         }

@@ -37,6 +37,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public virtual DirectoryReader OpenIndexReader(Directory directory)
         {
+            // LUCENENET specific - added null check
+            if (directory is null) throw new System.ArgumentNullException(nameof(directory));
             return DirectoryReader.Open(directory);
         }
 
@@ -45,6 +47,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public virtual DirectoryReader OpenIndexReader(IndexWriter writer)
         {
+            // LUCENENET specific - added null check
+            if (writer is null) throw new System.ArgumentNullException(nameof(writer));
             return DirectoryReader.Open(writer, applyAllDeletes: false);
         }
     }

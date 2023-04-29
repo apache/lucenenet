@@ -49,8 +49,9 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
+            // LUCENENET specific - changed to use SnapshotDirectoryTaxonomyWriterFactory
             var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
-            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, indexWriterFactory);
+            var taxoWriter = new DirectoryTaxonomyWriter(indexWriterFactory, taxoDir);
             try
             {
                 assertNotNull(new IndexAndTaxonomyRevision(indexWriter, indexWriterFactory));
@@ -75,8 +76,9 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
+            // LUCENENET specific - changed to use SnapshotDirectoryTaxonomyWriterFactory
             var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
-            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, indexWriterFactory);
+            var taxoWriter = new DirectoryTaxonomyWriter(indexWriterFactory, taxoDir);
             try
             {
                 indexWriter.AddDocument(NewDocument(taxoWriter));
@@ -111,8 +113,9 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
+            // LUCENENET specific - changed to use SnapshotDirectoryTaxonomyWriterFactory
             var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
-            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, indexWriterFactory);
+            var taxoWriter = new DirectoryTaxonomyWriter(indexWriterFactory, taxoDir);
             try
             {
                 indexWriter.AddDocument(NewDocument(taxoWriter));
@@ -142,8 +145,9 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
+            // LUCENENET specific - changed to use SnapshotDirectoryTaxonomyWriterFactory
             var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
-            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, indexWriterFactory);
+            var taxoWriter = new DirectoryTaxonomyWriter(indexWriterFactory, taxoDir);
             try
             {
                 indexWriter.AddDocument(NewDocument(taxoWriter));
