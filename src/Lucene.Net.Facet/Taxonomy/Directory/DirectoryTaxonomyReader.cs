@@ -108,8 +108,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <exception cref="Index.CorruptIndexException"> if the Taxonomy is corrupt. </exception>
         /// <exception cref="IOException"> if another error occurred. </exception>
         public DirectoryTaxonomyReader(Directory directory)
+            : this(DirectoryTaxonomyIndexReaderFactory.Default, directory)
         {
-            indexReader = OpenIndexReader(directory);
+        }
+
+        public DirectoryTaxonomyReader(DirectoryTaxonomyIndexReaderFactory indexReaderFactory, Directory directory)
+        {
+            indexReader = indexReaderFactory.OpenIndexReader(directory);
             taxoWriter = null;
             taxoEpoch = -1;
 
@@ -128,10 +133,15 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         ///          The <see cref="DirectoryTaxonomyWriter"/> from which to obtain newly
         ///          added categories, in real-time. </param>
         public DirectoryTaxonomyReader(DirectoryTaxonomyWriter taxoWriter)
+            : this(DirectoryTaxonomyIndexReaderFactory.Default, taxoWriter)
+        {
+        }
+
+        public DirectoryTaxonomyReader(DirectoryTaxonomyIndexReaderFactory indexReaderFactory, DirectoryTaxonomyWriter taxoWriter)
         {
             this.taxoWriter = taxoWriter;
             taxoEpoch = taxoWriter.TaxonomyEpoch;
-            indexReader = OpenIndexReader(taxoWriter.InternalIndexWriter);
+            indexReader = indexReaderFactory.OpenIndexReader(taxoWriter.InternalIndexWriter);
 
             // These are the default cache sizes; they can be configured after
             // construction with the cache's setMaxSize() method
@@ -236,22 +246,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     IOUtils.DisposeWhileHandlingException(r2);
                 }
             }
-        }
-
-        /// <summary>
-        /// Open the <see cref="DirectoryReader"/> from this <see cref="Directory"/>. 
-        /// </summary>
-        protected virtual DirectoryReader OpenIndexReader(Directory directory)
-        {
-            return DirectoryReader.Open(directory);
-        }
-
-        /// <summary>
-        /// Open the <see cref="DirectoryReader"/> from this <see cref="IndexWriter"/>. 
-        /// </summary>
-        protected virtual DirectoryReader OpenIndexReader(IndexWriter writer)
-        {
-            return DirectoryReader.Open(writer, false);
         }
 
         /// <summary>

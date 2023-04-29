@@ -27,6 +27,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// </summary>
     public class DirectoryTaxonomyIndexReaderFactory
     {
+        public static DirectoryTaxonomyIndexReaderFactory Default { get; } = new DirectoryTaxonomyIndexReaderFactory();
+        
         /// <summary>
         /// Open the <see cref="DirectoryReader"/> from this <see cref="Directory"/>. 
         /// </summary>

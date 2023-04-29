@@ -181,7 +181,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <exception cref="IOException">
         ///     if another error occurred. </exception>
         public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode,
-            ITaxonomyWriterCache cache) : this(directory, openMode, cache, new DirectoryTaxonomyIndexWriterFactory())
+            ITaxonomyWriterCache cache) : this(directory, openMode, cache, DirectoryTaxonomyIndexWriterFactory.Default)
         {
         }
 

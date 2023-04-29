@@ -29,6 +29,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// </summary>
     public class DirectoryTaxonomyIndexWriterFactory
     {
+        public static DirectoryTaxonomyIndexWriterFactory Default { get; } = new DirectoryTaxonomyIndexWriterFactory();
+        
         /// <summary>
         /// Open internal index writer, which contains the taxonomy data.
         /// <para/>
