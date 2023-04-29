@@ -24,14 +24,14 @@ namespace Lucene.Net.Replicator
     // LUCENENET specific - refactored SnapshotDirectoryTaxonomyWriter into SnapshotDirectoryTaxonomyIndexWriterFactory and de-nested
     
     /// <summary>
-    /// A <see cref="DirectoryTaxonomyIndexWriterFactory"/> which sets the underlying
-    /// <see cref="Index.IndexWriter"/>'s <see cref="IndexDeletionPolicy"/> to
+    /// An implementation of <see cref="DirectoryTaxonomyIndexWriterFactory"/>
+    /// which sets the underlying <see cref="Index.IndexWriter"/>'s <see cref="IndexDeletionPolicy"/> to
     /// <see cref="SnapshotDeletionPolicy"/>.
     /// </summary>
     public class SnapshotDirectoryTaxonomyIndexWriterFactory : DirectoryTaxonomyIndexWriterFactory
     {
         private SnapshotDeletionPolicy sdp;
-        private IndexWriter writer; // LUCENENET: this gets disposed when the DirectoryTaxonomyWriter that uses the factory is disposed
+        private IndexWriter writer;
 
         /// <summary>
         /// Creates a new <see cref="IndexWriterConfig"/> using <see cref="DirectoryTaxonomyIndexWriterFactory.CreateIndexWriterConfig"/> and
@@ -56,7 +56,8 @@ namespace Lucene.Net.Replicator
         public virtual SnapshotDeletionPolicy DeletionPolicy => sdp;
 
         /// <summary>
-        /// Gets the <see cref="Index.IndexWriter"/> used by this <see cref="DirectoryTaxonomyWriter"/>.
+        /// Gets the <see cref="Index.IndexWriter"/> that was opened by <see cref="DirectoryTaxonomyWriter"/>
+        /// that is using this factory class.
         /// </summary>
         public virtual IndexWriter IndexWriter => writer;
     }
