@@ -30,7 +30,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using Document = Lucene.Net.Documents.Document;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using MultiFields = Lucene.Net.Index.MultiFields;
 
