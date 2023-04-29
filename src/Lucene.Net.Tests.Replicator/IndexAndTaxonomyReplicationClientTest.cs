@@ -125,7 +125,7 @@ namespace Lucene.Net.Replicator
         private IReplicationHandler handler;
         private IndexWriter publishIndexWriter;
         private DirectoryTaxonomyWriter publishTaxoWriter;
-        private IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyIndexWriterFactory publishTaxoWriterFactory;
+        private SnapshotDirectoryTaxonomyIndexWriterFactory publishTaxoWriterFactory;
         private FacetsConfig config;
         private IndexAndTaxonomyReadyCallback callback;
         private DirectoryInfo clientWorkDir;
@@ -209,7 +209,7 @@ namespace Lucene.Net.Replicator
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.IndexDeletionPolicy = new SnapshotDeletionPolicy(conf.IndexDeletionPolicy);
             publishIndexWriter = new IndexWriter(publishIndexDir, conf);
-            publishTaxoWriterFactory = new IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyIndexWriterFactory();
+            publishTaxoWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
             publishTaxoWriter = new DirectoryTaxonomyWriter(publishTaxoDir, publishTaxoWriterFactory);
             config = new FacetsConfig();
             config.SetHierarchical("A", true);
