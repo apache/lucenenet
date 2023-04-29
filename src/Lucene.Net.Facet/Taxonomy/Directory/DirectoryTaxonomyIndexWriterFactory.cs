@@ -26,6 +26,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// <summary>
     /// This class offers some hooks for extending classes to control the
     /// <see cref="IndexWriter"/> instance that is used by <see cref="DirectoryTaxonomyWriter"/>.
+    /// <para/>
+    /// This class is specific to Lucene.NET to allow to customize the <see cref="IndexWriter"/> instance
+    /// and its configuration before it is used by <see cref="DirectoryTaxonomyWriter"/>.
     /// </summary>
     public class DirectoryTaxonomyIndexWriterFactory
     {

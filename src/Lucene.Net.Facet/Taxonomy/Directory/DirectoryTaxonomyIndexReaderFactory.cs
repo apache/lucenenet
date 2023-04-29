@@ -24,6 +24,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// <summary>
     /// This class offers some hooks for extending classes to control the
     /// <see cref="IndexReader"/> instance that is used by <see cref="DirectoryTaxonomyReader"/>.
+    /// <para/>
+    /// This class is specific to Lucene.NET to allow to customize the <see cref="DirectoryReader"/> instance
+    /// before it is used by <see cref="DirectoryTaxonomyReader"/>.
     /// </summary>
     public class DirectoryTaxonomyIndexReaderFactory
     {
