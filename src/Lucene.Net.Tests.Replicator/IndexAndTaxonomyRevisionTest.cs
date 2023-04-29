@@ -49,7 +49,7 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
-            var indexWriterFactory = new IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyIndexWriterFactory();
+            var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, indexWriterFactory);
             try
             {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
-            var indexWriterFactory = new IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyIndexWriterFactory();
+            var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, indexWriterFactory);
             try
             {
@@ -111,7 +111,7 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
-            var indexWriterFactory = new IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyIndexWriterFactory();
+            var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, indexWriterFactory);
             try
             {
@@ -142,7 +142,7 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
-            var indexWriterFactory = new IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyIndexWriterFactory();
+            var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, indexWriterFactory);
             try
             {
