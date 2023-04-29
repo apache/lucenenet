@@ -70,8 +70,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// algorithm used.
     /// </para>
     /// <para>
-    /// This class offers some hooks for extending classes to control the
-    /// <see cref="IndexWriter"/> instance that is used. See <see cref="OpenIndexWriter"/>.
+    /// For extending classes that need to control the <see cref="IndexWriter"/> instance that is used,
+    /// please see <see cref="DirectoryTaxonomyIndexWriterFactory"/> class.
     /// 
     /// @lucene.experimental
     /// </para>
@@ -181,11 +181,51 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <exception cref="IOException">
         ///     if another error occurred. </exception>
         public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode, 
-            ITaxonomyWriterCache cache)
+            ITaxonomyWriterCache cache) : this(directory, openMode, cache, new DirectoryTaxonomyIndexWriterFactory())
+        {
+        }
+
+        /// <summary>
+        /// Construct a Taxonomy writer.
+        /// </summary>
+        /// <param name="directory">
+        ///    The <see cref="Store.Directory"/> in which to store the taxonomy. Note that
+        ///    the taxonomy is written directly to that directory (not to a
+        ///    subdirectory of it). </param>
+        /// <param name="openMode">
+        ///    Specifies how to open a taxonomy for writing: <see cref="OpenMode.APPEND"/>
+        ///    means open an existing index for append (failing if the index does
+        ///    not yet exist). <see cref="OpenMode.CREATE"/> means create a new index (first
+        ///    deleting the old one if it already existed).
+        ///    <see cref="OpenMode.CREATE_OR_APPEND"/> appends to an existing index if there
+        ///    is one, otherwise it creates a new index. </param>
+        /// <param name="cache">
+        ///    A <see cref="ITaxonomyWriterCache"/> implementation which determines
+        ///    the in-memory caching policy. See for example
+        ///    <see cref="WriterCache.LruTaxonomyWriterCache"/> and <see cref="Cl2oTaxonomyWriterCache"/>.
+        ///    If null or missing, <see cref="DefaultTaxonomyWriterCache()"/> is used. </param>
+        /// <param name="indexWriterFactory">
+        ///    A <see cref="DirectoryTaxonomyIndexWriterFactory"/> implementation that can be used to
+        ///    customize the <see cref="IndexWriter"/> configuration and writer itself that's used to 
+        ///    store the taxonomy index.</param>
+        /// <exception cref="CorruptIndexException">
+        ///     if the taxonomy is corrupted. </exception>
+        /// <exception cref="LockObtainFailedException">
+        ///     if the taxonomy is locked by another writer. If it is known
+        ///     that no other concurrent writer is active, the lock might
+        ///     have been left around by an old dead process, and should be
+        ///     removed using <see cref="Unlock(Directory)"/>. </exception>
+        /// <exception cref="IOException">
+        ///     if another error occurred. </exception>
+        /// <exception cref="System.ArgumentNullException"> if <paramref name="indexWriterFactory"/> is <c>null</c> </exception>
+        protected DirectoryTaxonomyWriter(Directory directory, OpenMode openMode, 
+            ITaxonomyWriterCache cache, DirectoryTaxonomyIndexWriterFactory indexWriterFactory)
         {
             dir = directory;
-            IndexWriterConfig config = CreateIndexWriterConfig(openMode);
-            indexWriter = OpenIndexWriter(dir, config);
+
+            if (indexWriterFactory == null) throw new ArgumentNullException(nameof(indexWriterFactory));
+            IndexWriterConfig config = indexWriterFactory.CreateIndexWriterConfig(openMode);
+            indexWriter = indexWriterFactory.OpenIndexWriter(dir, config);
 
             // verify (to some extent) that merge policy in effect would preserve category docids 
             if (indexWriter != null)
@@ -254,53 +294,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Open internal index writer, which contains the taxonomy data.
-        /// <para/>
-        /// Extensions may provide their own <see cref="IndexWriter"/> implementation or instance. 
-        /// <para/>
-        /// <b>NOTE:</b> the instance this method returns will be disposed upon calling
-        /// to <see cref="Dispose()"/>.
-        /// <para/>
-        /// <b>NOTE:</b> the merge policy in effect must not merge none adjacent segments. See
-        /// comment in <see cref="CreateIndexWriterConfig(OpenMode)"/> for the logic behind this.
-        /// </summary>
-        /// <seealso cref="CreateIndexWriterConfig(OpenMode)"/>
-        /// <param name="directory">
-        ///          the <see cref="Store.Directory"/> on top of which an <see cref="IndexWriter"/>
-        ///          should be opened. </param>
-        /// <param name="config">
-        ///          configuration for the internal index writer. </param>
-        protected virtual IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config)
-        {
-            return new IndexWriter(directory, config);
-        }
-
-        /// <summary>
-        /// Create the <see cref="IndexWriterConfig"/> that would be used for opening the internal index writer.
-        /// <para/>
-        /// Extensions can configure the <see cref="IndexWriter"/> as they see fit,
-        /// including setting a <see cref="Index.MergeScheduler"/>, or
-        /// <see cref="Index.IndexDeletionPolicy"/>, different RAM size
-        /// etc.
-        /// <para/>
-        /// <b>NOTE:</b> internal docids of the configured index must not be altered.
-        /// For that, categories are never deleted from the taxonomy index.
-        /// In addition, merge policy in effect must not merge none adjacent segments.
-        /// </summary>
-        /// <seealso cref="OpenIndexWriter(Directory, IndexWriterConfig)"/>
-        /// <param name="openMode"> see <see cref="OpenMode"/> </param>
-        protected virtual IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
-        {
-            // TODO: should we use a more optimized Codec, e.g. Pulsing (or write custom)?
-            // The taxonomy has a unique structure, where each term is associated with one document
-
-            // :Post-Release-Update-Version.LUCENE_XY:
-            // Make sure we use a MergePolicy which always merges adjacent segments and thus
-            // keeps the doc IDs ordered as well (this is crucial for the taxonomy index).
-            return (new IndexWriterConfig(LuceneVersion.LUCENE_48, null)).SetOpenMode(openMode).SetMergePolicy(new LogByteSizeMergePolicy());
-        }
-
-        /// <summary>
         /// Opens a <see cref="ReaderManager"/> from the internal <see cref="IndexWriter"/>. 
         /// </summary>
         private void InitReaderManager()
@@ -353,6 +346,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// Create this with <see cref="OpenMode.CREATE_OR_APPEND"/>.
         /// </summary>
         public DirectoryTaxonomyWriter(Directory directory) : this(directory, OpenMode.CREATE_OR_APPEND) { }
+
+        /// <summary>
+        /// Create this with <see cref="OpenMode.CREATE_OR_APPEND"/> and <see cref="DefaultTaxonomyWriterCache()"/>.
+        /// </summary>
+        public DirectoryTaxonomyWriter(Directory directory, DirectoryTaxonomyIndexWriterFactory indexWriterFactory)
+            : this(directory, OpenMode.CREATE_OR_APPEND, DefaultTaxonomyWriterCache(), indexWriterFactory) { }
 
         /// <summary>
         /// Frees used resources as well as closes the underlying <see cref="IndexWriter"/>,
