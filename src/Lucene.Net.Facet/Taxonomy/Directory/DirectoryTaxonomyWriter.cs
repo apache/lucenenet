@@ -170,7 +170,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         ///    A <see cref="ITaxonomyWriterCache"/> implementation which determines
         ///    the in-memory caching policy. See for example
         ///    <see cref="WriterCache.LruTaxonomyWriterCache"/> and <see cref="Cl2oTaxonomyWriterCache"/>.
-        ///    If null or missing, <see cref="DefaultTaxonomyWriterCache()"/> is used. </param>
+        ///    If null or missing, <see cref="CreateDefaultTaxonomyWriterCache()"/> is used. </param>
         /// <exception cref="CorruptIndexException">
         ///     if the taxonomy is corrupted. </exception>
         /// <exception cref="LockObtainFailedException">
@@ -180,7 +180,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         ///     removed using <see cref="Unlock(Directory)"/>. </exception>
         /// <exception cref="IOException">
         ///     if another error occurred. </exception>
-        public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode, 
+        public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode,
             ITaxonomyWriterCache cache) : this(directory, openMode, cache, new DirectoryTaxonomyIndexWriterFactory())
         {
         }
@@ -203,7 +203,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         ///    A <see cref="ITaxonomyWriterCache"/> implementation which determines
         ///    the in-memory caching policy. See for example
         ///    <see cref="WriterCache.LruTaxonomyWriterCache"/> and <see cref="Cl2oTaxonomyWriterCache"/>.
-        ///    If null or missing, <see cref="DefaultTaxonomyWriterCache()"/> is used. </param>
+        ///    If null or missing, <see cref="CreateDefaultTaxonomyWriterCache()"/> is used. </param>
         /// <param name="indexWriterFactory">
         ///    A <see cref="DirectoryTaxonomyIndexWriterFactory"/> implementation that can be used to
         ///    customize the <see cref="IndexWriter"/> configuration and writer itself that's used to 
@@ -218,12 +218,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <exception cref="IOException">
         ///     if another error occurred. </exception>
         /// <exception cref="System.ArgumentNullException"> if <paramref name="indexWriterFactory"/> is <c>null</c> </exception>
-        protected DirectoryTaxonomyWriter(Directory directory, OpenMode openMode, 
+        protected DirectoryTaxonomyWriter(Directory directory, OpenMode openMode,
             ITaxonomyWriterCache cache, DirectoryTaxonomyIndexWriterFactory indexWriterFactory)
         {
             dir = directory;
 
-            if (indexWriterFactory == null) throw new ArgumentNullException(nameof(indexWriterFactory));
+            if (indexWriterFactory is null) throw new ArgumentNullException(nameof(indexWriterFactory));
             IndexWriterConfig config = indexWriterFactory.CreateIndexWriterConfig(openMode);
             indexWriter = indexWriterFactory.OpenIndexWriter(dir, config);
 
@@ -270,7 +270,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             if (cache is null)
             {
-                cache = DefaultTaxonomyWriterCache();
+                cache = CreateDefaultTaxonomyWriterCache();
             }
             this.cache = cache;
 
@@ -292,6 +292,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 cacheIsComplete = false;
             }
         }
+
+        /// LUCENENET specific - OpenIndexWriter(Directory directory, IndexWriterConfig config)
+        /// and protected virtual IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode) were
+        /// moved to <see cref="DirectoryTaxonomyIndexWriterFactory"/> to allow extended classes
+        /// to customize the configs and writers. This is a breaking change from Lucene, and required
+        /// in order to offer the same functionality in .NET as Lucene offers in Java. These virtual methods
+        /// were being called from the constructors and have different initialization sequence in .NET
+        /// so a factory approach was used instead.
 
         /// <summary>
         /// Opens a <see cref="ReaderManager"/> from the internal <see cref="IndexWriter"/>. 
@@ -321,10 +329,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Creates a new instance with a default cache as defined by
-        /// <see cref="DefaultTaxonomyWriterCache()"/>.
+        /// <see cref="CreateDefaultTaxonomyWriterCache()"/>.
         /// </summary>
         public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode)
-            : this(directory, openMode, DefaultTaxonomyWriterCache())
+            : this(directory, openMode, CreateDefaultTaxonomyWriterCache())
         {
         }
 
@@ -337,7 +345,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// cached in memory while building it.
         /// </para>
         /// </summary>
-        public static ITaxonomyWriterCache DefaultTaxonomyWriterCache()
+        public static ITaxonomyWriterCache CreateDefaultTaxonomyWriterCache()
         {
             return new Cl2oTaxonomyWriterCache(1024, 0.15f, 3);
         }
@@ -348,10 +356,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         public DirectoryTaxonomyWriter(Directory directory) : this(directory, OpenMode.CREATE_OR_APPEND) { }
 
         /// <summary>
-        /// Create this with <see cref="OpenMode.CREATE_OR_APPEND"/> and <see cref="DefaultTaxonomyWriterCache()"/>.
+        /// Create this with <see cref="OpenMode.CREATE_OR_APPEND"/> and <see cref="CreateDefaultTaxonomyWriterCache()"/>.
         /// </summary>
         public DirectoryTaxonomyWriter(Directory directory, DirectoryTaxonomyIndexWriterFactory indexWriterFactory)
-            : this(directory, OpenMode.CREATE_OR_APPEND, DefaultTaxonomyWriterCache(), indexWriterFactory) { }
+            : this(directory, OpenMode.CREATE_OR_APPEND, CreateDefaultTaxonomyWriterCache(), indexWriterFactory) { }
 
         /// <summary>
         /// Frees used resources as well as closes the underlying <see cref="IndexWriter"/>,

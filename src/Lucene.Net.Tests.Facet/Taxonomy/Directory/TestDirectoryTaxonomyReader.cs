@@ -231,6 +231,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // test openIfChanged() when the taxonomy contains many segments
             Directory dir = NewDirectory();
 
+            // LUCENENET specific: Added DirectoryTaxonomyIndexWriterFactory constructor parameter
             var writer = new DirectoryTaxonomyWriter(dir, new TestDirectoryTaxonomyIndexWriterFactory());
             var reader = new DirectoryTaxonomyReader(writer);
 
@@ -266,6 +267,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
+        // LUCENENET specific: Converted DirectoryTaxonomyWriter anonymous class into a DirectoryTaxonomyIndexWriterFactory subclass
         private sealed class TestDirectoryTaxonomyIndexWriterFactory : DirectoryTaxonomyIndexWriterFactory
         {
             public override IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
@@ -287,6 +289,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // hold onto IW to forceMerge
             // note how we don't close it, since DTW will close it.
+            // LUCENENET: Moved the creation of IndexWriter to TestDirectoryTaxonomyIndexWriterFactory2
             var indexWriterFactory = new TestDirectoryTaxonomyIndexWriterFactory2(Random, TEST_VERSION_CURRENT);
             var writer = new DirectoryTaxonomyWriter(dir, indexWriterFactory);
             Assert.NotNull(indexWriterFactory.iw, "iw should be set via DirectoryTaxonomyIndexWriter constructor calling factory");
@@ -313,6 +316,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
+        // LUCENENET specific: Converted DirectoryTaxonomyWriter anonymous class into a DirectoryTaxonomyIndexWriterFactory subclass
         private sealed class TestDirectoryTaxonomyIndexWriterFactory2 : DirectoryTaxonomyIndexWriterFactory
         {
             internal IndexWriter iw = null;
@@ -351,8 +355,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // hold onto IW to forceMerge
             // note how we don't close it, since DTW will close it.
+            // LUCENENET: Moved the creation of IndexWriter to TestDirectoryTaxonomyIndexWriterFactory2
             var indexWriterFactory = new TestDirectoryTaxonomyIndexWriterFactory2(Random, TEST_VERSION_CURRENT);
-            DirectoryTaxonomyWriter writer = new DirectoryTaxonomyWriter(dir, indexWriterFactory);
+            var writer = new DirectoryTaxonomyWriter(dir, indexWriterFactory);
             Assert.NotNull(indexWriterFactory.iw, "iw should be set via DirectoryTaxonomyIndexWriter constructor calling factory");
             
             // add a category so that the following DTR open will cause a flush and 

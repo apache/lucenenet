@@ -1,6 +1,5 @@
 ﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Facet.Taxonomy.Directory;
 using Lucene.Net.Facet.Taxonomy.WriterCache;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -41,46 +40,8 @@ namespace Lucene.Net.Replicator
     /// @lucene.experimental
     /// </remarks>
     /// <seealso cref="IndexRevision"/>
-    public class IndexAndTaxonomyRevision : IRevision
+    public partial class IndexAndTaxonomyRevision : IRevision
     {
-        /// <summary>
-        /// A <see cref="DirectoryTaxonomyIndexWriterFactory"/> which sets the underlying
-        /// <see cref="Index.IndexWriter"/>'s <see cref="IndexDeletionPolicy"/> to
-        /// <see cref="SnapshotDeletionPolicy"/>.
-        /// </summary>
-        public class SnapshotDirectoryTaxonomyIndexWriterFactory : DirectoryTaxonomyIndexWriterFactory
-        {
-            private SnapshotDeletionPolicy sdp;
-            private IndexWriter writer; // LUCENENET: this gets disposed when the DirectoryTaxonomyWriter that uses the factory is disposed
-
-            /// <summary>
-            /// Creates a new <see cref="IndexWriterConfig"/> using <see cref="DirectoryTaxonomyIndexWriterFactory.CreateIndexWriterConfig"/> and
-            /// sets IndexDeletionPolicy to <see cref="SnapshotDeletionPolicy"/>.
-            /// </summary>
-            public override IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
-            {
-                IndexWriterConfig conf = base.CreateIndexWriterConfig(openMode);
-                conf.IndexDeletionPolicy = sdp = new SnapshotDeletionPolicy(conf.IndexDeletionPolicy);
-                return conf;
-            }
-
-            /// <inheritdoc/>
-            public override IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config)
-            {
-                return writer = base.OpenIndexWriter(directory, config);
-            }
-
-            /// <summary>
-            /// Gets the <see cref="SnapshotDeletionPolicy"/> used by the underlying <see cref="Index.IndexWriter"/>.
-            /// </summary>
-            public virtual SnapshotDeletionPolicy DeletionPolicy => sdp;
-
-            /// <summary>
-            /// Gets the <see cref="Index.IndexWriter"/> used by this <see cref="DirectoryTaxonomyWriter"/>.
-            /// </summary>
-            public virtual IndexWriter IndexWriter => writer;
-        }
-
         public const string INDEX_SOURCE = "index";
         public const string TAXONOMY_SOURCE = "taxonomy";
 
