@@ -45,7 +45,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public virtual DirectoryReader OpenIndexReader(IndexWriter writer)
         {
-            return DirectoryReader.Open(writer, false);
+            return DirectoryReader.Open(writer, applyAllDeletes: false);
         }
     }
 }
