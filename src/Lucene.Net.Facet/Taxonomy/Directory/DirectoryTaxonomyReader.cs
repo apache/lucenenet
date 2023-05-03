@@ -30,7 +30,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using Document = Lucene.Net.Documents.Document;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using MultiFields = Lucene.Net.Index.MultiFields;
 
@@ -102,14 +101,30 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Open for reading a taxonomy stored in a given <see cref="Directory"/>.
+        /// Open for reading a taxonomy stored in a given <see cref="Directory"/>. Uses <see cref="DirectoryTaxonomyIndexReaderFactory.Default"/> as
+        /// for <see cref="DirectoryTaxonomyIndexReaderFactory"/>.
         /// </summary>
         /// <param name="directory"> The <see cref="Directory"/> in which the taxonomy resides. </param>
         /// <exception cref="Index.CorruptIndexException"> if the Taxonomy is corrupt. </exception>
         /// <exception cref="IOException"> if another error occurred. </exception>
         public DirectoryTaxonomyReader(Directory directory)
+            : this(DirectoryTaxonomyIndexReaderFactory.Default, directory)
         {
-            indexReader = OpenIndexReader(directory);
+        }
+
+        /// <summary>
+        /// Open for reading a taxonomy stored in a given <see cref="Directory"/>.
+        /// </summary>
+        /// <param name="indexReaderFactory"> The <see cref="DirectoryTaxonomyIndexReaderFactory"/> to use to open the index reader. </param>
+        /// <param name="directory"> The <see cref="Directory"/> in which the taxonomy resides. </param>
+        /// <exception cref="Index.CorruptIndexException"> if the Taxonomy is corrupt. </exception>
+        /// <exception cref="IOException"> if another error occurred. </exception>
+        public DirectoryTaxonomyReader(DirectoryTaxonomyIndexReaderFactory indexReaderFactory, Directory directory)
+        {
+            // LUCENENET specific - uses indexReaderFactory to open the index reader instead of
+            // calling virtual method
+            if (indexReaderFactory is null) throw new ArgumentNullException(nameof(indexReaderFactory));
+            indexReader = indexReaderFactory.OpenIndexReader(directory);
             taxoWriter = null;
             taxoEpoch = -1;
 
@@ -122,16 +137,37 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Opens a <see cref="DirectoryTaxonomyReader"/> over the given
-        /// <see cref="DirectoryTaxonomyWriter"/> (for NRT).
+        /// <see cref="DirectoryTaxonomyWriter"/> (for NRT). Uses <see cref="DirectoryTaxonomyIndexReaderFactory.Default"/>
+        /// for <see cref="DirectoryTaxonomyIndexReaderFactory"/>.
         /// </summary>
         /// <param name="taxoWriter">
         ///          The <see cref="DirectoryTaxonomyWriter"/> from which to obtain newly
         ///          added categories, in real-time. </param>
         public DirectoryTaxonomyReader(DirectoryTaxonomyWriter taxoWriter)
+            : this(DirectoryTaxonomyIndexReaderFactory.Default, taxoWriter)
         {
+        }
+
+        /// <summary>
+        /// Opens a <see cref="DirectoryTaxonomyReader"/> over the given
+        /// <see cref="DirectoryTaxonomyWriter"/> (for NRT).
+        /// </summary>
+        /// <param name="indexReaderFactory"> The <see cref="DirectoryTaxonomyIndexReaderFactory"/> to use to open the index reader. </param>
+        /// <param name="taxoWriter">
+        ///          The <see cref="DirectoryTaxonomyWriter"/> from which to obtain newly
+        ///          added categories, in real-time. </param>
+        /// <exception cref="ArgumentNullException"> if <paramref name="indexReaderFactory"/> or <paramref name="taxoWriter"/> is <c>null</c>. </exception>
+        public DirectoryTaxonomyReader(DirectoryTaxonomyIndexReaderFactory indexReaderFactory, DirectoryTaxonomyWriter taxoWriter)
+        {
+            // LUCENENET added null checks
+            if (taxoWriter is null) throw new ArgumentNullException(nameof(taxoWriter));
             this.taxoWriter = taxoWriter;
             taxoEpoch = taxoWriter.TaxonomyEpoch;
-            indexReader = OpenIndexReader(taxoWriter.InternalIndexWriter);
+            
+            // LUCENENET specific - uses indexReaderFactory to open the index reader instead of
+            // calling virtual method
+            if (indexReaderFactory is null) throw new ArgumentNullException(nameof(indexReaderFactory));
+            indexReader = indexReaderFactory.OpenIndexReader(taxoWriter.InternalIndexWriter);
 
             // These are the default cache sizes; they can be configured after
             // construction with the cache's setMaxSize() method
@@ -238,21 +274,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
 
-        /// <summary>
-        /// Open the <see cref="DirectoryReader"/> from this <see cref="Directory"/>. 
-        /// </summary>
-        protected virtual DirectoryReader OpenIndexReader(Directory directory)
-        {
-            return DirectoryReader.Open(directory);
-        }
-
-        /// <summary>
-        /// Open the <see cref="DirectoryReader"/> from this <see cref="IndexWriter"/>. 
-        /// </summary>
-        protected virtual DirectoryReader OpenIndexReader(IndexWriter writer)
-        {
-            return DirectoryReader.Open(writer, false);
-        }
+        /// LUCENENET specific - OpenIndexReader(Directory directory) and
+        /// OpenIndexReader(IndexWriter writer) were
+        /// moved to <see cref="DirectoryTaxonomyIndexReaderFactory"/> to allow extended classes
+        /// to customize writer behavior. This is a breaking change from Lucene, and required
+        /// in order to offer the same functionality in .NET as Lucene offers in Java. These virtual methods
+        /// were being called from the constructors and have different initialization sequence in .NET
+        /// so a factory approach was used instead.
 
         /// <summary>
         /// Expert: returns the underlying <see cref="DirectoryReader"/> instance that is

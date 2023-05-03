@@ -63,3 +63,6 @@ websites/apidocs/api/**/*.manifest
 
 # Apache Releases on Subversion
 svn-*/
+
+# vscode files
+.vscode/
