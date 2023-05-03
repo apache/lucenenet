@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Documents;
 using Lucene.Net.Facet;
 using Lucene.Net.Facet.Taxonomy;
+using Lucene.Net.Facet.Taxonomy.Directory;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -48,10 +49,12 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
-            IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyWriter taxoWriter = new IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyWriter(taxoDir);
+            // LUCENENET specific - changed to use SnapshotDirectoryTaxonomyWriterFactory
+            var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
+            var taxoWriter = new DirectoryTaxonomyWriter(indexWriterFactory, taxoDir);
             try
             {
-                assertNotNull(new IndexAndTaxonomyRevision(indexWriter, taxoWriter));
+                assertNotNull(new IndexAndTaxonomyRevision(indexWriter, indexWriterFactory));
                 fail("should have failed when there are no commits to snapshot");
             }
             catch (Exception e) when (e.IsIllegalStateException())
@@ -73,23 +76,25 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
-            IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyWriter taxoWriter = new IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyWriter(taxoDir);
+            // LUCENENET specific - changed to use SnapshotDirectoryTaxonomyWriterFactory
+            var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
+            var taxoWriter = new DirectoryTaxonomyWriter(indexWriterFactory, taxoDir);
             try
             {
                 indexWriter.AddDocument(NewDocument(taxoWriter));
                 indexWriter.Commit();
                 taxoWriter.Commit();
-                IRevision rev1 = new IndexAndTaxonomyRevision(indexWriter, taxoWriter);
+                IRevision rev1 = new IndexAndTaxonomyRevision(indexWriter, indexWriterFactory);
                 // releasing that revision should not delete the files
                 rev1.Release();
                 assertTrue(SlowFileExists(indexDir, IndexFileNames.SEGMENTS + "_1"));
                 assertTrue(SlowFileExists(taxoDir, IndexFileNames.SEGMENTS + "_1"));
 
-                rev1 = new IndexAndTaxonomyRevision(indexWriter, taxoWriter); // create revision again, so the files are snapshotted
+                rev1 = new IndexAndTaxonomyRevision(indexWriter, indexWriterFactory); // create revision again, so the files are snapshotted
                 indexWriter.AddDocument(NewDocument(taxoWriter));
                 indexWriter.Commit();
                 taxoWriter.Commit();
-                assertNotNull(new IndexAndTaxonomyRevision(indexWriter, taxoWriter));
+                assertNotNull(new IndexAndTaxonomyRevision(indexWriter, indexWriterFactory)); // this should not fail, since there is a commit
                 rev1.Release(); // this release should trigger the delete of segments_1
                 assertFalse(SlowFileExists(indexDir, IndexFileNames.SEGMENTS + "_1"));
             }
@@ -108,13 +113,15 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
-            IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyWriter taxoWriter = new IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyWriter(taxoDir);
+            // LUCENENET specific - changed to use SnapshotDirectoryTaxonomyWriterFactory
+            var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
+            var taxoWriter = new DirectoryTaxonomyWriter(indexWriterFactory, taxoDir);
             try
             {
                 indexWriter.AddDocument(NewDocument(taxoWriter));
                 indexWriter.Commit();
                 taxoWriter.Commit();
-                IRevision rev = new IndexAndTaxonomyRevision(indexWriter, taxoWriter);
+                IRevision rev = new IndexAndTaxonomyRevision(indexWriter, indexWriterFactory);
                 var sourceFiles = rev.SourceFiles;
                 assertEquals(2, sourceFiles.Count);
                 foreach (var files in sourceFiles.Values)
@@ -138,13 +145,15 @@ namespace Lucene.Net.Replicator
             IndexWriter indexWriter = new IndexWriter(indexDir, conf);
 
             Directory taxoDir = NewDirectory();
-            IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyWriter taxoWriter = new IndexAndTaxonomyRevision.SnapshotDirectoryTaxonomyWriter(taxoDir);
+            // LUCENENET specific - changed to use SnapshotDirectoryTaxonomyWriterFactory
+            var indexWriterFactory = new SnapshotDirectoryTaxonomyIndexWriterFactory();
+            var taxoWriter = new DirectoryTaxonomyWriter(indexWriterFactory, taxoDir);
             try
             {
                 indexWriter.AddDocument(NewDocument(taxoWriter));
                 indexWriter.Commit();
                 taxoWriter.Commit();
-                IRevision rev = new IndexAndTaxonomyRevision(indexWriter, taxoWriter);
+                IRevision rev = new IndexAndTaxonomyRevision(indexWriter, indexWriterFactory);
                 foreach (var e in rev.SourceFiles)
                 {
                     string source = e.Key;

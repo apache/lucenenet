@@ -1,6 +1,5 @@
 ﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Facet.Taxonomy.Directory;
 using Lucene.Net.Facet.Taxonomy.WriterCache;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -43,56 +42,15 @@ namespace Lucene.Net.Replicator
     /// <seealso cref="IndexRevision"/>
     public class IndexAndTaxonomyRevision : IRevision
     {
-        /// <summary>
-        /// A <see cref="DirectoryTaxonomyWriter"/> which sets the underlying
-        /// <see cref="Index.IndexWriter"/>'s <see cref="IndexDeletionPolicy"/> to
-        /// <see cref="SnapshotDeletionPolicy"/>.
-        /// </summary>
-        public class SnapshotDirectoryTaxonomyWriter : DirectoryTaxonomyWriter
-        {
-            private SnapshotDeletionPolicy sdp;
-            private IndexWriter writer; // LUCENENET TODO: Why does disposing this in Dispose(true) throw an excpetion?
-
-            /// <inheritdoc/>
-            public SnapshotDirectoryTaxonomyWriter(Directory directory, OpenMode openMode, ITaxonomyWriterCache cache)
-                : base(directory, openMode, cache)
-            {
-            }
-
-            /// <inheritdoc/>
-            public SnapshotDirectoryTaxonomyWriter(Directory directory, OpenMode openMode = OpenMode.CREATE_OR_APPEND)
-                : base(directory, openMode)
-            {
-            }
-
-            protected override IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
-            {
-                IndexWriterConfig conf = base.CreateIndexWriterConfig(openMode);
-                conf.IndexDeletionPolicy = sdp = new SnapshotDeletionPolicy(conf.IndexDeletionPolicy);
-                return conf;
-            }
-
-            protected override IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config)
-            {
-                return writer = base.OpenIndexWriter(directory, config);
-            }
-
-            /// <summary>
-            /// Gets the <see cref="SnapshotDeletionPolicy"/> used by the underlying <see cref="Index.IndexWriter"/>.
-            /// </summary>
-            public virtual SnapshotDeletionPolicy DeletionPolicy => sdp;
-
-            /// <summary>
-            /// Gets the <see cref="Index.IndexWriter"/> used by this <see cref="DirectoryTaxonomyWriter"/>.
-            /// </summary>
-            public virtual IndexWriter IndexWriter => writer;
-        }
+        // LUCENENET specific - de-nested SnapshotDirectoryTaxonomyWriter and rewrote it as
+        // SnapshotDirectoryTaxonomyIndexWriterFactory
 
         public const string INDEX_SOURCE = "index";
         public const string TAXONOMY_SOURCE = "taxonomy";
 
         private readonly IndexWriter indexWriter;
-        private readonly SnapshotDirectoryTaxonomyWriter taxonomyWriter;
+        // LUCENENET specific, storing the taxonomyWriterFactory that creates writer and policies
+        private readonly SnapshotDirectoryTaxonomyIndexWriterFactory taxonomyWriterFactory;
         private readonly IndexCommit indexCommit, taxonomyCommit;
         private readonly SnapshotDeletionPolicy indexSdp, taxonomySdp;
         private readonly string version;
@@ -126,15 +84,18 @@ namespace Lucene.Net.Replicator
         /// </summary>
         /// <exception cref="InvalidOperationException">If this index does not have any commits yet.</exception>
         /// <exception cref="ArgumentException">If the <see cref="IndexWriterConfig.IndexDeletionPolicy"/> is not a <see cref="SnapshotDeletionPolicy"/>.</exception>
-        public IndexAndTaxonomyRevision(IndexWriter indexWriter, SnapshotDirectoryTaxonomyWriter taxonomyWriter)
+        public IndexAndTaxonomyRevision(IndexWriter indexWriter, SnapshotDirectoryTaxonomyIndexWriterFactory taxonomyWriterFactory)
         {
             this.indexSdp = indexWriter.Config.IndexDeletionPolicy as SnapshotDeletionPolicy;
             if (indexSdp is null)
                 throw new ArgumentException("IndexWriter must be created with SnapshotDeletionPolicy", nameof(indexWriter));
 
+            if (taxonomyWriterFactory.IndexWriter is null)
+                throw new ArgumentException("TaxonomyWriter must be created with SnapshotDirectoryTaxonomyIndexWriterFactory", nameof(taxonomyWriterFactory));
+
             this.indexWriter = indexWriter;
-            this.taxonomyWriter = taxonomyWriter;
-            this.taxonomySdp = taxonomyWriter.DeletionPolicy;
+            this.taxonomyWriterFactory = taxonomyWriterFactory;
+            this.taxonomySdp = taxonomyWriterFactory.DeletionPolicy;
             this.indexCommit = indexSdp.Snapshot();
             this.taxonomyCommit = taxonomySdp.Snapshot();
             this.version = RevisionVersion(indexCommit, taxonomyCommit);
@@ -203,7 +164,7 @@ namespace Lucene.Net.Replicator
             }
             finally
             {
-                taxonomyWriter.IndexWriter.DeleteUnusedFiles();
+                taxonomyWriterFactory.IndexWriter.DeleteUnusedFiles();
             }
         }
     }

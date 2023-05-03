@@ -231,7 +231,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // test openIfChanged() when the taxonomy contains many segments
             Directory dir = NewDirectory();
 
-            DirectoryTaxonomyWriter writer = new DirectoryTaxonomyWriterAnonymousClass(this, dir);
+            // LUCENENET specific: Added DirectoryTaxonomyIndexWriterFactory constructor parameter
+            var writer = new DirectoryTaxonomyWriter(new TestDirectoryTaxonomyIndexWriterFactory(), dir);
             var reader = new DirectoryTaxonomyReader(writer);
 
             int numRounds = Random.Next(10) + 10;
@@ -266,17 +267,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
-        private sealed class DirectoryTaxonomyWriterAnonymousClass : DirectoryTaxonomyWriter
+        // LUCENENET specific: Converted DirectoryTaxonomyWriter anonymous class into a DirectoryTaxonomyIndexWriterFactory subclass
+        private sealed class TestDirectoryTaxonomyIndexWriterFactory : DirectoryTaxonomyIndexWriterFactory
         {
-            private readonly TestDirectoryTaxonomyReader outerInstance;
-
-            public DirectoryTaxonomyWriterAnonymousClass(TestDirectoryTaxonomyReader outerInstance, Directory dir)
-                : base(dir)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected override IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
+            public override IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
             {
                 IndexWriterConfig conf = base.CreateIndexWriterConfig(openMode);
                 LogMergePolicy lmp = (LogMergePolicy)conf.MergePolicy;
@@ -295,14 +289,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // hold onto IW to forceMerge
             // note how we don't close it, since DTW will close it.
-            IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                .SetMergePolicy(new LogByteSizeMergePolicy()));
-
-            // LUCENENET: We need to set the index writer before the constructor of the base class is called
-            // because the DirectoryTaxonomyWriter class constructor is the consumer of the OpenIndexWriter method.
-            // The only option seems to be to set it statically before creating the instance.
-            DirectoryTaxonomyWriterAnonymousClass2.iw = iw;
-            var writer = new DirectoryTaxonomyWriterAnonymousClass2(dir);
+            // LUCENENET: Moved the creation of IndexWriter to TestDirectoryTaxonomyIndexWriterFactory2
+            var indexWriterFactory = new TestDirectoryTaxonomyIndexWriterFactory2(Random, TEST_VERSION_CURRENT);
+            var writer = new DirectoryTaxonomyWriter(indexWriterFactory, dir);
+            Assert.NotNull(indexWriterFactory.iw, "iw should be set via DirectoryTaxonomyIndexWriter constructor calling factory");
 
             var reader = new DirectoryTaxonomyReader(writer);
             Assert.AreEqual(1, reader.Count);
@@ -311,7 +301,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // add category and call forceMerge -- this should flush IW and merge segments down to 1
             // in ParentArray.initFromReader, this used to fail assuming there are no parents.
             writer.AddCategory(new FacetLabel("1"));
-            iw.ForceMerge(1);
+            indexWriterFactory.iw.ForceMerge(1);
 
             // now calling openIfChanged should trip on the bug
             var newtr = TaxonomyReader.OpenIfChanged(reader);
@@ -326,17 +316,30 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
-        private sealed class DirectoryTaxonomyWriterAnonymousClass2 : DirectoryTaxonomyWriter
+        // LUCENENET specific: Converted DirectoryTaxonomyWriter anonymous class into a DirectoryTaxonomyIndexWriterFactory subclass
+        private sealed class TestDirectoryTaxonomyIndexWriterFactory2 : DirectoryTaxonomyIndexWriterFactory
         {
-            internal static IndexWriter iw = null;
+            internal IndexWriter iw = null;
+            private readonly Random random;
+            private readonly Util.LuceneVersion luceneVersion;
 
-            public DirectoryTaxonomyWriterAnonymousClass2(Directory dir)
-                : base(dir)
+            public TestDirectoryTaxonomyIndexWriterFactory2(
+                Random random,
+                Util.LuceneVersion luceneVersion)
             {
+                this.random = random;
+                this.luceneVersion = luceneVersion;
             }
 
-            protected override IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config)
+            public override IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
             {
+                return new IndexWriterConfig(luceneVersion, new MockAnalyzer(random))
+                            .SetMergePolicy(new LogByteSizeMergePolicy());
+            }
+
+            public override IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config)
+            {
+                iw = base.OpenIndexWriter(directory, config);
                 return iw;
             }
         }
@@ -352,15 +355,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // hold onto IW to forceMerge
             // note how we don't close it, since DTW will close it.
-            var iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(new LogByteSizeMergePolicy()));
-
-            // LUCENENET: We need to set the index writer before the constructor of the base class is called
-            // because the DirectoryTaxonomyWriter class constructor is the consumer of the OpenIndexWriter method.
-            // The only option seems to be to set it statically before creating the instance.
-            DirectoryTaxonomyWriterAnonymousClass3.iw = iw;
-            DirectoryTaxonomyWriter writer = new DirectoryTaxonomyWriterAnonymousClass3(dir);
-
-
+            // LUCENENET: Moved the creation of IndexWriter to TestDirectoryTaxonomyIndexWriterFactory2
+            var indexWriterFactory = new TestDirectoryTaxonomyIndexWriterFactory2(Random, TEST_VERSION_CURRENT);
+            var writer = new DirectoryTaxonomyWriter(indexWriterFactory, dir);
+            Assert.NotNull(indexWriterFactory.iw, "iw should be set via DirectoryTaxonomyIndexWriter constructor calling factory");
+            
             // add a category so that the following DTR open will cause a flush and 
             // a new segment will be created
             writer.AddCategory(new FacetLabel("a"));
@@ -370,7 +369,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
             // merge all the segments so that NRT reader thinks there's a change 
-            iw.ForceMerge(1);
+            indexWriterFactory.iw.ForceMerge(1);
 
             // now calling openIfChanged should trip on the wrong assert in ParetArray's ctor
             var newtr = TaxonomyReader.OpenIfChanged(reader);
@@ -383,21 +382,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             reader.Dispose();
             writer.Dispose();
             dir.Dispose();
-        }
-
-        private sealed class DirectoryTaxonomyWriterAnonymousClass3 : DirectoryTaxonomyWriter
-        {
-            internal static IndexWriter iw;
-
-            public DirectoryTaxonomyWriterAnonymousClass3(Directory dir)
-                : base(dir)
-            {
-            }
-
-            protected override IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config)
-            {
-                return iw;
-            }
         }
 
         [Test]
