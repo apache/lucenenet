@@ -10,6 +10,7 @@ using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
@@ -188,6 +189,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Construct a Taxonomy writer.
         /// </summary>
+        /// <para />
+        /// NOTE to inheritors: This constructor in some cases can call AddCategory to add the root category
+        /// (e.g. if the index is empty). Therefore, if you override the AddCategory method, you should be aware
+        /// that it will be called from this constructor and some of your state might not be fully initialized at that time.
         /// <param name="directory">
         ///    The <see cref="Store.Directory"/> in which to store the taxonomy. Note that
         ///    the taxonomy is written directly to that directory (not to a
@@ -218,6 +223,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <exception cref="IOException">
         ///     if another error occurred. </exception>
         /// <exception cref="ArgumentNullException"> if <paramref name="indexWriterFactory"/> is <c>null</c> </exception>
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         public DirectoryTaxonomyWriter(DirectoryTaxonomyIndexWriterFactory indexWriterFactory, Directory directory,
             OpenMode openMode, ITaxonomyWriterCache cache)
         {
@@ -517,6 +524,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
 
+        /// <summary>
+        /// NOTE to inheritors: This method can be called from the constructor to add the root category
+        /// (e.g. if the index is empty). Therefore, if you override the AddCategory method, you should be aware
+        /// that it will be called before your state is fully initialized.
+        /// </summary>
         public virtual int AddCategory(FacetLabel categoryPath)
         {
             EnsureOpen();
