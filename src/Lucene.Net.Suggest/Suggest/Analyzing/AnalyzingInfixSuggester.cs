@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public const int DEFAULT_MIN_PREFIX_CHARS = 4;
 
         /// <summary>
-        /// How we sort the postings and search  results. </summary>
+        /// How we sort the postings and search results. </summary>
         private static readonly Sort SORT = new Sort(new SortField("weight", SortFieldType.INT64, true));
 
         /// <summary>
