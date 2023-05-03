@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         internal readonly int minPrefixChars;
         private readonly bool commitOnBuild;
         // LUCENENET specific - index writer config factory for extending classes
-        private readonly AnalyzingInfixSuggesterIndexWriterConfigFactory indexWriterConfigFactory;
+        private readonly IAnalyzingInfixSuggesterIndexWriterConfigFactory indexWriterConfigFactory;
 
         /// <summary>
         /// Used for ongoing NRT additions/updates. </summary>
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  use this pre-built dictionary. </param>
         /// <param name="indexWriterConfigFactory"> Factory for creating the <see cref="IndexWriterConfig"/>. </param>
         // LUCENENET specific - added indexWriterConfigFactory parameter to allow for customizing the index writer config.
-        public AnalyzingInfixSuggester(AnalyzingInfixSuggesterIndexWriterConfigFactory indexWriterConfigFactory, LuceneVersion matchVersion,
+        public AnalyzingInfixSuggester(IAnalyzingInfixSuggesterIndexWriterConfigFactory indexWriterConfigFactory, LuceneVersion matchVersion,
             Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild)
         {
             if (minPrefixChars < 0)
