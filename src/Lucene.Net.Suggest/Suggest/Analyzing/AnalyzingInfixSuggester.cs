@@ -91,6 +91,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private readonly Directory dir;
         internal readonly int minPrefixChars;
         private readonly bool commitOnBuild;
+        // LUCENENET specific - index writer config factory for extending classes
         private readonly AnalyzingInfixSuggesterIndexWriterConfigFactory indexWriterConfigFactory;
 
         /// <summary>
@@ -109,7 +110,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// How we sort the postings and search  results. </summary>
-       private static readonly Sort SORT = new Sort(new SortField("weight", SortFieldType.INT64, true));
+        private static readonly Sort SORT = new Sort(new SortField("weight", SortFieldType.INT64, true));
 
         /// <summary>
         /// Create a new instance, loading from a previously built
@@ -210,6 +211,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 m_searcherMgr = new SearcherManager(writer, true, null);
             }
         }
+
+        /// LUCENENET specific - moved IndexWriterConfig GetIndexWriterConfig to 
+        /// <see cref="AnalyzingInfixSuggesterIndexWriterConfigFactory"/> class
+        /// to allow for customizing the index writer config.
 
         /// <summary>
         /// Subclass can override to choose a specific 
