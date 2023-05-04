@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.NGram;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Codecs.Lucene46;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Sorter;
@@ -92,6 +91,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private readonly Directory dir;
         internal readonly int minPrefixChars;
         private readonly bool commitOnBuild;
+        // LUCENENET specific - index writer config factory for extending classes
+        private readonly IAnalyzingInfixSuggesterIndexWriterConfigFactory indexWriterConfigFactory;
 
         /// <summary>
         /// Used for ongoing NRT additions/updates. </summary>
@@ -163,11 +164,36 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. (Code moved from other constructor to here.)
         public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
             Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild)
+            : this(new AnalyzingInfixSuggesterIndexWriterConfigFactory(SORT), matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild)
+        {
+        }
+
+        /// <summary>
+        /// Create a new instance, loading from a previously built
+        /// <see cref="AnalyzingInfixSuggester"/> directory, if it exists.  This directory must be
+        /// private to the infix suggester (i.e., not an external
+        /// Lucene index).  Note that <see cref="Dispose()"/>
+        /// will also dispose the provided directory.
+        /// </summary>
+        ///  <param name="minPrefixChars"> Minimum number of leading characters
+        ///     before <see cref="PrefixQuery"/> is used (default 4).
+        ///     Prefixes shorter than this are indexed as character
+        ///     ngrams (increasing index size but making lookups
+        ///     faster). </param>
+        ///  <param name="commitOnBuild"> Call commit after the index has finished building. This
+        ///  would persist the suggester index to disk and future instances of this suggester can
+        ///  use this pre-built dictionary. </param>
+        /// <param name="indexWriterConfigFactory"> Factory for creating the <see cref="IndexWriterConfig"/>. </param>
+        // LUCENENET specific - added indexWriterConfigFactory parameter to allow for customizing the index writer config.
+        public AnalyzingInfixSuggester(IAnalyzingInfixSuggesterIndexWriterConfigFactory indexWriterConfigFactory, LuceneVersion matchVersion,
+            Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer, int minPrefixChars, bool commitOnBuild)
         {
             if (minPrefixChars < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(minPrefixChars), "minPrefixChars must be >= 0; got: " + minPrefixChars);// LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
+
+            if (indexWriterConfigFactory is null) throw new ArgumentNullException(nameof(indexWriterConfigFactory));
 
             this.m_queryAnalyzer = queryAnalyzer;
             this.m_indexAnalyzer = indexAnalyzer;
@@ -175,35 +201,20 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.dir = dir;
             this.minPrefixChars = minPrefixChars;
             this.commitOnBuild = commitOnBuild;
+            this.indexWriterConfigFactory = indexWriterConfigFactory;
 
             if (DirectoryReader.IndexExists(dir))
             {
                 // Already built; open it:
-                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.APPEND));
+                var config = indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.APPEND);
+                writer = new IndexWriter(dir, config);
                 m_searcherMgr = new SearcherManager(writer, true, null);
             }
         }
 
-        /// <summary>
-        /// Override this to customize index settings, e.g. which
-        /// codec to use. 
-        /// </summary>
-        protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion,
-            Analyzer indexAnalyzer, OpenMode openMode)
-        {
-            IndexWriterConfig iwc = new IndexWriterConfig(matchVersion, indexAnalyzer)
-            {
-                Codec = new Lucene46Codec(),
-                OpenMode = openMode
-            };
-
-            // This way all merged segments will be sorted at
-            // merge time, allow for per-segment early termination
-            // when those segments are searched:
-            iwc.MergePolicy = new SortingMergePolicy(iwc.MergePolicy, SORT);
-
-            return iwc;
-        }
+        /// LUCENENET specific - moved IndexWriterConfig GetIndexWriterConfig to 
+        /// <see cref="AnalyzingInfixSuggesterIndexWriterConfigFactory"/> class
+        /// to allow for customizing the index writer config.
 
         /// <summary>
         /// Subclass can override to choose a specific 
@@ -234,7 +245,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 // First pass: build a temporary normal Lucene index,
                 // just indexing the suggestions as they iterate:
-                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
+                writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
                 //long t0 = System.nanoTime();
 
                 // TODO: use threads?
@@ -339,7 +350,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         m_searcherMgr.Dispose();
                         m_searcherMgr = null;
                     }
-                    writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
+                    writer = new IndexWriter(dir, indexWriterConfigFactory.Get(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
                     m_searcherMgr = new SearcherManager(writer, true, null);
                 }
             }
