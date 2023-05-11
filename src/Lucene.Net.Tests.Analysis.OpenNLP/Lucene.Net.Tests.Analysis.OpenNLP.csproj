@@ -27,6 +27,7 @@
     <!-- Allow specific target framework to flow in from TestTargetFrameworks.props -->
     <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net7.0;net6.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TargetFramework)' == '' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48</TargetFrameworks>
+    
     <AssemblyTitle>Lucene.Net.Tests.Analysis.OpenNLP</AssemblyTitle>
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
   </PropertyGroup>

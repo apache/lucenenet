@@ -31,6 +31,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net462</TargetFrameworks>
+    <TargetFrameworks>net462;net6.0;</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>
     <PackageTags>$(PackageTags);analysis;natural;language;processing;opennlp</PackageTags>
