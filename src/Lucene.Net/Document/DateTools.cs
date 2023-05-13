@@ -62,7 +62,7 @@ namespace Lucene.Net.Documents
         };
 
         /// <summary>
-        /// Converts a <see cref="DateTime"/> to a string suitable for indexing using the specified 
+        /// Converts a <see cref="DateTime"/> to a string suitable for indexing using the specified
         /// <paramref name="resolution"/>.
         /// <para/>
         /// The <paramref name="date"/> is converted according to its <see cref="DateTime.Kind"/> property
@@ -77,7 +77,7 @@ namespace Lucene.Net.Documents
         /// depending on <paramref name="resolution"/>; using UTC as the timezone.</returns>
         public static string DateToString(DateTime date, DateResolution resolution)
         {
-            return DateToString(date, resolution, timeZone: null);
+            return DateToStringInternal(date, timeZone: null, resolution);
         }
 
         /// <summary>
@@ -98,39 +98,19 @@ namespace Lucene.Net.Documents
             if (timeZone is null)
                 throw new ArgumentNullException(nameof(timeZone));
 
-            return DateToString(date, resolution, timeZone);
+            return DateToStringInternal(date, timeZone, resolution);
         }
 
-        private static string DateToString(DateTime date, DateResolution resolution, TimeZoneInfo timeZone)
+        private static string DateToStringInternal(DateTime date, TimeZoneInfo timeZone, DateResolution resolution)
         {
             string format = ToDateFormat(resolution);
             if (format is null)
                 throw new ArgumentException($"Unknown resolution {resolution}.");
 
-            DateTimeOffset timeZoneAdjusted;
-            switch (date.Kind)
+            DateTimeOffset timeZoneAdjusted = new DateTimeOffset(date.ToUniversalTime(), TimeSpan.Zero);
+            if (timeZone is not null && !TimeZoneInfo.Utc.Equals(timeZone))
             {
-                case DateTimeKind.Utc:
-                    if (timeZone is null || TimeZoneInfo.Utc.Equals(timeZone))
-                    {
-                        timeZoneAdjusted = new DateTimeOffset(date, TimeSpan.Zero);
-                    }
-                    else
-                    {
-                        timeZoneAdjusted = new DateTimeOffset(date, TimeSpan.Zero);
-                        timeZoneAdjusted = TimeZoneInfo.ConvertTime(timeZoneAdjusted, timeZone);
-                    }
-                    break;
-
-                case DateTimeKind.Local:
-                    timeZone = timeZone ?? TimeZoneInfo.Local;
-                    timeZoneAdjusted = new DateTimeOffset(date, timeZone.GetUtcOffset(date));
-                    break;
-
-                default: //case DateTimeKind.Unspecified:
-                    timeZone = timeZone ?? TimeZoneInfo.Local; // Assume local time zone if not specified
-                    timeZoneAdjusted = new DateTimeOffset(date, timeZone.GetUtcOffset(new DateTime(date.Ticks, DateTimeKind.Local)));
-                    break;
+                timeZoneAdjusted = TimeZoneInfo.ConvertTime(timeZoneAdjusted, timeZone);
             }
 
             DateTime d = Round(timeZoneAdjusted.UtcDateTime, resolution);
