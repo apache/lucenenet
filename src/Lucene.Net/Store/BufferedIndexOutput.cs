@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -34,6 +35,7 @@ namespace Lucene.Net.Store
         private long bufferStart = 0; // position in file of buffer
         private int bufferPosition = 0; // position in buffer
         private readonly CRC32 crc;
+        private int disposed = 0; // LUCENENET specific - allow double-dispose
 
         /// <summary>
         /// Creates a new <see cref="BufferedIndexOutput"/> with the default buffer size
@@ -161,6 +163,8 @@ namespace Lucene.Net.Store
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
+            if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
             if (disposing)
             {
                 Flush();
@@ -172,6 +176,7 @@ namespace Lucene.Net.Store
         [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
         public override void Seek(long pos)
         {
+            EnsureOpen(); // LUCENENET specific - ensure we can't be abused after dispose
             Flush();
             bufferStart = pos;
         }
@@ -187,8 +192,21 @@ namespace Lucene.Net.Store
         {
             get
             {
+                EnsureOpen(); // LUCENENET specific - ensure we can't be abused after dispose
                 Flush();
                 return crc.Value;
+            }
+        }
+
+        // LUCENENET specific - ensure we can't be abused after dispose
+        private bool IsOpen => Interlocked.CompareExchange(ref this.disposed, 0, 0) == 0 ? true : false;
+
+        // LUCENENET specific - ensure we can't be abused after dispose
+        private void EnsureOpen()
+        {
+            if (!IsOpen)
+            {
+                throw AlreadyClosedException.Create(this.GetType().FullName, "this IndexOutput is disposed.");
             }
         }
     }
