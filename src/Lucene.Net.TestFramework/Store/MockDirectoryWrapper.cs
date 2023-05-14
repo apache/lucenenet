@@ -1399,17 +1399,16 @@ namespace Lucene.Net.Store
                 this.delegateHandle = delegateHandle;
             }
 
-            private int disposed = 0;
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
 
             protected override void Dispose(bool disposing)
             {
-                if (0 == Interlocked.CompareExchange(ref this.disposed, 1, 0))
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
+                if (disposing)
                 {
-                    if (disposing)
-                    {
-                        delegateHandle.Dispose();
-                        outerInstance.RemoveOpenFile(this, name);
-                    }
+                    delegateHandle.Dispose();
+                    outerInstance.RemoveOpenFile(this, name);
                 }
             }
 

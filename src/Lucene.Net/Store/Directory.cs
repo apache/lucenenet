@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -253,6 +254,7 @@ namespace Lucene.Net.Store
         private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly IndexInput @base;
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
 
             public IndexInputSlicerAnonymousClass(IndexInput @base)
             {
@@ -266,6 +268,8 @@ namespace Lucene.Net.Store
 
             protected override void Dispose(bool disposing)
             {
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
                 if (disposing)
                 {
                     @base.Dispose();
@@ -323,6 +327,7 @@ namespace Lucene.Net.Store
             private IndexInput @base;
             private long fileOffset;
             private long length;
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
 
             internal SlicedIndexInput(string sliceDescription, IndexInput @base, long fileOffset, long length)
                 : this(sliceDescription, @base, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
@@ -377,6 +382,8 @@ namespace Lucene.Net.Store
             /// </summary>
             protected override void Dispose(bool disposing)
             {
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
                 if (disposing)
                 {
                     @base.Dispose();
