@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -26,6 +27,7 @@ namespace Lucene.Net.Store
     public class OutputStreamDataOutput : DataOutput, IDisposable
     {
         private readonly Stream _os;
+        private int disposed = 0; // LUCENENET specific - allow double-dispose
 
         public OutputStreamDataOutput(Stream os)
         {
@@ -60,6 +62,8 @@ namespace Lucene.Net.Store
         // LUCENENET specific - implemented proper dispose pattern
         protected virtual void Dispose(bool disposing)
         {
+            if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
             if (disposing)
             {
                 _os.Dispose();
