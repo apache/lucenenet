@@ -2,6 +2,7 @@
 using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -115,6 +116,7 @@ namespace Lucene.Net.Store
             private readonly IOContext context;
             private readonly FileInfo file;
             private readonly FileStream descriptor;
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
 
             public IndexInputSlicerAnonymousClass(IOContext context, FileInfo file, FileStream descriptor)
             {
@@ -125,6 +127,8 @@ namespace Lucene.Net.Store
 
             protected override void Dispose(bool disposing)
             {
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
                 if (disposing)
                 {
                     descriptor.Dispose();
@@ -156,6 +160,8 @@ namespace Lucene.Net.Store
         /// </summary>
         protected internal class SimpleFSIndexInput : BufferedIndexInput
         {
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
+
             // LUCENENET specific: chunk size not needed
             ///// <summary>
             ///// The maximum chunk size is 8192 bytes, because <seealso cref="RandomAccessFile"/> mallocs
@@ -199,6 +205,8 @@ namespace Lucene.Net.Store
 
             protected override void Dispose(bool disposing)
             {
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
                 if (disposing && !IsClone)
                 {
                     m_file.Dispose();

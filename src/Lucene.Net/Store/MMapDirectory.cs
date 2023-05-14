@@ -5,6 +5,7 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -196,8 +197,8 @@ namespace Lucene.Net.Store
         private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly MMapDirectory outerInstance;
-
             private readonly MMapIndexInput full;
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
 
             public IndexInputSlicerAnonymousClass(MMapDirectory outerInstance, MMapIndexInput full)
             {
@@ -220,6 +221,8 @@ namespace Lucene.Net.Store
 
             protected override void Dispose(bool disposing)
             {
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
                 if (disposing)
                 {
                     full.Dispose();
@@ -231,6 +234,7 @@ namespace Lucene.Net.Store
         {
             internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
             private readonly FileStream fc;
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
 
             internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc)
                 : base(resourceDescription, null, fc.Length, outerInstance.chunkSizePower, true)
@@ -241,6 +245,8 @@ namespace Lucene.Net.Store
 
             protected override sealed void Dispose(bool disposing)
             {
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
                 try
                 {
                     if (disposing)
