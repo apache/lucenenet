@@ -2,7 +2,6 @@
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
@@ -51,10 +50,10 @@ namespace Lucene.Net.Store
     /// <para/>Here's a simple example usage:
     ///
     /// <code>
-    ///     Directory fsDir = FSDirectory.Open(new DirectoryInfo("/path/to/index"));
-    ///     NRTCachingDirectory cachedFSDir = new NRTCachingDirectory(fsDir, 5.0, 60.0);
+    ///     using Directory fsDir = FSDirectory.Open(new DirectoryInfo("/path/to/index"));
+    ///     using NRTCachingDirectory cachedFSDir = new NRTCachingDirectory(fsDir, 5.0, 60.0);
     ///     IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_48, analyzer);
-    ///     IndexWriter writer = new IndexWriter(cachedFSDir, conf);
+    ///     using IndexWriter writer = new IndexWriter(cachedFSDir, conf);
     /// </code>
     ///
     /// <para>This will cache all newly flushed segments, all merges
@@ -64,7 +63,7 @@ namespace Lucene.Net.Store
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class NRTCachingDirectory : Directory
+    public class NRTCachingDirectory : BaseDirectory // LUCENENET specific - subclass BaseDirectory so we can leverage isOpen logic.
     {
         private readonly RAMDirectory cache = new RAMDirectory();
 
@@ -96,21 +95,25 @@ namespace Lucene.Net.Store
 
         public override void SetLockFactory(LockFactory lockFactory)
         {
+            EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
             @delegate.SetLockFactory(lockFactory);
         }
 
         public override string GetLockID()
         {
+            EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
             return @delegate.GetLockID();
         }
 
         public override Lock MakeLock(string name)
         {
+            EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
             return @delegate.MakeLock(name);
         }
 
         public override void ClearLock(string name)
         {
+            EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
             @delegate.ClearLock(name);
         }
 
@@ -124,6 +127,8 @@ namespace Lucene.Net.Store
             UninterruptableMonitor.Enter(this);
             try
             {
+                EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
+
                 ISet<string> files = new JCG.HashSet<string>();
                 foreach (string f in cache.ListAll())
                 {
@@ -166,6 +171,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual long GetSizeInBytes()
         {
+            EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
             return cache.GetSizeInBytes();
         }
 
@@ -175,6 +181,7 @@ namespace Lucene.Net.Store
             UninterruptableMonitor.Enter(this);
             try
             {
+                EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
                 return cache.FileExists(name) || @delegate.FileExists(name);
             }
             finally
@@ -188,6 +195,7 @@ namespace Lucene.Net.Store
             UninterruptableMonitor.Enter(this);
             try
             {
+                EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
                 if (VERBOSE)
                 {
                     Console.WriteLine("nrtdir.deleteFile name=" + name);
@@ -214,6 +222,7 @@ namespace Lucene.Net.Store
             UninterruptableMonitor.Enter(this);
             try
             {
+                EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
 #pragma warning disable 612, 618
                 if (cache.FileExists(name))
 #pragma warning restore 612, 618
@@ -233,6 +242,7 @@ namespace Lucene.Net.Store
 
         public virtual string[] ListCachedFiles()
         {
+            EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
             return cache.ListAll();
         }
 
@@ -242,6 +252,7 @@ namespace Lucene.Net.Store
             {
                 Console.WriteLine("nrtdir.createOutput name=" + name);
             }
+            EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
             if (DoCacheWrite(name, context))
             {
                 if (VERBOSE)
@@ -278,6 +289,7 @@ namespace Lucene.Net.Store
             {
                 Console.WriteLine("nrtdir.sync files=" + fileNames);
             }
+            EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
             foreach (string fileName in fileNames)
             {
                 UnCache(fileName);
@@ -290,10 +302,12 @@ namespace Lucene.Net.Store
             UninterruptableMonitor.Enter(this);
             try
             {
+                EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
                 if (VERBOSE)
                 {
                     Console.WriteLine("nrtdir.openInput name=" + name);
                 }
+                
 #pragma warning disable 612, 618
                 if (cache.FileExists(name))
 #pragma warning restore 612, 618
@@ -352,6 +366,8 @@ namespace Lucene.Net.Store
         /// </summary>
         protected override void Dispose(bool disposing)
         {
+            if (!CompareAndSetIsOpen(expect: true, update: false)) return; // LUCENENET: Don't allow dispose more than once
+
             if (disposing)
             {
                 // NOTE: technically we shouldn't have to do this, ie,
@@ -374,6 +390,7 @@ namespace Lucene.Net.Store
         /// </summary>
         protected virtual bool DoCacheWrite(string name, IOContext context)
         {
+            EnsureOpen(); // LUCENENET: Added check to ensure we aren't disposed.
             //System.out.println(Thread.currentThread().getName() + ": CACHE check merge=" + merge + " size=" + (merge==null ? 0 : merge.estimatedMergeBytes));
 
             long bytes = 0;
@@ -402,6 +419,8 @@ namespace Lucene.Net.Store
                 {
                     Console.WriteLine("nrtdir.unCache name=" + fileName);
                 }
+                // LUCENENET: We delegate the EnsureOpen() call to cache.FileExists() here so we can
+                // call this after setting isDisposed to true.
 #pragma warning disable 612, 618
                 if (!cache.FileExists(fileName))
 #pragma warning restore 612, 618

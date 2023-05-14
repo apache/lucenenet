@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using System;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -27,15 +28,57 @@ namespace Lucene.Net.Store
     /// </summary>
     public abstract class BaseDirectory : Directory
     {
-        private volatile bool isOpen = true;
+        // LUCENENET specific - setup to make it safe to call dispose multiple times
+        private const int True = 1;
+        private const int False = 0;
 
-        // LUCENENET specific - since we can't make a CLS-compliant 
-        // protected volatile field, we are exposing it through a protected
-        // property.
+        // LUCENENET specific - using Interlocked intead of a volatile field for IsOpen.
+        private int isOpen = True; // LUCENENET: Added check to ensure we aren't disposed.
+
+        /// <summary>
+        /// Gets a value indicating whether the current <see cref="Directory"/> instance is open.
+        /// <para/>
+        /// Expert: This is useful for implementing the <see cref="EnsureOpen()"/> logic.
+        /// </summary>
         protected internal virtual bool IsOpen
         {
-            get => isOpen;
-            set => isOpen = value;
+            get => Interlocked.CompareExchange(ref isOpen, False, False) == True ? true : false;
+            set => Interlocked.Exchange(ref this.isOpen, value ? True : False);
+        }
+
+        /// <summary>
+        /// Atomically sets the value to the given updated value
+        /// if the current value <c>==</c> the expected value.
+        /// <para/>
+        /// Expert: Use this in the <see cref="Dispose(bool)"/> call to skip
+        /// duplicate calls by using the folling if block to guard the
+        /// dispose logic.
+        /// <code>
+        /// protected override void Dispose(bool disposing)
+        /// {
+        ///     if (!CompareAndSetIsOpen(expect: true, update: false)) return;
+        /// 
+        ///     // Dispose unmanaged resources
+        ///     if (disposing)
+        ///     {
+        ///         // Dispose managed resources
+        ///     }
+        /// }
+        /// </code>
+        /// </summary>
+        /// <param name="expect">The expected value (the comparand).</param>
+        /// <param name="update">The new value.</param>
+        /// <returns><c>true</c> if successful. A <c>false</c> return value indicates that
+        /// the actual value was not equal to the expected value.</returns>
+        // LUCENENET specific - setup to make it safe to call dispose multiple times
+        protected internal bool CompareAndSetIsOpen(bool expect, bool update)
+        {
+            int e = expect ? True : False;
+            int u = update ? True : False;
+
+            int original = Interlocked.CompareExchange(ref isOpen, u, e);
+
+            return original == e;
         }
 
         /// <summary>

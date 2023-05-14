@@ -217,9 +217,11 @@ namespace Lucene.Net.Store
         /// Closes the store to future operations, releasing associated memory. </summary>
         protected override void Dispose(bool disposing)
         {
+            if (!CompareAndSetIsOpen(expect: true, update: false)) return; // LUCENENET: allow dispose more than once as per https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/dispose-pattern
+
             if (disposing)
             {
-                IsOpen = false;
+                // LUCENENET: Removed setter for isOpen and put it above in the if check so it is atomic
                 m_fileMap.Clear();
             }
         }

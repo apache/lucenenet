@@ -1,5 +1,6 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Util;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -30,7 +31,48 @@ namespace Lucene.Net.Store
     {
         private bool checkIndexOnClose = true;
         private bool crossCheckTermVectorsOnClose = true;
-        private volatile bool isOpen = true; // LUCENENET specific - private because volatile is not CLS compliant, but made protected setter
+
+        // LUCENENET specific - setup to make it safe to call dispose multiple times
+        private const int True = 1;
+        private const int False = 0;
+
+        // LUCENENET specific - using Interlocked intead of a volatile field for IsOpen.
+        private int isOpen = True; // LUCENENET: Changed from bool to int so we can use Interlocked.
+
+        /// <summary>
+        /// Atomically sets the value to the given updated value
+        /// if the current value <c>==</c> the expected value.
+        /// <para/>
+        /// Expert: Use this in the <see cref="Dispose(bool)"/> call to skip
+        /// duplicate calls by using the folling if block to guard the
+        /// dispose logic.
+        /// <code>
+        /// protected override void Dispose(bool disposing)
+        /// {
+        ///     if (!CompareAndSetIsOpen(expect: true, update: false)) return;
+        /// 
+        ///     // Dispose unmanaged resources
+        ///     if (disposing)
+        ///     {
+        ///         // Dispose managed resources
+        ///     }
+        /// }
+        /// </code>
+        /// </summary>
+        /// <param name="expect">The expected value (the comparand).</param>
+        /// <param name="update">The new value.</param>
+        /// <returns><c>true</c> if successful. A <c>false</c> return value indicates that
+        /// the actual value was not equal to the expected value.</returns>
+        // LUCENENET specific - setup to make it safe to call dispose multiple times
+        protected internal bool CompareAndSetIsOpen(bool expect, bool update)
+        {
+            int e = expect ? True : False;
+            int u = update ? True : False;
+
+            int original = Interlocked.CompareExchange(ref isOpen, u, e);
+
+            return original == e;
+        }
 
         public BaseDirectoryWrapper(Directory @delegate)
             : base(@delegate)
@@ -39,9 +81,11 @@ namespace Lucene.Net.Store
 
         protected override void Dispose(bool disposing)
         {
+            if (!CompareAndSetIsOpen(expect: true, update: false)) return; // LUCENENET: allow dispose more than once as per https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/dispose-pattern
+
             if (disposing)
             {
-                isOpen = false;
+                // LUCENENET: Removed setter for isOpen and put it above in the if check so it is atomic
                 if (checkIndexOnClose && DirectoryReader.IndexExists(this))
                 {
                     TestUtil.CheckIndex(this, crossCheckTermVectorsOnClose);
@@ -50,10 +94,15 @@ namespace Lucene.Net.Store
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the current <see cref="Directory"/> instance is open.
+        /// <para/>
+        /// Expert: This is useful for implementing the <see cref="EnsureOpen()"/> logic.
+        /// </summary>
         public virtual bool IsOpen
         {
-            get => isOpen;
-            protected set => isOpen = value; // LUCENENET specific - added protected setter and marked isOpen private because volatile is not CLS compliant
+            get => Interlocked.CompareExchange(ref isOpen, False, False) == True ? true : false;
+            protected set => Interlocked.Exchange(ref this.isOpen, value ? True : False); // LUCENENET specific - added protected setter
         }
 
         /// <summary>
