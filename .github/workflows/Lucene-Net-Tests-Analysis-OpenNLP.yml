@@ -56,7 +56,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net48]
+        framework: [net7.0, net48]
         platform: [x64]
         configuration: [Release]
         exclude:
