@@ -5,6 +5,7 @@ using System.IO;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using Lucene.Net.Attributes;
 
 namespace Lucene.Net.Store
 {
@@ -201,6 +202,18 @@ namespace Lucene.Net.Store
             Assert.AreEqual("d.xyz", cfr.ListAll()[0]);
             cfr.Dispose();
             newDir.Dispose();
+        }
+
+        /// <summary>
+        /// Make sure directory allows double-dispose as per the
+        /// <a href="https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/dispose-pattern">dispose pattern docs</a>.
+        /// </summary>
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestDoubleDispose()
+        {
+            using Directory newDir = new NRTCachingDirectory(NewDirectory(), 2.0, 25.0);
+            Assert.DoesNotThrow(() => newDir.Dispose());
         }
 
         /// <summary>

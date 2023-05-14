@@ -423,10 +423,7 @@ namespace Lucene.Net.Store
         /// Closes the store to future operations. </summary>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                IsOpen = false;
-            }
+            IsOpen = false; // LUCENENET: Since there is nothing else to do here, we can safely call this. If we have other stuff to dispose, change to if (!CompareAndSetIsOpen(expect: true, update: false)) return;
         }
 
         /// <summary> the underlying filesystem directory </summary>
