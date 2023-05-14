@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -26,6 +27,7 @@ namespace Lucene.Net.Store
     public class InputStreamDataInput : DataInput, IDisposable
     {
         private readonly Stream _is;
+        private int disposed = 0; // LUCENENET specific - allow double-dispose
 
         public InputStreamDataInput(Stream @is)
         {
@@ -65,6 +67,8 @@ namespace Lucene.Net.Store
 
         protected virtual void Dispose(bool disposing)
         {
+            if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
             if (disposing)
             {
                 _is.Dispose();
