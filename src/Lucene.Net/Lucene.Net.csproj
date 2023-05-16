@@ -60,10 +60,14 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
+    <!-- NOTE: This is a transitive dependency only, but we are forcing an upgrade to ensure there are no conflicts with dependencies. -->
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="$(SystemRuntimeCompilerServicesUnsafePackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
+    <!-- NOTE: This is a transitive dependency only, but we are forcing an upgrade to ensure there are no conflicts with dependencies. -->
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="$(SystemRuntimeCompilerServicesUnsafePackageVersion)" />
   </ItemGroup>
 
   <ItemGroup>
