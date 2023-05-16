@@ -77,7 +77,7 @@
     <SystemReflectionEmitPackageVersion>4.3.0</SystemReflectionEmitPackageVersion>
     <SystemReflectionEmitILGenerationPackageVersion>4.3.0</SystemReflectionEmitILGenerationPackageVersion>
     <SystemReflectionTypeExtensionsPackageVersion>4.3.0</SystemReflectionTypeExtensionsPackageVersion>
-    <SystemRuntimeCompilerServicesUnsafePackageVersion>5.0.0</SystemRuntimeCompilerServicesUnsafePackageVersion>
+    <SystemRuntimeCompilerServicesUnsafePackageVersion>6.0.0</SystemRuntimeCompilerServicesUnsafePackageVersion>
     <SystemRuntimeInteropServicesRuntimeInformationPackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimeInformationPackageVersion>
     <SystemSecurityCryptographyXmlPackageVersion>4.7.0</SystemSecurityCryptographyXmlPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion>4.3.0</SystemTextEncodingCodePagesPackageVersion>
