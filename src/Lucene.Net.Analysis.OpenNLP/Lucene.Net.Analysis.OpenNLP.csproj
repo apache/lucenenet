@@ -40,8 +40,6 @@
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
   </PropertyGroup>
 
-  
-
   <ItemGroup>
     <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
@@ -50,7 +48,12 @@
 
   <ItemGroup>
     <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
-    <PackageReference Include="OpenNLP.NET" Version="$(OpenNLPNETPackageVersion)" />
+    <PackageReference Include="IKVM" Version="$(IKVMPackageVersion)" />
+    <PackageReference Include="IKVM.Maven.Sdk" Version="$(IKVMMavenSdkPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MavenReference Include="org.apache.opennlp:opennlp-tools" Version="1.9.4" />
   </ItemGroup>
 
 </Project>
