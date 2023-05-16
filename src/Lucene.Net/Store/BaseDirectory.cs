@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
         /// Atomically sets the value to the given updated value
         /// if the current value <c>==</c> the expected value.
         /// <para/>
-        /// Expert: Use this in the <see cref="Dispose(bool)"/> call to skip
+        /// Expert: Use this in the <see cref="Directory.Dispose(bool)"/> call to skip
         /// duplicate calls by using the folling if block to guard the
         /// dispose logic.
         /// <code>
