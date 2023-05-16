@@ -71,7 +71,7 @@
     <OpenNLPNETPackageVersion>1.9.4.1</OpenNLPNETPackageVersion>
     <PrismCorePackageVersion>7.2.0.1422</PrismCorePackageVersion>
     <RandomizedTestingGeneratorsPackageVersion>2.7.8</RandomizedTestingGeneratorsPackageVersion>
-    <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
+    <SharpZipLibPackageVersion>1.3.3</SharpZipLibPackageVersion>
     <Spatial4nPackageVersion>0.4.1.1</Spatial4nPackageVersion>
     <SystemMemoryPackageVersion>4.5.5</SystemMemoryPackageVersion>
     <SystemReflectionEmitPackageVersion>4.3.0</SystemReflectionEmitPackageVersion>
