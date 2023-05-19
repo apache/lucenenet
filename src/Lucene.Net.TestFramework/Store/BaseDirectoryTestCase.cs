@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 8.2.0
 // LUCENENET NOTE: This class now exists both here and in Lucene.Net.Tests
 using J2N.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -453,6 +454,18 @@ namespace Lucene.Net.Store
             Assert.Throws<ObjectDisposedException>(() => {
                 dir.CreateOutput("test", NewIOContext(Random));
             });
+        }
+
+        /// <summary>
+        /// Make sure directory allows double-dispose as per the
+        /// <a href="https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/dispose-pattern">dispose pattern docs</a>.
+        /// </summary>
+        [Test]
+        [LuceneNetSpecific] // GH-841, GH-265
+        public virtual void TestDoubleDispose()
+        {
+            using Directory dir = GetDirectory(CreateTempDir("testDoubleDispose"));
+            Assert.DoesNotThrow(() => dir.Dispose());
         }
 
         //        private class ListAllThread : ThreadJob

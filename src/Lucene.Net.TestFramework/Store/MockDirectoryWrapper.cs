@@ -919,6 +919,8 @@ namespace Lucene.Net.Store
 
         protected override void Dispose(bool disposing)
         {
+            if (!CompareAndSetIsOpen(expect: true, update: false)) return; // LUCENENET: allow dispose more than once as per https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/dispose-pattern
+
             UninterruptableMonitor.Enter(this);
             try
             {
@@ -1097,8 +1099,16 @@ namespace Lucene.Net.Store
                             }
                         }
                     }
-                    m_input.Dispose(); // LUCENENET TODO: using blocks in this entire class
-                    throttledOutput.Dispose(); // LUCENENET specific
+                    // LUCENENET specific: While the Microsoft docs say that Dispose() should not throw errors,
+                    // we are being defensive because this is a test mock.
+                    try
+                    {
+                        m_input.Dispose();
+                    }
+                    finally
+                    {
+                        throttledOutput.Dispose(); // LUCENENET specific
+                    }
                 }
             }
             finally
@@ -1389,17 +1399,16 @@ namespace Lucene.Net.Store
                 this.delegateHandle = delegateHandle;
             }
 
-            private int disposed = 0;
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
 
             protected override void Dispose(bool disposing)
             {
-                if (0 == Interlocked.CompareExchange(ref this.disposed, 1, 0))
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
+                if (disposing)
                 {
-                    if (disposing)
-                    {
-                        delegateHandle.Dispose();
-                        outerInstance.RemoveOpenFile(this, name);
-                    }
+                    delegateHandle.Dispose();
+                    outerInstance.RemoveOpenFile(this, name);
                 }
             }
 

@@ -584,5 +584,14 @@ namespace Lucene.Net.Documents
             Assert.AreEqual("2004-02-03 22:08:56:333", IsoFormat(DateTools.StringToDate(convertedDate)));
             Assert.AreEqual(unixDate, DateTools.StringToTime(convertedDate));
         }
+
+        [Test]
+        [LuceneNetSpecific] // GH-772
+        public void DateToString_MinDate_ShouldNotThrowArgumentOutOfRangeException()
+        {
+            var date = new DateTime();
+            var value = DateTools.DateToString(date, DateResolution.DAY);
+            Assert.AreEqual("00010101", value);
+        }
     }
 }

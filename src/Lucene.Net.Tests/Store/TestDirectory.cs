@@ -57,6 +57,20 @@ namespace Lucene.Net.Store
             }
         }
 
+        [Test]
+        [LuceneNetSpecific] // GH-841, GH-265
+        public virtual void TestDoubleDispose()
+        {
+            DirectoryInfo tempDir = CreateTempDir(GetType().Name);
+            Directory[] dirs = new Directory[] { new RAMDirectory(), new SimpleFSDirectory(tempDir), new NIOFSDirectory(tempDir) };
+
+            foreach (Directory dir in dirs)
+            {
+                Assert.DoesNotThrow(() => dir.Dispose());
+                Assert.DoesNotThrow(() => dir.Dispose());
+            }
+        }
+
         // test is occasionally very slow, i dont know why
         // try this seed: 7D7E036AD12927F5:93333EF9E6DE44DE
         [Test]

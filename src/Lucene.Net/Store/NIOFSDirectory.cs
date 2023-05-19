@@ -3,6 +3,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.IO;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -119,6 +120,7 @@ namespace Lucene.Net.Store
             private readonly IOContext context;
             private readonly FileInfo path;
             private readonly FileStream descriptor;
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
 
             public IndexInputSlicerAnonymousClass(IOContext context, FileInfo path, FileStream descriptor)
             {
@@ -129,6 +131,8 @@ namespace Lucene.Net.Store
 
             protected override void Dispose(bool disposing)
             {
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
                 if (disposing)
                 {
                     descriptor.Dispose();
@@ -184,6 +188,8 @@ namespace Lucene.Net.Store
 
             private ByteBuffer byteBuf; // wraps the buffer for NIO
 
+            private int disposed = 0; // LUCENENET specific - allow double-dispose
+
             public NIOFSIndexInput(string resourceDesc, FileStream fc, IOContext context)
                 : base(resourceDesc, context)
             {
@@ -203,6 +209,8 @@ namespace Lucene.Net.Store
 
             protected override void Dispose(bool disposing)
             {
+                if (0 != Interlocked.CompareExchange(ref this.disposed, 1, 0)) return; // LUCENENET specific - allow double-dispose
+
                 if (disposing && !isClone)
                 {
                     m_channel.Dispose();

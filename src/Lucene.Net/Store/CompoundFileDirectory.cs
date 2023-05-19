@@ -286,17 +286,15 @@ namespace Lucene.Net.Store
 
         protected override void Dispose(bool disposing)
         {
+            // allow double close - usually to be consistent with other closeables
+            if (!CompareAndSetIsOpen(expect: true, update: false)) return; // already closed
+
             UninterruptableMonitor.Enter(this);
             try
             {
                 if (disposing)
                 {
-                    if (!IsOpen)
-                    {
-                        // allow double close - usually to be consistent with other closeables
-                        return; // already closed
-                    }
-                    IsOpen = false;
+                    // LUCENENET: Moved double-dispose logic outside of lock.
                     if (writer != null)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(openForWrite);
@@ -455,6 +453,7 @@ namespace Lucene.Net.Store
 
             protected override void Dispose(bool disposing)
             {
+                // LUCENENET: Intentionally blank
             }
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)

@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Data.Common;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
@@ -361,17 +362,26 @@ namespace Lucene.Net.Codecs
 
             public override long Position => pointer + pos; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
-            public override long Length => data.Length;
+            public override long Length
+            {
+                get
+                {
+                    EnsureOpen(); // LUCENENET: Guard against disposed IndexInput
+                    return data.Length;
+                }
+            }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override byte ReadByte()
             {
+                EnsureOpen(); // LUCENENET: Guard against disposed IndexInput
                 return data[pos++];
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void ReadBytes(byte[] b, int offset, int len)
             {
+                EnsureOpen(); // LUCENENET: Guard against disposed IndexInput
                 Arrays.Copy(data, pos, b, offset, len);
                 pos += len;
             }
@@ -379,7 +389,16 @@ namespace Lucene.Net.Codecs
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Seek(long pos)
             {
+                EnsureOpen(); // LUCENENET: Guard against disposed IndexInput
                 this.pos = (int)(pos - pointer);
+            }
+
+            private void EnsureOpen() // LUCENENET: Guard against disposed IndexInput
+            {
+                if (data is null)
+                {
+                    throw AlreadyClosedException.Create(this.GetType().FullName, "this IndexInput is disposed.");
+                }
             }
         }
     }
