@@ -10,7 +10,7 @@ uid: quick-start
 
 Welcome. We are glad you're here. We hope this Quick Start section makes it easy to start learning about Lucene.NET.  We assume you don't know anything about this awesome search library and are encountering it for the first time.
 
-Our goal here is to get you enough information and experience with Lucene.NET so that you have a sense for what it is and how it might be useful to you. We also hope you will come away from this section with enough knowledge to be able to be able to continue your leaning journey with the various other resources that are available.
+Our goal here is to get you enough information and experience with Lucene.NET so that you have a sense for what it is and how it might be useful to you. We also hope you will come away from this section with enough knowledge to be able to continue your leaning journey with the various other resources that are available.
 
 Lucene.NET is a sophisticated search library that has a lot of advanced features.  But for now we are not concerned about that. We want to get you up and running quickly with the basic info you need to take Lucene.NET for a spin.  
 
