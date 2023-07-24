@@ -50,8 +50,16 @@ namespace Lucene.Net.Search.VectorHighlight
             this.fieldMatch = fieldMatch;
             // LUCENENET NOTE: LinkedHashSet cares about insertion order
             ISet<Query> flatQueries = new JCG.LinkedHashSet<Query>();
-            Flatten(query, reader, flatQueries);
-            SaveTerms(flatQueries, reader);
+            
+            IndexSearcher searcher;
+            if (reader == null) {
+                searcher = null;
+            } else {
+                searcher = new IndexSearcher(reader);
+            }
+
+            Flatten(query, searcher, flatQueries);
+            SaveTerms(flatQueries, searcher);
             ICollection<Query> expandQueries = Expand(flatQueries);
 
             foreach (Query flatQuery in expandQueries)
@@ -81,7 +89,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
         }
 
-        internal void Flatten(Query sourceQuery, IndexReader reader, ICollection<Query> flatQueries)
+        internal void Flatten(Query sourceQuery, IndexSearcher indexSearcher, ICollection<Query> flatQueries)
         {
             if (sourceQuery is BooleanQuery bq)
             {
@@ -89,7 +97,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 {
                     if (!clause.IsProhibited)
                     {
-                        Flatten(ApplyParentBoost(clause.Query, bq), reader, flatQueries);
+                        Flatten(ApplyParentBoost(clause.Query, bq), indexSearcher, flatQueries);
                     }
                 }
             }
@@ -97,7 +105,7 @@ namespace Lucene.Net.Search.VectorHighlight
             {
                 foreach (Query query in dmq)
                 {
-                    Flatten(ApplyParentBoost(query, dmq), reader, flatQueries);
+                    Flatten(ApplyParentBoost(query, dmq), indexSearcher, flatQueries);
                 }
             }
             else if (sourceQuery is TermQuery)
@@ -126,7 +134,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 Query q = constantScoreQuery.Query;
                 if (q != null)
                 {
-                    Flatten(ApplyParentBoost(q, sourceQuery), reader, flatQueries);
+                    Flatten(ApplyParentBoost(q, sourceQuery), indexSearcher, flatQueries);
                 }
             }
             else if (sourceQuery is FilteredQuery filteredQuery)
@@ -134,10 +142,10 @@ namespace Lucene.Net.Search.VectorHighlight
                 Query q = filteredQuery.Query;
                 if (q != null)
                 {
-                    Flatten(ApplyParentBoost(q, sourceQuery), reader, flatQueries);
+                    Flatten(ApplyParentBoost(q, sourceQuery), indexSearcher, flatQueries);
                 }
             }
-            else if (reader != null)
+            else if (indexSearcher != null)
             {
                 Query query = sourceQuery;
                 if (sourceQuery is MultiTermQuery)
@@ -146,12 +154,12 @@ namespace Lucene.Net.Search.VectorHighlight
                     copy.MultiTermRewriteMethod = new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(MAX_MTQ_TERMS);
                     query = copy;
                 }
-                Query rewritten = query.Rewrite(reader);
+                Query rewritten = query.Rewrite(indexSearcher);
                 if (rewritten != query)
                 {
                     // only rewrite once and then flatten again - the rewritten query could have a speacial treatment
                     // if this method is overwritten in a subclass.
-                    Flatten(rewritten, reader, flatQueries);
+                    Flatten(rewritten, indexSearcher, flatQueries);
 
                 }
                 // if the query is already rewritten we discard it
@@ -348,7 +356,7 @@ namespace Lucene.Net.Search.VectorHighlight
         ///          termSetMap=IDictionary&lt;null,ISet&lt;"john","lennon"&gt;&gt;
         /// </code>
         /// </summary>
-        internal void SaveTerms(ICollection<Query> flatQueries, IndexReader reader)
+        internal void SaveTerms(ICollection<Query> flatQueries, IndexSearcher indexSearcher)
         {
             foreach (Query query in flatQueries)
             {
@@ -360,9 +368,9 @@ namespace Lucene.Net.Search.VectorHighlight
                     foreach (Term term in phraseQuery.GetTerms())
                         termSet.Add(term.Text);
                 }
-                else if (query is MultiTermQuery && reader != null)
+                else if (query is MultiTermQuery && indexSearcher != null)
                 {
-                    BooleanQuery mtqTerms = (BooleanQuery)query.Rewrite(reader);
+                    BooleanQuery mtqTerms = (BooleanQuery)query.Rewrite(indexSearcher);
                     foreach (BooleanClause clause in mtqTerms.GetClauses())
                     {
                         termSet.Add(((TermQuery)clause.Query).Term.Text);

@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Highlight
     /// <summary> 
     /// Utility class used to extract the terms used in a query, plus any weights.
     /// This class will not find terms for <see cref="MultiTermQuery"/>, RangeQuery and <see cref="PrefixQuery"/> classes
-    /// so the caller must pass a rewritten query (see <see cref="Query.Rewrite(IndexReader)"/>) to obtain a list of 
+    /// so the caller must pass a rewritten query (see <see cref="Query.Rewrite(IndexSearcher)"/>) to obtain a list of 
     /// expanded terms.
     /// </summary>
     public static class QueryTermExtractor

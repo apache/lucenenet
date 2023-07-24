@@ -47,9 +47,9 @@ namespace Lucene.Net.Queries.Function
 
         public virtual ValueSource ValueSource => boostVal;
     
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
-            var newQ = q.Rewrite(reader);
+            var newQ = q.Rewrite(indexSearcher);
             if (Equals(newQ, q))
             {
                 return this;

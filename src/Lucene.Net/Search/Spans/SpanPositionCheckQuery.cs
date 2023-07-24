@@ -89,11 +89,11 @@ namespace Lucene.Net.Search.Spans
             return new PositionCheckSpan(this, context, acceptDocs, termContexts);
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             SpanPositionCheckQuery clone = null;
 
-            var rewritten = (SpanQuery)m_match.Rewrite(reader);
+            var rewritten = (SpanQuery)m_match.Rewrite(indexSearcher);
             if (rewritten != m_match)
             {
                 clone = (SpanPositionCheckQuery)this.Clone();

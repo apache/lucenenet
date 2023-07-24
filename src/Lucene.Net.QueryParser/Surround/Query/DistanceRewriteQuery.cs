@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.QueryParsers.Surround.Query
+﻿using Lucene.Net.Search;
+
+namespace Lucene.Net.QueryParsers.Surround.Query
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -27,8 +29,9 @@
         {
         }
 
-        public override Search.Query Rewrite(Index.IndexReader reader)
+        public override Search.Query Rewrite(IndexSearcher indexSearcher)
         {
+            var reader = indexSearcher.IndexReader;
             return m_srndQuery.GetSpanNearQuery(reader, m_fieldName, Boost, m_qf);
         }
     }

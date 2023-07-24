@@ -80,13 +80,13 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary>
-        /// <seealso cref="Query.Rewrite(IndexReader)"/>
+        /// <seealso cref="Query.Rewrite(IndexSearcher)"/>
         /// </summary>
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             CustomScoreQuery clone = null;
 
-            Query sq = subQuery.Rewrite(reader);
+            Query sq = subQuery.Rewrite(indexSearcher);
             if (sq != subQuery)
             {
                 clone = (CustomScoreQuery)Clone();
@@ -95,7 +95,7 @@ namespace Lucene.Net.Queries
 
             for (int i = 0; i < scoringQueries.Length; i++)
             {
-                Query v = scoringQueries[i].Rewrite(reader);
+                Query v = scoringQueries[i].Rewrite(indexSearcher);
                 if (v != scoringQueries[i])
                 {
                     if (clone is null)

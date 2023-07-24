@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Index;
+using Lucene.Net.Search;
 using System;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
@@ -36,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             this.m_qf = qf;
         }
 
-        public abstract override Search.Query Rewrite(IndexReader reader);
+        public abstract override Search.Query Rewrite(IndexSearcher indexSearcher);
 
         public override string ToString()
         {

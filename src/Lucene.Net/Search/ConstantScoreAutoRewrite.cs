@@ -96,8 +96,10 @@ namespace Lucene.Net.Search
             topLevel.Add(new TermQuery(term, states), Occur.SHOULD);
         }
 
-        public override Query Rewrite(IndexReader reader, MultiTermQuery query)
+        public override Query Rewrite(IndexSearcher indexSearcher, MultiTermQuery query)
         {
+            IndexReader reader = indexSearcher.IndexReader;
+
             // Get the enum and start visiting terms.  If we
             // exhaust the enum before hitting either of the
             // cutoffs, we use ConstantBooleanQueryRewrite; else,
@@ -110,7 +112,7 @@ namespace Lucene.Net.Search
             int size = col.pendingTerms.Count;
             if (col.hasCutOff)
             {
-                return MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE.Rewrite(reader, query);
+                return MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE.Rewrite(indexSearcher, query);
             }
             else
             {

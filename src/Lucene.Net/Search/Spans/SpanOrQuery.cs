@@ -104,13 +104,13 @@ namespace Lucene.Net.Search.Spans
             return soq;
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             SpanOrQuery clone = null;
             for (int i = 0; i < clauses.Count; i++)
             {
                 SpanQuery c = clauses[i];
-                SpanQuery query = (SpanQuery)c.Rewrite(reader);
+                SpanQuery query = (SpanQuery)c.Rewrite(indexSearcher);
                 if (query != c) // clause rewrote: must clone
                 {
                     if (clone is null)

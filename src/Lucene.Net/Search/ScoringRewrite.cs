@@ -104,9 +104,9 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override Query Rewrite(IndexReader reader, MultiTermQuery query)
+            public override Query Rewrite(IndexSearcher indexSearcher, MultiTermQuery query)
             {
-                BooleanQuery bq = (BooleanQuery)SCORING_BOOLEAN_QUERY_REWRITE.Rewrite(reader, query);
+                BooleanQuery bq = (BooleanQuery)SCORING_BOOLEAN_QUERY_REWRITE.Rewrite(indexSearcher, query);
                 // strip the scores off
                 Query result = new ConstantScoreQuery(bq);
                 result.Boost = query.Boost;
@@ -120,8 +120,9 @@ namespace Lucene.Net.Search
         /// </summary>
         protected abstract void CheckMaxClauseCount(int count);
 
-        public override Query Rewrite(IndexReader reader, MultiTermQuery query)
+        public override Query Rewrite(IndexSearcher indexSearcher, MultiTermQuery query)
         {
+            var reader = indexSearcher.IndexReader;
             var result = GetTopLevelQuery();
             ParallelArraysTermCollector col = new ParallelArraysTermCollector(this);
             CollectTerms(reader, query, col);

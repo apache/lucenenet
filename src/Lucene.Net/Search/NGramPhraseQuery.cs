@@ -56,17 +56,17 @@ namespace Lucene.Net.Search
             this.n = n;
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             if (Slop != 0)
             {
-                return base.Rewrite(reader);
+                return base.Rewrite(indexSearcher);
             }
 
             // check whether optimizable or not
             if (n < 2 || GetTerms().Length < 3) // too short to optimize -  non-overlap n-gram cannot be optimized
             {
-                return base.Rewrite(reader);
+                return base.Rewrite(indexSearcher);
             }
 
             // check all posIncrement is 1
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
                 int pos = positions[i];
                 if (prevPosition + 1 != pos)
                 {
-                    return base.Rewrite(reader);
+                    return base.Rewrite(indexSearcher);
                 }
                 prevPosition = pos;
             }

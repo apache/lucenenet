@@ -44,7 +44,7 @@ namespace Lucene.Net.Queries.Function
         /// <returns> The associated <see cref="Function.ValueSource"/> </returns>
         public virtual ValueSource ValueSource => func;
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             return this;
         }

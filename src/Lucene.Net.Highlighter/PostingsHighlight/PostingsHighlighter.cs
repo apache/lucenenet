@@ -881,9 +881,10 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         private static Query Rewrite(Query original)
         {
+            var indexSearcher = new IndexSearcher(EMPTY_INDEXREADER);
             Query query = original;
-            for (Query rewrittenQuery = query.Rewrite(EMPTY_INDEXREADER); rewrittenQuery != query;
-                rewrittenQuery = query.Rewrite(EMPTY_INDEXREADER))
+            for (Query rewrittenQuery = query.Rewrite(indexSearcher); rewrittenQuery != query;
+                rewrittenQuery = query.Rewrite(indexSearcher))
             {
                 query = rewrittenQuery;
             }

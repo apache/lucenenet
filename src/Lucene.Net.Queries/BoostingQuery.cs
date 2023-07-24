@@ -52,7 +52,7 @@ namespace Lucene.Net.Queries
             this.context.Boost = 0.0f; // ignore context-only matches
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             return new BooleanQueryAnonymousClass(this)
             {

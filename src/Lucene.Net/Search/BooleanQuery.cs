@@ -532,14 +532,14 @@ namespace Lucene.Net.Search
             return new BooleanWeight(this, searcher, disableCoord);
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             if (m_minNrShouldMatch == 0 && clauses.Count == 1) // optimize 1-clause queries
             {
                 BooleanClause c = clauses[0];
                 if (!c.IsProhibited) // just return clause
                 {
-                    Query query = c.Query.Rewrite(reader); // rewrite first
+                    Query query = c.Query.Rewrite(indexSearcher); // rewrite first
 
                     if (Boost != 1.0f) // incorporate boost
                     {
@@ -561,7 +561,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < clauses.Count; i++)
             {
                 BooleanClause c = clauses[i];
-                Query query = c.Query.Rewrite(reader);
+                Query query = c.Query.Rewrite(indexSearcher);
                 if (query != c.Query) // clause rewrote: must clone
                 {
                     if (clone is null)

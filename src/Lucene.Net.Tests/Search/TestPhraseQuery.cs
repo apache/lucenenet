@@ -620,7 +620,7 @@ namespace Lucene.Net.Search
         {
             PhraseQuery pq = new PhraseQuery();
             pq.Add(new Term("foo", "bar"));
-            Query rewritten = pq.Rewrite(searcher.IndexReader);
+            Query rewritten = pq.Rewrite(searcher);
             Assert.IsTrue(rewritten is TermQuery);
         }
 

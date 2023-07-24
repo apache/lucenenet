@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System;
 using System.Collections;
@@ -141,7 +142,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Creates a new <see cref="DrillDownQuery"/> over the given base query. Can be
         /// <c>null</c>, in which case the result <see cref="Query"/> from
-        /// <see cref="Rewrite(IndexReader)"/> will be a pure browsing query, filtering on
+        /// <see cref="Rewrite(IndexSearcher)"/> will be a pure browsing query, filtering on
         /// the added categories only. 
         /// </summary>
         public DrillDownQuery(FacetsConfig config, Query baseQuery)
@@ -297,7 +298,7 @@ namespace Lucene.Net.Facet
             return query.Equals(other.query) && base.Equals(other);
         }
 
-        public override Query Rewrite(IndexReader r)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             if (query.Clauses.Count == 0)
             {

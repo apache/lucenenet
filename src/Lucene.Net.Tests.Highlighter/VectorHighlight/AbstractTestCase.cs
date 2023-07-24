@@ -40,6 +40,7 @@ namespace Lucene.Net.Search.VectorHighlight
         protected Analyzer analyzerB;
         protected Analyzer analyzerK;
         protected IndexReader reader;
+        protected IndexSearcher searcher;
 
         protected static readonly String[] shortMVValues = {
             "",
@@ -402,6 +403,7 @@ namespace Lucene.Net.Search.VectorHighlight
             writer.Dispose();
             if (reader != null) reader.Dispose();
             reader = DirectoryReader.Open(dir);
+            searcher = NewSearcher(reader);
         }
 
         // make 1 doc with multi valued & not analyzed field

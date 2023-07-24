@@ -105,11 +105,11 @@ namespace Lucene.Net.Search.Spans
             return maskedQuery.CreateWeight(searcher);
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             FieldMaskingSpanQuery clone = null;
 
-            SpanQuery rewritten = (SpanQuery)maskedQuery.Rewrite(reader);
+            SpanQuery rewritten = (SpanQuery)maskedQuery.Rewrite(indexSearcher);
             if (rewritten != maskedQuery)
             {
                 clone = (FieldMaskingSpanQuery)this.Clone();

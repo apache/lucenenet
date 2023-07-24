@@ -77,9 +77,9 @@ namespace Lucene.Net.Search
             return Wrap(new J2N.Randomizer(random.NextInt64()), (Query)@in.Clone());
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
-            Query rewritten = @in.Rewrite(reader);
+            Query rewritten = @in.Rewrite(indexSearcher);
             if (rewritten == @in)
             {
                 return this;

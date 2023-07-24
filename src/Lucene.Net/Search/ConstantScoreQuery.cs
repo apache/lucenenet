@@ -74,11 +74,11 @@ namespace Lucene.Net.Search
         /// Returns the encapsulated query, returns <c>null</c> if a filter is wrapped. </summary>
         public virtual Query Query => m_query;
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             if (m_query != null)
             {
-                Query rewritten = m_query.Rewrite(reader);
+                Query rewritten = m_query.Rewrite(indexSearcher);
                 if (rewritten != m_query)
                 {
                     rewritten = new ConstantScoreQuery(rewritten);
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
                 // QueryWrapperFilter was used to wrap queries.
                 if (m_filter is QueryWrapperFilter qwf)
                 {
-                    Query rewritten = new ConstantScoreQuery(qwf.Query.Rewrite(reader));
+                    Query rewritten = new ConstantScoreQuery(qwf.Query.Rewrite(indexSearcher));
                     rewritten.Boost = this.Boost;
                     return rewritten;
                 }

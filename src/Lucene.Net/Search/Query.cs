@@ -91,14 +91,14 @@ namespace Lucene.Net.Search
         /// a <see cref="PrefixQuery"/> will be rewritten into a <see cref="BooleanQuery"/> that consists
         /// of <see cref="TermQuery"/>s.
         /// </summary>
-        public virtual Query Rewrite(IndexReader reader)
+        public virtual Query Rewrite(IndexSearcher indexSearcher)
         {
             return this;
         }
 
         /// <summary>
         /// Expert: adds all terms occurring in this query to the terms set. Only
-        /// works if this query is in its rewritten (<see cref="Rewrite(IndexReader)"/>) form.
+        /// works if this query is in its rewritten (<see cref="Rewrite(IndexSearcher)"/>) form.
         /// </summary>
         /// <exception cref="InvalidOperationException"> If this query is not yet rewritten </exception>
         public virtual void ExtractTerms(ISet<Term> terms)

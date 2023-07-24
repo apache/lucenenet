@@ -148,7 +148,7 @@ namespace Lucene.Net.Search.Highlight.Custom
                 return new TermQuery(term).ToString(field);
             }
 
-            public override Query Rewrite(IndexReader reader)
+            public override Query Rewrite(IndexSearcher indexSearcher)
             {
                 return new TermQuery(term);
             }

@@ -219,7 +219,7 @@ namespace Lucene.Net.Search.Highlight
                     origQuery = copy;
                 }
                 IndexReader reader = GetLeafContext().Reader;
-                Query rewritten = origQuery.Rewrite(reader);
+                Query rewritten = origQuery.Rewrite(new IndexSearcher(reader));
                 if (rewritten != origQuery)
                 {
                     // only rewrite once and then flatten again - the rewritten query could have a speacial treatment
@@ -272,7 +272,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 foreach (string field in fieldNames)
                 {
-                    SpanQuery rewrittenQuery = (SpanQuery)spanQuery.Rewrite(GetLeafContext().Reader);
+                    SpanQuery rewrittenQuery = (SpanQuery)spanQuery.Rewrite(new IndexSearcher(GetLeafContext().Reader));
                     queries[field] = rewrittenQuery;
                     rewrittenQuery.ExtractTerms(nonWeightedTerms);
                 }

@@ -133,7 +133,7 @@ namespace Lucene.Net.Search.Highlight
 
         private sealed class TestHighlightUnknowQueryAnonymousClass : Query
         {
-            public override Query Rewrite(IndexReader reader)
+            public override Query Rewrite(IndexSearcher indexSearcher)
             {
                 CommonTermsQuery query = new CommonTermsQuery(Occur.MUST, Occur.SHOULD, 3);
                 query.Add(new Term(FIELD_NAME, "this"));
@@ -1928,7 +1928,7 @@ namespace Lucene.Net.Search.Highlight
             searcher = NewSearcher(reader);
             // for any multi-term queries to work (prefix, wildcard, range,fuzzy etc)
             // you must use a rewritten query!
-            query = unReWrittenQuery.Rewrite(reader);
+            query = unReWrittenQuery.Rewrite(searcher);
             if (Verbose) Console.WriteLine("Searching for: " + query.ToString(FIELD_NAME));
             hits = searcher.Search(query, null, 1000);
         }

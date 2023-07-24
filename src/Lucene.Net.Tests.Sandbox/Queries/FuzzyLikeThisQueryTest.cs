@@ -77,7 +77,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("smith", "name", 0.3f, 1);
-            Query q = flt.Rewrite(searcher.IndexReader);
+            Query q = flt.Rewrite(searcher);
             ISet<Term> queryTerms = new JCG.HashSet<Term>();
             q.ExtractTerms(queryTerms);
             assertTrue("Should have variant smythe", queryTerms.contains(new Term("name", "smythe")));
@@ -96,7 +96,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("jonathin smoth", "name", 0.3f, 1);
-            Query q = flt.Rewrite(searcher.IndexReader);
+            Query q = flt.Rewrite(searcher);
             ISet<Term> queryTerms = new JCG.HashSet<Term>();
             q.ExtractTerms(queryTerms);
             assertTrue("Should have variant jonathan", queryTerms.contains(new Term("name", "jonathan")));
@@ -116,7 +116,7 @@ namespace Lucene.Net.Sandbox.Queries
             flt.AddTerms("jonathin smoth", "name", 0.3f, 1);
             flt.AddTerms("jonathin smoth", "this field does not exist", 0.3f, 1);
             // don't fail here just because the field doesn't exits
-            Query q = flt.Rewrite(searcher.IndexReader);
+            Query q = flt.Rewrite(searcher);
             ISet<Term> queryTerms = new JCG.HashSet<Term>();
             q.ExtractTerms(queryTerms);
             assertTrue("Should have variant jonathan", queryTerms.contains(new Term("name", "jonathan")));
@@ -135,7 +135,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("fernando smith", "name", 0.3f, 1);
-            Query q = flt.Rewrite(searcher.IndexReader);
+            Query q = flt.Rewrite(searcher);
             ISet<Term> queryTerms = new JCG.HashSet<Term>();
             q.ExtractTerms(queryTerms);
             assertTrue("Should have variant smith", queryTerms.contains(new Term("name", "smith")));

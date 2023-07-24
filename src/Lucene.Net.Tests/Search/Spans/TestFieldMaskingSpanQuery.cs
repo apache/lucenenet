@@ -137,7 +137,7 @@ namespace Lucene.Net.Search.Spans
                 this.outerInstance = outerInstance;
             }
 
-            public override Query Rewrite(IndexReader reader)
+            public override Query Rewrite(IndexSearcher indexSearcher)
             {
                 return new SpanOrQuery(new SpanTermQuery(new Term("first", "sally")), new SpanTermQuery(new Term("first", "james")));
             }

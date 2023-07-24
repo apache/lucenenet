@@ -272,8 +272,10 @@ namespace Lucene.Net.Sandbox.Queries
             }
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
+            IndexReader reader = indexSearcher.IndexReader;
+
             if (rewrittenQuery != null)
             {
                 return rewrittenQuery;

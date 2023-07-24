@@ -31,6 +31,7 @@ namespace Lucene.Net.Search
     public class TestNGramPhraseQuery : LuceneTestCase
     {
         private static IndexReader reader;
+        private static IndexSearcher searcher;
         private static Directory directory;
 
         /// <summary>
@@ -46,6 +47,7 @@ namespace Lucene.Net.Search
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory);
             writer.Dispose();
             reader = DirectoryReader.Open(directory);
+            searcher = NewSearcher(reader);
         }
 
         [OneTimeTearDown]
@@ -66,7 +68,7 @@ namespace Lucene.Net.Search
             pq1.Add(new Term("f", "AB"));
             pq1.Add(new Term("f", "BC"));
 
-            Query q = pq1.Rewrite(reader);
+            Query q = pq1.Rewrite(searcher);
             Assert.IsTrue(q is NGramPhraseQuery);
             Assert.AreSame(pq1, q);
             pq1 = (NGramPhraseQuery)q;
@@ -79,7 +81,7 @@ namespace Lucene.Net.Search
             pq2.Add(new Term("f", "BC"));
             pq2.Add(new Term("f", "CD"));
 
-            q = pq2.Rewrite(reader);
+            q = pq2.Rewrite(searcher);
             Assert.IsTrue(q is PhraseQuery);
             Assert.AreNotSame(pq2, q);
             pq2 = (PhraseQuery)q;
@@ -95,7 +97,7 @@ namespace Lucene.Net.Search
             pq3.Add(new Term("f", "EFG"));
             pq3.Add(new Term("f", "FGH"));
 
-            q = pq3.Rewrite(reader);
+            q = pq3.Rewrite(searcher);
             Assert.IsTrue(q is PhraseQuery);
             Assert.AreNotSame(pq3, q);
             pq3 = (PhraseQuery)q;
@@ -109,7 +111,7 @@ namespace Lucene.Net.Search
             pq4.Add(new Term("f", "CD"));
             pq4.Boost = 100.0F;
 
-            q = pq4.Rewrite(reader);
+            q = pq4.Rewrite(searcher);
             Assert.AreNotSame(pq4, q);
             Assert.AreEqual(pq4.Boost, q.Boost, 0.1f);
         }

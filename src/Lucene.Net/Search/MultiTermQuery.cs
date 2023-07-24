@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
         /// Abstract class that defines how the query is rewritten. </summary>
         public abstract class RewriteMethod
         {
-            public abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
+            public abstract Query Rewrite(IndexSearcher indexSearcher, MultiTermQuery query);
 
             /// <summary>
             /// Returns the <see cref="MultiTermQuery"/>s <see cref="TermsEnum"/> </summary>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public override Query Rewrite(IndexReader reader, MultiTermQuery query)
+            public override Query Rewrite(IndexSearcher indexSearcher, MultiTermQuery query)
             {
                 Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter<MultiTermQuery>(query));
                 result.Boost = query.Boost;
@@ -305,9 +305,9 @@ namespace Lucene.Net.Search
         /// enum from <see cref="GetTermsEnum(Terms, AttributeSource)"/>.  For example,
         /// to rewrite to a single term, return a <see cref="Index.SingleTermsEnum"/>.
         /// </summary>
-        public override sealed Query Rewrite(IndexReader reader)
+        public override sealed Query Rewrite(IndexSearcher indexSearcher)
         {
-            return m_rewriteMethod.Rewrite(reader, this);
+            return m_rewriteMethod.Rewrite(indexSearcher, this);
         }
 
 

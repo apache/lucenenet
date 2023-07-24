@@ -65,4 +65,4 @@ websites/apidocs/api/**/*.manifest
 svn-*/
 
 # vscode files
-.vscode/
+.vscode/*

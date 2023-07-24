@@ -150,8 +150,9 @@ namespace Lucene.Net.Queries
             this.m_terms.Add(term);
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
+            IndexReader reader = indexSearcher.IndexReader;
             if (this.m_terms.Count == 0)
             {
                 return new BooleanQuery();

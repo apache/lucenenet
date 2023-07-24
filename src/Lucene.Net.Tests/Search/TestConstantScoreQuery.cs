@@ -227,7 +227,7 @@ namespace Lucene.Net.Search
             s.Search(new ConstantScoreQuery(filter), new TotalHitCountCollector());
 
             // check the rewrite
-            Query rewritten = (new ConstantScoreQuery(filter)).Rewrite(r);
+            Query rewritten = (new ConstantScoreQuery(filter)).Rewrite(s);
             Assert.IsTrue(rewritten is ConstantScoreQuery);
             Assert.IsTrue(((ConstantScoreQuery)rewritten).Query is AssertingQuery);
 

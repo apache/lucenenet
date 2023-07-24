@@ -144,13 +144,13 @@ namespace Lucene.Net.Search.Spans
             return m_inOrder ? (Spans)new NearSpansOrdered(this, context, acceptDocs, termContexts, collectPayloads) : (Spans)new NearSpansUnordered(this, context, acceptDocs, termContexts);
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             SpanNearQuery clone = null;
             for (int i = 0; i < m_clauses.Count; i++)
             {
                 SpanQuery c = m_clauses[i];
-                SpanQuery query = (SpanQuery)c.Rewrite(reader);
+                SpanQuery query = (SpanQuery)c.Rewrite(indexSearcher);
                 if (query != c) // clause rewrote: must clone
                 {
                     if (clone is null)

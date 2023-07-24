@@ -378,9 +378,9 @@ namespace Lucene.Net.Search
         /// <see cref="MatchAllDocsQuery"/> it returns a <see cref="ConstantScoreQuery"/>. Otherwise
         /// it returns a new <see cref="FilteredQuery"/> wrapping the rewritten query.
         /// </summary>
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
-            Query queryRewritten = query.Rewrite(reader);
+            Query queryRewritten = query.Rewrite(indexSearcher);
 
             if (queryRewritten != query)
             {

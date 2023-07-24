@@ -32,8 +32,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
         }
 
-        public override Search.Query Rewrite(IndexReader reader)
+        public override Search.Query Rewrite(IndexSearcher indexSearcher)
         {
+            var reader = indexSearcher.IndexReader;
             var luceneSubQueries = new JCG.List<Search.Query>();
             m_srndQuery.VisitMatchingTerms(reader, m_fieldName, 
                 new SimpleTermRewriteMatchingTermVisitor(luceneSubQueries, m_qf));

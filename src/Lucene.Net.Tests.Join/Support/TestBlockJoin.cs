@@ -251,9 +251,9 @@ namespace Lucene.Net.Tests.Join
             Filter parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("docType", "resume"))));
 
             int h1 = qc.GetHashCode();
-            Query qw1 = qc.Rewrite(r);
+            Query qw1 = qc.Rewrite(s);
             int h2 = qw1.GetHashCode();
-            Query qw2 = qw1.Rewrite(r);
+            Query qw2 = qw1.Rewrite(s);
             int h3 = qw2.GetHashCode();
 
             assertTrue(h1 != h2);

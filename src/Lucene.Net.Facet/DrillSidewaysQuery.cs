@@ -62,12 +62,12 @@ namespace Lucene.Net.Facet
             return nameof(DrillSidewaysQuery);
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             Query newQuery = baseQuery;
             while (true)
             {
-                Query rewrittenQuery = newQuery.Rewrite(reader);
+                Query rewrittenQuery = newQuery.Rewrite(indexSearcher);
                 if (rewrittenQuery == newQuery)
                 {
                     break;

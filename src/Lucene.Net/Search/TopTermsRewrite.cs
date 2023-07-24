@@ -71,8 +71,9 @@ namespace Lucene.Net.Search
         /// Return the maximum size of the priority queue (for boolean rewrites this is <see cref="BooleanQuery.MaxClauseCount"/>). </summary>
         protected abstract int MaxSize { get; }
 
-        public override Query Rewrite(IndexReader reader, MultiTermQuery query)
+        public override Query Rewrite(IndexSearcher indexSearcher, MultiTermQuery query)
         {
+            var reader = indexSearcher.reader;
             int maxSize = Math.Min(size, MaxSize);
             JCG.PriorityQueue<ScoreTerm> stQueue = new JCG.PriorityQueue<ScoreTerm>();
             CollectTerms(reader, query, new TermCollectorAnonymousClass(maxSize, stQueue));

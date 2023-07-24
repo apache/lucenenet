@@ -757,7 +757,7 @@ namespace Lucene.Net.Search
             if (query is null)
                 throw new ArgumentNullException(nameof(query));
 
-            for (Query rewrittenQuery = query.Rewrite(reader); rewrittenQuery != query; rewrittenQuery = query.Rewrite(reader))
+            for (Query rewrittenQuery = query.Rewrite(this); rewrittenQuery != query; rewrittenQuery = query.Rewrite(this))
             {
                 query = rewrittenQuery;
             }

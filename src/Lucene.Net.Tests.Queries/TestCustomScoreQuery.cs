@@ -247,14 +247,14 @@ namespace Lucene.Net.Tests.Queries
 
             Query q = new TermQuery(new Term(TEXT_FIELD, "first"));
             CustomScoreQuery original = new CustomScoreQuery(q);
-            CustomScoreQuery rewritten = (CustomScoreQuery)original.Rewrite(s.IndexReader);
+            CustomScoreQuery rewritten = (CustomScoreQuery)original.Rewrite(s);
             assertTrue("rewritten query should be identical, as TermQuery does not rewrite", original == rewritten);
             assertTrue("no hits for query", s.Search(rewritten, 1).TotalHits > 0);
             assertEquals(s.Search(q, 1).TotalHits, s.Search(rewritten, 1).TotalHits);
 
             q = new TermRangeQuery(TEXT_FIELD, null, null, true, true); // everything
             original = new CustomScoreQuery(q);
-            rewritten = (CustomScoreQuery)original.Rewrite(s.IndexReader);
+            rewritten = (CustomScoreQuery)original.Rewrite(s);
             assertTrue("rewritten query should not be identical, as TermRangeQuery rewrites", original != rewritten);
             assertTrue("no hits for query", s.Search(rewritten, 1).TotalHits > 0);
             assertEquals(s.Search(q, 1).TotalHits, s.Search(original, 1).TotalHits);

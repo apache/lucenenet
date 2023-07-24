@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
             return result;
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             if (terms.Count == 0)
             {
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                return base.Rewrite(reader);
+                return base.Rewrite(indexSearcher);
             }
         }
 

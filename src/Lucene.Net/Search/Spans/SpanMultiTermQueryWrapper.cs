@@ -112,9 +112,9 @@ namespace Lucene.Net.Search.Spans
             return builder.ToString();
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
-            Query q = m_query.Rewrite(reader);
+            Query q = m_query.Rewrite(indexSearcher);
             if (!(q is SpanQuery))
             {
                 throw UnsupportedOperationException.Create("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
@@ -198,9 +198,9 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override Query Rewrite(IndexReader reader, MultiTermQuery query)
+            public override Query Rewrite(IndexSearcher indexSearcher, MultiTermQuery query)
             {
-                return @delegate.Rewrite(reader, query);
+                return @delegate.Rewrite(indexSearcher, query);
             }
         }
 
@@ -256,9 +256,9 @@ namespace Lucene.Net.Search.Spans
             /// </summary>
             public int Count => @delegate.Count;
 
-            public override Query Rewrite(IndexReader reader, MultiTermQuery query)
+            public override Query Rewrite(IndexSearcher indexSearcher, MultiTermQuery query)
             {
-                return @delegate.Rewrite(reader, query);
+                return @delegate.Rewrite(indexSearcher, query);
             }
 
             public override int GetHashCode()
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search.Spans
     // LUCENENET specific - moved this class outside of SpanMultiTermQueryWrapper<Q>
     public abstract class SpanRewriteMethod : MultiTermQuery.RewriteMethod
     {
-        public override abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
+        public override abstract Query Rewrite(IndexSearcher indexSearcher, MultiTermQuery query);
     }
 
     /// <summary>
@@ -311,6 +311,6 @@ namespace Lucene.Net.Search.Spans
         /// <summary>
         /// Returns the wrapped query </summary>
         Query WrappedQuery { get; }
-        Query Rewrite(IndexReader reader);
+        Query Rewrite(IndexSearcher indexSearcher);
     }
 }

@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
+using Lucene.Net.Search;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -49,6 +50,7 @@ namespace Lucene.Net.Facet
     public class TestDrillDownQuery : FacetTestCase
     {
         private static IndexReader reader;
+        private static IndexSearcher searcher;
         private static DirectoryTaxonomyReader taxo;
         private static Directory dir;
         private static Directory taxoDir;
@@ -59,6 +61,7 @@ namespace Lucene.Net.Facet
         {
             IOUtils.Dispose(reader, taxo, dir, taxoDir);
             reader = null;
+            searcher = null;
             taxo = null;
             dir = null;
             taxoDir = null;
@@ -128,6 +131,7 @@ namespace Lucene.Net.Facet
 
             taxoWriter.Dispose();
             reader = writer.GetReader();
+            searcher = NewSearcher(reader);
             writer.Dispose();
 
             taxo = new DirectoryTaxonomyReader(taxoDir);
@@ -276,7 +280,7 @@ namespace Lucene.Net.Facet
         {
             Query @base = new MatchAllDocsQuery();
             DrillDownQuery q = new DrillDownQuery(config, @base);
-            Query rewrite = q.Rewrite(reader).Rewrite(reader);
+            Query rewrite = q.Rewrite(searcher).Rewrite(searcher);
             Assert.AreSame(@base, rewrite);
         }
     }

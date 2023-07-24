@@ -253,7 +253,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 }
             }
 
-            public override Query Rewrite(IndexReader reader)
+            public override Query Rewrite(IndexSearcher indexSearcher)
             {
                 // ArrayList spanClauses = new ArrayList();
                 if (contents is TermQuery)
@@ -264,7 +264,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 // clauses can be complex
                 // Booleans e.g. nots and ors etc
                 int numNegatives = 0;
-                if (!(contents is BooleanQuery))
+                if (contents is not BooleanQuery)
                 {
                     throw new ArgumentException("Unknown query type \""
                         + contents.GetType().Name
@@ -280,7 +280,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                     // HashSet bclauseterms=new HashSet();
                     Query qc = bclauses[i].Query;
                     // Rewrite this clause e.g one* becomes (one OR onerous)
-                    qc = qc.Rewrite(reader);
+                    qc = qc.Rewrite(indexSearcher);
                     if (bclauses[i].Occur.Equals(Occur.MUST_NOT))
                     {
                         numNegatives++;

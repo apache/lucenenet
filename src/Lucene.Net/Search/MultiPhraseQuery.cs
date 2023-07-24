@@ -343,7 +343,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             if (termArrays.Count == 0)
             {

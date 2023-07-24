@@ -69,9 +69,9 @@ namespace Lucene.Net.Search.Join
             _originalQuery.ExtractTerms(terms);
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
-            Query originalQueryRewrite = _originalQuery.Rewrite(reader);
+            Query originalQueryRewrite = _originalQuery.Rewrite(indexSearcher);
             if (originalQueryRewrite != _originalQuery)
             {
                 Query rewritten = new TermsIncludingScoreQuery(_field, _multipleValuesPerDocument, _terms, _scores,

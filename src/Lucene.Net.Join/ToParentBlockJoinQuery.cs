@@ -452,9 +452,9 @@ namespace Lucene.Net.Search.Join
             _childQuery.ExtractTerms(terms);
         }
         
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
-            Query childRewrite = _childQuery.Rewrite(reader);
+            Query childRewrite = _childQuery.Rewrite(indexSearcher);
             if (childRewrite != _childQuery)
             {
                 Query rewritten = new ToParentBlockJoinQuery(_origChildQuery, childRewrite, _parentsFilter, _scoreMode);

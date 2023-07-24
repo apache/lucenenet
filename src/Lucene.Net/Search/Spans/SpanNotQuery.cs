@@ -229,17 +229,17 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             SpanNotQuery clone = null;
 
-            var rewrittenInclude = (SpanQuery)include.Rewrite(reader);
+            var rewrittenInclude = (SpanQuery)include.Rewrite(indexSearcher);
             if (rewrittenInclude != include)
             {
                 clone = (SpanNotQuery)this.Clone();
                 clone.include = rewrittenInclude;
             }
-            var rewrittenExclude = (SpanQuery)exclude.Rewrite(reader);
+            var rewrittenExclude = (SpanQuery)exclude.Rewrite(indexSearcher);
             if (rewrittenExclude != exclude)
             {
                 if (clone is null)

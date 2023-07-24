@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Highlight
         private ICharTermAttribute termAtt;
 
         /// <param name="query">
-        /// a Lucene query (ideally rewritten using <see cref="Query.Rewrite(IndexReader)"/> before
+        /// a Lucene query (ideally rewritten using <see cref="Query.Rewrite(IndexSearcher)"/> before
         /// being passed to this class and the searcher)
         /// </param>
         public QueryTermScorer(Query query)
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <param name="query">
-        /// a Lucene query (ideally rewritten using <see cref="Query.Rewrite(IndexReader)"/> before
+        /// a Lucene query (ideally rewritten using <see cref="Query.Rewrite(IndexSearcher)"/> before
         /// being passed to this class and the searcher)
         /// </param>
         /// <param name="fieldName">the Field name which is used to match Query terms</param>
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <param name="query">
-        /// a Lucene query (ideally rewritten using <see cref="Query.Rewrite(IndexReader)"/> before
+        /// a Lucene query (ideally rewritten using <see cref="Query.Rewrite(IndexSearcher)"/> before
         /// being passed to this class and the searcher)
         /// </param>
         /// <param name="reader">

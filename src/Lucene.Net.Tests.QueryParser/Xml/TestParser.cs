@@ -159,7 +159,7 @@ namespace Lucene.Net.QueryParsers.Xml
             //show rewritten fuzzyLikeThisQuery - see what is being matched on
             if (Verbose)
             {
-                Console.WriteLine(q.Rewrite(reader));
+                Console.WriteLine(q.Rewrite(searcher));
             }
             DumpResults("FuzzyLikeThis", q, 5);
         }

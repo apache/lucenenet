@@ -248,15 +248,15 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Optimize our representation and our subqueries representations </summary>
-        /// <param name="reader"> The <see cref="IndexReader"/> we query </param>
+        /// <param name="indexSearcher"> The <see cref="IndexSearcher"/> we query </param>
         /// <returns> An optimized copy of us (which may not be a copy if there is nothing to optimize)  </returns>
-        public override Query Rewrite(IndexReader reader)
+        public override Query Rewrite(IndexSearcher indexSearcher)
         {
             int numDisjunctions = disjuncts.Count;
             if (numDisjunctions == 1)
             {
                 Query singleton = disjuncts[0];
-                Query result = singleton.Rewrite(reader);
+                Query result = singleton.Rewrite(indexSearcher);
                 if (Boost != 1.0f)
                 {
                     if (result == singleton)
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < numDisjunctions; i++)
             {
                 Query clause = disjuncts[i];
-                Query rewrite = clause.Rewrite(reader);
+                Query rewrite = clause.Rewrite(indexSearcher);
                 if (rewrite != clause)
                 {
                     if (clone is null)

@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public sealed class DocTermOrdsRewriteMethod : MultiTermQuery.RewriteMethod
     {
-        public override Query Rewrite(IndexReader reader, MultiTermQuery query)
+        public override Query Rewrite(IndexSearcher indexSearcher, MultiTermQuery query)
         {
             Query result = new ConstantScoreQuery(new MultiTermQueryDocTermOrdsWrapperFilter(query));
             result.Boost = query.Boost;
