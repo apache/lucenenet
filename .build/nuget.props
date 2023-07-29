@@ -25,7 +25,7 @@
     <Authors>The Apache Software Foundation</Authors>
     <PackageProjectUrl>https://lucenenet.apache.org</PackageProjectUrl>
     <PackageIcon>lucene-net-icon-128x128.png</PackageIcon>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageNoticeFile>NOTICE.txt</PackageNoticeFile>
 
     <!-- This git tag convention was used for legacy packages rather than using PackageVersion, so we are following suit -->
@@ -44,7 +44,7 @@ This package is part of the Lucene.NET project: https://www.nuget.org/packages/L
     </Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(SolutionDir)LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
+    <None Include="$(SolutionDir)LICENSE.txt" Pack="true" PackagePath="LICENSE.txt"/>
     <None Include="$(SolutionDir)NOTICE.txt" Pack="true" PackagePath="$(PackageNoticeFile)"/>
     <None Include="$(SolutionDir)branding\logo\lucene-net-icon-128x128.png" Pack="true" PackagePath="$(PackageIcon)"/>
   </ItemGroup>
