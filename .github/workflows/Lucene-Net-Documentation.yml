@@ -57,7 +57,7 @@ jobs:
 
       # Checkout the main repo with all history so we get all tags
       - name: Checkout Lucene.Net source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: main-repo
           fetch-depth: 0
@@ -119,7 +119,7 @@ jobs:
         shell: powershell
 
       - name: Setup .NET 6 SDK
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.101'
 
@@ -128,7 +128,7 @@ jobs:
         shell: powershell
 
       - name: Checkout Lucene.Net website
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{ env.SITE_REPO }}
           ref: asf-site
@@ -142,7 +142,7 @@ jobs:
       # Because we are always building the docs against a consistent version
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.LUCENE_NET_WEBSITE_BUILD }}
           path: website-repo
