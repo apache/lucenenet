@@ -61,6 +61,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <!-- This is the new symbols format (the only one currently supported at NuGet.org) -->
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <PropertyGroup Label="Copyright Info">

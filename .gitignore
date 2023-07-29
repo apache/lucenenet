@@ -35,6 +35,7 @@ src/demo/
 packages/
 .vs/
 *.lock.json
+!src/**/packages.lock.json
 TestResults/
 test-files/analysis/data/
 [Nn]u[Gg]et[Pp]ackages/
