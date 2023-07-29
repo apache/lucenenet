@@ -274,7 +274,7 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Disable .NET SDK Telemetry and Logo
         run: |
@@ -283,19 +283,19 @@ jobs:
         shell: pwsh
 
       - name: Setup .NET 5 SDK
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '$DotNet5SDKVersion'
         if: `${{ startswith(matrix.framework, 'net5.') }}
 
       - name: Setup .NET 6 SDK
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '$DotNet6SDKVersion'
         if: `${{ startswith(matrix.framework, 'net6.') }}
 
       - name: Setup .NET 7 SDK
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '$DotNet7SDKVersion'
 
@@ -327,7 +327,7 @@ jobs:
         shell: bash
       # upload reports as build artifacts
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: `${{always()}}
         with:
           name: '`${{env.test_results_artifact_name}}'
