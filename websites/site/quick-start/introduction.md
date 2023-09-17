@@ -16,7 +16,7 @@ The codebase for Apache Lucene is very mature.  In March 2020, the open source p
 
 Apache Lucene.NET 4.8 is an open source project who's aim is to be a line by line c# port of java based Apache Lucene 4.8.  This port makes the power of Lucene available to all .NET developers. And makes it easy for them to contribute to the project or customize it since it's pure C#. 
 
-Currently Lucene.NET 4.8 is in Beta but it is extremely stable and many developers already use it in production. It has far more features then Lucene.NET 3.03 and has much better unit test coverage then the older version.  Lucene.NET has more than 7800+ passing unit tests.  This test coverage is what makes Lucene.NET so stable.
+Currently Lucene.NET 4.8 is in Beta but it is extremely stable and many developers already use it in production. It has far more features than Lucene.NET 3.03 and has much better unit test coverage than the older version.  Lucene.NET has more than 7800+ passing unit tests.  This test coverage is what makes Lucene.NET so stable.
 
 
 
