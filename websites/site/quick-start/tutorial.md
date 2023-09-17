@@ -160,7 +160,7 @@ IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
 //Add three documents to the index
 Document doc = new Document();
-doc.Add(new TextField("titleTag", "The Apache Software Foundation - The world's largest open source foundation.", Field.Store.YES));
+doc.Add(new TextField("title", "The Apache Software Foundation - The world's largest open source foundation.", Field.Store.YES));
 doc.Add(new StringField("domain", "www.apache.org/", Field.Store.YES));
 writer.AddDocument(doc);
 
