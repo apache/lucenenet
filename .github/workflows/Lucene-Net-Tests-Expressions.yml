@@ -96,6 +96,19 @@ jobs:
         with:
           dotnet-version: '7.0.100'
 
+      - name: Cache NuGet Packages
+        uses: actions/cache@v3
+        id: lucene-nuget-cache
+        with:
+          path: |
+            ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-lucene
+ 
+      - name: Restore dependencies
+        run: dotnet restore
+
       - name: Setup Environment Variables
         run: |
           $project_name = [System.IO.Path]::GetFileNameWithoutExtension($env:project_path)
@@ -111,7 +124,7 @@ jobs:
           # Title for LiquidTestReports.Markdown
           echo "title=Test Run for $project_name - ${{matrix.framework}} - ${{matrix.platform}} - ${{matrix.os}}" | Out-File -FilePath  $env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
-      - run: dotnet build ${{env.project_path}} --configuration ${{matrix.configuration}} --framework ${{matrix.framework}} /p:TestFrameworks=true
+      - run: dotnet build ${{env.project_path}} --configuration ${{matrix.configuration}} --framework ${{matrix.framework}} --no-restore /p:TestFrameworks=true
       - run: dotnet test ${{env.project_path}} --configuration ${{matrix.configuration}} --framework ${{matrix.framework}} --no-build --no-restore --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 20minutes --logger:"console;verbosity=normal" --logger:"trx;LogFileName=${{env.trx_file_name}}" --logger:"liquid.md;LogFileName=${{env.md_file_name}};Title=${{env.title}};" --results-directory:"${{github.workspace}}/${{env.test_results_artifact_name}}/${{env.project_name}}" -- RunConfiguration.TargetPlatform=${{matrix.platform}} TestRunParameters.Parameter\(name=\"tests:slow\",\ value=\"\${{env.run_slow_tests}}\"\)
         shell: bash
       # upload reports as build artifacts
