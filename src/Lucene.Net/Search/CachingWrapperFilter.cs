@@ -3,7 +3,7 @@ using Lucene.Net.Runtime.CompilerServices;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-using Prism.Events;
+using Lucene.Net.Util.Events;
 #endif
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
                     cache.AddOrUpdate(key, docIdSet);
                     // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
                     // we use a weak event to retrieve the DocIdSet instances
-                    reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<Events.GetCacheKeysEvent>());
+                    reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<WeakEvents.GetCacheKeysEvent>());
                 }
                 finally
                 {
@@ -200,8 +200,8 @@ namespace Lucene.Net.Search
                 // we use a weak event to retrieve the DocIdSet instances. We look each of these up here to avoid the need
                 // to attach events to the DocIdSet instances themselves (thus using the existing IndexReader.Dispose()
                 // method to detach the events rather than using a finalizer in DocIdSet to ensure they are cleaned up).
-                var e = new Events.GetCacheKeysEventArgs();
-                eventAggregator.GetEvent<Events.GetCacheKeysEvent>().Publish(e);
+                var e = new WeakEvents.GetCacheKeysEventArgs();
+                eventAggregator.GetEvent<WeakEvents.GetCacheKeysEvent>().Publish(e);
                 foreach (var key in e.CacheKeys)
                     if (cache.TryGetValue(key, out DocIdSet value))
                         docIdSets.Add(value);
