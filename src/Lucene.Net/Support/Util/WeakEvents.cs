@@ -1,6 +1,6 @@
 ﻿#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
 using Lucene.Net.Index;
-using Prism.Events;
+using Lucene.Net.Util.Events;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 

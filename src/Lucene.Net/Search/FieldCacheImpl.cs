@@ -7,7 +7,7 @@ using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-using Prism.Events;
+using Lucene.Net.Util.Events;
 #endif
 using System;
 using System.Collections.Generic;

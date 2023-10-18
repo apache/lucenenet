@@ -27,6 +27,7 @@ psake/*
 KStemData\d+\.cs
 Snowball/*
 Egothor.Stemmer/*
+Events/*
 Sax/*
 JaspellTernarySearchTrie\.cs
 RectangularArrays\.cs
