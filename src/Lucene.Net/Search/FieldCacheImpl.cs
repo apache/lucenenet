@@ -188,8 +188,8 @@ namespace Lucene.Net.Search
 #else
                 // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
                 // we use a weak event to retrieve the readerKey instances and then lookup the values in the table one by one.
-                var e = new Events.GetCacheKeysEventArgs();
-                eventAggregator.GetEvent<Events.GetCacheKeysEvent>().Publish(e);
+                var e = new WeakEvents.GetCacheKeysEventArgs();
+                eventAggregator.GetEvent<WeakEvents.GetCacheKeysEvent>().Publish(e);
                 foreach (object readerKey in e.CacheKeys)
                 {
                     if (cache.readerCache.TryGetValue(readerKey, out IDictionary<TKey, object> innerCache))
@@ -270,7 +270,7 @@ namespace Lucene.Net.Search
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
             // we use a weak event to retrieve the readerKey instances
-            reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<Events.GetCacheKeysEvent>());
+            reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<WeakEvents.GetCacheKeysEvent>());
 #endif
         }
 

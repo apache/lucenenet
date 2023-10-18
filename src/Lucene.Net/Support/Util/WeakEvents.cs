@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     /// Events are used in Lucene.NET to work around the fact that <see cref="System.Runtime.CompilerServices.ConditionalWeakTable{TKey, TValue}"/>
     /// doesn't have an enumerator in .NET Framework or .NET Standard prior to 2.1. They are declared in this static class to avoid adding coupling.
     /// </summary>
-    internal static class Events
+    internal static class WeakEvents
     {
         #region GetParentReaders
 
