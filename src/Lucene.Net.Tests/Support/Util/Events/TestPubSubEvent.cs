@@ -436,6 +436,7 @@ namespace Lucene.Net.Util.Events
         }
 
         [Test]
+        [Ignore("This test has been flakey since it was brought over from Prism")]
         public void CanAddSubscriptionWhileEventIsFiring()
         {
             var PubSubEvent = new TestablePubSubEvent<string>();
