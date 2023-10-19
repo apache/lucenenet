@@ -46,27 +46,26 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      #- name: Cache SonarCloud packages
-      #  uses: actions/cache@v3
-      #  with:
-      #    path: ~\sonar\cache
-      #    key: ${{ runner.os }}-sonar
-      #    restore-keys: ${{ runner.os }}-sonar
-      #- name: Cache SonarCloud scanner
-      #  id: cache-sonar-scanner
-      #  uses: actions/cache@v3
-      #  with:
-      #    path: .\.sonar\scanner
-      #    key: ${{ runner.os }}-sonar-scanner
-      #    restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v3
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
       - name: Install SonarCloud scanner
-        #if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           $dir = '.\.sonar\scanner'
           if (!(Test-Path $dir)) { New-Item -Path $dir -ItemType Directory }
-          # NOTE: Using 5.8.0 when the sonar scan was first added because that is likely the version that was in the cache
-          dotnet tool update dotnet-sonarscanner --tool-path $dir #--version 5.8.0
+          dotnet tool update dotnet-sonarscanner --tool-path $dir
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
