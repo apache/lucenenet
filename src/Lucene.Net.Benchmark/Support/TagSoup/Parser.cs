@@ -22,6 +22,7 @@ using Sax.Ext;
 using Sax.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
@@ -31,6 +32,8 @@ namespace TagSoup
     /// <summary>
     ///   The SAX parser class.
     /// </summary>
+    [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+    [SuppressMessage("Security Hotspot", "S5332:Using clear-text protocols is security-sensitive", Justification = "URLs are only for naming purposes")]
     public class Parser : DefaultHandler, IScanHandler, IXMLReader, ILexicalHandler
     {
         // XMLReader implementation
