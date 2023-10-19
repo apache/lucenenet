@@ -1191,32 +1191,6 @@ namespace Lucene.Net.Util
             pq.Clear();
         }
 
-#if FEATURE_SERIALIZABLE
-
-        [Test, LuceneNetSpecific]
-        public void TestSerialization()
-        {
-            var queue = new IntegerQueue(10);
-            var expected = new int?[11];
-
-            for (int i = 0; i < 10; i++)
-            {
-                queue.Add(i);
-                expected[i + 1] = i;
-            }
-
-            Assert.AreEqual(10, queue.maxSize);
-            Assert.AreEqual(expected, queue.heap);
-            Assert.AreEqual(10, queue.Count);
-
-            var clone = Clone(queue);
-
-            Assert.AreEqual(10, clone.maxSize);
-            Assert.AreEqual(expected, clone.heap);
-            Assert.AreEqual(10, clone.Count);
-        }
-#endif
-
         private static int GetArrayHeapSize(int maxSize)
         {
             return PriorityQueue.GetArrayHeapSize(maxSize);
