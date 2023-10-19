@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -35,6 +36,8 @@ namespace Lucene.Net.Store
     public static class LockStressTest // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         [STAThread]
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("Security Hotspot", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "The Random class is only used to generate a timeout value")]
         public static void Main(string[] args)
         {
             if (args.Length != 7)
