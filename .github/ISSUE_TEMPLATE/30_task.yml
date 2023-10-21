@@ -1,0 +1,25 @@
+name: ⭐ Task
+description: File a general task
+labels: ["is:task"]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Please keep in mind that the GitHub issue tracker is not intended as a general support forum, but for reporting **non-security** bugs, feature requests, and for general tasks to work on. Since Lucene.NET is mostly a line-by-line port from a **specific version** of Lucene, feature requests should generally be limited to improvements that make Lucene.NET interoperate with .NET better.
+
+      If you believe you have an issue that affects the SECURITY of the platform, please do NOT create an issue and instead follow the [ASF vulnerability reporting process](https://apache.org/security/#reporting-a-vulnerability). This is a project of the [Apache Software Foundation](https://apache.org) and follows the ASF [vulnerability handling process](https://apache.org/security/#vulnerability-handling).
+      
+      For other types of questions, consider using [StackOverflow](https://stackoverflow.com) and applying the tags `lucene.net` AND `lucene` or join the [Lucene.NET user mailing list](https://lucenenet.apache.org/contributing/index.html#ask-a-question).
+- type: checkboxes
+  attributes:
+    label: Is there an existing issue for this?
+    description: Please search to see if an issue already exists for the bug you encountered ([lucenenet/issues](https://github.com/apache/lucenenet/issues?q=is%3Aissue)).
+    options:
+    - label: I have searched the existing issues
+      required: true
+- type: textarea
+  id: description
+  attributes:
+    label: Task description
+  validations:
+    required: true
