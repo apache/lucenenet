@@ -1,0 +1,29 @@
+name: 📖 Documentation Improvement
+description: Suggest an enhancement or point out a typo in the documentation
+labels: ["docs"]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Please keep in mind that the GitHub issue tracker is not intended as a general support forum, but for reporting **non-security** bugs, feature requests, and for general tasks to work on. Since Lucene.NET is mostly a line-by-line port from a **specific version** of Lucene, feature requests should generally be limited to improvements that make Lucene.NET interoperate with .NET better.
+- type: checkboxes
+  attributes:
+    label: Is there an existing issue for this?
+    description: Please search to see if an issue already exists for the documentation issue you are reporting. (https://github.com/apache/lucenenet/issues).
+    options:
+    - label: I have searched the existing issues
+      required: true
+- type: textarea
+  attributes:
+    label: Describe the documentation issue
+    description: |
+      A clear and concise description of the issue you have encountered and any recommendations on how to fix it.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Additional context
+    description: |
+      Add any other context or screenshots about the documentation issue here.
+  validations:
+    required: false

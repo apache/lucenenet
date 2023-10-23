@@ -1,0 +1,20 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Design Proposal
+    url:  https://lucene.apache.org/core/discussion.html
+    about: Please discuss platform-agnostic design proposals of the API or features on the Lucene developer mailing list. These types of changes need to go through Lucene's design review before they can be ported from Java to Lucene.NET in a later version.
+  - name: Ask a How-To Question
+    url:  https://stackoverflow.com/questions/tagged/lucene.net
+    about: Please ask usability questions on StackOverflow. Consider including BOTH the lucene.net tag and the lucene tag. Alternatively, join the Lucene.NET user mailing list by sending an email to user-subscribe@apache.org. Once signed up, you can submit your question to user@apache.org.
+  - name: Join a Mailing List
+    url:  https://lucenenet.apache.org/contributing/mailing-lists.html
+    about: Join a Lucene.NET mailing list to ask user questions, discuss the development or other aspects of Lucene.NET with our team, or to track commits and builds. 
+  - name: Issue with J2N
+    url:  https://github.com/NightOwl888/J2N/issues/new/choose
+    about: Please open issues relating to J2N in NightOwl888/J2N.
+  - name: Issue with ICU4N
+    url:  https://github.com/ICU4N/ICU4N/issues/new/choose
+    about: Please open issues relating to International Components for Unicode for .NET (ICU4N) in ICU4N/ICU4N.
+  - name: Issue with Examine
+    url:  https://github.com/Shazwazza/Examine/issues/new/choose
+    about: Please open issues relating to Examine in Shazwazza/Examine.
