@@ -416,26 +416,6 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the <see cref="ThreadState"/> with the minimum estimated number of threads
-        /// waiting to acquire its lock or <c>null</c> if no <see cref="ThreadState"/>
-        /// is yet visible to the calling thread.
-        /// </summary>
-        internal ThreadState MinContendedThreadState()
-        {
-            ThreadState minThreadState = null;
-            int limit = numThreadStatesActive;
-            for (int i = 0; i < limit; i++)
-            {
-                ThreadState state = threadStates[i];
-                if (minThreadState is null || state.QueueLength < minThreadState.QueueLength)
-                {
-                    minThreadState = state;
-                }
-            }
-            return minThreadState;
-        }
-
-        /// <summary>
         /// Returns the number of currently deactivated <see cref="ThreadState"/> instances.
         /// A deactivated <see cref="ThreadState"/> should not be used for indexing anymore.
         /// </summary>

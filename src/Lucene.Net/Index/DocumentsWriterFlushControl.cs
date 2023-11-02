@@ -681,9 +681,10 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal void MarkForFullFlush()
+        internal long MarkForFullFlush()
         {
             DocumentsWriterDeleteQueue flushingQueue;
+            long seqNo;
             UninterruptableMonitor.Enter(this);
             try
             {
@@ -696,8 +697,11 @@ namespace Lucene.Net.Index
                 flushingQueue = documentsWriter.deleteQueue;
                 // Set a new delete queue - all subsequent DWPT will use this queue until
                 // we do another full flush
-                DocumentsWriterDeleteQueue newQueue = new DocumentsWriterDeleteQueue(flushingQueue.generation + 1);
-                documentsWriter.deleteQueue = newQueue;
+                seqNo = documentsWriter.deleteQueue.seqNo.Value + perThreadPool.NumThreadStatesActive;
+
+                // nocommit is this (active thread state count) always enough of a gap?  what if new indexing thread sneaks in just now?  it would
+                // have to get this next delete queue?
+                DocumentsWriterDeleteQueue newQueue = new DocumentsWriterDeleteQueue(flushingQueue.generation + 1, seqNo + 1);
             }
             finally
             {
@@ -756,6 +760,7 @@ namespace Lucene.Net.Index
                 UninterruptableMonitor.Exit(this);
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(AssertActiveDeleteQueue(documentsWriter.deleteQueue));
+            return seqNo;
         }
 
         private bool AssertActiveDeleteQueue(DocumentsWriterDeleteQueue queue)

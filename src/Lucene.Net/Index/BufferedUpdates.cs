@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
     /// single segment. this is used to hold buffered pending
     /// deletes and updates against the to-be-flushed segment.  Once the
     /// deletes and updates are pushed (on flush in <see cref="DocumentsWriter"/>), they
-    /// are converted to a FrozenDeletes instance.
+    /// are converted to a FrozenBufferedUpdates instance.
     /// <para/>
     /// NOTE: instances of this class are accessed either via a private
     /// instance on <see cref="DocumentsWriterPerThread"/>, or via sync'd code by

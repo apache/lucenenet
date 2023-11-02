@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
@@ -72,43 +73,52 @@ namespace Lucene.Net.Index
         private readonly DeleteSlice globalSlice;
 
         private readonly BufferedUpdates globalBufferedUpdates;
+
+        private long gen;
+
         /* only acquired to update the global deletes */
         private readonly ReentrantLock globalBufferLock = new ReentrantLock();
 
         internal readonly long generation;
 
+        internal readonly AtomicInt64 seqNo;
+
+        // seqNo must start at 1 because some APIs negate this to encode a boolean
         internal DocumentsWriterDeleteQueue()
-            : this(0)
+            :this(0, 1)
         {
         }
 
-        internal DocumentsWriterDeleteQueue(long generation)
-            : this(new BufferedUpdates(), generation)
+        internal DocumentsWriterDeleteQueue(long generation, long startSeqNo)
+            : this(new BufferedUpdates(), generation, startSeqNo)
         {
         }
 
-        internal DocumentsWriterDeleteQueue(BufferedUpdates globalBufferedUpdates, long generation)
+        internal DocumentsWriterDeleteQueue(BufferedUpdates globalBufferedUpdates, long generation, long startSeqNo)
         {
             this.globalBufferedUpdates = globalBufferedUpdates;
             this.generation = generation;
-            /*
-             * we use a sentinel instance as our initial tail. No slice will ever try to
-             * apply this tail since the head is always omitted.
-             */
-            tail = new Node(null); // sentinel
+            this.seqNo = new AtomicInt64(startSeqNo);
+        /*
+         * we use a sentinel instance as our initial tail. No slice will ever try to
+         * apply this tail since the head is always omitted.
+         */
+        tail = new Node(null); // sentinel
             globalSlice = new DeleteSlice(tail);
         }
 
-        internal void AddDelete(params Query[] queries)
+        internal long AddDelete(params Query[] queries)
         {
-            Add(new QueryArrayNode(queries));
+            long seqNo = Add(new QueryArrayNode(queries));
             TryApplyGlobalSlice();
+            return seqNo;
         }
 
-        internal void AddDelete(params Term[] terms)
+        internal long AddDelete(params Term[] terms)
         {
-            Add(new TermArrayNode(terms));
+            long seqNo = Add(new TermArrayNode(terms));
             TryApplyGlobalSlice();
+            return seqNo;
         }
 
         internal void AddNumericUpdate(NumericDocValuesUpdate update)
@@ -126,10 +136,10 @@ namespace Lucene.Net.Index
         /// <summary>
         /// invariant for document update
         /// </summary>
-        internal void Add(Term term, DeleteSlice slice)
+        internal long Add(Term term, DeleteSlice slice)
         {
             TermNode termNode = new TermNode(term);
-            Add(termNode);
+            long seqNo = Add(termNode);
             /*
              * this is an update request where the term is the updated documents
              * delTerm. in that case we need to guarantee that this insert is atomic
@@ -144,48 +154,58 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled) Debugging.Assert(slice.sliceHead != slice.sliceTail, "slice head and tail must differ after add");
             TryApplyGlobalSlice(); // TODO doing this each time is not necessary maybe
             // we can do it just every n times or so?
+            return seqNo;
         }
 
-        internal void Add(Node item)
+        // nocommit can we remove the sync'd
+        internal long Add(Node newNode)
         {
+            UninterruptableMonitor.Enter(this);
             /*
              * this non-blocking / 'wait-free' linked list add was inspired by Apache
              * Harmony's ConcurrentLinkedQueue Implementation.
              */
-            while (true)
+            try
             {
-                Node currentTail = this.tail;
-                Node tailNext = currentTail.next;
-                if (tail == currentTail)
+                while (true)
                 {
-                    if (tailNext != null)
+                    Node currentTail = this.tail;
+                    Node tailNext = currentTail.next;
+                    if (tail == currentTail)
                     {
-                        /*
-                         * we are in intermediate state here. the tails next pointer has been
-                         * advanced but the tail itself might not be updated yet. help to
-                         * advance the tail and try again updating it.
-                         */
-                        Interlocked.CompareExchange(ref tail, tailNext, currentTail); // can fail
-                    }
-                    else
-                    {
-                        /*
-                         * we are in quiescent state and can try to insert the item to the
-                         * current tail if we fail to insert we just retry the operation since
-                         * somebody else has already added its item
-                         */
-                        if (currentTail.CasNext(null, item))
+                        if (tailNext != null)
                         {
                             /*
-                             * now that we are done we need to advance the tail while another
-                             * thread could have advanced it already so we can ignore the return
-                             * type of this CAS call
+                             * we are in intermediate state here. the tails next pointer has been
+                             * advanced but the tail itself might not be updated yet. help to
+                             * advance the tail and try again updating it.
                              */
-                            Interlocked.CompareExchange(ref tail, item, currentTail);
-                            return;
+                            Interlocked.CompareExchange(ref tail, tailNext, currentTail); // can fail
+                        }
+                        else
+                        {
+                            /*
+                             * we are in quiescent state and can try to insert the new node to the
+                             * current tail if we fail to insert we just retry the operation since
+                             * somebody else has already added its item
+                             */
+                            if (currentTail.CasNext(null, newNode))
+                            {
+                                /*
+                                 * now that we are done we need to advance the tail while another
+                                 * thread could have advanced it already so we can ignore the return
+                                 * type of this CAS call
+                                 */
+                                Interlocked.CompareExchange(ref tail, newNode, currentTail);
+                                return seqNo.GetAndIncrement();
+                            }
                         }
                     }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

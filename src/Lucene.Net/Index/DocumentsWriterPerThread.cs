@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
             return true;
         }
 
-        public virtual void UpdateDocument(IEnumerable<IIndexableField> doc, Analyzer analyzer, Term delTerm)
+        public virtual long UpdateDocument(IEnumerable<IIndexableField> doc, Analyzer analyzer, Term delTerm)
         {
             if (Debugging.AssertsEnabled)
             {
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
                     Abort(filesToDelete);
                 }
             }
-            FinishDocument(delTerm);
+            return FinishDocument(delTerm);
         }
 
         public virtual int UpdateDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer, Term delTerm)
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void FinishDocument(Term delTerm)
+        private long FinishDocument(Term delTerm)
         {
             /*
              * here we actually finish the document in two steps 1. push the delete into
@@ -435,14 +435,17 @@ namespace Lucene.Net.Index
              * since we updated the slice the last time.
              */
             bool applySlice = numDocsInRAM != 0;
+            long seqNo;
             if (delTerm != null)
             {
-                deleteQueue.Add(delTerm, deleteSlice);
+                seqNo = deleteQueue.Add(delTerm, deleteSlice);
                 if (Debugging.AssertsEnabled) Debugging.Assert(deleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
             }
             else
             {
                 applySlice &= deleteQueue.UpdateSlice(deleteSlice);
+                // nocommit we don't need to increment here?
+                seqNo = deleteQueue.seqNo;
             }
 
             if (applySlice)
@@ -454,6 +457,7 @@ namespace Lucene.Net.Index
                 deleteSlice.Reset();
             }
             ++numDocsInRAM;
+            return seqNo;
         }
 
         // Buffer a specific docID for deletion. Currently only

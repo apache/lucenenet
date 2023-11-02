@@ -1,4 +1,4 @@
-using J2N.Threading.Atomic;
+﻿using J2N.Threading.Atomic;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
 
+    // nocommit removeme
     public class TrackingIndexWriter
     {
         private readonly IndexWriter writer;

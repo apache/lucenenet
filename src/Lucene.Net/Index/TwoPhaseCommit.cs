@@ -1,4 +1,4 @@
-namespace Lucene.Net.Index
+﻿namespace Lucene.Net.Index
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
         /// 2-phase commit fails, <see cref="Rollback()"/> is called to discard all changes
         /// since last successful commit.
         /// </summary>
-        void PrepareCommit();
+        long PrepareCommit();
 
         /// <summary>
         /// The second phase of a 2-phase commit. Implementations should ideally do
@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
         /// after it returns, the caller can assume that the changes were successfully
         /// committed to the underlying storage.
         /// </summary>
-        void Commit();
+        long Commit();
 
         /// <summary>
         /// Discards any changes that have occurred since the last commit. In a 2-phase

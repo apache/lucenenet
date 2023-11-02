@@ -3,6 +3,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -188,7 +189,7 @@ namespace Lucene.Net.Index
      * keeps track of the last non commit checkpoint.
      */
 
-    public class IndexWriter : IDisposable, ITwoPhaseCommit
+    public class IndexWriter : IDisposable, ITwoPhaseCommit, IAccountable
     {
         private const int UNBOUNDED_MAX_MERGE_SEGMENTS = -1;
 
@@ -234,6 +235,7 @@ namespace Lucene.Net.Index
         private IList<SegmentCommitInfo> rollbackSegments; // list of segmentInfo we will fallback to if the commit fails
 
         internal volatile SegmentInfos pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
+        internal AtomicInt64 pendingSeqNo;
         internal long pendingCommitChangeCount;
 
         private ICollection<string> filesToCommit;
@@ -383,7 +385,17 @@ namespace Lucene.Net.Index
                     bool success = false;
                     try
                     {
-                        anySegmentFlushed = docWriter.FlushAllThreads(this);
+                        // nocommit should we make this available in the returned NRT reader?
+                        long seqNo = docWriter.FlushAllThreads(this);
+                        if (seqNo < 0)
+                        {
+                            anySegmentFlushed = true;
+                            seqNo = -seqNo;
+                        }
+                        else
+                        {
+                            anySegmentFlushed = false;
+                        }
                         if (!anySegmentFlushed)
                         {
                             // prevent double increment since docWriter#doFlush increments the flushcount
@@ -1599,9 +1611,9 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public virtual void AddDocument(IEnumerable<IIndexableField> doc)
+        public virtual long AddDocument(IEnumerable<IIndexableField> doc)
         {
-            AddDocument(doc, analyzer);
+           return AddDocument(doc, analyzer);
         }
 
         /// <summary>
@@ -1618,9 +1630,9 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public virtual void AddDocument(IEnumerable<IIndexableField> doc, Analyzer analyzer)
+        public virtual long AddDocument(IEnumerable<IIndexableField> doc, Analyzer analyzer)
         {
-            UpdateDocument(null, doc, analyzer);
+            return UpdateDocument(null, doc, analyzer);
         }
 
         /// <summary>
@@ -1752,20 +1764,25 @@ namespace Lucene.Net.Index
         /// <param name="term"> the term to identify the documents to be deleted </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public virtual void DeleteDocuments(Term term)
+        public virtual long DeleteDocuments(Term term)
         {
             EnsureOpen();
             try
             {
-                if (docWriter.DeleteTerms(term))
+                long seqNo = docWriter.DeleteTerms(term);
+                if (seqNo < 0)
                 {
+                    seqNo = -seqNo;
                     ProcessEvents(true, false);
                 }
+                return seqNo;
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "DeleteDocuments(Term)");
             }
+            // dead code but javac disagrees:
+            return -1;
         }
 
         /// <summary>
@@ -1884,20 +1901,25 @@ namespace Lucene.Net.Index
         /// to be deleted </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public virtual void DeleteDocuments(params Term[] terms)
+        public virtual long DeleteDocuments(params Term[] terms)
         {
             EnsureOpen();
             try
             {
-                if (docWriter.DeleteTerms(terms))
+                long seqNo = docWriter.DeleteTerms(terms);
+                if (seqNo < 0)
                 {
+                    seqNo = -seqNo;
                     ProcessEvents(true, false);
                 }
+                return seqNo;
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "DeleteDocuments(Term..)");
             }
+            // dead code but javac disagrees:
+            return -1;
         }
 
         /// <summary>
@@ -1993,7 +2015,7 @@ namespace Lucene.Net.Index
         /// <param name="analyzer"> the analyzer to use when analyzing the document </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public virtual void UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
+        public virtual long UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
         {
             EnsureOpen();
             try
@@ -2001,11 +2023,14 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    if (docWriter.UpdateDocument(doc, analyzer, term))
+                    long seqNo = docWriter.UpdateDocument(doc, analyzer, term);
+                    if (seqNo < 0)
                     {
+                        seqNo = - seqNo;
                         ProcessEvents(true, false);
                     }
                     success = true;
+                    return seqNo;
                 }
                 finally
                 {
@@ -2022,6 +2047,8 @@ namespace Lucene.Net.Index
             {
                 HandleOOM(oom, "UpdateDocument");
             }
+            // dead code but javac disagrees:
+            return -1;
         }
 
         /// <summary>
@@ -3865,13 +3892,13 @@ namespace Lucene.Net.Index
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
-        public void PrepareCommit()
+        public long PrepareCommit()
         {
             EnsureOpen();
-            PrepareCommitInternal();
+            return PrepareCommitInternal();
         }
 
-        private void PrepareCommitInternal()
+        private long PrepareCommitInternal()
         {
             UninterruptableMonitor.Enter(commitLock);
             try
@@ -3898,7 +3925,7 @@ namespace Lucene.Net.Index
                 if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("startDoFlush");
                 SegmentInfos toCommit = null;
                 bool anySegmentsFlushed = false;
-
+                long seqNo;
                 // this is copied from doFlush, except it's modified to
                 // clone & incRef the flushed SegmentInfos inside the
                 // sync block:
@@ -3912,7 +3939,12 @@ namespace Lucene.Net.Index
                         bool success = false;
                         try
                         {
-                            anySegmentsFlushed = docWriter.FlushAllThreads(this);
+                            seqNo = docWriter.FlushAllThreads(this);
+                            if (seqNo < 0)
+                            {
+                                anySegmentsFlushed = true;
+                                seqNo = -seqNo;
+                            }
                             if (!anySegmentsFlushed)
                             {
                                 // prevent double increment since docWriter#doFlush increments the flushcount
@@ -3974,6 +4006,8 @@ namespace Lucene.Net.Index
                 catch (Exception oom) when (oom.IsOutOfMemoryError())
                 {
                     HandleOOM(oom, "PrepareCommit");
+                    // dead code but javac disagrees:
+                    seqNo = -1;
                 }
 
                 bool success_ = false;
@@ -3985,6 +4019,7 @@ namespace Lucene.Net.Index
                     }
                     StartCommit(toCommit);
                     success_ = true;
+                    return seqNo;
                 }
                 finally
                 {
@@ -4089,10 +4124,10 @@ namespace Lucene.Net.Index
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
-        public void Commit()
+        public long Commit()
         {
             EnsureOpen();
-            CommitInternal();
+            return CommitInternal();
         }
 
         /// <summary>
@@ -4111,12 +4146,14 @@ namespace Lucene.Net.Index
             return changeCount != lastCommitChangeCount || docWriter.AnyChanges() || bufferedUpdatesStream.Any();
         }
 
-        private void CommitInternal()
+        private long CommitInternal()
         {
             if (infoStream.IsEnabled("IW"))
             {
                 infoStream.Message("IW", "commit: start");
             }
+
+            long seqNo;
 
             UninterruptableMonitor.Enter(commitLock);
             try
@@ -4134,7 +4171,7 @@ namespace Lucene.Net.Index
                     {
                         infoStream.Message("IW", "commit: now prepare");
                     }
-                    PrepareCommitInternal();
+                   seqNo = PrepareCommitInternal();
                 }
                 else
                 {
@@ -4142,14 +4179,16 @@ namespace Lucene.Net.Index
                     {
                         infoStream.Message("IW", "commit: already prepared");
                     }
+                    seqNo = pendingSeqNo;
                 }
 
-                FinishCommit();
+                FinishCommit();  
             }
             finally
             {
                 UninterruptableMonitor.Exit(commitLock);
             }
+            return seqNo;
         }
 
         private void FinishCommit()
@@ -4264,7 +4303,16 @@ namespace Lucene.Net.Index
                     bool flushSuccess = false;
                     try
                     {
-                        anySegmentFlushed = docWriter.FlushAllThreads(this);
+                        long seqNo = docWriter.FlushAllThreads(this);
+                        if (seqNo < 0)
+                        {
+                            seqNo = -seqNo;
+                            anySegmentFlushed = true;
+                        }
+                        else
+                        {
+                            anySegmentFlushed = false;
+                        }
                         flushSuccess = true;
                     }
                     finally
@@ -6484,5 +6532,7 @@ namespace Lucene.Net.Index
                 return false;
             }
         }
+
+        public long RamBytesUsed() => throw new NotImplementedException();
     }
 }

@@ -152,6 +152,7 @@ namespace Lucene.Net.Index
                 DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
                 deleteQueue.AddDelete(queries);
                 flushControl.DoOnDelete();
+                //nocommit long
                 return ApplyAllDeletes(deleteQueue);
             }
             finally
@@ -163,16 +164,20 @@ namespace Lucene.Net.Index
         // TODO: we could check w/ FreqProxTermsWriter: if the
         // term doesn't exist, don't bother buffering into the
         // per-DWPT map (but still must go into the global map)
-        internal bool DeleteTerms(params Term[] terms)
+        internal long DeleteTerms(params Term[] terms)
         {
             UninterruptableMonitor.Enter(this);
             try
             {
                 // TODO why is this synchronized?
                 DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
-                deleteQueue.AddDelete(terms);
+                long seqNo = deleteQueue.AddDelete(terms);
                 flushControl.DoOnDelete();
-                return ApplyAllDeletes(deleteQueue);
+                if (ApplyAllDeletes(deleteQueue))
+                {
+                    seqNo = -seqNo;
+                }
+                return seqNo;
             }
             finally
             {
@@ -566,13 +571,14 @@ namespace Lucene.Net.Index
             return PostUpdate(flushingDWPT, hasEvents);
         }
 
-        internal bool UpdateDocument(IEnumerable<IIndexableField> doc, Analyzer analyzer, Term delTerm)
+        internal long UpdateDocument(IEnumerable<IIndexableField> doc, Analyzer analyzer, Term delTerm)
         {
             bool hasEvents = PreUpdate();
 
             ThreadState perThread = flushControl.ObtainAndLock();
 
             DocumentsWriterPerThread flushingDWPT;
+            long seqno;
             try
             {
                 if (!perThread.IsActive)
@@ -586,7 +592,7 @@ namespace Lucene.Net.Index
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
                 {
-                    dwpt.UpdateDocument(doc, analyzer, delTerm);
+                   seqno = dwpt.UpdateDocument(doc, analyzer, delTerm);
                     numDocsInRAM.IncrementAndGet();
                 }
                 finally
@@ -609,7 +615,14 @@ namespace Lucene.Net.Index
                 perThreadPool.Release(perThread);
             }
 
-            return PostUpdate(flushingDWPT, hasEvents);
+            if (PostUpdate(flushingDWPT, hasEvents))
+            {
+                return -seqno;
+            }
+            else
+            {
+                return seqno;
+            }
         }
 
         private bool DoFlush(DocumentsWriterPerThread flushingDWPT)
@@ -760,13 +773,14 @@ namespace Lucene.Net.Index
          * is called after this method, to release the flush lock in DWFlushControl
          */
 
-        internal bool FlushAllThreads(IndexWriter indexWriter)
+        internal long FlushAllThreads(IndexWriter indexWriter)
         {
             DocumentsWriterDeleteQueue flushingDeleteQueue;
             if (infoStream.IsEnabled("DW"))
             {
                 infoStream.Message("DW", "startFullFlush");
             }
+            long seqNo;
 
             UninterruptableMonitor.Enter(this);
             try
@@ -776,8 +790,8 @@ namespace Lucene.Net.Index
                 /* Cutover to a new delete queue.  this must be synced on the flush control
                  * otherwise a new DWPT could sneak into the loop with an already flushing
                  * delete queue */
-                flushControl.MarkForFullFlush(); // swaps the delQueue synced on FlushControl
-                if (Debugging.AssertsEnabled) Debugging.Assert(SetFlushingDeleteQueue(flushingDeleteQueue));
+               seqNo = flushControl.MarkForFullFlush(); // swaps the delQueue synced on FlushControl
+               if (Debugging.AssertsEnabled) Debugging.Assert(SetFlushingDeleteQueue(flushingDeleteQueue));
             }
             finally
             {
@@ -815,7 +829,15 @@ namespace Lucene.Net.Index
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(flushingDeleteQueue == currentFullFlushDelQueue);
             }
-            return anythingFlushed;
+
+            if (anythingFlushed)
+            {
+                return -seqNo;
+            }
+            else
+            {
+                return seqNo;
+            }
         }
 
         internal void FinishFullFlush(bool success)
