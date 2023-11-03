@@ -82,8 +82,6 @@ namespace Lucene.Net.Index
 
             ReferenceManager<IndexSearcher> mgr = new SearcherManager(writer, true, new SearcherFactory());
 
-            TrackingIndexWriter mgrWriter = new TrackingIndexWriter(writer);
-
             IndexSearcher searcher = mgr.Acquire();
 
             TopDocs topDocs = searcher.Search(new TermQuery(new Term("foo", "0")), 100);
@@ -93,12 +91,12 @@ namespace Lucene.Net.Index
             if (Random.NextBoolean())
             {
                 IndexReader r = DirectoryReader.Open(writer, true);
-                result = mgrWriter.TryDeleteDocument(r, 0);
+                result = writer.TryDeleteDocument(r, 0);
                 r.Dispose();
             }
             else
             {
-                result = mgrWriter.TryDeleteDocument(searcher.IndexReader, 0);
+                result = writer.TryDeleteDocument(searcher.IndexReader, 0);
             }
 
             // The tryDeleteDocument should have succeeded:
@@ -136,10 +134,9 @@ namespace Lucene.Net.Index
             TopDocs topDocs = searcher.Search(new TermQuery(new Term("foo", "0")), 100);
             Assert.AreEqual(1, topDocs.TotalHits);
 
-            TrackingIndexWriter mgrWriter = new TrackingIndexWriter(writer);
-            long result = mgrWriter.TryDeleteDocument(DirectoryReader.Open(writer, true), 0);
+            long result = writer.TryDeleteDocument(DirectoryReader.Open(writer, true), 0);
 
-            Assert.AreEqual(1, result);
+            Assert.True(result != -1);
 
             writer.Commit();
 
@@ -176,10 +173,9 @@ namespace Lucene.Net.Index
             TopDocs topDocs = searcher.Search(new TermQuery(new Term("foo", "0")), 100);
             Assert.AreEqual(1, topDocs.TotalHits);
 
-            TrackingIndexWriter mgrWriter = new TrackingIndexWriter(writer);
-            long result = mgrWriter.DeleteDocuments(new TermQuery(new Term("foo", "0")));
+            long result = writer.DeleteDocuments(new TermQuery(new Term("foo", "0")));
 
-            Assert.AreEqual(1, result);
+            Assert.True(result != -1);
 
             // writer.Commit();
 

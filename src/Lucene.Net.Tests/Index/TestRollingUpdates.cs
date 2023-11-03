@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
                 {
                     TopDocs hits = s.Search(new TermQuery(idTerm), 1);
                     Assert.AreEqual(1, hits.TotalHits);
-                    doUpdate = !w.TryDeleteDocument(r, hits.ScoreDocs[0].Doc);
+                    doUpdate = w.TryDeleteDocument(r, hits.ScoreDocs[0].Doc) == -1;
                     if (Verbose)
                     {
                         if (doUpdate)

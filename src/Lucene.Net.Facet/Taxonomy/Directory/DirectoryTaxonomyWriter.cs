@@ -745,7 +745,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
 
-        public virtual void Commit()
+        public virtual long Commit()
         {
             UninterruptableMonitor.Enter(syncLock);
             try
@@ -758,7 +758,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 {
                     indexWriter.SetCommitData(CombinedCommitData(indexWriter.CommitData));
                 }
-                indexWriter.Commit();
+                return indexWriter.Commit();
             }
             finally
             {
@@ -790,7 +790,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// prepare most of the work needed for a two-phase commit.
         /// See <see cref="IndexWriter.PrepareCommit"/>.
         /// </summary>
-        public virtual void PrepareCommit()
+        public virtual long PrepareCommit()
         {
             UninterruptableMonitor.Enter(syncLock);
             try
@@ -803,7 +803,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 {
                     indexWriter.SetCommitData(CombinedCommitData(indexWriter.CommitData));
                 }
-                indexWriter.PrepareCommit();
+                return indexWriter.PrepareCommit();
             }
             finally
             {

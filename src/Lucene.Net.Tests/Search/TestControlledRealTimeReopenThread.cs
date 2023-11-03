@@ -61,7 +61,6 @@ namespace Lucene.Net.Search
     using Term = Lucene.Net.Index.Term;
     using TextField = Lucene.Net.Documents.TextField;
     using ThreadedIndexingAndSearchingTestCase = Lucene.Net.Index.ThreadedIndexingAndSearchingTestCase;
-    using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
     using Version = Lucene.Net.Util.LuceneVersion;
 
     [SuppressCodecs("SimpleText", "Memory", "Direct")]
@@ -75,7 +74,7 @@ namespace Lucene.Net.Search
         // Is guaranteed to reflect deletes:
         private SearcherManager nrtDeletes;
 
-        private TrackingIndexWriter genWriter;
+        private IndexWriter genWriter;
 
         private ControlledRealTimeReopenThread<IndexSearcher> nrtDeletesThread;
         private ControlledRealTimeReopenThread<IndexSearcher> nrtNoDeletesThread;
@@ -279,7 +278,7 @@ namespace Lucene.Net.Search
                 Console.WriteLine("TEST: make SearcherManager maxReopenSec=" + maxReopenSec + " minReopenSec=" + minReopenSec);
             }
 
-            genWriter = new TrackingIndexWriter(m_writer);
+            genWriter = m_writer;
 
             SearcherFactory sf = new SearcherFactoryAnonymousClass(this, es);
 
@@ -400,9 +399,8 @@ namespace Lucene.Net.Search
             CountdownEvent latch = new CountdownEvent(1);
             CountdownEvent signal = new CountdownEvent(1);
 
-            LatchedIndexWriter _writer = new LatchedIndexWriter(d, conf, latch, signal);
-            TrackingIndexWriter writer = new TrackingIndexWriter(_writer);
-            SearcherManager manager = new SearcherManager(_writer, false, null);
+            LatchedIndexWriter writer = new LatchedIndexWriter(d, conf, latch, signal);
+            SearcherManager manager = new SearcherManager(writer, false, null);
 
             Document doc = new Document();
             doc.Add(NewTextField("test", "test", Field.Store.YES));
@@ -411,7 +409,7 @@ namespace Lucene.Net.Search
 
             var t = new ThreadAnonymousClass(this, latch, signal, writer, manager);
             t.Start();
-            _writer.waitAfterUpdate = true; // wait in addDocument to let some reopens go through
+            writer.waitAfterUpdate = true; // wait in addDocument to let some reopens go through
             long lastGen = writer.UpdateDocument(new Term("foo", "bar"), doc); // once this returns the doc is already reflected in the last reopen
 
             assertFalse(manager.IsSearcherCurrent()); // false since there is a delete in the queue
@@ -446,7 +444,7 @@ namespace Lucene.Net.Search
             }
             thread.Dispose();
             thread.Join();
-            IOUtils.Dispose(manager, _writer, d);
+            IOUtils.Dispose(manager, writer, d);
         }
 
         private sealed class ThreadAnonymousClass : ThreadJob
@@ -455,10 +453,10 @@ namespace Lucene.Net.Search
 
             private readonly CountdownEvent latch;
             private readonly CountdownEvent signal;
-            private readonly TrackingIndexWriter writer;
+            private readonly IndexWriter writer;
             private readonly SearcherManager manager;
 
-            public ThreadAnonymousClass(TestControlledRealTimeReopenThread outerInstance, CountdownEvent latch, CountdownEvent signal, TrackingIndexWriter writer, SearcherManager manager)
+            public ThreadAnonymousClass(TestControlledRealTimeReopenThread outerInstance, CountdownEvent latch, CountdownEvent signal, IndexWriter writer, SearcherManager manager)
             {
                 this.outerInstance = outerInstance;
                 this.latch = latch;
@@ -533,9 +531,9 @@ namespace Lucene.Net.Search
 
             }
 
-            public override void UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
+            public override long UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
             {
-                base.UpdateDocument(term, doc, analyzer);
+               long result = base.UpdateDocument(term, doc, analyzer);
                 try
                 {
                     if (waitAfterUpdate)
@@ -548,6 +546,7 @@ namespace Lucene.Net.Search
                 {
                     throw new Util.ThreadInterruptedException(ie);
                 }
+                return result;
             }
         }
 
@@ -666,9 +665,8 @@ namespace Lucene.Net.Search
             config.SetOpenMode(OpenMode.CREATE_OR_APPEND);
             IndexWriter iw = new IndexWriter(dir, config);
             SearcherManager sm = new SearcherManager(iw, true, new SearcherFactory());
-            TrackingIndexWriter tiw = new TrackingIndexWriter(iw);
             ControlledRealTimeReopenThread<IndexSearcher> controlledRealTimeReopenThread = 
-                new ControlledRealTimeReopenThread<IndexSearcher>(tiw, sm, maxStaleSecs, 0);
+                new ControlledRealTimeReopenThread<IndexSearcher>(iw, sm, maxStaleSecs, 0);
 
             controlledRealTimeReopenThread.IsBackground = (true);
             controlledRealTimeReopenThread.Start();
@@ -687,7 +685,7 @@ namespace Lucene.Net.Search
                 d.Add(new TextField("count", i + "", Field.Store.NO));
                 d.Add(new TextField("content", content, Field.Store.YES));
                 long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
-                long l = tiw.AddDocument(d);
+                long l = iw.AddDocument(d);
                 controlledRealTimeReopenThread.WaitForGeneration(l);
                 long wait = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - start; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 assertTrue("waited too long for generation " + wait, wait < (maxStaleSecs * 1000));
@@ -764,18 +762,17 @@ namespace Lucene.Net.Search
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter indexWriter = new IndexWriter(indexDir, indexConfig);
-            TrackingIndexWriter trackingWriter = new TrackingIndexWriter(indexWriter);
 
             Document doc = new Document();
             doc.Add(new Int32Field("id", 1, Field.Store.YES));
             doc.Add(new StringField("name", "Doc1", Field.Store.YES));
-            trackingWriter.AddDocument(doc);
+            indexWriter.AddDocument(doc);
 
             SearcherManager searcherManager = new SearcherManager(indexWriter, applyAllDeletes: true, null);
 
             //Reopen SearcherManager every 1 secs via background thread if no thread waiting for newer generation.
             //Reopen SearcherManager after .2 secs if another thread IS waiting on a newer generation.  
-            var controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(trackingWriter, searcherManager, 1, 0.2);
+            var controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(indexWriter, searcherManager, 1, 0.2);
 
             //Start() will start a seperate thread that will invoke the object's Run(). However,
             //calling Run() directly would execute that code on the current thread rather then a new thread
@@ -802,7 +799,7 @@ namespace Lucene.Net.Search
             doc = new Document();
             doc.Add(new Int32Field("id", 2, Field.Store.YES));
             doc.Add(new StringField("name", "Doc2", Field.Store.YES));
-            trackingWriter.AddDocument(doc);
+            indexWriter.AddDocument(doc);
 
             //Demonstrate that we can only see the first doc because we haven't 
             //waited 1 sec or called WaitForGeneration
@@ -838,7 +835,7 @@ namespace Lucene.Net.Search
             doc = new Document();
             doc.Add(new Int32Field("id", 3, Field.Store.YES));
             doc.Add(new StringField("name", "Doc3", Field.Store.YES));
-            long generation = trackingWriter.AddDocument(doc);
+            long generation = indexWriter.AddDocument(doc);
 
             //Demonstrate that if we call WaitForGeneration our wait will be
             // .2 secs or less (the min interval we set earlier) and then we will
@@ -919,17 +916,16 @@ namespace Lucene.Net.Search
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
             IndexWriter indexWriter = new IndexWriter(indexDir, indexConfig);
-            TrackingIndexWriter trackingWriter = new TrackingIndexWriter(indexWriter);
 
             //Add two documents
             Document doc = new Document();
             doc.Add(new Int32Field("id", 1, Field.Store.YES));
             doc.Add(new StringField("name", "Doc1", Field.Store.YES));
-            long generation = trackingWriter.AddDocument(doc);
+            long generation = indexWriter.AddDocument(doc);
 
             doc.Add(new Int32Field("id", 2, Field.Store.YES));
             doc.Add(new StringField("name", "Doc3", Field.Store.YES));
-            generation = trackingWriter.AddDocument(doc);
+            generation = indexWriter.AddDocument(doc);
 
             SearcherManager searcherManager = new SearcherManager(indexWriter, applyAllDeletes: true, null);
 
@@ -937,7 +933,7 @@ namespace Lucene.Net.Search
             //Reopen SearcherManager after .2 secs if another thread IS waiting on a newer generation.  
             double maxRefreshSecs = 2.0;
             double minRefreshSecs = .2;
-            var controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(trackingWriter, searcherManager, maxRefreshSecs, minRefreshSecs);
+            var controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(indexWriter, searcherManager, maxRefreshSecs, minRefreshSecs);
 
             //Start() will start a seperate thread that will invoke the object's Run(). However,
             //calling Run() directly would execute that code on the current thread rather then a new thread

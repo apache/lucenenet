@@ -74,8 +74,6 @@ namespace Lucene.Net.Index
 
         private readonly BufferedUpdates globalBufferedUpdates;
 
-        private long gen;
-
         /* only acquired to update the global deletes */
         private readonly ReentrantLock globalBufferLock = new ReentrantLock();
 
@@ -121,16 +119,18 @@ namespace Lucene.Net.Index
             return seqNo;
         }
 
-        internal void AddNumericUpdate(NumericDocValuesUpdate update)
+        internal long AddNumericUpdate(NumericDocValuesUpdate update)
         {
-            Add(new NumericUpdateNode(update));
+            long seqNo = Add(new NumericUpdateNode(update));
             TryApplyGlobalSlice();
+            return seqNo;
         }
 
-        internal void AddBinaryUpdate(BinaryDocValuesUpdate update)
+        internal long AddBinaryUpdate(BinaryDocValuesUpdate update)
         {
-            Add(new BinaryUpdateNode(update));
+            long seqNo = Add(new BinaryUpdateNode(update));
             TryApplyGlobalSlice();
+            return seqNo;
         }
 
         /// <summary>
@@ -167,41 +167,9 @@ namespace Lucene.Net.Index
              */
             try
             {
-                while (true)
-                {
-                    Node currentTail = this.tail;
-                    Node tailNext = currentTail.next;
-                    if (tail == currentTail)
-                    {
-                        if (tailNext != null)
-                        {
-                            /*
-                             * we are in intermediate state here. the tails next pointer has been
-                             * advanced but the tail itself might not be updated yet. help to
-                             * advance the tail and try again updating it.
-                             */
-                            Interlocked.CompareExchange(ref tail, tailNext, currentTail); // can fail
-                        }
-                        else
-                        {
-                            /*
-                             * we are in quiescent state and can try to insert the new node to the
-                             * current tail if we fail to insert we just retry the operation since
-                             * somebody else has already added its item
-                             */
-                            if (currentTail.CasNext(null, newNode))
-                            {
-                                /*
-                                 * now that we are done we need to advance the tail while another
-                                 * thread could have advanced it already so we can ignore the return
-                                 * type of this CAS call
-                                 */
-                                Interlocked.CompareExchange(ref tail, newNode, currentTail);
-                                return seqNo.GetAndIncrement();
-                            }
-                        }
-                    }
-                }
+                tail.next = newNode;
+                tail = newNode;
+                return seqNo.GetAndIncrement();
             }
             finally
             {

@@ -24,16 +24,12 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
 
     /// <summary>
     /// Utility class that runs a thread to manage periodic
     /// reopens of a <see cref="ReferenceManager{T}"/>, with methods to wait for a specific
-    /// index changes to become visible.  To use this class you
-    /// must first wrap your <see cref="Index.IndexWriter"/> with a
-    /// <see cref="TrackingIndexWriter"/> and always use it to make changes
-    /// to the index, saving the returned generation.  Then,
-    /// when a given search request needs to see a specific
+    /// index changes to become visible. When a given search request needs to see a specific
     /// index change, call the <see cref="WaitForGeneration(long)"/> to wait for
     /// that change to be visible.  Note that this will only
     /// scale well if most searches do not need to wait for a
@@ -48,7 +44,7 @@ namespace Lucene.Net.Search
         private readonly ReferenceManager<T> manager;
         private readonly long targetMaxStaleNS;
         private readonly long targetMinStaleNS;
-        private readonly TrackingIndexWriter writer;
+        private readonly IndexWriter writer;
         private volatile bool finish;
         private long waitingGen;
         private long searchingGen;
@@ -74,7 +70,7 @@ namespace Lucene.Net.Search
         ///        on how quickly reopens may occur, when a caller
         ///        is waiting for a specific generation to
         ///        become visible. </param>
-        public ControlledRealTimeReopenThread(TrackingIndexWriter writer, ReferenceManager<T> manager, double targetMaxStaleSec, double targetMinStaleSec)
+        public ControlledRealTimeReopenThread(IndexWriter writer, ReferenceManager<T> manager, double targetMaxStaleSec, double targetMinStaleSec)
         {
             if (targetMaxStaleSec < targetMinStaleSec)
             {
@@ -211,7 +207,7 @@ namespace Lucene.Net.Search
             //                 syncronize lock and c# has no similar primitive.  So we must handle locking a
             //                 bit differently here to mimic that affect.
 
-            long curGen = writer.Generation;
+            long curGen = writer.LastSequenceNumber;
             if (targetGen > curGen)
             {
                 throw new ArgumentException("targetGen=" + targetGen + " was never returned by the ReferenceManager instance (current gen=" + curGen + ")");
@@ -322,7 +318,7 @@ namespace Lucene.Net.Search
                 // Save the gen as of when we started the reopen; the
                 // listener (HandleRefresh above) copies this to
                 // searchingGen once the reopen completes:
-                refreshStartGen.Value = writer.GetAndIncrementGeneration();
+                refreshStartGen.Value = writer.LastSequenceNumber;
                 try
                 {
                     manager.MaybeRefreshBlocking();

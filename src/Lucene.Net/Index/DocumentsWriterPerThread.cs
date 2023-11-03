@@ -330,7 +330,7 @@ namespace Lucene.Net.Index
             return FinishDocument(delTerm);
         }
 
-        public virtual int UpdateDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer, Term delTerm)
+        public virtual long UpdateDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer, Term delTerm)
         {
             if (Debugging.AssertsEnabled)
             {
@@ -396,12 +396,19 @@ namespace Lucene.Net.Index
                 // Apply delTerm only after all indexing has
                 // succeeded, but apply it only to docs prior to when
                 // this batch started:
+                long seqNo;
                 if (delTerm != null)
                 {
-                    deleteQueue.Add(delTerm, deleteSlice);
+                    seqNo = deleteQueue.Add(delTerm, deleteSlice);
                     if (Debugging.AssertsEnabled) Debugging.Assert(deleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
                     deleteSlice.Apply(pendingUpdates, numDocsInRAM - docCount);
+                    return seqNo;
                 }
+                else
+                {
+                    seqNo = deleteQueue.seqNo;
+                }
+                return seqNo;
             }
             finally
             {
@@ -419,8 +426,6 @@ namespace Lucene.Net.Index
                 }
                 docState.Clear();
             }
-
-            return docCount;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

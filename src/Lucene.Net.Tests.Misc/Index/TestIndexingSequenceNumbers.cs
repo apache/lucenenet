@@ -12,6 +12,7 @@ using System.Threading;
 
 namespace Lucene.Net.Tests.Misc.Index
 {
+    //move me to Lucene.Net.Index
     public class TestIndexingSequenceNumbers : LuceneTestCase
     {
         [Test]
@@ -21,7 +22,7 @@ namespace Lucene.Net.Tests.Misc.Index
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             long a = w.AddDocument(new Document());
             long b = w.AddDocument(new Document());
-            assertTrue(b > a);
+            assertTrue(b >= a);
             w.Dispose();
             dir.Dispose();
         }

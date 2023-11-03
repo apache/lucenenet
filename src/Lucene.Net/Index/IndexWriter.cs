@@ -1530,6 +1530,16 @@ namespace Lucene.Net.Index
             }
         }
 
+        // nocommit javadocs
+        public virtual long LastSequenceNumber
+        {
+            get
+            {
+                EnsureOpen();
+                return docWriter.deleteQueue.seqNo;
+            }
+        }
+
         /// <summary>
         /// Returns <c>true</c> if this index has deletions (including
         /// buffered deletions).  Note that this will return <c>true</c>
@@ -1675,9 +1685,9 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public virtual void AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
+        public virtual long AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            AddDocuments(docs, analyzer);
+            return AddDocuments(docs, analyzer);
         }
 
         /// <summary>
@@ -1690,9 +1700,9 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public virtual void AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer)
+        public virtual long AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer)
         {
-            UpdateDocuments(null, docs, analyzer);
+           return UpdateDocuments(null, docs, analyzer);
         }
 
         /// <summary>
@@ -1706,9 +1716,9 @@ namespace Lucene.Net.Index
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         /// <seealso cref="AddDocuments(IEnumerable{IEnumerable{IIndexableField}})"/>
-        public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs)
+        public virtual long UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            UpdateDocuments(delTerm, docs, analyzer);
+           return UpdateDocuments(delTerm, docs, analyzer);
         }
 
         /// <summary>
@@ -1723,7 +1733,7 @@ namespace Lucene.Net.Index
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         /// <seealso cref="AddDocuments(IEnumerable{IEnumerable{IIndexableField}})"/>
-        public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer)
+        public virtual long UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer)
         {
             EnsureOpen();
             try
@@ -1731,11 +1741,14 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    if (docWriter.UpdateDocuments(docs, analyzer, delTerm))
+                    long seqNo = docWriter.UpdateDocuments(docs, analyzer, delTerm);
+                    if (seqNo < 0)
                     {
+                        seqNo = -seqNo;
                         ProcessEvents(true, false);
                     }
                     success = true;
+                    return seqNo;
                 }
                 finally
                 {
@@ -1752,6 +1765,8 @@ namespace Lucene.Net.Index
             {
                 HandleOOM(oom, "UpdateDocuments");
             }
+            // dead code but javac disagrees
+            return -1;
         }
 
         /// <summary>
@@ -1791,9 +1806,9 @@ namespace Lucene.Net.Index
         /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/>.  If the
         /// provided <paramref name="readerIn"/> is an NRT reader obtained from this
         /// writer, and its segment has not been merged away, then
-        /// the delete succeeds and this method returns <c>true</c>; else, it
-        /// returns <c>false</c> the caller must then separately delete by
-        /// Term or Query.
+        /// the delete succeeds and this method returns a valid (&gt; 0) sequence
+        /// number; else, it returns -1 and the caller must then
+        /// separately delete by Term or Query.
         ///
         /// <b>NOTE</b>: this method can only delete documents
         /// visible to the currently open NRT reader.  If you need
@@ -1801,7 +1816,7 @@ namespace Lucene.Net.Index
         /// reader you must use the other DeleteDocument() methods
         /// (e.g., <see cref="DeleteDocuments(Term)"/>).
         /// </summary>
-        public virtual bool TryDeleteDocument(IndexReader readerIn, int docID)
+        public virtual long TryDeleteDocument(IndexReader readerIn, int docID)
         {
             UninterruptableMonitor.Enter(this);
             try
@@ -1864,7 +1879,7 @@ namespace Lucene.Net.Index
                                 Changed();
                             }
                             //System.out.println("  yes " + info.info.name + " " + docID);
-                            return true;
+                            return docWriter.deleteQueue.seqNo.GetAndIncrement();
                         }
                         finally
                         {
@@ -1880,7 +1895,7 @@ namespace Lucene.Net.Index
                 {
                     //System.out.println("  no seg " + info.info.name + " " + docID);
                 }
-                return false;
+                return -1;
             }
             finally
             {
@@ -1932,20 +1947,24 @@ namespace Lucene.Net.Index
         /// <param name="query"> the query to identify the documents to be deleted </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public virtual void DeleteDocuments(Query query)
+        public virtual long DeleteDocuments(Query query)
         {
             EnsureOpen();
             try
             {
-                if (docWriter.DeleteQueries(query))
+                long seqNo = docWriter.DeleteQueries(query);
+                if (seqNo < 0)
                 {
+                    seqNo = -seqNo;
                     ProcessEvents(true, false);
                 }
+                return seqNo;
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "DeleteDocuments(Query)");
             }
+            return -1;
         }
 
         /// <summary>
@@ -1960,20 +1979,24 @@ namespace Lucene.Net.Index
         /// to be deleted </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public virtual void DeleteDocuments(params Query[] queries)
+        public virtual long DeleteDocuments(params Query[] queries)
         {
             EnsureOpen();
             try
             {
-                if (docWriter.DeleteQueries(queries))
+                long seqNo = docWriter.DeleteQueries(queries);
+                if (seqNo < 0)
                 {
+                    seqNo = -seqNo;
                     ProcessEvents(true, false);
                 }
+                return seqNo;
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "DeleteDocuments(Query..)");
             }
+            return -1;
         }
 
         /// <summary>
@@ -1992,10 +2015,10 @@ namespace Lucene.Net.Index
         /// <param name="doc"> the document to be added </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        public virtual void UpdateDocument(Term term, IEnumerable<IIndexableField> doc)
+        public virtual long UpdateDocument(Term term, IEnumerable<IIndexableField> doc)
         {
             EnsureOpen();
-            UpdateDocument(term, doc, analyzer);
+            return UpdateDocument(term, doc, analyzer);
         }
 
         /// <summary>
@@ -2073,7 +2096,7 @@ namespace Lucene.Net.Index
         ///           if the index is corrupt </exception>
         /// <exception cref="IOException">
         ///           if there is a low-level IO error </exception>
-        public virtual void UpdateNumericDocValue(Term term, string field, long? value)
+        public virtual long UpdateNumericDocValue(Term term, string field, long? value)
         {
             EnsureOpen();
             if (!globalFieldNumberMap.Contains(field, DocValuesType.NUMERIC))
@@ -2082,14 +2105,18 @@ namespace Lucene.Net.Index
             }
             try
             {
-                if (docWriter.UpdateNumericDocValue(term, field, value))
+                long seqNo = docWriter.UpdateNumericDocValue(term, field, value);
+                if (seqNo < 0)
                 {
+                    seqNo = -seqNo;
                     ProcessEvents(true, false);
                 }
+                return seqNo;
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "UpdateNumericDocValue");
+                return -1;
             }
         }
 
@@ -2119,7 +2146,7 @@ namespace Lucene.Net.Index
         ///           if the index is corrupt </exception>
         /// <exception cref="IOException">
         ///           if there is a low-level IO error </exception>
-        public virtual void UpdateBinaryDocValue(Term term, string field, BytesRef value)
+        public virtual long UpdateBinaryDocValue(Term term, string field, BytesRef value)
         {
             EnsureOpen();
             if (!globalFieldNumberMap.Contains(field, DocValuesType.BINARY))
@@ -2128,14 +2155,18 @@ namespace Lucene.Net.Index
             }
             try
             {
-                if (docWriter.UpdateBinaryDocValue(term, field, value))
+                long seqNo = docWriter.UpdateBinaryDocValue(term, field, value);
+                if (seqNo < 0)
                 {
+                    seqNo = -seqNo;
                     ProcessEvents(true, false);
                 }
+                return seqNo;
             }
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "UpdateBinaryDocValue");
+                return -1;
             }
         }
 
@@ -2944,7 +2975,7 @@ namespace Lucene.Net.Index
         ///    <see cref="ForceMergeDeletes()"/> methods, they may receive
         ///    <see cref="MergePolicy.MergeAbortedException"/>s.</para>
         /// </summary>
-        public virtual void DeleteAll()
+        public virtual long DeleteAll()
         {
             EnsureOpen();
             // Remove any buffered docs
@@ -2992,10 +3023,15 @@ namespace Lucene.Net.Index
                             segmentInfos.Changed();
                             globalFieldNumberMap.Clear();
                             success = true;
+                            return docWriter.deleteQueue.seqNo;
                         }
                         catch (Exception oom) when (oom.IsOutOfMemoryError())
                         {
                             HandleOOM(oom, "DeleteAll");
+
+                            // dead code but javac disagrees
+                            return -1;
+
                         }
                         finally
                         {
@@ -3373,7 +3409,7 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         /// <exception cref="LockObtainFailedException"> if we were unable to
         ///   acquire the write lock in at least one directory </exception>
-        public virtual void AddIndexes(params Directory[] dirs)
+        public virtual long AddIndexes(params Directory[] dirs)
         {
             EnsureOpen();
 
@@ -3502,6 +3538,8 @@ namespace Lucene.Net.Index
                     IOUtils.DisposeWhileHandlingException(locks);
                 }
             }
+            MaybeMerge();
+            return docWriter.deleteQueue.seqNo;
         }
 
         /// <summary>
@@ -3542,7 +3580,7 @@ namespace Lucene.Net.Index
         ///           if the index is corrupt </exception>
         /// <exception cref="IOException">
         ///           if there is a low-level IO error </exception>
-        public virtual void AddIndexes(params IndexReader[] readers)
+        public virtual long AddIndexes(params IndexReader[] readers)
         {
             EnsureOpen();
             int numDocs = 0;
@@ -3578,7 +3616,8 @@ namespace Lucene.Net.Index
 
                 if (!merger.ShouldMerge)
                 {
-                    return;
+                    // no need to increment:
+                    return docWriter.deleteQueue.seqNo;
                 }
 
                 MergeState mergeState;
@@ -3618,7 +3657,8 @@ namespace Lucene.Net.Index
                     if (stopMerges)
                     {
                         deleter.DeleteNewFiles(infoPerCommit.GetFiles());
-                        return;
+                        // no need to increment:
+                        return docWriter.deleteQueue.seqNo;
                     }
                     EnsureOpen();
                     useCompoundFile = mergePolicy.UseCompoundFile(segmentInfos, infoPerCommit);
@@ -3688,7 +3728,8 @@ namespace Lucene.Net.Index
                     if (stopMerges)
                     {
                         deleter.DeleteNewFiles(info.GetFiles());
-                        return;
+                          // no need to increment:
+                        return docWriter.deleteQueue.seqNo;
                     }
                     EnsureOpen();
                     segmentInfos.Add(infoPerCommit);
@@ -3703,6 +3744,9 @@ namespace Lucene.Net.Index
             {
                 HandleOOM(oom, "AddIndexes(IndexReader...)");
             }
+            MaybeMerge();
+            // no need to increment:
+            return docWriter.deleteQueue.seqNo;
         }
 
         /// <summary>

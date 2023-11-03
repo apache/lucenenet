@@ -125,27 +125,29 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Adds a Document. </summary>
         /// <seealso cref="IndexWriter.AddDocument(IEnumerable{IIndexableField})"/>
-        public virtual void AddDocument(IEnumerable<IIndexableField> doc)
+        public virtual long AddDocument(IEnumerable<IIndexableField> doc)
         {
-            AddDocument(doc, IndexWriter.Analyzer);
+           return AddDocument(doc, IndexWriter.Analyzer);
         }
 
-        public virtual void AddDocument(IEnumerable<IIndexableField> doc, Analyzer a)
+        public virtual long AddDocument(IEnumerable<IIndexableField> doc, Analyzer a)
         {
+            long seqNo;
             if (r.Next(5) == 3)
             {
                 // TODO: maybe, we should simply buffer up added docs
                 // (but we need to clone them), and only when
                 // getReader, commit, etc. are called, we do an
                 // addDocuments?  Would be better testing.
-                IndexWriter.AddDocuments(new EnumerableAnonymousClass<IIndexableField>(doc), a);
+               seqNo = IndexWriter.AddDocuments(new EnumerableAnonymousClass<IIndexableField>(doc), a);
             }
             else
             {
-                IndexWriter.AddDocument(doc, a);
+               seqNo = IndexWriter.AddDocument(doc, a);
             }
 
             MaybeCommit();
+            return seqNo;
         }
 
         private sealed class EnumerableAnonymousClass<IndexableField> : IEnumerable<IEnumerable<IndexableField>>
@@ -223,32 +225,36 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual void AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
+        public virtual long AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            IndexWriter.AddDocuments(docs);
+            long seqNo =  IndexWriter.AddDocuments(docs);
             MaybeCommit();
+            return seqNo;
         }
 
-        public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs)
+        public virtual long UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            IndexWriter.UpdateDocuments(delTerm, docs);
+            long seqNo = IndexWriter.UpdateDocuments(delTerm, docs);
             MaybeCommit();
+            return seqNo;
         }
 
         /// <summary>
         /// Updates a document. </summary>
         /// <see cref="IndexWriter.UpdateDocument(Term, IEnumerable{IIndexableField})"/>
-        public virtual void UpdateDocument(Term t, IEnumerable<IIndexableField> doc)
+        public virtual long UpdateDocument(Term t, IEnumerable<IIndexableField> doc)
         {
+            long seqNo;
             if (r.Next(5) == 3)
             {
-                IndexWriter.UpdateDocuments(t, new EnumerableAnonymousClass2(doc));
+               seqNo = IndexWriter.UpdateDocuments(t, new EnumerableAnonymousClass2(doc));
             }
             else
             {
-                IndexWriter.UpdateDocument(t, doc);
+                seqNo = IndexWriter.UpdateDocument(t, doc);
             }
             MaybeCommit();
+            return seqNo;
         }
 
         private sealed class EnumerableAnonymousClass2 : IEnumerable<IEnumerable<IIndexableField>>
@@ -306,25 +312,25 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual void AddIndexes(params Directory[] dirs)
+        public virtual long AddIndexes(params Directory[] dirs)
             => IndexWriter.AddIndexes(dirs);
 
-        public virtual void AddIndexes(params IndexReader[] readers)
+        public virtual long AddIndexes(params IndexReader[] readers)
             => IndexWriter.AddIndexes(readers);
 
-        public virtual void UpdateNumericDocValue(Term term, string field, long? value)
+        public virtual long UpdateNumericDocValue(Term term, string field, long? value)
             => IndexWriter.UpdateNumericDocValue(term, field, value);
 
-        public virtual void UpdateBinaryDocValue(Term term, string field, BytesRef value)
+        public virtual long UpdateBinaryDocValue(Term term, string field, BytesRef value)
             => IndexWriter.UpdateBinaryDocValue(term, field, value);
 
-        public virtual void DeleteDocuments(Term term)
+        public virtual long DeleteDocuments(Term term)
             => IndexWriter.DeleteDocuments(term);
 
-        public virtual void DeleteDocuments(Query q)
+        public virtual long DeleteDocuments(Query q)
             => IndexWriter.DeleteDocuments(q);
 
-        public virtual void Commit()
+        public virtual long Commit()
             => IndexWriter.Commit();
 
         public virtual int NumDocs
@@ -333,7 +339,7 @@ namespace Lucene.Net.Index
         public virtual int MaxDoc
             => IndexWriter.MaxDoc;
 
-        public virtual void DeleteAll()
+        public virtual long DeleteAll()
             => IndexWriter.DeleteAll();
 
         public virtual DirectoryReader GetReader()

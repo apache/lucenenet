@@ -525,7 +525,7 @@ namespace Lucene.Net.Index
 
             public override string ToString()
             {
-                return "DirectoryReader.ReaderCommit(" + segmentsFileName + ")";
+                return "StandardDirectoryReader.ReaderCommit(" + segmentsFileName + " files=" + files + ")";
             }
 
             public override int SegmentCount => segmentCount;

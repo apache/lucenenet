@@ -46,12 +46,12 @@ namespace Lucene.Net.Index
                 this.failOnRollback = failOnRollback;
             }
 
-            public void PrepareCommit()
+            public long PrepareCommit()
             {
-                PrepareCommit(null);
+               return PrepareCommit(null);
             }
 
-            public virtual void PrepareCommit(IDictionary<string, string> commitData)
+            public virtual long PrepareCommit(IDictionary<string, string> commitData)
             {
                 this.prepareCommitData = commitData;
                 Assert.IsFalse(commitCalled, "commit should not have been called before all prepareCommit were");
@@ -59,14 +59,15 @@ namespace Lucene.Net.Index
                 {
                     throw new IOException("failOnPrepare");
                 }
+                return 1;
             }
 
-            public void Commit()
+            public long Commit()
             {
-                Commit(null);
+               return Commit(null);
             }
 
-            public virtual void Commit(IDictionary<string, string> commitData)
+            public virtual long Commit(IDictionary<string, string> commitData)
             {
                 this.commitData = commitData;
                 commitCalled = true;
@@ -74,6 +75,7 @@ namespace Lucene.Net.Index
                 {
                     throw RuntimeException.Create("failOnCommit");
                 }
+                return 1;
             }
 
             public void Rollback()

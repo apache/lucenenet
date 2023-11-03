@@ -143,17 +143,20 @@ namespace Lucene.Net.Index
             flushControl = new DocumentsWriterFlushControl(this, config, writer.bufferedUpdatesStream);
         }
 
-        internal bool DeleteQueries(params Query[] queries)
+        internal long DeleteQueries(params Query[] queries)
         {
             UninterruptableMonitor.Enter(this);
             try
             {
                 // TODO why is this synchronized?
                 DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
-                deleteQueue.AddDelete(queries);
+                long seqNo = deleteQueue.AddDelete(queries);
                 flushControl.DoOnDelete();
-                //nocommit long
-                return ApplyAllDeletes(deleteQueue);
+                if (ApplyAllDeletes(deleteQueue))
+                {
+                    seqNo = -seqNo;
+                }
+                return seqNo;
             }
             finally
             {
@@ -185,15 +188,20 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal bool UpdateNumericDocValue(Term term, string field, long? value)
+        internal long UpdateNumericDocValue(Term term, string field, long? value)
         {
             UninterruptableMonitor.Enter(this);
             try
             {
                 DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
-                deleteQueue.AddNumericUpdate(new NumericDocValuesUpdate(term, field, value));
+                long seqNo = deleteQueue.AddNumericUpdate(new NumericDocValuesUpdate(term, field, value));
                 flushControl.DoOnDelete();
-                return ApplyAllDeletes(deleteQueue);
+                if (ApplyAllDeletes(deleteQueue))
+                {
+                    seqNo = -seqNo;
+                }
+
+                return seqNo;
             }
             finally
             {
@@ -201,15 +209,20 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal bool UpdateBinaryDocValue(Term term, string field, BytesRef value)
+        internal long UpdateBinaryDocValue(Term term, string field, BytesRef value)
         {
             UninterruptableMonitor.Enter(this);
             try
             {
                 DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
-                deleteQueue.AddBinaryUpdate(new BinaryDocValuesUpdate(term, field, value));
+                long seqNo = deleteQueue.AddBinaryUpdate(new BinaryDocValuesUpdate(term, field, value));
                 flushControl.DoOnDelete();
-                return ApplyAllDeletes(deleteQueue);
+                if (ApplyAllDeletes(deleteQueue))
+                {
+                    seqNo = -seqNo;
+                }
+
+                return seqNo;
             }
             finally
             {
@@ -335,6 +348,8 @@ namespace Lucene.Net.Index
                         AbortThreadState(perThread, newFilesSet);
                     }
                     deleteQueue.Clear();
+                    // jump over any possible in flight ops:
+                    deleteQueue.seqNo.AddAndGet(perThreadPool.NumThreadStatesActive + 1);
                     flushControl.AbortPendingFlushes(newFilesSet);
                     PutEvent(new DeleteNewFilesEvent(newFilesSet));
                     flushControl.WaitForFlush();
@@ -525,12 +540,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal bool UpdateDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer, Term delTerm)
+        internal long UpdateDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer, Term delTerm)
         {
             bool hasEvents = PreUpdate();
 
             ThreadState perThread = flushControl.ObtainAndLock();
             DocumentsWriterPerThread flushingDWPT;
+            long seqNo;
 
             try
             {
@@ -545,8 +561,7 @@ namespace Lucene.Net.Index
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
                 {
-                    int docCount = dwpt.UpdateDocuments(docs, analyzer, delTerm);
-                    numDocsInRAM.AddAndGet(docCount);
+                    seqNo = dwpt.UpdateDocuments(docs, analyzer, delTerm);
                 }
                 finally
                 {
@@ -568,7 +583,14 @@ namespace Lucene.Net.Index
                 perThreadPool.Release(perThread);
             }
 
-            return PostUpdate(flushingDWPT, hasEvents);
+            if (PostUpdate(flushingDWPT, hasEvents))
+            {
+                return -seqNo;
+            }
+            else
+            {
+                return seqNo;
+            }
         }
 
         internal long UpdateDocument(IEnumerable<IIndexableField> doc, Analyzer analyzer, Term delTerm)
@@ -578,7 +600,7 @@ namespace Lucene.Net.Index
             ThreadState perThread = flushControl.ObtainAndLock();
 
             DocumentsWriterPerThread flushingDWPT;
-            long seqno;
+            long seqNo;
             try
             {
                 if (!perThread.IsActive)
@@ -592,7 +614,7 @@ namespace Lucene.Net.Index
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
                 {
-                   seqno = dwpt.UpdateDocument(doc, analyzer, delTerm);
+                   seqNo = dwpt.UpdateDocument(doc, analyzer, delTerm);
                     numDocsInRAM.IncrementAndGet();
                 }
                 finally
@@ -617,11 +639,11 @@ namespace Lucene.Net.Index
 
             if (PostUpdate(flushingDWPT, hasEvents))
             {
-                return -seqno;
+                return -seqNo;
             }
             else
             {
-                return seqno;
+                return seqNo;
             }
         }
 
