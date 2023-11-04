@@ -1530,13 +1530,17 @@ namespace Lucene.Net.Index
             }
         }
 
-        // nocommit javadocs
+        ///<summary>
+        /// Returns the last <a cref="SequenceNumber">sequence number</a>,
+        /// or 0 if no index-changing operations have completed yet.
+        ///@lucene.experimental
+        /// </summary>
         public virtual long LastSequenceNumber
         {
             get
             {
                 EnsureOpen();
-                return docWriter.deleteQueue.seqNo;
+                return docWriter.deleteQueue.LastSequenceNumber;
             }
         }
 
@@ -1879,7 +1883,7 @@ namespace Lucene.Net.Index
                                 Changed();
                             }
                             //System.out.println("  yes " + info.info.name + " " + docID);
-                            return docWriter.deleteQueue.seqNo.GetAndIncrement();
+                            return docWriter.deleteQueue.NextSequenceNumber;
                         }
                         finally
                         {
@@ -3023,7 +3027,7 @@ namespace Lucene.Net.Index
                             segmentInfos.Changed();
                             globalFieldNumberMap.Clear();
                             success = true;
-                            return docWriter.deleteQueue.seqNo;
+                            return docWriter.deleteQueue.NextSequenceNumber;
                         }
                         catch (Exception oom) when (oom.IsOutOfMemoryError())
                         {
@@ -3419,6 +3423,8 @@ namespace Lucene.Net.Index
 
             bool successTop = false;
 
+            long seqNo;
+
             try
             {
                 if (infoStream.IsEnabled("IW"))
@@ -3463,6 +3469,7 @@ namespace Lucene.Net.Index
                             infos.Add(CopySegmentAsIs(info, newSegName, dsNames, dsFilesCopied, context, copiedFiles));
                         }
                     }
+                    seqNo = docWriter.deleteQueue.NextSequenceNumber;
                     success = true;
                 }
                 finally
@@ -3526,6 +3533,8 @@ namespace Lucene.Net.Index
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "AddIndexes(Directory...)");
+                // dead code but javac disagrees:
+                seqNo = -1;
             }
             finally
             {
@@ -3539,7 +3548,7 @@ namespace Lucene.Net.Index
                 }
             }
             MaybeMerge();
-            return docWriter.deleteQueue.seqNo;
+            return seqNo;
         }
 
         /// <summary>
@@ -3584,7 +3593,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             int numDocs = 0;
-
+            long seqNo;
             try
             {
                 if (infoStream.IsEnabled("IW"))
@@ -3616,8 +3625,7 @@ namespace Lucene.Net.Index
 
                 if (!merger.ShouldMerge)
                 {
-                    // no need to increment:
-                    return docWriter.deleteQueue.seqNo;
+                    return docWriter.deleteQueue.NextSequenceNumber;
                 }
 
                 MergeState mergeState;
@@ -3658,7 +3666,7 @@ namespace Lucene.Net.Index
                     {
                         deleter.DeleteNewFiles(infoPerCommit.GetFiles());
                         // no need to increment:
-                        return docWriter.deleteQueue.seqNo;
+                        return docWriter.deleteQueue.NextSequenceNumber;
                     }
                     EnsureOpen();
                     useCompoundFile = mergePolicy.UseCompoundFile(segmentInfos, infoPerCommit);
@@ -3728,11 +3736,11 @@ namespace Lucene.Net.Index
                     if (stopMerges)
                     {
                         deleter.DeleteNewFiles(info.GetFiles());
-                          // no need to increment:
-                        return docWriter.deleteQueue.seqNo;
+                        return docWriter.deleteQueue.NextSequenceNumber;
                     }
                     EnsureOpen();
                     segmentInfos.Add(infoPerCommit);
+                    seqNo = docWriter.deleteQueue.NextSequenceNumber;
                     Checkpoint();
                 }
                 finally
@@ -3743,10 +3751,11 @@ namespace Lucene.Net.Index
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "AddIndexes(IndexReader...)");
+                // dead code but javac disagrees:
+                seqNo = -1;
             }
             MaybeMerge();
-            // no need to increment:
-            return docWriter.deleteQueue.seqNo;
+            return seqNo;
         }
 
         /// <summary>

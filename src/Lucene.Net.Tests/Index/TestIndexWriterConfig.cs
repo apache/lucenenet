@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             getters.Add("getIndexingChain");
             getters.Add("getMergedSegmentWarmer");
             getters.Add("getMergePolicy");
-            getters.Add("getMaxThreadStates");
+            getters.Add("getMaxThreadStates");//why should removed?
             getters.Add("getReaderPooling");
             getters.Add("getIndexerThreadPool");
             getters.Add("getReaderTermsIndexDivisor");

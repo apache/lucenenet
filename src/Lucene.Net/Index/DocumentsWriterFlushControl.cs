@@ -697,11 +697,14 @@ namespace Lucene.Net.Index
                 flushingQueue = documentsWriter.deleteQueue;
                 // Set a new delete queue - all subsequent DWPT will use this queue until
                 // we do another full flush
-                seqNo = documentsWriter.deleteQueue.seqNo.Value + perThreadPool.NumThreadStatesActive;
 
-                // nocommit is this (active thread state count) always enough of a gap?  what if new indexing thread sneaks in just now?  it would
-                // have to get this next delete queue?
+                // Insert a gap in seqNo of current active thread count, in the worst case each of those threads now have one operation in flight.  It's fine
+                // if we have some sequence numbers that were never assigned:
+                seqNo = documentsWriter.deleteQueue.LastSequenceNumber + perThreadPool.NumThreadStatesActive + 2;
+                flushingQueue.maxSeqNo = seqNo;
+
                 DocumentsWriterDeleteQueue newQueue = new DocumentsWriterDeleteQueue(flushingQueue.generation + 1, seqNo + 1);
+                documentsWriter.deleteQueue = newQueue;
             }
             finally
             {

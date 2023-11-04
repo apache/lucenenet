@@ -349,7 +349,7 @@ namespace Lucene.Net.Index
                     }
                     deleteQueue.Clear();
                     // jump over any possible in flight ops:
-                    deleteQueue.seqNo.AddAndGet(perThreadPool.NumThreadStatesActive + 1);
+                    deleteQueue.SkipSequenceNumbers(perThreadPool.NumThreadStatesActive + 1);
                     flushControl.AbortPendingFlushes(newFilesSet);
                     PutEvent(new DeleteNewFilesEvent(newFilesSet));
                     flushControl.WaitForFlush();

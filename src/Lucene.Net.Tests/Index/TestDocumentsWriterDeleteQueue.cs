@@ -52,8 +52,8 @@ namespace Lucene.Net.Index
             }
             DeleteSlice slice1 = queue.NewSlice();
             DeleteSlice slice2 = queue.NewSlice();
-            BufferedUpdates bd1 = new BufferedUpdates();
-            BufferedUpdates bd2 = new BufferedUpdates();
+            BufferedUpdates bd1 = new BufferedUpdates("bd1");
+            BufferedUpdates bd2 = new BufferedUpdates("bd2");
             int last1 = 0;
             int last2 = 0;
             ISet<Term> uniqueValues = new JCG.HashSet<Term>();
@@ -312,7 +312,7 @@ namespace Lucene.Net.Index
                 this.index = index;
                 this.ids = ids;
                 this.slice = queue.NewSlice();
-                deletes = new BufferedUpdates();
+                deletes = new BufferedUpdates("deletes");
                 this.latch = latch;
             }
 

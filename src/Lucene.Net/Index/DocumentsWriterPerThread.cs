@@ -232,11 +232,10 @@ namespace Lucene.Net.Index
             this.docState.similarity = indexWriterConfig.Similarity;
             bytesUsed = Counter.NewCounter();
             byteBlockAllocator = new DirectTrackingAllocator(bytesUsed);
-            pendingUpdates = new BufferedUpdates();
+            pendingUpdates = new BufferedUpdates(segmentName);
             intBlockAllocator = new Int32BlockAllocator(bytesUsed);
             this.deleteQueue = deleteQueue;
             if (Debugging.AssertsEnabled) Debugging.Assert(numDocsInRAM == 0,"num docs {0}", numDocsInRAM);
-            pendingUpdates.Clear();
             deleteSlice = deleteQueue.NewSlice();
 
             segmentInfo = new SegmentInfo(directoryOrig, Constants.LUCENE_MAIN_VERSION, segmentName, -1, false, codec, null);
@@ -388,8 +387,7 @@ namespace Lucene.Net.Index
                             Abort(filesToDelete);
                         }
                     }
-
-                    FinishDocument(null);
+                    numDocsInRAM++;
                 }
                 allDocsIndexed = true;
 
@@ -406,7 +404,16 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    seqNo = deleteQueue.seqNo;
+                    seqNo = deleteQueue.UpdateSlice(deleteSlice);
+                    if (seqNo < 0)
+                    {
+                        seqNo = -seqNo;
+                        deleteSlice.Apply(pendingUpdates, numDocsInRAM - docCount);
+                    }
+                    else
+                    {
+                        deleteSlice.Reset();
+                    }
                 }
                 return seqNo;
             }
@@ -448,9 +455,16 @@ namespace Lucene.Net.Index
             }
             else
             {
-                applySlice &= deleteQueue.UpdateSlice(deleteSlice);
-                // nocommit we don't need to increment here?
-                seqNo = deleteQueue.seqNo;
+                seqNo = deleteQueue.UpdateSlice(deleteSlice);
+
+                if (seqNo < 0)
+                {
+                    seqNo = -seqNo;
+                }
+                else
+                {
+                    applySlice = false;
+                }
             }
 
             if (applySlice)

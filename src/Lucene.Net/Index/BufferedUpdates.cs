@@ -154,9 +154,12 @@ namespace Lucene.Net.Index
 
         internal long gen;
 
-        internal BufferedUpdates() // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
+        private readonly string segmentName;
+
+        internal BufferedUpdates(string segmentName) // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
             this.bytesUsed = new AtomicInt64();
+            this.segmentName = segmentName;
         }
 
         public override string ToString()

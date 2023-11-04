@@ -67,10 +67,12 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class DocumentsWriterDeleteQueue
     {
+        // the current end (latest delete operation) in the delete queue:
         private Node tail; // LUCENENET NOTE: can't use type without specifying type parameter, also not volatile due to Interlocked
 
-        // LUCENENET NOTE: no need for AtomicReferenceFieldUpdater, we can use Interlocked instead
-        private readonly DeleteSlice globalSlice;
+        /* Used to record deletes against all prior (already written to disk) segments.  Whenever any segment flushes, we bundle up this set of
+        *  deletes and insert into the buffered updates stream before the newly flushed segment(s). */
+        private readonly DeleteSlice globalSlice; // LUCENENET NOTE: no need for AtomicReferenceFieldUpdater, we can use Interlocked instead
 
         private readonly BufferedUpdates globalBufferedUpdates;
 
@@ -79,16 +81,20 @@ namespace Lucene.Net.Index
 
         internal readonly long generation;
 
-        internal readonly AtomicInt64 seqNo;
+        /* Generates the sequence number that IW returns to callers changing the index, showing the effective serialization of all operations. */
+        private readonly AtomicInt64 nextSeqNo;
+
+        // for asserts
+        internal long maxSeqNo = long.MaxValue;
 
         // seqNo must start at 1 because some APIs negate this to encode a boolean
         internal DocumentsWriterDeleteQueue()
-            :this(0, 1)
+            : this(0, 1)
         {
         }
 
         internal DocumentsWriterDeleteQueue(long generation, long startSeqNo)
-            : this(new BufferedUpdates(), generation, startSeqNo)
+            : this(new BufferedUpdates("global"), generation, startSeqNo)
         {
         }
 
@@ -96,12 +102,12 @@ namespace Lucene.Net.Index
         {
             this.globalBufferedUpdates = globalBufferedUpdates;
             this.generation = generation;
-            this.seqNo = new AtomicInt64(startSeqNo);
-        /*
-         * we use a sentinel instance as our initial tail. No slice will ever try to
-         * apply this tail since the head is always omitted.
-         */
-        tail = new Node(null); // sentinel
+            this.nextSeqNo = new AtomicInt64(startSeqNo);
+            /*
+             * we use a sentinel instance as our initial tail. No slice will ever try to
+             * apply this tail since the head is always omitted.
+             */
+            tail = new Node(null); // sentinel
             globalSlice = new DeleteSlice(tail);
         }
 
@@ -161,7 +167,7 @@ namespace Lucene.Net.Index
         internal long Add(Node newNode)
         {
             UninterruptableMonitor.Enter(this);
-            /*
+            /* Earlier/old implementation
              * this non-blocking / 'wait-free' linked list add was inspired by Apache
              * Harmony's ConcurrentLinkedQueue Implementation.
              */
@@ -169,7 +175,7 @@ namespace Lucene.Net.Index
             {
                 tail.next = newNode;
                 tail = newNode;
-                return seqNo.GetAndIncrement();
+                return NextSequenceNumber;
             }
             finally
             {
@@ -207,9 +213,8 @@ namespace Lucene.Net.Index
                  */
                 try
                 {
-                    if (UpdateSlice(globalSlice))
+                    if (UpdateSliceNoSeqNo(globalSlice))
                     {
-                        //          System.out.println(Thread.currentThread() + ": apply globalSlice");
                         globalSlice.Apply(globalBufferedUpdates, BufferedUpdates.MAX_INT32);
                     }
                 }
@@ -259,10 +264,33 @@ namespace Lucene.Net.Index
             return new DeleteSlice(tail);
         }
 
-        internal bool UpdateSlice(DeleteSlice slice)
+        /* Negative result means there were new deletes since we last applied*/
+        internal long UpdateSlice(DeleteSlice slice)
         {
-            if (slice.sliceTail != tail) // If we are the same just
+            UninterruptableMonitor.Enter(this);
+            long seqNo = NextSequenceNumber;
+            try
             {
+                if (slice.sliceTail != tail)
+                {
+                    // new deletes arrived since we last checked
+                    slice.sliceTail = tail;
+                    seqNo = -seqNo;
+                }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
+            }
+            return seqNo;
+        }
+
+        /** Just like updateSlice, but does not assign a sequence number */
+        internal bool UpdateSliceNoSeqNo(DeleteSlice slice)
+        {
+            if (slice.sliceTail != tail)
+            {
+                // new deletes arrived since we last checked
                 slice.sliceTail = tail;
                 return true;
             }
@@ -505,5 +533,25 @@ namespace Lucene.Net.Index
         {
             return "DWDQ: [ generation: " + generation + " ]";
         }
+
+        public long NextSequenceNumber
+        {
+            get
+            {
+               long seqNo =nextSeqNo.GetAndIncrement();
+                Debugging.Assert( seqNo <= maxSeqNo , "seqNo=" + seqNo + " vs maxSeqNo=" + maxSeqNo);
+                return seqNo;
+            }
+        }
+
+        public long LastSequenceNumber => nextSeqNo - 1;
+
+        /* Inserts a gap in the sequence numbers.  This is used by IW during flush or commit to ensure any in-flight threads get sequence numbers
+         *  inside the gap */
+        public void SkipSequenceNumbers(long jump)
+        {
+            nextSeqNo.AddAndGet(jump);
+        }
+
     }
 }
