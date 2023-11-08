@@ -164,7 +164,7 @@ namespace Lucene.Net.Tests.Misc.Index
             List<Operation> commits = new();
             AtomicInt32 opsSinceCommit = new();
 
-            // multiple threads update the same set of documents, and we randomly commit
+            // multiple threads update the same set of documents, and we randonly commit
             for (int i = 0; i < threads.Length; i++)
             {
                 List<Operation> ops = new();
@@ -179,9 +179,9 @@ namespace Lucene.Net.Tests.Misc.Index
                         {
                             Operation op = new();
                             op.threadID = threadID;
-                            if (new Random().Next(500) == 17)
+                            if (Random.Next(500) == 17)
                             {
-                                op.what = 0;
+                                op.what = 2;
                                 UninterruptableMonitor.Enter(commitLock);
                                 try
                                 {
@@ -198,19 +198,26 @@ namespace Lucene.Net.Tests.Misc.Index
                             }
                             else
                             {
-                                op.id = new Random().Next(idCount);
+                                op.id = Random.Next(idCount);
                                 Term idTerm = new Term("id", op.id.ToString());
-                                if (new Random().Next(10) == 1)
+                                if (Random.Next(10) == 1)
                                 {
                                     op.what = 1;
-                                    op.seqNo = new Random().Next(2) == 0 ? w.DeleteDocuments(idTerm) : w.DeleteDocuments(new TermQuery(idTerm));
+                                    if (Random.nextBoolean())
+                                    {
+                                        op.seqNo = w.DeleteDocuments(idTerm);
+                                    }
+                                    else
+                                    {
+                                        op.seqNo = w.DeleteDocuments(new TermQuery(idTerm));
+                                    }
                                 }
                                 else
                                 {
                                     Document doc = new Document();
                                     doc.Add(new StoredField("thread", threadID));
                                     doc.Add(new StringField("id", op.id.ToString(), Field.Store.NO));
-                                    if (new Random().Next(2) == 0)
+                                    if (Random.Next(2) == 0)
                                     {
                                         List<Document> docs = new List<Document> { doc };
                                         op.seqNo = w.UpdateDocuments(idTerm, docs);
@@ -218,10 +225,10 @@ namespace Lucene.Net.Tests.Misc.Index
                                     else
                                     {
                                         op.seqNo = w.UpdateDocument(idTerm, doc);
-                                        op.what = 0;
                                     }
-                                    ops.Add(op);
+                                    op.what = 0;
                                 }
+                                ops.Add(op);
                             }
                         }
                     }
@@ -409,7 +416,7 @@ namespace Lucene.Net.Tests.Misc.Index
                         {
                             Operation op = new Operation();
                             op.threadID = threadID;
-                            if (new Random().Next(500) == 17)
+                            if (Random.Next(500) == 17)
                             {
                                 op.what = 2;
                                 UninterruptableMonitor.Enter(commitLock);
@@ -428,7 +435,7 @@ namespace Lucene.Net.Tests.Misc.Index
                             }
                             else
                             {
-                                op.id = new Random().Next(idCount);
+                                op.id = Random.Next(idCount);
                                 Term idTerm = new Term("id", "" + op.id);
                                 op.seqNo = w.UpdateNumericDocValue(idTerm, "thread", threadID);
                                 op.what = 0;
@@ -564,7 +571,7 @@ namespace Lucene.Net.Tests.Misc.Index
                         {
                             Operation op = new Operation();
                             op.threadID = threadID;
-                            if (new Random().Next(500) == 17)
+                            if (Random.Next(500) == 17)
                             {
                                 op.what = 2;
                                 lock (commitLock)
@@ -578,12 +585,12 @@ namespace Lucene.Net.Tests.Misc.Index
                             }
                             else
                             {
-                                op.id = new Random().Next(idCount);
+                                op.id = Random.Next(idCount);
                                 Term idTerm = new Term("id", "" + op.id);
-                                if (new Random().Next(10) == 1)
+                                if (Random.Next(10) == 1)
                                 {
                                     op.what = 1;
-                                    if (new Random().nextBoolean())
+                                    if (Random.nextBoolean())
                                     {
                                         op.seqNo = w.DeleteDocuments(idTerm);
                                     }
@@ -591,13 +598,14 @@ namespace Lucene.Net.Tests.Misc.Index
                                     {
                                         op.seqNo = w.DeleteDocuments(new TermQuery(idTerm));
                                     }
+                                    Assert.IsTrue(w.HasDeletions()); //testing concurrenct deletions 
                                 }
                                 else
                                 {
                                     Document doc = new Document();
                                     doc.Add(new StoredField("threadop", threadID + "-" + ops.size()));
                                     doc.Add(new StringField("id", "" + op.id, Field.Store.NO));
-                                    if (new Random().nextBoolean())
+                                    if (Random.nextBoolean())
                                     {
                                         List<Document> docs = new();
                                         docs.Add(doc);
@@ -708,16 +716,15 @@ namespace Lucene.Net.Tests.Misc.Index
                             Console.WriteLine("  hit: " + s.Doc(hit.Doc).Get("threadop"));
                         }
 
-                        //why this is com-out bc Bits liveDocs is not supported for now
-                       /* foreach (AtomicReaderContext ctx in r.Leaves)
+                        foreach (AtomicReaderContext ctx in r.Leaves)
                         {
                             Console.WriteLine("  sub=" + ctx.Reader);
-                            Bits liveDocs = ctx.Reader;
+                            IBits liveDocs = ctx.AtomicReader.LiveDocs;
                             for (int docID = 0; docID < ctx.Reader.MaxDoc; docID++)
                             {
-                                Console.WriteLine("    docID=" + docID + " threadop=" + ctx.Reader.Document(docID).Get("threadop") + (liveDocs != null && liveDocs[docID] == false ? " (deleted)" : ""));
+                                Console.WriteLine("docID=" + docID + " threadop=" + ctx.Reader.Document(docID).Get("threadop") + (liveDocs != null && liveDocs.Get(docID) == false ? " (deleted)" : ""));
                             }
-                        }*/
+                        }
 
                         assertEquals("commit " + i + " of " + commits.size() + " id=" + id + " reader=" + r, expectedCounts[id], actualCount);
                     }

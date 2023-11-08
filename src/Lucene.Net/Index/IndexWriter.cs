@@ -75,6 +75,14 @@ namespace Lucene.Net.Index
     /// <see cref="UpdateDocument(Term, IEnumerable{IIndexableField})"/> (which just deletes
     /// and then adds the entire document). When finished adding, deleting
     /// and updating documents, <see cref="Dispose()"/> should be called.</para>
+    /// 
+    /// <a name="sequence_numbers"></a>
+    ///<para>Each method that changes the index returns a <c>long</c>
+    ///sequence number, which expresses the effective order in which each change was applied.
+    ///<see cref="Dispose()"/> also returns a sequence number, describing which
+    ///changes are in the commit point and which are not. Sequence numbers
+    ///are transient(not saved into the index in any way) and only valid
+    ///within a single <see cref="IndexWriter"/> instance.</para>
     ///
     /// <a name="flush"></a>
     /// <para>These changes are buffered in memory and periodically
@@ -1531,7 +1539,7 @@ namespace Lucene.Net.Index
         }
 
         ///<summary>
-        /// Returns the last <a cref="SequenceNumber">sequence number</a>,
+        /// Returns the last <a href="#sequence_numbers">sequence number</a>,
         /// or 0 if no index-changing operations have completed yet.
         ///@lucene.experimental
         /// </summary>
@@ -1553,22 +1561,14 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual bool HasDeletions()
         {
+            EnsureOpen();
+            if (bufferedUpdatesStream.Any() || docWriter.AnyDeletions() || readerPool.AnyPendingDeletes())
+            {
+                return true;
+            }
             UninterruptableMonitor.Enter(this);
             try
             {
-                EnsureOpen();
-                if (bufferedUpdatesStream.Any())
-                {
-                    return true;
-                }
-                if (docWriter.AnyDeletions())
-                {
-                    return true;
-                }
-                if (readerPool.AnyPendingDeletes())
-                {
-                    return true;
-                }
                 foreach (SegmentCommitInfo info in segmentInfos.Segments)
                 {
                     if (info.HasDeletions)
@@ -1576,12 +1576,12 @@ namespace Lucene.Net.Index
                         return true;
                     }
                 }
-                return false;
             }
             finally
             {
                 UninterruptableMonitor.Exit(this);
             }
+            return false;
         }
 
         /// <summary>
@@ -1618,7 +1618,10 @@ namespace Lucene.Net.Index
         /// In this case, the invalid characters are silently
         /// replaced with the Unicode replacement character
         /// U+FFFD.</para>
-        ///
+        /// 
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
+        /// 
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See 
         /// <see cref="IndexWriter"/> for details.</para>
@@ -1637,7 +1640,10 @@ namespace Lucene.Net.Index
         /// <para>See <see cref="AddDocument(IEnumerable{IIndexableField})"/> for details on
         /// index and <see cref="IndexWriter"/> state after an <see cref="Exception"/>, and
         /// flushing/merging temporary free space requirements.</para>
-        ///
+        /// 
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
+        /// 
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
@@ -1685,6 +1691,9 @@ namespace Lucene.Net.Index
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
         /// 
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
+        /// 
         /// @lucene.experimental 
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
@@ -1700,6 +1709,8 @@ namespace Lucene.Net.Index
         /// IDs, such that an external reader will see all or none
         /// of the documents.
         /// <para/>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// @lucene.experimental
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
@@ -1715,6 +1726,8 @@ namespace Lucene.Net.Index
         /// assigned document IDs, such that an external reader
         /// will see all or none of the documents.
         /// <para/>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// @lucene.experimental
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
@@ -1732,6 +1745,8 @@ namespace Lucene.Net.Index
         /// assigned document IDs, such that an external reader
         /// will see all or none of the documents.
         /// <para/>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// @lucene.experimental
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
@@ -1779,6 +1794,8 @@ namespace Lucene.Net.Index
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See 
         /// <see cref="IndexWriter"/> for details.</para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         /// <param name="term"> the term to identify the documents to be deleted </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
@@ -1799,9 +1816,9 @@ namespace Lucene.Net.Index
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "DeleteDocuments(Term)");
+                // dead code but javac disagrees:
+                return -1;
             }
-            // dead code but javac disagrees:
-            return -1;
         }
 
         /// <summary>
@@ -1915,6 +1932,8 @@ namespace Lucene.Net.Index
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         /// <param name="terms"> array of terms to identify the documents
         /// to be deleted </param>
@@ -1936,9 +1955,9 @@ namespace Lucene.Net.Index
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "DeleteDocuments(Term..)");
+                // dead code but javac disagrees:
+                return -1;
             }
-            // dead code but javac disagrees:
-            return -1;
         }
 
         /// <summary>
@@ -1947,6 +1966,8 @@ namespace Lucene.Net.Index
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         /// <param name="query"> the query to identify the documents to be deleted </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
@@ -1978,6 +1999,8 @@ namespace Lucene.Net.Index
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         /// <param name="queries"> array of queries to identify the documents
         /// to be deleted </param>
@@ -2013,6 +2036,8 @@ namespace Lucene.Net.Index
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         /// <param name="term"> the term to identify the document(s) to be
         /// deleted </param>
@@ -2035,6 +2060,8 @@ namespace Lucene.Net.Index
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         /// <param name="term"> the term to identify the document(s) to be
         /// deleted </param>
@@ -2073,9 +2100,9 @@ namespace Lucene.Net.Index
             catch (Exception oom) when (oom.IsOutOfMemoryError())
             {
                 HandleOOM(oom, "UpdateDocument");
+                // dead code but javac disagrees:
+                return -1;
             }
-            // dead code but javac disagrees:
-            return -1;
         }
 
         /// <summary>
@@ -2089,6 +2116,8 @@ namespace Lucene.Net.Index
         /// <b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/> you should immediately
         /// dispose the writer. See <see cref="IndexWriter"/> for details.
         /// </para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         /// <param name="term">
         ///          the term to identify the document(s) to be updated </param>
@@ -2139,6 +2168,8 @@ namespace Lucene.Net.Index
         /// <b>NOTE:</b> if this method hits an <see cref="OutOfMemoryException"/> you should immediately
         /// dispose the writer. See <see cref="IndexWriter"/> for details.
         /// </para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         /// <param name="term">
         ///          the term to identify the document(s) to be updated </param>
@@ -2978,6 +3009,8 @@ namespace Lucene.Net.Index
         ///    <see cref="ForceMerge(int)"/>, <see cref="AddIndexes(IndexReader[])"/> or
         ///    <see cref="ForceMergeDeletes()"/> methods, they may receive
         ///    <see cref="MergePolicy.MergeAbortedException"/>s.</para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         public virtual long DeleteAll()
         {
@@ -3408,6 +3441,8 @@ namespace Lucene.Net.Index
         /// <b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer. See
         /// <see cref="IndexWriter"/> for details.
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
@@ -3584,6 +3619,8 @@ namespace Lucene.Net.Index
         /// <b>NOTE</b>: if you call <see cref="Dispose(bool)"/> with <c>false</c>, which
         /// aborts all running merges, then any thread still running this method might
         /// hit a <see cref="MergePolicy.MergeAbortedException"/>.
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         /// <exception cref="CorruptIndexException">
         ///           if the index is corrupt </exception>
@@ -3944,6 +3981,8 @@ namespace Lucene.Net.Index
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         public long PrepareCommit()
         {
@@ -4176,6 +4215,8 @@ namespace Lucene.Net.Index
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
+        /// Return The <a href="#sequence_numbers">sequence number</a>
+        /// for this operation.
         /// </summary>
         public long Commit()
         {
