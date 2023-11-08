@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Lucene.Net.Tests.Misc.Index
+namespace Lucene.Net.Tests.Index
 {
     //move me to Lucene.Net.Index
     public class TestIndexingSequenceNumbers : LuceneTestCase

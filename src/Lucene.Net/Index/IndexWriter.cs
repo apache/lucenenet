@@ -237,14 +237,14 @@ namespace Lucene.Net.Index
         private readonly Directory directory; // where this index resides
         private readonly Analyzer analyzer; // how to analyze text
 
-        private long changeCount; // increments every time a change is completed
+        private readonly AtomicInt64 changeCount = new(); // increments every time a change is completed
         private long lastCommitChangeCount; // last changeCount that was committed
 
         private IList<SegmentCommitInfo> rollbackSegments; // list of segmentInfo we will fallback to if the commit fails
 
         internal volatile SegmentInfos pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
-        internal AtomicInt64 pendingSeqNo;
-        internal long pendingCommitChangeCount;
+        internal AtomicInt64 pendingSeqNo = new();
+        internal AtomicInt64 pendingCommitChangeCount = new();
 
         private ICollection<string> filesToCommit;
 
@@ -2295,7 +2295,7 @@ namespace Lucene.Net.Index
                 // could close, re-open and re-return the same segment
                 // name that was previously returned which can cause
                 // problems at least with ConcurrentMergeScheduler.
-                changeCount++;
+                changeCount.GetAndIncrement();
                 segmentInfos.Changed();
                 return "_" + SegmentInfos.SegmentNumberToString(segmentInfos.Counter++, allowLegacyNames: false); // LUCENENET specific - we had this right thru all of the betas, so don't change if the legacy feature is enabled
             }
@@ -3056,7 +3056,7 @@ namespace Lucene.Net.Index
                             // Don't bother saving any changes in our segmentInfos
                             readerPool.DropAll(false);
                             // Mark that the index has changed
-                            ++changeCount;
+                            changeCount.IncrementAndGet();
                             segmentInfos.Changed();
                             globalFieldNumberMap.Clear();
                             success = true;
@@ -3232,7 +3232,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                changeCount++;
+                changeCount.GetAndIncrement();
                 deleter.Checkpoint(segmentInfos, false);
             }
             finally
@@ -3248,7 +3248,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                changeCount++;
+                changeCount.GetAndIncrement();
                 segmentInfos.Changed();
             }
             finally
@@ -4155,7 +4155,7 @@ namespace Lucene.Net.Index
             try
             {
                 segmentInfos.UserData = new Dictionary<string, string>(commitUserData);
-                ++changeCount;
+                changeCount.IncrementAndGet();
             }
             finally
             {
