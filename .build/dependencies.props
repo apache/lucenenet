@@ -87,5 +87,6 @@
   </PropertyGroup>
   <PropertyGroup Label="Maven Package Reference Versions">
     <OpenNLPToolsMavenReferenceVersion>1.9.4</OpenNLPToolsMavenReferenceVersion>
+    <OSGICoreMavenReferenceVersion>4.2.0</OSGICoreMavenReferenceVersion>
   </PropertyGroup>
 </Project>

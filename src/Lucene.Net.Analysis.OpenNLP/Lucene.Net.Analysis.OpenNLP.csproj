@@ -53,6 +53,7 @@
 
   <ItemGroup>
     <MavenReference Include="org.apache.opennlp:opennlp-tools" Version="$(OpenNLPToolsMavenReferenceVersion)" />
+    <MavenReference Include="org.osgi:org.osgi.core" Version="$(OSGICoreMavenReferenceVersion)" />
   </ItemGroup>
 
 </Project>
