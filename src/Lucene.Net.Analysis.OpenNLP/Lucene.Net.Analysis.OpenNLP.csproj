@@ -52,7 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <MavenReference Include="org.apache.opennlp:opennlp-tools" Version="1.9.4" />
+    <MavenReference Include="org.apache.opennlp:opennlp-tools" Version="$(OpenNLPToolsMavenReferenceVersion)" />
   </ItemGroup>
 
 </Project>

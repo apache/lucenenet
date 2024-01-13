@@ -85,4 +85,7 @@
     <SystemTextJsonPackageVersion>6.0.6</SystemTextJsonPackageVersion>
     <TimeZoneConverterPackageVersion>6.1.0</TimeZoneConverterPackageVersion>
   </PropertyGroup>
+  <PropertyGroup Label="Maven Package Reference Versions">
+    <OpenNLPToolsMavenReferenceVersion>1.9.4</OpenNLPToolsMavenReferenceVersion>
+  </PropertyGroup>
 </Project>
