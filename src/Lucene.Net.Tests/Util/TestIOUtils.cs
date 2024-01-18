@@ -74,9 +74,7 @@ namespace Lucene.Net.Util
             {
                 IOUtils.DisposeWhileHandlingException((TestException)null, new BrokenIDisposable(1), new BrokenIDisposable(2));
             }
-#pragma warning disable 168
-            catch (TestException e1)
-#pragma warning restore 168
+            catch (TestException)
             {
                 fail("TestException should not be thrown here");
             }
@@ -86,9 +84,7 @@ namespace Lucene.Net.Util
                 assertEquals(1, e2.GetSuppressed().Length);
                 assertEquals("TEST-IO-EXCEPTION-2", e2.GetSuppressed()[0].Message);
             }
-#pragma warning disable 168
-            catch (Exception e2)
-#pragma warning restore 168
+            catch (Exception)
             {
                 fail("Exception should not be thrown here");
             }

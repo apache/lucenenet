@@ -146,7 +146,7 @@ namespace Lucene.Net.Util
         {
             const int NUM_THREADS = 4;
             const int CACHE_SIZE = 512;
-            int OBJ_COUNT = 3 * CACHE_SIZE;
+            const int OBJ_COUNT = 3 * CACHE_SIZE;
 
             DoubleBarrelLRUCache<CloneableObject, object> c = new DoubleBarrelLRUCache<CloneableObject, object>(1024);
 
@@ -182,7 +182,8 @@ namespace Lucene.Net.Util
 
             public override bool Equals(object other)
             {
-                if (other.GetType().Equals(typeof (CloneableObject)))
+                // LUCENENET: Additional type check not present in Java code
+                if (other is CloneableObject)
                     return this.value.Equals(((CloneableObject) other).value);
                 else
                     return false;

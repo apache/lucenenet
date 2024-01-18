@@ -1,10 +1,13 @@
 ﻿using Lucene.Net.Support;
 using NUnit.Framework;
-using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using Int64 = J2N.Numerics.Int64;
+
+#if !NET6_0_OR_GREATER
+using RandomizedTesting.Generators; // for Random.NextInt64 extension method
+#endif
 
 namespace Lucene.Net.Util.Fst
 {

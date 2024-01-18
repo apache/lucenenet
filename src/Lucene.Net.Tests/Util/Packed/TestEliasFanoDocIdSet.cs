@@ -22,11 +22,12 @@ namespace Lucene.Net.Util.Packed
 
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
+    [TestFixture]
     public class TestEliasFanoDocIdSet : BaseDocIdSetTestCase<EliasFanoDocIdSet>
     {
         public override EliasFanoDocIdSet CopyOf(BitSet bs, int numBits)
         {
-            EliasFanoDocIdSet set = new EliasFanoDocIdSet((int)bs.Cardinality, numBits - 1);
+            EliasFanoDocIdSet set = new EliasFanoDocIdSet(bs.Cardinality, numBits - 1);
             set.EncodeFromDisi(new DocIdSetIteratorAnonymousClass(bs, numBits));
             return set;
         }
@@ -40,10 +41,9 @@ namespace Lucene.Net.Util.Packed
             {
                 this.bs = bs;
                 this.numBits = numBits;
-                doc = -1;
             }
 
-            internal int doc;
+            int doc = -1;
 
             public override int NextDoc()
             {

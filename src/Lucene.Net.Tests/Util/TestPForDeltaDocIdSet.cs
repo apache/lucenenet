@@ -20,6 +20,7 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
+    [TestFixture]
     public class TestPForDeltaDocIdSet : BaseDocIdSetTestCase<PForDeltaDocIdSet>
     {
         public override PForDeltaDocIdSet CopyOf(BitSet bs, int length)

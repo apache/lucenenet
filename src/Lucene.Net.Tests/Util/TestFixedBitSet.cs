@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using DocIdSetIterator = Search.DocIdSetIterator;
 
     [TestFixture]
     public class TestFixedBitSet : BaseDocIdSetTestCase<FixedBitSet>
@@ -218,7 +218,7 @@ namespace Lucene.Net.Util
                 if (b0 != null && b0.Length <= b.Length)
                 {
                     Assert.AreEqual(a.Cardinality, b.Cardinality);
-                    
+
                     BitSet a_and = (BitSet)a.Clone();
                     a_and.And(a0);
                     BitSet a_or = (BitSet)a.Clone();

@@ -26,6 +26,8 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestFilterIterator : LuceneTestCase
     {
+        // LUCENENET: in these tests, using lambdas with FilterEnumerator instead of anonymous classes
+
         private static readonly ISet<string> set = new JCG.SortedSet<string>(StringComparer.Ordinal) { "a", "b", "c" };
 
         private static void AssertNoMore<T1>(IEnumerator<T1> it)
@@ -37,14 +39,14 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestEmpty()
         {
-            IEnumerator<string> it = new FilterEnumerator<string>(set.GetEnumerator(), (s) => false);
+            IEnumerator<string> it = new FilterEnumerator<string>(set.GetEnumerator(), (_) => false);
             AssertNoMore(it);
         }
 
         [Test]
         public virtual void TestA1()
         {
-            IEnumerator<string> it = new FilterEnumerator<string>(set.GetEnumerator(), (s) => "a".Equals(s, StringComparison.Ordinal));
+            IEnumerator<string> it = new FilterEnumerator<string>(set.GetEnumerator(), s => "a".Equals(s, StringComparison.Ordinal));
             Assert.IsTrue(it.MoveNext());
             Assert.AreEqual("a", it.Current);
             AssertNoMore(it);
@@ -115,7 +117,7 @@ namespace Lucene.Net.Util
         //    try
         //    {
 
-        //        it.Remove(); 
+        //        it.Remove();
         //        Assert.Fail("Should throw UnsupportedOperationException");
         //    }
         //    catch (Exception oue) when (oue.IsUnsupportedOperationException())
@@ -123,9 +125,6 @@ namespace Lucene.Net.Util
         //        // pass
         //    }
         //}
-
-
-
 
         [Test]
         [Obsolete("This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

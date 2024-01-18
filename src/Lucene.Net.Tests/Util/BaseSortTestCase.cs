@@ -44,12 +44,10 @@ namespace Lucene.Net.Util
         }
 
         private readonly bool stable;
-        private readonly Random random;
 
         protected BaseSortTestCase(bool stable)
         {
             this.stable = stable;
-            this.random = Random;
         }
 
         public abstract Sorter NewSorter(Entry[] arr);
@@ -69,6 +67,7 @@ namespace Lucene.Net.Util
         public virtual void AssertSorted(Entry[] original, Entry[] sorted)
         {
             Assert.AreEqual(original.Length, sorted.Length);
+            // LUCENENET: this code differs significantly from the original Java test which used Arrays.sort().
             Entry[] stableSorted = original.OrderBy(e => e, new StableEntryComparer()).ToArray();
             for (int i = 0; i < original.Length; ++i)
             {
@@ -82,8 +81,8 @@ namespace Lucene.Net.Util
 
         public virtual void SortTest(Entry[] arr)
         {
-            int o = random.Next(1000);
-            var toSort = new Entry[o + arr.Length + random.Next(3)];
+            int o = Random.Next(1000);
+            var toSort = new Entry[o + arr.Length + Random.Next(3)];
             Arrays.Copy(arr, 0, toSort, o, arr.Length);
             Sorter sorter = NewSorter(toSort);
             sorter.Sort(o, o + arr.Length);
@@ -94,50 +93,47 @@ namespace Lucene.Net.Util
 
         private void RandomStrategy(Entry[] arr, int i)
         {
-            arr[i] = new Entry(random.Next(), i);
+            arr[i] = new Entry(Random.Next(), i);
         }
 
         private void RandomLowCardinalityStrategy(Entry[] arr, int i)
         {
-            arr[i] = new Entry(random.nextInt(6), i);
+            arr[i] = new Entry(Random.nextInt(6), i);
         }
 
         private void AscendingStrategy(Entry[] arr, int i)
         {
             arr[i] = i == 0
-            ? new Entry(random.nextInt(6), 0)
-            : new Entry(arr[i - 1].Value + random.nextInt(6), i);
+            ? new Entry(Random.nextInt(6), 0)
+            : new Entry(arr[i - 1].Value + Random.nextInt(6), i);
         }
 
         private void DescendingStrategy(Entry[] arr, int i)
         {
             arr[i] = i == 0
-            ? new Entry(random.nextInt(6), 0)
-            : new Entry(arr[i - 1].Value - random.nextInt(6), i);
+            ? new Entry(Random.nextInt(6), 0)
+            : new Entry(arr[i - 1].Value - Random.nextInt(6), i);
         }
-        
+
         private void StrictlyDescendingStrategy(Entry[] arr, int i)
         {
             arr[i] = i == 0
-            ? new Entry(random.nextInt(6), 0)
-            : new Entry(arr[i - 1].Value - TestUtil.NextInt32(random, 1, 5), i);
-            
+            ? new Entry(Random.nextInt(6), 0)
+            : new Entry(arr[i - 1].Value - TestUtil.NextInt32(Random, 1, 5), i);
         }
 
         private void AscendingSequencesStrategy(Entry[] arr, int i)
         {
             arr[i] = i == 0
-            ? new Entry(random.nextInt(6), 0)
-            : new Entry(Rarely(random) ? random.nextInt(1000) : arr[i - 1].Value + random.nextInt(6), i);
-            
+            ? new Entry(Random.nextInt(6), 0)
+            : new Entry(Rarely(Random) ? Random.nextInt(1000) : arr[i - 1].Value + Random.nextInt(6), i);
         }
-        
+
         private void MostlyAscendingStrategy(Entry[] arr, int i)
         {
             arr[i] = i == 0
-            ? new Entry(random.nextInt(6), 0)
-            : new Entry(arr[i - 1].Value + TestUtil.NextInt32(random, -8, 10), i);
-            
+            ? new Entry(Random.nextInt(6), 0)
+            : new Entry(arr[i - 1].Value + TestUtil.NextInt32(Random, -8, 10), i);
         }
 
         private void DoTest(Strategy strategy, int length)
@@ -169,7 +165,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestTwo()
         {
-            DoTest(RandomStrategy, 2);
+            DoTest(RandomLowCardinalityStrategy, 2);
         }
 
         [Test]
@@ -181,31 +177,31 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestRandomLowCardinality()
         {
-            DoTest(RandomLowCardinalityStrategy, 2);
+            DoTest(RandomLowCardinalityStrategy);
         }
 
         [Test]
         public virtual void TestAscending()
         {
-            DoTest(AscendingStrategy, 2);
+            DoTest(AscendingStrategy);
         }
 
         [Test]
         public virtual void TestAscendingSequences()
         {
-            DoTest(AscendingSequencesStrategy, 2);
+            DoTest(AscendingSequencesStrategy);
         }
 
         [Test]
         public virtual void TestDescending()
         {
-            DoTest(DescendingStrategy, 2);
+            DoTest(DescendingStrategy);
         }
 
         [Test]
         public virtual void TestStrictlyDescendingStrategy()
         {
-            DoTest(StrictlyDescendingStrategy, 2);
+            DoTest(StrictlyDescendingStrategy);
         }
     }
 }

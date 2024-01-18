@@ -118,7 +118,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual("bcde", c.ToString());
         }
 
-        // LUCENENET NOTE: Removed the CharAt(int) method from the 
+        // LUCENENET NOTE: Removed the CharAt(int) method from the
         // ICharSequence interface and replaced with this[int]
         //// LUCENE-3590: fix charsequence to fully obey interface
         //[Test]

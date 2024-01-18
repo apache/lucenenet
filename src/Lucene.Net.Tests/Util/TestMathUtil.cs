@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using RandomizedTesting.Generators;
-using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -58,10 +57,11 @@ namespace Lucene.Net.Util
         }
 
         // slow version used for testing
-        private static bool TryGetGcd(long a, long b, out long result)
+        // LUCENENET: semantics changed to a Try pattern as BigInteger could overflow long
+        private static bool TryGetGcd(long l1, long l2, out long result)
         {
             result = 0;
-            var c = System.Numerics.BigInteger.GreatestCommonDivisor(a, b);
+            var c = System.Numerics.BigInteger.GreatestCommonDivisor(l1, l2);
             if (c <= long.MaxValue && c >= long.MinValue)
             {
                 result = (long)c;
@@ -79,6 +79,7 @@ namespace Lucene.Net.Util
                 long l1 = RandomLong();
                 long l2 = RandomLong();
                 long gcd = MathUtil.Gcd(l1, l2);
+                // LUCENENET: test changed to use Try pattern, was: final long actualGcd = gcd(l1, l2);
                 if (TryGetGcd(l1, l2, out long actualGcd))
                 {
                     Assert.AreEqual(actualGcd, gcd);

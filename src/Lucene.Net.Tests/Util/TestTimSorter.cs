@@ -17,6 +17,7 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
+    [TestFixture]
     public class TestTimSorter : BaseSortTestCase
     {
         public TestTimSorter()

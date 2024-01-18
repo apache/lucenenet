@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using JCG = J2N.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
@@ -505,7 +504,7 @@ namespace Lucene.Net.Util.Packed
         /*
           Check if the structures properly handle the case where
           index * bitsPerValue > Integer.MAX_VALUE
-        
+
           NOTE: this test allocates 256 MB
          */
         [Ignore("See LUCENE-4488 - LUCENENET NOTE: In .NET it is not possible to catch OOME")]
@@ -1343,7 +1342,7 @@ namespace Lucene.Net.Util.Packed
                 in1.ReadBytes(buf, 0, (int)fp);
                 in1.Seek(0L);
                 ByteArrayDataInput in2 = new ByteArrayDataInput(buf);
-                DataInput @in = Random.NextBoolean() ? (DataInput)in1 : in2;
+                DataInput @in = Random.NextBoolean() ? in1 : in2;
                 BlockPackedReaderIterator it = new BlockPackedReaderIterator(@in, PackedInt32s.VERSION_CURRENT, blockSize, valueCount);
                 for (int i = 0; i < valueCount; )
                 {

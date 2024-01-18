@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using System;
 using System.Globalization;
-using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util
@@ -26,7 +25,7 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Estimates how <seealso cref="RamUsageEstimator"/> estimates physical memory consumption
-    /// of Java objects. 
+    /// of Java objects.
     /// </summary>
     [TestFixture]
     public class StressRamUsageEstimator : LuceneTestCase
@@ -50,6 +49,8 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestChainedEstimation()
         {
+            // LUCENENET: not needed: MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+
             Random rnd = Random;
             Entry first = new Entry();
             try
@@ -57,7 +58,7 @@ namespace Lucene.Net.Util
                 while (true)
                 {
                     // Check the current memory consumption and provide the estimate.
-                    long jvmUsed = GC.GetTotalMemory(false);
+                    long jvmUsed = GC.GetTotalMemory(false); // LUCENENET: instead of memoryMXBean.getHeapMemoryUsage().getUsed()
                     long estimated = RamUsageEstimator.SizeOf(first);
                     Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:0000000000}, {1:0000000000}", jvmUsed, estimated));
 
@@ -80,15 +81,17 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestLargeSetOfByteArrays()
         {
+            // LUCENENET: not needed: MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+
             CauseGc();
-            long before = GC.GetTotalMemory(false);
+            long before = GC.GetTotalMemory(false); // LUCENENET: instead of memoryMXBean.getHeapMemoryUsage().getUsed()
             object[] all = new object[1000000];
             for (int i = 0; i < all.Length; i++)
             {
                 all[i] = new sbyte[Random.Next(3)];
             }
             CauseGc();
-            long after = GC.GetTotalMemory(false);
+            long after = GC.GetTotalMemory(false); // LUCENENET: instead of memoryMXBean.getHeapMemoryUsage().getUsed()
             Console.WriteLine("mx:  " + RamUsageEstimator.HumanReadableUnits(after - before));
             Console.WriteLine("rue: " + RamUsageEstimator.HumanReadableUnits(ShallowSizeOf(all)));
 
@@ -123,6 +126,8 @@ namespace Lucene.Net.Util
         [Slow]
         public virtual void TestSimpleByteArrays()
         {
+            // LUCENENET: not needed: MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+
             object[][] all = new object[0][];
             try
             {
@@ -130,14 +135,20 @@ namespace Lucene.Net.Util
                 {
                     // Check the current memory consumption and provide the estimate.
                     CauseGc();
-                    
+
+                    // LUCENENET: not needed: MemoryUsage mu = memoryMXBean.getHeapMemoryUsage();
+
                     long estimated = ShallowSizeOf(all);
                     if (estimated > 50 * RamUsageEstimator.ONE_MB)
                     {
                         break;
                     }
 
-                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0}\t{1}\t{2}", RamUsageEstimator.HumanReadableUnits(GC.GetTotalMemory(false)).PadLeft(10, ' '), RamUsageEstimator.HumanReadableUnits(GC.MaxGeneration).PadLeft(10, ' '), RamUsageEstimator.HumanReadableUnits(estimated).PadLeft(10, ' ')));
+                    // LUCENENET: padding done for each value instead of in format string
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0}\t{1}\t{2}",
+                        RamUsageEstimator.HumanReadableUnits(GC.GetTotalMemory(false)).PadLeft(10, ' '), // LUCENENET: GC.GetTotalMemory(false) instead of mu.getUsed()
+                        RamUsageEstimator.HumanReadableUnits(GC.MaxGeneration).PadLeft(10, ' '), // LUCENENET: GC.MaxGeneration instead of mu.getMax()
+                        RamUsageEstimator.HumanReadableUnits(estimated).PadLeft(10, ' ')));
 
                     // Make another batch of objects.
                     object[] seg = new object[10000];
@@ -156,11 +167,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Very hacky, very crude, but (sometimes) works. 
-        /// Don't look, it will burn your eyes out. 
+        /// Very hacky, very crude, but (sometimes) works.
+        /// Don't look, it will burn your eyes out.
         /// </summary>
         private void CauseGc()
         {
+            // LUCENENET: this is way simpler than the Java equivalent here!
             GC.Collect();
         }
     }

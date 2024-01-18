@@ -1,9 +1,12 @@
 ﻿using J2N.Threading;
 using NUnit.Framework;
-using RandomizedTesting.Generators;
 using System;
 using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
+
+#if !NET6_0_OR_GREATER
+using RandomizedTesting.Generators; // for Random.NextInt64 extension method
+#endif
 
 namespace Lucene.Net.Util
 {
