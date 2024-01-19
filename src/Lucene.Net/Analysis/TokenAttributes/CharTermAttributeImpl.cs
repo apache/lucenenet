@@ -190,9 +190,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
 
             char[] result = new char[length];
-            for (int i = 0, j = startIndex; i < length; i++, j++)
-                result[i] = termBuffer[j];
-
+            Arrays.Copy(termBuffer, startIndex, result, 0, length);
             return new CharArrayCharSequence(result);
         }
 
