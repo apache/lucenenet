@@ -5,6 +5,7 @@ using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -120,11 +121,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             this.blocks.Add(this.current);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int BlockIndex(int index)
         {
             return index / blockSize;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int IndexInBlock(int index)
         {
             return index % blockSize;
@@ -316,6 +319,75 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         public static CharBlockArray Open(Stream @in)
         {
             return new CharBlockArray(@in);
+        }
+
+
+        // LUCENENET specific - Lucene allocated memory using Subsequence and
+        // then called hashCode(), which calculated based on the value of the subsequence.
+        // However, in .NET this uses the indexer of the StringBuilder that Subsequence returned,
+        // which is super slow
+        // (see: https://learn.microsoft.com/en-us/dotnet/api/system.text.stringbuilder.chars).
+        // But this operation doesn't require an allocation at all if we simply calculate the
+        // value based off of the chars that are in the CharArrayBlock.
+        //
+        // This is a combination of Subsequence(int, int) and the J2N.Text.CharSequenceComparer.Ordinal.GetHashCode()
+        // implementation. The hash code calculated must be kept in sync with the J2N implementation
+        // (which originated in Apache Harmony) in order to return the correct result.
+        internal int GetHashCode(int startIndex, int length)
+        {
+            if (length == 0)
+                return 0;
+            int hash = 0;
+            int remaining = length;
+            int blockIdx = BlockIndex(startIndex);
+            int indexInBlock = IndexInBlock(startIndex);
+            while (remaining > 0)
+            {
+                Block b = blocks[blockIdx++];
+                int numToCheck = Math.Min(remaining, b.length - indexInBlock);
+                int end = indexInBlock + numToCheck;
+                var chars = b.chars;
+                for (int i = indexInBlock; i < end; i++)
+                {
+                    // Hash code calculation from J2N/Apache Harmony
+                    hash = chars[i] + ((hash << 5) - hash);
+                }
+                remaining -= numToCheck;
+                indexInBlock = 0; // 2nd+ iterations read from start of the block
+            }
+            return hash;
+        }
+
+        /// <summary>
+        /// Compares a slice of this <see cref="CharBlockArray"/> to <paramref name="other"/>
+        /// for binary (ordinal) equality. Does not allocate any memory.
+        /// <para/>
+        /// LUCENENET specific.
+        /// </summary>
+        /// <param name="startIndex">The start index of this <see cref="CharBlockArray"/>.</param>
+        /// <param name="length">The length of characters to compare.</param>
+        /// <param name="other">The other character sequence to check for equality.</param>
+        /// <returns><c>true</c> if the two character sequences are equal; otherwise <c>false</c></returns>
+        internal bool Equals(int startIndex, int length, ReadOnlySpan<char> other)
+        {
+            if (other.Length != length) return false;
+
+            int remaining = length;
+            int blockIdx = BlockIndex(startIndex);
+            int indexInBlock = IndexInBlock(startIndex);
+            int otherIndex = 0;
+            while (remaining > 0)
+            {
+                Block b = blocks[blockIdx++];
+                int numToCheck = Math.Min(remaining, b.length - indexInBlock);
+                var charsToCheck = b.chars.AsSpan(indexInBlock, numToCheck);
+                if (!other.Slice(otherIndex, numToCheck).Equals(charsToCheck, StringComparison.Ordinal))
+                    return false;
+                remaining -= numToCheck;
+                otherIndex += numToCheck;
+                indexInBlock = 0; // 2nd+ iterations read from start of the block
+            }
+            return true;
         }
     }
 }
