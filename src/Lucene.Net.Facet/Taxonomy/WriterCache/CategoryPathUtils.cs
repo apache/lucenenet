@@ -58,7 +58,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             for (int i = 0; i < length; i++)
             {
                 int len = charBlockArray[offset++];
-                hash = hash * 31 + charBlockArray.Subsequence(offset, len).GetHashCode(); // LUCENENET: Corrected 2nd Subsequence parameter
+                // LUCENENET specific - calculate the hash code without the allocation caused by Subsequence
+                hash = hash * 31 + charBlockArray.GetHashCode(offset, len); // LUCENENET: Corrected 2nd parameter
                 offset += len;
             }
             return hash;
@@ -88,7 +89,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     return false;
                 }
 
-                if (!cp.Components[i].Equals(charBlockArray.Subsequence(offset, len).ToString(), StringComparison.Ordinal)) // LUCENENET: Corrected 2nd Subsequence parameter
+                // LUCENENET specific - calculate the hash code without the allocation caused by Subsequence() and ToString()
+                if (!charBlockArray.Equals(offset, len, cp.Components[i].AsSpan())) // LUCENENET: Corrected 2nd parameter
                 {
                     return false;
                 }

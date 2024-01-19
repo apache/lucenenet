@@ -441,7 +441,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                         for (int i = 0; i < length; i++)
                         {
                             int len = (ushort)l2o.labelRepository[offset++];
-                            hash = hash * 31 + l2o.labelRepository.Subsequence(offset, len).GetHashCode(); // LUCENENET: Corrected 2nd Subsequence parameter
+                            // LUCENENET specific - calculate the hash code without the allocation caused by Subsequence
+                            hash = hash * 31 + l2o.labelRepository.GetHashCode(offset, len); // LUCENENET: Corrected 2nd parameter
                             offset += len;
                         }
                     }
