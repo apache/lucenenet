@@ -279,7 +279,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return this; // No-op
             }
 
-            return Append(value.ToString());
+            int len = value.Length;
+            value.CopyTo(0, InternalResizeBuffer(termLength + len), termLength, len);
+            Length += len;
+            return this;
         }
 
         public CharTermAttribute Append(StringBuilder value, int startIndex, int charCount)
@@ -301,7 +304,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (startIndex > value.Length - charCount)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
-            return Append(value.ToString(startIndex, charCount));
+            value.CopyTo(startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
+            Length += charCount;
+            return this;
         }
 
         public CharTermAttribute Append(ICharTermAttribute value)
