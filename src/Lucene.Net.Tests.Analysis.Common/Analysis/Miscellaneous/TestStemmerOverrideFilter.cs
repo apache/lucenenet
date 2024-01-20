@@ -4,6 +4,7 @@ using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.En;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -99,7 +100,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public virtual void TestRandomRealisticWhiteSpace()
         {
             IDictionary<string, string> map = new Dictionary<string, string>();
+            // LUCENENET: Ported the patch from https://github.com/apache/lucene/commit/bce10efeb40c11271cb398c37b859408818b8a00
+            // so we don't have random failures.
+            ISet<string> seen = new HashSet<string>();
             int numTerms = AtLeast(50);
+            bool ignoreCase = Random.nextBoolean();
+
+            CharacterUtils charUtils = CharacterUtils.GetInstance(TEST_VERSION_CURRENT);
+
             for (int i = 0; i < numTerms; i++)
             {
                 string randomRealisticUnicodeString = TestUtil.RandomRealisticUnicodeString(Random);
@@ -116,16 +124,36 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
                 if (sb.Length > 0)
                 {
-                    string value = TestUtil.RandomSimpleString(Random);
-                    map[sb.ToString()] = value.Length == 0 ? "a" : value;
+                    string inputValue = sb.ToString();
 
+                    // Make sure we don't try to add two inputs that vary only by case:
+                    string seenInputValue;
+                    if (ignoreCase)
+                    {
+                        // TODO: can we simply use inputValue.toLowerCase(Locale.ROOT)???
+                        char[] buffer = inputValue.ToCharArray();
+                        charUtils.ToLower(buffer, 0, buffer.Length);
+                        seenInputValue = buffer.ToString();
+                    }
+                    else
+                    {
+                        seenInputValue = inputValue;
+                    }
+
+                    if (seen.Contains(seenInputValue) == false)
+                    {
+                        seen.Add(seenInputValue);
+                        string value = TestUtil.RandomSimpleString(Random);
+                        map[inputValue] =
+                            value == string.Empty ? "a" : value;
+                    }
                 }
             }
             if (map.Count == 0)
             {
                 map["booked"] = "books";
             }
-            StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(Random.nextBoolean());
+            StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(ignoreCase);
             IDictionary<string, string> entrySet = map;
             StringBuilder input = new StringBuilder();
             IList<string> output = new JCG.List<string>();
