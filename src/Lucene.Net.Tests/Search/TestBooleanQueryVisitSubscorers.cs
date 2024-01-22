@@ -101,9 +101,9 @@ namespace Lucene.Net.Search
             bq.Add(bq2, Occur.SHOULD);
             IDictionary<int, int> tfs = GetDocCounts(searcher, bq);
             Assert.AreEqual(3, tfs.Count); // 3 documents
-            Assert.AreEqual(3, (int)tfs[0]); // f1:lucene + f2:lucene + f2:search
-            Assert.AreEqual(2, (int)tfs[1]); // f2:search + f2:lucene
-            Assert.AreEqual(2, (int)tfs[2]); // f2:search + f2:lucene
+            Assert.AreEqual(3, tfs[0]); // f1:lucene + f2:lucene + f2:search
+            Assert.AreEqual(2, tfs[1]); // f2:search + f2:lucene
+            Assert.AreEqual(2, tfs[2]); // f2:search + f2:lucene
         }
 
         [Test]
@@ -114,9 +114,9 @@ namespace Lucene.Net.Search
             bq.Add(new TermQuery(new Term(F2, "is")), Occur.MUST);
             IDictionary<int, int> tfs = GetDocCounts(searcher, bq);
             Assert.AreEqual(3, tfs.Count); // 3 documents
-            Assert.AreEqual(2, (int)tfs[0]); // f2:lucene + f2:is
-            Assert.AreEqual(3, (int)tfs[1]); // f2:is + f2:is + f2:lucene
-            Assert.AreEqual(3, (int)tfs[2]); // f2:is + f2:is + f2:lucene
+            Assert.AreEqual(2, tfs[0]); // f2:lucene + f2:is
+            Assert.AreEqual(3, tfs[1]); // f2:is + f2:is + f2:lucene
+            Assert.AreEqual(3, tfs[2]); // f2:is + f2:is + f2:lucene
         }
 
         internal static Document Doc(string v1, string v2)

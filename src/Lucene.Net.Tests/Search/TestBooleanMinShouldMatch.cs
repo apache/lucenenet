@@ -54,7 +54,17 @@ namespace Lucene.Net.Search
         {
             base.BeforeClass();
 
-            string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
+            string[] data =
+            {
+                "A 1 2 3 4 5 6",
+                "Z       4 5 6",
+                null,
+                "B   2   4 5 6",
+                "Y     3   5 6",
+                null,
+                "C     3     6",
+                "X       4 5 6"
+            };
 
             index = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, index);
@@ -338,7 +348,7 @@ namespace Lucene.Net.Search
             int maxLev = 4;
 
             // callback object to set a random setMinimumNumberShouldMatch
-            TestBoolean2.ICallback minNrCB = new CallbackAnonymousClass(this, field, vals);
+            TestBoolean2.ICallback minNrCB = new CallbackAnonymousClass(field, vals);
 
             // increase number of iterations for more complete testing
             int num = AtLeast(20);
@@ -370,14 +380,11 @@ namespace Lucene.Net.Search
 
         private sealed class CallbackAnonymousClass : TestBoolean2.ICallback
         {
-            private readonly TestBooleanMinShouldMatch outerInstance;
-
             private readonly string field;
             private readonly string[] vals;
 
-            public CallbackAnonymousClass(TestBooleanMinShouldMatch outerInstance, string field, string[] vals)
+            public CallbackAnonymousClass(string field, string[] vals)
             {
-                this.outerInstance = outerInstance;
                 this.field = field;
                 this.vals = vals;
             }
@@ -443,7 +450,7 @@ namespace Lucene.Net.Search
             Similarity oldSimilarity = s.Similarity;
             try
             {
-                s.Similarity = new DefaultSimilarityAnonymousClass(this);
+                s.Similarity = DefaultSimilarityAnonymousClass.Default;
                 BooleanQuery q1 = new BooleanQuery();
                 q1.Add(new TermQuery(new Term("data", "1")), Occur.SHOULD);
                 BooleanQuery q2 = new BooleanQuery();
@@ -459,13 +466,14 @@ namespace Lucene.Net.Search
             }
         }
 
+        // LUCENENET NOTE: This logic is the same between TestRewriteCoord1 and TestRewriteNegate so it can be shared
         private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
-            private readonly TestBooleanMinShouldMatch outerInstance;
+            // LUCENENET: Making this a singleton to avoid unnecessary allocations
+            public static readonly DefaultSimilarityAnonymousClass Default = new DefaultSimilarityAnonymousClass();
 
-            public DefaultSimilarityAnonymousClass(TestBooleanMinShouldMatch outerInstance)
+            private DefaultSimilarityAnonymousClass()
             {
-                this.outerInstance = outerInstance;
             }
 
             public override float Coord(int overlap, int maxOverlap)
@@ -480,7 +488,7 @@ namespace Lucene.Net.Search
             Similarity oldSimilarity = s.Similarity;
             try
             {
-                s.Similarity = new DefaultSimilarityAnonymousClass2(this);
+                s.Similarity = DefaultSimilarityAnonymousClass.Default;
                 BooleanQuery q1 = new BooleanQuery();
                 q1.Add(new TermQuery(new Term("data", "1")), Occur.SHOULD);
                 BooleanQuery q2 = new BooleanQuery();
@@ -493,21 +501,6 @@ namespace Lucene.Net.Search
             finally
             {
                 s.Similarity = oldSimilarity;
-            }
-        }
-
-        private sealed class DefaultSimilarityAnonymousClass2 : DefaultSimilarity
-        {
-            private readonly TestBooleanMinShouldMatch outerInstance;
-
-            public DefaultSimilarityAnonymousClass2(TestBooleanMinShouldMatch outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public override float Coord(int overlap, int maxOverlap)
-            {
-                return overlap / ((float)maxOverlap + 1);
             }
         }
 

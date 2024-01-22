@@ -29,6 +29,7 @@ namespace Lucene.Net.Search
     {
         private class DummyCollector : ICollector
         {
+            // LUCENENET: .NET conventions are to use properties instead of fields where feasible
             internal bool AcceptsDocsOutOfOrderCalled { get; private set; } = false;
             internal bool CollectCalled { get; private set; } = false;
             internal bool SetNextReaderCalled { get; private set; } = false;

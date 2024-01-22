@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
         private IndexReader reader;
         private IndexSearcher searcher;
 
-        private readonly string FN = "field";
+        private const string FN = "field";
 
         [SetUp]
         public override void SetUp()
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
             ThreadJob[] threads = new ThreadJob[numThreads];
             for (int threadID = 0; threadID < numThreads; threadID++)
             {
-                ThreadJob thread = new ThreadAnonymousClass(this, queries, startingGun);
+                ThreadJob thread = new ThreadAnonymousClass(queries, startingGun);
                 threads[threadID] = thread;
                 thread.Start();
             }
@@ -248,14 +248,11 @@ namespace Lucene.Net.Search
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestAutomatonQuery outerInstance;
-
             private readonly AutomatonQuery[] queries;
             private readonly CountdownEvent startingGun;
 
-            public ThreadAnonymousClass(TestAutomatonQuery outerInstance, AutomatonQuery[] queries, CountdownEvent startingGun)
+            public ThreadAnonymousClass(AutomatonQuery[] queries, CountdownEvent startingGun)
             {
-                this.outerInstance = outerInstance;
                 this.queries = queries;
                 this.startingGun = startingGun;
             }
@@ -265,7 +262,7 @@ namespace Lucene.Net.Search
                 startingGun.Wait();
                 for (int i = 0; i < queries.Length; i++)
                 {
-                    queries[i].GetHashCode();
+                    _ = queries[i].GetHashCode(); // LUCENENET: using discard variable to prevent warning about ignoring return value
                 }
                 // LUCENENET: The Rethrow.rethrow() method only is for tricking the Java compiler into letting it throw a "checked" exception.
                 // In .NET, it is better just not to catch than deal with such nonsense.

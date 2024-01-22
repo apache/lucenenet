@@ -182,9 +182,6 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(multireader);
             Assert.AreEqual(0, searcher.Search(query, 10).TotalHits);
 
-
-            Task foo = new Task(TestDeMorgan);
-
             TaskScheduler es = TaskScheduler.Default;
             searcher = new IndexSearcher(multireader, es);
             if (Verbose)
@@ -381,7 +378,7 @@ namespace Lucene.Net.Search
             w.AddDocument(doc);
             IndexReader r = w.GetReader();
             w.Dispose();
-            IndexSearcher s = new IndexSearcherAnonymousClass(this, r);
+            IndexSearcher s = new IndexSearcherAnonymousClass(r);
             BooleanQuery bq = new BooleanQuery();
             bq.Add(new TermQuery(new Term("field", "some")), Occur.SHOULD);
             bq.Add(new TermQuery(new Term("field", "text")), Occur.SHOULD);
@@ -394,12 +391,9 @@ namespace Lucene.Net.Search
 
         private sealed class IndexSearcherAnonymousClass : IndexSearcher
         {
-            private readonly TestBooleanQuery outerInstance;
-
-            public IndexSearcherAnonymousClass(TestBooleanQuery outerInstance, IndexReader r)
+            public IndexSearcherAnonymousClass(IndexReader r)
                 : base(r)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
@@ -410,4 +404,3 @@ namespace Lucene.Net.Search
         }
     }
 }
- 
