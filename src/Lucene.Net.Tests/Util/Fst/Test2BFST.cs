@@ -5,7 +5,7 @@ using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using Int64 = J2N.Numerics.Int64;
 
-#if !NET6_0_OR_GREATER
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
 using RandomizedTesting.Generators; // for Random.NextInt64 extension method
 #endif
 
