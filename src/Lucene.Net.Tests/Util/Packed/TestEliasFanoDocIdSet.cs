@@ -22,7 +22,6 @@ namespace Lucene.Net.Util.Packed
 
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
-    [TestFixture]
     public class TestEliasFanoDocIdSet : BaseDocIdSetTestCase<EliasFanoDocIdSet>
     {
         public override EliasFanoDocIdSet CopyOf(BitSet bs, int numBits)
