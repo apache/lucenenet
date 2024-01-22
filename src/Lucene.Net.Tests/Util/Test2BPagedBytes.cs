@@ -1,9 +1,12 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using NUnit.Framework;
-using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
+
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
+using RandomizedTesting.Generators; // for Random.NextInt64 extension method
+#endif
 
 namespace Lucene.Net.Util
 {
@@ -30,9 +33,6 @@ namespace Lucene.Net.Util
     using IOContext = Lucene.Net.Store.IOContext;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 
-    //using Ignore = org.junit.Ignore;
-
-    //ORIGINAL LINE: @Ignore("You must increase heap to > 2 G to run this") public class Test2BPagedBytes extends LuceneTestCase
     [Ignore("You must increase heap to > 2 G to run this")]
     [TestFixture]
     public class Test2BPagedBytes : LuceneTestCase

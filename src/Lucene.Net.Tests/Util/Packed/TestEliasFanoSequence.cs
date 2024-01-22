@@ -294,6 +294,7 @@ namespace Lucene.Net.Util.Packed
         [Test]
         public virtual void TestMonotoneSequences()
         {
+            // LUCENENET: See TestMonotoneSequencesLonger below for 4422 case from original Lucene test
             for (int s = 2; s < 1222; s++)
             {
                 long[] values = new long[s];
@@ -322,6 +323,7 @@ namespace Lucene.Net.Util.Packed
         [Test]
         public virtual void TestStrictMonotoneSequences()
         {
+            // LUCENENET: See TestStrictMonotoneSequencesLonger below for 4422 case from original Lucene test
             for (int s = 2; s < 1222; s++)
             {
                 var values = new long[s];

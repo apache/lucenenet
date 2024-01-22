@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    using MaxBytesLengthExceededException = Lucene.Net.Util.BytesRefHash.MaxBytesLengthExceededException;
+    using MaxBytesLengthExceededException = BytesRefHash.MaxBytesLengthExceededException;
 
     [TestFixture]
     public class TestBytesRefHash : LuceneTestCase
@@ -43,17 +43,19 @@ namespace Lucene.Net.Util
 
         private ByteBlockPool NewPool()
         {
-            return Random.NextBoolean() && pool != null ? pool : new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random.Next(25)));
+            return Random.NextBoolean() && pool != null ? pool
+                : new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random.Next(25)));
         }
 
         private BytesRefHash NewHash(ByteBlockPool blockPool)
         {
             int initSize = 2 << 1 + Random.Next(5);
-            return Random.NextBoolean() ? new BytesRefHash(blockPool) : new BytesRefHash(blockPool, initSize, new BytesRefHash.DirectBytesStartArray(initSize));
+            return Random.NextBoolean() ? new BytesRefHash(blockPool) : new BytesRefHash(
+                blockPool, initSize, new BytesRefHash.DirectBytesStartArray(initSize));
         }
 
         /// <summary>
-        /// Test method for <seealso cref="Lucene.Net.Util.BytesRefHash#size()"/>.
+        /// Test method for <see cref="Lucene.Net.Util.BytesRefHash.Count"/>.
         /// </summary>
         [Test]
         public virtual void TestSize()
@@ -93,7 +95,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Test method for
-        /// <seealso cref="Lucene.Net.Util.BytesRefHash#get(int, BytesRef)"/>
+        /// <see cref="Lucene.Net.Util.BytesRefHash.Get(int, BytesRef)"/>
         /// .
         /// </summary>
         [Test]
@@ -133,7 +135,7 @@ namespace Lucene.Net.Util
                 foreach (KeyValuePair<string, int> entry in strings)
                 {
                     @ref.CopyChars(entry.Key);
-                    Assert.AreEqual(@ref, hash.Get((int)entry.Value, scratch));
+                    Assert.AreEqual(@ref, hash.Get(entry.Value, scratch));
                 }
                 hash.Clear();
                 Assert.AreEqual(0, hash.Count);
@@ -142,7 +144,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Test method for <seealso cref="Lucene.Net.Util.BytesRefHash.Compact()"/>.
+        /// Test method for <see cref="Lucene.Net.Util.BytesRefHash.Compact()"/>.
         /// </summary>
         [Test]
         public virtual void TestCompact()
@@ -192,7 +194,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Test method for
-        /// <seealso cref="Lucene.Net.Util.BytesRefHash#sort(java.util.Comparer)"/>.
+        /// <see cref="Lucene.Net.Util.BytesRefHash.Sort(IComparer{BytesRef})" />.
         /// </summary>
         [Test]
         public virtual void TestSort()
@@ -237,7 +239,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Test method for
-        /// <seealso cref="Lucene.Net.Util.BytesRefHash#add(Lucene.Net.Util.BytesRef)"/>
+        /// <see cref="Lucene.Net.Util.BytesRefHash.Add(BytesRef)"/>
         /// .
         /// </summary>
         [Test]
@@ -331,7 +333,9 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestLargeValue()
         {
-            int[] sizes = { Random.Next(5), ByteBlockPool.BYTE_BLOCK_SIZE - 33 + Random.Next(31), ByteBlockPool.BYTE_BLOCK_SIZE - 1 + Random.Next(37) };
+            int[] sizes = { Random.Next(5),
+                ByteBlockPool.BYTE_BLOCK_SIZE - 33 + Random.Next(31),
+                ByteBlockPool.BYTE_BLOCK_SIZE - 1 + Random.Next(37) };
             BytesRef @ref = new BytesRef();
 
             var exceptionThrown = false;
@@ -362,7 +366,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Test method for
-        /// <seealso cref="Lucene.Net.Util.BytesRefHash#addByPoolOffset(int)"/>
+        /// <see cref="Lucene.Net.Util.BytesRefHash.AddByPoolOffset(int)"/>
         /// .
         /// </summary>
         [Test]

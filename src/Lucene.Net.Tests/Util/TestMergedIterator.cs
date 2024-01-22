@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using RandomizedTesting.Generators;
+
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
+using RandomizedTesting.Generators; // for Random.NextInt64 extension method
+#endif
 
 namespace Lucene.Net.Util
 {
@@ -36,13 +39,13 @@ namespace Lucene.Net.Util
             IEnumerator<int> merged = new MergedEnumerator<int>();
             Assert.IsFalse(merged.MoveNext());
 
-            merged = new MergedEnumerator<int>((new JCG.List<int>()).GetEnumerator());
+            merged = new MergedEnumerator<int>(new JCG.List<int>().GetEnumerator());
             Assert.IsFalse(merged.MoveNext());
 
             IEnumerator<int>[] itrs = new IEnumerator<int>[Random.Next(100)];
             for (int i = 0; i < itrs.Length; i++)
             {
-                itrs[i] = (new JCG.List<int>()).GetEnumerator();
+                itrs[i] = new JCG.List<int>().GetEnumerator();
             }
             merged = new MergedEnumerator<int>(itrs);
             Assert.IsFalse(merged.MoveNext());
@@ -192,13 +195,13 @@ namespace Lucene.Net.Util
             IEnumerator<int> merged = new MergedIterator<int>();
             Assert.IsFalse(merged.MoveNext());
 
-            merged = new MergedIterator<int>((new JCG.List<int>()).GetEnumerator());
+            merged = new MergedIterator<int>(new JCG.List<int>().GetEnumerator());
             Assert.IsFalse(merged.MoveNext());
 
             IEnumerator<int>[] itrs = new IEnumerator<int>[Random.Next(100)];
             for (int i = 0; i < itrs.Length; i++)
             {
-                itrs[i] = (new JCG.List<int>()).GetEnumerator();
+                itrs[i] = new JCG.List<int>().GetEnumerator();
             }
             merged = new MergedIterator<int>(itrs);
             Assert.IsFalse(merged.MoveNext());

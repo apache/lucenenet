@@ -2,7 +2,6 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -10,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -128,7 +126,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         pairs.Add(new InputOutput<object>(term, NO_OUTPUT));
                     }
-                    FST<object> fst = (new FSTTester<object>(Random, dir, inputMode, pairs, outputs, false)).DoTest(0, 0, false);
+                    FST<object> fst = new FSTTester<object>(Random, dir, inputMode, pairs, outputs, false).DoTest(0, 0, false);
                     Assert.IsNotNull(fst);
                     Assert.AreEqual(22, fst.NodeCount);
                     Assert.AreEqual(27, fst.ArcCount);
@@ -142,7 +140,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         pairs.Add(new InputOutput<Int64>(terms2[idx], idx));
                     }
-                    FST<Int64> fst = (new FSTTester<Int64>(Random, dir, inputMode, pairs, outputs, true)).DoTest(0, 0, false);
+                    FST<Int64> fst = new FSTTester<Int64>(Random, dir, inputMode, pairs, outputs, true).DoTest(0, 0, false);
                     Assert.IsNotNull(fst);
                     Assert.AreEqual(22, fst.NodeCount);
                     Assert.AreEqual(27, fst.ArcCount);
@@ -158,7 +156,7 @@ namespace Lucene.Net.Util.Fst
                         BytesRef output = Random.Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
                         pairs.Add(new InputOutput<BytesRef>(terms2[idx], output));
                     }
-                    FST<BytesRef> fst = (new FSTTester<BytesRef>(Random, dir, inputMode, pairs, outputs, false)).DoTest(0, 0, false);
+                    FST<BytesRef> fst = new FSTTester<BytesRef>(Random, dir, inputMode, pairs, outputs, false).DoTest(0, 0, false);
                     Assert.IsNotNull(fst);
                     Assert.AreEqual(24, fst.NodeCount);
                     Assert.AreEqual(30, fst.ArcCount);
@@ -180,7 +178,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     pairs.Add(new InputOutput<object>(term, NO_OUTPUT));
                 }
-                (new FSTTester<object>(Random, dir, inputMode, pairs, outputs, false)).DoTest(true);
+                new FSTTester<object>(Random, dir, inputMode, pairs, outputs, false).DoTest(true);
             }
 
             // PositiveIntOutput (ord)
@@ -191,7 +189,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     pairs.Add(new InputOutput<Int64>(terms[idx], idx));
                 }
-                (new FSTTester<Int64>(Random, dir, inputMode, pairs, outputs, true)).DoTest(true);
+                new FSTTester<Int64>(Random, dir, inputMode, pairs, outputs, true).DoTest(true);
             }
 
             // PositiveIntOutput (random monotonically increasing positive number)
@@ -205,7 +203,7 @@ namespace Lucene.Net.Util.Fst
                     lastOutput = value;
                     pairs.Add(new InputOutput<Int64>(terms[idx], value));
                 }
-                (new FSTTester<Int64>(Random, dir, inputMode, pairs, outputs, true)).DoTest(true);
+                new FSTTester<Int64>(Random, dir, inputMode, pairs, outputs, true).DoTest(true);
             }
 
             // PositiveIntOutput (random positive number)
@@ -216,7 +214,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     pairs.Add(new InputOutput<Int64>(terms[idx], TestUtil.NextInt64(Random, 0, long.MaxValue)));
                 }
-                (new FSTTester<Int64>(Random, dir, inputMode, pairs, outputs, false)).DoTest(true);
+                new FSTTester<Int64>(Random, dir, inputMode, pairs, outputs, false).DoTest(true);
             }
 
             // Pair<ord, (random monotonically increasing positive number>
@@ -232,7 +230,7 @@ namespace Lucene.Net.Util.Fst
                     lastOutput = value;
                     pairs.Add(new InputOutput<Pair>(terms[idx], outputs.NewPair(idx, value)));
                 }
-                (new FSTTester<Pair>(Random, dir, inputMode, pairs, outputs, false)).DoTest(true);
+                new FSTTester<Pair>(Random, dir, inputMode, pairs, outputs, false).DoTest(true);
             }
 
             // Sequence-of-bytes
@@ -245,7 +243,7 @@ namespace Lucene.Net.Util.Fst
                     BytesRef output = Random.Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
                     pairs.Add(new InputOutput<BytesRef>(terms[idx], output));
                 }
-                (new FSTTester<BytesRef>(Random, dir, inputMode, pairs, outputs, false)).DoTest(true);
+                new FSTTester<BytesRef>(Random, dir, inputMode, pairs, outputs, false).DoTest(true);
             }
 
             // Sequence-of-ints
@@ -265,7 +263,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     pairs.Add(new InputOutput<Int32sRef>(terms[idx], output));
                 }
-                (new FSTTester<Int32sRef>(Random, dir, inputMode, pairs, outputs, false)).DoTest(true);
+                new FSTTester<Int32sRef>(Random, dir, inputMode, pairs, outputs, false).DoTest(true);
             }
 
         }
@@ -376,7 +374,7 @@ namespace Lucene.Net.Util.Fst
                 BytesRef term;
                 int ord = 0;
 
-                Automaton automaton = (new RegExp(".*", RegExpSyntax.NONE)).ToAutomaton();
+                Automaton automaton = new RegExp(".*", RegExpSyntax.NONE).ToAutomaton();
                 TermsEnum termsEnum2 = terms.Intersect(new CompiledAutomaton(automaton, false, false), null);
 
                 while (termsEnum.MoveNext())
@@ -392,7 +390,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         try
                         {
-                            var _ = termsEnum.Ord;
+                            _ = termsEnum.Ord; // LUCENENET: using discard assignment to avoid "Only ... can be used as a statement" error
                         }
                         catch (Exception uoe) when (uoe.IsUnsupportedOperationException())
                         {
@@ -813,7 +811,7 @@ namespace Lucene.Net.Util.Fst
                 object NO_OUTPUT = outputs.NoOutput;
                 new VisitTermsAnonymousClass4(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays, NO_OUTPUT).Run(limit, verify, false);
             }
-        }*/
+        }
 
         private sealed class VisitTermsAnonymousClass : VisitTerms<Pair>
         {
@@ -881,7 +879,7 @@ namespace Lucene.Net.Util.Fst
             {
                 return NO_OUTPUT;
             }
-        }
+        }*/
 
         [Test]
         public virtual void TestSingleString()
@@ -923,16 +921,16 @@ namespace Lucene.Net.Util.Fst
 
         /*
         public void testTrivial() throws Exception {
-    
+
           // Get outputs -- passing true means FST will share
           // (delta code) the outputs.  this should result in
           // smaller FST if the outputs grow monotonically.  But
           // if numbers are "random", false should give smaller
           // final size:
           final NoOutputs outputs = NoOutputs.getSingleton();
-    
+
           String[] strings = new String[] {"station", "commotion", "elation", "elastic", "plastic", "stop", "ftop", "ftation", "stat"};
-    
+
           final Builder<Object> builder = new Builder<Object>(FST.INPUT_TYPE.BYTE1,
                                                               0, 0,
                                                               true,
@@ -951,9 +949,9 @@ namespace Lucene.Net.Util.Fst
           Writer w = new OutputStreamWriter(new FileOutputStream("/mnt/scratch/before.dot"));
           Util.toDot(fst, w, false, false);
           w.Dispose();
-    
+
           final FST<Object> rewrite = new FST<Object>(fst, 1, 100);
-    
+
           System.out.println("DOT after rewrite");
           w = new OutputStreamWriter(new FileOutputStream("/mnt/scratch/after.dot"));
           Util.toDot(rewrite, w, false, false);
@@ -1251,6 +1249,8 @@ namespace Lucene.Net.Util.Fst
         [Test]
         public virtual void TestExpandedCloseToRoot()
         {
+            // LUCENENET: Local class moved to SyntheticData class below
+
             // Sanity check.
             Assert.IsTrue(FST.FIXED_ARRAY_NUM_ARCS_SHALLOW < FST.FIXED_ARRAY_NUM_ARCS_DEEP);
             Assert.IsTrue(FST.FIXED_ARRAY_SHALLOW_DISTANCE >= 0);
@@ -1451,7 +1451,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         internal static readonly IComparer<Int64> minLongComparer = Comparer<Int64>.Create((left, right)=> left.CompareTo(right));
-        
+
         [Test]
         public virtual void TestShortestPaths()
         {
@@ -1505,7 +1505,7 @@ namespace Lucene.Net.Util.Fst
             Assert.AreEqual(1, res.TopN.Count);
             Assert.AreEqual(Util.ToInt32sRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
             Assert.AreEqual(7L, res.TopN[0].Output);
-            rejectCount.Value = (0);
+            rejectCount.Value = 0;
             searcher = new TopNSearcherAnonymousClass2(fst, minLongComparer, rejectCount);
 
             searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<Int64>()), outputs.NoOutput, true, new Int32sRef());
@@ -1558,7 +1558,7 @@ namespace Lucene.Net.Util.Fst
 
         // compares just the weight side of the pair
         internal static readonly IComparer<Pair> minPairWeightComparer = Comparer<Pair>.Create((left, right)=> left.Output1.CompareTo(right.Output1));
-             
+
         /// <summary>
         /// like testShortestPaths, but uses pairoutputs so we have both a weight and an output </summary>
         [Test]

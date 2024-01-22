@@ -33,7 +33,7 @@ namespace Lucene.Net.Util
         public override WAH8DocIdSet CopyOf(BitSet bs, int length)
         {
             int indexInterval = TestUtil.NextInt32(Random, 8, 256);
-            WAH8DocIdSet.Builder builder = (WAH8DocIdSet.Builder)(new WAH8DocIdSet.Builder()).SetIndexInterval(indexInterval);
+            WAH8DocIdSet.Builder builder = (WAH8DocIdSet.Builder)new WAH8DocIdSet.Builder().SetIndexInterval(indexInterval);
             for (int i = bs.NextSetBit(0); i != -1; i = bs.NextSetBit(i + 1))
             {
                 builder.Add(i);
@@ -41,10 +41,11 @@ namespace Lucene.Net.Util
             return builder.Build();
         }
 
+        // LUCENENET: Added to support OpenBitSet, see OpenBitSet documentation
         public WAH8DocIdSet CopyOf(OpenBitSet bs, int length)
         {
             int indexInterval = TestUtil.NextInt32(Random, 8, 256);
-            WAH8DocIdSet.Builder builder = (WAH8DocIdSet.Builder)(new WAH8DocIdSet.Builder()).SetIndexInterval(indexInterval);
+            WAH8DocIdSet.Builder builder = (WAH8DocIdSet.Builder)new WAH8DocIdSet.Builder().SetIndexInterval(indexInterval);
             for (int i = bs.NextSetBit(0); i != -1; i = bs.NextSetBit(i + 1))
             {
                 builder.Add(i);
@@ -92,6 +93,7 @@ namespace Lucene.Net.Util
             AssertEquals(numBits, expected, union);
         }
 
+        // LUCENENET specific - added to support OpenBitSet, see OpenBitSet documentation
         /// <summary>
         /// Create a random set which has <paramref name="numBitsSet"/> of its <paramref name="numBits"/> bits set. </summary>
         protected static OpenBitSet RandomOpenSet(int numBits, int numBitsSet)
@@ -121,6 +123,7 @@ namespace Lucene.Net.Util
             return set;
         }
 
+        // LUCENENET specific - added to support OpenBitSet, see OpenBitSet documentation
         /// <summary>
         /// Same as <see cref="RandomSet(int, int)"/> but given a load factor. </summary>
         protected static OpenBitSet RandomOpenSet(int numBits, float percentSet)
@@ -128,6 +131,7 @@ namespace Lucene.Net.Util
             return RandomOpenSet(numBits, (int)(percentSet * numBits));
         }
 
+        // LUCENENET specific - added to support OpenBitSet, see OpenBitSet documentation
         /// <summary>
         /// Assert that the content of the <see cref="DocIdSet"/> is the same as the content of the <see cref="OpenBitSet"/>.
         /// </summary>
@@ -212,6 +216,8 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestIntersection()
         {
+            // LUCENENET: using OpenBitSet instead of BitSet in this test, see OpenBitSet documentation for rationale
+
             int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);
             int numDocIdSets = TestUtil.NextInt32(Random, 1, 4);
             IList<OpenBitSet> fixedSets = new JCG.List<OpenBitSet>(numDocIdSets);

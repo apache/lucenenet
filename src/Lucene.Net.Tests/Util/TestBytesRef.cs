@@ -55,12 +55,12 @@ namespace Lucene.Net.Util
             for (int i = 0; i < 100; i++)
             {
                 string s = TestUtil.RandomUnicodeString(Random);
-                string s2 = (new BytesRef(s)).Utf8ToString();
+                string s2 = new BytesRef(s).Utf8ToString();
                 Assert.AreEqual(s, s2);
             }
 
             // only for 4.x
-            Assert.AreEqual("\uFFFF", (new BytesRef("\uFFFF")).Utf8ToString());
+            Assert.AreEqual("\uFFFF", new BytesRef("\uFFFF").Utf8ToString());
         }
 
         [Test, LuceneNetSpecific]
@@ -69,12 +69,12 @@ namespace Lucene.Net.Util
             for (int i = 0; i < 100; i++)
             {
                 ICharSequence s = new StringCharSequence(TestUtil.RandomUnicodeString(Random));
-                ICharSequence s2 = (new BytesRef(s)).Utf8ToString().AsCharSequence();
+                ICharSequence s2 = new BytesRef(s).Utf8ToString().AsCharSequence();
                 Assert.AreEqual(s, s2);
             }
 
             // only for 4.x
-            Assert.AreEqual("\uFFFF", (new BytesRef("\uFFFF")).Utf8ToString());
+            Assert.AreEqual("\uFFFF", new BytesRef("\uFFFF").Utf8ToString());
         }
 
         // LUCENE-3590, AIOOBE if you append to a bytesref with offset != 0

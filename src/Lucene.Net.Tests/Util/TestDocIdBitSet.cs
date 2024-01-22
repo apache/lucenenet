@@ -1,4 +1,3 @@
-using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
 
 namespace Lucene.Net.Util
@@ -20,6 +19,7 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
+    [TestFixture]
     public class TestDocIdBitSet : BaseDocIdSetTestCase<DocIdBitSet>
     {
         public override DocIdBitSet CopyOf(BitSet bs, int length)

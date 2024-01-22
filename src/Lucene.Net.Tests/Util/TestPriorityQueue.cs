@@ -348,7 +348,7 @@ namespace Lucene.Net.Util
                 return 0;
 
             }
-        } 
+        }
 
         [Ignore("Increase heap size to run this test")]
         [Test, LuceneNetSpecific]
@@ -365,7 +365,7 @@ namespace Lucene.Net.Util
             // A valid maximum size
             maxSize = 12345;
             pq = new IntegerQueue(maxSize);
-            
+
             // Cannot construct a negative size heap
             maxSize = -3;
             try
@@ -552,7 +552,7 @@ namespace Lucene.Net.Util
             pq.Add(7);
             pq.Pop();
             Assert.AreEqual(pq.Count, 0);
-            
+
             // Add a bunch of elements, pop them all
             pq.Add(1);
             pq.Add(20);
@@ -724,7 +724,7 @@ namespace Lucene.Net.Util
         {
             // Tests adding elements to full queues
             // Add's documentation claims throwing an IndexOutOfRangeException in this situation
-            
+
             // Add an element to a prepopulated queue
             int maxSize = 10;
             PriorityQueue<int?> pq = new IntegerQueue(maxSize, true);

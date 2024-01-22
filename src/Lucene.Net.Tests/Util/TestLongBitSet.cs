@@ -117,12 +117,12 @@ namespace Lucene.Net.Util
                         idx = Random.Next(sz);
                         a.Flip(idx);
                         b.Flip(idx, idx + 1);
-                        
+
                         bool val2 = b.Get(idx);
                         bool val = b.GetAndSet(idx);
                         Assert.IsTrue(val2 == val);
                         Assert.IsTrue(b.Get(idx));
-                        
+
                         if (!val)
                         {
                             b.Clear(idx);
@@ -133,7 +133,7 @@ namespace Lucene.Net.Util
 
                 // test that the various ways of accessing the bits are equivalent
                 DoGet(a, b);
-                
+
                 // test ranges, including possible extension
                 int fromIndex, toIndex;
                 fromIndex = Random.Next(sz / 2);

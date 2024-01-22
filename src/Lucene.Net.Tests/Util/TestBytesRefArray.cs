@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
         public virtual void TestAppend()
         {
             Random random = Random;
-            BytesRefArray list = new BytesRefArray(Util.Counter.NewCounter());
+            BytesRefArray list = new BytesRefArray(Counter.NewCounter());
             IList<string> stringList = new JCG.List<string>();
             for (int j = 0; j < 2; j++)
             {
@@ -80,7 +80,7 @@ namespace Lucene.Net.Util
         public virtual void TestAppendIterator()
         {
             Random random = Random;
-            BytesRefArray list = new BytesRefArray(Util.Counter.NewCounter());
+            BytesRefArray list = new BytesRefArray(Counter.NewCounter());
             IList<string> stringList = new JCG.List<string>();
             for (int j = 0; j < 2; j++)
             {
@@ -114,11 +114,10 @@ namespace Lucene.Net.Util
                 }
                 for (int i = 0; i < 2; i++)
                 {
-                    IBytesRefEnumerator iterator = list.GetEnumerator();
+                    IBytesRefIterator iterator = list.GetIterator();
                     foreach (string @string in stringList)
                     {
-                        Assert.IsTrue(iterator.MoveNext());
-                        Assert.AreEqual(@string, iterator.Current.Utf8ToString());
+                        Assert.AreEqual(@string, iterator.Next().Utf8ToString());
                     }
                 }
             }
@@ -128,7 +127,7 @@ namespace Lucene.Net.Util
         public virtual void TestSort()
         {
             Random random = Random;
-            BytesRefArray list = new BytesRefArray(Util.Counter.NewCounter());
+            BytesRefArray list = new BytesRefArray(Counter.NewCounter());
             IList<string> stringList = new JCG.List<string>();
 
             for (int j = 0; j < 2; j++)
@@ -172,7 +171,7 @@ namespace Lucene.Net.Util
         public virtual void TestSortIterator()
         {
             Random random = Random;
-            BytesRefArray list = new BytesRefArray(Util.Counter.NewCounter());
+            BytesRefArray list = new BytesRefArray(Counter.NewCounter());
             IList<string> stringList = new JCG.List<string>();
 
             for (int j = 0; j < 2; j++)

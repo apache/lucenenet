@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using RandomizedTesting.Generators;
-using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -58,6 +57,8 @@ namespace Lucene.Net.Util
         }
 
         // slow version used for testing
+        // LUCENENET: semantics changed to a Try pattern as BigInteger could overflow long
+        // LUCENENET: l1/l2 parameters renamed to a/b to potentially avoid reader confusion with 11/12
         private static bool TryGetGcd(long a, long b, out long result)
         {
             result = 0;
@@ -79,6 +80,7 @@ namespace Lucene.Net.Util
                 long l1 = RandomLong();
                 long l2 = RandomLong();
                 long gcd = MathUtil.Gcd(l1, l2);
+                // LUCENENET: test changed to use Try pattern, was: final long actualGcd = gcd(l1, l2);
                 if (TryGetGcd(l1, l2, out long actualGcd))
                 {
                     Assert.AreEqual(actualGcd, gcd);

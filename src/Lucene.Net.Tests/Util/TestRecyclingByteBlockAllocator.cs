@@ -1,8 +1,6 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
@@ -39,7 +37,7 @@ namespace Lucene.Net.Util
 
         private RecyclingByteBlockAllocator NewAllocator()
         {
-            return new RecyclingByteBlockAllocator(1 << (2 + Random.Next(15)), Random.Next(97), Util.Counter.NewCounter());
+            return new RecyclingByteBlockAllocator(1 << (2 + Random.Next(15)), Random.Next(97), Counter.NewCounter());
         }
 
         [Test]

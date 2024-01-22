@@ -53,20 +53,20 @@ namespace Lucene.Net.Util
                 int blockSize = 1 << blockBits;
                 PagedBytes p = new PagedBytes(blockBits);
                 IndexOutput @out = dir.CreateOutput("foo", IOContext.DEFAULT);
-                int numBytes = TestUtil.NextInt32(LuceneTestCase.Random, 2, 10000000);
+                int numBytes = TestUtil.NextInt32(Random, 2, 10000000);
 
                 byte[] answer = new byte[numBytes];
-                LuceneTestCase.Random.NextBytes(answer);
+                Random.NextBytes(answer);
                 int written = 0;
                 while (written < numBytes)
                 {
-                    if (LuceneTestCase.Random.Next(10) == 7)
+                    if (Random.Next(10) == 7)
                     {
                         @out.WriteByte(answer[written++]);
                     }
                     else
                     {
-                        int chunk = Math.Min(LuceneTestCase.Random.Next(1000), numBytes - written);
+                        int chunk = Math.Min(Random.Next(1000), numBytes - written);
                         @out.WriteBytes(answer, written, chunk);
                         written += chunk;
                     }
@@ -83,13 +83,13 @@ namespace Lucene.Net.Util
                 int read = 0;
                 while (read < numBytes)
                 {
-                    if (LuceneTestCase.Random.Next(10) == 7)
+                    if (Random.Next(10) == 7)
                     {
                         verify[read++] = @in.ReadByte();
                     }
                     else
                     {
-                        int chunk = Math.Min(LuceneTestCase.Random.Next(1000), numBytes - read);
+                        int chunk = Math.Min(Random.Next(1000), numBytes - read);
                         @in.ReadBytes(verify, read, chunk);
                         read += chunk;
                     }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
                     reader.FillSlice(slice, pos, len);
                     for (int byteUpto = 0; byteUpto < len; byteUpto++)
                     {
-                        Assert.AreEqual(answer[pos + byteUpto], (byte)slice.Bytes[slice.Offset + byteUpto]);
+                        Assert.AreEqual(answer[pos + byteUpto], slice.Bytes[slice.Offset + byteUpto]);
                     }
                 }
                 input.Dispose();
@@ -126,20 +126,20 @@ namespace Lucene.Net.Util
                 int blockSize = 1 << blockBits;
                 PagedBytes p = new PagedBytes(blockBits);
                 DataOutput @out = p.GetDataOutput();
-                int numBytes = LuceneTestCase.Random.Next(10000000);
+                int numBytes = Random.Next(10000000);
 
                 byte[] answer = new byte[numBytes];
-                LuceneTestCase.Random.NextBytes(answer);
+                Random.NextBytes(answer);
                 int written = 0;
                 while (written < numBytes)
                 {
-                    if (LuceneTestCase.Random.Next(10) == 7)
+                    if (Random.Next(10) == 7)
                     {
                         @out.WriteByte(answer[written++]);
                     }
                     else
                     {
-                        int chunk = Math.Min(LuceneTestCase.Random.Next(1000), numBytes - written);
+                        int chunk = Math.Min(Random.Next(1000), numBytes - written);
                         @out.WriteBytes(answer, written, chunk);
                         written += chunk;
                     }
@@ -153,13 +153,13 @@ namespace Lucene.Net.Util
                 int read = 0;
                 while (read < numBytes)
                 {
-                    if (LuceneTestCase.Random.Next(10) == 7)
+                    if (Random.Next(10) == 7)
                     {
                         verify[read++] = @in.ReadByte();
                     }
                     else
                     {
-                        int chunk = Math.Min(LuceneTestCase.Random.Next(1000), numBytes - read);
+                        int chunk = Math.Min(Random.Next(1000), numBytes - read);
                         @in.ReadBytes(verify, read, chunk);
                         read += chunk;
                     }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Util
                     reader.FillSlice(slice, pos, len);
                     for (int byteUpto = 0; byteUpto < len; byteUpto++)
                     {
-                        Assert.AreEqual(answer[pos + byteUpto], (byte)slice.Bytes[slice.Offset + byteUpto]);
+                        Assert.AreEqual(answer[pos + byteUpto], slice.Bytes[slice.Offset + byteUpto]);
                     }
                 }
             }

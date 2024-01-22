@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        
+
        [Test]
         public virtual void TestReferenceSize()
         {
