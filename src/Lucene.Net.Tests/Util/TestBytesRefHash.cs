@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Test method for <seealso cref="Lucene.Net.Util.BytesRefHash#size()"/>.
+        /// Test method for <see cref="Lucene.Net.Util.BytesRefHash.Count"/>.
         /// </summary>
         [Test]
         public virtual void TestSize()
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Test method for
-        /// <seealso cref="Lucene.Net.Util.BytesRefHash.Get(int, BytesRef)"/>
+        /// <see cref="Lucene.Net.Util.BytesRefHash.Get(int, BytesRef)"/>
         /// .
         /// </summary>
         [Test]
@@ -144,7 +144,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Test method for <seealso cref="Lucene.Net.Util.BytesRefHash.Compact()"/>.
+        /// Test method for <see cref="Lucene.Net.Util.BytesRefHash.Compact()"/>.
         /// </summary>
         [Test]
         public virtual void TestCompact()
@@ -194,7 +194,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Test method for
-        /// <seealso cref="Lucene.Net.Util.BytesRefHash.Sort(IComparer&lt;BytesRef&gt;)" />.
+        /// <see cref="Lucene.Net.Util.BytesRefHash.Sort(IComparer{BytesRef})" />.
         /// </summary>
         [Test]
         public virtual void TestSort()
@@ -239,7 +239,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Test method for
-        /// <seealso cref="Lucene.Net.Util.BytesRefHash.Add(BytesRef)"/>
+        /// <see cref="Lucene.Net.Util.BytesRefHash.Add(BytesRef)"/>
         /// .
         /// </summary>
         [Test]
@@ -366,7 +366,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Test method for
-        /// <seealso cref="Lucene.Net.Util.BytesRefHash.AddByPoolOffset(int)"/>
+        /// <see cref="Lucene.Net.Util.BytesRefHash.AddByPoolOffset(int)"/>
         /// .
         /// </summary>
         [Test]
