@@ -58,10 +58,11 @@ namespace Lucene.Net.Util
 
         // slow version used for testing
         // LUCENENET: semantics changed to a Try pattern as BigInteger could overflow long
-        private static bool TryGetGcd(long l1, long l2, out long result)
+        // LUCENENET: l1/l2 parameters renamed to a/b to potentially avoid reader confusion with 11/12
+        private static bool TryGetGcd(long a, long b, out long result)
         {
             result = 0;
-            var c = System.Numerics.BigInteger.GreatestCommonDivisor(l1, l2);
+            var c = System.Numerics.BigInteger.GreatestCommonDivisor(a, b);
             if (c <= long.MaxValue && c >= long.MinValue)
             {
                 result = (long)c;
