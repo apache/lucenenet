@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Payloads
             PayloadAnalyzer analyzer = new PayloadAnalyzer(this);
 
             // TODO randomize this
-            IndexWriter writer = new IndexWriter(directory, (new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity));
+            IndexWriter writer = new IndexWriter(directory, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer).SetSimilarity(similarity));
             // writer.infoStream = System.out;
             for (int i = 0; i < numDocs; i++)
             {
