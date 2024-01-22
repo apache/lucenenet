@@ -48,7 +48,7 @@ namespace Lucene.Net.Search.Payloads
     {
         private static IndexSearcher searcher;
         private static IndexReader reader;
-        private static readonly Similarity similarity = new BoostingSimilarity();
+        private static readonly Similarity similarity = BoostingSimilarity.Default; // LUCENENET: using static instance
         private static readonly byte[] payloadField = { 1 };
         private static readonly byte[] payloadMultiField1 = { 2 };
         private static readonly byte[] payloadMultiField2 = { 4 };
@@ -56,7 +56,10 @@ namespace Lucene.Net.Search.Payloads
 
         private class PayloadAnalyzer : Analyzer
         {
-            internal PayloadAnalyzer()
+            // LUCENENET: static singleton instance and private ctor to avoid unnecessary allocations
+            public static readonly PayloadAnalyzer Default = new PayloadAnalyzer();
+
+            private PayloadAnalyzer()
                 : base(PER_FIELD_REUSE_STRATEGY)
             {
             }
@@ -125,7 +128,7 @@ namespace Lucene.Net.Search.Payloads
 
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer())
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, PayloadAnalyzer.Default) // LUCENENET: Using static instance of PayloadAnalyzer
                     .SetSimilarity(similarity).SetMergePolicy(NewLogMergePolicy()));
             //writer.infoStream = System.out;
             for (int i = 0; i < 1000; i++)
@@ -249,7 +252,7 @@ namespace Lucene.Net.Search.Payloads
 
             IndexReader reader = DirectoryReader.Open(directory);
             IndexSearcher theSearcher = NewSearcher(reader);
-            theSearcher.Similarity = new FullSimilarity();
+            theSearcher.Similarity = FullSimilarity.Default; // LUCENENET: using static instance of FullSimilarity
             TopDocs hits = searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
             Assert.IsTrue(hits.TotalHits == 100, "hits Size: " + hits.TotalHits + " is not: " + 100);
@@ -318,6 +321,13 @@ namespace Lucene.Net.Search.Payloads
 
         internal class BoostingSimilarity : DefaultSimilarity
         {
+            // LUCENENET: static singleton instance and private ctor to avoid unnecessary allocations
+            public static readonly BoostingSimilarity Default = new BoostingSimilarity();
+
+            private BoostingSimilarity()
+            {
+            }
+
             public override float QueryNorm(float sumOfSquaredWeights)
             {
                 return 1;
@@ -361,6 +371,13 @@ namespace Lucene.Net.Search.Payloads
 
         internal class FullSimilarity : DefaultSimilarity
         {
+            // LUCENENET: static singleton instance and private ctor to avoid unnecessary allocations
+            public static readonly FullSimilarity Default = new FullSimilarity();
+
+            private FullSimilarity()
+            {
+            }
+
             public virtual float ScorePayload(int docId, string fieldName, sbyte[] payload, int offset, int length)
             {
                 //we know it is size 4 here, so ignore the offset/length

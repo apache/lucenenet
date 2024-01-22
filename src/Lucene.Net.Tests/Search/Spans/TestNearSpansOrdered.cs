@@ -68,11 +68,21 @@ namespace Lucene.Net.Search.Spans
             searcher = NewSearcher(reader);
         }
 
-        protected internal string[] docFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3 zz", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3 zz" };
+        protected internal string[] docFields = {
+            "w1 w2 w3 w4 w5",
+            "w1 w3 w2 w3 zz",
+            "w1 xx w2 yy w3",
+            "w1 w3 xx w2 yy w3 zz"
+        };
 
         protected internal virtual SpanNearQuery MakeQuery(string s1, string s2, string s3, int slop, bool inOrder)
         {
-            return new SpanNearQuery(new SpanQuery[] { new SpanTermQuery(new Term(FIELD, s1)), new SpanTermQuery(new Term(FIELD, s2)), new SpanTermQuery(new Term(FIELD, s3)) }, slop, inOrder);
+            return new SpanNearQuery(new SpanQuery[]
+            {
+                new SpanTermQuery(new Term(FIELD, s1)),
+                new SpanTermQuery(new Term(FIELD, s2)),
+                new SpanTermQuery(new Term(FIELD, s3))
+            }, slop, inOrder);
         }
 
         protected internal virtual SpanNearQuery MakeQuery()

@@ -41,11 +41,17 @@ namespace Lucene.Net.Search.Payloads
         public override void SetUp()
         {
             base.SetUp();
-            searcher.Similarity = new DefaultSimilarityAnonymousClass();
+            searcher.Similarity = DefaultSimilarityAnonymousClass.Default;
         }
 
         private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
+            public static readonly DefaultSimilarityAnonymousClass Default = new DefaultSimilarityAnonymousClass();
+
+            private DefaultSimilarityAnonymousClass()
+            {
+            }
+
             public override float ScorePayload(int doc, int start, int end, BytesRef payload)
             {
                 return 1 + (payload.GetHashCode() % 10);

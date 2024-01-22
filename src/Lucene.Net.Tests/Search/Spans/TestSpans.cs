@@ -1,7 +1,9 @@
-﻿using Lucene.Net.Documents;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -75,7 +77,22 @@ namespace Lucene.Net.Search.Spans
             base.TearDown();
         }
 
-        private readonly string[] docFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3", "u2 u2 u1", "u2 xx u2 u1", "u2 u2 xx u1", "u2 xx u2 yy u1", "u2 xx u1 u2", "u2 u1 xx u2", "u1 u2 xx u2", "t1 t2 t1 t3 t2 t3", "s2 s1 s1 xx xx s2 xx s2 xx s1 xx xx xx xx xx s2 xx" };
+        private readonly string[] docFields =
+        {
+            "w1 w2 w3 w4 w5",
+            "w1 w3 w2 w3",
+            "w1 xx w2 yy w3",
+            "w1 w3 xx w2 yy w3",
+            "u2 u2 u1",
+            "u2 xx u2 u1",
+            "u2 u2 xx u1",
+            "u2 xx u2 yy u1",
+            "u2 xx u1 u2",
+            "u2 u1 xx u2",
+            "u1 u2 xx u2",
+            "t1 t2 t1 t3 t2 t3",
+            "s2 s1 s1 xx xx s2 xx s2 xx s1 xx xx xx xx xx s2 xx"
+        };
 
         public virtual SpanTermQuery MakeSpanTermQuery(string text)
         {
@@ -96,17 +113,32 @@ namespace Lucene.Net.Search.Spans
 
         public virtual void OrderedSlopTest3(int slop, int[] expectedDocs)
         {
-            OrderedSlopTest3SQ(MakeSpanTermQuery("w1"), MakeSpanTermQuery("w2"), MakeSpanTermQuery("w3"), slop, expectedDocs);
+            OrderedSlopTest3SQ(
+                MakeSpanTermQuery("w1"),
+                MakeSpanTermQuery("w2"),
+                MakeSpanTermQuery("w3"),
+                slop,
+                expectedDocs);
         }
 
         public virtual void OrderedSlopTest3Equal(int slop, int[] expectedDocs)
         {
-            OrderedSlopTest3SQ(MakeSpanTermQuery("w1"), MakeSpanTermQuery("w3"), MakeSpanTermQuery("w3"), slop, expectedDocs);
+            OrderedSlopTest3SQ(
+                MakeSpanTermQuery("w1"),
+                MakeSpanTermQuery("w3"),
+                MakeSpanTermQuery("w3"),
+                slop,
+                expectedDocs);
         }
 
         public virtual void OrderedSlopTest1Equal(int slop, int[] expectedDocs)
         {
-            OrderedSlopTest3SQ(MakeSpanTermQuery("u2"), MakeSpanTermQuery("u2"), MakeSpanTermQuery("u1"), slop, expectedDocs);
+            OrderedSlopTest3SQ(
+                MakeSpanTermQuery("u2"),
+                MakeSpanTermQuery("u2"),
+                MakeSpanTermQuery("u1"),
+                slop,
+                expectedDocs);
         }
 
         [Test]
@@ -198,7 +230,13 @@ namespace Lucene.Net.Search.Spans
         {
             bool ordered = true;
             int slop = 1;
-            SpanNearQuery snq = new SpanNearQuery(new SpanQuery[] { MakeSpanTermQuery("t1"), MakeSpanTermQuery("t2"), MakeSpanTermQuery("t3") }, slop, ordered);
+            SpanNearQuery snq = new SpanNearQuery(
+                new SpanQuery[]
+                {
+                    MakeSpanTermQuery("t1"),
+                    MakeSpanTermQuery("t2"),
+                    MakeSpanTermQuery("t3")
+                }, slop, ordered);
             Spans spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, snq);
 
             Assert.IsTrue(spans.MoveNext(), "first range");
@@ -219,7 +257,12 @@ namespace Lucene.Net.Search.Spans
         {
             //See http://www.gossamer-threads.com/lists/lucene/java-dev/52270 for discussion about this test
             SpanNearQuery snq;
-            snq = new SpanNearQuery(new SpanQuery[] { MakeSpanTermQuery("u1"), MakeSpanTermQuery("u2") }, 0, false);
+            snq = new SpanNearQuery(
+                new SpanQuery[]
+                {
+                    MakeSpanTermQuery("u1"),
+                    MakeSpanTermQuery("u2")
+                }, 0, false);
             Spans spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, snq);
             Assert.IsTrue(spans.MoveNext(), "Does not have next and it should");
             Assert.AreEqual(4, spans.Doc, "doc");
@@ -247,8 +290,18 @@ namespace Lucene.Net.Search.Spans
             Assert.AreEqual(2, spans.End, "end");
             Assert.IsTrue(spans.MoveNext() == false, "Has next and it shouldn't: " + spans.Doc);
 
-            SpanNearQuery u1u2 = new SpanNearQuery(new SpanQuery[] { MakeSpanTermQuery("u1"), MakeSpanTermQuery("u2") }, 0, false);
-            snq = new SpanNearQuery(new SpanQuery[] { u1u2, MakeSpanTermQuery("u2") }, 1, false);
+            SpanNearQuery u1u2 = new SpanNearQuery(
+                new SpanQuery[]
+                {
+                    MakeSpanTermQuery("u1"),
+                    MakeSpanTermQuery("u2")
+                }, 0, false);
+            snq = new SpanNearQuery(
+                new SpanQuery[]
+                {
+                    u1u2,
+                    MakeSpanTermQuery("u2")
+                }, 1, false);
             spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, snq);
             Assert.IsTrue(spans.MoveNext(), "Does not have next and it should");
             Assert.AreEqual(4, spans.Doc, "doc");
@@ -320,7 +373,8 @@ namespace Lucene.Net.Search.Spans
         [Test]
         public virtual void TestSpanOrEmpty()
         {
-            Spans spans = OrSpans(new string[0]);
+            // LUCENENET: Using Array.Empty<T>() instead of new string[0] to reduce allocations
+            Spans spans = OrSpans(Array.Empty<string>());
             Assert.IsFalse(spans.MoveNext(), "empty next");
 
             SpanOrQuery a = new SpanOrQuery();
@@ -413,7 +467,7 @@ namespace Lucene.Net.Search.Spans
             {
                 AtomicReaderContext ctx = leaves[i];
 
-                Similarity sim = new DefaultSimilarityAnonymousClass(this);
+                Similarity sim = DefaultSimilarityAnonymousClass.Default;
 
                 Similarity oldSim = searcher.Similarity;
                 Scorer spanScorer;
@@ -444,11 +498,10 @@ namespace Lucene.Net.Search.Spans
 
         private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
-            private readonly TestSpans outerInstance;
+            public static readonly DefaultSimilarityAnonymousClass Default = new DefaultSimilarityAnonymousClass();
 
-            public DefaultSimilarityAnonymousClass(TestSpans outerInstance)
+            private DefaultSimilarityAnonymousClass()
             {
-                this.outerInstance = outerInstance;
             }
 
             public override float SloppyFreq(int distance)
@@ -556,6 +609,7 @@ namespace Lucene.Net.Search.Spans
 
         [Test]
         [Description("LUCENENET-597")]
+        [LuceneNetSpecific]
         public void TestToString_LUCENENET_597()
         {
             var clauses = new[]

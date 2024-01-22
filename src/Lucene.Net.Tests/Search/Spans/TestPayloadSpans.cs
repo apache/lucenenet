@@ -262,7 +262,7 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestShrinkToAfterShortestMatch()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer()));
 
             Document doc = new Document();
             doc.Add(new TextField("content", new StringReader("a b c d e f g h i j a k")));
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestShrinkToAfterShortestMatch2()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer()));
 
             Document doc = new Document();
             doc.Add(new TextField("content", new StringReader("a b a d k f a h i k a k")));
@@ -341,7 +341,7 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestShrinkToAfterShortestMatch3()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer()));
 
             Document doc = new Document();
             doc.Add(new TextField("content", new StringReader("j k a l f k k p a t a k l k t a")));
@@ -516,14 +516,12 @@ namespace Lucene.Net.Search.Spans
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                return new TokenStreamComponents(result, new PayloadFilter(outerInstance, result));
+                return new TokenStreamComponents(result, new PayloadFilter(result));
             }
         }
 
         internal sealed class PayloadFilter : TokenFilter
         {
-            private readonly TestPayloadSpans outerInstance;
-
             internal ISet<string> entities = new JCG.HashSet<string>();
             internal ISet<string> nopayload = new JCG.HashSet<string>();
             internal int pos;
@@ -531,10 +529,9 @@ namespace Lucene.Net.Search.Spans
             internal ICharTermAttribute termAtt;
             internal IPositionIncrementAttribute posIncrAtt;
 
-            public PayloadFilter(TestPayloadSpans outerInstance, TokenStream input)
+            public PayloadFilter(TokenStream input)
                 : base(input)
             {
-                this.outerInstance = outerInstance;
                 pos = 0;
                 entities.Add("xx");
                 entities.Add("one");
@@ -577,17 +574,10 @@ namespace Lucene.Net.Search.Spans
 
         public sealed class TestPayloadAnalyzer : Analyzer
         {
-            private readonly TestPayloadSpans outerInstance;
-
-            public TestPayloadAnalyzer(TestPayloadSpans outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                return new TokenStreamComponents(result, new PayloadFilter(outerInstance, result));
+                return new TokenStreamComponents(result, new PayloadFilter(result));
             }
         }
     }
