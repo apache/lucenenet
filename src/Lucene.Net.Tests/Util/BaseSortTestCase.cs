@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -52,8 +51,11 @@ namespace Lucene.Net.Util
 
         public abstract Sorter NewSorter(Entry[] arr);
 
+        // LUCENENET specific
         public class StableEntryComparer : IComparer<Entry>
         {
+            public static readonly StableEntryComparer Default = new StableEntryComparer();
+
             public int Compare(Entry a, Entry b)
             {
                 if (a.Value < b.Value) return -1;
@@ -67,8 +69,8 @@ namespace Lucene.Net.Util
         public virtual void AssertSorted(Entry[] original, Entry[] sorted)
         {
             Assert.AreEqual(original.Length, sorted.Length);
-            // LUCENENET: this code differs significantly from the original Java test which used Arrays.sort().
-            Entry[] stableSorted = original.OrderBy(e => e, new StableEntryComparer()).ToArray();
+            Entry[] stableSorted = Arrays.CopyOf(original, original.Length);
+            Array.Sort(stableSorted, StableEntryComparer.Default); // LUCENENET: use StableEntryComparer
             for (int i = 0; i < original.Length; ++i)
             {
                 Assert.AreEqual(stableSorted[i].Value, sorted[i].Value);
