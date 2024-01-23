@@ -389,7 +389,7 @@ namespace Lucene.Net.Search
         }
 
         /*
-         * LUCENE-3528 - NRTManager hangs in certain situations 
+         * LUCENE-3528 - NRTManager hangs in certain situations
          */
         [Test]
         public virtual void TestThreadStarvationNoDeleteNRTReader()
@@ -409,7 +409,7 @@ namespace Lucene.Net.Search
             writer.AddDocument(doc);
             manager.MaybeRefresh();
 
-            var t = new ThreadAnonymousClass(this, latch, signal, writer, manager);
+            var t = new ThreadAnonymousClass(latch, signal, writer, manager);
             t.Start();
             _writer.waitAfterUpdate = true; // wait in addDocument to let some reopens go through
             long lastGen = writer.UpdateDocument(new Term("foo", "bar"), doc); // once this returns the doc is already reflected in the last reopen
@@ -434,7 +434,7 @@ namespace Lucene.Net.Search
             }
 
             AtomicBoolean finished = new AtomicBoolean(false);
-            var waiter = new ThreadAnonymousClass2(this, lastGen, thread, finished);
+            var waiter = new ThreadAnonymousClass2(lastGen, thread, finished);
             waiter.Start();
             manager.MaybeRefresh();
 
@@ -451,16 +451,13 @@ namespace Lucene.Net.Search
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestControlledRealTimeReopenThread outerInstance;
-
             private readonly CountdownEvent latch;
             private readonly CountdownEvent signal;
             private readonly TrackingIndexWriter writer;
             private readonly SearcherManager manager;
 
-            public ThreadAnonymousClass(TestControlledRealTimeReopenThread outerInstance, CountdownEvent latch, CountdownEvent signal, TrackingIndexWriter writer, SearcherManager manager)
+            public ThreadAnonymousClass(CountdownEvent latch, CountdownEvent signal, TrackingIndexWriter writer, SearcherManager manager)
             {
-                this.outerInstance = outerInstance;
                 this.latch = latch;
                 this.signal = signal;
                 this.writer = writer;
@@ -489,15 +486,12 @@ namespace Lucene.Net.Search
 
         private sealed class ThreadAnonymousClass2 : ThreadJob
         {
-            private readonly TestControlledRealTimeReopenThread outerInstance;
-
             private readonly long lastGen;
             private readonly ControlledRealTimeReopenThread<IndexSearcher> thread;
             private readonly AtomicBoolean finished;
 
-            public ThreadAnonymousClass2(TestControlledRealTimeReopenThread outerInstance, long lastGen, ControlledRealTimeReopenThread<IndexSearcher> thread, AtomicBoolean finished)
+            public ThreadAnonymousClass2(long lastGen, ControlledRealTimeReopenThread<IndexSearcher> thread, AtomicBoolean finished)
             {
-                this.outerInstance = outerInstance;
                 this.lastGen = lastGen;
                 this.thread = thread;
                 this.finished = finished;
@@ -520,7 +514,6 @@ namespace Lucene.Net.Search
 
         public class LatchedIndexWriter : IndexWriter
         {
-
             internal CountdownEvent latch;
             internal bool waitAfterUpdate = false;
             internal CountdownEvent signal;
@@ -560,11 +553,11 @@ namespace Lucene.Net.Search
 
             IndexReader other = DirectoryReader.Open(dir);
 
-            SearcherFactory theEvilOne = new SearcherFactoryAnonymousClass2(this, other);
+            SearcherFactory theEvilOne = new SearcherFactoryAnonymousClass2(other);
 
             try
             {
-                new SearcherManager(w.IndexWriter, false, theEvilOne);
+                _ = new SearcherManager(w.IndexWriter, false, theEvilOne); // LUCENENET: discard result of constructor
                 fail("didn't hit expected exception");
             }
             catch (Exception ise) when (ise.IsIllegalStateException())
@@ -578,13 +571,10 @@ namespace Lucene.Net.Search
 
         private sealed class SearcherFactoryAnonymousClass2 : SearcherFactory
         {
-            private readonly TestControlledRealTimeReopenThread outerInstance;
-
             private readonly IndexReader other;
 
-            public SearcherFactoryAnonymousClass2(TestControlledRealTimeReopenThread outerInstance, IndexReader other)
+            public SearcherFactoryAnonymousClass2(IndexReader other)
             {
-                this.outerInstance = outerInstance;
                 this.other = other;
             }
 
@@ -601,7 +591,7 @@ namespace Lucene.Net.Search
             IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
             AtomicBoolean afterRefreshCalled = new AtomicBoolean(false);
             SearcherManager sm = new SearcherManager(iw, true, new SearcherFactory());
-            sm.AddListener(new RefreshListenerAnonymousClass(this, afterRefreshCalled));
+            sm.AddListener(new RefreshListenerAnonymousClass(afterRefreshCalled));
             iw.AddDocument(new Document());
             iw.Commit();
             assertFalse(afterRefreshCalled);
@@ -614,13 +604,10 @@ namespace Lucene.Net.Search
 
         private sealed class RefreshListenerAnonymousClass : ReferenceManager.IRefreshListener
         {
-            private readonly TestControlledRealTimeReopenThread outerInstance;
-
             private AtomicBoolean afterRefreshCalled;
 
-            public RefreshListenerAnonymousClass(TestControlledRealTimeReopenThread outerInstance, AtomicBoolean afterRefreshCalled)
+            public RefreshListenerAnonymousClass(AtomicBoolean afterRefreshCalled)
             {
-                this.outerInstance = outerInstance;
                 this.afterRefreshCalled = afterRefreshCalled;
             }
 
@@ -667,10 +654,10 @@ namespace Lucene.Net.Search
             IndexWriter iw = new IndexWriter(dir, config);
             SearcherManager sm = new SearcherManager(iw, true, new SearcherFactory());
             TrackingIndexWriter tiw = new TrackingIndexWriter(iw);
-            ControlledRealTimeReopenThread<IndexSearcher> controlledRealTimeReopenThread = 
+            ControlledRealTimeReopenThread<IndexSearcher> controlledRealTimeReopenThread =
                 new ControlledRealTimeReopenThread<IndexSearcher>(tiw, sm, maxStaleSecs, 0);
 
-            controlledRealTimeReopenThread.IsBackground = (true);
+            controlledRealTimeReopenThread.IsBackground = true;
             controlledRealTimeReopenThread.Start();
 
             IList<ThreadJob> commitThreads = new JCG.List<ThreadJob>();
@@ -679,7 +666,7 @@ namespace Lucene.Net.Search
             {
                 if (i > 0 && i % 50 == 0)
                 {
-                    ThreadJob commitThread = new RunnableAnonymousClass(this, sdp, dir, iw);
+                    ThreadJob commitThread = new RunnableAnonymousClass(sdp, dir, iw);
                     commitThread.Start();
                     commitThreads.Add(commitThread);
                 }
@@ -710,15 +697,12 @@ namespace Lucene.Net.Search
 
         private sealed class RunnableAnonymousClass : ThreadJob
         {
-            private readonly TestControlledRealTimeReopenThread outerInstance;
-
             private SnapshotDeletionPolicy sdp;
             private Directory dir;
             private IndexWriter iw;
 
-            public RunnableAnonymousClass(TestControlledRealTimeReopenThread outerInstance, SnapshotDeletionPolicy sdp, Directory dir, IndexWriter iw)
+            public RunnableAnonymousClass(SnapshotDeletionPolicy sdp, Directory dir, IndexWriter iw)
             {
-                this.outerInstance = outerInstance;
                 this.sdp = sdp;
                 this.dir = dir;
                 this.iw = iw;
@@ -749,7 +733,7 @@ namespace Lucene.Net.Search
         /// This test was purposely written in a way that demonstrates how to use the
         /// ControlledRealTimeReopenThread.  It contains seperate Asserts for each of
         /// several use cases rather then trying to brake these use cases up into
-        /// seperate unit tests.  This combined approach makes the behavior of 
+        /// seperate unit tests.  This combined approach makes the behavior of
         /// ControlledRealTimeReopenThread easier to understand.
         /// </summary>
         // LUCENENET specific - An extra test to demonstrate use of ControlledRealTimeReopen.
@@ -758,7 +742,6 @@ namespace Lucene.Net.Search
         [Ignore("Run Manually (contains timing code that doesn't play well with other tests)")]
         public void TestStraightForwardDemonstration()
         {
-
             RAMDirectory indexDir = new RAMDirectory();
 
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
@@ -774,7 +757,7 @@ namespace Lucene.Net.Search
             SearcherManager searcherManager = new SearcherManager(indexWriter, applyAllDeletes: true, null);
 
             //Reopen SearcherManager every 1 secs via background thread if no thread waiting for newer generation.
-            //Reopen SearcherManager after .2 secs if another thread IS waiting on a newer generation.  
+            //Reopen SearcherManager after .2 secs if another thread IS waiting on a newer generation.
             var controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(trackingWriter, searcherManager, 1, 0.2);
 
             //Start() will start a seperate thread that will invoke the object's Run(). However,
@@ -804,7 +787,7 @@ namespace Lucene.Net.Search
             doc.Add(new StringField("name", "Doc2", Field.Store.YES));
             trackingWriter.AddDocument(doc);
 
-            //Demonstrate that we can only see the first doc because we haven't 
+            //Demonstrate that we can only see the first doc because we haven't
             //waited 1 sec or called WaitForGeneration
             indexSearcher = searcherManager.Acquire();
             try
@@ -868,8 +851,8 @@ namespace Lucene.Net.Search
 
 
         /// <summary>
-        /// In this test multiple threads are created each of which is waiting on the same 
-        /// generation before doing a search.  These threads will all stack up on the 
+        /// In this test multiple threads are created each of which is waiting on the same
+        /// generation before doing a search.  These threads will all stack up on the
         /// WaitForGeneration(generation) call.  All threads should return from this call
         /// in approximately in the time expected, namely the value for targetMinStaleSec passed
         /// to ControlledRealTimeReopenThread in it's constructor.
@@ -934,7 +917,7 @@ namespace Lucene.Net.Search
             SearcherManager searcherManager = new SearcherManager(indexWriter, applyAllDeletes: true, null);
 
             //Reopen SearcherManager every 2 secs via background thread if no thread waiting for newer generation.
-            //Reopen SearcherManager after .2 secs if another thread IS waiting on a newer generation.  
+            //Reopen SearcherManager after .2 secs if another thread IS waiting on a newer generation.
             double maxRefreshSecs = 2.0;
             double minRefreshSecs = .2;
             var controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(trackingWriter, searcherManager, maxRefreshSecs, minRefreshSecs);

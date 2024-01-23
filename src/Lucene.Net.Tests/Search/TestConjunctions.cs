@@ -105,18 +105,11 @@ namespace Lucene.Net.Search
 
             public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
             {
-                return new SimWeightAnonymousClass(this);
+                return new SimWeightAnonymousClass();
             }
 
             private sealed class SimWeightAnonymousClass : SimWeight
             {
-                private readonly TFSimilarity outerInstance;
-
-                public SimWeightAnonymousClass(TFSimilarity outerInstance)
-                {
-                    this.outerInstance = outerInstance;
-                }
-
                 public override float GetValueForNormalization()
                 {
                     return 1; // we don't care
@@ -130,18 +123,11 @@ namespace Lucene.Net.Search
 
             public override SimScorer GetSimScorer(SimWeight weight, AtomicReaderContext context)
             {
-                return new SimScorerAnonymousClass(this);
+                return new SimScorerAnonymousClass();
             }
 
             private sealed class SimScorerAnonymousClass : SimScorer
             {
-                private readonly TFSimilarity outerInstance;
-
-                public SimScorerAnonymousClass(TFSimilarity outerInstance)
-                {
-                    this.outerInstance = outerInstance;
-                }
-
                 public override float Score(int doc, float freq)
                 {
                     return freq;

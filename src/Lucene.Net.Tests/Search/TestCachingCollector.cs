@@ -31,7 +31,11 @@ namespace Lucene.Net.Search
 
         private class MockScorer : Scorer
         {
-            internal MockScorer()
+            // LUCENENET: static instance to reduce allocations
+            public static readonly MockScorer Default = new MockScorer();
+
+            // LUCENENET: Made private
+            private MockScorer()
                 : base((Weight)null)
             {
             }
@@ -63,9 +67,14 @@ namespace Lucene.Net.Search
 
         private class NoOpCollector : ICollector
         {
+            // LUCENENET: static instances to reduce allocations
+            public static readonly NoOpCollector FalseInstance = new NoOpCollector(false);
+            public static readonly NoOpCollector TrueInstance = new NoOpCollector(true);
+
             private readonly bool acceptDocsOutOfOrder;
 
-            public NoOpCollector(bool acceptDocsOutOfOrder)
+            // LUCENENET: Made private
+            private NoOpCollector(bool acceptDocsOutOfOrder)
             {
                 this.acceptDocsOutOfOrder = acceptDocsOutOfOrder;
             }
@@ -90,8 +99,8 @@ namespace Lucene.Net.Search
         {
             foreach (bool cacheScores in new bool[] { false, true })
             {
-                CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), cacheScores, 1.0);
-                cc.SetScorer(new MockScorer());
+                CachingCollector cc = CachingCollector.Create(NoOpCollector.FalseInstance, cacheScores, 1.0); // LUCENENET: use static instance of NoOpCollector
+                cc.SetScorer(MockScorer.Default); // LUCENENET: use static instance of MockScorer
 
                 // collect 1000 docs
                 for (int i = 0; i < 1000; i++)
@@ -100,21 +109,13 @@ namespace Lucene.Net.Search
                 }
 
                 // now replay them
-                cc.Replay(new CollectorAnonymousClass(this));
+                cc.Replay(new CollectorAnonymousClass());
             }
         }
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            private readonly TestCachingCollector outerInstance;
-
-            public CollectorAnonymousClass(TestCachingCollector outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                prevDocID = -1;
-            }
-
-            internal int prevDocID;
+            internal int prevDocID = -1;
 
             public void SetScorer(Scorer scorer)
             {
@@ -136,8 +137,8 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestIllegalStateOnReplay()
         {
-            CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), true, 50 * ONE_BYTE);
-            cc.SetScorer(new MockScorer());
+            CachingCollector cc = CachingCollector.Create(NoOpCollector.FalseInstance, true, 50 * ONE_BYTE); // LUCENENET: use static instance of NoOpCollector
+            cc.SetScorer(MockScorer.Default); // LUCENENET: use static instance of MockScorer
 
             // collect 130 docs, this should be enough for triggering cache abort.
             for (int i = 0; i < 130; i++)
@@ -149,7 +150,7 @@ namespace Lucene.Net.Search
 
             try
             {
-                cc.Replay(new NoOpCollector(false));
+                cc.Replay(NoOpCollector.FalseInstance); // LUCENENET: use static instance of NoOpCollector
                 Assert.Fail("replay should fail if CachingCollector is not cached");
             }
             catch (Exception e) when (e.IsIllegalStateException())
@@ -165,26 +166,26 @@ namespace Lucene.Net.Search
             // is valid with the Collector passed to the ctor
 
             // 'src' Collector does not support out-of-order
-            CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), true, 50 * ONE_BYTE);
-            cc.SetScorer(new MockScorer());
+            CachingCollector cc = CachingCollector.Create(NoOpCollector.FalseInstance, true, 50 * ONE_BYTE); // LUCENENET: use static instance of NoOpCollector
+            cc.SetScorer(MockScorer.Default); // LUCENENET: use static instance of MockScorer
             for (int i = 0; i < 10; i++)
             {
                 cc.Collect(i);
             }
-            cc.Replay(new NoOpCollector(true)); // this call should not fail
-            cc.Replay(new NoOpCollector(false)); // this call should not fail
+            cc.Replay(NoOpCollector.TrueInstance); // this call should not fail  // LUCENENET: use static instance of NoOpCollector
+            cc.Replay(NoOpCollector.FalseInstance); // this call should not fail  // LUCENENET: use static instance of NoOpCollector
 
             // 'src' Collector supports out-of-order
-            cc = CachingCollector.Create(new NoOpCollector(true), true, 50 * ONE_BYTE);
-            cc.SetScorer(new MockScorer());
+            cc = CachingCollector.Create(NoOpCollector.TrueInstance, true, 50 * ONE_BYTE);  // LUCENENET: use static instance of NoOpCollector
+            cc.SetScorer(MockScorer.Default); // LUCENENET: use static instance of MockScorer
             for (int i = 0; i < 10; i++)
             {
                 cc.Collect(i);
             }
-            cc.Replay(new NoOpCollector(true)); // this call should not fail
+            cc.Replay(NoOpCollector.TrueInstance); // this call should not fail  // LUCENENET: use static instance of NoOpCollector
             try
             {
-                cc.Replay(new NoOpCollector(false)); // this call should fail
+                cc.Replay(NoOpCollector.FalseInstance); // this call should fail  // LUCENENET: use static instance of NoOpCollector
                 Assert.Fail("should have failed if an in-order Collector was given to replay(), " + "while CachingCollector was initialized with out-of-order collection");
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
@@ -204,8 +205,8 @@ namespace Lucene.Net.Search
             foreach (bool cacheScores in new bool[] { false, true })
             {
                 int bytesPerDoc = cacheScores ? 8 : 4;
-                CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), cacheScores, bytesPerDoc * ONE_BYTE * numDocs);
-                cc.SetScorer(new MockScorer());
+                CachingCollector cc = CachingCollector.Create(NoOpCollector.FalseInstance, cacheScores, bytesPerDoc * ONE_BYTE * numDocs);  // LUCENENET: use static instance of NoOpCollector
+                cc.SetScorer(MockScorer.Default); // LUCENENET: use static instance of MockScorer
                 for (int i = 0; i < numDocs; i++)
                 {
                     cc.Collect(i);
@@ -226,11 +227,11 @@ namespace Lucene.Net.Search
                 // create w/ null wrapped collector, and test that the methods work
                 CachingCollector cc = CachingCollector.Create(true, cacheScores, 50 * ONE_BYTE);
                 cc.SetNextReader(null);
-                cc.SetScorer(new MockScorer());
+                cc.SetScorer(MockScorer.Default); // LUCENENET: use static instance of MockScorer
                 cc.Collect(0);
 
                 Assert.IsTrue(cc.IsCached);
-                cc.Replay(new NoOpCollector(true));
+                cc.Replay(NoOpCollector.TrueInstance); // LUCENENET: use static instance of NoOpCollector
             }
         }
     }

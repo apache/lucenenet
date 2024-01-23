@@ -56,8 +56,8 @@ namespace Lucene.Net.Search
             base.SetUp();
             INDEX_SIZE = AtLeast(2000);
             index = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(LuceneTestCase.Random, index);
-            RandomGen random = new RandomGen(this, Random);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, index);
+            RandomGen random = new RandomGen(Random);
             for (int i = 0; i < INDEX_SIZE; ++i) // don't decrease; if to low the
             {
                 // problem doesn't show up
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
             // log("Run testFieldSortCustomSearcher");
             // define the sort criteria
             Sort custSort = new Sort(new SortField("publicationDate_", SortFieldType.STRING), SortField.FIELD_SCORE);
-            IndexSearcher searcher = new CustomSearcher(this, reader, 2);
+            IndexSearcher searcher = new CustomSearcher(reader, 2);
             // search and check hits
             MatchHits(searcher, custSort);
         }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
             // log("Run testFieldSortSingleSearcher");
             // define the sort criteria
             Sort custSort = new Sort(new SortField("publicationDate_", SortFieldType.STRING), SortField.FIELD_SCORE);
-            IndexSearcher searcher = new CustomSearcher(this, reader, 2);
+            IndexSearcher searcher = new CustomSearcher(reader, 2);
             // search and check hits
             MatchHits(searcher, custSort);
         }
@@ -205,14 +205,11 @@ namespace Lucene.Net.Search
 
         public class CustomSearcher : IndexSearcher
         {
-            private readonly TestCustomSearcherSort outerInstance;
-
             internal int switcher;
 
-            public CustomSearcher(TestCustomSearcherSort outerInstance, IndexReader r, int switcher)
+            public CustomSearcher(IndexReader r, int switcher)
                 : base(r)
             {
-                this.outerInstance = outerInstance;
                 this.switcher = switcher;
             }
 
@@ -235,11 +232,8 @@ namespace Lucene.Net.Search
 
         private class RandomGen
         {
-            private readonly TestCustomSearcherSort outerInstance;
-
-            internal RandomGen(TestCustomSearcherSort outerInstance, Random random)
+            internal RandomGen(Random random)
             {
-                this.outerInstance = outerInstance;
                 this.random = random;
                 @base = new DateTime(1980, 1, 1);
             }
@@ -251,7 +245,7 @@ namespace Lucene.Net.Search
 
             // Just to generate some different Lucene Date strings
             internal virtual string LuceneDate
-                => DateTools.TimeToString((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + random.Next() - int.MinValue, DateResolution.DAY);
+                => DateTools.TimeToString((@base.Ticks / TimeSpan.TicksPerMillisecond) + random.Next() - int.MinValue, DateResolution.DAY);
         }
     }
 }
