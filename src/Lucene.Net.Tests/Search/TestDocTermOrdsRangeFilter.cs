@@ -3,7 +3,6 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
-using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -140,7 +139,7 @@ namespace Lucene.Net.Search
         {
             Query docValues = new ConstantScoreQuery(DocTermOrdsRangeFilter.NewBytesRefRange(fieldName, lowerVal, upperVal, includeLower, includeUpper));
             MultiTermQuery inverted = new TermRangeQuery(fieldName, lowerVal, upperVal, includeLower, includeUpper);
-            inverted.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            inverted.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
 
             TopDocs invertedDocs = searcher1.Search(inverted, 25);
             TopDocs docValuesDocs = searcher2.Search(docValues, 25);

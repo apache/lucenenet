@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
-using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -34,13 +33,10 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// DateFilter JUnit tests.
-    ///
-    ///
     /// </summary>
     [TestFixture]
     public class TestDateFilter : LuceneTestCase
     {
-        ///
         [OneTimeSetUp]
         public override void BeforeClass() // LUCENENET specific - renamed from TestBefore() to ensure calling order vs base class
         {
@@ -106,7 +102,6 @@ namespace Lucene.Net.Search
             // noop, required for the before and after tests to run
         }
 
-        ///
         [OneTimeTearDown]
         public override void AfterClass() // LUCENENET specific - renamed from TestAfter() to ensure calling order vs base class
         {

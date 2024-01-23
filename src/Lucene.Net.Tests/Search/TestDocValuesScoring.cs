@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
             Similarity @base = searcher1.Similarity;
             // boosting
             IndexSearcher searcher2 = NewSearcher(ir, false);
-            searcher2.Similarity = new PerFieldSimilarityWrapperAnonymousClass(this, field, @base);
+            searcher2.Similarity = new PerFieldSimilarityWrapperAnonymousClass(@base);
 
             // in this case, we searched on field "foo". first document should have 2x the score.
             TermQuery tq = new TermQuery(new Term("foo", "quick"));
@@ -123,15 +123,10 @@ namespace Lucene.Net.Search
 
         private sealed class PerFieldSimilarityWrapperAnonymousClass : PerFieldSimilarityWrapper
         {
-            private readonly TestDocValuesScoring outerInstance;
-
-            private Field field;
             private Similarity @base;
 
-            public PerFieldSimilarityWrapperAnonymousClass(TestDocValuesScoring outerInstance, Field field, Similarity @base)
+            public PerFieldSimilarityWrapperAnonymousClass(Similarity @base)
             {
-                this.outerInstance = outerInstance;
-                this.field = field;
                 this.@base = @base;
                 fooSim = new BoostingSimilarity(@base, "foo_boost");
             }

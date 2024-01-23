@@ -73,11 +73,6 @@ namespace Lucene.Net.Search
             base.AfterClass();
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig, NewTextField and
-        /// NewStringField are no longer static.
-        /// </summary>
         [OneTimeSetUp]
         public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassTestExplanations() to ensure calling order
         {
@@ -100,7 +95,13 @@ namespace Lucene.Net.Search
             searcher = NewSearcher(reader);
         }
 
-        protected internal static readonly string[] docFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3 zz", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3 zz" };
+        protected internal static readonly string[] docFields = new string[]
+        {
+            "w1 w2 w3 w4 w5",
+            "w1 w3 w2 w3 zz",
+            "w1 xx w2 yy w3",
+            "w1 w3 xx w2 yy w3 zz"
+        };
 
         /// <summary>
         /// check the expDocNrs first, then check the query (and the explanations) </summary>

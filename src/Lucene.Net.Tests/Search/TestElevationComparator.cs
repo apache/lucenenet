@@ -73,8 +73,10 @@ namespace Lucene.Net.Search
             newq.Add(query, Occur.SHOULD);
             newq.Add(GetElevatedQuery(new string[] { "id", "a", "id", "x" }), Occur.SHOULD);
 
-            Sort sort = new Sort(new SortField("id", new ElevationComparerSource(priority), false), new SortField(null, SortFieldType.SCORE, reversed)
-             );
+            Sort sort = new Sort(
+                new SortField("id", new ElevationComparerSource(priority), false),
+                new SortField(null, SortFieldType.SCORE, reversed)
+            );
 
             TopDocsCollector<Entry> topCollector = TopFieldCollector.Create(sort, 50, false, true, true, true);
             searcher.Search(newq, null, topCollector);
@@ -156,13 +158,11 @@ namespace Lucene.Net.Search
             private readonly ElevationComparerSource outerInstance;
 
             private readonly string fieldname;
-            private int numHits;
 
             public FieldComparerAnonymousClass(ElevationComparerSource outerInstance, string fieldname, int numHits)
             {
                 this.outerInstance = outerInstance;
                 this.fieldname = fieldname;
-                this.numHits = numHits;
                 values = new int[numHits];
                 tempBR = new BytesRef();
             }
