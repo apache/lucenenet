@@ -47,8 +47,8 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// LUCENENET specific. Ensure we have an infostream attached to the default FieldCache
-        /// when running the tests. In Java, this was done in the Core.Search.TestFieldCache.TestInfoStream() 
-        /// method (which polluted the state of these tests), but we need to make the tests self-contained 
+        /// when running the tests. In Java, this was done in the Core.Search.TestFieldCache.TestInfoStream()
+        /// method (which polluted the state of these tests), but we need to make the tests self-contained
         /// so they can be run correctly regardless of order. Not setting the InfoStream skips an execution
         /// path within these tests, so we should do it to make sure we test all of the code.
         /// </summary>
@@ -501,7 +501,7 @@ namespace Lucene.Net.Search
 
             int numDocs = reader.NumDocs;
             float minIdO = Convert.ToSingle(minId + .5f);
-            float medIdO = Convert.ToSingle((float)minIdO + ((maxId - minId)) / 2.0f);
+            float medIdO = Convert.ToSingle(minIdO + ((maxId - minId)) / 2.0f);
 
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));

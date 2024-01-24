@@ -82,8 +82,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// LUCENENET specific. Ensure we have an infostream attached to the default FieldCache
-        /// when running the tests. In Java, this was done in the Core.Search.TestFieldCache.TestInfoStream() 
-        /// method (which polluted the state of these tests), but we need to make the tests self-contained 
+        /// when running the tests. In Java, this was done in the Core.Search.TestFieldCache.TestInfoStream()
+        /// method (which polluted the state of these tests), but we need to make the tests self-contained
         /// so they can be run correctly regardless of order. Not setting the InfoStream skips an execution
         /// path within these tests, so we should do it to make sure we test all of the code.
         /// </summary>
@@ -488,10 +488,10 @@ namespace Lucene.Net.Search
             AtomicBoolean failed = new AtomicBoolean();
             AtomicInt32 iters = new AtomicInt32();
             int NUM_ITER = 200 * RandomMultiplier;
-            Barrier restart = new Barrier(NUM_THREADS, (barrier) => new RunnableAnonymousClass(this, cache, iters).Run());
+            Barrier restart = new Barrier(NUM_THREADS, (barrier) => new RunnableAnonymousClass(cache, iters).Run());
             for (int threadIDX = 0; threadIDX < NUM_THREADS; threadIDX++)
             {
-                threads[threadIDX] = new ThreadAnonymousClass(this, cache, failed, iters, NUM_ITER, restart);
+                threads[threadIDX] = new ThreadAnonymousClass(cache, failed, iters, NUM_ITER, restart);
                 threads[threadIDX].Start();
             }
 
@@ -504,14 +504,11 @@ namespace Lucene.Net.Search
 
         private sealed class RunnableAnonymousClass //: IThreadRunnable
         {
-            private readonly TestFieldCache outerInstance;
-
             private readonly IFieldCache cache;
             private readonly AtomicInt32 iters;
 
-            public RunnableAnonymousClass(TestFieldCache outerInstance, IFieldCache cache, AtomicInt32 iters)
+            public RunnableAnonymousClass(IFieldCache cache, AtomicInt32 iters)
             {
-                this.outerInstance = outerInstance;
                 this.cache = cache;
                 this.iters = iters;
             }
@@ -525,17 +522,14 @@ namespace Lucene.Net.Search
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestFieldCache outerInstance;
-
             private readonly IFieldCache cache;
             private readonly AtomicBoolean failed;
             private readonly AtomicInt32 iters;
             private readonly int NUM_ITER;
             private readonly Barrier restart;
 
-            public ThreadAnonymousClass(TestFieldCache outerInstance, IFieldCache cache, AtomicBoolean failed, AtomicInt32 iters, int NUM_ITER, Barrier restart)
+            public ThreadAnonymousClass(IFieldCache cache, AtomicBoolean failed, AtomicInt32 iters, int NUM_ITER, Barrier restart)
             {
-                this.outerInstance = outerInstance;
                 this.cache = cache;
                 this.failed = failed;
                 this.iters = iters;
@@ -744,7 +738,7 @@ namespace Lucene.Net.Search
             bits = FieldCache.DEFAULT.GetDocsWithField(ar, "numeric");
             Assert.IsTrue(bits.Get(0));
 
-            // SortedSet type: can be retrieved via getDocTermOrds() 
+            // SortedSet type: can be retrieved via getDocTermOrds()
             if (DefaultCodecSupportsSortedSet)
             {
                 try

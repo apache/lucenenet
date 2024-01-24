@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// A basic unit test for FieldCacheTermsFilter
     /// </summary>
-    /// <seealso cref= Lucene.Net.Search.FieldCacheTermsFilter </seealso>
+    /// <seealso cref="Lucene.Net.Search.FieldCacheTermsFilter" />
     [TestFixture]
     public class TestFieldCacheTermsFilter : LuceneTestCase
     {
