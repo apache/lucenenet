@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 
                 // 10% of the time, the document is missing the value:
                 BytesRef br;
-                if (LuceneTestCase.Random.Next(10) != 7)
+                if (Random.Next(10) != 7)
                 {
                     string s;
                     if (random.NextBoolean())
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search
 
                 // Compute expected results:
                 var expected = f.matchValues.ToList();
-                
+
                 expected.Sort(Comparer<BytesRef>.Create((a,b) =>
                     {
                         if (a is null)

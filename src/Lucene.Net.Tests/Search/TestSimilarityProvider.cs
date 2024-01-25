@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             directory = NewDirectory();
-            PerFieldSimilarityWrapper sim = new ExampleSimilarityProvider(this);
+            PerFieldSimilarityWrapper sim = new ExampleSimilarityProvider();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetSimilarity(sim);
             RandomIndexWriter iw = new RandomIndexWriter(Random, directory, iwc);
             Document doc = new Document();
@@ -105,17 +105,8 @@ namespace Lucene.Net.Search
 
         private class ExampleSimilarityProvider : PerFieldSimilarityWrapper
         {
-            private readonly TestSimilarityProvider outerInstance;
-
-            public ExampleSimilarityProvider(TestSimilarityProvider outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                sim1 = new Sim1(outerInstance);
-                sim2 = new Sim2(outerInstance);
-            }
-
-            private readonly Similarity sim1;
-            private readonly Similarity sim2;
+            private readonly Similarity sim1 = new Sim1();
+            private readonly Similarity sim2 = new Sim2();
 
             public override Similarity Get(string field)
             {
@@ -132,13 +123,6 @@ namespace Lucene.Net.Search
 
         private class Sim1 : TFIDFSimilarity
         {
-            private readonly TestSimilarityProvider outerInstance;
-
-            public Sim1(TestSimilarityProvider outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override long EncodeNormValue(float f)
             {
                 return (long)f;
@@ -187,13 +171,6 @@ namespace Lucene.Net.Search
 
         private class Sim2 : TFIDFSimilarity
         {
-            private readonly TestSimilarityProvider outerInstance;
-
-            public Sim2(TestSimilarityProvider outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override long EncodeNormValue(float f)
             {
                 return (long)f;

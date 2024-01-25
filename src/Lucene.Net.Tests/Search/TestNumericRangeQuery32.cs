@@ -74,7 +74,10 @@ namespace Lucene.Net.Search
             noDocs = AtLeast(4096);
             distance = (1 << 30) / noDocs;
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(TestUtil.NextInt32(Random, 100, 1000))
+                    .SetMergePolicy(NewLogMergePolicy()));
 
             FieldType storedInt = new FieldType(Int32Field.TYPE_NOT_STORED);
             storedInt.IsStored = true;
@@ -103,7 +106,14 @@ namespace Lucene.Net.Search
             FieldType unstoredInt2 = new FieldType(unstoredInt);
             unstoredInt2.NumericPrecisionStep = 2;
 
-            Int32Field field8 = new Int32Field("field8", 0, storedInt8), field4 = new Int32Field("field4", 0, storedInt4), field2 = new Int32Field("field2", 0, storedInt2), fieldNoTrie = new Int32Field("field" + int.MaxValue, 0, storedIntNone), ascfield8 = new Int32Field("ascfield8", 0, unstoredInt8), ascfield4 = new Int32Field("ascfield4", 0, unstoredInt4), ascfield2 = new Int32Field("ascfield2", 0, unstoredInt2);
+            Int32Field
+                field8 = new Int32Field("field8", 0, storedInt8),
+                field4 = new Int32Field("field4", 0, storedInt4),
+                field2 = new Int32Field("field2", 0, storedInt2),
+                fieldNoTrie = new Int32Field("field" + int.MaxValue, 0, storedIntNone),
+                ascfield8 = new Int32Field("ascfield8", 0, unstoredInt8),
+                ascfield4 = new Int32Field("ascfield4", 0, unstoredInt4),
+                ascfield2 = new Int32Field("ascfield2", 0, unstoredInt2);
 
             Document doc = new Document();
             // add fields, that have a distance to test general functionality
@@ -225,11 +235,11 @@ namespace Lucene.Net.Search
         {
             AtomicReaderContext context = (AtomicReaderContext)SlowCompositeReaderWrapper.Wrap(reader).Context;
             NumericRangeFilter<int> f = NumericRangeFilter.NewInt32Range("field8", 8, 1000, -1000, true, true);
-            Assert.IsNull(f.GetDocIdSet(context, (context.AtomicReader).LiveDocs), "A inverse range should return the null instance");
+            Assert.IsNull(f.GetDocIdSet(context, context.AtomicReader.LiveDocs), "A inverse range should return the null instance");
             f = NumericRangeFilter.NewInt32Range("field8", 8, int.MaxValue, null, false, false);
-            Assert.IsNull(f.GetDocIdSet(context, (context.AtomicReader).LiveDocs), "A exclusive range starting with Integer.MAX_VALUE should return the null instance");
+            Assert.IsNull(f.GetDocIdSet(context, context.AtomicReader.LiveDocs), "A exclusive range starting with Integer.MAX_VALUE should return the null instance");
             f = NumericRangeFilter.NewInt32Range("field8", 8, null, int.MinValue, false, false);
-            Assert.IsNull(f.GetDocIdSet(context, (context.AtomicReader).LiveDocs), "A exclusive range ending with Integer.MIN_VALUE should return the null instance");
+            Assert.IsNull(f.GetDocIdSet(context, context.AtomicReader.LiveDocs), "A exclusive range ending with Integer.MIN_VALUE should return the null instance");
         }
 
         [Test]

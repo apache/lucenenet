@@ -178,8 +178,28 @@ namespace Lucene.Net.Search
         {
             // Two Sort criteria to instantiate the multi/single comparers.
             Sort[] sort = new Sort[] { new Sort(SortField.FIELD_DOC), new Sort() };
-            bool[][] tfcOptions = new bool[][] { new bool[] { false, false, false }, new bool[] { false, false, true }, new bool[] { false, true, false }, new bool[] { false, true, true }, new bool[] { true, false, false }, new bool[] { true, false, true }, new bool[] { true, true, false }, new bool[] { true, true, true } };
-            string[] actualTFCClasses = new string[] { "OutOfOrderOneComparerNonScoringCollector", "OutOfOrderOneComparerScoringMaxScoreCollector", "OutOfOrderOneComparerScoringNoMaxScoreCollector", "OutOfOrderOneComparerScoringMaxScoreCollector", "OutOfOrderOneComparerNonScoringCollector", "OutOfOrderOneComparerScoringMaxScoreCollector", "OutOfOrderOneComparerScoringNoMaxScoreCollector", "OutOfOrderOneComparerScoringMaxScoreCollector" };
+            bool[][] tfcOptions = new bool[][]
+            {
+                new bool[] { false, false, false },
+                new bool[] { false, false, true },
+                new bool[] { false, true, false },
+                new bool[] { false, true, true },
+                new bool[] { true, false, false },
+                new bool[] { true, false, true },
+                new bool[] { true, true, false },
+                new bool[] { true, true, true }
+            };
+            string[] actualTFCClasses = new string[]
+            {
+                "OutOfOrderOneComparerNonScoringCollector",
+                "OutOfOrderOneComparerScoringMaxScoreCollector",
+                "OutOfOrderOneComparerScoringNoMaxScoreCollector",
+                "OutOfOrderOneComparerScoringMaxScoreCollector",
+                "OutOfOrderOneComparerNonScoringCollector",
+                "OutOfOrderOneComparerScoringMaxScoreCollector",
+                "OutOfOrderOneComparerScoringNoMaxScoreCollector",
+                "OutOfOrderOneComparerScoringMaxScoreCollector"
+            };
 
             BooleanQuery bq = new BooleanQuery();
             // Add a Query with SHOULD, since bw.Scorer() returns BooleanScorer2
@@ -211,8 +231,28 @@ namespace Lucene.Net.Search
         {
             // Two Sort criteria to instantiate the multi/single comparers.
             Sort[] sort = new Sort[] { new Sort(SortField.FIELD_DOC, SortField.FIELD_SCORE) };
-            bool[][] tfcOptions = new bool[][] { new bool[] { false, false, false }, new bool[] { false, false, true }, new bool[] { false, true, false }, new bool[] { false, true, true }, new bool[] { true, false, false }, new bool[] { true, false, true }, new bool[] { true, true, false }, new bool[] { true, true, true } };
-            string[] actualTFCClasses = new string[] { "OutOfOrderMultiComparerNonScoringCollector", "OutOfOrderMultiComparerScoringMaxScoreCollector", "OutOfOrderMultiComparerScoringNoMaxScoreCollector", "OutOfOrderMultiComparerScoringMaxScoreCollector", "OutOfOrderMultiComparerNonScoringCollector", "OutOfOrderMultiComparerScoringMaxScoreCollector", "OutOfOrderMultiComparerScoringNoMaxScoreCollector", "OutOfOrderMultiComparerScoringMaxScoreCollector" };
+            bool[][] tfcOptions = new bool[][]
+            {
+                new bool[] { false, false, false },
+                new bool[] { false, false, true },
+                new bool[] { false, true, false },
+                new bool[] { false, true, true },
+                new bool[] { true, false, false },
+                new bool[] { true, false, true },
+                new bool[] { true, true, false },
+                new bool[] { true, true, true }
+            };
+            string[] actualTFCClasses = new string[]
+            {
+                "OutOfOrderMultiComparerNonScoringCollector",
+                "OutOfOrderMultiComparerScoringMaxScoreCollector",
+                "OutOfOrderMultiComparerScoringNoMaxScoreCollector",
+                "OutOfOrderMultiComparerScoringMaxScoreCollector",
+                "OutOfOrderMultiComparerNonScoringCollector",
+                "OutOfOrderMultiComparerScoringMaxScoreCollector",
+                "OutOfOrderMultiComparerScoringNoMaxScoreCollector",
+                "OutOfOrderMultiComparerScoringMaxScoreCollector"
+            };
 
             BooleanQuery bq = new BooleanQuery();
             // Add a Query with SHOULD, since bw.Scorer() returns BooleanScorer2

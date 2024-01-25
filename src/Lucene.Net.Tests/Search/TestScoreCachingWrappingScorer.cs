@@ -108,7 +108,9 @@ namespace Lucene.Net.Search
             public bool AcceptsDocsOutOfOrder => true;
         }
 
-        private static readonly float[] scores = new float[] { 0.7767749f, 1.7839992f, 8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, 8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f };
+        private static readonly float[] scores = new float[] { 0.7767749f, 1.7839992f,
+            8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f,
+            8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f };
 
         [Test]
         public virtual void TestGetScores()
@@ -119,7 +121,7 @@ namespace Lucene.Net.Search
             IndexReader ir = writer.GetReader();
             writer.Dispose();
             IndexSearcher searcher = NewSearcher(ir);
-            Weight fake = (new TermQuery(new Term("fake", "weight"))).CreateWeight(searcher);
+            Weight fake = new TermQuery(new Term("fake", "weight")).CreateWeight(searcher);
             Scorer s = new SimpleScorer(fake);
             ScoreCachingCollector scc = new ScoreCachingCollector(scores.Length);
             scc.SetScorer(s);

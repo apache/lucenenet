@@ -32,8 +32,7 @@ namespace Lucene.Net.Search
     using Terms = Lucene.Net.Index.Terms;
 
     /// <summary>
-    /// Tests <seealso cref="PrefixQuery"/> class.
-    ///
+    /// Tests <see cref="PrefixQuery"/> class.
     /// </summary>
     [TestFixture]
     public class TestPrefixQuery : LuceneTestCase

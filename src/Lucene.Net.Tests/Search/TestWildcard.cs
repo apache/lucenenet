@@ -292,18 +292,91 @@ namespace Lucene.Net.Search
             string[] docs = new string[] { "\\ abcdefg1", "\\x00079 hijklmn1", "\\\\ opqrstu1" };
 
             // queries that should find all docs
-            Query[] matchAll = new Query[] { new WildcardQuery(new Term(field, "*")), new WildcardQuery(new Term(field, "*1")), new WildcardQuery(new Term(field, "**1")), new WildcardQuery(new Term(field, "*?")), new WildcardQuery(new Term(field, "*?1")), new WildcardQuery(new Term(field, "?*1")), new WildcardQuery(new Term(field, "**")), new WildcardQuery(new Term(field, "***")), new WildcardQuery(new Term(field, "\\\\*")) };
+            Query[] matchAll = new Query[]
+            {
+                new WildcardQuery(new Term(field, "*")),
+                new WildcardQuery(new Term(field, "*1")),
+                new WildcardQuery(new Term(field, "**1")),
+                new WildcardQuery(new Term(field, "*?")),
+                new WildcardQuery(new Term(field, "*?1")),
+                new WildcardQuery(new Term(field, "?*1")),
+                new WildcardQuery(new Term(field, "**")),
+                new WildcardQuery(new Term(field, "***")),
+                new WildcardQuery(new Term(field, "\\\\*"))
+            };
 
             // queries that should find no docs
-            Query[] matchNone = new Query[] { new WildcardQuery(new Term(field, "a*h")), new WildcardQuery(new Term(field, "a?h")), new WildcardQuery(new Term(field, "*a*h")), new WildcardQuery(new Term(field, "?a")), new WildcardQuery(new Term(field, "a?")) };
+            Query[] matchNone = new Query[]
+            {
+                new WildcardQuery(new Term(field, "a*h")),
+                new WildcardQuery(new Term(field, "a?h")),
+                new WildcardQuery(new Term(field, "*a*h")),
+                new WildcardQuery(new Term(field, "?a")),
+                new WildcardQuery(new Term(field, "a?"))
+            };
 
-            PrefixQuery[][] matchOneDocPrefix = new PrefixQuery[][] { new PrefixQuery[] { new PrefixQuery(new Term(field, "a")), new PrefixQuery(new Term(field, "ab")), new PrefixQuery(new Term(field, "abc")) }, new PrefixQuery[] { new PrefixQuery(new Term(field, "h")), new PrefixQuery(new Term(field, "hi")), new PrefixQuery(new Term(field, "hij")), new PrefixQuery(new Term(field, "\\x0007")) }, new PrefixQuery[] { new PrefixQuery(new Term(field, "o")), new PrefixQuery(new Term(field, "op")), new PrefixQuery(new Term(field, "opq")), new PrefixQuery(new Term(field, "\\\\")) } };
+            PrefixQuery[][] matchOneDocPrefix = new PrefixQuery[][]
+            {
+                new[]
+                {
+                    new PrefixQuery(new Term(field, "a")),
+                    new PrefixQuery(new Term(field, "ab")),
+                    new PrefixQuery(new Term(field, "abc")) // these should find only doc 0
+                },
+                new[]
+                {
+                    new PrefixQuery(new Term(field, "h")),
+                    new PrefixQuery(new Term(field, "hi")),
+                    new PrefixQuery(new Term(field, "hij")),
+                    new PrefixQuery(new Term(field, "\\x0007")) // these should find only doc 1
+                },
+                new[]
+                {
+                    new PrefixQuery(new Term(field, "o")),
+                    new PrefixQuery(new Term(field, "op")),
+                    new PrefixQuery(new Term(field, "opq")),
+                    new PrefixQuery(new Term(field, "\\\\")) // these should find only doc 2
+                }
+            };
 
-            WildcardQuery[][] matchOneDocWild = new WildcardQuery[][] { new WildcardQuery[] { new WildcardQuery(new Term(field, "*a*")), new WildcardQuery(new Term(field, "*ab*")), new WildcardQuery(new Term(field, "*abc**")), new WildcardQuery(new Term(field, "ab*e*")), new WildcardQuery(new Term(field, "*g?")), new WildcardQuery(new Term(field, "*f?1")) }, new WildcardQuery[] { new WildcardQuery(new Term(field, "*h*")), new WildcardQuery(new Term(field, "*hi*")), new WildcardQuery(new Term(field, "*hij**")), new WildcardQuery(new Term(field, "hi*k*")), new WildcardQuery(new Term(field, "*n?")), new WildcardQuery(new Term(field, "*m?1")), new WildcardQuery(new Term(field, "hij**")) }, new WildcardQuery[] { new WildcardQuery(new Term(field, "*o*")), new WildcardQuery(new Term(field, "*op*")), new WildcardQuery(new Term(field, "*opq**")), new WildcardQuery(new Term(field, "op*q*")), new WildcardQuery(new Term(field, "*u?")), new WildcardQuery(new Term(field, "*t?1")), new WildcardQuery(new Term(field, "opq**")) } };
+            WildcardQuery[][] matchOneDocWild = new WildcardQuery[][]
+            {
+                new[]
+                {
+                    new WildcardQuery(new Term(field, "*a*")), // these should find only doc 0
+                    new WildcardQuery(new Term(field, "*ab*")),
+                    new WildcardQuery(new Term(field, "*abc**")),
+                    new WildcardQuery(new Term(field, "ab*e*")),
+                    new WildcardQuery(new Term(field, "*g?")),
+                    new WildcardQuery(new Term(field, "*f?1"))
+                },
+                new[]
+                {
+                    new WildcardQuery(new Term(field, "*h*")), // these should find only doc 1
+                    new WildcardQuery(new Term(field, "*hi*")),
+                    new WildcardQuery(new Term(field, "*hij**")),
+                    new WildcardQuery(new Term(field, "hi*k*")),
+                    new WildcardQuery(new Term(field, "*n?")),
+                    new WildcardQuery(new Term(field, "*m?1")),
+                    new WildcardQuery(new Term(field, "hij**"))
+                },
+                new[]
+                {
+                    new WildcardQuery(new Term(field, "*o*")),  // these should find only doc 2
+                    new WildcardQuery(new Term(field, "*op*")),
+                    new WildcardQuery(new Term(field, "*opq**")),
+                    new WildcardQuery(new Term(field, "op*q*")),
+                    new WildcardQuery(new Term(field, "*u?")),
+                    new WildcardQuery(new Term(field, "*t?1")),
+                    new WildcardQuery(new Term(field, "opq**"))
+                }
+            };
 
             // prepare the index
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMergePolicy(NewLogMergePolicy()));
             for (int i = 0; i < docs.Length; i++)
             {
                 Document doc = new Document();

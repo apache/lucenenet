@@ -52,7 +52,10 @@ namespace Lucene.Net.Search
             base.SetUp();
             directory = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMergePolicy(NewLogMergePolicy())
+                    .SetSimilarity(new DefaultSimilarity()));
             for (int i = 0; i < values.Length; i++)
             {
                 Document doc = new Document();
@@ -82,13 +85,13 @@ namespace Lucene.Net.Search
             Weight weight = indexSearcher.CreateNormalizedWeight(termQuery);
             Assert.IsTrue(indexSearcher.TopReaderContext is AtomicReaderContext);
             AtomicReaderContext context = (AtomicReaderContext)indexSearcher.TopReaderContext;
-            BulkScorer ts = weight.GetBulkScorer(context, true, (context.AtomicReader).LiveDocs);
+            BulkScorer ts = weight.GetBulkScorer(context, true, context.AtomicReader.LiveDocs);
             // we have 2 documents with the term all in them, one document for all the
             // other values
             IList<TestHit> docs = new JCG.List<TestHit>();
             // must call next first
 
-            ts.Score(new CollectorAnonymousClass(this, context, docs));
+            ts.Score(new CollectorAnonymousClass(this, docs));
             Assert.IsTrue(docs.Count == 2, "docs Size: " + docs.Count + " is not: " + 2);
             TestHit doc0 = docs[0];
             TestHit doc5 = docs[1];
@@ -110,13 +113,11 @@ namespace Lucene.Net.Search
         {
             private readonly TestTermScorer outerInstance;
 
-            private AtomicReaderContext context;
             private readonly IList<TestHit> docs;
 
-            public CollectorAnonymousClass(TestTermScorer outerInstance, AtomicReaderContext context, IList<TestHit> docs)
+            public CollectorAnonymousClass(TestTermScorer outerInstance, IList<TestHit> docs)
             {
                 this.outerInstance = outerInstance;
-                this.context = context;
                 this.docs = docs;
                 @base = 0;
             }
@@ -133,7 +134,7 @@ namespace Lucene.Net.Search
             {
                 float score = scorer.GetScore();
                 doc = doc + @base;
-                docs.Add(new TestHit(outerInstance, doc, score));
+                docs.Add(new TestHit(doc, score));
                 Assert.IsTrue(score > 0, "score " + score + " is not greater than 0");
                 Assert.IsTrue(doc == 0 || doc == 5, "Doc: " + doc + " does not equal 0 or doc does not equal 5");
             }
@@ -180,14 +181,11 @@ namespace Lucene.Net.Search
 
         private class TestHit
         {
-            private readonly TestTermScorer outerInstance;
-
             public int Doc { get; }
             public float Score { get; }
 
-            public TestHit(TestTermScorer outerInstance, int doc, float score)
+            public TestHit(int doc, float score)
             {
-                this.outerInstance = outerInstance;
                 this.Doc = doc;
                 this.Score = score;
             }

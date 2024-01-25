@@ -2,11 +2,9 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
@@ -101,12 +99,15 @@ namespace Lucene.Net.Search
             r = DirectoryReader.Open(dir);
             atomicReader = GetOnlySegmentReader(r);
             searcher = new IndexSearcher(atomicReader);
-            searcher.Similarity = new DefaultSimilarityAnonymousClass();
+            searcher.Similarity = DefaultSimilarityAnonymousClass.Default;
         }
 
         private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
-            public DefaultSimilarityAnonymousClass()
+            // LUCENENET: making a static readonly instance with private constructor for reduced allocations
+            public static readonly DefaultSimilarityAnonymousClass Default = new DefaultSimilarityAnonymousClass();
+
+            private DefaultSimilarityAnonymousClass()
             {
             }
 
@@ -371,7 +372,7 @@ namespace Lucene.Net.Search
                         if (Debugging.AssertsEnabled) Debugging.Assert(success); // no dups
                         TermContext context = TermContext.Build(reader.Context, term);
                         SimWeight w = weight.Similarity.ComputeWeight(1f, searcher.CollectionStatistics("field"), searcher.TermStatistics(term, context));
-                        var dummy = w.GetValueForNormalization(); // ignored
+                        _ = w.GetValueForNormalization(); // ignored
                         w.Normalize(1F, 1F);
                         sims[(int)ord] = weight.Similarity.GetSimScorer(w, (AtomicReaderContext)reader.Context);
                     }

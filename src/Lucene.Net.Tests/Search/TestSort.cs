@@ -68,8 +68,8 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// LUCENENET specific. Ensure we have an infostream attached to the default FieldCache
-        /// when running the tests. In Java, this was done in the Core.Search.TestFieldCache.TestInfoStream() 
-        /// method (which polluted the state of these tests), but we need to make the tests self-contained 
+        /// when running the tests. In Java, this was done in the Core.Search.TestFieldCache.TestInfoStream()
+        /// method (which polluted the state of these tests), but we need to make the tests self-contained
         /// so they can be run correctly regardless of order. Not setting the InfoStream skips an execution
         /// path within these tests, so we should do it to make sure we test all of the code.
         /// </summary>
@@ -1565,7 +1565,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new IntParserAnonymousClass(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new IntParserAnonymousClass()), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -1583,13 +1583,6 @@ namespace Lucene.Net.Search
 
         private sealed class IntParserAnonymousClass : FieldCache.IInt32Parser
         {
-            private readonly TestSort outerInstance;
-
-            public IntParserAnonymousClass(TestSort outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             /// <summary>
             /// NOTE: This was parseInt() in Lucene
             /// </summary>
@@ -1626,7 +1619,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new ByteParserAnonymousClass(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new ByteParserAnonymousClass()), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -1646,13 +1639,6 @@ namespace Lucene.Net.Search
         private sealed class ByteParserAnonymousClass : FieldCache.IByteParser
 #pragma warning restore 612, 618
         {
-            private readonly TestSort outerInstance;
-
-            public ByteParserAnonymousClass(TestSort outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public byte ParseByte(BytesRef term)
             {
                 return (byte)(term.Bytes[term.Offset] - 'A');
@@ -1686,7 +1672,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new ShortParserAnonymousClass(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new ShortParserAnonymousClass()), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -1706,13 +1692,6 @@ namespace Lucene.Net.Search
         private sealed class ShortParserAnonymousClass : FieldCache.IInt16Parser
 #pragma warning restore 612, 618
         {
-            private readonly TestSort outerInstance;
-
-            public ShortParserAnonymousClass(TestSort outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             /// <summary>
             /// NOTE: This was parseShort() in Lucene
             /// </summary>
@@ -1749,7 +1728,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new LongParserAnonymousClass(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new LongParserAnonymousClass()), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -1767,13 +1746,6 @@ namespace Lucene.Net.Search
 
         private sealed class LongParserAnonymousClass : FieldCache.IInt64Parser
         {
-            private readonly TestSort outerInstance;
-
-            public LongParserAnonymousClass(TestSort outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             /// <summary>
             /// NOTE: This was parseLong() in Lucene
             /// </summary>
@@ -1810,7 +1782,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new FloatParserAnonymousClass(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new FloatParserAnonymousClass()), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -1828,13 +1800,6 @@ namespace Lucene.Net.Search
 
         private sealed class FloatParserAnonymousClass : FieldCache.ISingleParser
         {
-            private readonly TestSort outerInstance;
-
-            public FloatParserAnonymousClass(TestSort outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             /// <summary>
             /// NOTE: This was parseFloat() in Lucene
             /// </summary>
@@ -1871,7 +1836,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("parser", new DoubleParserAnonymousClass(this)), SortField.FIELD_DOC);
+            Sort sort = new Sort(new SortField("parser", new DoubleParserAnonymousClass()), SortField.FIELD_DOC);
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
 
@@ -1889,13 +1854,6 @@ namespace Lucene.Net.Search
 
         private sealed class DoubleParserAnonymousClass : FieldCache.IDoubleParser
         {
-            private readonly TestSort outerInstance;
-
-            public DoubleParserAnonymousClass(TestSort outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public double ParseDouble(BytesRef term)
             {
                 return Math.Pow(term.Bytes[term.Offset], (term.Bytes[term.Offset] - 'A'));

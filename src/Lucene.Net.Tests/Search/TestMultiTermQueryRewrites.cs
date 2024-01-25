@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
         private void CheckDuplicateTerms(MultiTermQuery.RewriteMethod method)
         {
             MultiTermQuery mtq = TermRangeQuery.NewStringRange("data", "2", "7", true, true);
-            mtq.MultiTermRewriteMethod = (method);
+            mtq.MultiTermRewriteMethod = method;
             Query q1 = searcher.Rewrite(mtq);
             Query q2 = multiSearcher.Rewrite(mtq);
             Query q3 = multiSearcherDupls.Rewrite(mtq);
@@ -184,8 +184,8 @@ namespace Lucene.Net.Search
 
         private void CheckBoosts(MultiTermQuery.RewriteMethod method)
         {
-            MultiTermQuery mtq = new MultiTermQueryAnonymousClass(this);
-            mtq.MultiTermRewriteMethod = (method);
+            MultiTermQuery mtq = new MultiTermQueryAnonymousClass();
+            mtq.MultiTermRewriteMethod = method;
             Query q1 = searcher.Rewrite(mtq);
             Query q2 = multiSearcher.Rewrite(mtq);
             Query q3 = multiSearcherDupls.Rewrite(mtq);
@@ -205,27 +205,21 @@ namespace Lucene.Net.Search
 
         private sealed class MultiTermQueryAnonymousClass : MultiTermQuery
         {
-            private readonly TestMultiTermQueryRewrites outerInstance;
-
-            public MultiTermQueryAnonymousClass(TestMultiTermQueryRewrites outerInstance)
+            public MultiTermQueryAnonymousClass()
                 : base("data")
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
             {
-                return new TermRangeTermsEnumAnonymousClass(this, terms.GetEnumerator(), new BytesRef("2"), new BytesRef("7"));
+                return new TermRangeTermsEnumAnonymousClass(terms.GetEnumerator(), new BytesRef("2"), new BytesRef("7"));
             }
 
             private sealed class TermRangeTermsEnumAnonymousClass : TermRangeTermsEnum
             {
-                private readonly MultiTermQueryAnonymousClass outerInstance;
-
-                public TermRangeTermsEnumAnonymousClass(MultiTermQueryAnonymousClass outerInstance, TermsEnum iterator, BytesRef bref1, BytesRef bref2)
+                public TermRangeTermsEnumAnonymousClass(TermsEnum iterator, BytesRef bref1, BytesRef bref2)
                     : base(iterator, bref1, bref2, true, true)
                 {
-                    this.outerInstance = outerInstance;
                     boostAtt = Attributes.AddAttribute<IBoostAttribute>();
                 }
 
