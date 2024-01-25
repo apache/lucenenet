@@ -1,7 +1,6 @@
 ﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support.IO;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -63,7 +62,7 @@ namespace Lucene.Net.Store
             indexDir = new DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
 
             Directory dir = NewFSDirectory(indexDir);
-            IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.CREATE));
+            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
             // add some documents
             Document doc = null;
             for (int i = 0; i < docsToAdd; i++)
@@ -117,7 +116,7 @@ namespace Lucene.Net.Store
             MockDirectoryWrapper ramDir = new MockDirectoryWrapper(Random, new RAMDirectory(dir, NewIOContext(Random)));
             dir.Dispose();
 
-            IndexWriter writer = new IndexWriter(ramDir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
+            IndexWriter writer = new IndexWriter(ramDir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
 
             Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.GetRecomputedSizeInBytes());

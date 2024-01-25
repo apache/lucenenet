@@ -127,7 +127,7 @@ namespace Lucene.Net.Store
             Directory fsDir = FSDirectory.Open(new DirectoryInfo("/path/to/index"));
             NRTCachingDirectory cachedFSDir = new NRTCachingDirectory(fsDir, 2.0, 25.0);
             IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            IndexWriter writer = new IndexWriter(cachedFSDir, conf);
+            IndexWriter _ = new IndexWriter(cachedFSDir, conf); // LUCENENET: discarding unused variable, was `writer`
         }
 
         [Test]

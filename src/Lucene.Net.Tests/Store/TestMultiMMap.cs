@@ -426,7 +426,7 @@ namespace Lucene.Net.Store
             File.WriteAllText(fileName, string.Empty, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) /* No BOM */);
 
             MMapDirectory mmapDir = new MMapDirectory(dir);
-            using (var indexInput = mmapDir.OpenInput(name, NewIOContext(Random)))
+            using (var _ = mmapDir.OpenInput(name, NewIOContext(Random)))
             {
             } // Dispose
 

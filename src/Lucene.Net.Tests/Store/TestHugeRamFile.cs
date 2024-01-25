@@ -29,7 +29,8 @@ namespace Lucene.Net.Store
     [TestFixture]
     public class TestHugeRamFile : LuceneTestCase
     {
-        private static readonly long MAX_VALUE = (long)2 * (long)int.MaxValue;
+        // LUCENENET: made const, using long literal instead of cast to long
+        private const long MAX_VALUE = 2L * int.MaxValue;
 
         /// <summary>
         /// Fake a huge ram file by using the same byte buffer for all
