@@ -86,7 +86,7 @@
     <TimeZoneConverterPackageVersion>6.1.0</TimeZoneConverterPackageVersion>
   </PropertyGroup>
   <PropertyGroup Label="Maven Package Reference Versions">
-    <OpenNLPToolsMavenReferenceVersion>1.9.4</OpenNLPToolsMavenReferenceVersion>
+    <OpenNLPToolsMavenReferenceVersion>1.9.1</OpenNLPToolsMavenReferenceVersion>
     <OSGICoreMavenReferenceVersion>4.2.0</OSGICoreMavenReferenceVersion>
   </PropertyGroup>
 </Project>
