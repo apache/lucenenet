@@ -45,7 +45,7 @@ Another way of contacting Lucene.net committers and PMC members is the [#lucenen
 
 Further details on using the ASF Slack channels and associated expectations can be found on the related [ASF infra page](https://infra.apache.org/slack.html).
 
-Note
+[!Note]
 The ASF Slack requires an @apache.org email address to join as a full member. Users without an @apache.org email address have to be invited.
 
 ### Website and Documentation
