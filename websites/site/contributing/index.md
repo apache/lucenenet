@@ -40,6 +40,14 @@ We recommend you join both the [user and dev mailing lists](https://cwiki.apache
 
 see **[mailing lists](xref:contributing/mailing-lists)**
 
+### Slack Channel
+Another way of contacting OpenNLP committers and PMC members is the [#lucenenet-dev](https://the-asf.slack.com/archives/C03FFRQQ2RM) Slack channel. This is a great place to meet and get guidance on contributions.
+
+Further details on using the ASF Slack channels and associated expectations can be found on the related [ASF infra page](https://infra.apache.org/slack.html).
+
+Note
+The ASF Slack requires an @apache.org email address to join as a full member. Users without an @apache.org email address have to be invited.
+
 ### Website and Documentation
 
 Help with keeping this website and documentation up to date would be a great help. It would be great to migrate/consolidate a lot of the important information from the wiki to this website. See **[website and documentation](xref:contributing/documentation)** for more information about contributing to this area.
