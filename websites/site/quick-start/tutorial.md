@@ -140,6 +140,8 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System.Diagnostics;
 using LuceneDirectory = Lucene.Net.Store.Directory;
+using OpenMode = Lucene.Net.Index.OpenMode;
+using Document = Lucene.Net.Documents.Document;
 
 // Specify the compatibility version we want
 const LuceneVersion luceneVersion = LuceneVersion.LUCENE_48; 
