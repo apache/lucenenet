@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -31,6 +31,7 @@ namespace Lucene.Net.Analysis
         private readonly IPositionLengthAttribute posLengthAtt;
         private readonly IOffsetAttribute offsetAtt;
         private readonly IPayloadAttribute payloadAtt;
+        private readonly ITypeAttribute typeAtt; // LUCENENET specific - See IncrementToken()
         private readonly int finalOffset;
         private readonly int finalPosInc;
 
@@ -49,6 +50,7 @@ namespace Lucene.Net.Analysis
             posLengthAtt = AddAttribute<IPositionLengthAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
             payloadAtt = AddAttribute<IPayloadAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>(); // LUCENENET specific - See IncrementToken()
 
             this.tokens = tokens;
             this.finalOffset = finalOffset;
@@ -76,6 +78,12 @@ namespace Lucene.Net.Analysis
                 posLengthAtt.PositionLength = token.PositionLength;
                 offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                 payloadAtt.Payload = token.Payload;
+
+                // LUCENENET: This change is from https://github.com/apache/lucene/commit/72eaeab7151d421a28ecec1634b8c48599e524f5.
+                // We need it for the TestTypeAsSynonymFilterFactory tests to pass (from lucene 8.2.0).
+                // But we don't yet have all of the PackedTokenAttributeImpl plumbing it takes to do it the way they did,
+                // so setting it explicitly as a workaround.
+                typeAtt.Type = token.Type;
                 return true;
             }
             else

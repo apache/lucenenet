@@ -26,12 +26,15 @@
   <PropertyGroup>
     <!-- Allow specific target framework to flow in from TestTargetFrameworks.props -->
     <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net7.0;net6.0</TargetFrameworks>
-    <!-- If .NET Frameowrk is specified, just target the latest version -->
-    <TargetFramework Condition=" $(TargetFramework.StartsWith('net4')) ">net7.0</TargetFramework>
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>
+  </PropertyGroup>
 
-    <IsPublishable Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net5.'))">false</IsPublishable>
-    <IsTestProject Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net5.'))">false</IsTestProject>
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net5.')) ">
+    <!-- For CI, we don't publish the projects and exclude them from the test run by setting IsPublishable=false and IsTestProject=false -->
+    <IsPublishable>false</IsPublishable>
+    <IsTestProject>false</IsTestProject>
+    <!-- For the IDE, the above doesn't work. Redirect to a supported test framework instead. -->
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
