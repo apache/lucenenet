@@ -105,6 +105,13 @@ jobs:
         run: ./main-repo/websites/site/site.ps1 -Clean
         shell: powershell
 
+      - name: Upload website as build artifact
+        uses: actions/upload-artifact@v3
+        if: ${{always()}}
+        with:
+          name: 'website'
+          path: '${{github.workspace}}/main-repo/websites/site/_site'
+
       - name: Checkout Lucene.Net website
         uses: actions/checkout@v3
         with:
