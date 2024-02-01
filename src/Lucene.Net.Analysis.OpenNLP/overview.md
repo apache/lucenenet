@@ -31,12 +31,14 @@ The OpenNLP Tokenizer behavior is similar to the <xref:Lucene.Net.Analysis.Core.
 
 The OpenNLP taggers annotate terms using the <xref:Lucene.Net.Analysis.TokenAttributes.ITypeAttribute>.
 
-<xref:Lucene.Net.Analysis.OpenNlp.OpenNLPTokenizer> segments text into sentences or words. This Tokenizer uses the OpenNLP Sentence Detector and/or Tokenizer classes. When used together, the Tokenizer receives sentences and can do a better job.
-<xref:Lucene.Net.Analysis.OpenNlp.OpenNLPFilter> tags words using one or more technologies: Part-of-Speech, Chunking, and Named Entity Recognition. These tags are assigned as token types. Note that only one of these operations will tag
+- <xref:Lucene.Net.Analysis.OpenNlp.OpenNLPTokenizer> segments text into sentences or words. This Tokenizer uses the OpenNLP Sentence Detector and/or Tokenizer classes. When used together, the Tokenizer receives sentences and can do a better job.
+- <xref:Lucene.Net.Analysis.OpenNlp.OpenNLPPOSFilter> tags words for Part-of-Speech and <xref:Lucene.Net.Analysis.OpenNlp.OpenNLPChunkerFilter> tags words for Chunking. These tags are assigned as token types. Note that only one of these operations will tag
 Since the <xref:Lucene.Net.Analysis.TokenAttributes.ITypeAttribute> is not stored in the index, it is recommended that one of these filters is used following OpenNLPFilter to enable search against the assigned tags:
 
-<xref:Lucene.Net.Analysis.Payloads.TypeAsPayloadTokenFilter> copies the <xref:Lucene.Net.Analysis.TokenAttributes.ITypeAttribute> value to the <xref:Lucene.Net.Analysis.TokenAttributes.IPayloadAttribute>
-<xref:Lucene.Net.Analysis.Miscellaneous.TypeAsSynonymFilter> creates a cloned token at the same position as each tagged token, and copies the <xref:Lucene.Net.Analysis.TokenAttributes.ITypeAttribute> value to the <xref:Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute>, optionally with a customized prefix (so that tags effectively occupy a different namespace from token text).
+- <xref:Lucene.Net.Analysis.Payloads.TypeAsPayloadTokenFilter> copies the <xref:Lucene.Net.Analysis.TokenAttributes.ITypeAttribute> value to the <xref:Lucene.Net.Analysis.TokenAttributes.IPayloadAttribute>
+- <xref:Lucene.Net.Analysis.Miscellaneous.TypeAsSynonymFilter> creates a cloned token at the same position as each tagged token, and copies the <xref:Lucene.Net.Analysis.TokenAttributes.ITypeAttribute> value to the <xref:Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute>, optionally with a customized prefix (so that tags effectively occupy a different namespace from token text).
+
+Named Entity Recognition is also supported by OpenNLP, but there is no OpenNLPNERFilter included. For an implementation, see the [lucenenet-opennlp-mavenreference-demo](https://github.com/NightOwl888/lucenenet-opennlp-mavenreference-demo).
 
 ## MavenReference Primer
 
