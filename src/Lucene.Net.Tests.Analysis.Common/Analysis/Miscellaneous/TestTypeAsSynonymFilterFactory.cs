@@ -1,4 +1,6 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿// Lucene version compatibility level 8.2.0
+// LUCENENET NOTE: Ported because Lucene.Net.Analysis.OpenNLP requires this to be useful.
+using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 
 namespace Lucene.Net.Analysis.Miscellaneous
