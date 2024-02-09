@@ -251,6 +251,9 @@ namespace Lucene.Net.Search
     // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
     public abstract class FieldComparer
     {
+        // LUCENENET: This class is not intended for user subclassing. Use FieldComparer<T> instead.
+        internal FieldComparer() { }
+
         /// <summary>
         /// Returns -1 if first is less than second. Default
         /// implementation to assume the type implements <see cref="IComparable{T}"/> and
