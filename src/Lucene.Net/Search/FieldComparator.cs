@@ -1452,10 +1452,14 @@ namespace Lucene.Net.Search
         // TODO: should we remove this?  who really uses it?
         public sealed class TermValComparer : FieldComparer<BytesRef>
         {
-            // sentinels, just used internally in this comparer
-            private static readonly byte[] MISSING_BYTES = Arrays.Empty<byte>();
+            // LUCENENET NOTE: We can't use Arrays.Empty<byte>() here because
+            // MISSING_BYTES and NON_MISSING_BYTES are compared for reference
+            // equality and Arrays.Empty<byte>() returns a singleton instance.
 
-            private static readonly byte[] NON_MISSING_BYTES = Arrays.Empty<byte>();
+            // sentinels, just used internally in this comparer
+            private static readonly byte[] MISSING_BYTES = new byte[0];
+
+            private static readonly byte[] NON_MISSING_BYTES = new byte[0];
 
             private readonly BytesRef[] values; // LUCENENET: marked readonly
             private BinaryDocValues docTerms;
