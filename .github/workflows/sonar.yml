@@ -21,6 +21,17 @@ on:
   push:
     branches:
       - master
+    paths: # Exclude anything that isn't the main solution (docs, images, website, etc.)
+    - '.github/workflows/sonar.yml'
+    - 'src/**'
+    - '.build/dependencies.props'
+    - '.build/TestReferences.Common.*'
+    - '**/TestTargetFramework.*'
+    - '*.sln'
+    - '**/Directory.Build.*'
+    - '!src/docs/**'
+    - '!**/*.md'
+    - '!**/*.txt'
   schedule:
     - cron: '36 12 * * *' # 12:36 PM UTC, daily (picked an odd start time to try to avoid competing for agents with other projects)
 jobs:
