@@ -33,7 +33,7 @@ namespace Lucene.Net.Support
     {
         private class TransactionlThreadInterrupt : ThreadJob
         {
-            private static AtomicInt32 transactionNumber = new AtomicInt32(0);
+            private readonly static AtomicInt32 transactionNumber = new AtomicInt32(0);
 
             // Share locks between threads
             private static readonly object lock1 = new object();
@@ -45,7 +45,7 @@ namespace Lucene.Net.Support
 
             internal volatile bool allowInterrupt = false;
             internal volatile bool transactionInProgress = false;
-            
+
 
             public override void Run()
             {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Support
                         Console.WriteLine("sleeping...");
                     }
 
-                    // Use SpinWait instead of Sleep to demonstrate the 
+                    // Use SpinWait instead of Sleep to demonstrate the
                     // effect of calling Interrupt on a running thread.
                     Thread.SpinWait(1000000);
 
@@ -143,7 +143,7 @@ namespace Lucene.Net.Support
                             Console.WriteLine("sleeping...");
                         }
 
-                        // Use SpinWait instead of Sleep to demonstrate the 
+                        // Use SpinWait instead of Sleep to demonstrate the
                         // effect of calling Interrupt on a running thread.
                         Thread.SpinWait(1000000);
                     }
@@ -167,7 +167,7 @@ namespace Lucene.Net.Support
                         Console.WriteLine("sleeping...");
                     }
 
-                    // Use SpinWait instead of Sleep to demonstrate the 
+                    // Use SpinWait instead of Sleep to demonstrate the
                     // effect of calling Interrupt on a running thread.
                     Thread.SpinWait(1000000);
                 }
@@ -241,7 +241,7 @@ namespace Lucene.Net.Support
         public virtual void TestThreadInterrupt()
         {
             TransactionlThreadInterrupt t = new TransactionlThreadInterrupt();
-            t.IsBackground = (true);
+            t.IsBackground = true;
             t.Start();
 
             // issue 300 interrupts to child thread
@@ -275,11 +275,11 @@ namespace Lucene.Net.Support
         public virtual void TestTwoThreadsInterrupt()
         {
             TransactionlThreadInterrupt t1 = new TransactionlThreadInterrupt();
-            t1.IsBackground = (true);
+            t1.IsBackground = true;
             t1.Start();
 
             TransactionlThreadInterrupt t2 = new TransactionlThreadInterrupt();
-            t2.IsBackground = (true);
+            t2.IsBackground = true;
             t2.Start();
 
             // issue 300 interrupts to child thread

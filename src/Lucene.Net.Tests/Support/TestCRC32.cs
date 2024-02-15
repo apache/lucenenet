@@ -1,6 +1,5 @@
 using Lucene.Net.Attributes;
 using NUnit.Framework;
-using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support
@@ -25,8 +24,6 @@ namespace Lucene.Net.Support
     [TestFixture]
     public class TestCRC32
     {
-        /// <summary></summary>
-        /// <throws></throws>
         [Test, LuceneNetSpecific]
         public virtual void TestCRC32_()
         {
@@ -37,7 +34,7 @@ namespace Lucene.Net.Support
             IChecksum digest = new CRC32();
             digest.Update(b, 0, b.Length);
 
-            Int64 expected = 688229491;
+            const long expected = 688229491;
             Assert.AreEqual(expected, digest.Value);
         }
     }

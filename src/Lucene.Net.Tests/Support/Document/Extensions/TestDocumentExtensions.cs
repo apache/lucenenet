@@ -39,7 +39,7 @@ namespace Lucene.Net.Documents.Extensions
                 new BinaryDocValuesField("someOtherName", new BytesRef("Foobar2")),
                 target
             };
-            
+
             BinaryDocValuesField field = document.GetField<BinaryDocValuesField>("theName");
             Assert.AreSame(target, field);
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddDoubleDocValuesField()
         {
             DoubleDocValuesField field = null;
-            double value = 123.456d;
+            const double value = 123.456d;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddDoubleDocValuesField("theName", value));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(J2N.BitConversion.DoubleToRawInt64Bits(value), field.GetDoubleValueOrDefault());
@@ -106,8 +106,8 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddDoubleField_Stored()
         {
             DoubleField field = null;
-            double value = 123.456d;
-            var stored = Field.Store.YES;
+            const double value = 123.456d;
+            const Field.Store stored = Field.Store.YES;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddDoubleField("theName", value, stored));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetDoubleValueOrDefault(), 0.0000001d); // We don't really care about precision, just checking to see if the value got passed through
@@ -119,7 +119,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddDoubleField_FieldType()
         {
             DoubleField field = null;
-            double value = 123.456d;
+            const double value = 123.456d;
             var fieldType = new FieldType
             {
                 IsIndexed = true,
@@ -140,7 +140,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddSingleDocValuesField()
         {
             SingleDocValuesField field = null;
-            float value = 123.456f;
+            const float value = 123.456f;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddSingleDocValuesField("theName", value));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(J2N.BitConversion.SingleToRawInt32Bits(value), field.GetSingleValueOrDefault());
@@ -151,8 +151,8 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddSingleField_Stored()
         {
             SingleField field = null;
-            float value = 123.456f;
-            var stored = Field.Store.YES;
+            const float value = 123.456f;
+            const Field.Store stored = Field.Store.YES;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddSingleField("theName", value, stored));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetSingleValueOrDefault(), 0.0000001f); // We don't really care about precision, just checking to see if the value got passed through
@@ -164,7 +164,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddSingleField_FieldType()
         {
             SingleField field = null;
-            float value = 123.456f;
+            const float value = 123.456f;
             var fieldType = new FieldType
             {
                 IsIndexed = true,
@@ -187,8 +187,8 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddInt32Field_Stored()
         {
             Int32Field field = null;
-            int value = 123;
-            var stored = Field.Store.YES;
+            const int value = 123;
+            const Field.Store stored = Field.Store.YES;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddInt32Field("theName", value, stored));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetInt32ValueOrDefault());
@@ -200,7 +200,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddInt32Field_FieldType()
         {
             Int32Field field = null;
-            int value = 123;
+            const int value = 123;
             var fieldType = new FieldType
             {
                 IsIndexed = true,
@@ -223,8 +223,8 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddInt64Field_Stored()
         {
             Int64Field field = null;
-            long value = 123;
-            var stored = Field.Store.YES;
+            const long value = 123;
+            const Field.Store stored = Field.Store.YES;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddInt64Field("theName", value, stored));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetInt64ValueOrDefault());
@@ -236,7 +236,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddInt64Field_FieldType()
         {
             Int64Field field = null;
-            long value = 123;
+            const long value = 123;
             var fieldType = new FieldType
             {
                 IsIndexed = true,
@@ -257,7 +257,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddNumericDocValuesField()
         {
             NumericDocValuesField field = null;
-            long value = 123;
+            const long value = 123;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddNumericDocValuesField("theName", value));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetInt64ValueOrDefault());
@@ -293,8 +293,8 @@ namespace Lucene.Net.Documents.Extensions
         {
             StoredField field = null;
             byte[] bytes = Encoding.UTF8.GetBytes("FoobarAgain");
-            int offset = 3;
-            int length = 3;
+            const int offset = 3;
+            const int length = 3;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddStoredField("theName", bytes, offset, length));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(bytes, field.GetBinaryValue().Bytes);
@@ -318,7 +318,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddStoredField_String()
         {
             StoredField field = null;
-            string value = "Foobar";
+            const string value = "Foobar";
             AssertDocumentExtensionAddsToDocument(document => field = document.AddStoredField("theName", value));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetStringValue());
@@ -329,7 +329,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddStoredField_Int32()
         {
             StoredField field = null;
-            int value = 123;
+            const int value = 123;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddStoredField("theName", value));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetInt32ValueOrDefault());
@@ -340,7 +340,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddStoredField_Single()
         {
             StoredField field = null;
-            float value = 123.456f;
+            const float value = 123.456f;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddStoredField("theName", value));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetSingleValueOrDefault(), 0.0000001f); // We don't really care about precision, just checking to see if the value got passed through
@@ -351,7 +351,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddStoredField_Int64()
         {
             StoredField field = null;
-            long value = 123;
+            const long value = 123;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddStoredField("theName", value));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetInt64ValueOrDefault());
@@ -362,7 +362,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddStoredField_Double()
         {
             StoredField field = null;
-            double value = 123.456d;
+            const double value = 123.456d;
             AssertDocumentExtensionAddsToDocument(document => field = document.AddStoredField("theName", value));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetDoubleValueOrDefault(), 0.0000001d); // We don't really care about precision, just checking to see if the value got passed through
@@ -373,7 +373,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddStringField()
         {
             StringField field = null;
-            string value = "Foobar";
+            const string value = "Foobar";
             AssertDocumentExtensionAddsToDocument(document => field = document.AddStringField("theName", value, Field.Store.YES));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetStringValue());
@@ -396,7 +396,7 @@ namespace Lucene.Net.Documents.Extensions
         public void TestAddTextField_Stored()
         {
             TextField field = null;
-            string value = "Foobar";
+            const string value = "Foobar";
             AssertDocumentExtensionAddsToDocument(document => field = document.AddTextField("theName", value, Field.Store.YES));
             Assert.AreEqual("theName", field.Name);
             Assert.AreEqual(value, field.GetStringValue());
