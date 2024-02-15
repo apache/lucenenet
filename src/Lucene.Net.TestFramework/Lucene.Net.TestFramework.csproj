@@ -67,6 +67,11 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
+    <!-- This is a transitive dependency of Microsoft.Extensions.Configuration.Json and IKVM. It is just here to pin the version to avoid conflicts. -->
+    <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.ServiceModel" />

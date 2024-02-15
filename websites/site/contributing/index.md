@@ -1,4 +1,4 @@
----
+﻿---
 uid: contributing
 ---
 
@@ -39,6 +39,15 @@ To start a development discussion regarding technical features of Lucene.Net, pl
 We recommend you join both the [user and dev mailing lists](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) to stay looped in to all user and developer discussions.
 
 see **[mailing lists](xref:contributing/mailing-lists)**
+
+### Slack Channel
+
+Another way of contacting Lucene.net committers and PMC members is the [#lucenenet-dev](https://the-asf.slack.com/archives/C03FFRQQ2RM) Slack channel. This is a great place to meet and get guidance on contributions.
+
+Further details on using the ASF Slack channels and associated expectations can be found on the related [ASF infra page](https://infra.apache.org/slack.html).
+
+> [!NOTE]
+> The ASF Slack requires an @apache.org email address to join as a full member. Users without an @apache.org email address have to be invited.
 
 ### Website and Documentation
 

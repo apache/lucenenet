@@ -251,6 +251,9 @@ namespace Lucene.Net.Search
     // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
     public abstract class FieldComparer
     {
+        // LUCENENET: This class is not intended for user subclassing. Use FieldComparer<T> instead.
+        internal FieldComparer() { }
+
         /// <summary>
         /// Returns -1 if first is less than second. Default
         /// implementation to assume the type implements <see cref="IComparable{T}"/> and
@@ -1452,10 +1455,14 @@ namespace Lucene.Net.Search
         // TODO: should we remove this?  who really uses it?
         public sealed class TermValComparer : FieldComparer<BytesRef>
         {
-            // sentinels, just used internally in this comparer
-            private static readonly byte[] MISSING_BYTES = Arrays.Empty<byte>();
+            // LUCENENET NOTE: We can't use Arrays.Empty<byte>() here because
+            // MISSING_BYTES and NON_MISSING_BYTES are compared for reference
+            // equality and Arrays.Empty<byte>() returns a singleton instance.
 
-            private static readonly byte[] NON_MISSING_BYTES = Arrays.Empty<byte>();
+            // sentinels, just used internally in this comparer
+            private static readonly byte[] MISSING_BYTES = new byte[0];
+
+            private static readonly byte[] NON_MISSING_BYTES = new byte[0];
 
             private readonly BytesRef[] values; // LUCENENET: marked readonly
             private BinaryDocValues docTerms;

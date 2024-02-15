@@ -30,7 +30,10 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <!-- Currently, IKVM doesn't officially support building NetFX on anything but Windows, so we skip it for contributors who may be on various platforms.
+        We can remove the condition once that has been addressed. See: https://github.com/ikvmnet/ikvm-maven/issues/49 -->
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net472</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>
     <PackageTags>$(PackageTags);analysis;natural;language;processing;opennlp</PackageTags>
@@ -38,8 +41,6 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
   </PropertyGroup>
-
-  
 
   <ItemGroup>
     <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
@@ -49,7 +50,13 @@
 
   <ItemGroup>
     <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
-    <PackageReference Include="OpenNLP.NET" Version="$(OpenNLPNETPackageVersion)" />
+    <PackageReference Include="IKVM" Version="$(IKVMPackageVersion)" />
+    <PackageReference Include="IKVM.Maven.Sdk" Version="$(IKVMMavenSdkPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MavenReference Include="org.apache.opennlp:opennlp-tools" Version="$(OpenNLPToolsMavenReferenceVersion)" />
+    <MavenReference Include="org.osgi:org.osgi.core" Version="$(OSGICoreMavenReferenceVersion)" />
   </ItemGroup>
 
 </Project>

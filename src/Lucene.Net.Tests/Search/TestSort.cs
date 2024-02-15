@@ -242,6 +242,43 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// Tests sorting on type string_val with a missing value and an empty value.</summary>
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestStringValMissingVsNotMissing()
+        {
+            Directory dir = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
+            Document doc = new Document();
+            doc.Add(NewStringField("value", "", Field.Store.YES)); // Not missing (empty)
+            writer.AddDocument(doc);
+            doc = new Document();
+            writer.AddDocument(doc);
+            doc = new Document();
+            doc.Add(NewStringField("value", "foo", Field.Store.YES));
+            writer.AddDocument(doc);
+            doc = new Document();
+            doc.Add(NewStringField("value", "bar", Field.Store.YES));
+            writer.AddDocument(doc);
+            IndexReader ir = writer.GetReader();
+            writer.Dispose();
+
+            IndexSearcher searcher = NewSearcher(ir);
+            Sort sort = new Sort(new SortField("value", SortFieldType.STRING_VAL));
+
+            TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+            Assert.AreEqual(4, td.TotalHits);
+            // null comes first
+            Assert.IsNull(searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+            Assert.AreEqual("", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+            Assert.AreEqual("bar", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
+            Assert.AreEqual("foo", searcher.Doc(td.ScoreDocs[3].Doc).Get("value"));
+
+            ir.Dispose();
+            dir.Dispose();
+        }
+
+        /// <summary>
         /// Tests sorting on type string with a missing
         ///  value sorted first
         /// </summary>

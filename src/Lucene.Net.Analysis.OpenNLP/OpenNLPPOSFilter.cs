@@ -26,6 +26,13 @@ namespace Lucene.Net.Analysis.OpenNlp
 
     /// <summary>
     /// Run OpenNLP POS tagger.  Tags all terms in the <see cref="ITypeAttribute"/>.
+    /// <para/>
+    /// The <see cref="Lucene.Net.Analysis.Payloads.TypeAsPayloadTokenFilter"/> can be used to copy the POS tag values to
+    /// <see cref="Lucene.Net.Analysis.TokenAttributes.IPayloadAttribute"/>, which will index the value. Alternatively, the
+    /// <see cref="Lucene.Net.Analysis.Miscellaneous.TypeAsSynonymFilter"/> creates a cloned token at the same position as
+    /// each tagged token, and copies the <see cref="Lucene.Net.Analysis.TokenAttributes.ITypeAttribute"/> value to the
+    /// <see cref="Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute"/>, optionally with a customized prefix
+    /// (so that tags effectively occupy a different namespace from token text).
     /// </summary>
     public sealed class OpenNLPPOSFilter : TokenFilter
     {
