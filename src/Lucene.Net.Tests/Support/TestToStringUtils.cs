@@ -2,6 +2,9 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Globalization;
+#if !FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER
+using System.Threading;
+#endif
 
 namespace Lucene.Net.Support
 {
