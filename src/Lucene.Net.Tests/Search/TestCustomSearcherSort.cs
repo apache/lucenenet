@@ -244,8 +244,9 @@ namespace Lucene.Net.Search
             internal DateTime @base;
 
             // Just to generate some different Lucene Date strings
+            // LUCENENET: Using DateTools.TicksToUnixTimeMilliseconds instead of Java's .getTimeInMillis()
             internal virtual string LuceneDate
-                => DateTools.TimeToString((@base.Ticks / TimeSpan.TicksPerMillisecond) + random.Next() - int.MinValue, DateResolution.DAY);
+                => DateTools.TimeToString(DateTools.TicksToUnixTimeMilliseconds(@base.Ticks) + random.Next() - int.MinValue, DateResolution.DAY);
         }
     }
 }
