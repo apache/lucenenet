@@ -127,15 +127,14 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Checks to see if the hits are what we expected.
-        ///
-        /// LUCENENET specific
-        /// Is non-static because it depends on the non-static variable, <see cref="LuceneTestCase.Similarity"/>
         /// </summary>
         /// <param name="query"> the query to execute </param>
         /// <param name="description"> the description of the search </param>
         /// <param name="expectedIds"> the expected document ids of the hits </param>
         /// <param name="expectedScores"> the expected scores of the hits </param>
-        protected internal void AssertHits(IndexSearcher s, Query query, string description, string[] expectedIds, float[] expectedScores)
+        protected internal static void AssertHits(IndexSearcher s, Query query,
+            string description, string[] expectedIds,
+            float[] expectedScores)
         {
             QueryUtils.Check(Random, query, s);
 
