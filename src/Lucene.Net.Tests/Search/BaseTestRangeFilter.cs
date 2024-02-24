@@ -1,3 +1,4 @@
+using J2N.Text;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -198,7 +199,7 @@ namespace Lucene.Net.Search
                 string bb = Pad(b);
                 string label = a + ":" + aa + " vs " + b + ":" + bb;
                 Assert.AreEqual(aa.Length, bb.Length, "i=" + i + ": length of " + label);
-                Assert.IsTrue(string.Compare(aa, bb, StringComparison.Ordinal) < 0, "i=" + i + ": compare less than " + label);
+                Assert.IsTrue(aa.CompareToOrdinal(bb) < 0, "i=" + i + ": compare less than " + label);
             }
         }
     }
