@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
         internal bool validate = true; // set to false when doing performance testing
 
         internal BitSet[] sets;
-        internal Term[] terms;
+        //internal Term[] terms; // LUCENENET: see commented-out code below
         internal IndexSearcher s;
         internal IndexReader r;
         internal Directory d;
