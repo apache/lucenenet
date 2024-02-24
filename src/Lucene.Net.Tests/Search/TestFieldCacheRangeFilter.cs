@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// A basic 'positive' Unit test class for the FieldCacheRangeFilter class.
     ///
-    /// <p>
+    /// <para />
     /// NOTE: at the moment, this class only tests for 'positive' results,
     /// it does not verify the results to ensure there are no 'false positives',
     /// nor does it adequately test 'negative' results.  It also does not test
