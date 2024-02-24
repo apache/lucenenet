@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             directory = NewDirectory();
-            Analyzer analyzer = AnalyzerAnonymousClass.Default; // LUCENENET: using static instance
+            Analyzer analyzer = new AnalyzerAnonymousClass();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory, analyzer);
 
             Document doc = new Document();
@@ -91,13 +91,6 @@ namespace Lucene.Net.Search
 
         private sealed class AnalyzerAnonymousClass : Analyzer
         {
-            // LUCENENET: making static singleton with private constructor to reduce allocations
-            public static readonly AnalyzerAnonymousClass Default = new AnalyzerAnonymousClass();
-
-            private AnalyzerAnonymousClass()
-            {
-            }
-
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
