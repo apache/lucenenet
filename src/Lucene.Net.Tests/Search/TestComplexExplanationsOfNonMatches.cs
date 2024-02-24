@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Overrides superclass to ignore matches and focus on non-matches
         /// </summary>
-        /// <seealso cref="CheckHits.CheckNoMatchExplanations" />
+        /// <seealso cref="CheckHits.CheckNoMatchExplanations(Query, string, IndexSearcher, int[])" />
         public override void Qtest(Query q, int[] expDocNrs)
         {
             CheckHits.CheckNoMatchExplanations(q, FIELD, searcher, expDocNrs);
