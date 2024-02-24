@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -229,7 +230,7 @@ namespace Lucene.Net.Search
             query.Add(new TermQuery(new Term(field, "w3")), Occur.MUST_NOT);
             query.Add(new TermQuery(new Term(field, "xx")), Occur.MUST_NOT);
             query.Add(new TermQuery(new Term(field, "w5")), Occur.MUST_NOT);
-            int[] expDocNrs = Array.Empty<int>(); // LUCENENET: instead of new int[] { };
+            int[] expDocNrs = Arrays.Empty<int>(); // LUCENENET: instead of new int[] { };
             QueriesTest(query, expDocNrs);
         }
 
