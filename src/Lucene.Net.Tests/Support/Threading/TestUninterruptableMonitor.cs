@@ -31,7 +31,7 @@ namespace Lucene.Net.Support
     [TestFixture]
     public class TestUninterruptableMonitor : LuceneTestCase
     {
-        private class TransactionlThreadInterrupt : ThreadJob
+        private class TransactionalThreadInterrupt : ThreadJob
         {
             private readonly static AtomicInt32 transactionNumber = new AtomicInt32(0);
 
@@ -240,7 +240,7 @@ namespace Lucene.Net.Support
         [Ignore("Lucene.NET does not support Thread.Interrupt(). See https://github.com/apache/lucenenet/issues/526.")]
         public virtual void TestThreadInterrupt()
         {
-            TransactionlThreadInterrupt t = new TransactionlThreadInterrupt();
+            TransactionalThreadInterrupt t = new TransactionalThreadInterrupt();
             t.IsBackground = true;
             t.Start();
 
@@ -274,11 +274,11 @@ namespace Lucene.Net.Support
         [Ignore("Lucene.NET does not support Thread.Interrupt(). See https://github.com/apache/lucenenet/issues/526.")]
         public virtual void TestTwoThreadsInterrupt()
         {
-            TransactionlThreadInterrupt t1 = new TransactionlThreadInterrupt();
+            TransactionalThreadInterrupt t1 = new TransactionalThreadInterrupt();
             t1.IsBackground = true;
             t1.Start();
 
-            TransactionlThreadInterrupt t2 = new TransactionlThreadInterrupt();
+            TransactionalThreadInterrupt t2 = new TransactionalThreadInterrupt();
             t2.IsBackground = true;
             t2.Start();
 
@@ -290,7 +290,7 @@ namespace Lucene.Net.Support
                 // TODO: would be nice to also sometimes interrupt the
                 // CMS merge threads too ...
                 Thread.Sleep(10);
-                TransactionlThreadInterrupt t = Random.NextBoolean() ? t1 : t2;
+                TransactionalThreadInterrupt t = Random.NextBoolean() ? t1 : t2;
                 if (t.allowInterrupt)
                 {
                     i++;
