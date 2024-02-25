@@ -61,5 +61,17 @@ namespace Lucene.Net.Search
             Assert.IsFalse(a1.Equals(b));
             QueryUtils.Check(a1);
         }
+
+        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
+        // context in Visual Studio or Azure DevOps. This fixes that with the minimum amount of code necessary
+        // to run them in the correct context without duplicating all of the tests.
+
+        /// <summary>
+        /// test a bunch of random regular expressions </summary>
+        [Test]
+        public override void TestRegexps()
+        {
+            base.TestRegexps();
+        }
     }
 }
