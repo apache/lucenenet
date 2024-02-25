@@ -4,6 +4,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -373,8 +374,8 @@ namespace Lucene.Net.Search
                 {
                     try
                     {
-                        int av = idToNum[Convert.ToInt32(r.Document(a).Get("id"))];
-                        int bv = idToNum[Convert.ToInt32(r.Document(b).Get("id"))];
+                        int av = idToNum[Convert.ToInt32(r.Document(a).Get("id"), CultureInfo.InvariantCulture)];
+                        int bv = idToNum[Convert.ToInt32(r.Document(b).Get("id"), CultureInfo.InvariantCulture)];
                         if (av < bv)
                         {
                             return -reverseInt;
