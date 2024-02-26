@@ -7,6 +7,10 @@ using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
+using RandomizedTesting.Generators; // for Random.NextSingle extension method
+#endif
+
 namespace Lucene.Net.Index
 {
     /*
@@ -48,12 +52,11 @@ namespace Lucene.Net.Index
     {
         private class MyField : IIndexableField
         {
-            private readonly TestIndexableField outerInstance;
+            private readonly int counter;
+            private readonly IIndexableFieldType fieldType;
 
-            internal readonly int counter;
-            internal readonly IIndexableFieldType fieldType;
-
-            public MyField()
+            // LUCENENET specific: only used to create an instance of the anonymous class
+            private MyField()
             {
                 fieldType = new IndexableFieldTypeAnonymousClass(this);
             }
@@ -98,21 +101,20 @@ namespace Lucene.Net.Index
 
                 public bool OmitNorms => false;
 
-                public IndexOptions IndexOptions => Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                public IndexOptions IndexOptions => IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 
                 public DocValuesType DocValueType => DocValuesType.NONE;
             }
 
-            public MyField(TestIndexableField outerInstance, int counter)
+            public MyField(int counter)
                 : this()
             {
-                this.outerInstance = outerInstance;
                 this.counter = counter;
             }
 
             public string Name => "f" + counter;
 
-            public float Boost => 1.0f + (float)Random.NextDouble();
+            public float Boost => 1.0f + Random.NextSingle();
 
             public BytesRef GetBinaryValue()
             {
@@ -223,7 +225,8 @@ namespace Lucene.Net.Index
 
             public TokenStream GetTokenStream(Analyzer analyzer)
             {
-                return GetReaderValue() != null ? analyzer.GetTokenStream(Name, GetReaderValue()) : analyzer.GetTokenStream(Name, new StringReader(GetStringValue()));
+                return GetReaderValue() != null ? analyzer.GetTokenStream(Name, GetReaderValue()) :
+                    analyzer.GetTokenStream(Name, new StringReader(GetStringValue()));
             }
         }
 
@@ -257,7 +260,7 @@ namespace Lucene.Net.Index
                 int finalBaseCount = baseCount;
                 baseCount += fieldCount - 1;
 
-                w.AddDocument(new EnumerableAnonymousClass(this, fieldCount, finalDocCount, finalBaseCount));
+                w.AddDocument(new EnumerableAnonymousClass(fieldCount, finalDocCount, finalBaseCount));
             }
 
             IndexReader r = w.GetReader();
@@ -377,15 +380,12 @@ namespace Lucene.Net.Index
 
         private sealed class EnumerableAnonymousClass : IEnumerable<IIndexableField>
         {
-            private readonly TestIndexableField outerInstance;
+            private readonly int fieldCount;
+            private readonly int finalDocCount;
+            private readonly int finalBaseCount;
 
-            private int fieldCount;
-            private int finalDocCount;
-            private int finalBaseCount;
-
-            public EnumerableAnonymousClass(TestIndexableField outerInstance, int fieldCount, int finalDocCount, int finalBaseCount)
+            public EnumerableAnonymousClass(int fieldCount, int finalDocCount, int finalBaseCount)
             {
-                this.outerInstance = outerInstance;
                 this.fieldCount = fieldCount;
                 this.finalDocCount = finalDocCount;
                 this.finalBaseCount = finalBaseCount;
@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
 
             public IEnumerator<IIndexableField> GetEnumerator()
             {
-                return new EnumeratorAnonymousClass(this, outerInstance);
+                return new EnumeratorAnonymousClass(this);
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -404,15 +404,13 @@ namespace Lucene.Net.Index
             private sealed class EnumeratorAnonymousClass : IEnumerator<IIndexableField>
             {
                 private readonly EnumerableAnonymousClass outerInstance;
-                private readonly TestIndexableField outerTextIndexableField;
 
-                public EnumeratorAnonymousClass(EnumerableAnonymousClass outerInstance, TestIndexableField outerTextIndexableField)
+                public EnumeratorAnonymousClass(EnumerableAnonymousClass outerInstance)
                 {
                     this.outerInstance = outerInstance;
-                    this.outerTextIndexableField = outerTextIndexableField;
                 }
 
-                internal int fieldUpto;
+                private int fieldUpto;
                 private IIndexableField current;
 
                 public bool MoveNext()
@@ -430,7 +428,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        current = new MyField(outerTextIndexableField, outerInstance.finalBaseCount + (fieldUpto++ - 1));
+                        current = new MyField(outerInstance.finalBaseCount + (fieldUpto++ - 1));
                     }
 
                     return true;
