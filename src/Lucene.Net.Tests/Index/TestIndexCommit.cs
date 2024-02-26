@@ -33,9 +33,9 @@ namespace Lucene.Net.Index
             // LUCENE-2417: equals and hashCode() impl was inconsistent
             Directory dir = NewDirectory();
 
-            IndexCommit ic1 = new IndexCommitAnonymousClass(this, dir);
+            IndexCommit ic1 = new IndexCommitAnonymousClass(dir);
 
-            IndexCommit ic2 = new IndexCommitAnonymousClass2(this, dir);
+            IndexCommit ic2 = new IndexCommitAnonymousClass2(dir);
 
             Assert.AreEqual(ic1, ic2);
             Assert.AreEqual(ic1.GetHashCode(), ic2.GetHashCode(), "hash codes are not equals");
@@ -44,13 +44,10 @@ namespace Lucene.Net.Index
 
         private sealed class IndexCommitAnonymousClass : IndexCommit
         {
-            private readonly TestIndexCommit outerInstance;
+            private readonly Directory dir;
 
-            private Directory dir;
-
-            public IndexCommitAnonymousClass(TestIndexCommit outerInstance, Directory dir)
+            public IndexCommitAnonymousClass(Directory dir)
             {
-                this.outerInstance = outerInstance;
                 this.dir = dir;
             }
 
@@ -75,13 +72,10 @@ namespace Lucene.Net.Index
 
         private sealed class IndexCommitAnonymousClass2 : IndexCommit
         {
-            private readonly TestIndexCommit outerInstance;
+            private readonly Directory dir;
 
-            private Directory dir;
-
-            public IndexCommitAnonymousClass2(TestIndexCommit outerInstance, Directory dir)
+            public IndexCommitAnonymousClass2(Directory dir)
             {
-                this.outerInstance = outerInstance;
                 this.dir = dir;
             }
 
