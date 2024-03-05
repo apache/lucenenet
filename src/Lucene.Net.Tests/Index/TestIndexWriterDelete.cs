@@ -15,7 +15,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
-using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -62,13 +61,14 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestSimpleCase()
         {
-            string[] keywords = new string[] { "1", "2" };
-            string[] unindexed = new string[] { "Netherlands", "Italy" };
-            string[] unstored = new string[] { "Amsterdam has lots of bridges", "Venice has lots of canals" };
-            string[] text = new string[] { "Amsterdam", "Venice" };
+            string[] keywords = { "1", "2" };
+            string[] unindexed = { "Netherlands", "Italy" };
+            string[] unstored = { "Amsterdam has lots of bridges", "Venice has lots of canals" };
+            string[] text = { "Amsterdam", "Venice" };
 
             Directory dir = NewDirectory();
-            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(1));
+            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(1));
 
             FieldType custom1 = new FieldType();
             custom1.IsStored = true;
@@ -110,9 +110,11 @@ namespace Lucene.Net.Index
         public virtual void TestNonRAMDelete()
         {
             Directory dir = NewDirectory();
-            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
+            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
+                .SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
             int id = 0;
-            int value = 100;
+            const int value = 100;
 
             for (int i = 0; i < 7; i++)
             {
@@ -144,7 +146,8 @@ namespace Lucene.Net.Index
         public virtual void TestMaxBufferedDeletes()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(1));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(1));
 
             writer.AddDocument(new Document());
             writer.DeleteDocuments(new Term("foobar", "1"));
@@ -166,9 +169,11 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: t=" + t);
                 }
                 Directory dir = NewDirectory();
-                IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(4).SetMaxBufferedDeleteTerms(4));
+                IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(
+                    TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(4)
+                    .SetMaxBufferedDeleteTerms(4));
                 int id = 0;
-                int value = 100;
+                const int value = 100;
 
                 AddDoc(modifier, ++id, value);
                 if (0 == t)
@@ -211,7 +216,9 @@ namespace Lucene.Net.Index
         public virtual void TestBothDeletes()
         {
             Directory dir = NewDirectory();
-            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(100).SetMaxBufferedDeleteTerms(100));
+            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(100)
+                .SetMaxBufferedDeleteTerms(100));
 
             int id = 0;
             int value = 100;
@@ -248,10 +255,12 @@ namespace Lucene.Net.Index
         public virtual void TestBatchDeletes()
         {
             Directory dir = NewDirectory();
-            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
+            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2)
+                .SetMaxBufferedDeleteTerms(2));
 
             int id = 0;
-            int value = 100;
+            const int value = 100;
 
             for (int i = 0; i < 7; i++)
             {
@@ -293,10 +302,12 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteAll()
         {
             Directory dir = NewDirectory();
-            IndexWriter modifier = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
+            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2)
+                .SetMaxBufferedDeleteTerms(2));
 
             int id = 0;
-            int value = 100;
+            const int value = 100;
 
             for (int i = 0; i < 7; i++)
             {
@@ -347,12 +358,12 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numThreads; i++)
             {
                 int offset = i;
-                threads[i] = new ThreadAnonymousClass(this, modifier, latch, doneLatch, offset);
+                threads[i] = new ThreadAnonymousClass(modifier, latch, doneLatch, offset);
                 threads[i].Start();
             }
             latch.Signal();
             //Wait for 1 millisecond
-            while (!doneLatch.Wait(new TimeSpan(0, 0, 0, 0, 1)))
+            while (!doneLatch.Wait(TimeSpan.FromMilliseconds(1)))
             {
                 modifier.DeleteAll();
                 if (Verbose)
@@ -379,16 +390,13 @@ namespace Lucene.Net.Index
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestIndexWriterDelete outerInstance;
-
             private readonly RandomIndexWriter modifier;
             private readonly CountdownEvent latch;
             private readonly CountdownEvent doneLatch;
             private readonly int offset;
 
-            public ThreadAnonymousClass(TestIndexWriterDelete outerInstance, RandomIndexWriter modifier, CountdownEvent latch, CountdownEvent doneLatch, int offset)
+            public ThreadAnonymousClass(RandomIndexWriter modifier, CountdownEvent latch, CountdownEvent doneLatch, int offset)
             {
-                this.outerInstance = outerInstance;
                 this.modifier = modifier;
                 this.latch = latch;
                 this.doneLatch = doneLatch;
@@ -398,7 +406,7 @@ namespace Lucene.Net.Index
             public override void Run()
             {
                 int id = offset * 1000;
-                int value = 100;
+                const int value = 100;
                 try
                 {
                     latch.Wait();
@@ -439,10 +447,12 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteAllRollback()
         {
             Directory dir = NewDirectory();
-            IndexWriter modifier = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
+            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2)
+                .SetMaxBufferedDeleteTerms(2));
 
             int id = 0;
-            int value = 100;
+            const int value = 100;
 
             for (int i = 0; i < 7; i++)
             {
@@ -476,10 +486,12 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteAllNRT()
         {
             Directory dir = NewDirectory();
-            IndexWriter modifier = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
+            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2)
+                .SetMaxBufferedDeleteTerms(2));
 
             int id = 0;
-            int value = 100;
+            const int value = 100;
 
             for (int i = 0; i < 7; i++)
             {
@@ -567,8 +579,8 @@ namespace Lucene.Net.Index
         private void DoTestOperationsOnDiskFull(bool updates)
         {
             Term searchTerm = new Term("content", "aaa");
-            int START_COUNT = 157;
-            int END_COUNT = 144;
+            const int START_COUNT = 157;
+            const int END_COUNT = 144;
 
             // First build up a starting index:
             MockDirectoryWrapper startDir = NewMockDirectory();
@@ -611,11 +623,8 @@ namespace Lucene.Net.Index
                                 .SetMaxBufferedDeleteTerms(1000)
                                 .SetMergeScheduler(new ConcurrentMergeScheduler());
 
-                IConcurrentMergeScheduler scheduler = config.MergeScheduler as IConcurrentMergeScheduler;
-                if (scheduler != null)
-                {
-                    scheduler.SetSuppressExceptions();
-                }
+                // LUCENENET note: Original Java code does an unsafe cast here, so we should as well. Do not change to a safe type check.
+                ((IConcurrentMergeScheduler)config.MergeScheduler).SetSuppressExceptions();
 
                 IndexWriter modifier = new IndexWriter(dir, config);
 
@@ -826,17 +835,18 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestErrorAfterApplyDeletes()
         {
-            Failure failure = new FailureAnonymousClass(this);
+            Failure failure = new FailureAnonymousClass();
 
             // create a couple of files
 
-            string[] keywords = new string[] { "1", "2" };
-            string[] unindexed = new string[] { "Netherlands", "Italy" };
-            string[] unstored = new string[] { "Amsterdam has lots of bridges", "Venice has lots of canals" };
-            string[] text = new string[] { "Amsterdam", "Venice" };
+            string[] keywords = { "1", "2" };
+            string[] unindexed = { "Netherlands", "Italy" };
+            string[] unstored = { "Amsterdam has lots of bridges", "Venice has lots of canals" };
+            string[] text = { "Amsterdam", "Venice" };
 
             MockDirectoryWrapper dir = NewMockDirectory();
-            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(2).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(2).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy()));
 
             MergePolicy lmp = modifier.Config.MergePolicy;
             lmp.NoCFSRatio = 1.0;
@@ -893,7 +903,7 @@ namespace Lucene.Net.Index
             {
                 Console.WriteLine("TEST: add empty doc");
             }
-            Document doc_ = new Document();
+            Document doc_ = new Document(); // LUCENENET: renamed to doc_ to avoid conflict with the local variable doc above
             modifier.AddDocument(doc_);
 
             // commit the changes, the buffered deletes, and the new doc
@@ -941,18 +951,9 @@ namespace Lucene.Net.Index
 
         private sealed class FailureAnonymousClass : Failure
         {
-            private readonly TestIndexWriterDelete outerInstance;
-
-            public FailureAnonymousClass(TestIndexWriterDelete outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                sawMaybe = false;
-                failed = false;
-            }
-
-            internal bool sawMaybe;
-            internal bool failed;
-            internal Thread thread;
+            private bool sawMaybe = false;
+            private bool failed = false;
+            private Thread thread;
 
             public override Failure Reset()
             {
@@ -973,9 +974,9 @@ namespace Lucene.Net.Index
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                    bool seen = 
+                    bool seen =
                         StackTraceHelper.DoesStackTraceContainMethod("ApplyDeletesAndUpdates") ||
-                        StackTraceHelper.DoesStackTraceContainMethod("SlowFileExists");                 
+                        StackTraceHelper.DoesStackTraceContainMethod("SlowFileExists");
 
                     if (!seen)
                     {
@@ -1001,7 +1002,7 @@ namespace Lucene.Net.Index
                             Console.WriteLine(Environment.StackTrace);
                         }
                         sawMaybe = true;
-                    }              
+                    }
                 }
             }
         }
@@ -1011,14 +1012,14 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestErrorInDocsWriterAdd()
         {
-            Failure failure = new FailureAnonymousClass2(this);
+            Failure failure = new FailureAnonymousClass2();
 
             // create a couple of files
 
-            string[] keywords = new string[] { "1", "2" };
-            string[] unindexed = new string[] { "Netherlands", "Italy" };
-            string[] unstored = new string[] { "Amsterdam has lots of bridges", "Venice has lots of canals" };
-            string[] text = new string[] { "Amsterdam", "Venice" };
+            string[] keywords = { "1", "2" };
+            string[] unindexed = { "Netherlands", "Italy" };
+            string[] unstored = { "Amsterdam has lots of bridges", "Venice has lots of canals" };
+            string[] text = { "Amsterdam", "Venice" };
 
             MockDirectoryWrapper dir = NewMockDirectory();
             IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
@@ -1056,15 +1057,7 @@ namespace Lucene.Net.Index
 
         private sealed class FailureAnonymousClass2 : Failure
         {
-            private readonly TestIndexWriterDelete outerInstance;
-
-            public FailureAnonymousClass2(TestIndexWriterDelete outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                failed = false;
-            }
-
-            internal bool failed;
+            private bool failed = false;
 
             public override Failure Reset()
             {
@@ -1150,11 +1143,11 @@ namespace Lucene.Net.Index
             Random r = Random;
             Directory dir = NewDirectory();
             // note this test explicitly disables payloads
-            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (_, reader) =>
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
             });
-            IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetRAMBufferSizeMB(1.0).SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetRAMBufferSizeMB(1.0).SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH));
             Document doc = new Document();
             doc.Add(NewTextField("field", "go 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20", Field.Store.NO));
             int num = AtLeast(3);
@@ -1203,7 +1196,9 @@ namespace Lucene.Net.Index
             // Cannot use RandomIndexWriter because we don't want to
             // ever call commit() for this test:
             // note: tiny rambuffer used, as with a 1MB buffer the test is too slow (flush @ 128,999)
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetRAMBufferSizeMB(0.1f).SetMaxBufferedDocs(1000).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false));
+            IndexWriter w = new IndexWriter(dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetRAMBufferSizeMB(0.1f).SetMaxBufferedDocs(1000).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false));
             int count = 0;
             while (true)
             {
@@ -1256,7 +1251,9 @@ namespace Lucene.Net.Index
             // Cannot use RandomIndexWriter because we don't want to
             // ever call commit() for this test:
             int flushAtDelCount = AtLeast(1020);
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDeleteTerms(flushAtDelCount).SetMaxBufferedDocs(1000).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false));
+            IndexWriter w = new IndexWriter(dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDeleteTerms(flushAtDelCount).SetMaxBufferedDocs(1000).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false));
             int count = 0;
             while (true)
             {
@@ -1304,7 +1301,7 @@ namespace Lucene.Net.Index
             AtomicInt32 docsInSegment = new AtomicInt32();
             AtomicBoolean closing = new AtomicBoolean();
             AtomicBoolean sawAfterFlush = new AtomicBoolean();
-            IndexWriter w = new IndexWriterAnonymousClass(this, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetRAMBufferSizeMB(0.5).SetMaxBufferedDocs(-1).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false), docsInSegment, closing, sawAfterFlush);
+            IndexWriter w = new IndexWriterAnonymousClass(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetRAMBufferSizeMB(0.5).SetMaxBufferedDocs(-1).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false), docsInSegment, closing, sawAfterFlush);
             int id = 0;
             while (true)
             {
@@ -1333,7 +1330,7 @@ namespace Lucene.Net.Index
                 }
                 id++;
             }
-            closing.Value = (true);
+            closing.Value = true;
             Assert.IsTrue(sawAfterFlush);
             w.Dispose();
             dir.Dispose();
@@ -1341,16 +1338,13 @@ namespace Lucene.Net.Index
 
         private sealed class IndexWriterAnonymousClass : IndexWriter
         {
-            private readonly TestIndexWriterDelete outerInstance;
-
             private readonly AtomicInt32 docsInSegment;
             private readonly AtomicBoolean closing;
             private readonly AtomicBoolean sawAfterFlush;
 
-            public IndexWriterAnonymousClass(TestIndexWriterDelete outerInstance, Directory dir, IndexWriterConfig setReaderPooling, AtomicInt32 docsInSegment, AtomicBoolean closing, AtomicBoolean sawAfterFlush)
+            public IndexWriterAnonymousClass(Directory dir, IndexWriterConfig setReaderPooling, AtomicInt32 docsInSegment, AtomicBoolean closing, AtomicBoolean sawAfterFlush)
                 : base(dir, setReaderPooling)
             {
-                this.outerInstance = outerInstance;
                 this.docsInSegment = docsInSegment;
                 this.closing = closing;
                 this.sawAfterFlush = sawAfterFlush;
@@ -1360,7 +1354,7 @@ namespace Lucene.Net.Index
             {
                 Assert.IsTrue(closing || docsInSegment >= 7, "only " + docsInSegment + " in segment");
                 docsInSegment.Value = 0;
-                sawAfterFlush.Value = (true);
+                sawAfterFlush.Value = true;
             }
         }
 
