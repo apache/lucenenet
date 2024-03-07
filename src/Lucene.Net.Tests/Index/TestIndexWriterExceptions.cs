@@ -74,8 +74,8 @@ namespace Lucene.Net.Index
     {
         private class DocCopyIterator : IEnumerable<Document>
         {
-            internal readonly Document doc;
-            internal readonly int count;
+            private readonly Document doc;
+            private readonly int count;
 
             /* private field types */
             /* private field types */
@@ -213,7 +213,7 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": TEST: IndexerThread: cycle");
                     }
-                    outerInstance.doFail.Value = (this.Instance);
+                    outerInstance.doFail.Value = this.Instance;
                     string id = "" + r.Next(50);
                     idField.SetStringValue(id);
                     Term idTerm = new Term("id", id);
@@ -256,7 +256,7 @@ namespace Lucene.Net.Index
                         break;
                     }
 
-                    outerInstance.doFail.Value = (null);
+                    outerInstance.doFail.Value = null;
 
                     // After a possible exception (above) I should be able
                     // to add a new document without hitting an
@@ -303,13 +303,14 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": NOW FAIL: " + name);
-                        Console.WriteLine((new Exception()).StackTrace);
+                        Console.WriteLine(new Exception().StackTrace);
                     }
                     throw new TestPoint1Exception(Thread.CurrentThread.Name + ": intentionally failing at " + name); // LUCENENET TODO: Need to change this to RuntimeException once we add a custom (or flagged) exception that is created by RuntimeException.Create
                 }
             }
         }
 
+        // LUCENENET specific exception type
         private class TestPoint1Exception : Exception, IRuntimeException
         {
             public TestPoint1Exception(string message) : base(message)
@@ -507,7 +508,7 @@ namespace Lucene.Net.Index
         public virtual void TestExceptionJustBeforeFlush()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2), new TestPoint1(this));
+            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2), new TestPoint1(this));
             Document doc = new Document();
             doc.Add(NewTextField("field", "a field", Field.Store.YES));
             w.AddDocument(doc);
@@ -519,7 +520,7 @@ namespace Lucene.Net.Index
                 return new TokenStreamComponents(tokenizer, new CrashingFilter(fieldName, tokenizer));
             }, reuseStrategy: Analyzer.PER_FIELD_REUSE_STRATEGY);
 
-             Document crashDoc = new Document();
+            Document crashDoc = new Document();
             crashDoc.Add(NewTextField("crash", "do it on token 4", Field.Store.YES));
             try
             {
@@ -657,7 +658,7 @@ namespace Lucene.Net.Index
 
             private int count;
 
-            public sealed override bool IncrementToken()
+            public override bool IncrementToken()
             {
                 if (count++ == 5)
                 {
@@ -694,7 +695,7 @@ namespace Lucene.Net.Index
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                    bool sawAppend = StackTraceHelper.DoesStackTraceContainMethod(typeof(FreqProxTermsWriterPerField).Name, "Flush");
+                    bool sawAppend = StackTraceHelper.DoesStackTraceContainMethod(nameof(FreqProxTermsWriterPerField), "Flush");
                     bool sawFlush = StackTraceHelper.DoesStackTraceContainMethod("Flush");
 
                     if (sawAppend && sawFlush && count++ >= 30)
@@ -716,9 +717,9 @@ namespace Lucene.Net.Index
             failure.SetDoFail();
             dir.FailOn(failure);
 
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
             Document doc = new Document();
-            string contents = "aa bb cc dd ee ff gg hh ii jj kk";
+            const string contents = "aa bb cc dd ee ff gg hh ii jj kk";
             doc.Add(NewTextField("content", contents, Field.Store.NO));
             bool hitError = false;
             for (int i = 0; i < 200; i++)
@@ -824,7 +825,7 @@ namespace Lucene.Net.Index
                 }
                 reader.Dispose();
 
-                writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10));
+                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10));
                 doc = new Document();
                 doc.Add(NewField("contents", "here are some contents", DocCopyIterator.custom5));
                 for (int j = 0; j < 17; j++)
@@ -912,7 +913,7 @@ namespace Lucene.Net.Index
 
                 Assert.AreEqual(NUM_THREAD * NUM_ITER, numDel);
 
-                IndexWriter indWriter = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10));
+                IndexWriter indWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10));
                 Document doc = new Document();
                 doc.Add(NewField("contents", "here are some contents", DocCopyIterator.custom5));
                 for (int j = 0; j < 17; j++)
@@ -1009,8 +1010,7 @@ namespace Lucene.Net.Index
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                    bool foundMethod =
-                        StackTraceHelper.DoesStackTraceContainMethod(typeof(MockDirectoryWrapper).Name, "Sync");
+                    bool foundMethod = StackTraceHelper.DoesStackTraceContainMethod(nameof(MockDirectoryWrapper), "Sync");
 
                     if (m_doFail && foundMethod)
                     {
@@ -1095,9 +1095,9 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                bool isCommit = StackTraceHelper.DoesStackTraceContainMethod(typeof(SegmentInfos).Name, stage);
-                bool isDelete = StackTraceHelper.DoesStackTraceContainMethod(typeof(MockDirectoryWrapper).Name, "DeleteFile");
-                bool isInGlobalFieldMap = StackTraceHelper.DoesStackTraceContainMethod(typeof(SegmentInfos).Name, "WriteGlobalFieldMap");
+                bool isCommit = StackTraceHelper.DoesStackTraceContainMethod(nameof(SegmentInfos), stage);
+                bool isDelete = StackTraceHelper.DoesStackTraceContainMethod(nameof(MockDirectoryWrapper), "DeleteFile");
+                bool isInGlobalFieldMap = StackTraceHelper.DoesStackTraceContainMethod(nameof(SegmentInfos), "WriteGlobalFieldMap");
 
                 if (isInGlobalFieldMap && dontFailDuringGlobalFieldMap)
                 {
@@ -1122,7 +1122,11 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestExceptionsDuringCommit()
         {
-            FailOnlyInCommit[] failures = new FailOnlyInCommit[] { new FailOnlyInCommit(false, FailOnlyInCommit.PREPARE_STAGE), new FailOnlyInCommit(true, FailOnlyInCommit.PREPARE_STAGE), new FailOnlyInCommit(false, FailOnlyInCommit.FINISH_STAGE) };
+            FailOnlyInCommit[] failures = new FailOnlyInCommit[] {
+                new FailOnlyInCommit(false, FailOnlyInCommit.PREPARE_STAGE),
+                new FailOnlyInCommit(true, FailOnlyInCommit.PREPARE_STAGE),
+                new FailOnlyInCommit(false, FailOnlyInCommit.FINISH_STAGE)
+            };
 
             foreach (FailOnlyInCommit failure in failures)
             {
@@ -1176,11 +1180,7 @@ namespace Lucene.Net.Index
                 }
                 MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new RAMDirectory(startDir, NewIOContext(Random)));
                 conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new ConcurrentMergeScheduler());
-                var scheduler = conf.MergeScheduler as IConcurrentMergeScheduler;
-                if (scheduler != null)
-                {
-                    scheduler.SetSuppressExceptions();
-                }
+                ((IConcurrentMergeScheduler)conf.MergeScheduler).SetSuppressExceptions();
                 w = new IndexWriter(dir, conf);
                 dir.RandomIOExceptionRate = 0.5;
                 try
@@ -1332,10 +1332,10 @@ namespace Lucene.Net.Index
                 Console.WriteLine(e.StackTrace);
                 Assert.Fail("segmentInfos failed to retry fallback to correct segments_N file");
             }
-            reader.Dispose();
+            reader!.Dispose(); // LUCENENET [!]: using null suppression to match Java behavior
 
             // should remove the corrumpted segments_N
-            (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null))).Dispose();
+            new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null)).Dispose();
             dir.Dispose();
         }
 
@@ -1503,7 +1503,7 @@ namespace Lucene.Net.Index
             {
                 Assert.Fail("reader failed to open on a crashed index");
             }
-            reader.Dispose();
+            reader!.Dispose(); // LUCENENET [!]: using null suppression to match Java behavior
 
             try
             {
@@ -1529,7 +1529,10 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTermVectorExceptions()
         {
-            FailOnTermVectors[] failures = new FailOnTermVectors[] { new FailOnTermVectors(FailOnTermVectors.AFTER_INIT_STAGE), new FailOnTermVectors(FailOnTermVectors.INIT_STAGE) };
+            FailOnTermVectors[] failures = new FailOnTermVectors[] {
+                new FailOnTermVectors(FailOnTermVectors.AFTER_INIT_STAGE),
+                new FailOnTermVectors(FailOnTermVectors.INIT_STAGE)
+            };
             int num = AtLeast(1);
             for (int j = 0; j < num; j++)
             {
@@ -1619,7 +1622,7 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                bool fail = StackTraceHelper.DoesStackTraceContainMethod(typeof(TermVectorsConsumer).Name, stage);
+                bool fail = StackTraceHelper.DoesStackTraceContainMethod(nameof(TermVectorsConsumer), stage);
 
                 if (fail)
                 {
@@ -1814,7 +1817,7 @@ namespace Lucene.Net.Index
             uoe.doFail = true;
             try
             {
-                new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
+                _ = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, null)); // LUCENENET: discard result
                 Assert.Fail("should have gotten a UOE");
             }
             catch (Exception expected) when (expected.IsUnsupportedOperationException())
@@ -2030,9 +2033,7 @@ namespace Lucene.Net.Index
                 {
                     iw = new IndexWriter(dir, iwc);
                 }
-#pragma warning disable 168
-                catch (CorruptIndexException ex)
-#pragma warning restore 168
+                catch (CorruptIndexException)
                 {
                     // Exceptions are fine - we are running out of file handlers here
                     continue;
@@ -2059,7 +2060,6 @@ namespace Lucene.Net.Index
 
         private sealed class FailureAnonymousClass : Failure
         {
-
             public override Failure Reset()
             {
                 m_doFail = false;
@@ -2143,7 +2143,7 @@ namespace Lucene.Net.Index
                 // TODO: we could also install an infoStream and try
                 // to fail in "more evil" places inside BDS
 
-                shouldFail.Value = (true);
+                shouldFail.Value = true;
                 bool doClose = false;
 
                 try
@@ -2185,10 +2185,10 @@ namespace Lucene.Net.Index
                             {
                                 if (Verbose)
                                 {
-                                    Console.WriteLine("  delete id=" + (docBase + i).ToString());
+                                    Console.WriteLine("  delete id=" + (docBase + i));
                                 }
                                 deleteCount++;
-                                w.DeleteDocuments(new Term("id", "" + (docBase + i).ToString()));
+                                w.DeleteDocuments(new Term("id", "" + (docBase + i)));
                             }
                         }
                     }
@@ -2283,8 +2283,8 @@ namespace Lucene.Net.Index
                         {
                             if (liveDocs is null || liveDocs.Get(i))
                             {
-                                Assert.AreEqual(cf.Get(i), f.Get(i) * 2, "doc=" + (docBase + i).ToString());
-                                Assert.AreEqual(TestBinaryDocValuesUpdates.GetValue(bcf, i, scratch), TestBinaryDocValuesUpdates.GetValue(bf, i, scratch) * 2, "doc=" + (docBase + i).ToString());
+                                Assert.AreEqual(cf.Get(i), f.Get(i) * 2, "doc=" + (docBase + i));
+                                Assert.AreEqual(TestBinaryDocValuesUpdates.GetValue(bcf, i, scratch), TestBinaryDocValuesUpdates.GetValue(bf, i, scratch) * 2, "doc=" + (docBase + i));
                             }
                         }
                     }
@@ -2351,9 +2351,9 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: now fail; thread=" + Thread.CurrentThread.Name + " exc:");
-                        Console.WriteLine((new Exception()).StackTrace);
+                        Console.WriteLine(new Exception().StackTrace);
                     }
-                    shouldFail.Value = (false);
+                    shouldFail.Value = false;
                     throw new FakeIOException();
                 }
             }
@@ -2364,7 +2364,7 @@ namespace Lucene.Net.Index
             protected override void HandleMergeException(Exception exc)
             {
                 // suppress only FakeIOException:
-                if (!(exc is FakeIOException))
+                if (exc is not FakeIOException)
                 {
                     base.HandleMergeException(exc);
                 }
@@ -2490,9 +2490,7 @@ namespace Lucene.Net.Index
                 {
                     iw.Rollback();
                 }
-#pragma warning disable 168
-                catch (FakeIOException expected)
-#pragma warning restore 168
+                catch (FakeIOException)
                 {
                 }
 
@@ -2524,7 +2522,7 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: now fail; thread=" + Thread.CurrentThread.Name + " exc:");
-                        Console.WriteLine((new Exception()).StackTrace);
+                        Console.WriteLine(new Exception().StackTrace);
                     }
                     throw new FakeIOException();
                 }
