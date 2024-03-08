@@ -192,6 +192,7 @@ namespace Lucene.Net.Index
             return p;
         }
 
+#region LUCENENET-specific methods for ForkTest
         private static string TestRunParameter(string name, string value)
         {
             // See: https://github.com/microsoft/vstest/issues/862#issuecomment-621737720
@@ -204,7 +205,7 @@ namespace Lucene.Net.Index
         private const string BackSlash = "\\";
         private const string Space = " ";
 
-        private TextWriter BeginOutput(Process p, out ThreadJob stdOutPumper, out ThreadJob stdErrPumper)
+        private static TextWriter BeginOutput(Process p, out ThreadJob stdOutPumper, out ThreadJob stdErrPumper)
         {
             // We pump everything to stderr.
             TextWriter childOut = Console.Error;
@@ -214,7 +215,7 @@ namespace Lucene.Net.Index
             return childOut;
         }
 
-        private void EndOutput(Process p, TextWriter childOut, ThreadJob stdOutPumper, ThreadJob stdErrPumper)
+        private static void EndOutput(Process p, TextWriter childOut, ThreadJob stdOutPumper, ThreadJob stdErrPumper)
         {
             p.WaitForExit(10000);
             stdOutPumper.Join();
@@ -224,16 +225,17 @@ namespace Lucene.Net.Index
 
         private string GetTargetFramework()
         {
-            var targetFrameworkAttribute = GetType().Assembly.GetAttributes<System.Reflection.AssemblyMetadataAttribute>(inherit: false).Where(a => a.Key == "TargetFramework").FirstOrDefault();
+            var targetFrameworkAttribute = GetType().Assembly.GetAttributes<AssemblyMetadataAttribute>(inherit: false).FirstOrDefault(a => a.Key == "TargetFramework");
             if (targetFrameworkAttribute is null)
                 Assert.Fail("TargetFramework metadata not found in this assembly.");
             return targetFrameworkAttribute.Value;
         }
 
-        private string GetTargetPlatform()
+        private static string GetTargetPlatform()
         {
             return Environment.Is64BitProcess ? "x64" : "x86";
         }
+#endregion
 
         /// <summary>
         /// A pipe thread. It'd be nice to reuse guava's implementation for this... </summary>
@@ -248,8 +250,8 @@ namespace Lucene.Net.Index
 
             private sealed class ThreadPumperAnonymousClass : ThreadJob
             {
-                private TextReader from;
-                private TextWriter to;
+                private readonly TextReader from;
+                private readonly TextWriter to;
 
                 public ThreadPumperAnonymousClass(TextReader from, TextWriter to)
                 {
@@ -334,7 +336,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENENET: Wait for our test to spin up and log its PID so we can kill it.
-        private int WaitForProcessToKillLogFile(string processToKillFile)
+        private static int WaitForProcessToKillLogFile(string processToKillFile)
         {
             bool exists = false;
             Thread.Sleep(500);
