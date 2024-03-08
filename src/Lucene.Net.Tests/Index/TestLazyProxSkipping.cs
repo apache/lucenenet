@@ -2,7 +2,6 @@
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
-using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -76,7 +75,7 @@ namespace Lucene.Net.Index
 
         private void CreateIndex(int numHits)
         {
-            int numDocs = 500;
+            const int numDocs = 500;
 
             Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader2) =>
             {
@@ -198,7 +197,7 @@ namespace Lucene.Net.Index
         {
             private readonly TestLazyProxSkipping outerInstance;
 
-            internal IndexInput input;
+            private IndexInput input;
 
             internal SeeksCountingStream(TestLazyProxSkipping outerInstance, IndexInput input)
                 : base("SeekCountingStream(" + input + ")")
