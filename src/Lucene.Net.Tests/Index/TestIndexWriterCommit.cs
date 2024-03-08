@@ -125,7 +125,9 @@ namespace Lucene.Net.Index
             Assert.AreEqual(14, hits.Length, "first number of hits");
             reader.Dispose();
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetOpenMode(OpenMode.APPEND)
+                .SetMaxBufferedDocs(10));
             for (int j = 0; j < 17; j++)
             {
                 AddDoc(writer);
@@ -153,7 +155,8 @@ namespace Lucene.Net.Index
             // Now make sure we can re-open the index, add docs,
             // and all is good:
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                .SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10));
+                .SetOpenMode(OpenMode.APPEND)
+                .SetMaxBufferedDocs(10));
 
             // On abort, writer in fact may write to the same
             // segments_N file:
@@ -245,11 +248,11 @@ namespace Lucene.Net.Index
             writer = new IndexWriter(
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
-                    .SetOpenMode(OpenMode.APPEND).
-                    SetMaxBufferedDocs(10).
-                    SetMergeScheduler(new SerialMergeScheduler()).
-                    SetReaderPooling(false).
-                    SetMergePolicy(NewLogMergePolicy(10))
+                    .SetOpenMode(OpenMode.APPEND)
+                    .SetMaxBufferedDocs(10)
+                    .SetMergeScheduler(new SerialMergeScheduler())
+                    .SetReaderPooling(false)
+                    .SetMergePolicy(NewLogMergePolicy(10))
             );
             for (int j = 0; j < 1470; j++)
             {
@@ -294,9 +297,9 @@ namespace Lucene.Net.Index
             }
             IndexWriter writer = new IndexWriter(
                 dir,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).
-                    SetMaxBufferedDocs(10).
-                    SetMergePolicy(NewLogMergePolicy(10))
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(10)
+                    .SetMergePolicy(NewLogMergePolicy(10))
             );
             for (int j = 0; j < 17; j++)
             {
@@ -444,9 +447,9 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = new IndexWriter(
                 dir,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).
-                    SetMaxBufferedDocs(2).
-                    SetMergePolicy(NewLogMergePolicy(5))
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(2)
+                    .SetMergePolicy(NewLogMergePolicy(5))
             );
             writer.Commit();
 
@@ -487,7 +490,8 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
 
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
             Document doc = new Document();
             w.AddDocument(doc);
 
@@ -516,7 +520,9 @@ namespace Lucene.Net.Index
 
             Assert.IsNotNull(commit);
 
-            w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE).SetIndexCommit(commit));
+            w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE)
+                .SetIndexCommit(commit));
 
             Assert.AreEqual(1, w.NumDocs);
 
@@ -573,9 +579,9 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = new IndexWriter(
                 dir,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).
-                    SetMaxBufferedDocs(2).
-                    SetMergePolicy(NewLogMergePolicy(5))
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(2)
+                    .SetMergePolicy(NewLogMergePolicy(5))
             );
             writer.Commit();
 
@@ -639,9 +645,9 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = new IndexWriter(
                 dir,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).
-                    SetMaxBufferedDocs(2).
-                    SetMergePolicy(NewLogMergePolicy(5))
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(2)
+                    .SetMergePolicy(NewLogMergePolicy(5))
             );
             writer.Commit();
 

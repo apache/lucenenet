@@ -717,7 +717,8 @@ namespace Lucene.Net.Index
             failure.SetDoFail();
             dir.FailOn(failure);
 
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(2));
             Document doc = new Document();
             const string contents = "aa bb cc dd ee ff gg hh ii jj kk";
             doc.Add(NewTextField("content", contents, Field.Store.NO));
@@ -760,7 +761,8 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: cycle i=" + i);
                 }
                 Directory dir = NewDirectory();
-                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMergePolicy(NewLogMergePolicy()));
+                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                    .SetMergePolicy(NewLogMergePolicy()));
 
                 // don't allow a sudden merge to clean up the deleted
                 // doc below:
@@ -825,7 +827,8 @@ namespace Lucene.Net.Index
                 }
                 reader.Dispose();
 
-                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10));
+                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                    .SetMaxBufferedDocs(10));
                 doc = new Document();
                 doc.Add(NewField("contents", "here are some contents", DocCopyIterator.custom5));
                 for (int j = 0; j < 17; j++)
@@ -871,7 +874,9 @@ namespace Lucene.Net.Index
                 Directory dir = NewDirectory();
 
                 {
-                    IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(-1).SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.COMPOUND_FILES : NoMergePolicy.NO_COMPOUND_FILES));
+                    IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                        .SetMaxBufferedDocs(-1)
+                        .SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.COMPOUND_FILES : NoMergePolicy.NO_COMPOUND_FILES));
                     // don't use a merge policy here they depend on the DWPThreadPool and its max thread states etc.
                     int finalI = i;
 
@@ -913,7 +918,8 @@ namespace Lucene.Net.Index
 
                 Assert.AreEqual(NUM_THREAD * NUM_ITER, numDel);
 
-                IndexWriter indWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10));
+                IndexWriter indWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                    .SetMaxBufferedDocs(10));
                 Document doc = new Document();
                 doc.Add(NewField("contents", "here are some contents", DocCopyIterator.custom5));
                 for (int j = 0; j < 17; j++)
@@ -1207,7 +1213,8 @@ namespace Lucene.Net.Index
         {
             AtomicBoolean thrown = new AtomicBoolean(false);
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetInfoStream(new TOOMInfoStreamAnonymousClass(thrown)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetInfoStream(new TOOMInfoStreamAnonymousClass(thrown)));
 
             try
             {
@@ -1403,7 +1410,9 @@ namespace Lucene.Net.Index
             dir.CheckIndexOnDispose = false; // we are corrupting it!
             IndexWriter writer = null;
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy(true)).SetUseCompoundFile(true));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMergePolicy(NewLogMergePolicy(true))
+                .SetUseCompoundFile(true));
             MergePolicy lmp = writer.Config.MergePolicy;
             // Force creation of CFS:
             lmp.NoCFSRatio = 1.0;

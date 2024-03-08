@@ -845,8 +845,10 @@ namespace Lucene.Net.Index
             string[] text = { "Amsterdam", "Venice" };
 
             MockDirectoryWrapper dir = NewMockDirectory();
-            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(
-                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(2).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
+                .SetMaxBufferedDeleteTerms(2)
+                .SetReaderPooling(false)
+                .SetMergePolicy(NewLogMergePolicy()));
 
             MergePolicy lmp = modifier.Config.MergePolicy;
             lmp.NoCFSRatio = 1.0;
@@ -1147,7 +1149,10 @@ namespace Lucene.Net.Index
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
             });
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetRAMBufferSizeMB(1.0).SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetRAMBufferSizeMB(1.0)
+                .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                .SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH));
             Document doc = new Document();
             doc.Add(NewTextField("field", "go 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20", Field.Store.NO));
             int num = AtLeast(3);
@@ -1196,9 +1201,11 @@ namespace Lucene.Net.Index
             // Cannot use RandomIndexWriter because we don't want to
             // ever call commit() for this test:
             // note: tiny rambuffer used, as with a 1MB buffer the test is too slow (flush @ 128,999)
-            IndexWriter w = new IndexWriter(dir,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                    .SetRAMBufferSizeMB(0.1f).SetMaxBufferedDocs(1000).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetRAMBufferSizeMB(0.1f)
+                    .SetMaxBufferedDocs(1000)
+                    .SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES)
+                    .SetReaderPooling(false));
             int count = 0;
             while (true)
             {
@@ -1251,9 +1258,12 @@ namespace Lucene.Net.Index
             // Cannot use RandomIndexWriter because we don't want to
             // ever call commit() for this test:
             int flushAtDelCount = AtLeast(1020);
-            IndexWriter w = new IndexWriter(dir,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                    .SetMaxBufferedDeleteTerms(flushAtDelCount).SetMaxBufferedDocs(1000).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDeleteTerms(flushAtDelCount)
+                    .SetMaxBufferedDocs(1000)
+                    .SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                    .SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES)
+                    .SetReaderPooling(false));
             int count = 0;
             while (true)
             {
@@ -1301,7 +1311,11 @@ namespace Lucene.Net.Index
             AtomicInt32 docsInSegment = new AtomicInt32();
             AtomicBoolean closing = new AtomicBoolean();
             AtomicBoolean sawAfterFlush = new AtomicBoolean();
-            IndexWriter w = new IndexWriterAnonymousClass(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetRAMBufferSizeMB(0.5).SetMaxBufferedDocs(-1).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false), docsInSegment, closing, sawAfterFlush);
+            IndexWriter w = new IndexWriterAnonymousClass(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetRAMBufferSizeMB(0.5)
+                .SetMaxBufferedDocs(-1)
+                .SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES)
+                .SetReaderPooling(false), docsInSegment, closing, sawAfterFlush);
             int id = 0;
             while (true)
             {
