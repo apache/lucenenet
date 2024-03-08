@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestSingleWriterReader()
         {
-            Counter bytesUsed = Util.Counter.NewCounter();
+            Counter bytesUsed = Counter.NewCounter();
             Int32BlockPool pool = new Int32BlockPool(new ByteTrackingAllocator(bytesUsed));
 
             for (int j = 0; j < 2; j++)
@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestMultipleWriterReader()
         {
-            Counter bytesUsed = Util.Counter.NewCounter();
+            Counter bytesUsed = Counter.NewCounter();
             Int32BlockPool pool = new Int32BlockPool(new ByteTrackingAllocator(bytesUsed));
             for (int j = 0; j < 2; j++)
             {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
 
         private class ByteTrackingAllocator : Int32BlockPool.Allocator
         {
-            internal readonly Counter bytesUsed;
+            private readonly Counter bytesUsed;
 
             public ByteTrackingAllocator(Counter bytesUsed)
                 : this(Int32BlockPool.INT32_BLOCK_SIZE, bytesUsed)
