@@ -751,7 +751,7 @@ namespace Lucene.Net.Index
         /// Copied from <see cref="TestIndexWriter.AddDoc(IndexWriter)"/>
         /// to remove inter-class dependency on <see cref="TestIndexWriter"/>
         /// </summary>
-        private void AddDoc(IndexWriter writer)
+        private static void AddDoc(IndexWriter writer)
         {
             Document doc = new Document();
             doc.Add(NewTextField("content", "aaa", Field.Store.NO));
@@ -760,10 +760,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// LUCENENET specific
-        /// Copied from <seealso cref="TestIndexWriter.AddDocWithIndex(IndexWriter, int)"/>
+        /// Copied from <see cref="TestIndexWriter.AddDocWithIndex(IndexWriter, int)"/>
         /// to remove inter-class dependency on <see cref="TestIndexWriter"/>.
         /// </summary>
-        private void AddDocWithIndex(IndexWriter writer, int index)
+        private static void AddDocWithIndex(IndexWriter writer, int index)
         {
             Document doc = new Document();
             doc.Add(NewField("content", "aaa " + index, storedTextType));

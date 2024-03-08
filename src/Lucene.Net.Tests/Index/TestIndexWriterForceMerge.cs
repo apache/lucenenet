@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
-using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -242,23 +241,15 @@ namespace Lucene.Net.Index
         /// <summary>
         /// LUCENENET specific
         ///
-        /// Copied from <seealso cref="TestIndexWriter.AddDoc(IndexWriter)"/>
+        /// Copied from <see cref="TestIndexWriter.AddDocWithIndex(IndexWriter, int)"/>
         /// to remove inter-class dependency on TestIndexWriter.
         /// </summary>
-        private void AddDoc(IndexWriter writer)
-        {
-            Document doc = new Document();
-            doc.Add(NewTextField("content", "aaa", Field.Store.NO));
-            writer.AddDocument(doc);
-        }
-
-        private void AddDocWithIndex(IndexWriter writer, int index)
+        private static void AddDocWithIndex(IndexWriter writer, int index)
         {
             Document doc = new Document();
             doc.Add(NewField("content", "aaa " + index, storedTextType));
             doc.Add(NewField("id", "" + index, storedTextType));
             writer.AddDocument(doc);
         }
-
     }
 }

@@ -85,9 +85,8 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriter : LuceneTestCase
     {
-        private static readonly FieldType storedTextType = new FieldType(TextField.TYPE_NOT_STORED);
-
 #if FEATURE_INDEXWRITER_TESTS
+        private static readonly FieldType storedTextType = new FieldType(TextField.TYPE_NOT_STORED);
 
         [Test]
         public virtual void TestDocCount()
@@ -155,11 +154,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// LUCENENET specific
-        /// Changed from internal static method to private to remove
+        /// Changed from internal method to private to remove
         /// inter-dependencies between TestIndexWriter*.cs, TestAddIndexes.cs
         /// and TestDeletionPolicy.cs tests
         /// </summary>
-        private void AddDoc(IndexWriter writer)
+        private static void AddDoc(IndexWriter writer)
         {
             Document doc = new Document();
             doc.Add(NewTextField("content", "aaa", Field.Store.NO));
@@ -168,11 +167,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// LUCENENET specific
-        /// Changed from internal static method to private to remove
+        /// Changed from internal method to private to remove
         /// inter-dependencies between TestIndexWriter*.cs, TestAddIndexes.cs
         /// and TestDeletionPolicy.cs tests
         /// </summary>
-        private void AddDocWithIndex(IndexWriter writer, int index)
+        private static void AddDocWithIndex(IndexWriter writer, int index)
         {
             Document doc = new Document();
             doc.Add(NewField("content", "aaa " + index, storedTextType));
