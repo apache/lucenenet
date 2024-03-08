@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
             base.SetUp();
             dir = NewDirectory();
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy());
-            config.SetSimilarity(new TestSimilarity(this));
+            config.SetSimilarity(new TestSimilarity());
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, config);
             Document doc = new Document();
             Field foo = NewTextField("foo", "", Field.Store.NO);
@@ -117,13 +117,6 @@ namespace Lucene.Net.Index
         /// </summary>
         internal class TestSimilarity : TFIDFSimilarity
         {
-            private readonly TestMaxTermFrequency outerInstance;
-
-            public TestSimilarity(TestMaxTermFrequency outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override float LengthNorm(FieldInvertState state)
             {
                 return state.MaxTermFrequency;
