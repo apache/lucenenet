@@ -140,7 +140,9 @@ namespace Lucene.Net.Index
             }
 
             IndexReader r;
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMergePolicy(NewLogMergePolicy());
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetOpenMode(OpenMode.CREATE)
+                .SetMergePolicy(NewLogMergePolicy());
             iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random.NextDouble());
             iwc.SetMaxBufferedDocs(-1);
             RandomIndexWriter riw = new RandomIndexWriter(Random, dir, iwc);
@@ -253,10 +255,10 @@ namespace Lucene.Net.Index
                                 Assert.AreEqual(pos, postings.NextPosition());
                                 if (Random.NextBoolean())
                                 {
-                                    var dummy = postings.GetPayload();
+                                    _ = postings.GetPayload();
                                     if (Random.NextBoolean())
                                     {
-                                        dummy = postings.GetPayload(); // get it again
+                                        _ = postings.GetPayload(); // get it again
                                     }
                                 }
                             }
@@ -316,10 +318,10 @@ namespace Lucene.Net.Index
                                 Assert.AreEqual(pos, postings.NextPosition());
                                 if (Random.NextBoolean())
                                 {
-                                    var dummy = postings.GetPayload();
+                                    _ = postings.GetPayload();
                                     if (Random.NextBoolean())
                                     {
-                                        dummy = postings.GetPayload(); // get it again
+                                        _ = postings.GetPayload(); // get it again
                                     }
                                 }
                             }
