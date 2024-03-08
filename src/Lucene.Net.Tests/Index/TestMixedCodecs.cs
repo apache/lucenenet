@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             RandomIndexWriter w = null;
 
-            int docsLeftInthisSegment = 0;
+            int docsLeftInThisSegment = 0;
 
             int docUpto = 0;
             while (docUpto < NUM_DOCS)
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: " + docUpto + " of " + NUM_DOCS);
                 }
-                if (docsLeftInthisSegment == 0)
+                if (docsLeftInThisSegment == 0)
                 {
                     IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
                     if (Random.NextBoolean())
@@ -71,13 +71,13 @@ namespace Lucene.Net.Index
                         w.Dispose();
                     }
                     w = new RandomIndexWriter(Random, dir, iwc);
-                    docsLeftInthisSegment = TestUtil.NextInt32(Random, 10, 100);
+                    docsLeftInThisSegment = TestUtil.NextInt32(Random, 10, 100);
                 }
                 Document doc = new Document();
                 doc.Add(NewStringField("id", Convert.ToString(docUpto), Field.Store.YES));
                 w.AddDocument(doc);
                 docUpto++;
-                docsLeftInthisSegment--;
+                docsLeftInThisSegment--;
             }
 
             if (Verbose)
