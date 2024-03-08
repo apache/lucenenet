@@ -40,7 +40,32 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriterUnicode : LuceneTestCase
     {
-        internal readonly string[] utf8Data = new string[] { "ab\udc17cd", "ab\ufffdcd", "\udc17abcd", "\ufffdabcd", "\udc17", "\ufffd", "ab\udc17\udc17cd", "ab\ufffd\ufffdcd", "\udc17\udc17abcd", "\ufffd\ufffdabcd", "\udc17\udc17", "\ufffd\ufffd", "ab\ud917cd", "ab\ufffdcd", "\ud917abcd", "\ufffdabcd", "\ud917", "\ufffd", "ab\ud917\ud917cd", "ab\ufffd\ufffdcd", "\ud917\ud917abcd", "\ufffd\ufffdabcd", "\ud917\ud917", "\ufffd\ufffd", "ab\udc17\ud917cd", "ab\ufffd\ufffdcd", "\udc17\ud917abcd", "\ufffd\ufffdabcd", "\udc17\ud917", "\ufffd\ufffd", "ab\udc17\ud917\udc17\ud917cd", "ab\ufffd\ud917\udc17\ufffdcd", "\udc17\ud917\udc17\ud917abcd", "\ufffd\ud917\udc17\ufffdabcd", "\udc17\ud917\udc17\ud917", "\ufffd\ud917\udc17\ufffd" };
+        internal readonly string[] utf8Data = new string[]
+        {
+            // unpaired low surrogate
+            "ab\udc17cd", "ab\ufffdcd",
+            "\udc17abcd", "\ufffdabcd",
+            "\udc17", "\ufffd",
+            "ab\udc17\udc17cd", "ab\ufffd\ufffdcd",
+            "\udc17\udc17abcd", "\ufffd\ufffdabcd",
+            "\udc17\udc17", "\ufffd\ufffd",
+
+            // unpaired high surrogate
+            "ab\ud917cd", "ab\ufffdcd",
+            "\ud917abcd", "\ufffdabcd",
+            "\ud917", "\ufffd",
+            "ab\ud917\ud917cd", "ab\ufffd\ufffdcd",
+            "\ud917\ud917abcd", "\ufffd\ufffdabcd",
+            "\ud917\ud917", "\ufffd\ufffd",
+
+            // backwards surrogates
+            "ab\udc17\ud917cd", "ab\ufffd\ufffdcd",
+            "\udc17\ud917abcd", "\ufffd\ufffdabcd",
+            "\udc17\ud917", "\ufffd\ufffd",
+            "ab\udc17\ud917\udc17\ud917cd", "ab\ufffd\ud917\udc17\ufffdcd",
+            "\udc17\ud917\udc17\ud917abcd", "\ufffd\ud917\udc17\ufffdabcd",
+            "\udc17\ud917\udc17\ud917", "\ufffd\ud917\udc17\ufffd"
+        };
 
         private int NextInt(int lim)
         {
@@ -58,8 +83,8 @@ namespace Lucene.Net.Index
             bool hasIllegal = false;
 
             if (offset > 0 && buffer[offset] >= 0xdc00 && buffer[offset] < 0xe000)
-            // Don't start in the middle of a valid surrogate pair
             {
+                // Don't start in the middle of a valid surrogate pair
                 offset--;
             }
 
@@ -173,7 +198,7 @@ namespace Lucene.Net.Index
             }
 
             // Test seeking:
-            IEnumerator<string> it = seenTerms.GetEnumerator();
+            using IEnumerator<string> it = seenTerms.GetEnumerator();
             while (it.MoveNext())
             {
                 BytesRef tr = new BytesRef(it.Current);
@@ -199,9 +224,7 @@ namespace Lucene.Net.Index
                 UnicodeUtil.UTF16toUTF8(buffer, 0, 20, utf8);
                 if (!hasIllegal)
                 {
-#pragma warning disable 612, 618
-                    var b = (new string(buffer, 0, 20)).GetBytes(IOUtils.CHARSET_UTF_8);
-#pragma warning restore 612, 618
+                    var b = new string(buffer, 0, 20).GetBytes(Encoding.UTF8);
                     Assert.AreEqual(b.Length, utf8.Length);
                     for (int i = 0; i < b.Length; i++)
                     {
@@ -228,8 +251,8 @@ namespace Lucene.Net.Index
             for (int ch = 0; ch < 0x0010FFFF; ch++)
             {
                 if (ch == 0xd800)
-                // Skip invalid code points
                 {
+                    // Skip invalid code points
                     ch = 0xe000;
                 }
 
