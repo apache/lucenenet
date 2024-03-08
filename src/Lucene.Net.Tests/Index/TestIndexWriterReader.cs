@@ -727,7 +727,9 @@ namespace Lucene.Net.Index
             }
             w.Dispose();
         }
+#endif
 
+        // ReSharper disable once UnusedMember.Global - used in J-S test project, not in I-J
         public static void CreateIndexNoClose(bool multiSegment, string indexName, IndexWriter w)
         {
             for (int i = 0; i < 100; i++)
@@ -740,6 +742,7 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_INDEXWRITER_TESTS
         private class MyWarmer : IndexWriter.IndexReaderWarmer
         {
             internal int warmCount;
