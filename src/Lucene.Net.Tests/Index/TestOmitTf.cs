@@ -163,7 +163,9 @@ namespace Lucene.Net.Index
         {
             Directory ram = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(3).SetMergePolicy(NewLogMergePolicy(2)));
+            IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetMaxBufferedDocs(3)
+                .SetMergePolicy(NewLogMergePolicy(2)));
             Document d = new Document();
 
             // this field will have Tf
@@ -217,7 +219,9 @@ namespace Lucene.Net.Index
         {
             Directory ram = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(2)));
+            IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetMaxBufferedDocs(10)
+                .SetMergePolicy(NewLogMergePolicy(2)));
             Document d = new Document();
 
             // this field will have Tf
@@ -269,7 +273,9 @@ namespace Lucene.Net.Index
         {
             Directory ram = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(3).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetMaxBufferedDocs(3)
+                .SetMergePolicy(NewLogMergePolicy()));
             LogMergePolicy lmp = (LogMergePolicy)writer.Config.MergePolicy;
             lmp.MergeFactor = 2;
             lmp.NoCFSRatio = 0.0;
@@ -313,10 +319,13 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(2).SetSimilarity(new SimpleSimilarity()).SetMergePolicy(NewLogMergePolicy(2)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetMaxBufferedDocs(2)
+                .SetSimilarity(new SimpleSimilarity())
+                .SetMergePolicy(NewLogMergePolicy(2)));
 
             StringBuilder sb = new StringBuilder(265);
-            string term = "term";
+            const string term = "term";
             for (int i = 0; i < 30; i++)
             {
                 Document doc = new Document();
@@ -374,23 +383,23 @@ namespace Lucene.Net.Index
                 } // else OK because positions are not indexed
             }
 
-            searcher.Search(q1, new CountingHitCollectorAnonymousClass(this));
+            searcher.Search(q1, new CountingHitCollectorAnonymousClass());
             //System.out.println(CountingHitCollector.getCount());
 
-            searcher.Search(q2, new CountingHitCollectorAnonymousClass2(this));
+            searcher.Search(q2, new CountingHitCollectorAnonymousClass2());
             //System.out.println(CountingHitCollector.getCount());
 
-            searcher.Search(q3, new CountingHitCollectorAnonymousClass3(this));
+            searcher.Search(q3, new CountingHitCollectorAnonymousClass3());
             //System.out.println(CountingHitCollector.getCount());
 
-            searcher.Search(q4, new CountingHitCollectorAnonymousClass4(this));
+            searcher.Search(q4, new CountingHitCollectorAnonymousClass4());
             //System.out.println(CountingHitCollector.getCount());
 
             BooleanQuery bq = new BooleanQuery();
             bq.Add(q1, Occur.MUST);
             bq.Add(q4, Occur.MUST);
 
-            searcher.Search(bq, new CountingHitCollectorAnonymousClass5(this));
+            searcher.Search(bq, new CountingHitCollectorAnonymousClass5());
             Assert.AreEqual(15, CountingHitCollector.Count);
 
             reader.Dispose();
@@ -399,21 +408,14 @@ namespace Lucene.Net.Index
 
         private sealed class CountingHitCollectorAnonymousClass : CountingHitCollector
         {
-            private readonly TestOmitTf outerInstance;
-
-            public CountingHitCollectorAnonymousClass(TestOmitTf outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             private Scorer scorer;
 
-            public override sealed void SetScorer(Scorer scorer)
+            public override void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override sealed void Collect(int doc)
+            public override void Collect(int doc)
             {
                 //System.out.println("Q1: Doc=" + doc + " score=" + score);
                 float score = scorer.GetScore();
@@ -424,21 +426,14 @@ namespace Lucene.Net.Index
 
         private sealed class CountingHitCollectorAnonymousClass2 : CountingHitCollector
         {
-            private readonly TestOmitTf outerInstance;
-
-            public CountingHitCollectorAnonymousClass2(TestOmitTf outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             private Scorer scorer;
 
-            public override sealed void SetScorer(Scorer scorer)
+            public override void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override sealed void Collect(int doc)
+            public override void Collect(int doc)
             {
                 //System.out.println("Q2: Doc=" + doc + " score=" + score);
                 float score = scorer.GetScore();
@@ -449,21 +444,14 @@ namespace Lucene.Net.Index
 
         private sealed class CountingHitCollectorAnonymousClass3 : CountingHitCollector
         {
-            private readonly TestOmitTf outerInstance;
-
-            public CountingHitCollectorAnonymousClass3(TestOmitTf outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             private Scorer scorer;
 
-            public override sealed void SetScorer(Scorer scorer)
+            public override void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override sealed void Collect(int doc)
+            public override void Collect(int doc)
             {
                 //System.out.println("Q1: Doc=" + doc + " score=" + score);
                 float score = scorer.GetScore();
@@ -475,21 +463,14 @@ namespace Lucene.Net.Index
 
         private sealed class CountingHitCollectorAnonymousClass4 : CountingHitCollector
         {
-            private readonly TestOmitTf outerInstance;
-
-            public CountingHitCollectorAnonymousClass4(TestOmitTf outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             private Scorer scorer;
 
-            public override sealed void SetScorer(Scorer scorer)
+            public override void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
             }
 
-            public override sealed void Collect(int doc)
+            public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
                 //System.out.println("Q1: Doc=" + doc + " score=" + score);
@@ -501,14 +482,8 @@ namespace Lucene.Net.Index
 
         private sealed class CountingHitCollectorAnonymousClass5 : CountingHitCollector
         {
-            private readonly TestOmitTf outerInstance;
-
-            public CountingHitCollectorAnonymousClass5(TestOmitTf outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public override sealed void Collect(int doc)
+            // ReSharper disable once RedundantOverriddenMember - matches Java code, and adds comment
+            public override void Collect(int doc)
             {
                 //System.out.println("BQ: Doc=" + doc + " score=" + score);
                 base.Collect(doc);
@@ -519,7 +494,7 @@ namespace Lucene.Net.Index
         {
             internal static int count = 0;
             internal static int sum = 0;
-            internal int docBase = -1;
+            private int docBase = -1;
 
             internal CountingHitCollector()
             {
