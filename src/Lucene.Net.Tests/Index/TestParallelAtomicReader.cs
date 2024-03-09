@@ -94,7 +94,9 @@ namespace Lucene.Net.Index
             Directory dir2 = GetDir2(Random);
             AtomicReader ir1, ir2;
             // close subreaders, ParallelReader will not change refCounts, but close on its own close
-            ParallelAtomicReader pr = new ParallelAtomicReader(ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1)), ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2)));
+            ParallelAtomicReader pr = new ParallelAtomicReader(
+                ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1)),
+                ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2)));
 
             // check RefCounts
             Assert.AreEqual(1, ir1.RefCount);
@@ -136,7 +138,9 @@ namespace Lucene.Net.Index
             AtomicReader ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1));
 
             // with overlapping
-            ParallelAtomicReader pr = new ParallelAtomicReader(true, new AtomicReader[] { ir1 }, new AtomicReader[] { ir1 });
+            ParallelAtomicReader pr = new ParallelAtomicReader(true,
+                new AtomicReader[] { ir1 },
+                new AtomicReader[] { ir1 });
 
             ir1.Dispose();
 
@@ -175,7 +179,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                new ParallelAtomicReader(ir1, ir2);
+                _ = new ParallelAtomicReader(ir1, ir2);
                 Assert.Fail("didn't get exptected exception: indexes don't have same number of documents");
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
@@ -185,7 +189,9 @@ namespace Lucene.Net.Index
 
             try
             {
-                new ParallelAtomicReader(Random.NextBoolean(), new AtomicReader[] { ir1, ir2 }, new AtomicReader[] { ir1, ir2 });
+                _ = new ParallelAtomicReader(Random.NextBoolean(),
+                    new AtomicReader[] { ir1, ir2 },
+                    new AtomicReader[] { ir1, ir2 });
                 Assert.Fail("didn't get expected exception: indexes don't have same number of documents");
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
@@ -210,7 +216,9 @@ namespace Lucene.Net.Index
             AtomicReader ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2));
 
             // with overlapping
-            ParallelAtomicReader pr = new ParallelAtomicReader(false, new AtomicReader[] { ir1, ir2 }, new AtomicReader[] { ir1 });
+            ParallelAtomicReader pr = new ParallelAtomicReader(false,
+                new AtomicReader[] { ir1, ir2 },
+                new AtomicReader[] { ir1 });
             Assert.AreEqual("v1", pr.Document(0).Get("f1"));
             Assert.AreEqual("v1", pr.Document(0).Get("f2"));
             Assert.IsNull(pr.Document(0).Get("f3"));
@@ -223,7 +231,9 @@ namespace Lucene.Net.Index
             pr.Dispose();
 
             // no stored fields at all
-            pr = new ParallelAtomicReader(false, new AtomicReader[] { ir2 }, new AtomicReader[0]);
+            pr = new ParallelAtomicReader(false,
+                new AtomicReader[] { ir2 },
+                new AtomicReader[0]);
             Assert.IsNull(pr.Document(0).Get("f1"));
             Assert.IsNull(pr.Document(0).Get("f2"));
             Assert.IsNull(pr.Document(0).Get("f3"));
@@ -236,7 +246,9 @@ namespace Lucene.Net.Index
             pr.Dispose();
 
             // without overlapping
-            pr = new ParallelAtomicReader(true, new AtomicReader[] { ir2 }, new AtomicReader[] { ir1 });
+            pr = new ParallelAtomicReader(true,
+                new AtomicReader[] { ir2 },
+                new AtomicReader[] { ir1 });
             Assert.AreEqual("v1", pr.Document(0).Get("f1"));
             Assert.AreEqual("v1", pr.Document(0).Get("f2"));
             Assert.IsNull(pr.Document(0).Get("f3"));
@@ -251,7 +263,9 @@ namespace Lucene.Net.Index
             // no main readers
             try
             {
-                new ParallelAtomicReader(true, new AtomicReader[0], new AtomicReader[] { ir1 });
+                _ = new ParallelAtomicReader(true,
+                    new AtomicReader[0],
+                    new AtomicReader[] { ir1 });
                 Assert.Fail("didn't get expected exception: need a non-empty main-reader array");
             }
             catch (Exception iae) when (iae.IsIllegalArgumentException())
@@ -308,7 +322,9 @@ namespace Lucene.Net.Index
         {
             dir1 = GetDir1(random);
             dir2 = GetDir2(random);
-            ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1)), SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2)));
+            ParallelAtomicReader pr = new ParallelAtomicReader(
+                SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1)),
+                SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2)));
             TestUtil.CheckReader(pr);
             return NewSearcher(pr);
         }
