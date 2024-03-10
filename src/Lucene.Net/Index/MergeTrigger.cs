@@ -25,6 +25,11 @@ namespace Lucene.Net.Index
     public enum MergeTrigger
     {
         /// <summary>
+        /// LUCENENET-specific value to be used instead of null.
+        /// </summary>
+        NONE = -1,
+
+        /// <summary>
         /// Merge was triggered by a segment flush.
         /// </summary>
         SEGMENT_FLUSH,
