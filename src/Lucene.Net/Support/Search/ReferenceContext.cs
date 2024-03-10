@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+#nullable enable
 
 namespace Lucene.Net.Search
 {
@@ -22,28 +24,32 @@ namespace Lucene.Net.Search
     /// <summary>
     /// <see cref="ReferenceContext{T}"/> holds a reference instance and
     /// ensures it is properly de-referenced from its corresponding <see cref="ReferenceManager{G}"/>
-    /// when <see cref="Dispose()"/> is called. This class is primarily intended
-    /// to be used with a using block.
+    /// when <see cref="Dispose()"/> is called. This struct is intended
+    /// to be used with a using block to simplify releasing a reference
+    /// such as a <see cref="SearcherManager"/> instance.
     /// <para/>
     /// LUCENENET specific
     /// </summary>
-    /// <typeparam name="T">The reference type</typeparam>
-    public sealed class ReferenceContext<T> : IDisposable
+    /// <typeparam name="T">The reference type.</typeparam>
+    public ref struct ReferenceContext<T>
         where T : class
     {
-        private readonly ReferenceManager<T> referenceManager;
-        private T reference;
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
+        [SuppressMessage("Major Code Smell", "S2933:Fields that are only assigned in the constructor should be \"readonly\"", Justification = "Structs are known to have performance issues with readonly fields")]
+        [SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "Structs are known to have performance issues with readonly fields")]
+        private ReferenceManager<T> referenceManager;
+        private T? reference;
 
         internal ReferenceContext(ReferenceManager<T> referenceManager)
         {
-            this.referenceManager = referenceManager;
+            this.referenceManager = referenceManager ?? throw new ArgumentNullException(nameof(referenceManager));
             this.reference = referenceManager.Acquire();
         }
 
         /// <summary>
         /// The reference acquired from the <see cref="ReferenceManager{G}"/>.
         /// </summary>
-        public T Reference => reference;
+        public readonly T Reference => reference ?? throw new ObjectDisposedException(nameof(ReferenceContext<T>));
 
         /// <summary>
         /// Ensures the reference is properly de-referenced from its <see cref="ReferenceManager{G}"/>.
