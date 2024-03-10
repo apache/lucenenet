@@ -770,15 +770,36 @@ namespace Lucene.Net.Search
             controlledRealTimeReopenThread.Start();
 
             //An indexSearcher only sees Doc1
-            IndexSearcher indexSearcher = searcherManager.Acquire();
-            try
+
+            // In Java, to obtain a threadsafe IndexSearcher reference, the following pattern could
+            // be used. This also works in .NET.
+            //IndexSearcher indexSearcher = searcherManager.Acquire();
+            //try
+            //{
+            //    TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), 1);
+            //    assertEquals(1, topDocs.TotalHits);             //There is only one doc
+            //}
+            //finally
+            //{
+            //    searcherManager.Release(indexSearcher);
+            //}
+
+            // However, in .NET it can be done like this with less code. We get an instance of
+            // ReferenceContext<IndexSearcher> in a using block so the call to searcherManager.Release()
+            // happens implicitly. ReferenceContext<IndexSearcher> is a ref struct so it doesn't allocate
+            // on the heap and will be deallocated at the end of this block automatically.
+            using (var context = searcherManager.GetContext())
             {
+                IndexSearcher indexSearcher = context.Reference;
                 TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), 1);
                 assertEquals(1, topDocs.TotalHits);             //There is only one doc
             }
-            finally
+
+            using (var context = searcherManager.GetContext())
             {
-                searcherManager.Release(indexSearcher);
+                IndexSearcher indexSearcher = context.Reference;
+                TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), 1);
+                assertEquals(1, topDocs.TotalHits);             //There is only one doc
             }
 
             //Add a 2nd document
@@ -789,15 +810,29 @@ namespace Lucene.Net.Search
 
             //Demonstrate that we can only see the first doc because we haven't
             //waited 1 sec or called WaitForGeneration
-            indexSearcher = searcherManager.Acquire();
-            try
+
+            // In Java, to obtain a threadsafe IndexSearcher reference, the following pattern could
+            // be used. This also works in .NET.
+            //indexSearcher = searcherManager.Acquire();
+            //try
+            //{
+            //    TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), 1);
+            //    assertEquals(1, topDocs.TotalHits);             //Can see both docs due to auto refresh after 1.1 secs
+            //}
+            //finally
+            //{
+            //    searcherManager.Release(indexSearcher);
+            //}
+
+            // However, in .NET it can be done like this with less code. We get an instance of
+            // ReferenceContext<IndexSearcher> in a using block so the call to searcherManager.Release()
+            // happens implicitly. ReferenceContext<IndexSearcher> is a ref struct so it doesn't allocate
+            // on the heap and will be deallocated at the end of this block automatically.
+            using (var context = searcherManager.GetContext())
             {
+                IndexSearcher indexSearcher = context.Reference;
                 TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), 1);
                 assertEquals(1, topDocs.TotalHits);             //Can see both docs due to auto refresh after 1.1 secs
-            }
-            finally
-            {
-                searcherManager.Release(indexSearcher);
             }
 
 
@@ -805,15 +840,11 @@ namespace Lucene.Net.Search
             //then 1 sec so that controlledRealTimeReopenThread max interval is exceeded
             //and it calls MaybeRefresh
             Thread.Sleep(1100);     //wait 1.1 secs as ms
-            indexSearcher = searcherManager.Acquire();
-            try
+            using (var context = searcherManager.GetContext())
             {
+                IndexSearcher indexSearcher = context.Reference;
                 TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), 1);
                 assertEquals(2, topDocs.TotalHits);             //Can see both docs due to auto refresh after 1.1 secs
-            }
-            finally
-            {
-                searcherManager.Release(indexSearcher);
             }
 
 
@@ -831,15 +862,28 @@ namespace Lucene.Net.Search
             stopwatch.Stop();
             assertTrue(stopwatch.Elapsed.TotalMilliseconds <= 200 + 30);   //30ms is fudged factor to account for call overhead.
 
-            indexSearcher = searcherManager.Acquire();
-            try
+            // In Java, to obtain a threadsafe IndexSearcher reference, the following pattern could
+            // be used. This also works in .NET.
+            //indexSearcher = searcherManager.Acquire();
+            //try
+            //{
+            //    TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), 1);
+            //    assertEquals(3, topDocs.TotalHits);             //Can see both docs due to auto refresh after 1.1 secs
+            //}
+            //finally
+            //{
+            //    searcherManager.Release(indexSearcher);
+            //}
+
+            // However, in .NET it can be done like this with less code. We get an instance of
+            // ReferenceContext<IndexSearcher> in a using block so the call to searcherManager.Release()
+            // happens implicitly. ReferenceContext<IndexSearcher> is a ref struct so it doesn't allocate
+            // on the heap and will be deallocated at the end of this block automatically.
+            using (var context = searcherManager.GetContext())
             {
+                IndexSearcher indexSearcher = context.Reference;
                 TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), 1);
                 assertEquals(3, topDocs.TotalHits);             //Can see both docs due to auto refresh after 1.1 secs
-            }
-            finally
-            {
-                searcherManager.Release(indexSearcher);
             }
 
             controlledRealTimeReopenThread.Dispose();
