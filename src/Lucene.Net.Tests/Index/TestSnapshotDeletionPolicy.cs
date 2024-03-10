@@ -502,7 +502,7 @@ namespace Lucene.Net.Index
 
             // open a new writer w/ KeepOnlyLastCommit policy, so it will delete "s1"
             // commit.
-            (new IndexWriter(dir, GetConfig(Random, null))).Dispose();
+            new IndexWriter(dir, GetConfig(Random, null)).Dispose();
 
             Assert.IsFalse(SlowFileExists(dir, s1.SegmentsFileName), "snapshotted commit should not exist");
             dir.Dispose();
