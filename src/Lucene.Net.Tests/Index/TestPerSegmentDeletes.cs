@@ -1,12 +1,15 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
-using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
+
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
+using RandomizedTesting.Generators;
+#endif
 
 namespace Lucene.Net.Index
 {
@@ -49,7 +52,7 @@ namespace Lucene.Net.Index
             iwc.SetMergeScheduler(new SerialMergeScheduler());
             iwc.SetMaxBufferedDocs(5000);
             iwc.SetRAMBufferSizeMB(100);
-            RangeMergePolicy fsmp = new RangeMergePolicy(this, false);
+            RangeMergePolicy fsmp = new RangeMergePolicy(false);
             iwc.SetMergePolicy(fsmp);
             IndexWriter writer = new IndexWriter(dir, iwc);
             for (int x = 0; x < 5; x++)
@@ -174,17 +177,17 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        /// <summary>
-        /// static boolean hasPendingDeletes(SegmentInfos infos) {
-        ///  for (SegmentInfo info : infos) {
-        ///    if (info.deletes.Any()) {
-        ///      return true;
-        ///    }
-        ///  }
-        ///  return false;
-        /// }
-        ///
-        /// </summary>
+        // static boolean hasPendingDeletes(SegmentInfos infos) {
+        //  for (SegmentInfo info : infos) {
+        //    if (info.deletes.Any()) {
+        //      return true;
+        //    }
+        //  }
+        //  return false;
+        // }
+        //
+
+        // ReSharper disable once UnusedMember.Global - used by commented-out code above, leaving for future reference
         internal virtual void Part2(IndexWriter writer, RangeMergePolicy fsmp)
         {
             for (int x = 20; x < 25; x++)
@@ -221,6 +224,7 @@ namespace Lucene.Net.Index
             //System.out.println("segdels4:" + writer.docWriter.deletesToString());
         }
 
+        // ReSharper disable once UnusedMember.Global - used by commented-out code above, leaving for future reference
         internal virtual bool SegThere(SegmentCommitInfo info, SegmentInfos infos)
         {
             foreach (SegmentCommitInfo si in infos.Segments)
@@ -233,6 +237,7 @@ namespace Lucene.Net.Index
             return false;
         }
 
+        // ReSharper disable once UnusedMember.Global - used by commented-out code above, leaving for future reference
         public static void PrintDelDocs(IBits bits)
         {
             if (bits is null)
@@ -271,17 +276,14 @@ namespace Lucene.Net.Index
 
         public class RangeMergePolicy : MergePolicy
         {
-            private readonly TestPerSegmentDeletes outerInstance;
-
             internal bool doMerge = false;
             internal int start;
             internal int length;
 
             internal readonly bool useCompoundFile;
 
-            internal RangeMergePolicy(TestPerSegmentDeletes outerInstance, bool useCompoundFile)
+            internal RangeMergePolicy(bool useCompoundFile)
             {
-                this.outerInstance = outerInstance;
                 this.useCompoundFile = useCompoundFile;
             }
 
