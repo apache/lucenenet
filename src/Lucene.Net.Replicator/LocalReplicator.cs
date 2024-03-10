@@ -3,6 +3,7 @@ using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -189,7 +190,7 @@ namespace Lucene.Net.Replicator
                 // currentVersion is either null or older than latest published revision
                 currentRevision.IncRef();
 
-                string sessionID = sessionToken.IncrementAndGet().ToString();
+                string sessionID = sessionToken.IncrementAndGet().ToString(CultureInfo.InvariantCulture);
                 SessionToken token = new SessionToken(sessionID, currentRevision.Revision);
                 sessions[sessionID] = new ReplicationSession(token, currentRevision);
                 return token;
