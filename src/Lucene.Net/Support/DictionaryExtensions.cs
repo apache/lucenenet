@@ -88,26 +88,5 @@ namespace Lucene.Net.Support
             dictionary[key] = value;
             return oldValue;
         }
-
-        /// <summary>
-        /// Returns a concurrent wrapper for the current <see cref="IDictionary{TKey, TValue}"/>.
-        /// </summary>
-        /// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
-        /// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
-        /// <param name="dictionary">The collection to make concurrent (thread-safe).</param>
-        /// <returns>An object that acts as a read-only wrapper around the current <see cref="ISet{T}"/>.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <c>null</c>.</exception>
-        /// <remarks>
-        /// To synchronize any modifications to the <see cref="ISet{T}"/> object, expose it only through this wrapper.
-        /// <para/>
-        /// The set returned uses simple locking and may not be the most performant solution, but it provides a quick
-        /// way to make any set thread-safe.
-        /// <para/>
-        /// This method is an O(1) operation.
-        /// </remarks>
-        internal static IDictionary<TKey, TValue> AsConcurrent<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
-        {
-            return new ConcurrentDictionaryWrapper<TKey, TValue>(dictionary);
-        }
     }
 }
