@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
                 Directory dir = NewDirectory();
                 RandomIndexWriter w = new RandomIndexWriter(Random, dir);
                 ISet<int> aDocs = new JCG.HashSet<int>();
-                Documents.Document doc = new Documents.Document();
+                Document doc = new Document();
                 Field f = NewStringField("field", "", Field.Store.NO);
                 doc.Add(f);
                 Field idField = NewStringField("id", "", Field.Store.YES);
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("  expect docID=" + expected[upto] + " actual=" + docID);
                     }
                     Assert.IsTrue(docID != DocIdSetIterator.NO_MORE_DOCS);
-                    Assert.AreEqual((int)expected[upto], docID);
+                    Assert.AreEqual(expected[upto], docID);
                 }
             }
         }
