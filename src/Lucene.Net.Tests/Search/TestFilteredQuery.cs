@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// FilteredQuery JUnit tests.
     ///
-    /// <p>Created: Apr 21, 2004 1:21:46 PM
+    /// Created: Apr 21, 2004 1:21:46 PM
     ///
     ///
     /// @since   1.4
@@ -109,10 +109,6 @@ namespace Lucene.Net.Search
 
         private sealed class FilterAnonymousClass : Filter
         {
-            public FilterAnonymousClass()
-            {
-            }
-
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 if (acceptDocs is null)
@@ -212,10 +208,6 @@ namespace Lucene.Net.Search
 
         private sealed class FilterAnonymousClass2 : Filter
         {
-            public FilterAnonymousClass2()
-            {
-            }
-
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 Assert.IsNull(acceptDocs, "acceptDocs should be null, as we have an index without deletions");
@@ -458,10 +450,6 @@ namespace Lucene.Net.Search
 
         private sealed class RandomAccessFilterStrategyAnonymousClass : FilteredQuery.RandomAccessFilterStrategy
         {
-            public RandomAccessFilterStrategyAnonymousClass()
-            {
-            }
-
             protected override bool UseRandomAccess(IBits bits, int firstFilterDoc)
             {
                 return true;
@@ -495,7 +483,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);
-            Query query = new FilteredQuery(new TermQuery(new Term("field", "0")), new FilterAnonymousClass3(this, reader), FilteredQuery.QUERY_FIRST_FILTER_STRATEGY);
+            Query query = new FilteredQuery(new TermQuery(new Term("field", "0")), new FilterAnonymousClass3(), FilteredQuery.QUERY_FIRST_FILTER_STRATEGY);
 
             TopDocs search = searcher.Search(query, 10);
             Assert.AreEqual(totalDocsWithZero, search.TotalHits);
@@ -504,16 +492,6 @@ namespace Lucene.Net.Search
 
         private sealed class FilterAnonymousClass3 : Filter
         {
-            private readonly TestFilteredQuery outerInstance;
-
-            private IndexReader reader;
-
-            public FilterAnonymousClass3(TestFilteredQuery outerInstance, IndexReader reader)
-            {
-                this.outerInstance = outerInstance;
-                this.reader = reader;
-            }
-
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 bool nullBitset = Random.Next(10) == 5;
@@ -529,20 +507,17 @@ namespace Lucene.Net.Search
                 {
                     bitSet.Set(d);
                 }
-                return new DocIdSetAnonymousClass(this, nullBitset, reader, bitSet);
+                return new DocIdSetAnonymousClass(nullBitset, reader, bitSet);
             }
 
             private sealed class DocIdSetAnonymousClass : DocIdSet
             {
-                private readonly FilterAnonymousClass3 outerInstance;
-
                 private readonly bool nullBitset;
                 private readonly AtomicReader reader;
                 private readonly BitSet bitSet;
 
-                public DocIdSetAnonymousClass(FilterAnonymousClass3 outerInstance, bool nullBitset, AtomicReader reader, BitSet bitSet)
+                public DocIdSetAnonymousClass(bool nullBitset, AtomicReader reader, BitSet bitSet)
                 {
-                    this.outerInstance = outerInstance;
                     this.nullBitset = nullBitset;
                     this.reader = reader;
                     this.bitSet = bitSet;
@@ -613,7 +588,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
             bool queryFirst = Random.NextBoolean();
             IndexSearcher searcher = NewSearcher(reader);
-            Query query = new FilteredQuery(new TermQuery(new Term("field", "0")), new FilterAnonymousClass4(this, queryFirst), queryFirst ? FilteredQuery.LEAP_FROG_QUERY_FIRST_STRATEGY : Random
+            Query query = new FilteredQuery(new TermQuery(new Term("field", "0")), new FilterAnonymousClass4(queryFirst), queryFirst ? FilteredQuery.LEAP_FROG_QUERY_FIRST_STRATEGY : Random
                   .NextBoolean() ? FilteredQuery.RANDOM_ACCESS_FILTER_STRATEGY : FilteredQuery.LEAP_FROG_FILTER_FIRST_STRATEGY); // if filterFirst, we can use random here since bits are null
 
             TopDocs search = searcher.Search(query, 10);
@@ -623,13 +598,10 @@ namespace Lucene.Net.Search
 
         private sealed class FilterAnonymousClass4 : Filter
         {
-            private readonly TestFilteredQuery outerInstance;
-
             private readonly bool queryFirst;
 
-            public FilterAnonymousClass4(TestFilteredQuery outerInstance, bool queryFirst)
+            public FilterAnonymousClass4(bool queryFirst)
             {
-                this.outerInstance = outerInstance;
                 this.queryFirst = queryFirst;
             }
 

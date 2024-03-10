@@ -68,7 +68,9 @@ namespace Lucene.Net.Search
             base.SetUp();
             dir = NewDirectory();
             fieldName = Random.NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false))
+                    .SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             Document doc = new Document();
             Field field = NewStringField(fieldName, "", Field.Store.NO);
             doc.Add(field);
@@ -127,16 +129,12 @@ namespace Lucene.Net.Search
 
             private sealed class SimpleAutomatonTermsEnum : FilteredTermsEnum
             {
-                private readonly TestRegexpRandom2.DumbRegexpQuery outerInstance;
-
                 private CharacterRunAutomaton runAutomaton;
                 private readonly CharsRef utf16 = new CharsRef(10);
 
                 internal SimpleAutomatonTermsEnum(TestRegexpRandom2.DumbRegexpQuery outerInstance, TermsEnum tenum)
                     : base(tenum)
                 {
-                    this.outerInstance = outerInstance;
-
                     runAutomaton = new CharacterRunAutomaton(outerInstance.automaton);
                     SetInitialSeekTerm(new BytesRef(""));
                 }

@@ -2,7 +2,9 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Globalization;
+#if !FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER
 using System.Threading;
+#endif
 
 namespace Lucene.Net.Support
 {
@@ -25,13 +27,14 @@ namespace Lucene.Net.Support
 
     /// <summary>
     /// This test was added for .NET compatibility - LUCENENET specific
-    /// 
+    ///
     /// It tests the Lucene.Net.Util.ToStringUtils which was untested in the Java counterpart,
     /// but required some help to ensure .NET compatibility.
     /// </summary>
     public class TestToStringUtils : LuceneTestCase
     {
-        CultureInfo originalCulture;
+        private CultureInfo originalCulture;
+
         public override void SetUp()
         {
             base.SetUp();
@@ -54,12 +57,12 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void TestBoost()
         {
-            float boostNormal = 1f;
-            float boostFractional = 2.5f;
-            float boostNonFractional = 5f;
-            float boostLong = 1.111111111f;
-            float boostZeroNonFractional = 0f;
-            float boostZeroFractional = 0.123f;
+            const float boostNormal = 1f;
+            const float boostFractional = 2.5f;
+            const float boostNonFractional = 5f;
+            const float boostLong = 1.111111111f;
+            const float boostZeroNonFractional = 0f;
+            const float boostZeroFractional = 0.123f;
 
             var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures | CultureTypes.NeutralCultures);
 

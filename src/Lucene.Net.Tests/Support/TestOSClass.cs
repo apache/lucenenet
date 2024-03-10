@@ -29,17 +29,17 @@ namespace Lucene.Net.Support
         public void TestFSDirectorySync()
         {
             DirectoryInfo path = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "testsync"));
-            Lucene.Net.Store.Directory directory = new Lucene.Net.Store.SimpleFSDirectory(path, null);
+            Lucene.Net.Store.Directory directory = new Store.SimpleFSDirectory(path, null);
             try
             {
-                Lucene.Net.Store.IndexOutput io = directory.CreateOutput("syncfile", new Store.IOContext());
+                Store.IndexOutput io = directory.CreateOutput("syncfile", new Store.IOContext());
                 io.Dispose();
                 directory.Sync(new string[] { "syncfile" });
             }
             finally
             {
                 directory.Dispose();
-                Lucene.Net.Util.TestUtil.Rm(path);
+                Util.TestUtil.Rm(path);
             }
         }
     }

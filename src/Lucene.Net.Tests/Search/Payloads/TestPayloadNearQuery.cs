@@ -114,17 +114,15 @@ namespace Lucene.Net.Search.Payloads
             return new PayloadNearQuery(clauses, 0, inOrder, function);
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
         [OneTimeSetUp]
         public override void BeforeClass()
         {
             base.BeforeClass();
 
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(similarity));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer())
+                .SetSimilarity(similarity));
             //writer.infoStream = System.out;
             for (int i = 0; i < 1000; i++)
             {

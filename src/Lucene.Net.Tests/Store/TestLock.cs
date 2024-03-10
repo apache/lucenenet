@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using System;
-using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Store
@@ -30,7 +29,7 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestObtain()
         {
-            LockMock @lock = new LockMock(this);
+            LockMock @lock = new LockMock();
             Lock.LOCK_POLL_INTERVAL = 10;
 
             try
@@ -46,13 +45,6 @@ namespace Lucene.Net.Store
 
         private class LockMock : Lock
         {
-            private readonly TestLock outerInstance;
-
-            public LockMock(TestLock outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public int LockAttempts;
 
             public override bool Obtain()

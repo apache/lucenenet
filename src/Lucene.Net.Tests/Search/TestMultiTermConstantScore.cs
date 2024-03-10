@@ -50,10 +50,6 @@ namespace Lucene.Net.Search
         internal /*static*/ Directory small;
         internal /*static*/ IndexReader reader;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
         [OneTimeSetUp]
         public override void BeforeClass()
         {
@@ -95,7 +91,7 @@ namespace Lucene.Net.Search
         public static Query Csrq(string f, string l, string h, bool il, bool ih)
         {
             TermRangeQuery query = TermRangeQuery.NewStringRange(f, l, h, il, ih);
-            query.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            query.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
             if (Verbose)
             {
                 Console.WriteLine("TEST: query=" + query);
@@ -106,7 +102,7 @@ namespace Lucene.Net.Search
         public static Query Csrq(string f, string l, string h, bool il, bool ih, MultiTermQuery.RewriteMethod method)
         {
             TermRangeQuery query = TermRangeQuery.NewStringRange(f, l, h, il, ih);
-            query.MultiTermRewriteMethod = (method);
+            query.MultiTermRewriteMethod = method;
             if (Verbose)
             {
                 Console.WriteLine("TEST: query=" + query + " method=" + method);
@@ -119,7 +115,7 @@ namespace Lucene.Net.Search
         public static Query Cspq(Term prefix)
         {
             PrefixQuery query = new PrefixQuery(prefix);
-            query.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            query.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
             return query;
         }
 
@@ -128,7 +124,7 @@ namespace Lucene.Net.Search
         public static Query Cswcq(Term wild)
         {
             WildcardQuery query = new WildcardQuery(wild);
-            query.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
+            query.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
             return query;
         }
 
@@ -242,7 +238,7 @@ namespace Lucene.Net.Search
             search.Similarity = new DefaultSimilarity();
             Query q = Csrq("data", "1", "6", T, T);
             q.Boost = 100;
-            search.Search(q, null, new CollectorAnonymousClass(this));
+            search.Search(q, null, new CollectorAnonymousClass());
 
             //
             // Ensure that boosting works to score one clause of a query higher
@@ -287,15 +283,7 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            private readonly TestMultiTermConstantScore outerInstance;
-
-            public CollectorAnonymousClass(TestMultiTermConstantScore outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                @base = 0;
-            }
-
-            private int @base;
+            private int @base = 0;
             private Scorer scorer;
 
             public void SetScorer(Scorer scorer)

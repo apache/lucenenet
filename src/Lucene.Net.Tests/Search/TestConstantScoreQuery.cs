@@ -59,22 +59,19 @@ namespace Lucene.Net.Search
         private void CheckHits(IndexSearcher searcher, Query q, float expectedScore, string scorerClassName, string innerScorerClassName)
         {
             int[] count = new int[1];
-            searcher.Search(q, new CollectorAnonymousClass(this, expectedScore, scorerClassName, innerScorerClassName, count));
+            searcher.Search(q, new CollectorAnonymousClass(expectedScore, scorerClassName, innerScorerClassName, count));
             Assert.AreEqual(1, count[0], "invalid number of results");
         }
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            private readonly TestConstantScoreQuery outerInstance;
-
             private readonly float expectedScore;
             private readonly string scorerClassName;
             private readonly string innerScorerClassName;
             private readonly int[] count;
 
-            public CollectorAnonymousClass(TestConstantScoreQuery outerInstance, float expectedScore, string scorerClassName, string innerScorerClassName, int[] count)
+            public CollectorAnonymousClass(float expectedScore, string scorerClassName, string innerScorerClassName, int[] count)
             {
-                this.outerInstance = outerInstance;
                 this.expectedScore = expectedScore;
                 this.scorerClassName = scorerClassName;
                 this.innerScorerClassName = innerScorerClassName;
@@ -128,7 +125,7 @@ namespace Lucene.Net.Search
                 searcher = NewSearcher(reader, true, false);
 
                 // set a similarity that does not normalize our boost away
-                searcher.Similarity = new DefaultSimilarityAnonymousClass(this);
+                searcher.Similarity = new DefaultSimilarityAnonymousClass();
 
                 Query csq1 = new ConstantScoreQuery(new TermQuery(new Term("field", "term")));
                 csq1.Boost = 2.0f;
@@ -165,13 +162,6 @@ namespace Lucene.Net.Search
 
         private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
-            private readonly TestConstantScoreQuery outerInstance;
-
-            public DefaultSimilarityAnonymousClass(TestConstantScoreQuery outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override float QueryNorm(float sumOfSquaredWeights)
             {
                 return 1.0f;
@@ -227,7 +217,7 @@ namespace Lucene.Net.Search
             s.Search(new ConstantScoreQuery(filter), new TotalHitCountCollector());
 
             // check the rewrite
-            Query rewritten = (new ConstantScoreQuery(filter)).Rewrite(r);
+            Query rewritten = new ConstantScoreQuery(filter).Rewrite(r);
             Assert.IsTrue(rewritten is ConstantScoreQuery);
             Assert.IsTrue(((ConstantScoreQuery)rewritten).Query is AssertingQuery);
 

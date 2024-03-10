@@ -1,8 +1,6 @@
 ﻿using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;

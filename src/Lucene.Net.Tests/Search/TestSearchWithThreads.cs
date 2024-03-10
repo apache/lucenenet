@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
             for (int threadID = 0; threadID < NUM_SEARCH_THREADS; threadID++)
             {
                 threads[threadID] = new ThreadAnonymousClass(this, s, failed, netSearch);
-                threads[threadID].IsBackground = (true);
+                threads[threadID].IsBackground = true;
             }
 
             foreach (ThreadJob t in threads)
@@ -156,7 +156,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception exc) when (exc.IsException())
                 {
-                    failed.Value = (true);
+                    failed.Value = true;
                     throw RuntimeException.Create(exc);
                 }
             }

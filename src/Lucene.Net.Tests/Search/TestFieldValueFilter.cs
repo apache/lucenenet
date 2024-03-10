@@ -32,7 +32,6 @@ namespace Lucene.Net.Search
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
 
-    ///
     [TestFixture]
     public class TestFieldValueFilter : LuceneTestCase
     {

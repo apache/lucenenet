@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Reflection;
 using Lucene.Net.Index;
 
 namespace Lucene.Net.Codecs
@@ -34,7 +33,6 @@ namespace Lucene.Net.Codecs
 
             assertEquals(7, docValuesFormats.Count);
 
-            
             assertTrue(docValuesFormats.Contains("Lucene45"));
             assertTrue(docValuesFormats.Contains("Lucene42"));
             assertTrue(docValuesFormats.Contains("Lucene40"));

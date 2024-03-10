@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -59,13 +58,13 @@ namespace Lucene.Net.Search
             JCG.SortedSet<int> ignore = new JCG.SortedSet<int>();
             for (int i = 0; i < results.Length; i++)
             {
-                ignore.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
+                ignore.Add(results[i]);
             }
 
             int maxDoc = searcher.IndexReader.MaxDoc;
             for (int doc = 0; doc < maxDoc; doc++)
             {
-                if (ignore.Contains(Convert.ToInt32(doc, CultureInfo.InvariantCulture)))
+                if (ignore.Contains(doc))
                 {
                     continue;
                 }
@@ -133,13 +132,13 @@ namespace Lucene.Net.Search
             JCG.SortedSet<int> correct = new JCG.SortedSet<int>();
             for (int i = 0; i < results.Length; i++)
             {
-                correct.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
+                correct.Add(results[i]);
             }
 
             JCG.SortedSet<int> actual = new JCG.SortedSet<int>();
             for (int i = 0; i < hits.Length; i++)
             {
-                actual.Add(Convert.ToInt32(hits[i].Doc, CultureInfo.InvariantCulture));
+                actual.Add(hits[i].Doc);
             }
 
             Assert.AreEqual(correct, actual, aggressive: false, () => query.ToString(defaultFieldName));
@@ -423,7 +422,7 @@ namespace Lucene.Net.Search
 
         public virtual void Collect(int doc)
         {
-            bag.Add(Convert.ToInt32(doc + @base, CultureInfo.InvariantCulture));
+            bag.Add(doc + @base);
         }
 
         public virtual void SetNextReader(AtomicReaderContext context)

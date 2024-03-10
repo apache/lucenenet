@@ -3,7 +3,6 @@ using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -354,7 +353,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestEmptyToString()
         {
-            (new MultiPhraseQuery()).ToString();
+            _ = new MultiPhraseQuery().ToString();
         }
 
         [Test]
@@ -367,7 +366,7 @@ namespace Lucene.Net.Search
 
             IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
-            searcher.Similarity = new DefaultSimilarityAnonymousClass(this);
+            searcher.Similarity = new DefaultSimilarityAnonymousClass();
 
             MultiPhraseQuery query = new MultiPhraseQuery();
             query.Add(new Term[] { new Term("body", "this"), new Term("body", "that") });
@@ -382,13 +381,6 @@ namespace Lucene.Net.Search
 
         private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
-            private readonly TestMultiPhraseQuery outerInstance;
-
-            public DefaultSimilarityAnonymousClass(TestMultiPhraseQuery outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics[] termStats)
             {
                 return new Explanation(10f, "just a test");
@@ -462,13 +454,45 @@ namespace Lucene.Net.Search
             return t;
         }
 
-        private static readonly Token[] INCR_0_DOC_TOKENS = new Token[] { MakeToken("x", 1), MakeToken("a", 1), MakeToken("1", 0), MakeToken("m", 1), MakeToken("b", 1), MakeToken("1", 0), MakeToken("n", 1), MakeToken("c", 1), MakeToken("y", 1) };
+        private static readonly Token[] INCR_0_DOC_TOKENS = new Token[]
+        {
+            MakeToken("x", 1),
+            MakeToken("a", 1),
+            MakeToken("1", 0),
+            MakeToken("m", 1), // not existing, relying on slop=2
+            MakeToken("b", 1),
+            MakeToken("1", 0),
+            MakeToken("n", 1), // not existing, relying on slop=2
+            MakeToken("c", 1),
+            MakeToken("y", 1)
+        };
 
-        private static readonly Token[] INCR_0_QUERY_TOKENS_AND = new Token[] { MakeToken("a", 1), MakeToken("1", 0), MakeToken("b", 1), MakeToken("1", 0), MakeToken("c", 1) };
+        private static readonly Token[] INCR_0_QUERY_TOKENS_AND = new Token[]
+        {
+            MakeToken("a", 1),
+            MakeToken("1", 0),
+            MakeToken("b", 1),
+            MakeToken("1", 0),
+            MakeToken("c", 1)
+        };
 
-        private static readonly Token[][] INCR_0_QUERY_TOKENS_AND_OR_MATCH = new Token[][] { new Token[] { MakeToken("a", 1) }, new Token[] { MakeToken("x", 1), MakeToken("1", 0) }, new Token[] { MakeToken("b", 2) }, new Token[] { MakeToken("x", 2), MakeToken("1", 0) }, new Token[] { MakeToken("c", 3) } };
+        private static readonly Token[][] INCR_0_QUERY_TOKENS_AND_OR_MATCH = new Token[][]
+        {
+            new[] { MakeToken("a", 1) },
+            new[] { MakeToken("x", 1), MakeToken("1", 0) },
+            new[] { MakeToken("b", 2) },
+            new[] { MakeToken("x", 2), MakeToken("1", 0) },
+            new[] { MakeToken("c", 3) }
+        };
 
-        private static readonly Token[][] INCR_0_QUERY_TOKENS_AND_OR_NO_MATCHN = new Token[][] { new Token[] { MakeToken("x", 1) }, new Token[] { MakeToken("a", 1), MakeToken("1", 0) }, new Token[] { MakeToken("x", 2) }, new Token[] { MakeToken("b", 2), MakeToken("1", 0) }, new Token[] { MakeToken("c", 3) } };
+        private static readonly Token[][] INCR_0_QUERY_TOKENS_AND_OR_NO_MATCHN = new Token[][]
+        {
+            new[] { MakeToken("x", 1) },
+            new[] { MakeToken("a", 1), MakeToken("1", 0) },
+            new[] { MakeToken("x", 2) },
+            new[] { MakeToken("b", 2), MakeToken("1", 0) },
+            new[] { MakeToken("c", 3) }
+        };
 
         /// <summary>
         /// using query parser, MPQ will be created, and will not be strict about having all query terms

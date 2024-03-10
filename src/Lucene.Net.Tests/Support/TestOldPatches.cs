@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.IO;
@@ -64,13 +63,13 @@ namespace Lucene.Net.Support
         //            queryPreSerialized.Add(new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("country", "Russia")), Occur.MUST);
         //            queryPreSerialized.Add(new Lucene.Net.Search.TermQuery(new Lucene.Net.Index.Term("country", "France")), Occur.MUST);
 
-        //            //now serialize it 
+        //            //now serialize it
         //            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter serializer = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
         //            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
         //#pragma warning disable SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
         //            serializer.Serialize(memoryStream, queryPreSerialized);
 
-        //            //now deserialize 
+        //            //now deserialize
         //            memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
         //            Lucene.Net.Search.BooleanQuery queryPostSerialized = (Lucene.Net.Search.BooleanQuery)serializer.Deserialize(memoryStream);
         //#pragma warning restore SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
@@ -102,7 +101,7 @@ namespace Lucene.Net.Support
         //            wr.AddDocument(doc);
         //            wr.Dispose();
 
-        //            //now serialize it 
+        //            //now serialize it
         //            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter serializer = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
         //            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
         //            serializer.Serialize(memoryStream, ramDIR);
@@ -111,7 +110,7 @@ namespace Lucene.Net.Support
         //            ramDIR.Dispose();
         //            ramDIR = null;
 
-        //            //now deserialize 
+        //            //now deserialize
         //            memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
         //            Lucene.Net.Store.RAMDirectory ramDIR2 = (Lucene.Net.Store.RAMDirectory)serializer.Deserialize(memoryStream);
 
@@ -145,10 +144,10 @@ namespace Lucene.Net.Support
         public void Test_Index_ReusableStringReader()
         {
             var conf = new IndexWriterConfig(Version.LUCENE_CURRENT, new TestAnalyzer());
-            Lucene.Net.Index.IndexWriter wr = new Lucene.Net.Index.IndexWriter(new Lucene.Net.Store.RAMDirectory(), conf /*new TestAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED*/);
+            IndexWriter wr = new IndexWriter(new Store.RAMDirectory(), conf /*new TestAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED*/);
 
-            Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
-            Lucene.Net.Documents.Field f1 = new Lucene.Net.Documents.Field("f1", TEST_STRING, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED);
+            Documents.Document doc = new Documents.Document();
+            Documents.Field f1 = new Documents.Field("f1", TEST_STRING, Documents.Field.Store.YES, Documents.Field.Index.ANALYZED);
             doc.Add(f1);
             wr.AddDocument(doc);
 
@@ -157,7 +156,7 @@ namespace Lucene.Net.Support
 
         private const string TEST_STRING = "First Line\nSecond Line";
 
-        private class TestAnalyzer : Lucene.Net.Analysis.Analyzer
+        private class TestAnalyzer : Analyzer
         {
             public TestAnalyzer()
                 //: base(new TestReuseStrategy())
@@ -195,13 +194,13 @@ namespace Lucene.Net.Support
         //    }
         //}
 
-        private class TestTokenizer : Lucene.Net.Analysis.Tokenizer
+        private class TestTokenizer : Tokenizer
         {
-            public TestTokenizer(System.IO.TextReader reader)
+            public TestTokenizer(TextReader reader)
                 : base(reader)
             {
-                //Caution: "Reader" is actually of type "ReusableStringReader" and some 
-                //methods (for ex. "ReadToEnd", "Peek",  "ReadLine") is not implemented. 
+                //Caution: "Reader" is actually of type "ReusableStringReader" and some
+                //methods (for ex. "ReadToEnd", "Peek",  "ReadLine") is not implemented.
 
                 Assert.AreEqual("ReusableStringReader", reader.GetType().Name);
                 Assert.AreEqual("First Line", reader.ReadLine(), "\"ReadLine\" method is not implemented");
@@ -233,7 +232,7 @@ namespace Lucene.Net.Support
 
         //    Assert.IsFalse(reader.IsCurrent());
 
-        //    int resCount1 = new IndexSearcher(reader).Search(new TermQuery(new Term("TEST", "mytest")),100).TotalHits; 
+        //    int resCount1 = new IndexSearcher(reader).Search(new TermQuery(new Term("TEST", "mytest")),100).TotalHits;
         //    Assert.AreEqual(1, resCount1);
 
         //    writer.Commit();
@@ -257,7 +256,7 @@ namespace Lucene.Net.Support
         // LUCENENET TODO: Should IndexSearcher really implement MarshalByrefObj?
         ////-------------------------------------------
         //int ANYPORT = 0;
-        //[Test] 
+        //[Test]
         //[Description("LUCENENET-100")]
         //public void Test_Search_FieldDoc()
         //{
@@ -276,13 +275,13 @@ namespace Lucene.Net.Support
         //    var reader = DirectoryReader.Open(LUCENENET_100_Dir);
         //    Lucene.Net.Search.IndexSearcher indexSearcher = new Lucene.Net.Search.IndexSearcher(reader);
         //    System.Runtime.Remoting.RemotingServices.Marshal(indexSearcher, "Searcher");
-         
+
 
         //    LUCENENET_100_ClientSearch();
 
         //    //Wait Client to finish
         //    while (LUCENENET_100_testFinished == false) System.Threading.Thread.Sleep(10);
-                        
+
         //    if (LUCENENET_100_Exception != null) throw LUCENENET_100_Exception;
         //}
 

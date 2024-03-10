@@ -30,8 +30,7 @@ namespace Lucene.Net.Search
     using Term = Lucene.Net.Index.Term;
 
     /// <summary>
-    /// Tests <seealso cref="PrefixFilter"/> class.
-    ///
+    /// Tests <see cref="PrefixFilter"/> class.
     /// </summary>
     [TestFixture]
     public class TestPrefixFilter : LuceneTestCase

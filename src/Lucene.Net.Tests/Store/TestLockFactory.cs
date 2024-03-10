@@ -1,7 +1,6 @@
 ﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -52,7 +51,7 @@ namespace Lucene.Net.Store
         public virtual void TestCustomLockFactory()
         {
             Directory dir = new MockDirectoryWrapper(Random, new RAMDirectory());
-            MockLockFactory lf = new MockLockFactory(this);
+            MockLockFactory lf = new MockLockFactory();
             dir.SetLockFactory(lf);
 
             // Lock prefix should have been set:
@@ -175,12 +174,12 @@ namespace Lucene.Net.Store
             Directory dir = NewFSDirectory(indexDir, lockFactory);
 
             // First create a 1 doc index:
-            IndexWriter w = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.CREATE));
+            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
             AddDoc(w);
             w.Dispose();
 
             WriterThread writer = new WriterThread(this, 100, dir);
-            SearcherThread searcher = new SearcherThread(this, 100, dir);
+            SearcherThread searcher = new SearcherThread(100, dir);
             writer.Start();
             searcher.Start();
 
@@ -233,7 +232,7 @@ namespace Lucene.Net.Store
             var lockFile = new FileInfo(Path.Combine(tempDir.FullName, "test.lock"));
             using (lockFile.Create()){};
 
-            var l = (new NativeFSLockFactory(tempDir)).MakeLock("test.lock");
+            var l = new NativeFSLockFactory(tempDir).MakeLock("test.lock");
             Assert.IsTrue(l.Obtain(), "failed to obtain lock, got exception: {0}", l.FailureReason);
             l.Dispose();
             Assert.IsFalse(l.IsLocked(), "failed to release lock, got exception: {0}", l.FailureReason);
@@ -310,7 +309,7 @@ namespace Lucene.Net.Store
                 {
                     try
                     {
-                        writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
+                        writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
                     }
                     catch (Exception e) when (e.IsIOException())
                     {
@@ -369,15 +368,12 @@ namespace Lucene.Net.Store
 
         private class SearcherThread : ThreadJob
         {
-            private readonly TestLockFactory outerInstance;
-
             private readonly Directory dir;
             private readonly int numIteration;
             public bool HitException { get; private set; } = false;
 
-            public SearcherThread(TestLockFactory outerInstance, int numIteration, Directory dir)
+            public SearcherThread(int numIteration, Directory dir)
             {
-                this.outerInstance = outerInstance;
                 this.numIteration = numIteration;
                 this.dir = dir;
             }
@@ -430,13 +426,6 @@ namespace Lucene.Net.Store
 
         public class MockLockFactory : LockFactory
         {
-            private readonly TestLockFactory outerInstance;
-
-            public MockLockFactory(TestLockFactory outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public bool LockPrefixSet;
             public IDictionary<string, Lock> LocksCreated = /*CollectionsHelper.SynchronizedMap(*/new Dictionary<string, Lock>()/*)*/;
             public int MakeLockCount = 0;
@@ -454,7 +443,7 @@ namespace Lucene.Net.Store
             {
                 lock (this)
                 {
-                    Lock @lock = new MockLock(this);
+                    Lock @lock = new MockLock();
                     LocksCreated[lockName] = @lock;
                     MakeLockCount++;
                     return @lock;
@@ -467,13 +456,6 @@ namespace Lucene.Net.Store
 
             public class MockLock : Lock
             {
-                private readonly TestLockFactory.MockLockFactory outerInstance;
-
-                public MockLock(TestLockFactory.MockLockFactory outerInstance)
-                {
-                    this.outerInstance = outerInstance;
-                }
-
                 public int LockAttempts;
 
                 public override bool Obtain()

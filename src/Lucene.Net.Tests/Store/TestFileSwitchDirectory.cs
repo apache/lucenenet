@@ -58,7 +58,9 @@ namespace Lucene.Net.Store
             // for now we wire Lucene40Codec because we rely upon its specific impl
             bool oldValue = OldFormatImpersonationIsActive;
             OldFormatImpersonationIsActive = true;
-            IndexWriter writer = new IndexWriter(fsd, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NewLogMergePolicy(false)).SetCodec(Codec.ForName("Lucene40")).SetUseCompoundFile(false));
+            IndexWriter writer = new IndexWriter(fsd,
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMergePolicy(NewLogMergePolicy(false)).SetCodec(Codec.ForName("Lucene40")).SetUseCompoundFile(false));
             TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
             IndexReader reader = DirectoryReader.Open(writer, true);
             Assert.AreEqual(100, reader.MaxDoc);
@@ -136,7 +138,7 @@ namespace Lucene.Net.Store
         public virtual void TestDirectoryFilter()
         {
             Directory dir = NewFSSwitchDirectory(Collections.EmptySet<string>());
-            string name = "file";
+            const string name = "file"; // LUCENENET: made const
             try
             {
                 dir.CreateOutput(name, NewIOContext(Random)).Dispose();

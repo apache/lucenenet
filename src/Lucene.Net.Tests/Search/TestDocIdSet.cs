@@ -42,9 +42,9 @@ namespace Lucene.Net.Search
         public virtual void TestFilteredDocIdSet()
         {
             const int maxdoc = 10;
-            DocIdSet innerSet = new DocIdSetAnonymousClass(this, maxdoc);
+            DocIdSet innerSet = new DocIdSetAnonymousClass(maxdoc);
 
-            DocIdSet filteredSet = new FilteredDocIdSetAnonymousClass(this, innerSet);
+            DocIdSet filteredSet = new FilteredDocIdSetAnonymousClass(innerSet);
 
             DocIdSetIterator iter = filteredSet.GetIterator();
             IList<int> list = new JCG.List<int>();
@@ -77,13 +77,10 @@ namespace Lucene.Net.Search
 
         private sealed class DocIdSetAnonymousClass : DocIdSet
         {
-            private readonly TestDocIdSet outerInstance;
-
             private readonly int maxdoc;
 
-            public DocIdSetAnonymousClass(TestDocIdSet outerInstance, int maxdoc)
+            public DocIdSetAnonymousClass(int maxdoc)
             {
-                this.outerInstance = outerInstance;
                 this.maxdoc = maxdoc;
             }
 
@@ -126,12 +123,9 @@ namespace Lucene.Net.Search
 
         private sealed class FilteredDocIdSetAnonymousClass : FilteredDocIdSet
         {
-            private readonly TestDocIdSet outerInstance;
-
-            public FilteredDocIdSetAnonymousClass(TestDocIdSet outerInstance, DocIdSet innerSet)
+            public FilteredDocIdSetAnonymousClass(DocIdSet innerSet)
                 : base(innerSet)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override bool Match(int docid)
@@ -158,7 +152,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, searcher.Search(new MatchAllDocsQuery(), 10).TotalHits);
 
             // Now search w/ a Filter which returns a null DocIdSet
-            Filter f = new FilterAnonymousClass(this);
+            Filter f = new FilterAnonymousClass();
 
             Assert.AreEqual(0, searcher.Search(new MatchAllDocsQuery(), f, 10).TotalHits);
             reader.Dispose();
@@ -167,13 +161,6 @@ namespace Lucene.Net.Search
 
         private sealed class FilterAnonymousClass : Filter
         {
-            private readonly TestDocIdSet outerInstance;
-
-            public FilterAnonymousClass(TestDocIdSet outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return null;
@@ -196,7 +183,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, searcher.Search(new MatchAllDocsQuery(), 10).TotalHits);
 
             // Now search w/ a Filter which returns a null DocIdSet
-            Filter f = new FilterAnonymousClass2(this);
+            Filter f = new FilterAnonymousClass2();
 
             Assert.AreEqual(0, searcher.Search(new MatchAllDocsQuery(), f, 10).TotalHits);
             reader.Dispose();
@@ -205,28 +192,14 @@ namespace Lucene.Net.Search
 
         private sealed class FilterAnonymousClass2 : Filter
         {
-            private readonly TestDocIdSet outerInstance;
-
-            public FilterAnonymousClass2(TestDocIdSet outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                DocIdSet innerNullIteratorSet = new DocIdSetAnonymousClass2(this);
-                return new FilteredDocIdSetAnonymousClass2(this, innerNullIteratorSet);
+                DocIdSet innerNullIteratorSet = new DocIdSetAnonymousClass2();
+                return new FilteredDocIdSetAnonymousClass2(innerNullIteratorSet);
             }
 
             private sealed class DocIdSetAnonymousClass2 : DocIdSet
             {
-                private readonly FilterAnonymousClass2 outerInstance;
-
-                public DocIdSetAnonymousClass2(FilterAnonymousClass2 outerInstance)
-                {
-                    this.outerInstance = outerInstance;
-                }
-
                 public override DocIdSetIterator GetIterator()
                 {
                     return null;
@@ -235,12 +208,9 @@ namespace Lucene.Net.Search
 
             private sealed class FilteredDocIdSetAnonymousClass2 : FilteredDocIdSet
             {
-                private readonly FilterAnonymousClass2 outerInstance;
-
-                public FilteredDocIdSetAnonymousClass2(FilterAnonymousClass2 outerInstance, DocIdSet innerNullIteratorSet)
+                public FilteredDocIdSetAnonymousClass2(DocIdSet innerNullIteratorSet)
                     : base(innerNullIteratorSet)
                 {
-                    this.outerInstance = outerInstance;
                 }
 
                 protected override bool Match(int docid)

@@ -182,15 +182,15 @@ namespace Lucene.Net.Search
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
             // first time, nested filter is called
-            DocIdSet strongRef = cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
+            DocIdSet strongRef = cacher.GetDocIdSet(context, context.AtomicReader.LiveDocs);
             Assert.IsTrue(filter.WasCalled(), "first time");
 
             // make sure no exception if cache is holding the wrong docIdSet
-            cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
+            cacher.GetDocIdSet(context, context.AtomicReader.LiveDocs);
 
             // second time, nested filter should not be called
             filter.Clear();
-            cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
+            cacher.GetDocIdSet(context, context.AtomicReader.LiveDocs);
             Assert.IsFalse(filter.WasCalled(), "second time");
 
             reader.Dispose();
@@ -207,12 +207,12 @@ namespace Lucene.Net.Search
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
             AtomicReaderContext context = (AtomicReaderContext)reader.Context;
 
-            Filter filter = new FilterAnonymousClass(this, context);
+            Filter filter = new FilterAnonymousClass();
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
             // the caching filter should return the empty set constant
             //Assert.IsNull(cacher.GetDocIdSet(context, "second time", (context.AtomicReader).LiveDocs));
-            Assert.IsNull(cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs));
+            Assert.IsNull(cacher.GetDocIdSet(context, context.AtomicReader.LiveDocs));
 
             reader.Dispose();
             dir.Dispose();
@@ -220,16 +220,6 @@ namespace Lucene.Net.Search
 
         private sealed class FilterAnonymousClass : Filter
         {
-            private readonly TestCachingWrapperFilter outerInstance;
-
-            private AtomicReaderContext context;
-
-            public FilterAnonymousClass(TestCachingWrapperFilter outerInstance, AtomicReaderContext context)
-            {
-                this.outerInstance = outerInstance;
-                this.context = context;
-            }
-
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return null;
@@ -246,11 +236,11 @@ namespace Lucene.Net.Search
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
             AtomicReaderContext context = (AtomicReaderContext)reader.Context;
 
-            Filter filter = new FilterAnonymousClass2(this, context);
+            Filter filter = new FilterAnonymousClass2();
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
             // the caching filter should return the empty set constant
-            Assert.IsNull(cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs));
+            Assert.IsNull(cacher.GetDocIdSet(context, context.AtomicReader.LiveDocs));
 
             reader.Dispose();
             dir.Dispose();
@@ -258,30 +248,13 @@ namespace Lucene.Net.Search
 
         private sealed class FilterAnonymousClass2 : Filter
         {
-            private readonly TestCachingWrapperFilter outerInstance;
-
-            private AtomicReaderContext context;
-
-            public FilterAnonymousClass2(TestCachingWrapperFilter outerInstance, AtomicReaderContext context)
-            {
-                this.outerInstance = outerInstance;
-                this.context = context;
-            }
-
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
-                return new DocIdSetAnonymousClass(this);
+                return new DocIdSetAnonymousClass();
             }
 
             private sealed class DocIdSetAnonymousClass : DocIdSet
             {
-                private readonly FilterAnonymousClass2 outerInstance;
-
-                public DocIdSetAnonymousClass(FilterAnonymousClass2 outerInstance)
-                {
-                    this.outerInstance = outerInstance;
-                }
-
                 public override DocIdSetIterator GetIterator()
                 {
                     return null;
@@ -294,8 +267,8 @@ namespace Lucene.Net.Search
             Assert.IsTrue(reader.Context is AtomicReaderContext);
             AtomicReaderContext context = (AtomicReaderContext)reader.Context;
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
-            DocIdSet originalSet = filter.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
-            DocIdSet cachedSet = cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
+            DocIdSet originalSet = filter.GetDocIdSet(context, context.AtomicReader.LiveDocs);
+            DocIdSet cachedSet = cacher.GetDocIdSet(context, context.AtomicReader.LiveDocs);
             if (originalSet is null)
             {
                 Assert.IsNull(cachedSet);
@@ -333,11 +306,11 @@ namespace Lucene.Net.Search
             // not cacheable:
             AssertDocIdSetCacheable(reader, new QueryWrapperFilter(new TermQuery(new Term("test", "value"))), false);
             // returns default empty docidset, always cacheable:
-            AssertDocIdSetCacheable(reader, NumericRangeFilter.NewInt32Range("test", Convert.ToInt32(10000), Convert.ToInt32(-10000), true, true), true);
+            AssertDocIdSetCacheable(reader, NumericRangeFilter.NewInt32Range("test", 10000, -10000, true, true), true);
             // is cacheable:
-            AssertDocIdSetCacheable(reader, FieldCacheRangeFilter.NewInt32Range("test", Convert.ToInt32(10), Convert.ToInt32(20), true, true), true);
+            AssertDocIdSetCacheable(reader, FieldCacheRangeFilter.NewInt32Range("test", 10, 20, true, true), true);
             // a fixedbitset filter is always cacheable
-            AssertDocIdSetCacheable(reader, new FilterAnonymousClass3(this), true);
+            AssertDocIdSetCacheable(reader, new FilterAnonymousClass3(), true);
 
             reader.Dispose();
             dir.Dispose();
@@ -345,13 +318,6 @@ namespace Lucene.Net.Search
 
         private sealed class FilterAnonymousClass3 : Filter
         {
-            private readonly TestCachingWrapperFilter outerInstance;
-
-            public FilterAnonymousClass3(TestCachingWrapperFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new FixedBitSet(context.Reader.MaxDoc);
@@ -362,7 +328,12 @@ namespace Lucene.Net.Search
         public virtual void TestEnforceDeletions()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(NewLogMergePolicy(10)));
+            RandomIndexWriter writer = new RandomIndexWriter(
+                Random,
+                dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMergeScheduler(new SerialMergeScheduler())
+                    .SetMergePolicy(NewLogMergePolicy(10)));
             // asserts below requires no unexpected merges:
 
             // NOTE: cannot use writer.getReader because RIW (on

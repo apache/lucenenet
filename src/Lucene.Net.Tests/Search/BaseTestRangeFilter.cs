@@ -1,3 +1,4 @@
+using J2N.Text;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -68,7 +69,7 @@ namespace Lucene.Net.Search
         internal static TestIndex signedIndexDir;
         internal static TestIndex unsignedIndexDir;
 
-        internal static int minId = 0;
+        internal const int minId = 0;
         internal static int maxId;
 
         internal static readonly int intLength = Convert.ToString(int.MaxValue).Length;
@@ -96,11 +97,6 @@ namespace Lucene.Net.Search
             return b.ToString();
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because <see cref="Build(Random, TestIndex)"/> is no
-        /// longer static.
-        /// </summary>
         [OneTimeSetUp]
         public override void BeforeClass() // LUCENENET specific: renamed from BeforeClassBaseTestRangeFilter() so we can override to control the order of execution
         {
@@ -127,12 +123,7 @@ namespace Lucene.Net.Search
             base.AfterClass();
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Passed in because NewStringField and NewIndexWriterConfig are no
-        /// longer static.
-        /// </summary>
-        private IndexReader Build(Random random, TestIndex index)
+        private static IndexReader Build(Random random, TestIndex index)
         {
             /* build an index */
 
@@ -208,7 +199,7 @@ namespace Lucene.Net.Search
                 string bb = Pad(b);
                 string label = a + ":" + aa + " vs " + b + ":" + bb;
                 Assert.AreEqual(aa.Length, bb.Length, "i=" + i + ": length of " + label);
-                Assert.IsTrue(System.String.Compare(aa, bb, System.StringComparison.Ordinal) < 0, "i=" + i + ": compare less than " + label);
+                Assert.IsTrue(aa.CompareToOrdinal(bb) < 0, "i=" + i + ": compare less than " + label);
             }
         }
     }

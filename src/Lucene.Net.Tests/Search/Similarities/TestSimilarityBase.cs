@@ -75,23 +75,41 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// The DFR basic models to test. </summary>
-        internal static BasicModel[] BASIC_MODELS = new BasicModel[] { new BasicModelBE(), new BasicModelD(), new BasicModelG(), new BasicModelIF(), new BasicModelIn(), new BasicModelIne(), new BasicModelP() };
+        internal static BasicModel[] BASIC_MODELS =
+        {
+            new BasicModelBE(), new BasicModelD(), new BasicModelG(),
+            new BasicModelIF(), new BasicModelIn(), new BasicModelIne(),
+            new BasicModelP()
+        };
 
         /// <summary>
         /// The DFR aftereffects to test. </summary>
-        internal static AfterEffect[] AFTER_EFFECTS = new AfterEffect[] { new AfterEffectB(), new AfterEffectL(), new AfterEffect.NoAfterEffect() };
+        internal static AfterEffect[] AFTER_EFFECTS =
+        {
+            new AfterEffectB(), new AfterEffectL(), new AfterEffect.NoAfterEffect()
+        };
 
         /// <summary>
         /// The DFR normalizations to test. </summary>
-        internal static Normalization[] NORMALIZATIONS = new Normalization[] { new NormalizationH1(), new NormalizationH2(), new NormalizationH3(), new NormalizationZ(), new Normalization.NoNormalization() };
+        internal static Normalization[] NORMALIZATIONS =
+        {
+            new NormalizationH1(), new NormalizationH2(), new NormalizationH3(),
+            new NormalizationZ(), new Normalization.NoNormalization()
+        };
 
         /// <summary>
         /// The distributions for IB. </summary>
-        internal static Distribution[] DISTRIBUTIONS = new Distribution[] { new DistributionLL(), new DistributionSPL() };
+        internal static Distribution[] DISTRIBUTIONS =
+        {
+            new DistributionLL(), new DistributionSPL()
+        };
 
         /// <summary>
         /// Lambdas for IB. </summary>
-        internal static Lambda[] LAMBDAS = new Lambda[] { new LambdaDF(), new LambdaTTF() };
+        internal static Lambda[] LAMBDAS =
+        {
+            new LambdaDF(), new LambdaTTF()
+        };
 
         private IndexSearcher searcher;
         private Directory dir;
@@ -587,7 +605,17 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// The "collection" for the integration tests. </summary>
-        internal string[] docs = new string[] { "Tiger, tiger burning bright   In the forest of the night   What immortal hand or eye   Could frame thy fearful symmetry ?", "In what distant depths or skies   Burnt the fire of thine eyes ?   On what wings dare he aspire ?   What the hands the seize the fire ?", "And what shoulder and what art   Could twist the sinews of thy heart ?   And when thy heart began to beat What dread hand ? And what dread feet ?", "What the hammer? What the chain ?   In what furnace was thy brain ?   What the anvil ? And what dread grasp   Dare its deadly terrors clasp ?", "And when the stars threw down their spears   And water'd heaven with their tear   Did he smile his work to see ?   Did he, who made the lamb, made thee ?", "Tiger, tiger burning bright   In the forest of the night   What immortal hand or eye   Dare frame thy fearful symmetry ?", "Cruelty has a human heart   And jealousy a human face   Terror the human form divine   And Secrecy the human dress .", "The human dress is forg'd iron   The human form a fiery forge   The human face a furnace seal'd   The human heart its fiery gorge ." };
+        internal string[] docs = new string[]
+        {
+            "Tiger, tiger burning bright   In the forest of the night   What immortal hand or eye   Could frame thy fearful symmetry ?",
+            "In what distant depths or skies   Burnt the fire of thine eyes ?   On what wings dare he aspire ?   What the hands the seize the fire ?",
+            "And what shoulder and what art   Could twist the sinews of thy heart ?   And when thy heart began to beat What dread hand ? And what dread feet ?",
+            "What the hammer? What the chain ?   In what furnace was thy brain ?   What the anvil ? And what dread grasp   Dare its deadly terrors clasp ?",
+            "And when the stars threw down their spears   And water'd heaven with their tear   Did he smile his work to see ?   Did he, who made the lamb, made thee ?",
+            "Tiger, tiger burning bright   In the forest of the night   What immortal hand or eye   Dare frame thy fearful symmetry ?",
+            "Cruelty has a human heart   And jealousy a human face   Terror the human form divine   And Secrecy the human dress .",
+            "The human dress is forg'd iron   The human form a fiery forge   The human face a furnace seal'd   The human heart its fiery gorge ."
+        };
 
         /// <summary>
         /// Tests whether all similarities return three documents for the query word

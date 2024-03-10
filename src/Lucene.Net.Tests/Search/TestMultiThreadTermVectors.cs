@@ -2,10 +2,8 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
-using System.IO;
 using System.Text;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -60,7 +58,7 @@ namespace Lucene.Net.Search
             customType.StoreTermVectors = true;
             for (int i = 0; i < numDocs; i++)
             {
-                Documents.Document doc = new Documents.Document();
+                Document doc = new Document();
                 Field fld = NewField("field", English.Int32ToEnglish(i), customType);
                 doc.Add(fld);
                 writer.AddDocument(doc);
@@ -98,8 +96,7 @@ namespace Lucene.Net.Search
                 {
                     try
                     {
-                        /// <summary>
-                        /// close the opened reader </summary>
+                        // close the opened reader
                         reader.Dispose();
                     }
                     catch (Exception ioe) when (ioe.IsIOException())

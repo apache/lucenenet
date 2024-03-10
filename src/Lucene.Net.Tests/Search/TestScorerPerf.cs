@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
         internal bool validate = true; // set to false when doing performance testing
 
         internal BitSet[] sets;
-        internal Term[] terms;
+        //internal Term[] terms; // LUCENENET: see commented-out code below
         internal IndexSearcher s;
         internal IndexReader r;
         internal Directory d;
@@ -63,34 +63,35 @@ namespace Lucene.Net.Search
             s = NewSearcher(r);
         }
 
-        public virtual void CreateRandomTerms(int nDocs, int nTerms, double power, Directory dir)
-        {
-            int[] freq = new int[nTerms];
-            terms = new Term[nTerms];
-            for (int i = 0; i < nTerms; i++)
-            {
-                int f = (nTerms + 1) - i; // make first terms less frequent
-                freq[i] = (int)Math.Ceiling(Math.Pow(f, power));
-                terms[i] = new Term("f", char.ToString((char)('A' + i)));
-            }
-
-            IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
-            for (int i = 0; i < nDocs; i++)
-            {
-                Document d = new Document();
-                for (int j = 0; j < nTerms; j++)
-                {
-                    if (Random.Next(freq[j]) == 0)
-                    {
-                        d.Add(NewStringField("f", terms[j].Text, Field.Store.NO));
-                        //System.out.println(d);
-                    }
-                }
-                iw.AddDocument(d);
-            }
-            iw.ForceMerge(1);
-            iw.Dispose();
-        }
+        // LUCENENET: unused so commented out here, only used by commented-out code below
+        // public virtual void CreateRandomTerms(int nDocs, int nTerms, double power, Directory dir)
+        // {
+        //     int[] freq = new int[nTerms];
+        //     terms = new Term[nTerms];
+        //     for (int i = 0; i < nTerms; i++)
+        //     {
+        //         int f = (nTerms + 1) - i; // make first terms less frequent
+        //         freq[i] = (int)Math.Ceiling(Math.Pow(f, power));
+        //         terms[i] = new Term("f", char.ToString((char)('A' + i)));
+        //     }
+        //
+        //     IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
+        //     for (int i = 0; i < nDocs; i++)
+        //     {
+        //         Document d = new Document();
+        //         for (int j = 0; j < nTerms; j++)
+        //         {
+        //             if (Random.Next(freq[j]) == 0)
+        //             {
+        //                 d.Add(NewStringField("f", terms[j].Text, Field.Store.NO));
+        //                 //System.out.println(d);
+        //             }
+        //         }
+        //         iw.AddDocument(d);
+        //     }
+        //     iw.ForceMerge(1);
+        //     iw.Dispose();
+        // }
 
         public virtual BitSet RandBitSet(int sz, int numBitsToSet)
         {
@@ -264,115 +265,116 @@ namespace Lucene.Net.Search
             return ret;
         }
 
-        public virtual int DoTermConjunctions(IndexSearcher s, int termsInIndex, int maxClauses, int iter)
-        {
-            int ret = 0;
-
-            long nMatches = 0;
-            for (int i = 0; i < iter; i++)
-            {
-                int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
-                BooleanQuery bq = new BooleanQuery();
-                BitSet termflag = new BitSet(termsInIndex);
-                for (int j = 0; j < nClauses; j++)
-                {
-                    int tnum;
-                    // don't pick same clause twice
-                    tnum = Random.Next(termsInIndex);
-                    if (termflag.Get(tnum))
-                    {
-                        tnum = termflag.NextClearBit(tnum);
-                    }
-                    if (tnum < 0 || tnum >= termsInIndex)
-                    {
-                        tnum = termflag.NextClearBit(0);
-                    }
-                    termflag.Set(tnum);
-                    Query tq = new TermQuery(terms[tnum]);
-                    bq.Add(tq, Occur.MUST);
-                }
-
-                CountingHitCollector hc = new CountingHitCollector();
-                s.Search(bq, hc);
-                nMatches += hc.Count;
-                ret += hc.Sum;
-            }
-            if (Verbose)
-            {
-                Console.WriteLine("Average number of matches=" + (nMatches / iter));
-            }
-
-            return ret;
-        }
-
-        public virtual int DoNestedTermConjunctions(IndexSearcher s, int termsInIndex, int maxOuterClauses, int maxClauses, int iter)
-        {
-            int ret = 0;
-            long nMatches = 0;
-            for (int i = 0; i < iter; i++)
-            {
-                int oClauses = Random.Next(maxOuterClauses - 1) + 2;
-                BooleanQuery oq = new BooleanQuery();
-                for (int o = 0; o < oClauses; o++)
-                {
-                    int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
-                    BooleanQuery bq = new BooleanQuery();
-                    BitSet termflag = new BitSet(termsInIndex);
-                    for (int j = 0; j < nClauses; j++)
-                    {
-                        int tnum;
-                        // don't pick same clause twice
-                        tnum = Random.Next(termsInIndex);
-                        if (termflag.Get(tnum))
-                        {
-                            tnum = termflag.NextClearBit(tnum);
-                        }
-                        if (tnum < 0 || tnum >= 25)
-                        {
-                            tnum = termflag.NextClearBit(0);
-                        }
-                        termflag.Set(tnum);
-                        Query tq = new TermQuery(terms[tnum]);
-                        bq.Add(tq, Occur.MUST);
-                    } // inner
-
-                    oq.Add(bq, Occur.MUST);
-                } // outer
-
-                CountingHitCollector hc = new CountingHitCollector();
-                s.Search(oq, hc);
-                nMatches += hc.Count;
-                ret += hc.Sum;
-            }
-            if (Verbose)
-            {
-                Console.WriteLine("Average number of matches=" + (nMatches / iter));
-            }
-            return ret;
-        }
-
-        public virtual int DoSloppyPhrase(IndexSearcher s, int termsInIndex, int maxClauses, int iter)
-        {
-            int ret = 0;
-
-            for (int i = 0; i < iter; i++)
-            {
-                int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
-                PhraseQuery q = new PhraseQuery();
-                for (int j = 0; j < nClauses; j++)
-                {
-                    int tnum = Random.Next(termsInIndex);
-                    q.Add(new Term("f", char.ToString((char)(tnum + 'A'))), j);
-                }
-                q.Slop = termsInIndex; // this could be random too
-
-                CountingHitCollector hc = new CountingHitCollector();
-                s.Search(q, hc);
-                ret += hc.Sum;
-            }
-
-            return ret;
-        }
+        // LUCENENET: unused so commented out here, only used by commented-out code below
+        // public virtual int DoTermConjunctions(IndexSearcher s, int termsInIndex, int maxClauses, int iter)
+        // {
+        //     int ret = 0;
+        //
+        //     long nMatches = 0;
+        //     for (int i = 0; i < iter; i++)
+        //     {
+        //         int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
+        //         BooleanQuery bq = new BooleanQuery();
+        //         BitSet termflag = new BitSet(termsInIndex);
+        //         for (int j = 0; j < nClauses; j++)
+        //         {
+        //             int tnum;
+        //             // don't pick same clause twice
+        //             tnum = Random.Next(termsInIndex);
+        //             if (termflag.Get(tnum))
+        //             {
+        //                 tnum = termflag.NextClearBit(tnum);
+        //             }
+        //             if (tnum < 0 || tnum >= termsInIndex)
+        //             {
+        //                 tnum = termflag.NextClearBit(0);
+        //             }
+        //             termflag.Set(tnum);
+        //             Query tq = new TermQuery(terms[tnum]);
+        //             bq.Add(tq, Occur.MUST);
+        //         }
+        //
+        //         CountingHitCollector hc = new CountingHitCollector();
+        //         s.Search(bq, hc);
+        //         nMatches += hc.Count;
+        //         ret += hc.Sum;
+        //     }
+        //     if (Verbose)
+        //     {
+        //         Console.WriteLine("Average number of matches=" + (nMatches / iter));
+        //     }
+        //
+        //     return ret;
+        // }
+        //
+        // public virtual int DoNestedTermConjunctions(IndexSearcher s, int termsInIndex, int maxOuterClauses, int maxClauses, int iter)
+        // {
+        //     int ret = 0;
+        //     long nMatches = 0;
+        //     for (int i = 0; i < iter; i++)
+        //     {
+        //         int oClauses = Random.Next(maxOuterClauses - 1) + 2;
+        //         BooleanQuery oq = new BooleanQuery();
+        //         for (int o = 0; o < oClauses; o++)
+        //         {
+        //             int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
+        //             BooleanQuery bq = new BooleanQuery();
+        //             BitSet termflag = new BitSet(termsInIndex);
+        //             for (int j = 0; j < nClauses; j++)
+        //             {
+        //                 int tnum;
+        //                 // don't pick same clause twice
+        //                 tnum = Random.Next(termsInIndex);
+        //                 if (termflag.Get(tnum))
+        //                 {
+        //                     tnum = termflag.NextClearBit(tnum);
+        //                 }
+        //                 if (tnum < 0 || tnum >= 25)
+        //                 {
+        //                     tnum = termflag.NextClearBit(0);
+        //                 }
+        //                 termflag.Set(tnum);
+        //                 Query tq = new TermQuery(terms[tnum]);
+        //                 bq.Add(tq, Occur.MUST);
+        //             } // inner
+        //
+        //             oq.Add(bq, Occur.MUST);
+        //         } // outer
+        //
+        //         CountingHitCollector hc = new CountingHitCollector();
+        //         s.Search(oq, hc);
+        //         nMatches += hc.Count;
+        //         ret += hc.Sum;
+        //     }
+        //     if (Verbose)
+        //     {
+        //         Console.WriteLine("Average number of matches=" + (nMatches / iter));
+        //     }
+        //     return ret;
+        // }
+        //
+        // public virtual int DoSloppyPhrase(IndexSearcher s, int termsInIndex, int maxClauses, int iter)
+        // {
+        //     int ret = 0;
+        //
+        //     for (int i = 0; i < iter; i++)
+        //     {
+        //         int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
+        //         PhraseQuery q = new PhraseQuery();
+        //         for (int j = 0; j < nClauses; j++)
+        //         {
+        //             int tnum = Random.Next(termsInIndex);
+        //             q.Add(new Term("f", char.ToString((char)(tnum + 'A'))), j);
+        //         }
+        //         q.Slop = termsInIndex; // this could be random too
+        //
+        //         CountingHitCollector hc = new CountingHitCollector();
+        //         s.Search(q, hc);
+        //         ret += hc.Sum;
+        //     }
+        //
+        //     return ret;
+        // }
 
         [Test]
         public virtual void TestConjunctions()

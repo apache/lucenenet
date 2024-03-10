@@ -56,7 +56,9 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false))
+                    .SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
 
             var doc = new Document();
             Field field = NewStringField("field", "", Field.Store.NO);
@@ -88,32 +90,26 @@ namespace Lucene.Net.Search
         /// a stupid prefix query that just blasts thru the terms </summary>
         private class DumbPrefixQuery : MultiTermQuery
         {
-            private readonly TestPrefixRandom outerInstance;
-
             private readonly BytesRef prefix;
 
-            internal DumbPrefixQuery(TestPrefixRandom outerInstance, Term term)
+            internal DumbPrefixQuery(Term term)
                 : base(term.Field)
             {
-                this.outerInstance = outerInstance;
                 prefix = term.Bytes;
             }
 
             protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
             {
-                return new SimplePrefixTermsEnum(this, terms.GetEnumerator(), prefix);
+                return new SimplePrefixTermsEnum(terms.GetEnumerator(), prefix);
             }
 
             private class SimplePrefixTermsEnum : FilteredTermsEnum
             {
-                private readonly TestPrefixRandom.DumbPrefixQuery outerInstance;
-
                 private readonly BytesRef prefix;
 
-                internal SimplePrefixTermsEnum(TestPrefixRandom.DumbPrefixQuery outerInstance, TermsEnum tenum, BytesRef prefix)
+                internal SimplePrefixTermsEnum(TermsEnum tenum, BytesRef prefix)
                     : base(tenum)
                 {
-                    this.outerInstance = outerInstance;
                     this.prefix = prefix;
                     SetInitialSeekTerm(new BytesRef(""));
                 }
@@ -149,7 +145,7 @@ namespace Lucene.Net.Search
         private void AssertSame(string prefix)
         {
             PrefixQuery smart = new PrefixQuery(new Term("field", prefix));
-            DumbPrefixQuery dumb = new DumbPrefixQuery(this, new Term("field", prefix));
+            DumbPrefixQuery dumb = new DumbPrefixQuery(new Term("field", prefix));
 
             TopDocs smartDocs = searcher.Search(smart, 25);
             TopDocs dumbDocs = searcher.Search(dumb, 25);

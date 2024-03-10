@@ -31,8 +31,6 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Similarity unit test.
-    ///
-    ///
     /// </summary>
     [TestFixture]
     public class TestNot : LuceneTestCase

@@ -189,12 +189,12 @@ namespace Lucene.Net.Search
             bool fail = false;
             for (int i = 0; i < numHits; i++)
             {
-                fail |= (int)expected[i] != hits2.ScoreDocs[i].Doc;
+                fail |= expected[i] != hits2.ScoreDocs[i].Doc;
             }
             Assert.IsFalse(fail);
 
             r.Dispose();
             dir.Dispose();
-        }               
+        }
     }
 }

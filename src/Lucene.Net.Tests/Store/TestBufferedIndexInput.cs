@@ -42,15 +42,16 @@ namespace Lucene.Net.Store
     [TestFixture]
     public class TestBufferedIndexInput : LuceneTestCase
     {
-        private static void WriteBytes(FileInfo aFile, long size)
-        {
-            using FileStream ostream = new FileStream(aFile.FullName, FileMode.Create);
-            for (int i = 0; i < size; i++)
-            {
-                ostream.WriteByte(Byten(i));
-            }
-            ostream.Flush();
-        }
+        // LUCENENET: unused, commenting out until it is needed
+        // private static void WriteBytes(FileInfo aFile, long size)
+        // {
+        //     using FileStream ostream = new FileStream(aFile.FullName, FileMode.Create);
+        //     for (int i = 0; i < size; i++)
+        //     {
+        //         ostream.WriteByte(Byten(i));
+        //     }
+        //     ostream.Flush();
+        // }
 
         private const long TEST_FILE_LENGTH = 100 * 1024;
 
@@ -79,17 +80,18 @@ namespace Lucene.Net.Store
             RunReadBytes(input, BufferedIndexInput.BUFFER_SIZE, Random);
         }
 
-        private void RunReadBytesAndClose(IndexInput input, int bufferSize, Random r)
-        {
-            try
-            {
-                RunReadBytes(input, bufferSize, r);
-            }
-            finally
-            {
-                input.Dispose();
-            }
-        }
+        // LUCENENET: unused, commenting out until it is needed
+        // private void RunReadBytesAndClose(IndexInput input, int bufferSize, Random r)
+        // {
+        //     try
+        //     {
+        //         RunReadBytes(input, bufferSize, r);
+        //     }
+        //     finally
+        //     {
+        //         input.Dispose();
+        //     }
+        // }
 
         private void RunReadBytes(IndexInput input, int bufferSize, Random r)
         {
@@ -155,7 +157,7 @@ namespace Lucene.Net.Store
             Assert.AreEqual(pos + size, input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             for (int i = 0; i < size; i++)
             {
-                Assert.AreEqual(Byten(pos + i), (byte)buffer[offset + i], "pos=" + i + " filepos=" + (pos + i));
+                Assert.AreEqual(Byten(pos + i), buffer[offset + i], "pos=" + i + " filepos=" + (pos + i));
             }
         }
 
@@ -262,7 +264,7 @@ namespace Lucene.Net.Store
                     new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                         .SetOpenMode(OpenMode.CREATE)
                         .SetMergePolicy(NewLogMergePolicy(false)));
-                    
+
                 for (int i = 0; i < 37; i++)
                 {
                     var doc = new Document();

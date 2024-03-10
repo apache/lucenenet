@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
             return doc;
         }
 
-        
+
 
         private static PhraseQuery MakePhraseQuery(string terms)
         {
@@ -339,7 +339,36 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestInfiniteFreq2()
         {
-            string document = "So much fun to be had in my head " + "No more sunshine " + "So much fun just lying in my bed " + "No more sunshine " + "I can't face the sunlight and the dirt outside " + "Wanna stay in 666 where this darkness don't lie " + "Drug drug druggy " + "Got a feeling sweet like honey " + "Drug drug druggy " + "Need sensation like my baby " + "Show me your scars you're so aware " + "I'm not barbaric I just care " + "Drug drug drug " + "I need a reflection to prove I exist " + "No more sunshine " + "I am a victim of designer blitz " + "No more sunshine " + "Dance like a robot when you're chained at the knee " + "The C.I.A say you're all they'll ever need " + "Drug drug druggy " + "Got a feeling sweet like honey " + "Drug drug druggy " + "Need sensation like my baby " + "Snort your lines you're so aware " + "I'm not barbaric I just care " + "Drug drug druggy " + "Got a feeling sweet like honey " + "Drug drug druggy " + "Need sensation like my baby";
+            string document =
+                "So much fun to be had in my head " +
+                "No more sunshine " +
+                "So much fun just lying in my bed " +
+                "No more sunshine " +
+                "I can't face the sunlight and the dirt outside " +
+                "Wanna stay in 666 where this darkness don't lie " +
+                "Drug drug druggy " +
+                "Got a feeling sweet like honey " +
+                "Drug drug druggy " +
+                "Need sensation like my baby " +
+                "Show me your scars you're so aware " +
+                "I'm not barbaric I just care " +
+                "Drug drug drug " +
+                "I need a reflection to prove I exist " +
+                "No more sunshine " +
+                "I am a victim of designer blitz " +
+                "No more sunshine " +
+                "Dance like a robot when you're chained at the knee " +
+                "The C.I.A say you're all they'll ever need " +
+                "Drug drug druggy " +
+                "Got a feeling sweet like honey " +
+                "Drug drug druggy " +
+                "Need sensation like my baby " +
+                "Snort your lines you're so aware " +
+                "I'm not barbaric I just care " +
+                "Drug drug druggy " +
+                "Got a feeling sweet like honey " +
+                "Drug drug druggy " +
+                "Need sensation like my baby";
 
             Directory dir = NewDirectory();
 

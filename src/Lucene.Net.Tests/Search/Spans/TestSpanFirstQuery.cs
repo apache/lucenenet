@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Spans
             Directory dir = NewDirectory();
 
             // mimic StopAnalyzer
-            CharacterRunAutomaton stopSet = new CharacterRunAutomaton((new RegExp("the|a|of")).ToAutomaton());
+            CharacterRunAutomaton stopSet = new CharacterRunAutomaton(new RegExp("the|a|of").ToAutomaton());
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, stopSet);
 
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, analyzer);

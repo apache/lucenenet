@@ -33,8 +33,6 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Document boost unit test.
-    ///
-    ///
     /// </summary>
     [TestFixture]
     public class TestDocBoost : LuceneTestCase
@@ -49,8 +47,8 @@ namespace Lucene.Net.Search
             Field f2 = NewTextField("field", "word", Field.Store.YES);
             f2.Boost = 2.0f;
 
-            Documents.Document d1 = new Documents.Document();
-            Documents.Document d2 = new Documents.Document();
+            Document d1 = new Document();
+            Document d2 = new Document();
 
             d1.Add(f1); // boost = 1
             d2.Add(f2); // boost = 2
@@ -64,7 +62,9 @@ namespace Lucene.Net.Search
             float[] scores = new float[4];
 
             IndexSearcher searcher = NewSearcher(reader);
-            searcher.Search(new TermQuery(new Term("field", "word")), new CollectorAnonymousClass(this, scores));
+            searcher.Search(
+                new TermQuery(new Term("field", "word")),
+                new CollectorAnonymousClass(scores));
 
             float lastScore = 0.0f;
 
@@ -84,13 +84,10 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            private readonly TestDocBoost outerInstance;
-
             private readonly float[] scores;
 
-            public CollectorAnonymousClass(TestDocBoost outerInstance, float[] scores)
+            public CollectorAnonymousClass(float[] scores)
             {
-                this.outerInstance = outerInstance;
                 this.scores = scores;
                 @base = 0;
             }

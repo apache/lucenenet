@@ -1,6 +1,9 @@
 ﻿using NUnit.Framework;
-using RandomizedTesting.Generators;
 using System;
+
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
+using RandomizedTesting.Generators;
+#endif
 
 namespace Lucene.Net.Search
 {

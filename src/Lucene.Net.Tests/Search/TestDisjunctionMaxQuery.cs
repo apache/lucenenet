@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// threshold for comparing floats </summary>
-        public static readonly float SCORE_COMP_THRESH = 0.0000f;
+        public const float SCORE_COMP_THRESH = 0.0000f;
 
         /// <summary>
         /// Similarity to eliminate tf, idf and lengthNorm effects to isolate test
@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(s.TopReaderContext is AtomicReaderContext);
             Weight dw = s.CreateNormalizedWeight(dq);
             AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
-            Scorer ds = dw.GetScorer(context, (context.AtomicReader).LiveDocs);
+            Scorer ds = dw.GetScorer(context, context.AtomicReader.LiveDocs);
             bool skipOk = ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS;
             if (skipOk)
             {
@@ -208,7 +208,7 @@ namespace Lucene.Net.Search
             QueryUtils.Check(Random, dq, s);
             Weight dw = s.CreateNormalizedWeight(dq);
             AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
-            Scorer ds = dw.GetScorer(context, (context.AtomicReader).LiveDocs);
+            Scorer ds = dw.GetScorer(context, context.AtomicReader.LiveDocs);
             Assert.IsTrue(ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "firsttime skipTo found no match");
             Assert.AreEqual("d4", r.Document(ds.DocID).Get("id"), "found wrong docid");
         }

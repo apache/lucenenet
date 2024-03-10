@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -52,17 +53,13 @@ namespace Lucene.Net.Search
         private static IndexSearcher bigSearcher;
         private static IndexReader reader;
         private static IndexReader littleReader;
-        private static int NUM_EXTRA_DOCS = 6000;
+        private const int NUM_EXTRA_DOCS = 6000;
 
         public const string field = "field";
         private static Directory directory;
         private static Directory dir2;
         private static int mulFactor;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
         [OneTimeSetUp]
         public override void BeforeClass()
         {
@@ -106,7 +103,9 @@ namespace Lucene.Net.Search
                 mulFactor *= 2;
             } while (docCount < 3000);
 
-            RandomIndexWriter riw = new RandomIndexWriter(Random, dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
+            RandomIndexWriter riw = new RandomIndexWriter(Random, dir2,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             Document doc_ = new Document();
             doc_.Add(NewTextField("field2", "xxx", Field.Store.NO));
             for (int i = 0; i < NUM_EXTRA_DOCS / 2; i++)
@@ -140,7 +139,13 @@ namespace Lucene.Net.Search
             base.AfterClass();
         }
 
-        private static readonly string[] docFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3" };
+        private static readonly string[] docFields =
+        {
+            "w1 w2 w3 w4 w5",
+            "w1 w3 w2 w3",
+            "w1 xx w2 yy w3",
+            "w1 w3 xx w2 yy w3"
+        };
 
         public virtual void QueriesTest(Query query, int[] expDocNrs)
         {
@@ -225,7 +230,7 @@ namespace Lucene.Net.Search
             query.Add(new TermQuery(new Term(field, "w3")), Occur.MUST_NOT);
             query.Add(new TermQuery(new Term(field, "xx")), Occur.MUST_NOT);
             query.Add(new TermQuery(new Term(field, "w5")), Occur.MUST_NOT);
-            int[] expDocNrs = new int[] { };
+            int[] expDocNrs = Arrays.Empty<int>(); // LUCENENET: instead of new int[] { };
             QueriesTest(query, expDocNrs);
         }
 
@@ -265,7 +270,7 @@ namespace Lucene.Net.Search
             Similarity oldSimilarity = searcher.Similarity;
             try
             {
-                searcher.Similarity = new DefaultSimilarityAnonymousClass(this);
+                searcher.Similarity = DefaultSimilarityAnonymousClass.Default;
                 QueriesTest(query, expDocNrs);
             }
             finally
@@ -276,11 +281,11 @@ namespace Lucene.Net.Search
 
         private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
-            private readonly TestBoolean2 outerInstance;
+            // LUCENENET: Making this a singleton to avoid unnecessary allocations
+            public static readonly DefaultSimilarityAnonymousClass Default = new DefaultSimilarityAnonymousClass();
 
-            public DefaultSimilarityAnonymousClass(TestBoolean2 outerInstance)
+            private DefaultSimilarityAnonymousClass()
             {
-                this.outerInstance = outerInstance;
             }
 
             public override float Coord(int overlap, int maxOverlap)

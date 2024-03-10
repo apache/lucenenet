@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
         {
             private readonly bool acceptDocsOutOfOrder;
 
-            public NoOpCollector(bool acceptDocsOutOfOrder)
+            internal NoOpCollector(bool acceptDocsOutOfOrder)
             {
                 this.acceptDocsOutOfOrder = acceptDocsOutOfOrder;
             }
@@ -100,21 +100,13 @@ namespace Lucene.Net.Search
                 }
 
                 // now replay them
-                cc.Replay(new CollectorAnonymousClass(this));
+                cc.Replay(new CollectorAnonymousClass());
             }
         }
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            private readonly TestCachingCollector outerInstance;
-
-            public CollectorAnonymousClass(TestCachingCollector outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                prevDocID = -1;
-            }
-
-            internal int prevDocID;
+            internal int prevDocID = -1;
 
             public void SetScorer(Scorer scorer)
             {

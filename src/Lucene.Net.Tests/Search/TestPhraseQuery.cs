@@ -30,15 +30,15 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using OpenMode = Lucene.Net.Index.OpenMode;
 
     /// <summary>
-    /// Tests <seealso cref="PhraseQuery"/>.
+    /// Tests <see cref="PhraseQuery"/>.
     /// </summary>
-    /// <seealso cref= TestPositionIncrement </seealso>
+    /// <seealso cref="TestPositionIncrement" />
     /*
      * Remove ThreadLeaks and run with (Eclipse or command line):
      * -ea -Drt.seed=AFD1E7E84B35D2B1
@@ -49,7 +49,8 @@ namespace Lucene.Net.Search
     public class TestPhraseQuery : LuceneTestCase
     {
         /// <summary>
-        /// threshold for comparing floats </summary>
+        /// threshold for comparing floats
+        /// </summary>
         public const float SCORE_COMP_THRESH = 1e-6f;
 
         private static IndexSearcher searcher;
@@ -66,7 +67,7 @@ namespace Lucene.Net.Search
             Analyzer analyzer = new AnalyzerAnonymousClass();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory, analyzer);
 
-            Documents.Document doc = new Documents.Document();
+            Document doc = new Document();
             doc.Add(NewTextField("field", "one two three four five", Field.Store.YES));
             doc.Add(NewTextField("repeated", "this is a repeated field - first part", Field.Store.YES));
             IIndexableField repeatedField = NewTextField("repeated", "second part of a repeated field", Field.Store.YES);
@@ -74,11 +75,11 @@ namespace Lucene.Net.Search
             doc.Add(NewTextField("palindrome", "one two three two one", Field.Store.YES));
             writer.AddDocument(doc);
 
-            doc = new Documents.Document();
+            doc = new Document();
             doc.Add(NewTextField("nonexist", "phrase exist notexist exist found", Field.Store.YES));
             writer.AddDocument(doc);
 
-            doc = new Documents.Document();
+            doc = new Document();
             doc.Add(NewTextField("nonexist", "phrase exist notexist exist found", Field.Store.YES));
             writer.AddDocument(doc);
 
@@ -90,10 +91,6 @@ namespace Lucene.Net.Search
 
         private sealed class AnalyzerAnonymousClass : Analyzer
         {
-            public AnalyzerAnonymousClass()
-            {
-            }
-
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
@@ -247,7 +244,7 @@ namespace Lucene.Net.Search
             Directory directory = NewDirectory();
             Analyzer stopAnalyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, stopAnalyzer));
-            Documents.Document doc = new Documents.Document();
+            Document doc = new Document();
             doc.Add(NewTextField("field", "the stop words are here", Field.Store.YES));
             writer.AddDocument(doc);
             IndexReader reader = writer.GetReader();
@@ -273,11 +270,11 @@ namespace Lucene.Net.Search
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory);
 
-            Documents.Document doc = new Documents.Document();
+            Document doc = new Document();
             doc.Add(NewTextField("source", "marketing info", Field.Store.YES));
             writer.AddDocument(doc);
 
-            doc = new Documents.Document();
+            doc = new Document();
             doc.Add(NewTextField("contents", "foobar", Field.Store.YES));
             doc.Add(NewTextField("source", "marketing info", Field.Store.YES));
             writer.AddDocument(doc);
@@ -305,15 +302,15 @@ namespace Lucene.Net.Search
             reader.Dispose();
 
             writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
-            doc = new Documents.Document();
+            doc = new Document();
             doc.Add(NewTextField("contents", "map entry woo", Field.Store.YES));
             writer.AddDocument(doc);
 
-            doc = new Documents.Document();
+            doc = new Document();
             doc.Add(NewTextField("contents", "woo map entry", Field.Store.YES));
             writer.AddDocument(doc);
 
-            doc = new Documents.Document();
+            doc = new Document();
             doc.Add(NewTextField("contents", "map foobarword entry woo", Field.Store.YES));
             writer.AddDocument(doc);
 
@@ -355,15 +352,15 @@ namespace Lucene.Net.Search
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
 
-            Documents.Document doc = new Documents.Document();
+            Document doc = new Document();
             doc.Add(NewTextField("field", "foo firstname lastname foo", Field.Store.YES));
             writer.AddDocument(doc);
 
-            Documents.Document doc2 = new Documents.Document();
+            Document doc2 = new Document();
             doc2.Add(NewTextField("field", "foo firstname zzz lastname foo", Field.Store.YES));
             writer.AddDocument(doc2);
 
-            Documents.Document doc3 = new Documents.Document();
+            Document doc3 = new Document();
             doc3.Add(NewTextField("field", "foo firstname zzz yyy lastname foo", Field.Store.YES));
             writer.AddDocument(doc3);
 
@@ -632,7 +629,7 @@ namespace Lucene.Net.Search
 
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMergePolicy(NewLogMergePolicy()));
             IList<IList<string>> docs = new JCG.List<IList<string>>();
-            Documents.Document d = new Documents.Document();
+            Document d = new Document();
             Field f = NewTextField("f", "", Field.Store.NO);
             d.Add(f);
 

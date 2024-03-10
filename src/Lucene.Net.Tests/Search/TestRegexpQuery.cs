@@ -115,23 +115,20 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestCustomProvider()
         {
-            IAutomatonProvider myProvider = new AutomatonProviderAnonymousClass(this);
+            IAutomatonProvider myProvider = new AutomatonProviderAnonymousClass();
             RegexpQuery query = new RegexpQuery(NewTerm("<quickBrown>"), RegExpSyntax.ALL, myProvider);
             Assert.AreEqual(1, searcher.Search(query, 5).TotalHits);
         }
 
         private sealed class AutomatonProviderAnonymousClass : IAutomatonProvider
         {
-            private readonly TestRegexpQuery outerInstance;
-
-            public AutomatonProviderAnonymousClass(TestRegexpQuery outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                quickBrownAutomaton = BasicOperations.Union(new Automaton[] { BasicAutomata.MakeString("quick"), BasicAutomata.MakeString("brown"), BasicAutomata.MakeString("bob") });
-            }
-
             // automaton that matches quick or brown
-            private Automaton quickBrownAutomaton;
+            private Automaton quickBrownAutomaton = BasicOperations.Union(new Automaton[]
+            {
+                BasicAutomata.MakeString("quick"),
+                BasicAutomata.MakeString("brown"),
+                BasicAutomata.MakeString("bob")
+            });
 
             public Automaton GetAutomaton(string name)
             {

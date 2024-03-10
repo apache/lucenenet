@@ -68,13 +68,34 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestHugeN()
         {
+            // LUCENENET: this differs from Java
             TaskScheduler service = new LimitedConcurrencyLevelTaskScheduler(4);
 
-            IndexSearcher[] searchers = new IndexSearcher[] { new IndexSearcher(reader), new IndexSearcher(reader, service) };
-            Query[] queries = new Query[] { new MatchAllDocsQuery(), new TermQuery(new Term("field", "1")) };
-            Sort[] sorts = new Sort[] { null, new Sort(new SortField("field2", SortFieldType.STRING)) };
-            Filter[] filters = new Filter[] { null, new QueryWrapperFilter(new TermQuery(new Term("field2", "true"))) };
-            ScoreDoc[] afters = new ScoreDoc[] { null, new FieldDoc(0, 0f, new object[] { new BytesRef("boo!") }) };
+            IndexSearcher[] searchers = new IndexSearcher[]
+            {
+                new IndexSearcher(reader),
+                new IndexSearcher(reader, service)
+            };
+            Query[] queries = new Query[]
+            {
+                new MatchAllDocsQuery(),
+                new TermQuery(new Term("field", "1"))
+            };
+            Sort[] sorts = new Sort[]
+            {
+                null,
+                new Sort(new SortField("field2", SortFieldType.STRING))
+            };
+            Filter[] filters = new Filter[]
+            {
+                null,
+                new QueryWrapperFilter(new TermQuery(new Term("field2", "true")))
+            };
+            ScoreDoc[] afters = new ScoreDoc[]
+            {
+                null,
+                new FieldDoc(0, 0f, new object[] { new BytesRef("boo!") })
+            };
 
             foreach (IndexSearcher searcher in searchers)
             {

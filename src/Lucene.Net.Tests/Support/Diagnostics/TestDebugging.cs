@@ -96,7 +96,7 @@ namespace Lucene.Net.Diagnostics
         }
 
         [Test, LuceneNetSpecific]
-        [TestCaseSource(typeof(TestDebugging), "GetMessageFormatCases", new object[] { 1 })]
+        [TestCaseSource(typeof(TestDebugging), nameof(GetMessageFormatCases), new object[] { 1 })]
         public void TestMessageFormatting_1Parameter(string expectedMessage, string messageFormat, object p0)
         {
             TestWithAsserts(enabled: true, () =>
@@ -107,7 +107,7 @@ namespace Lucene.Net.Diagnostics
         }
 
         [Test, LuceneNetSpecific]
-        [TestCaseSource(typeof(TestDebugging), "GetMessageFormatCases", new object[] { 2 })]
+        [TestCaseSource(typeof(TestDebugging), nameof(GetMessageFormatCases), new object[] { 2 })]
         public void TestMessageFormatting_2Parameters(string expectedMessage, string messageFormat, object p0, object p1)
         {
             TestWithAsserts(enabled: true, () =>
@@ -118,7 +118,7 @@ namespace Lucene.Net.Diagnostics
         }
 
         [Test, LuceneNetSpecific]
-        [TestCaseSource(typeof(TestDebugging), "GetMessageFormatCases", new object[] { 3 })]
+        [TestCaseSource(typeof(TestDebugging), nameof(GetMessageFormatCases), new object[] { 3 })]
         public void TestMessageFormatting_3Parameters(string expectedMessage, string messageFormat, object p0, object p1, object p2)
         {
             TestWithAsserts(enabled: true, () =>
@@ -129,7 +129,7 @@ namespace Lucene.Net.Diagnostics
         }
 
         [Test, LuceneNetSpecific]
-        [TestCaseSource(typeof(TestDebugging), "GetMessageFormatCases", new object[] { 4 })]
+        [TestCaseSource(typeof(TestDebugging), nameof(GetMessageFormatCases), new object[] { 4 })]
         public void TestMessageFormatting_4Parameters(string expectedMessage, string messageFormat, object p0, object p1, object p2, object p3)
         {
             TestWithAsserts(enabled: true, () =>
@@ -140,7 +140,7 @@ namespace Lucene.Net.Diagnostics
         }
 
         [Test, LuceneNetSpecific]
-        [TestCaseSource(typeof(TestDebugging), "GetMessageFormatCases", new object[] { 5 })]
+        [TestCaseSource(typeof(TestDebugging), nameof(GetMessageFormatCases), new object[] { 5 })]
         public void TestMessageFormatting_5Parameters(string expectedMessage, string messageFormat, object p0, object p1, object p2, object p3, object p4)
         {
             TestWithAsserts(enabled: true, () =>
@@ -151,7 +151,7 @@ namespace Lucene.Net.Diagnostics
         }
 
         [Test, LuceneNetSpecific]
-        [TestCaseSource(typeof(TestDebugging), "GetMessageFormatCases", new object[] { 6 })]
+        [TestCaseSource(typeof(TestDebugging), nameof(GetMessageFormatCases), new object[] { 6 })]
         public void TestMessageFormatting_6Parameters(string expectedMessage, string messageFormat, object p0, object p1, object p2, object p3, object p4, object p5)
         {
             TestWithAsserts(enabled: true, () =>
@@ -162,7 +162,7 @@ namespace Lucene.Net.Diagnostics
         }
 
         [Test, LuceneNetSpecific]
-        [TestCaseSource(typeof(TestDebugging), "GetMessageFormatCases", new object[] { 7 })]
+        [TestCaseSource(typeof(TestDebugging), nameof(GetMessageFormatCases), new object[] { 7 })]
         public void TestMessageFormatting_7Parameters(string expectedMessage, string messageFormat, object p0, object p1, object p2, object p3, object p4, object p5, object p6)
         {
             TestWithAsserts(enabled: true, () =>

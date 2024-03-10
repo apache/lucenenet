@@ -4,6 +4,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -151,7 +152,7 @@ namespace Lucene.Net.Search
             pq.Add(new Term("field", "wizard"));
             pq.Add(new Term("field", "oz"));
 
-            TopDocs hits2 = new QueryRescorerAnonymousClass(this, pq)
+            TopDocs hits2 = new QueryRescorerAnonymousClass(pq)
               .Rescore(searcher, hits, 10);
 
             // Resorting didn't change the order:
@@ -165,12 +166,9 @@ namespace Lucene.Net.Search
 
         private sealed class QueryRescorerAnonymousClass : QueryRescorer
         {
-            private readonly TestQueryRescorer outerInstance;
-
-            public QueryRescorerAnonymousClass(TestQueryRescorer outerInstance, PhraseQuery pq)
+            public QueryRescorerAnonymousClass(PhraseQuery pq)
                 : base(pq)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
@@ -218,7 +216,7 @@ namespace Lucene.Net.Search
             pq.Add(new Term("field", "wizard"));
             pq.Add(new Term("field", "oz"));
 
-            Rescorer rescorer = new QueryRescorerAnonymousClass2(this, pq);
+            Rescorer rescorer = new QueryRescorerAnonymousClass2(pq);
 
             TopDocs hits2 = rescorer.Rescore(searcher, hits, 10);
 
@@ -253,12 +251,9 @@ namespace Lucene.Net.Search
 
         private sealed class QueryRescorerAnonymousClass2 : QueryRescorer
         {
-            private readonly TestQueryRescorer outerInstance;
-
-            public QueryRescorerAnonymousClass2(TestQueryRescorer outerInstance, PhraseQuery pq)
+            public QueryRescorerAnonymousClass2(PhraseQuery pq)
                 : base(pq)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
@@ -363,7 +358,7 @@ namespace Lucene.Net.Search
             //System.out.println("numHits=" + numHits + " reverse=" + reverse);
             TopDocs hits = s.Search(new TermQuery(new Term("field", "a")), numHits);
 
-            TopDocs hits2 = new QueryRescorerAnonymousClass3(this, new FixedScoreQuery(idToNum, reverse))
+            TopDocs hits2 = new QueryRescorerAnonymousClass3(new FixedScoreQuery(idToNum, reverse))
               .Rescore(s, hits, numHits);
 
             int[] expected = new int[numHits];
@@ -379,8 +374,8 @@ namespace Lucene.Net.Search
                 {
                     try
                     {
-                        int av = idToNum[Convert.ToInt32(r.Document(a).Get("id"))];
-                        int bv = idToNum[Convert.ToInt32(r.Document(b).Get("id"))];
+                        int av = idToNum[Convert.ToInt32(r.Document(a).Get("id"), CultureInfo.InvariantCulture)];
+                        int bv = idToNum[Convert.ToInt32(r.Document(b).Get("id"), CultureInfo.InvariantCulture)];
                         if (av < bv)
                         {
                             return -reverseInt;
@@ -406,7 +401,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < numHits; i++)
             {
                 //System.out.println("expected=" + expected[i] + " vs " + hits2.ScoreDocs[i].Doc + " v=" + idToNum[Integer.parseInt(r.Document(expected[i]).Get("id"))]);
-                if ((int)expected[i] != hits2.ScoreDocs[i].Doc)
+                if (expected[i] != hits2.ScoreDocs[i].Doc)
                 {
                     //System.out.println("  diff!");
                     fail = true;
@@ -420,12 +415,9 @@ namespace Lucene.Net.Search
 
         private sealed class QueryRescorerAnonymousClass3 : QueryRescorer
         {
-            private readonly TestQueryRescorer outerInstance;
-
-            public QueryRescorerAnonymousClass3(TestQueryRescorer outerInstance, FixedScoreQuery fixedScoreQuery)
+            public QueryRescorerAnonymousClass3(FixedScoreQuery fixedScoreQuery)
                 : base(fixedScoreQuery)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
@@ -433,7 +425,7 @@ namespace Lucene.Net.Search
                 return secondPassScore;
             }
         }
-        
+
         /// <summary>
         /// Just assigns score == idToNum[doc("id")] for each doc. </summary>
         private class FixedScoreQuery : Query
@@ -566,7 +558,7 @@ namespace Lucene.Net.Search
 
             public override int GetHashCode()
             {
-                int PRIME = 31;
+                const int PRIME = 31; // LUCENENET: made const
                 int hash = base.GetHashCode();
                 if (reverse)
                 {

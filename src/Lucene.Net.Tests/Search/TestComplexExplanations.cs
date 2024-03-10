@@ -52,12 +52,15 @@ namespace Lucene.Net.Search
         // must be static for weight serialization tests
         private static DefaultSimilarity CreateQnorm1Similarity()
         {
-            return new DefaultSimilarityAnonymousClass();
+            return DefaultSimilarityAnonymousClass.Default; // LUCENENET: using static instance
         }
 
         private sealed class DefaultSimilarityAnonymousClass : DefaultSimilarity
         {
-            public DefaultSimilarityAnonymousClass()
+            // LUCENENET: Made static singleton instance to reduce allocations
+            public static readonly DefaultSimilarityAnonymousClass Default = new DefaultSimilarityAnonymousClass();
+
+            private DefaultSimilarityAnonymousClass()
             {
             }
 

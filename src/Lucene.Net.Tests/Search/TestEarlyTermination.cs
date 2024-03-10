@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < iters; ++i)
             {
                 IndexSearcher searcher = NewSearcher(reader);
-                ICollector collector = new CollectorAnonymousClass(this);
+                ICollector collector = new CollectorAnonymousClass();
 
                 searcher.Search(new MatchAllDocsQuery(), collector);
             }
@@ -77,17 +77,8 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            private readonly TestEarlyTermination outerInstance;
-
-            public CollectorAnonymousClass(TestEarlyTermination outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                outOfOrder = Random.NextBoolean();
-                collectionTerminated = true;
-            }
-
-            internal readonly bool outOfOrder;
-            internal bool collectionTerminated;
+            internal readonly bool outOfOrder = Random.NextBoolean();
+            internal bool collectionTerminated = true;
 
             public void SetScorer(Scorer scorer)
             {

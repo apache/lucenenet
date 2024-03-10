@@ -36,8 +36,6 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Similarity unit test.
-    ///
-    ///
     /// </summary>
     [TestFixture]
     public class TestSimilarity : LuceneTestCase
@@ -104,23 +102,23 @@ namespace Lucene.Net.Search
             Term b = new Term("field", "b");
             Term c = new Term("field", "c");
 
-            searcher.Search(new TermQuery(b), new CollectorAnonymousClass(this));
+            searcher.Search(new TermQuery(b), new CollectorAnonymousClass());
 
             BooleanQuery bq = new BooleanQuery();
             bq.Add(new TermQuery(a), Occur.SHOULD);
             bq.Add(new TermQuery(b), Occur.SHOULD);
             //System.out.println(bq.toString("field"));
-            searcher.Search(bq, new CollectorAnonymousClass2(this));
+            searcher.Search(bq, new CollectorAnonymousClass2());
 
             PhraseQuery pq = new PhraseQuery();
             pq.Add(a);
             pq.Add(c);
             //System.out.println(pq.toString("field"));
-            searcher.Search(pq, new CollectorAnonymousClass3(this));
+            searcher.Search(pq, new CollectorAnonymousClass3());
 
             pq.Slop = 2;
             //System.out.println(pq.toString("field"));
-            searcher.Search(pq, new CollectorAnonymousClass4(this));
+            searcher.Search(pq, new CollectorAnonymousClass4());
 
             reader.Dispose();
             store.Dispose();
@@ -128,13 +126,6 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            private readonly TestSimilarity outerInstance;
-
-            public CollectorAnonymousClass(TestSimilarity outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             private Scorer scorer;
 
             public void SetScorer(Scorer scorer)
@@ -156,15 +147,7 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass2 : ICollector
         {
-            private readonly TestSimilarity outerInstance;
-
-            public CollectorAnonymousClass2(TestSimilarity outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                @base = 0;
-            }
-
-            private int @base;
+            private int @base = 0;
             private Scorer scorer;
 
             public void SetScorer(Scorer scorer)
@@ -188,13 +171,6 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass3 : ICollector
         {
-            private readonly TestSimilarity outerInstance;
-
-            public CollectorAnonymousClass3(TestSimilarity outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             private Scorer scorer;
 
             public void SetScorer(Scorer scorer)
@@ -217,13 +193,6 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass4 : ICollector
         {
-            private readonly TestSimilarity outerInstance;
-
-            public CollectorAnonymousClass4(TestSimilarity outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             private Scorer scorer;
 
             public void SetScorer(Scorer scorer)

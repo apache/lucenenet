@@ -27,7 +27,7 @@ namespace Lucene.Net.Support.IO
 
     public class TestFileSupport : LuceneTestCase
     {
-        private static String platformId = RuntimeInformation.FrameworkDescription.Replace('.', '-');
+        private readonly static string platformId = RuntimeInformation.FrameworkDescription.Replace('.', '-');
 
         /** Location to store tests in */
         private DirectoryInfo tempDirectory;
@@ -68,15 +68,15 @@ namespace Lucene.Net.Support.IO
             using (var file2 = FileSupport.CreateTempFileAsStream("foo", "bar", dir, new FileStreamOptions { Access = FileAccess.Write }))
             {
                 Assert.AreNotEqual(file1.Name, file2.Name);
-            } 
+            }
         }
 
         [Test, LuceneNetSpecific]
         public void TestGetCanonicalPath()
         {
             // Should work for Unix/Windows.
-            String dots = "..";
-            String @base = tempDirectory.GetCanonicalPath();
+            const string dots = "..";
+            string @base = tempDirectory.GetCanonicalPath();
             @base = addTrailingSlash(@base);
             FileInfo f = new FileInfo(Path.Combine(@base, "temp.tst"));
 
@@ -126,13 +126,13 @@ namespace Lucene.Net.Support.IO
                 DirectoryInfo testdir = new DirectoryInfo(Path.Combine(@base, "long-" + platformId));
                 testdir.Create();
                 FileInfo f1 = new FileInfo(Path.Combine(testdir.FullName, "longfilename" + platformId + ".tst"));
-                using (FileStream fos = new FileStream(f1.FullName, FileMode.CreateNew, FileAccess.Write))
+                using (FileStream _ = new FileStream(f1.FullName, FileMode.CreateNew, FileAccess.Write))
                 { }
                 FileInfo f2 = null, f3 = null;
                 DirectoryInfo dir2 = null;
                 try
                 {
-                    String dirName1 = f1.GetCanonicalPath();
+                    string dirName1 = f1.GetCanonicalPath();
                     FileInfo f4 = new FileInfo(Path.Combine(testdir.FullName, "longfi~1.tst"));
                     /*
                      * If the "short file name" doesn't exist, then assume that the
@@ -140,7 +140,7 @@ namespace Lucene.Net.Support.IO
                      */
                     if (f4.Exists)
                     {
-                        String dirName2 = f4.GetCanonicalPath();
+                        string dirName2 = f4.GetCanonicalPath();
                         assertEquals("Test 6: Incorrect Path Returned.", dirName1,
                                 dirName2);
                         dir2 = new DirectoryInfo(Path.Combine(testdir.FullName, "longdirectory" + platformId));
@@ -163,7 +163,7 @@ namespace Lucene.Net.Support.IO
                         f2 = new FileInfo(testdir.FullName + Path.DirectorySeparatorChar + "longdirectory"
                                 + platformId + Path.DirectorySeparatorChar + "Test" + Path.DirectorySeparatorChar + dots
                                 + Path.DirectorySeparatorChar + "longfilename.tst");
-                        using (FileStream fos2 = new FileStream(f2.FullName, FileMode.CreateNew, FileAccess.Write))
+                        using (FileStream _ = new FileStream(f2.FullName, FileMode.CreateNew, FileAccess.Write))
                         { }
                         dirName1 = f2.GetCanonicalPath();
                         f3 = new FileInfo(testdir.FullName + Path.DirectorySeparatorChar + "longdi~1"
@@ -177,20 +177,14 @@ namespace Lucene.Net.Support.IO
                 finally
                 {
                     f1.Delete();
-                    if (f2 != null)
-                    {
-                        f2.Delete();
-                    }
-                    if (dir2 != null)
-                    {
-                        dir2.Delete();
-                    }
+                    f2?.Delete();
+                    dir2?.Delete();
                     testdir.Delete();
                 }
             }
         }
 
-        private static String addTrailingSlash(String path)
+        private static string addTrailingSlash(string path)
         {
             if (Path.DirectorySeparatorChar == path[path.Length - 1])
             {
@@ -205,8 +199,8 @@ namespace Lucene.Net.Support.IO
             bool onWindows = (Path.DirectorySeparatorChar == '\\');
             if (onWindows)
             {
-                var path = @"f:\testing\on\Windows";
-                var expected = @"F:\testing\on\Windows";
+                const string path = @"f:\testing\on\Windows";
+                const string expected = @"F:\testing\on\Windows";
 
                 var dir = new DirectoryInfo(path);
 

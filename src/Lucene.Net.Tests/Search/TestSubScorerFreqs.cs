@@ -47,11 +47,11 @@ namespace Lucene.Net.Search
             int num = AtLeast(31);
             for (int i = 0; i < num; i++)
             {
-                Documents.Document doc = new Documents.Document();
+                Document doc = new Document();
                 doc.Add(NewTextField("f", "a b c d b c d c d d", Field.Store.NO));
                 w.AddDocument(doc);
 
-                doc = new Documents.Document();
+                doc = new Document();
                 doc.Add(NewTextField("f", "a b c d", Field.Store.NO));
                 w.AddDocument(doc);
             }

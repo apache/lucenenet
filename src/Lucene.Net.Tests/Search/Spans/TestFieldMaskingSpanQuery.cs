@@ -47,7 +47,8 @@ namespace Lucene.Net.Search.Spans
             return doc;
         }
 
-        protected internal Field GetField(string name, string value)
+        // LUCENENET: Renamed to GetField to prevent conflict with Field type
+        protected internal static Field GetField(string name, string value)
         {
             return NewTextField(name, value, Field.Store.NO);
         }
@@ -68,15 +69,63 @@ namespace Lucene.Net.Search.Spans
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
-            writer.AddDocument(Doc(new Field[] { GetField("id", "0"), GetField("gender", "male"), GetField("first", "james"), GetField("last", "jones") }));
+            writer.AddDocument(Doc(new Field[]
+            {
+                GetField("id", "0"),
+                GetField("gender", "male"),
+                GetField("first", "james"),
+                GetField("last", "jones")
+            }));
 
-            writer.AddDocument(Doc(new Field[] { GetField("id", "1"), GetField("gender", "male"), GetField("first", "james"), GetField("last", "smith"), GetField("gender", "female"), GetField("first", "sally"), GetField("last", "jones") }));
+            writer.AddDocument(Doc(new Field[]
+            {
+                GetField("id", "1"),
+                GetField("gender", "male"),
+                GetField("first", "james"),
+                GetField("last", "smith"),
+                GetField("gender", "female"),
+                GetField("first", "sally"),
+                GetField("last", "jones")
+            }));
 
-            writer.AddDocument(Doc(new Field[] { GetField("id", "2"), GetField("gender", "female"), GetField("first", "greta"), GetField("last", "jones"), GetField("gender", "female"), GetField("first", "sally"), GetField("last", "smith"), GetField("gender", "male"), GetField("first", "james"), GetField("last", "jones") }));
+            writer.AddDocument(Doc(new Field[]
+            {
+                GetField("id", "2"),
+                GetField("gender", "female"),
+                GetField("first", "greta"),
+                GetField("last", "jones"),
+                GetField("gender", "female"),
+                GetField("first", "sally"),
+                GetField("last", "smith"),
+                GetField("gender", "male"),
+                GetField("first", "james"),
+                GetField("last", "jones")
+            }));
 
-            writer.AddDocument(Doc(new Field[] { GetField("id", "3"), GetField("gender", "female"), GetField("first", "lisa"), GetField("last", "jones"), GetField("gender", "male"), GetField("first", "bob"), GetField("last", "costas") }));
+            writer.AddDocument(Doc(new Field[]
+            {
+                GetField("id", "3"),
+                GetField("gender", "female"),
+                GetField("first", "lisa"),
+                GetField("last", "jones"),
+                GetField("gender", "male"),
+                GetField("first", "bob"),
+                GetField("last", "costas")
+            }));
 
-            writer.AddDocument(Doc(new Field[] { GetField("id", "4"), GetField("gender", "female"), GetField("first", "sally"), GetField("last", "smith"), GetField("gender", "female"), GetField("first", "linda"), GetField("last", "dixit"), GetField("gender", "male"), GetField("first", "bubba"), GetField("last", "jones") }));
+            writer.AddDocument(Doc(new Field[] {
+                GetField("id", "4"),
+                GetField("gender", "female"),
+                GetField("first", "sally"),
+                GetField("last", "smith"),
+                GetField("gender", "female"),
+                GetField("first", "linda"),
+                GetField("last", "dixit"),
+                GetField("gender", "male"),
+                GetField("first", "bubba"),
+                GetField("last", "jones")
+            }));
+
             reader = writer.GetReader();
             writer.Dispose();
             searcher = NewSearcher(reader);
@@ -116,7 +165,7 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestRewrite1()
         {
             // mask an anon SpanQuery class that rewrites to something else.
-            SpanQuery q = new FieldMaskingSpanQuery(new SpanTermQueryAnonymousClass(this, new Term("last", "sally")), "first");
+            SpanQuery q = new FieldMaskingSpanQuery(new SpanTermQueryAnonymousClass(new Term("last", "sally")), "first");
 
             SpanQuery qr = (SpanQuery)searcher.Rewrite(q);
 
@@ -129,12 +178,9 @@ namespace Lucene.Net.Search.Spans
 
         private sealed class SpanTermQueryAnonymousClass : SpanTermQuery
         {
-            private readonly TestFieldMaskingSpanQuery outerInstance;
-
-            public SpanTermQueryAnonymousClass(TestFieldMaskingSpanQuery outerInstance, Term term)
+            public SpanTermQueryAnonymousClass(Term term)
                 : base(term)
             {
-                this.outerInstance = outerInstance;
             }
 
             public override Query Rewrite(IndexReader reader)
@@ -184,7 +230,7 @@ namespace Lucene.Net.Search.Spans
         {
             SpanQuery q1 = new SpanTermQuery(new Term("last", "sally"));
             SpanQuery q = new FieldMaskingSpanQuery(q1, "first");
-            Check(q, new int[] { }); // :EMPTY:
+            Check(q, new int[] { /* :EMPTY: */ });
         }
 
         [Test]

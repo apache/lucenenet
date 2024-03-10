@@ -1,7 +1,6 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
-using System;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -53,7 +52,9 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
 
             Document doc = new Document();
             Field field = NewStringField("field", "", Field.Store.NO);

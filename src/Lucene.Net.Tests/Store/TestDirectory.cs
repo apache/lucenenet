@@ -41,7 +41,12 @@ namespace Lucene.Net.Store
         public virtual void TestDetectClose()
         {
             DirectoryInfo tempDir = CreateTempDir(GetType().Name);
-            Directory[] dirs = new Directory[] { new RAMDirectory(), new SimpleFSDirectory(tempDir), new NIOFSDirectory(tempDir) };
+            Directory[] dirs = new Directory[]
+            {
+                new RAMDirectory(),
+                new SimpleFSDirectory(tempDir),
+                new NIOFSDirectory(tempDir)
+            };
 
             foreach (Directory dir in dirs)
             {
@@ -62,7 +67,12 @@ namespace Lucene.Net.Store
         public virtual void TestDoubleDispose()
         {
             DirectoryInfo tempDir = CreateTempDir(GetType().Name);
-            Directory[] dirs = new Directory[] { new RAMDirectory(), new SimpleFSDirectory(tempDir), new NIOFSDirectory(tempDir) };
+            Directory[] dirs = new Directory[]
+            {
+                new RAMDirectory(),
+                new SimpleFSDirectory(tempDir),
+                new NIOFSDirectory(tempDir)
+            };
 
             foreach (Directory dir in dirs)
             {
@@ -120,7 +130,8 @@ namespace Lucene.Net.Store
 
                     try
                     {
-                        using (IndexOutput output = outerBDWrapper.CreateOutput(fileName, NewIOContext(Random))) { }
+                        // LUCENENET: using statement instead of manual close/Dispose call
+                        using (IndexOutput _ = outerBDWrapper.CreateOutput(fileName, NewIOContext(Random))) { }
                         Assert.IsTrue(SlowFileExists(outerBDWrapper, fileName));
                     }
                     catch (Exception e) when (e.IsIOException())
@@ -347,7 +358,7 @@ namespace Lucene.Net.Store
                 //(new File(path, "subdir")).mkdirs();
                 System.IO.Directory.CreateDirectory(new DirectoryInfo(Path.Combine(path.FullName, "subdir")).FullName);
                 Directory fsDir = new SimpleFSDirectory(path, null);
-                Assert.AreEqual(0, (new RAMDirectory(fsDir, NewIOContext(Random))).ListAll().Length);
+                Assert.AreEqual(0, new RAMDirectory(fsDir, NewIOContext(Random)).ListAll().Length);
             }
             finally
             {

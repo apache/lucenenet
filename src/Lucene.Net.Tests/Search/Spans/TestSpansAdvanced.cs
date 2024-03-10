@@ -65,7 +65,10 @@ namespace Lucene.Net.Search.Spans
             base.SetUp();
             // create test index
             mDirectory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, mDirectory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, mDirectory,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT,
+                    new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET))
+                    .SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
             AddDocument(writer, "1", "I think it should work.");
             AddDocument(writer, "2", "I think it should work.");
             AddDocument(writer, "3", "I think it should work.");
@@ -79,16 +82,9 @@ namespace Lucene.Net.Search.Spans
         [TearDown]
         public override void TearDown()
         {
-            if (reader != null)
-            {
-                reader.Dispose();
-            }
-
-            if (mDirectory != null)
-            {
-                mDirectory.Dispose();
-                mDirectory = null;
-            }
+            reader?.Dispose();
+            mDirectory?.Dispose();
+            mDirectory = null;
             base.TearDown();
         }
 
@@ -131,15 +127,14 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Checks to see if the hits are what we expected.
-        /// 
-        /// LUCENENET specific
-        /// Is non-static because it depends on the non-static variable, <see cref="LuceneTestCase.Similarity"/>
         /// </summary>
         /// <param name="query"> the query to execute </param>
         /// <param name="description"> the description of the search </param>
         /// <param name="expectedIds"> the expected document ids of the hits </param>
         /// <param name="expectedScores"> the expected scores of the hits </param>
-        protected internal void AssertHits(IndexSearcher s, Query query, string description, string[] expectedIds, float[] expectedScores)
+        protected internal static void AssertHits(IndexSearcher s, Query query,
+            string description, string[] expectedIds,
+            float[] expectedScores)
         {
             QueryUtils.Check(Random, query, s);
 

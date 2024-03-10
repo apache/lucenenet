@@ -4,7 +4,6 @@ using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
-using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -139,7 +138,7 @@ namespace Lucene.Net.Search
         protected internal virtual void AssertSame(string regexp)
         {
             RegexpQuery docValues = new RegexpQuery(new Term(fieldName, regexp), RegExpSyntax.NONE);
-            docValues.MultiTermRewriteMethod = (new DocTermOrdsRewriteMethod());
+            docValues.MultiTermRewriteMethod = new DocTermOrdsRewriteMethod();
             RegexpQuery inverted = new RegexpQuery(new Term(fieldName, regexp), RegExpSyntax.NONE);
 
             TopDocs invertedDocs = searcher1.Search(inverted, 25);
@@ -157,9 +156,9 @@ namespace Lucene.Net.Search
             Assert.AreEqual(a1, a2);
             Assert.IsFalse(a1.Equals(b));
 
-            a1.MultiTermRewriteMethod = (new DocTermOrdsRewriteMethod());
-            a2.MultiTermRewriteMethod = (new DocTermOrdsRewriteMethod());
-            b.MultiTermRewriteMethod = (new DocTermOrdsRewriteMethod());
+            a1.MultiTermRewriteMethod = new DocTermOrdsRewriteMethod();
+            a2.MultiTermRewriteMethod = new DocTermOrdsRewriteMethod();
+            b.MultiTermRewriteMethod = new DocTermOrdsRewriteMethod();
             Assert.AreEqual(a1, a2);
             Assert.IsFalse(a1.Equals(b));
             QueryUtils.Check(a1);

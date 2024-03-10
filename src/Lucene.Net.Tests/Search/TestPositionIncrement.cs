@@ -48,8 +48,6 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Term position unit test.
-    ///
-    ///
     /// </summary>
     [TestFixture]
     public class TestPositionIncrement : LuceneTestCase
@@ -60,7 +58,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSetPosition()
         {
-            Analyzer analyzer = new AnalyzerAnonymousClass(this);
+            Analyzer analyzer = new AnalyzerAnonymousClass();
             Directory store = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, store, analyzer);
             Document d = new Document();
@@ -168,13 +166,6 @@ namespace Lucene.Net.Search
 
         private sealed class AnalyzerAnonymousClass : Analyzer
         {
-            private readonly TestPositionIncrement outerInstance;
-
-            public AnalyzerAnonymousClass(TestPositionIncrement outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new TokenizerAnonymousClass(reader));

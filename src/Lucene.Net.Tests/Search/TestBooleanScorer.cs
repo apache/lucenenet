@@ -89,19 +89,19 @@ namespace Lucene.Net.Search
             IndexReader ir = writer.GetReader();
             writer.Dispose();
             IndexSearcher searcher = NewSearcher(ir);
-            BooleanWeight weight = (BooleanWeight)(new BooleanQuery()).CreateWeight(searcher);
+            BooleanWeight weight = (BooleanWeight)new BooleanQuery().CreateWeight(searcher);
 
             BulkScorer[] scorers = new BulkScorer[] {
-            new BulkScorerAnonymousClass()
-        };
+                new BulkScorerAnonymousClass()
+            };
 
             BooleanScorer bs = new BooleanScorer(weight, false, 1, scorers, Collections.EmptyList<BulkScorer>(), scorers.Length);
 
             IList<int> hits = new JCG.List<int>();
-            bs.Score(new CollectorAnonymousClass(this, hits));
+            bs.Score(new CollectorAnonymousClass(hits));
 
             Assert.AreEqual(1, hits.Count, "should have only 1 hit");
-            Assert.AreEqual(3000, (int)hits[0], "hit should have been docID=3000");
+            Assert.AreEqual(3000, hits[0], "hit should have been docID=3000");
             ir.Dispose();
             directory.Dispose();
         }
@@ -125,13 +125,10 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            private readonly TestBooleanScorer outerInstance;
-
             private readonly IList<int> hits;
 
-            public CollectorAnonymousClass(TestBooleanScorer outerInstance, IList<int> hits)
+            public CollectorAnonymousClass(IList<int> hits)
             {
-                this.outerInstance = outerInstance;
                 this.hits = hits;
             }
 
@@ -178,7 +175,7 @@ namespace Lucene.Net.Search
             q.Add(new BooleanClause(new TermQuery(new Term("field", "33")), Occur.SHOULD));
 
             int[] count = new int[1];
-            s.Search(q, new CollectorAnonymousClass2(this, doc, count));
+            s.Search(q, new CollectorAnonymousClass2(count));
 
             Assert.AreEqual(1, count[0]);
 
@@ -188,15 +185,10 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass2 : ICollector
         {
-            private readonly TestBooleanScorer outerInstance;
-
-            private Document doc;
             private readonly int[] count;
 
-            public CollectorAnonymousClass2(TestBooleanScorer outerInstance, Document doc, int[] count)
+            public CollectorAnonymousClass2(int[] count)
             {
-                this.outerInstance = outerInstance;
-                this.doc = doc;
                 this.count = count;
             }
 
@@ -265,18 +257,11 @@ namespace Lucene.Net.Search
 
                 public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
                 {
-                    return new BulkScorerAnonymousClass(this);
+                    return new BulkScorerAnonymousClass();
                 }
 
                 private sealed class BulkScorerAnonymousClass : BulkScorer
                 {
-                    private readonly WeightAnonymousClass outerInstance;
-
-                    public BulkScorerAnonymousClass(WeightAnonymousClass outerInstance)
-                    {
-                        this.outerInstance = outerInstance;
-                    }
-
                     public override bool Score(ICollector collector, int max)
                     {
                         collector.SetScorer(new FakeScorer());

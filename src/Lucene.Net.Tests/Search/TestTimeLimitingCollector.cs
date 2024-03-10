@@ -39,22 +39,22 @@ namespace Lucene.Net.Search
     /// </summary>
     public class TestTimeLimitingCollector : LuceneTestCase
     {
-        private static readonly int SLOW_DOWN = 3;
-        private static readonly long TIME_ALLOWED = 17 * SLOW_DOWN; // so searches can find about 17 docs.
+        private const int SLOW_DOWN = 3;
+        private const long TIME_ALLOWED = 17 * SLOW_DOWN; // so searches can find about 17 docs.
 
-        // max time allowed is relaxed for multithreading tests. 
-        // the multithread case fails when setting this to 1 (no slack) and launching many threads (>2000).  
+        // max time allowed is relaxed for multithreading tests.
+        // the multithread case fails when setting this to 1 (no slack) and launching many threads (>2000).
         // but this is not a real failure, just noise.
-        private static readonly double MULTI_THREAD_SLACK = 7;
+        private const double MULTI_THREAD_SLACK = 7;
 
-        private static readonly int N_DOCS = 3000;
-        private static readonly int N_THREADS = 50;
+        private const int N_DOCS = 3000;
+        private const int N_THREADS = 50;
 
         private IndexSearcher searcher;
         private Directory directory;
         private IndexReader reader;
 
-        private readonly string FIELD_NAME = "body";
+        private const string FIELD_NAME = "body";
         private Query query;
         private Counter counter;
         private TimeLimitingCollector.TimerThread counterThread;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
         public override void SetUp()
         {
             base.SetUp();
-            counter = Lucene.Net.Util.Counter.NewCounter(true); 
+            counter = Counter.NewCounter(true);
             counterThread = new TimeLimitingCollector.TimerThread(counter);
             counterThread.Start();
             string[] docText = {
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search
         private ICollector CreateTimedCollector(MyHitCollector hc, long timeAllowed, bool greedy)
         {
             TimeLimitingCollector res = new TimeLimitingCollector(hc, counter, timeAllowed);
-            res.IsGreedy = (greedy); // set to true to make sure at least one doc is collected.
+            res.IsGreedy = greedy; // set to true to make sure at least one doc is collected.
             return res;
         }
 
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search
             long res = 2 * counterThread.Resolution + TIME_ALLOWED + SLOW_DOWN; // some slack for less noise in this test
             if (multiThreaded)
             {
-                res = (long)(res * MULTI_THREAD_SLACK); // larger slack  
+                res = (long)(res * MULTI_THREAD_SLACK); // larger slack
             }
             return res;
         }
@@ -272,7 +272,7 @@ namespace Lucene.Net.Search
         }
 
         /**
-         * Test timeout behavior when resolution is modified. 
+         * Test timeout behavior when resolution is modified.
          */
         [Test]
         public void TestModifyResolution()
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        /** 
+        /**
          * Test correctness with multiple searching threads.
          */
         [Test]
@@ -310,7 +310,7 @@ namespace Lucene.Net.Search
             DoTestMultiThreads(false);
         }
 
-        /** 
+        /**
          * Test correctness with multiple searching threads.
          */
         [Test]
@@ -345,6 +345,7 @@ namespace Lucene.Net.Search
             private readonly OpenBitSet success;
             private readonly bool withTimeout;
             private readonly int num;
+
             public ThreadAnonymousClass(TestTimeLimitingCollector outerInstance, OpenBitSet success, bool withTimeout, int num)
             {
                 this.outerInstance = outerInstance;
@@ -352,6 +353,7 @@ namespace Lucene.Net.Search
                 this.withTimeout = withTimeout;
                 this.num = num;
             }
+
             public override void Run()
             {
                 if (withTimeout)
@@ -362,6 +364,8 @@ namespace Lucene.Net.Search
                 {
                     outerInstance.DoTestSearch();
                 }
+
+                // LUCENENET: using UninterruptableMonitor instead of lock, see UninterruptableMonitor docs
                 UninterruptableMonitor.Enter(success);
                 try
                 {
