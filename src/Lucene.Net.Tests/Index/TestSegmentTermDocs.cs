@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestSegmentTermDocs : LuceneTestCase
     {
-        private Document testDoc = new Document();
+        private Document testDoc; // LUCENENET: = new Document(); moved to SetUp
         private Directory dir;
         private SegmentCommitInfo info;
 
@@ -42,6 +42,7 @@ namespace Lucene.Net.Index
         public override void SetUp()
         {
             base.SetUp();
+            testDoc = new Document();
             dir = NewDirectory();
             DocHelper.SetupDoc(testDoc);
             info = DocHelper.WriteDoc(Random, dir, testDoc);

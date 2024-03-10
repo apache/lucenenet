@@ -1,7 +1,6 @@
 ﻿using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -44,9 +43,9 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestSnapshotDeletionPolicy : LuceneTestCase
     {
-        public const string INDEX_PATH = "test.snapshots";
+        // public const string INDEX_PATH = "test.snapshots"; // LUCENENET: unused constant
 
-        protected internal virtual IndexWriterConfig GetConfig(Random random, IndexDeletionPolicy dp)
+        protected IndexWriterConfig GetConfig(Random random, IndexDeletionPolicy dp)
         {
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
             if (dp != null)
@@ -56,13 +55,13 @@ namespace Lucene.Net.Index
             return conf;
         }
 
-        protected internal virtual void CheckSnapshotExists(Directory dir, IndexCommit c)
+        protected void CheckSnapshotExists(Directory dir, IndexCommit c)
         {
             string segFileName = c.SegmentsFileName;
             Assert.IsTrue(SlowFileExists(dir, segFileName), "segments file not found in directory: " + segFileName);
         }
 
-        protected internal virtual void CheckMaxDoc(IndexCommit commit, int expectedMaxDoc)
+        protected void CheckMaxDoc(IndexCommit commit, int expectedMaxDoc)
         {
             IndexReader reader = DirectoryReader.Open(commit);
             try
@@ -75,7 +74,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual void PrepareIndexAndSnapshots(SnapshotDeletionPolicy sdp, IndexWriter writer, int numSnapshots)
+        protected IList<IndexCommit> snapshots; // LUCENENET: = new JCG.List<IndexCommit>(); moved to SetUp
+
+        protected void PrepareIndexAndSnapshots(SnapshotDeletionPolicy sdp, IndexWriter writer, int numSnapshots)
         {
             for (int i = 0; i < numSnapshots; i++)
             {
@@ -86,9 +87,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual SnapshotDeletionPolicy DeletionPolicy => new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
+        protected SnapshotDeletionPolicy DeletionPolicy => new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
 
-        protected internal virtual void AssertSnapshotExists(Directory dir, SnapshotDeletionPolicy sdp, int numSnapshots, bool checkIndexCommitSame)
+        protected void AssertSnapshotExists(Directory dir, SnapshotDeletionPolicy sdp, int numSnapshots, bool checkIndexCommitSame)
         {
             for (int i = 0; i < numSnapshots; i++)
             {
@@ -105,8 +106,6 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
-        protected internal IList<IndexCommit> snapshots;
 
         [SetUp]
         public override void SetUp()
@@ -130,7 +129,9 @@ namespace Lucene.Net.Index
             long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + 1000; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
             SnapshotDeletionPolicy dp = DeletionPolicy;
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetIndexDeletionPolicy(dp).SetMaxBufferedDocs(2));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random))
+                .SetIndexDeletionPolicy(dp)
+                .SetMaxBufferedDocs(2));
 
             // Verify we catch misuse:
             try
@@ -145,7 +146,7 @@ namespace Lucene.Net.Index
             dp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             writer.Commit();
 
-            ThreadJob t = new ThreadAnonymousClass(stopTime, writer, NewField);
+            ThreadJob t = new ThreadAnonymousClass(stopTime, writer);
 
             t.Start();
 
@@ -180,18 +181,11 @@ namespace Lucene.Net.Index
         {
             private readonly long stopTime;
             private readonly IndexWriter writer;
-            private readonly Func<string, string, FieldType, Field> newFieldFunc;
 
-            /// <param name="newFieldFunc">
-            /// LUCENENET specific
-            /// Passed in because <see cref="LuceneTestCase.NewField(string, string, FieldType)"/>
-            /// is no longer static. 
-            /// </param>
-            public ThreadAnonymousClass(long stopTime, IndexWriter writer, Func<string, string, FieldType, Field> newFieldFunc)
+            public ThreadAnonymousClass(long stopTime, IndexWriter writer)
             {
                 this.stopTime = stopTime;
                 this.writer = writer;
-                this.newFieldFunc = newFieldFunc;
             }
 
             public override void Run()
@@ -201,7 +195,7 @@ namespace Lucene.Net.Index
                 customType.StoreTermVectors = true;
                 customType.StoreTermVectorPositions = true;
                 customType.StoreTermVectorOffsets = true;
-                doc.Add(newFieldFunc("content", "aaa", customType));
+                doc.Add(NewField("content", "aaa", customType));
                 do
                 {
                     for (int i = 0; i < 27; i++)
@@ -269,7 +263,7 @@ namespace Lucene.Net.Index
             // we take to do the backup, the IndexWriter will
             // never delete the files in the snapshot:
             ICollection<string> files = cp.FileNames;
-            foreach (String fileName in files)
+            foreach (string fileName in files)
             {
                 // NOTE: in a real backup you would not use
                 // readFile; you would need to use something else
@@ -320,7 +314,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestBasicSnapshots()
         {
-            int numSnapshots = 3;
+            const int numSnapshots = 3;
 
             // Create 3 snapshots: snapshot0, snapshot1, snapshot2
             Directory dir = NewDirectory();
@@ -357,7 +351,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 int finalI = i;
-                threads[i] = new ThreadAnonymousClass2(this, writer, sdp, snapshots, finalI);
+                threads[i] = new ThreadAnonymousClass2(writer, sdp, snapshots, finalI);
                 threads[i].Name = "t" + i;
             }
 
@@ -387,16 +381,13 @@ namespace Lucene.Net.Index
 
         private sealed class ThreadAnonymousClass2 : ThreadJob
         {
-            private readonly TestSnapshotDeletionPolicy outerInstance;
-
             private readonly IndexWriter writer;
             private readonly SnapshotDeletionPolicy sdp;
             private readonly IndexCommit[] snapshots;
             private readonly int finalI;
 
-            public ThreadAnonymousClass2(TestSnapshotDeletionPolicy outerInstance, IndexWriter writer, SnapshotDeletionPolicy sdp, IndexCommit[] snapshots, int finalI)
+            public ThreadAnonymousClass2(IndexWriter writer, SnapshotDeletionPolicy sdp, IndexCommit[] snapshots, int finalI)
             {
-                this.outerInstance = outerInstance;
                 this.writer = writer;
                 this.sdp = sdp;
                 this.snapshots = snapshots;
@@ -421,7 +412,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRollbackToOldSnapshot()
         {
-            int numSnapshots = 2;
+            const int numSnapshots = 2;
             Directory dir = NewDirectory();
 
             SnapshotDeletionPolicy sdp = DeletionPolicy;
