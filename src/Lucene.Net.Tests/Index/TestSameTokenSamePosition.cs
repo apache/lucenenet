@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
         private readonly ICharTermAttribute termAtt;
         private readonly IOffsetAttribute offsetAtt;
         private readonly IPositionIncrementAttribute posIncAtt;
-        private readonly int tokenCount = 4;
+        private const int tokenCount = 4;
         private int nextTokenIndex = 0;
         private readonly string[] terms = new string[] { "six", "six", "drunken", "drunken" };
         private readonly int[] starts = new int[] { 0, 0, 4, 4 };
