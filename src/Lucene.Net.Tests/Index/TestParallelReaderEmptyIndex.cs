@@ -54,7 +54,9 @@ namespace Lucene.Net.Index
 
             IndexWriter iwOut = new IndexWriter(rdOut, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
-            ParallelAtomicReader apr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(rd1)), SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(rd2)));
+            ParallelAtomicReader apr = new ParallelAtomicReader(
+                SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(rd1)),
+                SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(rd2)));
 
             // When unpatched, Lucene crashes here with a NoSuchElementException (caused by ParallelTermEnum)
             iwOut.AddIndexes(apr);
@@ -64,7 +66,9 @@ namespace Lucene.Net.Index
             iwOut.AddIndexes(new ParallelAtomicReader());
             iwOut.ForceMerge(1);
 
-            ParallelCompositeReader cpr = new ParallelCompositeReader(DirectoryReader.Open(rd1), DirectoryReader.Open(rd2));
+            ParallelCompositeReader cpr = new ParallelCompositeReader(
+                DirectoryReader.Open(rd1),
+                DirectoryReader.Open(rd2));
 
             // When unpatched, Lucene crashes here with a NoSuchElementException (caused by ParallelTermEnum)
             iwOut.AddIndexes(cpr);
@@ -108,7 +112,7 @@ namespace Lucene.Net.Index
                 iw.AddDocument(doc);
                 iw.Dispose();
 
-                IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
+                IndexWriterConfig dontMergeConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
                 if (Verbose)
                 {
                     Console.WriteLine("\nTEST: make 2nd writer");
