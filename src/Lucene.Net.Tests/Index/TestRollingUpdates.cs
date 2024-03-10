@@ -49,21 +49,21 @@ namespace Lucene.Net.Index
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
 
             //provider.register(new MemoryCodec());
-            if ((!"Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal)) && LuceneTestCase.Random.NextBoolean())
+            if ((!"Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal)) && Random.NextBoolean())
             {
                 Codec.Default =
-                    TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(LuceneTestCase.Random.nextBoolean(), random.NextSingle()));
+                    TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(Random.nextBoolean(), random.NextSingle()));
             }
 
-            MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
-            analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
 
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             int SIZE = AtLeast(20);
             int id = 0;
             IndexReader r = null;
             IndexSearcher s = null;
-            int numUpdates = (int)(SIZE * (2 + (TestNightly ? 200 * LuceneTestCase.Random.NextDouble() : 5 * LuceneTestCase.Random.NextDouble())));
+            int numUpdates = (int)(SIZE * (2 + (TestNightly ? 200 * Random.NextDouble() : 5 * Random.NextDouble())));
             if (Verbose)
             {
                 Console.WriteLine("TEST: numUpdates=" + numUpdates);
@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
             // TODO: sometimes update ids not in order...
             for (int docIter = 0; docIter < numUpdates; docIter++)
             {
-                Documents.Document doc = docs.NextDoc();
+                Document doc = docs.NextDoc();
                 string myID = "" + id;
                 if (id == SIZE - 1)
                 {
@@ -128,14 +128,14 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                 }
 
-                if (docIter >= SIZE && LuceneTestCase.Random.Next(50) == 17)
+                if (docIter >= SIZE && Random.Next(50) == 17)
                 {
                     if (r != null)
                     {
                         r.Dispose();
                     }
 
-                    bool applyDeletions = LuceneTestCase.Random.NextBoolean();
+                    bool applyDeletions = Random.NextBoolean();
 
                     if (Verbose)
                     {
@@ -198,13 +198,14 @@ namespace Lucene.Net.Index
             LineFileDocs docs = new LineFileDocs(Random);
             for (int r = 0; r < 3; r++)
             {
-                IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
+                IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(
+                    TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
                 int numUpdates = AtLeast(20);
                 int numThreads = TestUtil.NextInt32(Random, 2, 6);
                 IndexingThread[] threads = new IndexingThread[numThreads];
                 for (int i = 0; i < numThreads; i++)
                 {
-                    threads[i] = new IndexingThread(docs, w, numUpdates, NewStringField);
+                    threads[i] = new IndexingThread(docs, w, numUpdates);
                     threads[i].Start();
                 }
 
@@ -229,20 +230,11 @@ namespace Lucene.Net.Index
             internal readonly IndexWriter writer;
             internal readonly int num;
 
-            private readonly Func<string, string, Field.Store, Field> newStringField;
-
-            /// <param name="newStringField">
-            /// LUCENENET specific
-            /// Passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
-            /// is no longer static.
-            /// </param>
-            public IndexingThread(LineFileDocs docs, IndexWriter writer, int num, Func<string, string, Field.Store, Field> newStringField)
-                : base()
+            public IndexingThread(LineFileDocs docs, IndexWriter writer, int num)
             {
                 this.docs = docs;
                 this.writer = writer;
                 this.num = num;
-                this.newStringField = newStringField;
             }
 
             public override void Run()
@@ -252,8 +244,8 @@ namespace Lucene.Net.Index
                     DirectoryReader open = null;
                     for (int i = 0; i < num; i++)
                     {
-                        Documents.Document doc = new Documents.Document(); // docs.NextDoc();
-                        doc.Add(newStringField("id", "test", Field.Store.NO));
+                        Document doc = new Document(); // docs.NextDoc();
+                        doc.Add(NewStringField("id", "test", Field.Store.NO));
                         writer.UpdateDocument(new Term("id", "test"), doc);
                         if (Random.Next(3) == 0)
                         {
