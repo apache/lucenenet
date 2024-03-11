@@ -704,7 +704,7 @@ namespace Lucene.Net.Store
                     {
                         if (existing != null)
                         {
-                            ramdir.m_sizeInBytes.AddAndGet(-existing.GetSizeInBytes()); // LUCENENET: GetAndAdd in Lucene, but we are not using the value
+                            ramdir.m_sizeInBytes.GetAndAdd(-existing.GetSizeInBytes());
                             existing.directory = null;
                         }
                         ramdir.m_fileMap[name] = file;
