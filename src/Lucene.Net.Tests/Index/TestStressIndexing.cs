@@ -38,8 +38,8 @@ namespace Lucene.Net.Index
         {
             internal volatile bool failed;
             internal int count;
-            internal static int RUN_TIME_MSEC = AtLeast(1000);
-            internal TimedThread[] allThreads;
+            private static int RUN_TIME_MSEC = AtLeast(1000);
+            private TimedThread[] allThreads;
 
             public abstract void DoWork();
 
@@ -89,30 +89,13 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : TimedThread
         {
-            private readonly Func<string, string, Field.Store, Field> newStringFieldFunc;
-            private readonly Func<string, string, Field.Store, Field> newTextFieldFunc;
-
             internal IndexWriter writer;
             internal int nextID;
 
-            /// <param name="newStringField">
-            /// LUCENENET specific
-            /// Passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
-            /// is no longer static.
-            /// </param>
-            /// <param name="newTextField">
-            /// LUCENENET specific
-            /// Passed in because <see cref="LuceneTestCase.NewTextField(string, string, Field.Store)"/>
-            /// is no longer static.
-            /// </param>
-            public IndexerThread(IndexWriter writer, TimedThread[] threads,
-                Func<string, string, Field.Store, Field> newStringField,
-                Func<string, string, Field.Store, Field> newTextField)
+            public IndexerThread(IndexWriter writer, TimedThread[] threads)
                 : base(threads)
             {
                 this.writer = writer;
-                newStringFieldFunc = newStringField;
-                newTextFieldFunc = newTextField;
             }
 
             public override void DoWork()
@@ -120,10 +103,10 @@ namespace Lucene.Net.Index
                 // Add 10 docs:
                 for (int j = 0; j < 10; j++)
                 {
-                    Documents.Document d = new Documents.Document();
+                    Document d = new Document();
                     int n = Random.Next();
-                    d.Add(newStringFieldFunc("id", Convert.ToString(nextID++), Field.Store.YES));
-                    d.Add(newTextFieldFunc("contents", English.Int32ToEnglish(n), Field.Store.NO));
+                    d.Add(NewStringField("id", Convert.ToString(nextID++), Field.Store.YES));
+                    d.Add(NewTextField("contents", English.Int32ToEnglish(n), Field.Store.NO));
                     writer.AddDocument(d);
                 }
 
@@ -139,18 +122,11 @@ namespace Lucene.Net.Index
 
         private class SearcherThread : TimedThread
         {
-            internal Directory directory;
-            private readonly LuceneTestCase outerInstance;
+            private Directory directory;
 
-            /// <param name="outerInstance">
-            /// LUCENENET specific
-            /// Passed in because <see cref="LuceneTestCase.NewSearcher(IndexReader)"/>
-            /// is no longer static.
-            /// </param>
-            public SearcherThread(Directory directory, TimedThread[] threads, LuceneTestCase outerInstance)
+            public SearcherThread(Directory directory, TimedThread[] threads)
                 : base(threads)
             {
-                this.outerInstance = outerInstance;
                 this.directory = directory;
             }
 
@@ -159,7 +135,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < 100; i++)
                 {
                     IndexReader ir = DirectoryReader.Open(directory);
-                    IndexSearcher @is = NewSearcher(ir);
+                    IndexSearcher _ = NewSearcher(ir); // LUCENENET: discarding unused `is` variable
                     ir.Dispose();
                 }
                 count += 100;
@@ -181,21 +157,21 @@ namespace Lucene.Net.Index
 
             // One modifier that writes 10 docs then removes 5, over
             // and over:
-            IndexerThread indexerThread = new IndexerThread(modifier, threads, NewStringField, NewTextField);
+            IndexerThread indexerThread = new IndexerThread(modifier, threads);
             threads[numThread++] = indexerThread;
             indexerThread.Start();
 
-            IndexerThread indexerThread2 = new IndexerThread(modifier, threads, NewStringField, NewTextField);
+            IndexerThread indexerThread2 = new IndexerThread(modifier, threads);
             threads[numThread++] = indexerThread2;
             indexerThread2.Start();
 
             // Two searchers that constantly just re-instantiate the
             // searcher:
-            SearcherThread searcherThread1 = new SearcherThread(directory, threads, this);
+            SearcherThread searcherThread1 = new SearcherThread(directory, threads);
             threads[numThread++] = searcherThread1;
             searcherThread1.Start();
 
-            SearcherThread searcherThread2 = new SearcherThread(directory, threads, this);
+            SearcherThread searcherThread2 = new SearcherThread(directory, threads);
             threads[numThread++] = searcherThread2;
             searcherThread2.Start();
 
