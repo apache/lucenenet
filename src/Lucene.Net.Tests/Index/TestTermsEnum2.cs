@@ -60,7 +60,8 @@ namespace Lucene.Net.Index
             // but for preflex codec, the test can be very slow, so use less iterations.
             numIterations = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) ? 10 * RandomMultiplier : AtLeast(50);
             dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false))
+                .SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             Document doc = new Document();
             Field field = NewStringField("field", "", Field.Store.YES);
             doc.Add(field);
@@ -91,14 +92,15 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// tests a pre-intersected automaton against the original </summary>
+        /// tests a pre-intersected automaton against the original
+        /// </summary>
         [Test]
         public virtual void TestFiniteVersusInfinite()
         {
             for (int i = 0; i < numIterations; i++)
             {
                 string reg = AutomatonTestUtil.RandomRegexp(Random);
-                Automaton automaton = (new RegExp(reg, RegExpSyntax.NONE)).ToAutomaton();
+                Automaton automaton = new RegExp(reg, RegExpSyntax.NONE).ToAutomaton();
                 IList<BytesRef> matchedTerms = new JCG.List<BytesRef>();
                 foreach (BytesRef t in terms)
                 {
@@ -119,7 +121,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// seeks to every term accepted by some automata </summary>
+        /// seeks to every term accepted by some automata
+        /// </summary>
         [Test]
         public virtual void TestSeeking()
         {
@@ -153,7 +156,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// mixes up seek and next for all terms </summary>
+        /// mixes up seek and next for all terms
+        /// </summary>
         [Test]
         public virtual void TestSeekingAndNexting()
         {
@@ -190,7 +194,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numIterations; i++)
             {
                 string reg = AutomatonTestUtil.RandomRegexp(Random);
-                Automaton automaton = (new RegExp(reg, RegExpSyntax.NONE)).ToAutomaton();
+                Automaton automaton = new RegExp(reg, RegExpSyntax.NONE).ToAutomaton();
                 CompiledAutomaton ca = new CompiledAutomaton(automaton, SpecialOperations.IsFinite(automaton), false);
                 TermsEnum te = MultiFields.GetTerms(reader, "field").Intersect(ca, null);
                 Automaton expected = BasicOperations.Intersection(termsAutomaton, automaton);
