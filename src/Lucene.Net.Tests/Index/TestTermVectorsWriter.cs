@@ -415,7 +415,11 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             for (int iter = 0; iter < 2; iter++)
             {
-                IndexWriter writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
+                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(2)
+                    .SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                    .SetMergeScheduler(new SerialMergeScheduler())
+                    .SetMergePolicy(new LogDocMergePolicy()));
 
                 Document document = new Document();
                 FieldType customType = new FieldType();
@@ -447,9 +451,13 @@ namespace Lucene.Net.Index
                 }
                 reader.Dispose();
 
-                writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
+                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(2)
+                    .SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                    .SetMergeScheduler(new SerialMergeScheduler())
+                    .SetMergePolicy(new LogDocMergePolicy()));
 
-                Directory[] indexDirs = new Directory[] { new MockDirectoryWrapper(Random, new RAMDirectory(dir, NewIOContext(Random))) };
+                Directory[] indexDirs = { new MockDirectoryWrapper(Random, new RAMDirectory(dir, NewIOContext(Random))) };
                 writer.AddIndexes(indexDirs);
                 writer.ForceMerge(1);
                 writer.Dispose();
@@ -464,7 +472,11 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             for (int iter = 0; iter < 2; iter++)
             {
-                IndexWriter writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
+                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(2)
+                    .SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                    .SetMergeScheduler(new SerialMergeScheduler())
+                    .SetMergePolicy(new LogDocMergePolicy()));
 
                 Document document = new Document();
 
@@ -502,7 +514,11 @@ namespace Lucene.Net.Index
         public virtual void TestTermVectorCorruption3()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(2)
+                .SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                .SetMergeScheduler(new SerialMergeScheduler())
+                .SetMergePolicy(new LogDocMergePolicy()));
 
             Document document = new Document();
             FieldType customType = new FieldType();
@@ -522,7 +538,11 @@ namespace Lucene.Net.Index
             }
             writer.Dispose();
 
-            writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(2)
+                .SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                .SetMergeScheduler(new SerialMergeScheduler())
+                .SetMergePolicy(new LogDocMergePolicy()));
             for (int i = 0; i < 6; i++)
             {
                 writer.AddDocument(document);
