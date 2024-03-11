@@ -41,6 +41,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestTermVectorsReader : LuceneTestCase
     {
+        // LUCENENET specific - required to initialize fields using testTerms field
         public TestTermVectorsReader()
         {
             positions = new int[testTerms.Length][];
@@ -48,26 +49,18 @@ namespace Lucene.Net.Index
         }
 
         //Must be lexicographically sorted, will do in setup, versus trying to maintain here
-        private string[] testFields = new string[] { "f1", "f2", "f3", "f4" };
-
-        private bool[] testFieldsStorePos = new bool[] { true, false, true, false };
-        private bool[] testFieldsStoreOff = new bool[] { true, false, false, true };
-        private string[] testTerms = new string[] { "this", "is", "a", "test" };
+        private string[] testFields = { "f1", "f2", "f3", "f4" };
+        private bool[] testFieldsStorePos = { true, false, true, false };
+        private bool[] testFieldsStoreOff = { true, false, false, true };
+        private string[] testTerms = { "this", "is", "a", "test" };
         private int[][] positions;
         private Directory dir;
         private SegmentCommitInfo seg;
         private FieldInfos fieldInfos = new FieldInfos(new FieldInfo[0]);
-        private static int TERM_FREQ = 3;
+        private const int TERM_FREQ = 3;
 
         internal class TestToken : IComparable<TestToken>
         {
-            private readonly TestTermVectorsReader outerInstance;
-
-            public TestToken(TestTermVectorsReader outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             internal string text;
             internal int pos;
             internal int startOffset;
@@ -101,7 +94,7 @@ namespace Lucene.Net.Index
                 {
                     // positions are always sorted in increasing order
                     positions[i][j] = (int)(j * 10 + Random.NextDouble() * 10); // LUCENENET: Using Random because Math.random() doesn't exist in .NET and it seems to make sense to want this repeatable.
-                    TestToken token = tokens[tokenUpto++] = new TestToken(this);
+                    TestToken token = tokens[tokenUpto++] = new TestToken();
                     token.text = testTerms[i];
                     token.pos = positions[i][j];
                     token.startOffset = j * 10;
@@ -111,7 +104,10 @@ namespace Lucene.Net.Index
             Array.Sort(tokens);
 
             dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MyAnalyzer(this)).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(false, 10)).SetUseCompoundFile(false));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MyAnalyzer(this))
+                .SetMaxBufferedDocs(-1)
+                .SetMergePolicy(NewLogMergePolicy(false, 10))
+                .SetUseCompoundFile(false));
 
             Document doc = new Document();
             for (int i = 0; i < testFields.Length; i++)
