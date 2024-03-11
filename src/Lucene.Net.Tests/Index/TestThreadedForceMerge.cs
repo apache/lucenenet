@@ -63,7 +63,10 @@ namespace Lucene.Net.Index
 
         public virtual void RunTest(Random random, Directory directory)
         {
-            IndexWriter writer = new IndexWriter(directory, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(2)).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER)
+                .SetOpenMode(OpenMode.CREATE)
+                .SetMaxBufferedDocs(2)
+                .SetMergePolicy(NewLogMergePolicy()));
 
             for (int iter = 0; iter < NUM_ITER; iter++)
             {
@@ -111,7 +114,9 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(expectedDocCount, writer.MaxDoc, "index=" + writer.SegString() + " numDocs=" + writer.NumDocs + " maxDoc=" + writer.MaxDoc + " config=" + writer.Config);
 
                 writer.Dispose();
-                writer = new IndexWriter(directory, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(2));
+                writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER)
+                    .SetOpenMode(OpenMode.APPEND)
+                    .SetMaxBufferedDocs(2));
 
                 DirectoryReader reader = DirectoryReader.Open(directory);
                 Assert.AreEqual(1, reader.Leaves.Count, "reader=" + reader);
