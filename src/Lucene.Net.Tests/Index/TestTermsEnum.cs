@@ -55,9 +55,9 @@ namespace Lucene.Net.Index
             Random random = new J2N.Randomizer(Random.NextInt64());
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
             Directory d = NewDirectory();
-            MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
-            analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
-            RandomIndexWriter w = new RandomIndexWriter(LuceneTestCase.Random, d, analyzer);
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d, analyzer);
             int numDocs = AtLeast(10);
             for (int docCount = 0; docCount < numDocs; docCount++)
             {
@@ -114,29 +114,29 @@ namespace Lucene.Net.Index
                 {
                     BytesRef target;
                     string exists;
-                    if (LuceneTestCase.Random.NextBoolean())
+                    if (Random.NextBoolean())
                     {
                         // likely fake term
-                        if (LuceneTestCase.Random.NextBoolean())
+                        if (Random.NextBoolean())
                         {
-                            target = new BytesRef(TestUtil.RandomSimpleString(LuceneTestCase.Random));
+                            target = new BytesRef(TestUtil.RandomSimpleString(Random));
                         }
                         else
                         {
-                            target = new BytesRef(TestUtil.RandomRealisticUnicodeString(LuceneTestCase.Random));
+                            target = new BytesRef(TestUtil.RandomRealisticUnicodeString(Random));
                         }
                         exists = "likely not";
                     }
                     else
                     {
                         // real term
-                        target = terms[LuceneTestCase.Random.Next(terms.Count)];
+                        target = terms[Random.Next(terms.Count)];
                         exists = "yes";
                     }
 
                     upto = terms.BinarySearch(target);
 
-                    if (LuceneTestCase.Random.NextBoolean())
+                    if (Random.NextBoolean())
                     {
                         if (Verbose)
                         {
@@ -421,7 +421,7 @@ namespace Lucene.Net.Index
                         docsEnum = TestUtil.Docs(Random, te, null, docsEnum, DocsFlags.NONE);
                         int docID = docsEnum.NextDoc();
                         Assert.IsTrue(docID != DocIdSetIterator.NO_MORE_DOCS);
-                        Assert.AreEqual(docIDToID.Get(docID), (int)termToID[expected]);
+                        Assert.AreEqual(docIDToID.Get(docID), termToID[expected]);
                         do
                         {
                             loc++;
@@ -435,10 +435,16 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private readonly string FIELD = "field";
+        // LUCENENET: passing directory in as parameter to MakeIndex and using returned IndexReader
+        // instead of having the fields here:
+        // private Directory d;
+        // private IndexReader r;
+
+        private const string FIELD = "field";
 
         private IndexReader MakeIndex(Directory d, params string[] terms)
         {
+            // d = new Directory(); // LUCENENET: see field note above, using parameter instead
             var iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
             /*
@@ -457,6 +463,12 @@ namespace Lucene.Net.Index
             return w.GetReader();
         }
 
+        // LUCENENET: not needed since fields are not used
+        // private void close() throws Exception {
+        //     r.close();
+        //     d.close();
+        // }
+
         private int DocFreq(IndexReader r, string term)
         {
             return r.DocFreq(new Term(FIELD, term));
@@ -466,7 +478,7 @@ namespace Lucene.Net.Index
         public virtual void TestEasy()
         {
             // No floor arcs:
-            using var d = NewDirectory();
+            using var d = NewDirectory(); // LUCENENET: using variable instead of field
             using var r = MakeIndex(d, "aa0", "aa1", "aa2", "aa3", "bb0", "bb1", "bb2", "bb3", "aa");
             // First term in block:
             Assert.AreEqual(1, DocFreq(r, "aa0"));
@@ -528,7 +540,7 @@ namespace Lucene.Net.Index
         {
             var terms = new[] { "aa0", "aa1", "aa2", "aa3", "aa4", "aa5", "aa6", "aa7", "aa8", "aa9", "aa", "xx" };
 
-            using var d = NewDirectory();
+            using var d = NewDirectory(); // LUCENENET: using variable instead of field
             using var r = MakeIndex(d, terms);
             // First term in first block:
             Assert.AreEqual(1, DocFreq(r, "aa0"));
@@ -656,7 +668,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            using var d = NewDirectory();
+            using var d = NewDirectory(); // LUCENENET: using variable instead of field
             using var r = MakeIndex(d, terms);
             TestRandomSeeks(r, terms);
         }
@@ -887,7 +899,7 @@ namespace Lucene.Net.Index
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");
-            Automaton automaton = (new RegExp(".*", RegExpSyntax.NONE)).ToAutomaton();
+            Automaton automaton = new RegExp(".*", RegExpSyntax.NONE).ToAutomaton();
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
             TermsEnum te = terms.Intersect(ca, null);
             Assert.IsTrue(te.MoveNext());
@@ -953,7 +965,7 @@ namespace Lucene.Net.Index
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");
 
-            Automaton automaton = (new RegExp(".*d", RegExpSyntax.NONE)).ToAutomaton();
+            Automaton automaton = new RegExp(".*d", RegExpSyntax.NONE).ToAutomaton();
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
             TermsEnum te;
 
@@ -1013,7 +1025,7 @@ namespace Lucene.Net.Index
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");
 
-            Automaton automaton = (new RegExp(".*", RegExpSyntax.NONE)).ToAutomaton(); // accept ALL
+            Automaton automaton = new RegExp(".*", RegExpSyntax.NONE).ToAutomaton(); // accept ALL
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
 
             TermsEnum te = terms.Intersect(ca, null);
