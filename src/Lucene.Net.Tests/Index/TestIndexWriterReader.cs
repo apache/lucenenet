@@ -1,11 +1,12 @@
-﻿#if FEATURE_INDEXWRITER_TESTS
+﻿using Lucene.Net.Search;
+using Lucene.Net.Util;
+#if FEATURE_INDEXWRITER_TESTS
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Support.Threading;
-using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -34,27 +35,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-#if FEATURE_INDEXWRITER_TESTS
-    using Codec = Lucene.Net.Codecs.Codec;
-    using Directory = Lucene.Net.Store.Directory;
-    using Document = Documents.Document;
-    using FakeIOException = Lucene.Net.Store.FakeIOException;
-    using Field = Field;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using InfoStream = Lucene.Net.Util.InfoStream;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using Query = Lucene.Net.Search.Query;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TextField = TextField;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-#endif
 
     [TestFixture]
     public class TestIndexWriterReader : LuceneTestCase
