@@ -12,6 +12,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -214,7 +215,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine(Thread.CurrentThread.Name + ": TEST: IndexerThread: cycle");
                     }
                     outerInstance.doFail.Value = this.Instance;
-                    string id = "" + r.Next(50);
+                    string id = r.Next(50).ToString(CultureInfo.InvariantCulture); // LUCENENET: using InvariantCulture ToString overload instead of implicit `"" + r.Next(50)`
                     idField.SetStringValue(id);
                     Term idTerm = new Term("id", id);
                     try
@@ -2134,7 +2135,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < numDocs; i++)
                 {
                     Document doc = new Document();
-                    doc.Add(new StringField("id", (docBase + i).ToString(), Field.Store.NO));
+                    doc.Add(new StringField("id", (docBase + i).ToString(CultureInfo.InvariantCulture), Field.Store.NO));
                     if (DefaultCodecSupportsDocValues)
                     {
                         doc.Add(new NumericDocValuesField("f", 1L));
@@ -2172,20 +2173,20 @@ namespace Lucene.Net.Index
                                 }
                                 if (Random.NextBoolean()) // update only numeric field
                                 {
-                                    w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString()), "f", value);
-                                    w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString()), "cf", value * 2);
+                                    w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString(CultureInfo.InvariantCulture)), "f", value);
+                                    w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString(CultureInfo.InvariantCulture)), "cf", value * 2);
                                 }
                                 else if (Random.NextBoolean())
                                 {
-                                    w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString()), "bf", TestBinaryDocValuesUpdates.ToBytes(value));
-                                    w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString()), "bcf", TestBinaryDocValuesUpdates.ToBytes(value * 2));
+                                    w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString(CultureInfo.InvariantCulture)), "bf", TestBinaryDocValuesUpdates.ToBytes(value));
+                                    w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString(CultureInfo.InvariantCulture)), "bcf", TestBinaryDocValuesUpdates.ToBytes(value * 2));
                                 }
                                 else
                                 {
-                                    w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString()), "f", value);
-                                    w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString()), "cf", value * 2);
-                                    w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString()), "bf", TestBinaryDocValuesUpdates.ToBytes(value));
-                                    w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString()), "bcf", TestBinaryDocValuesUpdates.ToBytes(value * 2));
+                                    w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString(CultureInfo.InvariantCulture)), "f", value);
+                                    w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString(CultureInfo.InvariantCulture)), "cf", value * 2);
+                                    w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString(CultureInfo.InvariantCulture)), "bf", TestBinaryDocValuesUpdates.ToBytes(value));
+                                    w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString(CultureInfo.InvariantCulture)), "bcf", TestBinaryDocValuesUpdates.ToBytes(value * 2));
                                 }
                             }
 
@@ -2194,10 +2195,10 @@ namespace Lucene.Net.Index
                             {
                                 if (Verbose)
                                 {
-                                    Console.WriteLine("  delete id=" + (docBase + i));
+                                    Console.WriteLine("  delete id=" + (docBase + i).ToString(CultureInfo.InvariantCulture));
                                 }
                                 deleteCount++;
-                                w.DeleteDocuments(new Term("id", "" + (docBase + i)));
+                                w.DeleteDocuments(new Term("id", (docBase + i).ToString(CultureInfo.InvariantCulture))); // LUCENENET: using InvariantCulture ToString overload instead of implicit `"" +` conversion
                             }
                         }
                     }

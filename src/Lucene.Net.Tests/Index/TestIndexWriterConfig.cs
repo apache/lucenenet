@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
                     // IndexWriterConfig return type and second with LiveIndexWriterConfig. The ones
                     // from LiveIndexWriterConfig are marked 'synthetic', so just collect them and
                     // assert in the end that we also received them from IWC.
-                    // In C# we do not have them marked synthetic so we look at the declaring type instead.
+                    // LUCENENET: In C# we do not have them marked synthetic so we look at the declaring type instead.
                     if (m.DeclaringType?.Name == "LiveIndexWriterConfig")
                     {
                         liveSetters.Add(m.Name);
