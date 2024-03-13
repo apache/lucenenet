@@ -9,6 +9,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -352,16 +353,16 @@ namespace Lucene.Net.Index
                                     if (tombstones)
                                     {
                                         Document d = new Document();
-                                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Field.Store.YES));
-                                        d.Add(NewField(field, Convert.ToString(nextVal), storedOnlyType));
-                                        writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
+                                        d.Add(NewStringField("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture), Field.Store.YES));
+                                        d.Add(NewField(field, Convert.ToString(nextVal, CultureInfo.InvariantCulture), storedOnlyType));
+                                        writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture)), d);
                                     }
 
                                     if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": term delDocs id:" + id + " nextVal=" + nextVal);
                                     }
-                                    writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                                    writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
                                     outerInstance.model[id] = -nextVal;
                                 }
                                 else if (oper < commitPercent + deletePercent + deleteByQueryPercent)
@@ -372,33 +373,33 @@ namespace Lucene.Net.Index
                                     if (tombstones)
                                     {
                                         Document d = new Document();
-                                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Field.Store.YES));
-                                        d.Add(NewField(field, Convert.ToString(nextVal), storedOnlyType));
-                                        writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
+                                        d.Add(NewStringField("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture), Field.Store.YES));
+                                        d.Add(NewField(field, Convert.ToString(nextVal, CultureInfo.InvariantCulture), storedOnlyType));
+                                        writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture)), d);
                                     }
 
                                     if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": query delDocs id:" + id + " nextVal=" + nextVal);
                                     }
-                                    writer.DeleteDocuments(new TermQuery(new Term("id", Convert.ToString(id))));
+                                    writer.DeleteDocuments(new TermQuery(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture))));
                                     outerInstance.model[id] = -nextVal;
                                 }
                                 else
                                 {
                                     // assertU(adoc("id",Integer.toString(id), field, Long.toString(nextVal)));
                                     Document d = new Document();
-                                    d.Add(NewStringField("id", Convert.ToString(id), Field.Store.YES));
-                                    d.Add(NewField(field, Convert.ToString(nextVal), storedOnlyType));
+                                    d.Add(NewStringField("id", Convert.ToString(id, CultureInfo.InvariantCulture), Field.Store.YES));
+                                    d.Add(NewField(field, Convert.ToString(nextVal, CultureInfo.InvariantCulture), storedOnlyType));
                                     if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": u id:" + id + " val=" + nextVal);
                                     }
-                                    writer.UpdateDocument(new Term("id", Convert.ToString(id)), d);
+                                    writer.UpdateDocument(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)), d);
                                     if (tombstones)
                                     {
                                         // remove tombstone after new addition (this should be optional?)
-                                        writer.DeleteDocuments(new Term("id", "-" + Convert.ToString(id)));
+                                        writer.DeleteDocuments(new Term("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture)));
                                     }
                                     outerInstance.model[id] = nextVal;
                                 }
@@ -493,13 +494,13 @@ namespace Lucene.Net.Index
                             lastReader = r;
                             lastSearcher = searcher;
                         }
-                        Query q = new TermQuery(new Term("id", Convert.ToString(id)));
+                        Query q = new TermQuery(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
                         TopDocs results = searcher.Search(q, 10);
 
                         if (results.TotalHits == 0 && tombstones)
                         {
                             // if we couldn't find the doc, look for its tombstone
-                            q = new TermQuery(new Term("id", "-" + Convert.ToString(id)));
+                            q = new TermQuery(new Term("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture)));
                             results = searcher.Search(q, 1);
                             if (results.TotalHits == 0)
                             {
