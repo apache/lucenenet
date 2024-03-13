@@ -30,7 +30,6 @@
     <!--<TargetFramework>net48</TargetFramework>-->
     <!--<TargetFramework>net5.0</TargetFramework>-->
     <!--<TargetFramework>net6.0</TargetFramework>-->
-    <!--<TargetFramework>net7.0</TargetFramework>-->
     <TargetFramework>net8.0</TargetFramework>
 
     <!-- Allow the build script to pass in the test frameworks to build for.
