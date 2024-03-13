@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// LUCENENET-specific value to be used instead of null.
         /// </summary>
-        NONE = -1,
+        NONE = 0,
 
         /// <summary>
         /// Merge was triggered by a segment flush.
