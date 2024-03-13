@@ -25,9 +25,9 @@
 
   <PropertyGroup>
     <!-- Allow specific target framework to flow in from TestTargetFrameworks.props -->
-    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net7.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net8.0;net6.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TargetFramework)' == '' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48</TargetFrameworks>
-    
+
     <AssemblyTitle>Lucene.Net.Tests.Analysis.OpenNLP</AssemblyTitle>
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
   </PropertyGroup>
@@ -37,7 +37,7 @@
     <IsPublishable>false</IsPublishable>
     <IsTestProject>false</IsTestProject>
     <!-- For the IDE, the above doesn't work. Redirect to a supported test framework instead. -->
-    <TargetFramework Condition=" $(TargetFramework.StartsWith('net5.')) ">net7.0</TargetFramework>
+    <TargetFramework Condition=" $(TargetFramework.StartsWith('net5.')) ">net8.0</TargetFramework>
     <TargetFramework Condition=" '$(TargetFramework)' == 'net461' ">net48</TargetFramework>
   </PropertyGroup>
 
