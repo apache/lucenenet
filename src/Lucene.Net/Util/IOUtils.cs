@@ -39,9 +39,12 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// UTF-8 <see cref="Encoding"/> instance to prevent repeated
-        /// <see cref="Encoding.UTF8"/> lookups </summary>
-        [Obsolete("Use Encoding.UTF8 instead.")]
-        public static readonly Encoding CHARSET_UTF_8 = Encoding.UTF8;
+        /// <see cref="Encoding.UTF8"/> lookups and match Java's behavior
+        /// with respect to a lack of a byte-order mark (BOM).
+        /// </summary>
+        public static readonly Encoding CHARSET_UTF_8 = new UTF8Encoding(
+            encoderShouldEmitUTF8Identifier: false,
+            throwOnInvalidBytes: true);
 
         /// <summary>
         /// UTF-8 charset string.
@@ -58,21 +61,21 @@ namespace Lucene.Net.Util
         /// <code>
         /// IDisposable resource1 = null, resource2 = null, resource3 = null;
         /// ExpectedException priorE = null;
-        /// try 
+        /// try
         /// {
         ///     resource1 = ...; resource2 = ...; resource3 = ...; // Acquisition may throw ExpectedException
         ///     ..do..stuff.. // May throw ExpectedException
-        /// } 
-        /// catch (ExpectedException e) 
+        /// }
+        /// catch (ExpectedException e)
         /// {
         ///     priorE = e;
-        /// } 
-        /// finally 
+        /// }
+        /// finally
         /// {
         ///     IOUtils.CloseWhileHandlingException(priorE, resource1, resource2, resource3);
         /// }
         /// </code>
-        /// </para> 
+        /// </para>
         /// </summary>
         /// <param name="priorException">  <c>null</c> or an exception that will be rethrown after method completion. </param>
         /// <param name="objects">         Objects to call <see cref="IDisposable.Dispose()"/> on. </param>
@@ -148,21 +151,21 @@ namespace Lucene.Net.Util
         /// <code>
         /// IDisposable resource1 = null, resource2 = null, resource3 = null;
         /// ExpectedException priorE = null;
-        /// try 
+        /// try
         /// {
         ///     resource1 = ...; resource2 = ...; resource3 = ...; // Acquisition may throw ExpectedException
         ///     ..do..stuff.. // May throw ExpectedException
-        /// } 
-        /// catch (ExpectedException e) 
+        /// }
+        /// catch (ExpectedException e)
         /// {
         ///     priorE = e;
-        /// } 
-        /// finally 
+        /// }
+        /// finally
         /// {
         ///     IOUtils.DisposeWhileHandlingException(priorE, resource1, resource2, resource3);
         /// }
         /// </code>
-        /// </para> 
+        /// </para>
         /// </summary>
         /// <param name="priorException">  <c>null</c> or an exception that will be rethrown after method completion. </param>
         /// <param name="objects">         Objects to call <see cref="IDisposable.Dispose()"/> on. </param>
@@ -201,7 +204,7 @@ namespace Lucene.Net.Util
         /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
         /// <seealso cref="DisposeWhileHandlingException(Exception, IDisposable[])"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void DisposeWhileHandlingException(Exception priorException, IEnumerable<IDisposable> objects) 
+        public static void DisposeWhileHandlingException(Exception priorException, IEnumerable<IDisposable> objects)
         {
             Exception th = null;
 
@@ -241,7 +244,7 @@ namespace Lucene.Net.Util
         /// <param name="objects">
         ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Dispose(params IDisposable[] objects) 
+        public static void Dispose(params IDisposable[] objects)
         {
             Exception th = null;
 
@@ -298,7 +301,7 @@ namespace Lucene.Net.Util
         /// <param name="objects">
         ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void DisposeWhileHandlingException(params IDisposable[] objects) 
+        public static void DisposeWhileHandlingException(params IDisposable[] objects)
         {
             foreach (var o in objects)
             {
@@ -334,7 +337,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Since there's no C# equivalent of Java's Exception.AddSuppressed, we add the
-        /// suppressed exceptions to a data field via the 
+        /// suppressed exceptions to a data field via the
         /// <see cref="ExceptionExtensions.AddSuppressed(Exception, Exception)"/> method.
         /// <para/>
         /// The exceptions can be retrieved by calling <see cref="ExceptionExtensions.GetSuppressed(Exception)"/>
@@ -480,7 +483,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Simple utilty method that takes a previously caught
-        /// <see cref="Exception"/> and rethrows either 
+        /// <see cref="Exception"/> and rethrows either
         /// <see cref="IOException"/> or an unchecked exception.  If the
         /// argument is <c>null</c> then this method does nothing.
         /// </summary>
@@ -513,7 +516,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        // LUCENENET specific: Fsync is pointless in .NET, since we are 
+        // LUCENENET specific: Fsync is pointless in .NET, since we are
         // calling FileStream.Flush(true) before the stream is disposed
         // which means we never need it at the point in Java where it is called.
     }
