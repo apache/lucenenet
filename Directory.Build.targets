@@ -25,8 +25,8 @@
   <!-- Features in .NET 6.x, .NET 7.x, and .NET 8.x only -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) ">
 
-    <DefineConstants>$(DefineConstants);FEATURE_SPANFORMATTABLE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_RANDOM_NEXTINT64_NEXTSINGLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_SPANFORMATTABLE</DefineConstants>
 
   </PropertyGroup>
 
