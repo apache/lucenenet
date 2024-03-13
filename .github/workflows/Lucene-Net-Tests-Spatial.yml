@@ -23,6 +23,7 @@ name: 'Lucene.Net.Tests.Spatial'
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
     - 'src/Lucene.Net.Tests.Spatial/**/*'
     - '.build/dependencies.props'
@@ -47,6 +48,7 @@ on:
 jobs:
 
   Test:
+    if: github.event.pull_request.draft == false
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

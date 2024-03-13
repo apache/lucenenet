@@ -23,6 +23,7 @@ name: 'Lucene.Net.Tests.ICU'
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
     - 'src/dotnet/Lucene.Net.Tests.ICU/**/*'
     - '.build/dependencies.props'
@@ -61,6 +62,7 @@ on:
 jobs:
 
   Test:
+    if: github.event.pull_request.draft == false
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

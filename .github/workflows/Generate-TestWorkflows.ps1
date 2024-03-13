@@ -227,6 +227,7 @@ name: '$projectName'
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
     - '$projectRelativeDirectory/**/*'
     - '.build/dependencies.props'
@@ -239,6 +240,7 @@ on:
 jobs:
 
   Test:
+    if: github.event.pull_request.draft == false
     runs-on: `${{ matrix.os }}
     strategy:
       fail-fast: false
