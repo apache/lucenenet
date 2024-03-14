@@ -3,6 +3,8 @@ using Lucene.Net.Util;
 #if FEATURE_INDEXWRITER_TESTS
 using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Analysis;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
