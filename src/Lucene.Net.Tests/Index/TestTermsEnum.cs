@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
             for (int iter = 0; iter < iters; iter++)
             {
                 bool isEnd;
-                if (upto != -1 && LuceneTestCase.Random.NextBoolean())
+                if (upto != -1 && Random.NextBoolean())
                 {
                     // next
                     if (Verbose)
@@ -435,23 +435,26 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        // LUCENENET: passing directory in as parameter to MakeIndex and using returned IndexReader
-        // instead of having the fields here:
-        // private Directory d;
-        // private IndexReader r;
+        private Directory d;
+        private IndexReader r;
 
         private const string FIELD = "field";
 
-        private IndexReader MakeIndex(Directory d, params string[] terms)
+        private IndexReader MakeIndex(params string[] terms)
         {
-            // d = new Directory(); // LUCENENET: see field note above, using parameter instead
+            // LUCENENET specific: clean up reader/directory before creating a new one, moved from below
+            if (r != null) {
+                Close();
+            }
+
+            d = NewDirectory();
             var iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
             /*
             iwc.SetCodec(new StandardCodec(minTermsInBlock, maxTermsInBlock));
             */
 
-            using var w = new RandomIndexWriter(Random, d, iwc);
+            var w = new RandomIndexWriter(Random, d, iwc);
             foreach (string term in terms)
             {
                 var doc = new Document();
@@ -460,14 +463,21 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            return w.GetReader();
+            // LUCENENET specific: moved above to clean up reader/directory before creating a new one
+            // if (r != null) {
+            //     Close();
+            // }
+            r = w.GetReader();
+            w.Dispose();
+            return r;
         }
 
-        // LUCENENET: not needed since fields are not used
-        // private void close() throws Exception {
-        //     r.close();
-        //     d.close();
-        // }
+        // LUCENENET NOTE: note that this is not a true dispose pattern, see usage above
+        private void Close()
+        {
+            r?.Dispose();
+            d?.Dispose();
+        }
 
         private int DocFreq(IndexReader r, string term)
         {
@@ -478,8 +488,8 @@ namespace Lucene.Net.Index
         public virtual void TestEasy()
         {
             // No floor arcs:
-            using var d = NewDirectory(); // LUCENENET: using variable instead of field
-            using var r = MakeIndex(d, "aa0", "aa1", "aa2", "aa3", "bb0", "bb1", "bb2", "bb3", "aa");
+            r = MakeIndex("aa0", "aa1", "aa2", "aa3", "bb0", "bb1", "bb2", "bb3", "aa");
+
             // First term in block:
             Assert.AreEqual(1, DocFreq(r, "aa0"));
 
@@ -529,6 +539,8 @@ namespace Lucene.Net.Index
 
             // Found, rewind:
             Assert.AreEqual(1, DocFreq(r, "bb0"));
+
+            Close();
         }
 
         // tests:
@@ -539,9 +551,9 @@ namespace Lucene.Net.Index
         public virtual void TestFloorBlocks()
         {
             var terms = new[] { "aa0", "aa1", "aa2", "aa3", "aa4", "aa5", "aa6", "aa7", "aa8", "aa9", "aa", "xx" };
+            r = MakeIndex(terms);
+            //r = makeIndex("aa0", "aa1", "aa2", "aa3", "aa4", "aa5", "aa6", "aa7", "aa8", "aa9");
 
-            using var d = NewDirectory(); // LUCENENET: using variable instead of field
-            using var r = MakeIndex(d, terms);
             // First term in first block:
             Assert.AreEqual(1, DocFreq(r, "aa0"));
             Assert.AreEqual(1, DocFreq(r, "aa4"));
@@ -587,12 +599,13 @@ namespace Lucene.Net.Index
             Assert.AreEqual("xx", Next(te));
 
             TestRandomSeeks(r, terms);
+            Close();
         }
 
         [Test]
         public virtual void TestZeroTerms()
         {
-            var d = NewDirectory();
+            d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, d);
             Document doc = new Document();
             doc.Add(NewTextField("field", "one two three", Field.Store.NO));
@@ -668,9 +681,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-            using var d = NewDirectory(); // LUCENENET: using variable instead of field
-            using var r = MakeIndex(d, terms);
+            r = MakeIndex(terms);
             TestRandomSeeks(r, terms);
+            Close();
         }
 
         // sugar
