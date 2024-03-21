@@ -1,5 +1,3 @@
-using NUnit.Framework;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -19,6 +17,7 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
+    // ReSharper disable once UnusedType.Global - tests are in base class
     public class TestLogMergePolicy : BaseMergePolicyTestCase
     {
         protected override MergePolicy NewMergePolicy()

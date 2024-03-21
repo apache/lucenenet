@@ -20,7 +20,9 @@ namespace Lucene.Net.Index
      */
 
     using Codec = Lucene.Net.Codecs.Codec;
+#pragma warning disable 612, 618
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
+#pragma warning restore 612, 618
 
     /// <summary>
     /// Tests with the default randomized codec. Not really redundant with

@@ -7,7 +7,6 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -82,7 +81,13 @@ namespace Lucene.Net.Index
                 ft.StoreTermVectorPositions = Random.NextBoolean();
                 ft.StoreTermVectorOffsets = Random.NextBoolean();
             }
-            Token[] tokens = new Token[] { MakeToken("a", 1, 0, 6), MakeToken("b", 1, 8, 9), MakeToken("a", 1, 9, 17), MakeToken("c", 1, 19, 50) };
+            Token[] tokens = new Token[]
+            {
+                MakeToken("a", 1, 0, 6),
+                MakeToken("b", 1, 8, 9),
+                MakeToken("a", 1, 9, 17),
+                MakeToken("c", 1, 19, 50),
+            };
             doc.Add(new Field("content", new CannedTokenStream(tokens), ft));
 
             w.AddDocument(doc);
@@ -138,7 +143,7 @@ namespace Lucene.Net.Index
         public virtual void DoTestNumbers(bool withPayloads)
         {
             Directory dir = NewDirectory();
-            Analyzer analyzer = withPayloads ? (Analyzer)new MockPayloadAnalyzer() : new MockAnalyzer(Random);
+            Analyzer analyzer = withPayloads ? new MockPayloadAnalyzer() : new MockAnalyzer(Random);
             iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy()); // will rely on docids a bit for skipping
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, iwc);
@@ -489,7 +494,12 @@ namespace Lucene.Net.Index
         {
             try
             {
-                CheckTokens(new Token[] { MakeToken("foo", 1, 0, 3), MakeToken("foo", 1, 4, 7), MakeToken("foo", 0, 3, 6) });
+                CheckTokens(new Token[]
+                {
+                    MakeToken("foo", 1, 0, 3),
+                    MakeToken("foo", 1, 4, 7),
+                    MakeToken("foo", 0, 3, 6)
+                });
                 Assert.Fail();
             }
             catch (Exception expected) when (expected.IsIllegalArgumentException())
@@ -501,7 +511,12 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestStackedTokens()
         {
-            CheckTokens(new Token[] { MakeToken("foo", 1, 0, 3), MakeToken("foo", 0, 0, 3), MakeToken("foo", 0, 0, 3) });
+            CheckTokens(new Token[]
+            {
+                MakeToken("foo", 1, 0, 3),
+                MakeToken("foo", 0, 0, 3),
+                MakeToken("foo", 0, 0, 3)
+            });
         }
 
         [Test]

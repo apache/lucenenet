@@ -1,13 +1,14 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
-using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
-using RandomizedTesting.Generators;
 using System;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
+
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
+using RandomizedTesting.Generators;
+#endif
 
 namespace Lucene.Net.Index
 {
@@ -49,7 +50,9 @@ namespace Lucene.Net.Index
             {
                 wrapper.AssertNoDeleteOpenFile = true;
             }
-            var writer = new IndexWriter(mainDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false, 2)));
+            var writer = new IndexWriter(mainDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(10)
+                .SetMergePolicy(NewLogMergePolicy(false, 2)));
             IndexReader reader = writer.GetReader(); // start pooling readers
             reader.Dispose();
             var indexThreads = new RunThread[4];
@@ -60,7 +63,7 @@ namespace Lucene.Net.Index
                 indexThreads[x].Start();
             }
             long startTime = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
-            long duration = 1000;
+            const long duration = 1000;
             while (((J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - startTime) < duration) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             {
                 Thread.Sleep(100);

@@ -1,6 +1,5 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -61,8 +60,6 @@ namespace Lucene.Net.Index
         // Used by test cases below
         private class IndexerThread : ThreadJob
         {
-            private readonly Func<string, string, FieldType, Field> newField;
-
             internal bool diskFull;
             internal Exception error;
             //internal ObjectDisposedException ace; // LUCENENET: Not used
@@ -71,16 +68,10 @@ namespace Lucene.Net.Index
             internal volatile int addCount;
             internal int timeToRunInMilliseconds = 200;
 
-            /// <param name="newField">
-            /// LUCENENET specific
-            /// Passed in because <see cref="LuceneTestCase.NewField(string, string, FieldType)"/>
-            /// is no longer static.
-            /// </param>
-            public IndexerThread(IndexWriter writer, bool noErrors, Func<string, string, FieldType, Field> newField)
+            public IndexerThread(IndexWriter writer, bool noErrors)
             {
                 this.writer = writer;
                 this.noErrors = noErrors;
-                this.newField = newField;
             }
 
             public override void Run()
@@ -91,7 +82,7 @@ namespace Lucene.Net.Index
                 customType.StoreTermVectorPositions = true;
                 customType.StoreTermVectorOffsets = true;
 
-                doc.Add(newField("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", customType));
+                doc.Add(NewField("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", customType));
                 doc.Add(new NumericDocValuesField("dv", 5));
 
                 int idUpto = 0;
@@ -165,7 +156,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestImmediateDiskFullWithThreads()
         {
-            int NUM_THREADS = 3;
+            const int NUM_THREADS = 3;
             int numIterations = TestNightly ? 10 : 3;
             for (int iter = 0; iter < numIterations; iter++)
             {
@@ -188,7 +179,7 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    threads[i] = new IndexerThread(writer, true, NewField);
+                    threads[i] = new IndexerThread(writer, true);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -219,7 +210,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestCloseWithThreads()
         {
-            int NUM_THREADS = 3;
+            const int NUM_THREADS = 3;
             int numIterations = TestNightly ? 7 : 3;
             for (int iter = 0; iter < numIterations; iter++)
             {
@@ -240,11 +231,11 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    threads[i] = new IndexerThread(writer, false, NewField)
+                    threads[i] = new IndexerThread(writer, false)
 
-                        // LUCENENET NOTE - ConcurrentMergeScheduler 
+                        // LUCENENET NOTE - ConcurrentMergeScheduler
                         // used to take too long for this test to index a single document
-                        // so, increased the time from 200 to 300 ms. 
+                        // so, increased the time from 200 to 300 ms.
                         // But it has now been restored to 200 ms like Lucene.
                         { timeToRunInMilliseconds = 200 };
                 }
@@ -310,7 +301,7 @@ namespace Lucene.Net.Index
         // failure to trigger an IOException
         public virtual void TestMultipleThreadsFailure(Failure failure)
         {
-            int NUM_THREADS = 3;
+            const int NUM_THREADS = 3;
 
             for (int iter = 0; iter < 2; iter++)
             {
@@ -331,7 +322,7 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    threads[i] = new IndexerThread(writer, true, NewField);
+                    threads[i] = new IndexerThread(writer, true);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -425,7 +416,7 @@ namespace Lucene.Net.Index
         // Throws IOException during FieldsWriter.flushDocument and during DocumentsWriter.abort
         private class FailOnlyOnAbortOrFlush : Failure
         {
-            internal bool onlyOnce;
+            private bool onlyOnce;
 
             public FailOnlyOnAbortOrFlush(bool onlyOnce)
             {
@@ -566,7 +557,6 @@ namespace Lucene.Net.Index
             DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
             DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
 
-
             thread1.Start();
             thread2.Start();
             oneIWConstructed.Wait();
@@ -600,11 +590,11 @@ namespace Lucene.Net.Index
 
         internal class DelayedIndexAndCloseRunnable : ThreadJob
         {
-            internal readonly Directory dir;
+            private readonly Directory dir;
             internal bool failed = false;
             internal Exception failure = null;
-            internal readonly CountdownEvent startIndexing = new CountdownEvent(1);
-            internal CountdownEvent iwConstructed;
+            private readonly CountdownEvent startIndexing = new CountdownEvent(1);
+            private CountdownEvent iwConstructed;
 
             public DelayedIndexAndCloseRunnable(Directory dir, CountdownEvent iwConstructed)
             {
@@ -637,7 +627,7 @@ namespace Lucene.Net.Index
                     failed = true;
                     failure = e;
                     Console.WriteLine(e.ToString());
-                    return;
+                    // return; // LUCENENET: redundant return
                 }
             }
         }
@@ -676,7 +666,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     threads[threadID].Join();
-                } 
+                }
                 catch (Exception e)
                 {
                     Console.WriteLine("EXCEPTION in ThreadAnonymousClass: " + Environment.NewLine + e);
@@ -720,7 +710,7 @@ namespace Lucene.Net.Index
                         switch (x)
                         {
                             case 0:
-                                rollbackLock.@Lock();
+                                rollbackLock.Lock();
                                 if (Verbose)
                                 {
                                     Console.WriteLine("\nTEST: " + Thread.CurrentThread.Name + ": now rollback");
@@ -732,7 +722,7 @@ namespace Lucene.Net.Index
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": rollback done; now open new writer");
                                     }
-                                    writerRef.Value = 
+                                    writerRef.Value =
                                         new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                                 }
                                 finally
@@ -742,7 +732,7 @@ namespace Lucene.Net.Index
                                 break;
 
                             case 1:
-                                commitLock.@Lock();
+                                commitLock.Lock();
                                 if (Verbose)
                                 {
                                     Console.WriteLine("\nTEST: " + Thread.CurrentThread.Name + ": now commit");
@@ -795,7 +785,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception t) when (t.IsThrowable())
                     {
-                        failed.Value = (true);
+                        failed.Value = true;
                         throw RuntimeException.Create(t);
                     }
                 }

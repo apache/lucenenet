@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestCloseUnderException()
         {
-            int iters = 1000 + 1 + Random.nextInt(20);
+            int iters = 1000 + 1 + Random.Next(20);
             for (int j = 0; j < iters; j++)
             {
                 Directory dir = NewDirectory();
@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
                 DirectoryReader open = DirectoryReader.Open(dir);
                 bool throwOnClose = !Rarely();
                 AtomicReader wrap = SlowCompositeReaderWrapper.Wrap(open);
-                FilterAtomicReader reader = new FilterAtomicReaderAnonymousClass(this, wrap, throwOnClose);
+                FilterAtomicReader reader = new FilterAtomicReaderAnonymousClass(wrap, throwOnClose);
                 //IList<IReaderDisposedListener> listeners = new JCG.List<IReaderDisposedListener>(); // LUCENENET: This list is unused (and was unused in Java)
                 int listenerCount = Random.Next(20);
                 AtomicInt32 count = new AtomicInt32();
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
 
                 try
                 {
-                    var aaa = reader.Fields;
+                    _ = reader.Fields;
                     Assert.Fail("we are closed");
                 }
                 catch (Exception ex) when (ex.IsAlreadyClosedException())
@@ -106,14 +106,11 @@ namespace Lucene.Net.Index
 
         private sealed class FilterAtomicReaderAnonymousClass : FilterAtomicReader
         {
-            private readonly TestIndexReaderClose outerInstance;
+            private readonly bool throwOnClose;
 
-            private bool throwOnClose;
-
-            public FilterAtomicReaderAnonymousClass(TestIndexReaderClose outerInstance, AtomicReader wrap, bool throwOnClose)
+            public FilterAtomicReaderAnonymousClass(AtomicReader wrap, bool throwOnClose)
                 : base(wrap)
             {
-                this.outerInstance = outerInstance;
                 this.throwOnClose = throwOnClose;
             }
 
@@ -129,7 +126,7 @@ namespace Lucene.Net.Index
 
         private sealed class CountListener : IReaderDisposedListener
         {
-            internal readonly AtomicInt32 count;
+            private readonly AtomicInt32 count;
 
             public CountListener(AtomicInt32 count)
             {

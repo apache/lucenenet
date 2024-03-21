@@ -102,7 +102,9 @@ namespace Lucene.Net.Index
             Directory dir2 = GetDir2(Random);
             DirectoryReader ir1, ir2;
             // close subreaders, ParallelReader will not change refCounts, but close on its own close
-            ParallelCompositeReader pr = new ParallelCompositeReader(ir1 = DirectoryReader.Open(dir1), ir2 = DirectoryReader.Open(dir2));
+            ParallelCompositeReader pr = new ParallelCompositeReader(
+                ir1 = DirectoryReader.Open(dir1),
+                ir2 = DirectoryReader.Open(dir2));
             IndexReader psub1 = pr.GetSequentialSubReaders()[0];
             // check RefCounts
             Assert.AreEqual(1, ir1.RefCount);
@@ -152,7 +154,9 @@ namespace Lucene.Net.Index
             CompositeReader ir1 = DirectoryReader.Open(dir1);
 
             // with overlapping
-            ParallelCompositeReader pr = new ParallelCompositeReader(false, new CompositeReader[] { ir1 }, new CompositeReader[] { ir1 });
+            ParallelCompositeReader pr = new ParallelCompositeReader(false,
+                new CompositeReader[] { ir1 },
+                new CompositeReader[] { ir1 });
 
             int[] listenerClosedCount = new int[1];
 
@@ -160,7 +164,7 @@ namespace Lucene.Net.Index
 
             foreach (AtomicReaderContext cxt in pr.Leaves)
             {
-                cxt.Reader.AddReaderDisposedListener(new ReaderClosedListenerAnonymousClass(this, listenerClosedCount));
+                cxt.Reader.AddReaderDisposedListener(new CountingReaderClosedListenerAnonymousClass(listenerClosedCount));
             }
             pr.Dispose();
             ir1.Dispose();
@@ -168,15 +172,12 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private sealed class ReaderClosedListenerAnonymousClass : IReaderDisposedListener
+        private sealed class CountingReaderClosedListenerAnonymousClass : IReaderDisposedListener
         {
-            private readonly TestParallelCompositeReader outerInstance;
-
             private readonly int[] listenerClosedCount;
 
-            public ReaderClosedListenerAnonymousClass(TestParallelCompositeReader outerInstance, int[] listenerClosedCount)
+            public CountingReaderClosedListenerAnonymousClass(int[] listenerClosedCount)
             {
-                this.outerInstance = outerInstance;
                 this.listenerClosedCount = listenerClosedCount;
             }
 
@@ -194,7 +195,9 @@ namespace Lucene.Net.Index
             CompositeReader ir1 = DirectoryReader.Open(dir1);
 
             // with overlapping
-            ParallelCompositeReader pr = new ParallelCompositeReader(true, new CompositeReader[] { ir1 }, new CompositeReader[] { ir1 });
+            ParallelCompositeReader pr = new ParallelCompositeReader(true,
+                new CompositeReader[] { ir1 },
+                new CompositeReader[] { ir1 });
 
             int[] listenerClosedCount = new int[1];
 
@@ -202,29 +205,11 @@ namespace Lucene.Net.Index
 
             foreach (AtomicReaderContext cxt in pr.Leaves)
             {
-                cxt.Reader.AddReaderDisposedListener(new ReaderClosedListenerAnonymousClass2(this, listenerClosedCount));
+                cxt.Reader.AddReaderDisposedListener(new CountingReaderClosedListenerAnonymousClass(listenerClosedCount));
             }
             pr.Dispose();
             Assert.AreEqual(3, listenerClosedCount[0]);
             dir1.Dispose();
-        }
-
-        private sealed class ReaderClosedListenerAnonymousClass2 : IReaderDisposedListener
-        {
-            private readonly TestParallelCompositeReader outerInstance;
-
-            private readonly int[] listenerClosedCount;
-
-            public ReaderClosedListenerAnonymousClass2(TestParallelCompositeReader outerInstance, int[] listenerClosedCount)
-            {
-                this.outerInstance = outerInstance;
-                this.listenerClosedCount = listenerClosedCount;
-            }
-
-            public void OnDispose(IndexReader reader)
-            {
-                listenerClosedCount[0]++;
-            }
         }
 
         [Test]
@@ -235,7 +220,9 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, ir1.GetSequentialSubReaders()[0].RefCount);
 
             // with overlapping
-            ParallelCompositeReader pr = new ParallelCompositeReader(true, new CompositeReader[] { ir1 }, new CompositeReader[] { ir1 });
+            ParallelCompositeReader pr = new ParallelCompositeReader(true,
+                new CompositeReader[] { ir1 },
+                new CompositeReader[] { ir1 });
 
             IndexReader psub = pr.GetSequentialSubReaders()[0];
             Assert.AreEqual(1, psub.RefCount);
@@ -287,7 +274,7 @@ namespace Lucene.Net.Index
             DirectoryReader ir1 = DirectoryReader.Open(dir1), ir2 = DirectoryReader.Open(dir2);
             try
             {
-                new ParallelCompositeReader(ir1, ir2);
+                _ = new ParallelCompositeReader(ir1, ir2);
                 Assert.Fail("didn't get expected exception: indexes don't have same number of documents");
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
@@ -296,7 +283,7 @@ namespace Lucene.Net.Index
             }
             try
             {
-                new ParallelCompositeReader(Random.NextBoolean(), ir1, ir2);
+                _ = new ParallelCompositeReader(Random.NextBoolean(), ir1, ir2);
                 Assert.Fail("didn't get expected exception: indexes don't have same number of documents");
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
@@ -323,7 +310,7 @@ namespace Lucene.Net.Index
             CompositeReader[] readers = new CompositeReader[] { ir1, ir2 };
             try
             {
-                new ParallelCompositeReader(readers);
+                _ = new ParallelCompositeReader(readers);
                 Assert.Fail("didn't get expected exception: indexes don't have same subreader structure");
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
@@ -332,7 +319,7 @@ namespace Lucene.Net.Index
             }
             try
             {
-                new ParallelCompositeReader(Random.NextBoolean(), readers, readers);
+                _ = new ParallelCompositeReader(Random.NextBoolean(), readers, readers);
                 Assert.Fail("didn't get expected exception: indexes don't have same subreader structure");
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
@@ -359,7 +346,7 @@ namespace Lucene.Net.Index
             CompositeReader[] readers = new CompositeReader[] { ir1, ir2 };
             try
             {
-                new ParallelCompositeReader(readers);
+                _ = new ParallelCompositeReader(readers);
                 Assert.Fail("didn't get expected exception: indexes don't have same subreader structure");
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
@@ -368,7 +355,7 @@ namespace Lucene.Net.Index
             }
             try
             {
-                new ParallelCompositeReader(Random.NextBoolean(), readers, readers);
+                _ = new ParallelCompositeReader(Random.NextBoolean(), readers, readers);
                 Assert.Fail("didn't get expected exception: indexes don't have same subreader structure");
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
@@ -394,7 +381,9 @@ namespace Lucene.Net.Index
             CompositeReader ir2 = DirectoryReader.Open(dir2);
 
             // with overlapping
-            ParallelCompositeReader pr = new ParallelCompositeReader(false, new CompositeReader[] { ir1, ir2 }, new CompositeReader[] { ir1 });
+            ParallelCompositeReader pr = new ParallelCompositeReader(false,
+                new CompositeReader[] { ir1, ir2 },
+                new CompositeReader[] { ir1 });
             Assert.AreEqual("v1", pr.Document(0).Get("f1"));
             Assert.AreEqual("v1", pr.Document(0).Get("f2"));
             Assert.IsNull(pr.Document(0).Get("f3"));
@@ -408,7 +397,9 @@ namespace Lucene.Net.Index
             pr.Dispose();
 
             // no stored fields at all
-            pr = new ParallelCompositeReader(false, new CompositeReader[] { ir2 }, new CompositeReader[0]);
+            pr = new ParallelCompositeReader(false,
+                new CompositeReader[] { ir2 },
+                new CompositeReader[0]);
             Assert.IsNull(pr.Document(0).Get("f1"));
             Assert.IsNull(pr.Document(0).Get("f2"));
             Assert.IsNull(pr.Document(0).Get("f3"));
@@ -422,7 +413,9 @@ namespace Lucene.Net.Index
             pr.Dispose();
 
             // without overlapping
-            pr = new ParallelCompositeReader(true, new CompositeReader[] { ir2 }, new CompositeReader[] { ir1 });
+            pr = new ParallelCompositeReader(true,
+                new CompositeReader[] { ir2 },
+                new CompositeReader[] { ir1 });
             Assert.AreEqual("v1", pr.Document(0).Get("f1"));
             Assert.AreEqual("v1", pr.Document(0).Get("f2"));
             Assert.IsNull(pr.Document(0).Get("f3"));
@@ -438,7 +431,9 @@ namespace Lucene.Net.Index
             // no main readers
             try
             {
-                new ParallelCompositeReader(true, new CompositeReader[0], new CompositeReader[] { ir1 });
+                _ = new ParallelCompositeReader(true,
+                    new CompositeReader[0],
+                    new CompositeReader[] { ir1 });
                 Assert.Fail("didn't get expected exception: need a non-empty main-reader array");
             }
             catch (Exception iae) when (iae.IsIllegalArgumentException())
@@ -567,7 +562,8 @@ namespace Lucene.Net.Index
         private Directory GetDir1(Random random)
         {
             Directory dir1 = NewDirectory();
-            IndexWriter w1 = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
+            IndexWriter w1 = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT,
+                new MockAnalyzer(random)).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
             Document d1 = new Document();
             d1.Add(NewTextField("f1", "v1", Field.Store.YES));
             d1.Add(NewTextField("f2", "v1", Field.Store.YES));
@@ -594,7 +590,8 @@ namespace Lucene.Net.Index
         private Directory GetDir2(Random random)
         {
             Directory dir2 = NewDirectory();
-            IndexWriter w2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
+            IndexWriter w2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT,
+                new MockAnalyzer(random)).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
             Document d1 = new Document();
             d1.Add(NewTextField("f3", "v1", Field.Store.YES));
             d1.Add(NewTextField("f4", "v1", Field.Store.YES));
@@ -621,7 +618,8 @@ namespace Lucene.Net.Index
         private Directory GetInvalidStructuredDir2(Random random)
         {
             Directory dir2 = NewDirectory();
-            IndexWriter w2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
+            IndexWriter w2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT,
+                new MockAnalyzer(random)).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
             Document d1 = new Document();
             d1.Add(NewTextField("f3", "v1", Field.Store.YES));
             d1.Add(NewTextField("f4", "v1", Field.Store.YES));

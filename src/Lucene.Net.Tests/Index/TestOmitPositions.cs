@@ -207,7 +207,9 @@ namespace Lucene.Net.Index
         {
             Directory ram = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(3).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetMaxBufferedDocs(3)
+                .SetMergePolicy(NewLogMergePolicy()));
             LogMergePolicy lmp = (LogMergePolicy)writer.Config.MergePolicy;
             lmp.MergeFactor = 2;
             lmp.NoCFSRatio = 0.0;

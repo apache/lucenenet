@@ -4,7 +4,6 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -57,7 +56,7 @@ namespace Lucene.Net.Index
                 IList<BytesRef> terms = new JCG.List<BytesRef>();
 
                 int numDocs = TestUtil.NextInt32(Random, 1, 100 * RandomMultiplier);
-                Documents.Document doc = new Documents.Document();
+                Document doc = new Document();
                 Field f = NewStringField("field", "", Field.Store.NO);
                 doc.Add(f);
                 Field id = NewStringField("id", "", Field.Store.NO);
@@ -192,7 +191,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-            Documents.Document d = new Documents.Document();
+            Document d = new Document();
             d.Add(NewStringField("f", "j", Field.Store.NO));
             w.AddDocument(d);
             w.Commit();
@@ -212,7 +211,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-            Documents.Document d = new Documents.Document();
+            Document d = new Document();
             d.Add(NewStringField("f", "j", Field.Store.NO));
             w.AddDocument(d);
             w.Commit();

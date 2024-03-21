@@ -38,18 +38,15 @@ namespace Lucene.Net.Index
     {
         //The variables for the new merged segment
         private Directory mergedDir;
-
         private string mergedSegment = "test";
 
         //First segment to be merged
         private Directory merge1Dir;
-
         private Document doc1;
         private SegmentReader reader1;
 
         //Second Segment to be merged
         private Directory merge2Dir;
-
         private Document doc2;
         private SegmentReader reader2;
 
@@ -113,7 +110,12 @@ namespace Lucene.Net.Index
             Assert.IsTrue(newDoc2 != null);
             Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(doc2) - DocHelper.Unstored.Count);
 
-            DocsEnum termDocs = TestUtil.Docs(Random, mergedReader, DocHelper.TEXT_FIELD_2_KEY, new BytesRef("field"), MultiFields.GetLiveDocs(mergedReader), null, 0);
+            DocsEnum termDocs = TestUtil.Docs(Random, mergedReader,
+                DocHelper.TEXT_FIELD_2_KEY,
+                new BytesRef("field"),
+                MultiFields.GetLiveDocs(mergedReader),
+                null,
+                0);
             Assert.IsTrue(termDocs != null);
             Assert.IsTrue(termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
@@ -149,21 +151,22 @@ namespace Lucene.Net.Index
             mergedReader.Dispose();
         }
 
-        private static bool Equals(MergeState.DocMap map1, MergeState.DocMap map2)
-        {
-            if (map1.MaxDoc != map2.MaxDoc)
-            {
-                return false;
-            }
-            for (int i = 0; i < map1.MaxDoc; ++i)
-            {
-                if (map1.Get(i) != map2.Get(i))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        // LUCENENET: commenting out as this method is unused, even in the upstream Java code
+        // private static bool Equals(MergeState.DocMap map1, MergeState.DocMap map2)
+        // {
+        //     if (map1.MaxDoc != map2.MaxDoc)
+        //     {
+        //         return false;
+        //     }
+        //     for (int i = 0; i < map1.MaxDoc; ++i)
+        //     {
+        //         if (map1.Get(i) != map2.Get(i))
+        //         {
+        //             return false;
+        //         }
+        //     }
+        //     return true;
+        // }
 
         [Test]
         public virtual void TestBuildDocMap()

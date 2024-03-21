@@ -83,8 +83,8 @@ namespace Lucene.Net.Index
 
         public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
         {
-            // LUCENENET specific - just use min value to indicate "null" for merge trigger
-            return m_base.FindMerges((MergeTrigger)int.MinValue, segmentInfos);
+            // LUCENENET specific - use NONE instead of null
+            return m_base.FindMerges(MergeTrigger.NONE, segmentInfos);
         }
 
         public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool> segmentsToMerge)
@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            { 
+            {
                 m_base.Dispose();
             }
         }

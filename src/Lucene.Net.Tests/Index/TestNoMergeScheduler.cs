@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
+using System.Linq;
 using System.Reflection;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -34,7 +35,7 @@ namespace Lucene.Net.Index
         {
             MergeScheduler ms = NoMergeScheduler.INSTANCE;
             ms.Dispose();
-            ms.Merge(null, RandomPicks.RandomFrom(Random, (MergeTrigger[])Enum.GetValues(typeof(MergeTrigger))), Random.NextBoolean());
+            ms.Merge(null, RandomPicks.RandomFrom(Random, ((MergeTrigger[])Enum.GetValues(typeof(MergeTrigger))).Where(i => i != MergeTrigger.NONE).ToArray()), Random.NextBoolean());
         }
 
         [Test]

@@ -6,7 +6,6 @@ using Lucene.Net.Search.Similarities;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Text;
 using JCG = J2N.Collections.Generic;
@@ -79,10 +78,10 @@ namespace Lucene.Net.Index
             }
         }
 
-        /**
-         * Makes a bunch of single-char tokens (the max # unique terms will at most be 26).
-         * puts the # unique terms into expected, to be checked against the norm.
-         */
+        /// <summary>
+        /// Makes a bunch of single-char tokens (the max # unique terms will at most be 26).
+        /// puts the # unique terms into expected, to be checked against the norm.
+        /// </summary>
         private string AddValue()
         {
             StringBuilder sb = new StringBuilder();
@@ -99,12 +98,11 @@ namespace Lucene.Net.Index
             return sb.toString();
         }
 
-        /**
-         * Simple similarity that encodes maxTermFrequency directly
-         */
+        /// <summary>
+        /// Simple similarity that encodes maxTermFrequency directly
+        /// </summary>
         internal class TestSimilarity : Similarity
         {
-
             public override long ComputeNorm(FieldInvertState state)
             {
                 return state.UniqueTermCount;

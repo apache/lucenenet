@@ -153,14 +153,27 @@ namespace Lucene.Net.Index
                 }
             }
 
-            DocsEnum termDocs = TestUtil.Docs(Random, reader, DocHelper.TEXT_FIELD_1_KEY, new BytesRef("field"), MultiFields.GetLiveDocs(reader), null, 0);
+            DocsEnum termDocs = TestUtil.Docs(Random, reader,
+                DocHelper.TEXT_FIELD_1_KEY,
+                new BytesRef("field"),
+                MultiFields.GetLiveDocs(reader),
+                null,
+                0);
             Assert.IsTrue(termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
-            termDocs = TestUtil.Docs(Random, reader, DocHelper.NO_NORMS_KEY, new BytesRef(DocHelper.NO_NORMS_TEXT), MultiFields.GetLiveDocs(reader), null, 0);
+            termDocs = TestUtil.Docs(Random, reader,
+                DocHelper.NO_NORMS_KEY,
+                new BytesRef(DocHelper.NO_NORMS_TEXT),
+                MultiFields.GetLiveDocs(reader),
+                null,
+                0);
 
             Assert.IsTrue(termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
-            DocsAndPositionsEnum positions = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), DocHelper.TEXT_FIELD_1_KEY, new BytesRef("field"));
+            DocsAndPositionsEnum positions = MultiFields.GetTermPositionsEnum(reader,
+                MultiFields.GetLiveDocs(reader),
+                DocHelper.TEXT_FIELD_1_KEY,
+                new BytesRef("field"));
             // NOTE: prior rev of this test was failing to first
             // call next here:
             Assert.IsTrue(positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);

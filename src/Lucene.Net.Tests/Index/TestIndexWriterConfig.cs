@@ -135,8 +135,8 @@ namespace Lucene.Net.Index
                     // IndexWriterConfig return type and second with LiveIndexWriterConfig. The ones
                     // from LiveIndexWriterConfig are marked 'synthetic', so just collect them and
                     // assert in the end that we also received them from IWC.
-                    // In C# we do not have them marked synthetic so we look at the declaring type instead.
-                    if (m.DeclaringType.Name == "LiveIndexWriterConfig")
+                    // LUCENENET: In C# we do not have them marked synthetic so we look at the declaring type instead.
+                    if (m.DeclaringType?.Name == "LiveIndexWriterConfig")
                     {
                         liveSetters.Add(m.Name);
                     }
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             // test that IWC cannot be reused across two IWs
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            (new RandomIndexWriter(Random, dir, conf)).Dispose();
+            new RandomIndexWriter(Random, dir, conf).Dispose();
 
             // this should fail
             try
@@ -188,8 +188,8 @@ namespace Lucene.Net.Index
 
             // if it's cloned in advance, it should be ok
             conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            (new RandomIndexWriter(Random, dir, (IndexWriterConfig)conf.Clone())).Dispose();
-            (new RandomIndexWriter(Random, dir, (IndexWriterConfig)conf.Clone())).Dispose();
+            new RandomIndexWriter(Random, dir, (IndexWriterConfig)conf.Clone()).Dispose();
+            new RandomIndexWriter(Random, dir, (IndexWriterConfig)conf.Clone()).Dispose();
 
             dir.Dispose();
         }
@@ -237,13 +237,13 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestToString()
         {
-            string str = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).ToString();
-            foreach (System.Reflection.FieldInfo f in (typeof(IndexWriterConfig).GetFields(
+            string str = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).ToString();
+            foreach (System.Reflection.FieldInfo f in typeof(IndexWriterConfig).GetFields(
                 BindingFlags.Instance |
                 BindingFlags.NonPublic |
                 BindingFlags.Public |
                 BindingFlags.DeclaredOnly |
-                BindingFlags.Static)))
+                BindingFlags.Static))
             {
                 if (f.IsStatic)
                 {

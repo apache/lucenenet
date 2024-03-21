@@ -7,7 +7,6 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
@@ -73,7 +72,8 @@ namespace Lucene.Net.Index
         public virtual void TestUpdatesAreFlushed()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetRAMBufferSizeMB(0.00000001));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
+                .SetRAMBufferSizeMB(0.00000001));
             writer.AddDocument(Doc(0)); // val=1
             writer.AddDocument(Doc(1)); // val=2
             writer.AddDocument(Doc(3)); // val=2
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
             conf.SetMaxBufferedDocs(2); // generate few segments
             conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // prevent merges for this test
             IndexWriter writer = new IndexWriter(dir, conf);
-            int numDocs = 10;
+            const int numDocs = 10;
             long[] expectedValues = new long[numDocs];
             for (int i = 0; i < numDocs; i++)
             {
@@ -619,7 +619,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            conf.SetCodec(new Lucene46CodecAnonymousClass(this));
+            conf.SetCodec(new Lucene46CodecAnonymousClass());
             IndexWriter writer = new IndexWriter(dir, conf);
 
             Document doc = new Document();
@@ -652,13 +652,6 @@ namespace Lucene.Net.Index
 
         private sealed class Lucene46CodecAnonymousClass : Lucene46Codec
         {
-            private readonly TestNumericDocValuesUpdates outerInstance;
-
-            public Lucene46CodecAnonymousClass(TestNumericDocValuesUpdates outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override DocValuesFormat GetDocValuesFormatForField(string field)
             {
                 return new Lucene45DocValuesFormat();
@@ -1155,7 +1148,7 @@ namespace Lucene.Net.Index
             {
                 string f = "f" + i;
                 string cf = "cf" + i;
-                threads[i] = new ThreadAnonymousClass(this, "UpdateThread-" + i, writer, numDocs, done, numUpdates, f, cf);
+                threads[i] = new ThreadAnonymousClass("UpdateThread-" + i, writer, numDocs, done, numUpdates, f, cf);
             }
 
             foreach (ThreadJob t in threads)
@@ -1196,8 +1189,6 @@ namespace Lucene.Net.Index
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestNumericDocValuesUpdates outerInstance;
-
             private readonly IndexWriter writer;
             private readonly int numDocs;
             private readonly CountdownEvent done;
@@ -1205,10 +1196,9 @@ namespace Lucene.Net.Index
             private readonly string f;
             private readonly string cf;
 
-            public ThreadAnonymousClass(TestNumericDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountdownEvent done, AtomicInt32 numUpdates, string f, string cf)
+            public ThreadAnonymousClass(string str, IndexWriter writer, int numDocs, CountdownEvent done, AtomicInt32 numUpdates, string f, string cf)
                 : base(str)
             {
-                this.outerInstance = outerInstance;
                 this.writer = writer;
                 this.numDocs = numDocs;
                 this.done = done;
@@ -1368,7 +1358,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // disable merges to simplify test assertions.
-            conf.SetCodec(new Lucene46CodecAnonymousClass2(this));
+            conf.SetCodec(new Lucene46CodecAnonymousClass2());
             IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
             Document doc = new Document();
             doc.Add(new StringField("id", "d0", Store.NO));
@@ -1378,7 +1368,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             // change format
-            conf.SetCodec(new Lucene46CodecAnonymousClass3(this));
+            conf.SetCodec(new Lucene46CodecAnonymousClass3());
             writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
             doc = new Document();
             doc.Add(new StringField("id", "d1", Store.NO));
@@ -1402,13 +1392,6 @@ namespace Lucene.Net.Index
 
         private sealed class Lucene46CodecAnonymousClass2 : Lucene46Codec
         {
-            private readonly TestNumericDocValuesUpdates outerInstance;
-
-            public Lucene46CodecAnonymousClass2(TestNumericDocValuesUpdates outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override DocValuesFormat GetDocValuesFormatForField(string field)
             {
                 return new Lucene45DocValuesFormat();
@@ -1417,13 +1400,6 @@ namespace Lucene.Net.Index
 
         private sealed class Lucene46CodecAnonymousClass3 : Lucene46Codec
         {
-            private readonly TestNumericDocValuesUpdates outerInstance;
-
-            public Lucene46CodecAnonymousClass3(TestNumericDocValuesUpdates outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override DocValuesFormat GetDocValuesFormatForField(string field)
             {
                 return new AssertingDocValuesFormat();

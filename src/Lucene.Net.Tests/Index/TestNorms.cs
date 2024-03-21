@@ -48,17 +48,10 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestNorms : LuceneTestCase
     {
-        private readonly string byteTestField = "normsTestByte";
+        private const string byteTestField = "normsTestByte";
 
         internal class CustomNormEncodingSimilarity : TFIDFSimilarity
         {
-            private readonly TestNorms outerInstance;
-
-            public CustomNormEncodingSimilarity(TestNorms outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override long EncodeNormValue(float f)
             {
                 return (long)f;
@@ -113,7 +106,7 @@ namespace Lucene.Net.Index
             MockAnalyzer analyzer = new MockAnalyzer(Random);
 
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            config.SetSimilarity(new CustomNormEncodingSimilarity(this));
+            config.SetSimilarity(new CustomNormEncodingSimilarity());
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, config);
             Document doc = new Document();
             Field foo = NewTextField("foo", "", Field.Store.NO);
@@ -169,10 +162,10 @@ namespace Lucene.Net.Index
         public virtual void BuildIndex(Directory dir)
         {
             Random random = Random;
-            MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
-            analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            Similarity provider = new MySimProvider(this);
+            Similarity provider = new MySimProvider();
             config.SetSimilarity(provider);
             RandomIndexWriter writer = new RandomIndexWriter(random, dir, config);
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
@@ -180,7 +173,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < num; i++)
             {
                 Document doc = docs.NextDoc();
-                int boost = LuceneTestCase.Random.Next(255);
+                int boost = Random.Next(255);
                 Field f = new TextField(byteTestField, "" + boost, Field.Store.YES);
                 f.Boost = boost;
                 doc.Add(f);
@@ -198,13 +191,6 @@ namespace Lucene.Net.Index
 
         public class MySimProvider : PerFieldSimilarityWrapper
         {
-            private readonly TestNorms outerInstance;
-
-            public MySimProvider(TestNorms outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             internal Similarity @delegate = new DefaultSimilarity();
 
             public override float QueryNorm(float sumOfSquaredWeights)
@@ -214,7 +200,7 @@ namespace Lucene.Net.Index
 
             public override Similarity Get(string field)
             {
-                if (outerInstance.byteTestField.Equals(field, StringComparison.Ordinal))
+                if (byteTestField.Equals(field, StringComparison.Ordinal))
                 {
                     return new ByteEncodingBoostSimilarity();
                 }

@@ -59,13 +59,6 @@ namespace Lucene.Net.Index
 
         public sealed class YieldTestPoint : ITestPoint
         {
-            private readonly TestStressIndexing2 outerInstance;
-
-            public YieldTestPoint(TestStressIndexing2 outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public void Apply(string name)
             {
                 //      if (name.equals("startCommit")) {
@@ -156,10 +149,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal static Term idTerm = new Term("id", "");
+        // internal static Term idTerm = new Term("id", ""); // LUCENENET: unused
         internal IndexingThread[] threads;
 
-        internal static IComparer<IIndexableField> fieldNameComparer = Comparer<IIndexableField>.Create((o1, o2) => o1.Name.CompareToOrdinal(o2.Name));
+        internal static IComparer<IIndexableField> fieldNameComparer = Comparer<IIndexableField>.Create((o1, o2) =>
+            o1.Name.CompareToOrdinal(o2.Name));
 
         // this test avoids using any extra synchronization in the multiple
         // indexing threads to test that IndexWriter does correctly synchronize
@@ -174,7 +168,11 @@ namespace Lucene.Net.Index
         public virtual DocsAndWriter IndexRandomIWReader(int nThreads, int iterations, int range, Directory dir)
         {
             IDictionary<string, Document> docs = new Dictionary<string, Document>();
-            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(maxBufferedDocs).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
+            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetOpenMode(OpenMode.CREATE)
+                .SetRAMBufferSizeMB(0.1)
+                .SetMaxBufferedDocs(maxBufferedDocs)
+                .SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint());
             w.Commit();
             LogMergePolicy lmp = (LogMergePolicy)w.Config.MergePolicy;
             lmp.NoCFSRatio = 0.0;
@@ -189,7 +187,7 @@ namespace Lucene.Net.Index
             threads = new IndexingThread[nThreads];
             for (int i = 0; i < threads.Length; i++)
             {
-                IndexingThread th = new IndexingThread(this);
+                IndexingThread th = new IndexingThread();
                 th.w = w;
                 th.@base = 1000000 * i;
                 th.range = range;
@@ -212,7 +210,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 IndexingThread th = threads[i];
-                UninterruptableMonitor.Enter(th);
+                UninterruptableMonitor.Enter(th); // LUCENENET: using UninterruptableMonitor instead of lock/synchronized, see docs for type
                 try
                 {
                     docs.PutAll(th.docs);
@@ -233,7 +231,13 @@ namespace Lucene.Net.Index
         public virtual IDictionary<string, Document> IndexRandom(int nThreads, int iterations, int range, Directory dir, int maxThreadStates, bool doReaderPooling)
         {
             IDictionary<string, Document> docs = new Dictionary<string, Document>();
-            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(maxBufferedDocs).SetIndexerThreadPool(new DocumentsWriterPerThreadPool(maxThreadStates)).SetReaderPooling(doReaderPooling).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
+            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetOpenMode(OpenMode.CREATE)
+                .SetRAMBufferSizeMB(0.1)
+                .SetMaxBufferedDocs(maxBufferedDocs)
+                .SetIndexerThreadPool(new DocumentsWriterPerThreadPool(maxThreadStates))
+                .SetReaderPooling(doReaderPooling)
+                .SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint());
             LogMergePolicy lmp = (LogMergePolicy)w.Config.MergePolicy;
             lmp.NoCFSRatio = 0.0;
             lmp.MergeFactor = mergeFactor;
@@ -241,7 +245,7 @@ namespace Lucene.Net.Index
             threads = new IndexingThread[nThreads];
             for (int i = 0; i < threads.Length; i++)
             {
-                IndexingThread th = new IndexingThread(this);
+                IndexingThread th = new IndexingThread();
                 th.w = w;
                 th.@base = 1000000 * i;
                 th.range = range;
@@ -264,7 +268,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 IndexingThread th = threads[i];
-                UninterruptableMonitor.Enter(th);
+                UninterruptableMonitor.Enter(th); // LUCENENET: using UninterruptableMonitor instead of lock/synchronized, see docs for type
                 try
                 {
                     docs.PutAll(th.docs);
@@ -281,11 +285,7 @@ namespace Lucene.Net.Index
             return docs;
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
-        public void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
+        public static void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
         {
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
 
@@ -559,13 +559,13 @@ namespace Lucene.Net.Index
             long[] info1 = new long[r1.NumDocs];
             long[] info2 = new long[r2.NumDocs];
 
-            for (; ; )
+            for (;;)
             {
                 BytesRef term1 = null, term2 = null;
 
                 // iterate until we get some docs
                 int len1;
-                for (; ; )
+                for (;;)
                 {
                     len1 = 0;
                     if (termsEnum1 is null)
@@ -608,7 +608,7 @@ namespace Lucene.Net.Index
 
                 // iterate until we get some docs
                 int len2;
-                for (; ; )
+                for (;;)
                 {
                     len2 = 0;
                     if (termsEnum2 is null)
@@ -810,13 +810,6 @@ namespace Lucene.Net.Index
 
         internal class IndexingThread : ThreadJob
         {
-            private readonly TestStressIndexing2 outerInstance;
-
-            public IndexingThread(TestStressIndexing2 outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             internal IndexWriter w;
             internal int @base;
             internal int range;
@@ -1055,7 +1048,7 @@ namespace Lucene.Net.Index
                     Assert.Fail(e.ToString());
                 }
 
-                UninterruptableMonitor.Enter(this);
+                UninterruptableMonitor.Enter(this); // LUCENENET: using UninterruptableMonitor instead of lock/synchronized, see docs for type
                 try
                 {
                     int dummy = docs.Count;

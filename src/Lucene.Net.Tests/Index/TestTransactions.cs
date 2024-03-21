@@ -47,13 +47,6 @@ namespace Lucene.Net.Index
 
         private class RandomFailure : Failure
         {
-            private readonly TestTransactions outerInstance;
-
-            public RandomFailure(TestTransactions outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override void Eval(MockDirectoryWrapper dir)
             {
                 if (TestTransactions.doFail && Random.Next() % 10 <= 3)
@@ -114,18 +107,16 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : TimedThread
         {
-            private readonly TestTransactions outerInstance;
             internal Directory dir1;
             internal Directory dir2;
             internal object @lock;
             internal int nextID;
 
-            public IndexerThread(TestTransactions outerInstance, object @lock, 
+            public IndexerThread(object @lock,
                 Directory dir1, Directory dir2,
                 TimedThread[] threads)
                 : base(threads)
             {
-                this.outerInstance = outerInstance;
                 this.@lock = @lock;
                 this.dir1 = dir1;
                 this.dir2 = dir2;
@@ -155,7 +146,7 @@ namespace Lucene.Net.Index
                 doFail = true;
                 try
                 {
-                    UninterruptableMonitor.Enter(@lock);
+                    UninterruptableMonitor.Enter(@lock); // LUCENENET: Using UninterruptableMonitor instead of lock/synchronized, see docs for type
                     try
                     {
                         try
@@ -237,7 +228,7 @@ namespace Lucene.Net.Index
             public override void DoWork()
             {
                 IndexReader r1 = null, r2 = null;
-                UninterruptableMonitor.Enter(@lock);
+                UninterruptableMonitor.Enter(@lock); // LUCENENET: Using UninterruptableMonitor instead of lock/synchronized, see docs for type
                 try
                 {
                     try
@@ -297,8 +288,8 @@ namespace Lucene.Net.Index
             MockDirectoryWrapper dir2 = new MockDirectoryWrapper(Random, new RAMDirectory());
             dir1.PreventDoubleWrite = false;
             dir2.PreventDoubleWrite = false;
-            dir1.FailOn(new RandomFailure(this));
-            dir2.FailOn(new RandomFailure(this));
+            dir1.FailOn(new RandomFailure());
+            dir2.FailOn(new RandomFailure());
             dir1.FailOnOpenInput = false;
             dir2.FailOnOpenInput = false;
 
@@ -313,7 +304,7 @@ namespace Lucene.Net.Index
             TimedThread[] threads = new TimedThread[3];
             int numThread = 0;
 
-            IndexerThread indexerThread = new IndexerThread(this, this, dir1, dir2, threads);
+            IndexerThread indexerThread = new IndexerThread(this, dir1, dir2, threads);
 
             threads[numThread++] = indexerThread;
             indexerThread.Start();

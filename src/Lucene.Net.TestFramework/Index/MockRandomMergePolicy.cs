@@ -116,8 +116,8 @@ namespace Lucene.Net.Index
 
         public override MergeSpecification FindForcedDeletesMerges(SegmentInfos segmentInfos)
         {
-            // LUCENENET specific - just use int.MinValue to indicate "null"
-            return FindMerges((MergeTrigger)int.MinValue, segmentInfos);
+            // LUCENENET specific - use NONE instead of null
+            return FindMerges(MergeTrigger.NONE, segmentInfos);
         }
 
         protected override void Dispose(bool disposing)

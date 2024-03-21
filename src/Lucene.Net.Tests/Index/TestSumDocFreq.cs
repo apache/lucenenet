@@ -1,5 +1,4 @@
-﻿using System;
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -30,7 +29,7 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// Tests <seealso cref="Terms#getSumDocFreq()"/>
+    /// Tests <see cref="Terms.SumDocFreq"/>
     /// @lucene.experimental
     /// </summary>
     [TestFixture]

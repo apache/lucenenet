@@ -59,7 +59,12 @@ namespace Lucene.Net.Index
             mergePolicy.NoCFSRatio = 1.0;
             mergePolicy.MaxCFSSegmentSizeMB = double.PositiveInfinity;
 
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(10).SetMergePolicy(mergePolicy).SetUseCompoundFile(true));
+            IndexWriter writer = new IndexWriter(
+                dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).
+                    SetMaxBufferedDocs(10).
+                    SetMergePolicy(mergePolicy).SetUseCompoundFile(true)
+            );
 
             int i;
             for (i = 0; i < 35; i++)
@@ -75,7 +80,11 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             // Delete one doc so we get a .del file:
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetUseCompoundFile(true));
+            writer = new IndexWriter(
+                dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).
+                    SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetUseCompoundFile(true)
+            );
             Term searchTerm = new Term("id", "7");
             writer.DeleteDocuments(searchTerm);
             writer.Dispose();
@@ -157,7 +166,7 @@ namespace Lucene.Net.Index
             {
                 set2.Add(files2[x]);
             }
-            IEnumerator<string> i1 = set1.GetEnumerator();
+            using IEnumerator<string> i1 = set1.GetEnumerator();
             while (i1.MoveNext())
             {
                 string o = i1.Current;
@@ -166,7 +175,7 @@ namespace Lucene.Net.Index
                     extra.Add(o);
                 }
             }
-            IEnumerator<string> i2 = set2.GetEnumerator();
+            using IEnumerator<string> i2 = set2.GetEnumerator();
             while (i2.MoveNext())
             {
                 string o = i2.Current;

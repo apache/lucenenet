@@ -9,6 +9,7 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -54,7 +55,7 @@ namespace Lucene.Net.Index
         private long snapshotCount;
         private long committedModelClock;
         private volatile int lastId;
-        private readonly string field = "val_l";
+        private const string field = "val_l";
         private object[] syncArr;
 
         private void InitModel(int ndocs)
@@ -208,7 +209,7 @@ namespace Lucene.Net.Index
                                 long version;
                                 DirectoryReader oldReader;
 
-                                UninterruptableMonitor.Enter(outerInstance);
+                                UninterruptableMonitor.Enter(outerInstance); // LUCENENET: using UninterruptableMonitor instead of lock/synchronized; see docs for type
                                 try
                                 {
                                     newCommittedModel = new Dictionary<int, long>(outerInstance.model); // take a snapshot
@@ -267,7 +268,7 @@ namespace Lucene.Net.Index
 
                                 oldReader.DecRef();
 
-                                UninterruptableMonitor.Enter(outerInstance);
+                                UninterruptableMonitor.Enter(outerInstance); // LUCENENET: using UninterruptableMonitor instead of lock/synchronized; see docs for type
                                 try
                                 {
                                     // install the new reader if it's newest (and check the current version since another reader may have already been installed)
@@ -286,7 +287,7 @@ namespace Lucene.Net.Index
                                         // Silly: forces fieldInfos to be
                                         // loaded so we don't hit IOE on later
                                         // reader.toString
-                                        newReader.ToString();
+                                        _ = newReader.ToString(); // LUCENENET: discard result
 
                                         // install this snapshot only if it's newer than the current one
                                         if (version >= outerInstance.committedModelClock)
@@ -338,7 +339,7 @@ namespace Lucene.Net.Index
 
                             // We can't concurrently update the same document and retain our invariants of increasing values
                             // since we can't guarantee what order the updates will be executed.
-                            UninterruptableMonitor.Enter(sync);
+                            UninterruptableMonitor.Enter(sync); // LUCENENET: using UninterruptableMonitor instead of lock/synchronized; see docs for type
                             try
                             {
                                 long val = outerInstance.model[id];
@@ -352,16 +353,16 @@ namespace Lucene.Net.Index
                                     if (tombstones)
                                     {
                                         Document d = new Document();
-                                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Documents.Field.Store.YES));
-                                        d.Add(NewField(outerInstance.field, Convert.ToString(nextVal), storedOnlyType));
-                                        writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
+                                        d.Add(NewStringField("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture), Field.Store.YES));
+                                        d.Add(NewField(field, Convert.ToString(nextVal, CultureInfo.InvariantCulture), storedOnlyType));
+                                        writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture)), d);
                                     }
 
                                     if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": term delDocs id:" + id + " nextVal=" + nextVal);
                                     }
-                                    writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                                    writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
                                     outerInstance.model[id] = -nextVal;
                                 }
                                 else if (oper < commitPercent + deletePercent + deleteByQueryPercent)
@@ -372,33 +373,33 @@ namespace Lucene.Net.Index
                                     if (tombstones)
                                     {
                                         Document d = new Document();
-                                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Documents.Field.Store.YES));
-                                        d.Add(NewField(outerInstance.field, Convert.ToString(nextVal), storedOnlyType));
-                                        writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
+                                        d.Add(NewStringField("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture), Field.Store.YES));
+                                        d.Add(NewField(field, Convert.ToString(nextVal, CultureInfo.InvariantCulture), storedOnlyType));
+                                        writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture)), d);
                                     }
 
                                     if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": query delDocs id:" + id + " nextVal=" + nextVal);
                                     }
-                                    writer.DeleteDocuments(new TermQuery(new Term("id", Convert.ToString(id))));
+                                    writer.DeleteDocuments(new TermQuery(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture))));
                                     outerInstance.model[id] = -nextVal;
                                 }
                                 else
                                 {
                                     // assertU(adoc("id",Integer.toString(id), field, Long.toString(nextVal)));
                                     Document d = new Document();
-                                    d.Add(NewStringField("id", Convert.ToString(id), Documents.Field.Store.YES));
-                                    d.Add(NewField(outerInstance.field, Convert.ToString(nextVal), storedOnlyType));
+                                    d.Add(NewStringField("id", Convert.ToString(id, CultureInfo.InvariantCulture), Field.Store.YES));
+                                    d.Add(NewField(field, Convert.ToString(nextVal, CultureInfo.InvariantCulture), storedOnlyType));
                                     if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": u id:" + id + " val=" + nextVal);
                                     }
-                                    writer.UpdateDocument(new Term("id", Convert.ToString(id)), d);
+                                    writer.UpdateDocument(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)), d);
                                     if (tombstones)
                                     {
                                         // remove tombstone after new addition (this should be optional?)
-                                        writer.DeleteDocuments(new Term("id", "-" + Convert.ToString(id)));
+                                        writer.DeleteDocuments(new Term("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture)));
                                     }
                                     outerInstance.model[id] = nextVal;
                                 }
@@ -461,7 +462,7 @@ namespace Lucene.Net.Index
 
                         long val;
                         DirectoryReader r;
-                        UninterruptableMonitor.Enter(outerInstance);
+                        UninterruptableMonitor.Enter(outerInstance); // LUCENENET: using UninterruptableMonitor instead of lock/synchronized; see docs for type
                         try
                         {
                             val = outerInstance.committedModel[id];
@@ -493,13 +494,13 @@ namespace Lucene.Net.Index
                             lastReader = r;
                             lastSearcher = searcher;
                         }
-                        Query q = new TermQuery(new Term("id", Convert.ToString(id)));
+                        Query q = new TermQuery(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
                         TopDocs results = searcher.Search(q, 10);
 
                         if (results.TotalHits == 0 && tombstones)
                         {
                             // if we couldn't find the doc, look for its tombstone
-                            q = new TermQuery(new Term("id", "-" + Convert.ToString(id)));
+                            q = new TermQuery(new Term("id", "-" + Convert.ToString(id, CultureInfo.InvariantCulture)));
                             results = searcher.Search(q, 1);
                             if (results.TotalHits == 0)
                             {
@@ -526,12 +527,12 @@ namespace Lucene.Net.Index
                                 foreach (ScoreDoc sd in results.ScoreDocs)
                                 {
                                     Document doc = r.Document(sd.Doc);
-                                    Console.WriteLine("  docID=" + sd.Doc + " id:" + doc.Get("id") + " foundVal=" + doc.Get(outerInstance.field));
+                                    Console.WriteLine("  docID=" + sd.Doc + " id:" + doc.Get("id") + " foundVal=" + doc.Get(field));
                                 }
                                 Assert.Fail("id=" + id + " reader=" + r + " totalHits=" + results.TotalHits);
                             }
                             Document doc_ = searcher.Doc(results.ScoreDocs[0].Doc);
-                            long foundVal = Convert.ToInt64(doc_.Get(outerInstance.field));
+                            long foundVal = Convert.ToInt64(doc_.Get(field));
                             if (foundVal < Math.Abs(val))
                             {
                                 Assert.Fail("foundVal=" + foundVal + " val=" + val + " id=" + id + " reader=" + r);
@@ -543,7 +544,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsThrowable())
                 {
-                    operations.Value = ((int)-1L);
+                    operations.Value = (int)-1L;
                     Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
                     Console.WriteLine(e.StackTrace);
                     throw RuntimeException.Create(e);

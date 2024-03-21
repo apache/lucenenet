@@ -9,7 +9,6 @@ using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
-using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -65,7 +64,7 @@ namespace Lucene.Net.Index
             long stopTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + AtLeast(1000); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int x = 0; x < indexThreads.Length; x++)
             {
-                indexThreads[x] = new ThreadAnonymousClass(w, stopTime, NewStringField, NewTextField);
+                indexThreads[x] = new ThreadAnonymousClass(w, stopTime);
                 indexThreads[x].Name = "Thread " + x;
                 indexThreads[x].Start();
             }
@@ -103,34 +102,18 @@ namespace Lucene.Net.Index
             w.Dispose();
             d.Dispose();
 
-            System.IO.Directory.Delete(tmpDir.FullName, true);
+            Directory.Delete(tmpDir.FullName, true);
         }
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly Func<string, string, Field.Store, Field> newStringField;
-            private readonly Func<string, string, Field.Store, Field> newTextField;
+            private readonly RandomIndexWriter w;
+            private readonly long stopTime;
 
-            private RandomIndexWriter w;
-            private long stopTime;
-
-            /// <param name="newStringField">
-            /// LUCENENET specific
-            /// Passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
-            /// is no longer static
-            /// </param>
-            /// <param name="newTextField">
-            /// LUCENENET specific
-            /// Passed in because <see cref="LuceneTestCase.NewTextField(string, string, Field.Store)"/>
-            /// is no longer static
-            /// </param>
-            public ThreadAnonymousClass(RandomIndexWriter w, long stopTime, 
-                Func<string, string, Field.Store, Field> newStringField, Func<string, string, Field.Store, Field> newTextField)
+            public ThreadAnonymousClass(RandomIndexWriter w, long stopTime)
             {
                 this.w = w;
                 this.stopTime = stopTime;
-                this.newStringField = newStringField;
-                this.newTextField = newTextField;
             }
 
             public override void Run()
@@ -141,8 +124,8 @@ namespace Lucene.Net.Index
                     while (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond < stopTime) // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                     {
                         Document doc = new Document();
-                        doc.Add(newStringField("dc", "" + docCount, Field.Store.YES));
-                        doc.Add(newTextField("field", "here is some text", Field.Store.YES));
+                        doc.Add(NewStringField("dc", "" + docCount, Field.Store.YES));
+                        doc.Add(NewTextField("field", "here is some text", Field.Store.YES));
                         w.AddDocument(doc);
 
                         if (docCount % 13 == 0)

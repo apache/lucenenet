@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
-using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -40,13 +39,15 @@ namespace Lucene.Net.Index
             Directory dir = NewFSDirectory(CreateTempDir("testLockRelease"));
             try
             {
-                new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
+                // LUCENENET: discard the result
+                _ = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             }
             catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())
             {
                 try
                 {
-                    new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
+                    // LUCENENET: discard the result
+                    _ = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
                 }
                 catch (Exception e1) when (e1.IsNoSuchFileExceptionOrFileNotFoundException())
                 {

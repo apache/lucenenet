@@ -3,10 +3,13 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
-using RandomizedTesting.Generators;
 using System;
 using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
+
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
+using RandomizedTesting.Generators;
+#endif
 
 namespace Lucene.Net.Index
 {
@@ -92,7 +95,10 @@ namespace Lucene.Net.Index
             Document doc = new Document();
 
             doc.Add(NewStringField(field, val, Field.Store.NO));
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(100).SetMergePolicy(NewLogMergePolicy(100)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetOpenMode(OpenMode.CREATE)
+                .SetMaxBufferedDocs(100)
+                .SetMergePolicy(NewLogMergePolicy(100)));
 
             for (int i = 0; i < ndocs; i++)
             {
@@ -129,7 +135,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
 
             long start = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
-            AddDocs(LuceneTestCase.Random, dir, ndocs, "foo", "val", maxTF, percentDocs);
+            AddDocs(Random, dir, ndocs, "foo", "val", maxTF, percentDocs);
             long end = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             if (Verbose)
             {

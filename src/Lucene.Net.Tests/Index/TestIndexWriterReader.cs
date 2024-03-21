@@ -1,11 +1,14 @@
-﻿using J2N.Threading;
+﻿using Lucene.Net.Search;
+using Lucene.Net.Util;
+#if FEATURE_INDEXWRITER_TESTS
+using J2N.Threading;
 using J2N.Threading.Atomic;
-using Lucene.Net.Attributes;
+using Lucene.Net.Analysis;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Support.Threading;
-using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -14,6 +17,7 @@ using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+#endif
 
 namespace Lucene.Net.Index
 {
@@ -34,29 +38,12 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using Directory = Lucene.Net.Store.Directory;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Documents.Document;
-    using FakeIOException = Lucene.Net.Store.FakeIOException;
-    using Field = Field;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using InfoStream = Lucene.Net.Util.InfoStream;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using Query = Lucene.Net.Search.Query;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = TextField;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-
     [TestFixture]
     public class TestIndexWriterReader : LuceneTestCase
     {
+#if FEATURE_INDEXWRITER_TESTS
         private readonly int numThreads = TestNightly ? 5 : 3;
+#endif
 
         public static int Count(Term t, IndexReader r)
         {
@@ -67,7 +54,7 @@ namespace Lucene.Net.Index
             {
                 while (td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    var _ = td.DocID;
+                    _ = td.DocID;
                     count++;
                 }
             }
@@ -700,8 +687,6 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-#endif
-
         /*
         * Delete a document by term and return the doc id
         *
@@ -724,7 +709,9 @@ namespace Lucene.Net.Index
             }
             w.Dispose();
         }
+#endif
 
+        // ReSharper disable once UnusedMember.Global - used in J-S test project, not in I-J
         public static void CreateIndexNoClose(bool multiSegment, string indexName, IndexWriter w)
         {
             for (int i = 0; i < 100; i++)
@@ -738,7 +725,6 @@ namespace Lucene.Net.Index
         }
 
 #if FEATURE_INDEXWRITER_TESTS
-
         private class MyWarmer : IndexWriter.IndexReaderWarmer
         {
             internal int warmCount;
@@ -873,7 +859,7 @@ namespace Lucene.Net.Index
 
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
             IndexWriter writer = new IndexWriter(
-                dir1, 
+                dir1,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                     .SetMergePolicy(NewLogMergePolicy(2)));
 
@@ -1265,14 +1251,14 @@ namespace Lucene.Net.Index
 
             // Don't proceed if picked Codec is in the list of illegal ones.
             string format = TestUtil.GetPostingsFormat("f");
-            AssumeFalse("Format: " + format + " does not support ReaderTermsIndexDivisor!", 
-                (format.Equals("FSTPulsing41", StringComparison.Ordinal) || 
-                format.Equals("FSTOrdPulsing41", StringComparison.Ordinal) || 
-                format.Equals("FST41", StringComparison.Ordinal) || 
-                format.Equals("FSTOrd41", StringComparison.Ordinal) || 
-                format.Equals("SimpleText", StringComparison.Ordinal) || 
-                format.Equals("Memory", StringComparison.Ordinal) || 
-                format.Equals("MockRandom", StringComparison.Ordinal) || 
+            AssumeFalse("Format: " + format + " does not support ReaderTermsIndexDivisor!",
+                (format.Equals("FSTPulsing41", StringComparison.Ordinal) ||
+                format.Equals("FSTOrdPulsing41", StringComparison.Ordinal) ||
+                format.Equals("FST41", StringComparison.Ordinal) ||
+                format.Equals("FSTOrd41", StringComparison.Ordinal) ||
+                format.Equals("SimpleText", StringComparison.Ordinal) ||
+                format.Equals("Memory", StringComparison.Ordinal) ||
+                format.Equals("MockRandom", StringComparison.Ordinal) ||
                 format.Equals("Direct", StringComparison.Ordinal)));
 
             Directory dir = NewDirectory();

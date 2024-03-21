@@ -126,9 +126,9 @@ namespace Lucene.Net.Index
     /// the <see cref="mergePolicy"/> and the <see cref="mergeScheduler"/>.
     /// The <see cref="mergePolicy"/> is invoked whenever there are
     /// changes to the segments in the index.  Its role is to
-    /// select which merges to do, if any, and return a 
+    /// select which merges to do, if any, and return a
     /// <see cref="MergePolicy.MergeSpecification"/> describing the merges.
-    /// The default is <see cref="LogByteSizeMergePolicy"/>.  Then, the 
+    /// The default is <see cref="LogByteSizeMergePolicy"/>.  Then, the
     /// <see cref="MergeScheduler"/> is invoked with the requested merges and
     /// it decides when and how to run the merges.  The default is
     /// <see cref="ConcurrentMergeScheduler"/>. </para>
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
     /// last commit.  You can also just call <see cref="Rollback()"/>
     /// directly.</para>
     ///
-    /// <a name="thread-safety"></a><para><b>NOTE</b>: 
+    /// <a name="thread-safety"></a><para><b>NOTE</b>:
     /// <see cref="IndexWriter"/> instances are completely thread
     /// safe, meaning multiple threads can call any of its
     /// methods, concurrently.  If your application requires
@@ -1074,24 +1074,24 @@ namespace Lucene.Net.Index
         /// something like this:</para>
         ///
         /// <code>
-        /// try 
+        /// try
         /// {
         ///     writer.Dispose();
-        /// } 
-        /// finally 
+        /// }
+        /// finally
         /// {
-        ///     if (IndexWriter.IsLocked(directory)) 
+        ///     if (IndexWriter.IsLocked(directory))
         ///     {
         ///         IndexWriter.Unlock(directory);
         ///     }
         /// }
         /// </code>
-        /// 
+        ///
         /// after which, you must be certain not to use the writer
         /// instance anymore.
         ///
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
-        /// you should immediately dispose the writer, again.  See 
+        /// you should immediately dispose the writer, again.  See
         /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
@@ -1109,7 +1109,7 @@ namespace Lucene.Net.Index
         /// threads.
         ///
         /// <para><b>NOTE</b>: If this method hits an <see cref="OutOfMemoryException"/>
-        /// you should immediately dispose the writer, again.  See 
+        /// you should immediately dispose the writer, again.  See
         /// <see cref="IndexWriter"/> for details.</para>
         ///
         /// <para><b>NOTE</b>: It is dangerous to always call
@@ -1160,7 +1160,7 @@ namespace Lucene.Net.Index
         /// set to <c>true</c>.</para>
         ///
         /// <para><b>NOTE</b>: If this method hits an <see cref="OutOfMemoryException"/>
-        /// you should immediately dispose the writer, again.  See 
+        /// you should immediately dispose the writer, again.  See
         /// <see cref="IndexWriter"/> for details.</para>
         ///
         /// <para><b>NOTE</b>: It is dangerous to always call
@@ -1594,7 +1594,7 @@ namespace Lucene.Net.Index
         /// U+FFFD.</para>
         ///
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
-        /// you should immediately dispose the writer.  See 
+        /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
@@ -1658,8 +1658,8 @@ namespace Lucene.Net.Index
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
         /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
-        /// 
-        /// @lucene.experimental 
+        ///
+        /// @lucene.experimental
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
@@ -1746,7 +1746,7 @@ namespace Lucene.Net.Index
         /// Deletes the document(s) containing <paramref name="term"/>.
         ///
         /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
-        /// you should immediately dispose the writer.  See 
+        /// you should immediately dispose the writer.  See
         /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <param name="term"> the term to identify the documents to be deleted </param>
@@ -1770,7 +1770,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: attempts to delete by document ID, as long as
-        /// the provided <paramref name="readerIn"/> is a near-real-time reader (from 
+        /// the provided <paramref name="readerIn"/> is a near-real-time reader (from
         /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/>.  If the
         /// provided <paramref name="readerIn"/> is an NRT reader obtained from this
         /// writer, and its segment has not been merged away, then
@@ -2604,7 +2604,7 @@ namespace Lucene.Net.Index
             try
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(maxNumSegments == -1 || maxNumSegments > 0);
-                //if (Debugging.AssertsEnabled) Debugging.Assert(trigger != null); // LUCENENET NOTE: Enum cannot be null in .NET
+                if (Debugging.AssertsEnabled) Debugging.Assert(trigger != MergeTrigger.NONE); // LUCENENET specific: using NONE instead of null
                 if (stopMerges)
                 {
                     return false;
@@ -2912,7 +2912,7 @@ namespace Lucene.Net.Index
         ///    documents as deleted.</para>
         ///
         /// <para>NOTE: this method will forcefully abort all merges
-        ///    in progress.  If other threads are running 
+        ///    in progress.  If other threads are running
         ///    <see cref="ForceMerge(int)"/>, <see cref="AddIndexes(IndexReader[])"/> or
         ///    <see cref="ForceMergeDeletes()"/> methods, they may receive
         ///    <see cref="MergePolicy.MergeAbortedException"/>s.</para>
@@ -3852,8 +3852,8 @@ namespace Lucene.Net.Index
         /// steps necessary to commit changes since this writer
         /// was opened: flushes pending added and deleted docs,
         /// syncs the index files, writes most of next segments_N
-        /// file.  After calling this you must call either 
-        /// <see cref="Commit()"/> to finish the commit, or 
+        /// file.  After calling this you must call either
+        /// <see cref="Commit()"/> to finish the commit, or
         /// <see cref="Rollback()"/> to revert the commit and undo all changes
         /// done since the writer was opened.</para>
         ///
@@ -6136,7 +6136,7 @@ namespace Lucene.Net.Index
         /// after a merge completes.
         /// <para/>
         /// @lucene.experimental
-        /// 
+        ///
         /// <para/><b>NOTE</b>: <see cref="Warm(AtomicReader)"/> is called before any deletes have
         /// been carried over to the merged segment.
         /// </summary>
