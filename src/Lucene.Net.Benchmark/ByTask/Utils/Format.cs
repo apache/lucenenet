@@ -25,15 +25,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
     public static class Formatter // LUCENENET specific - renamed from Format because of method name collision, CA1052 Static holder types should be Static or NotInheritable
     {
         private static readonly string[] numFormat = {
-            "N0",
-            "N1",
-            "N2"
+            "{0:N0}",
+            "{0:N1}",
+            "{0:N2}"
         };
 
         private const string padd = "                                                 ";
 
         /// <summary>
-        /// Padd a number from left.
+        /// Pad a number from left.
         /// </summary>
         /// <param name="numFracDigits">Number of digits in fraction part - must be 0 or 1 or 2.</param>
         /// <param name="f">Number to be formatted.</param>

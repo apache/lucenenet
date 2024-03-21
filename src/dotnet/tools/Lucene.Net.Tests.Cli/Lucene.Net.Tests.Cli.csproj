@@ -18,14 +18,14 @@
  specific language governing permissions and limitations
  under the License.
 
--->  
+-->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
 
   <PropertyGroup>
     <!-- Allow specific target framework to flow in from TestTargetFrameworks.props -->
-    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net7.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net8.0;net6.0</TargetFrameworks>
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>
   </PropertyGroup>
 
@@ -34,7 +34,7 @@
     <IsPublishable>false</IsPublishable>
     <IsTestProject>false</IsTestProject>
     <!-- For the IDE, the above doesn't work. Redirect to a supported test framework instead. -->
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
