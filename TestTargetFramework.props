@@ -63,12 +63,10 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
-  <PropertyGroup Label="net5.0 Warnings to be Disabled in Test Projects" Condition=" '$(TargetFramework)' == 'net5.0' ">
-    <!-- We purposely test on EoL frameworks for testing netstandard2.1, but we want to keep this warning in production code. -->
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
-  </PropertyGroup>
-
   <PropertyGroup Label="Warnings to be Disabled in Test Projects">
+
+    <!-- We purposely test on EoL frameworks for testing netstandard2.1, but we want to keep this warning in production code. -->
+    <CheckEolTargetFramework Condition=" '$(TargetFramework)' == 'net5.0' ">false</CheckEolTargetFramework>
 
     <NoWarn Label="Nested types should not be visible">$(NoWarn);CA1034</NoWarn>
     <NoWarn Label="Use Literals Where Appropriate">$(NoWarn);CA1802</NoWarn>
