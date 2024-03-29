@@ -112,13 +112,7 @@ steps:
     performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
   condition: and(succeeded(), contains('${{ parameters.framework }}', 'net6.'))
 
-- task: UseDotNet@2
-  displayName: 'Use .NET sdk 8.0.202'
-  inputs:
-    packageType: 'sdk'
-    version: '8.0.202'
-    performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
-  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net8.'))
+# NOTE: .NET 8 is not needed here as it is installed in the install-dotnet-sdk.yml template above
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
 - pwsh: |
