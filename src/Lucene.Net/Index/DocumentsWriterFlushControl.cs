@@ -418,7 +418,6 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsHeldByCurrentThread); // LUCENENET specific: Since .NET Core doesn't use unfair locking, we need to ensure the current thread has a lock before calling InternalTryCheckoutForFlush.
                 return perThread.flushPending ? InternalTryCheckOutForFlush(perThread) : null;
             }
             finally
@@ -453,28 +452,34 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                // LUCENENET specific - Since we need to mimic the unfair behavior of ReentrantLock, we need to ensure that all threads that enter here hold the lock.
-                Debugging.Assert(perThread.IsHeldByCurrentThread);
                 Debugging.Assert(UninterruptableMonitor.IsEntered(this));
                 Debugging.Assert(perThread.flushPending);
             }
             try
             {
-                // LUCENENET specific - We removed the call to perThread.TryLock() and the try-finally below as they are no longer needed.
-
-                // We are pending so all memory is already moved to flushBytes
-                if (perThread.IsInitialized)
+                if (perThread.TryLock())
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsHeldByCurrentThread);
-                    DocumentsWriterPerThread dwpt;
-                    long bytes = perThread.bytesUsed; // do that before
-                    // replace!
-                    dwpt = DocumentsWriterPerThreadPool.Reset(perThread, closed); // LUCENENET specific - made method static per CA1822
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!flushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
-                    // Record the flushing DWPT to reduce flushBytes in doAfterFlush
-                    flushingWriters[dwpt] = bytes;
-                    numPending--; // write access synced
-                    return dwpt;
+                    try
+                    {
+                        // We are pending so all memory is already moved to flushBytes
+                        if (perThread.IsInitialized)
+                        {
+                            if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsHeldByCurrentThread);
+                            DocumentsWriterPerThread dwpt;
+                            long bytes = perThread.bytesUsed; // do that before
+                                                              // replace!
+                            dwpt = DocumentsWriterPerThreadPool.Reset(perThread, closed); // LUCENENET specific - made method static per CA1822
+                            if (Debugging.AssertsEnabled) Debugging.Assert(!flushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
+                            // Record the flushing DWPT to reduce flushBytes in doAfterFlush
+                            flushingWriters[dwpt] = bytes;
+                            numPending--; // write access synced
+                            return dwpt;
+                        }
+                    }
+                    finally
+                    {
+                        perThread.Unlock();
+                    }
                 }
                 return null;
             }
@@ -515,19 +520,12 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < limit && numPending > 0; i++)
                 {
                     ThreadState next = perThreadPool.GetThreadState(i);
-                    if (next.flushPending && next.TryLock()) // LUCENENET specific: Since .NET Core 2+ uses fair locking, we need to ensure we have a lock before calling InternalTryCheckoutForFlush. See #
+                    if (next.flushPending)
                     {
-                        try
+                        DocumentsWriterPerThread dwpt = TryCheckoutForFlush(next);
+                        if (dwpt != null)
                         {
-                            DocumentsWriterPerThread dwpt = TryCheckoutForFlush(next);
-                            if (dwpt != null)
-                            {
-                                return dwpt;
-                            }
-                        }
-                        finally
-                        {
-                            next.Unlock();
+                            return dwpt;
                         }
                     }
                 }
