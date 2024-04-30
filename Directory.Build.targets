@@ -150,10 +150,6 @@
     <DebugType Condition=" '$(PortableDebugTypeOnly)' == 'true' ">portable</DebugType>
   </PropertyGroup>
 
-  <PropertyGroup Label="Versioning">
-    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-  </PropertyGroup>
-
   <Target Name="AddInternalsVisibleTo" BeforeTargets="BeforeCompile" Label="Adds InternalsVisibleTo Attribute and PublicKey (if supplied)">
     <ItemGroup Condition="'@(InternalsVisibleTo->Count())' &gt; 0 ">
       <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
