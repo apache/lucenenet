@@ -55,7 +55,7 @@ variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
 - name: DotNetSDKVersion
-  value: '8.0.202'
+  value: '8.0.204'
 - name: DocumentationArtifactName
   value: 'docs'
 - name: DocumentationArtifactZipFileName
@@ -366,7 +366,7 @@ stages:
       matrix:
         Windows:
           osName: 'Windows'
-          imageName: 'windows-latest'
+          imageName: 'windows-2019'
           maximumParallelJobs: 8
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
     displayName: 'Test net8.0,x86 on'
