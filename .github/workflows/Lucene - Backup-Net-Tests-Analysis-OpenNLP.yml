@@ -18,36 +18,32 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: 'Lucene.Net.Tests._A-D'
+name: 'Lucene - Backup.Net.Tests.Analysis.OpenNLP'
 
 on:
   workflow_dispatch:
   pull_request:
     paths:
-    - 'src/Lucene.Net.Tests._A-D/**/*'
+    - 'src/Lucene.Net.Tests.Analysis.OpenNLP/**/*'
     - '.build/dependencies.props'
     - '.build/TestReferences.Common.*'
     - 'TestTargetFrameworks.*'
     - '*.sln'
-    - 'src/Lucene.Net.Tests._A-D/Directory.Build.*'
+    - 'src/Lucene.Net.Tests.Analysis.OpenNLP/Directory.Build.*'
     - 'src/Directory.Build.*'
     - 'Directory.Build.*'
-    - 'src/Lucene.Net.Tests/Properties/AssemblyInfo.cs'
-    - 'src/Lucene.Net.Tests/*.cs'
-    - 'src/Lucene.Net.Tests/Analysis/**/*.cs'
-    - 'src/Lucene.Net.Tests/Codecs/**/*.cs'
-    - 'src/Lucene.Net.Tests/Document/**/*.cs'
+    - 'src/Lucene.Net.Tests.Analysis.OpenNLP/**/*.dict'
+    - 'src/Lucene.Net.Tests.Analysis.OpenNLP/**/*.bin'
 
     # Dependencies
     - 'src/Lucene.Net/**/*'
     - 'src/Lucene.Net.Analysis.Common/**/*'
-    - 'src/Lucene.Net.Codecs/**/*'
+    - 'src/Lucene.Net.Memory/**/*'
     - 'src/Lucene.Net.Queries/**/*'
-    - 'src/Lucene.Net.Grouping/**/*'
-    - 'src/Lucene.Net.Join/**/*'
-    - 'src/Lucene.Net.Facet/**/*'
-    - 'src/Lucene.Net.Sandbox/**/*'
-    - 'src/Lucene.Net.QueryParser/**/*'
+    - 'src/Lucene.Net.Highlighter/**/*'
+    - 'src/dotnet/Lucene.Net.ICU/**/*'
+    - 'src/Lucene.Net.Analysis.OpenNLP/**/*'
+    - 'src/Lucene.Net.Codecs/**/*'
     - 'src/Lucene.Net.TestFramework/**/*'
 
     - '!**/*.md'
@@ -60,7 +56,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net8.0, net5.0, net48, net461]
+        framework: [net48]
         platform: [x64]
         configuration: [Release]
         exclude:
@@ -73,7 +69,7 @@ jobs:
           - os: macos-latest
             framework: net461
     env:
-      project_path: './src/Lucene.Net.Tests._A-D/Lucene.Net.Tests._A-D.csproj'
+      project_path: './src/Lucene.Net.Tests.Analysis.OpenNLP/Lucene - Backup.Net.Tests.Analysis.OpenNLP.csproj'
       run_slow_tests: 'false'
       trx_file_name: 'TestResults.trx'
       md_file_name: 'TestResults.md' # Report file name for LiquidTestReports.Markdown

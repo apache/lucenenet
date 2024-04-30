@@ -53,15 +53,15 @@
 
  .PARAMETER DotNet8SDKVersion
     The SDK version of .NET 8.x to install on the build agent to be used for building and
-    testing. This SDK is always installed on the build agent. The default is 8.0.202.
+    testing. This SDK is always installed on the build agent. The default is 8.0.x.
 
  .PARAMETER DotNet6SDKVersion
     The SDK version of .NET 6.x to install on the build agent to be used for building and
-    testing. This SDK is always installed on the build agent. The default is 6.0.403.
+    testing. This SDK is always installed on the build agent. The default is 6.0.x.
 
  .PARAMETER DotNet5SDKVersion
     The SDK version of .NET 5.x to install on the build agent to be used for building and
-    testing. This SDK is always installed on the build agent. The default is 5.0.400.
+    testing. This SDK is always installed on the build agent. The default is 5.0.x.
 #>
 param(
     [string]$OutputDirectory =  $PSScriptRoot,
@@ -76,11 +76,11 @@ param(
 
     [string[]]$Configurations = @('Release'),
 
-    [string]$DotNet8SDKVersion = '8.0.202',
+    [string]$DotNet8SDKVersion = '8.0.x',
 
-    [string]$DotNet6SDKVersion = '6.0.403',
+    [string]$DotNet6SDKVersion = '6.0.x',
 
-    [string]$DotNet5SDKVersion = '5.0.400'
+    [string]$DotNet5SDKVersion = '5.0.x'
 )
 
 
