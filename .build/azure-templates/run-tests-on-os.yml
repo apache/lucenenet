@@ -77,7 +77,6 @@ steps:
 
 - pwsh: |
     $testPlatform = '${{ parameters.vsTestPlatform }}'
-    $framework = '${{ parameters.framework }}'
     if ($IsWindows -eq $null) {
         $IsWindows = $env:OS.StartsWith('Win')
     }
