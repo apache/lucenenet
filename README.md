@@ -1,4 +1,4 @@
-# Welcome to Apache Lucene.NET 
+﻿# Welcome to Apache Lucene.NET 
 
 [![Nuget](https://img.shields.io/nuget/dt/Lucene.Net)](https://www.nuget.org/packages/Lucene.Net)
 [![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/lucene-net/6ba240c9-9598-47e7-a793-0ed8a4ba2f8b/3/master)](https://dev.azure.com/lucene-net/Lucene.NET/_build?definitionId=3&_a=summary)
@@ -178,7 +178,7 @@ Before you start working on a pull request, please read our [Contributing](https
 ##### Prerequisites
 
 1. [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell) 5.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your PowerShell version)
-2. [.NET 7.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
+2. [.NET 8.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 ##### Execution
 
@@ -277,7 +277,7 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 #### Prerequisites
 
 1. Visual Studio 2022 or higher
-2. [.NET 7.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
+2. [.NET 8.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 #### Execution
 

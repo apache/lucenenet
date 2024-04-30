@@ -6,9 +6,9 @@
 # The ASF licenses this file to You under the Apache License, Version 2.0
 # (the ""License""); you may not use this file except in compliance with
 # the License.  You may obtain a copy of the License at
-# 
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an ""AS IS"" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ properties {
     [string]$testResultsDirectory = "$artifactsDirectory/TestResults"
     [string]$publishDirectory = "$artifactsDirectory/Publish"
     [string]$solutionFile = "$baseDirectory/Lucene.Net.sln"
-    [string]$minimumSdkVersion = "7.0.100"
+    [string]$minimumSdkVersion = "8.0.100"
     [string]$globalJsonFile = "$baseDirectory/global.json"
     [string]$versionPropsFile = "$baseDirectory/version.props"
     [string]$luceneReadmeFile = "$baseDirectory/src/Lucene.Net/readme-nuget.md"
@@ -48,7 +48,7 @@ properties {
     [string]$publishedArtifactZipFileName = "artifact.zip"
 
     [int]$maximumParallelJobs = 8
-    
+
     #test parameters
     #The build uses Lucene.Net.Tests.Analysis.Common to determine all of the targets for the solution:
     [string]$projectWithAllTestFrameworks = "$baseDirectory/src/Lucene.Net.Tests.Analysis.Common/Lucene.Net.Tests.Analysis.Common.csproj"
@@ -116,7 +116,7 @@ task Init -depends CheckSDK, UpdateLocalSDKVersion -description "This task makes
 task Restore -description "This task restores the dependencies" {
     Write-Host "##teamcity[progressMessage 'Restoring']"
     Write-Host "##vso[task.setprogress]'Restoring'"
-    Exec { 
+    Exec {
         & dotnet restore $solutionFile --no-dependencies /p:TestFrameworks=true
     }
 }
@@ -195,13 +195,13 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 
     try {
         $frameworksToTest = Get-FrameworksToTest
-        
+
         if ($zipPublishedArtifacts) {
             $outDirectory = New-TemporaryDirectory
         } else {
             $outDirectory = $publishDirectory
         }
-        
+
         foreach ($framework in $frameworksToTest) {
 
             # Pause if we have queued too many parallel jobs
@@ -215,7 +215,7 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 
             # Do this first so there is no conflict
             Ensure-Directory-Exists $outputPath
-            
+
             Write-Host "Configuration: $configuration"
 
             $expression = "dotnet publish `"$solutionFile`" --configuration `"$configuration`" --framework `"$framework`" --output `"$outputPath`""
@@ -271,7 +271,7 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
     popd
 
     $testProjects = $testProjects | Sort-Object -Property FullName
-    
+
     $frameworksToTest = Get-FrameworksToTest
 
     [int]$totalProjects = $testProjects.Length * $frameworksToTest.Length
@@ -281,7 +281,7 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
 
     foreach ($testProject in $testProjects) {
         $testName = $testProject.Directory.Name
-        
+
         # Call the target to get the configured test frameworks for this project. We only read the first line because MSBuild adds extra output.
         $frameworksString = $(dotnet build "$testProject" --verbosity minimal --nologo --no-restore /t:PrintTargetFrameworks /p:TestProjectsOnly=true /p:TestFrameworks=true)[0].Trim()
 
@@ -296,7 +296,7 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
 
         $frameworks = [System.Collections.Generic.HashSet[string]]::new($frameworksString -split '\s*;\s*')
         foreach ($framework in $frameworksToTest) {
-            
+
             # If the framework is not valid for this configuration, we need to adjust our
             # initial estimate and skip the combination.
             if (-not $frameworks.Contains($framework)) {
@@ -304,7 +304,7 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
                 $remainingProjects--
                 continue
             }
-            
+
             Write-Host ""
             Write-Host "  Next Project in Queue: $testName, Framework: $framework" -ForegroundColor Yellow
 
@@ -336,7 +336,7 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
             # Also log to a file in TRX format, so we have a build artifact both when
             # doing release inspection and on the CI server.
             $testExpression = "$testExpression --logger:""trx;LogFileName=TestResults.trx"""
-            
+
             if (![string]::IsNullOrEmpty($where)) {
                 $testExpression = "$testExpression --TestCaseFilter:""$where"""
             }
@@ -580,7 +580,7 @@ function Summarize-Test-Results([string[]]$frameworksToTest) {
             $_.FullName
         }
         popd
-        
+
         [int]$totalCountForFramework = 0
         [int]$executedCountForFramework = 0
         [int]$passedCountForFramework = 0
@@ -604,7 +604,7 @@ function Summarize-Test-Results([string[]]$frameworksToTest) {
             $reader = [System.Xml.XmlReader]::Create($testReport)
             try {
                 while ($reader.Read()) {
-                    
+
                     if ($reader.NodeType -eq [System.Xml.XmlNodeType]::Element -and $reader.Name -eq 'ResultSummary') {
                         $outcome = $reader.GetAttribute('outcome')
                         if ($outcomeForFramework -eq 'Completed') {

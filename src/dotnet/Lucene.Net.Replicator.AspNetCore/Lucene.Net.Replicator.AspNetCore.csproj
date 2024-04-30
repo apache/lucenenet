@@ -25,7 +25,7 @@
   <!--<Import Project="$(SolutionDir).build/nuget.props" />-->
   
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Replicator.AspNetCore</AssemblyTitle>
     <Description>AspNetCore integration of Lucene.Net.Replicator for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>

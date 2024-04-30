@@ -26,33 +26,33 @@
     <!-- Changing this setting will allow testing on all target frameworks within Visual Studio 2019.
     Note that the main libraries are multi-targeted, so this has no effect on how they are compiled,
     this setting only affects the test projects. -->
-    <!--<TargetFramework>net461</TargetFramework>-->
+    <!--<TargetFramework>net472</TargetFramework>-->
     <!--<TargetFramework>net48</TargetFramework>-->
     <!--<TargetFramework>net5.0</TargetFramework>-->
     <!--<TargetFramework>net6.0</TargetFramework>-->
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 
     <!-- Allow the build script to pass in the test frameworks to build for.
-      This overrides the above TargetFramework setting. 
+      This overrides the above TargetFramework setting.
       LUCENENET TODO: Due to a parsing bug, we cannot pass a string with a ; to dotnet msbuild, so passing true as a workaround -->
 
     <!-- Test Client to DLL target works as follows:
       Test Client       | Target Under Test
-      net7.0            | net6.0
+      net8.0            | net6.0
       net6.0            | net6.0
       net5.0            | netstandard2.1
       net48             | net462
-      net461            | netstandard2.0
+      net472            | netstandard2.0
     -->
-    
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net7.0;net6.0;net5.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48;net461</TargetFrameworks>
+
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net8.0;net6.0;net5.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48;net472</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Label="Mismatched Target Framework (to override the target framework under test)">
     <SetTargetFramework></SetTargetFramework>
-    <SetTargetFramework Condition=" '$(TargetFramework)' == 'net461' ">TargetFramework=netstandard2.0</SetTargetFramework>
+    <SetTargetFramework Condition=" '$(TargetFramework)' == 'net472' ">TargetFramework=netstandard2.0</SetTargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Label="Assembly Publishing">
@@ -64,9 +64,10 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Warnings to be Disabled in Test Projects">
+
     <!-- We purposely test on EoL frameworks for testing netstandard2.1, but we want to keep this warning in production code. -->
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
-    
+    <CheckEolTargetFramework Condition=" '$(TargetFramework)' == 'net5.0' ">false</CheckEolTargetFramework>
+
     <NoWarn Label="Nested types should not be visible">$(NoWarn);CA1034</NoWarn>
     <NoWarn Label="Use Literals Where Appropriate">$(NoWarn);CA1802</NoWarn>
     <NoWarn Label="Do not ignore method results">$(NoWarn);CA1806</NoWarn>
@@ -90,5 +91,5 @@
     <!-- SonarCloud issues -->
     <NoWarn Label="Add at least one assertion to this test case">$(NoWarn);S2699</NoWarn>
   </PropertyGroup>
-  
+
 </Project>

@@ -88,7 +88,7 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsOptionsPackageVersion)" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsOptionsPackageVersion)" />
   </ItemGroup>
 

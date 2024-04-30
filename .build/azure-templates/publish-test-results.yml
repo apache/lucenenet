@@ -76,7 +76,11 @@ steps:
                     if ($inRunInfos -and !$crashed -and $reader.Name -eq 'Text') {
                         $innerXml = $reader.ReadInnerXml()
                         # Test for specific error messages - we may need to adjust this, as needed
-                        if ($innerXml -and ($innerXml.Contains('Test host process crashed') -or $innerXml.Contains('Could not load file or assembly'))) {
+                        if ($innerXml -and ($innerXml.Contains('Test host process crashed') `
+                            -or $innerXml.Contains('Could not load file or assembly') `
+                            -or $innerXml.Contains("Could not find `'dotnet.exe`' host") `
+                            -or $innerXml.Contains('No test is available') `
+                            -or $innerXml.Contains('exited with error'))) {
                             Write-Host "##vso[task.setvariable variable=HostCrashed;]true"
                             # Report all of the test projects that crashed
                             $crashedRuns = "$env:CRASHEDRUNS,$testProjectName".TrimStart(',')

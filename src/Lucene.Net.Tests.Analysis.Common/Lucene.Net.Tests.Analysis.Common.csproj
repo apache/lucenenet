@@ -61,7 +61,7 @@
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
 

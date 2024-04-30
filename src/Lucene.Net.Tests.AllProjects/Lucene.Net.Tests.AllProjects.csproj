@@ -33,7 +33,7 @@
   <ItemGroup>
     <Compile Include="..\Lucene.Net.Tests\Support\ExceptionHandling\**\*.cs" LinkBase="Support\ExceptionHandling" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
@@ -118,7 +118,7 @@
 
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) ">
     <ProjectReference Include="..\Lucene.Net.Analysis.OpenNLP\Lucene.Net.Analysis.OpenNLP.csproj" />
   </ItemGroup>
 

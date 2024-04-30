@@ -5,9 +5,9 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -55,7 +55,7 @@ variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
 - name: DotNetSDKVersion
-  value: '7.0.100'
+  value: '8.0.204'
 - name: DocumentationArtifactName
   value: 'docs'
 - name: DocumentationArtifactZipFileName
@@ -63,7 +63,7 @@ variables:
 - name: WebsiteArtifactName
   value: 'website'
 - name: WebsiteArtifactZipFileName
-  value: 'website.zip'  
+  value: 'website.zip'
 - name: BinaryArtifactName
   value: 'testbinaries'
 - name: NuGetArtifactName
@@ -105,7 +105,7 @@ stages:
       PublishTempDirectory: '$(Build.ArtifactStagingDirectory)/publish'
 
     steps:
-    
+
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
@@ -144,7 +144,7 @@ stages:
       displayName: 'PSake Build, Pack, and Publish'
 
     #- template: '.build/azure-templates/show-all-environment-variables.yml' # Uncomment for debugging
-        
+
     - pwsh: |
         $dir = '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
         if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path "$dir" -Force }
@@ -195,15 +195,15 @@ stages:
           version.props
         TargetFolder: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
       condition: and(succeeded(), eq(variables['IsRelease'], 'true'))
-            
+
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(VersionArtifactName)'
       inputs:
         targetPath: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
         artifact: '$(VersionArtifactName)'
         publishLocation: 'pipeline'
-    
-    # Copy the .pdb files as build artifacts, which will 
+
+    # Copy the .pdb files as build artifacts, which will
     # later be used to push to the Azure Artifacts symbol server.
     - task: CopyFiles@2
       displayName: 'Copy .pdb Files to: /$(DebugArtifactName)'
@@ -220,7 +220,7 @@ stages:
         artifact: '$(NuGetArtifactName)'
         publishLocation: 'pipeline'
       condition: and(succeeded(), ne(variables['RunPack'], 'false'))
-    
+
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(DebugArtifactName)'
       inputs:
@@ -232,7 +232,7 @@ stages:
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
-        framework: 'net7.0'
+        framework: 'net8.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
@@ -253,7 +253,7 @@ stages:
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
-        framework: 'net461'
+        framework: 'net472'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
@@ -263,7 +263,7 @@ stages:
         framework: 'net48'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
-        
+
   - job: Docs
     condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))
     pool:
@@ -325,7 +325,7 @@ stages:
   displayName: 'Test Stage:'
   jobs:
 
-  - job: Test_net7_0_x64
+  - job: Test_net8_0_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
       matrix:
@@ -344,14 +344,14 @@ stages:
           imageName: 'macOS-latest'
           maximumParallelJobs: 7
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-    displayName: 'Test net7.0,x64 on'
+    displayName: 'Test net8.0,x64 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        framework: 'net7.0'
+        framework: 'net8.0'
         vsTestPlatform: 'x64'
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
@@ -360,23 +360,23 @@ stages:
         maximumAllowedFailures: $(maximumAllowedFailures)
         dotNetSdkVersion: '$(DotNetSDKVersion)'
 
-  - job: Test_net7_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+  - job: Test_net8_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
     strategy:
       matrix:
         Windows:
           osName: 'Windows'
-          imageName: 'windows-latest'
+          imageName: 'windows-2019'
           maximumParallelJobs: 8
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-    displayName: 'Test net7.0,x86 on'
+    displayName: 'Test net8.0,x86 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        framework: 'net7.0'
+        framework: 'net8.0'
         vsTestPlatform: 'x86'
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
@@ -505,7 +505,7 @@ stages:
         maximumAllowedFailures: $(maximumAllowedFailures)
         dotNetSdkVersion: '$(DotNetSDKVersion)'
 
-  - job: Test_net461_x64
+  - job: Test_net472_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
       matrix:
@@ -514,14 +514,14 @@ stages:
           imageName: 'windows-2019'
           maximumParallelJobs: 8
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-    displayName: 'Test net461,x64 on'
+    displayName: 'Test net472,x64 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        framework: 'net461'
+        framework: 'net472'
         vsTestPlatform: 'x64'
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
@@ -530,7 +530,7 @@ stages:
         maximumAllowedFailures: $(maximumAllowedFailures)
         dotNetSdkVersion: '$(DotNetSDKVersion)'
 
-  - job: Test_net461_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+  - job: Test_net472_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
     strategy:
       matrix:
@@ -539,14 +539,14 @@ stages:
           imageName: 'windows-2019'
           maximumParallelJobs: 8
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-    displayName: 'Test net461,x86 on'
+    displayName: 'Test net472,x86 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        framework: 'net461'
+        framework: 'net472'
         vsTestPlatform: 'x86'
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
@@ -617,7 +617,7 @@ stages:
         targetPath: '$(System.DefaultWorkingDirectory)/$(VersionArtifactName)'
 
       # For debugging this pipeline
-    #- pwsh: | 
+    #- pwsh: |
     #    Get-ChildItem -Path $(System.DefaultWorkingDirectory)
     #    Get-ChildItem -Path '$(VersionArtifactName)'
 
@@ -665,7 +665,7 @@ stages:
       inputs:
         artifactName: '$(VersionArtifactName)'
         targetPath: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
-        
+
     - template: '.build/azure-templates/show-all-files.yml' # Uncomment for debugging
 
       # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that

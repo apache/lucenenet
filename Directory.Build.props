@@ -43,6 +43,9 @@
     <!-- .NET enforces AssemblyVersion as the "major" version (when strong-named),
       so AssemblyVersion should only be changed for each major version release. -->
     <AssemblyVersion>4.0.0</AssemblyVersion>
+
+    <!-- .NET 8 SDK has a breaking change where they automatically add the commit hash to InformationalVersion unless it is explicitly disabled. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Assembly Signing">

@@ -60,7 +60,7 @@
     <MicrosoftExtensionsDependencyInjectionPackageVersion>$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)</MicrosoftExtensionsDependencyInjectionPackageVersion>
     <MicrosoftExtensionsOptionsPackageVersion>2.0.0</MicrosoftExtensionsOptionsPackageVersion>
     <MicrosoftNETFrameworkReferenceAssembliesPackageReferenceVersion>1.0.2</MicrosoftNETFrameworkReferenceAssembliesPackageReferenceVersion>
-    <MicrosoftNETTestSdkPackageVersion>16.6.1</MicrosoftNETTestSdkPackageVersion>
+    <MicrosoftNETTestSdkPackageVersion>17.9.0</MicrosoftNETTestSdkPackageVersion>
     <MicrosoftSourceLinkAzureReposGitPackageReferenceVersion>1.1.1</MicrosoftSourceLinkAzureReposGitPackageReferenceVersion>
     <MicrosoftSourceLinkGitHubPackageReferenceVersion>$(MicrosoftSourceLinkAzureReposGitPackageReferenceVersion)</MicrosoftSourceLinkGitHubPackageReferenceVersion>
     <MorfologikFsaPackageVersion>2.1.7</MorfologikFsaPackageVersion>
@@ -68,7 +68,7 @@
     <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
     <NewtonsoftJsonPackageVersion>13.0.1</NewtonsoftJsonPackageVersion>
-    <NUnit3TestAdapterPackageVersion>3.17.0</NUnit3TestAdapterPackageVersion>
+    <NUnit3TestAdapterPackageVersion>4.5.0</NUnit3TestAdapterPackageVersion>
     <NUnitPackageVersion>3.13.1</NUnitPackageVersion>
     <RandomizedTestingGeneratorsPackageVersion>2.7.8</RandomizedTestingGeneratorsPackageVersion>
     <SharpZipLibPackageVersion>1.4.2</SharpZipLibPackageVersion>
@@ -81,7 +81,7 @@
     <SystemRuntimeInteropServicesRuntimeInformationPackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimeInformationPackageVersion>
     <SystemSecurityCryptographyXmlPackageVersion>6.0.1</SystemSecurityCryptographyXmlPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion>4.3.0</SystemTextEncodingCodePagesPackageVersion>
-    <SystemTextEncodingCodePagesPackageVersion Condition=" '$(TargetFramework)' == 'net461' ">5.0.0</SystemTextEncodingCodePagesPackageVersion>
+    <SystemTextEncodingCodePagesPackageVersion Condition=" '$(TargetFramework)' == 'net472' ">5.0.0</SystemTextEncodingCodePagesPackageVersion>
     <SystemTextJsonPackageVersion>6.0.6</SystemTextJsonPackageVersion>
     <TimeZoneConverterPackageVersion>6.1.0</TimeZoneConverterPackageVersion>
   </PropertyGroup>

@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <Import Project="$(SolutionDir).build/nuget.props" />
-  
+
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
@@ -38,7 +38,7 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-  
+
 
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />

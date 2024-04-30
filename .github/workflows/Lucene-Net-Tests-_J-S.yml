@@ -8,9 +8,9 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -62,18 +62,18 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net7.0, net5.0, net48, net461]
+        framework: [net8.0, net5.0, net48, net472]
         platform: [x64]
         configuration: [Release]
         exclude:
           - os: ubuntu-latest
             framework: net48
           - os: ubuntu-latest
-            framework: net461
+            framework: net472
           - os: macos-latest
             framework: net48
           - os: macos-latest
-            framework: net461
+            framework: net472
     env:
       project_path: './src/Lucene.Net.Tests._J-S/Lucene.Net.Tests._J-S.csproj'
       run_slow_tests: 'false'
@@ -93,19 +93,19 @@ jobs:
       - name: Setup .NET 5 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '5.0.400'
+          dotnet-version: '5.0.x'
         if: ${{ startswith(matrix.framework, 'net5.') }}
 
       - name: Setup .NET 6 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.403'
+          dotnet-version: '6.0.x'
         if: ${{ startswith(matrix.framework, 'net6.') }}
 
-      - name: Setup .NET 7 SDK
+      - name: Setup .NET 8 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.0.100'
+          dotnet-version: '8.0.x'
 
       - name: Setup Environment Variables
         run: |
