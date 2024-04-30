@@ -77,42 +77,86 @@ steps:
 
 - pwsh: |
     $testPlatform = '${{ parameters.vsTestPlatform }}'
+    $framework = '${{ parameters.framework }}'
     if ($IsWindows -eq $null) {
         $IsWindows = $env:OS.StartsWith('Win')
     }
     $performMulitLevelLookup = if ($IsWindows -and $testPlatform.Equals('x86')) { 'true' } else { 'false' }
     Write-Host "##vso[task.setvariable variable=PerformMultiLevelLookup;]$performMulitLevelLookup"
 
+#- template: 'show-all-environment-variables.yml' # Uncomment for debugging
+
 - template: 'install-dotnet-sdk.yml'
   parameters:
     sdkVersion: '${{ parameters.dotNetSdkVersion }}'
     performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
 
-- task: UseDotNet@2
-  displayName: 'Use .NET Core sdk 3.1.412'
-  inputs:
-    packageType: 'sdk'
-    version: '3.1.412'
-    performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
-  condition: and(succeeded(), contains('${{ parameters.framework }}', 'netcoreapp3.'))
+    # Hack: .NET 8 no longer installs the x86 bits and they must be installed separately. However, it is not
+    # trivial to get it into the path and to get it to pass the minimum SDK version check in runbuild.ps1.
+    # So, we install it afterward and set the environment variable so the above SDK can delegate to it.
+    # This code only works on Windows.
+- pwsh: |
+    $sdkVersion = '${{ parameters.dotNetSdkVersion }}'
+    $architecture = '${{ parameters.vsTestPlatform }}'
+    $installScriptPath = "${env:AGENT_TEMPDIRECTORY}/dotnet-install.ps1"
+    $installScriptUrl = "https://raw.githubusercontent.com/dotnet/install-scripts/main/src/dotnet-install.ps1"
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest $installScriptUrl -OutFile $installScriptPath -TimeoutSec 60
+    $installPath = "${env:ProgramFiles(x86)}/dotnet"
+    & $installScriptPath -Version $sdkVersion -Architecture $architecture -InstallDir $installPath
+    Write-Host "##vso[task.setvariable variable=DOTNET_ROOT_X86;]$installPath"
+  displayName: 'Use .NET SDK ${{ parameters.dotNetSdkVersion }} (x86)'
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net8.'), eq('${{ parameters.vsTestPlatform }}', 'x86'))
 
 - task: UseDotNet@2
-  displayName: 'Use .NET sdk 5.0.400'
+  displayName: 'Use .NET SDK 6.0.421'
   inputs:
     packageType: 'sdk'
-    version: '5.0.400'
-    performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
-  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net5.'))
-
-- task: UseDotNet@2
-  displayName: 'Use .NET sdk 6.0.403'
-  inputs:
-    packageType: 'sdk'
-    version: '6.0.403'
+    version: '6.0.421'
     performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
   condition: and(succeeded(), contains('${{ parameters.framework }}', 'net6.'))
 
-# NOTE: .NET 8 is not needed here as it is installed in the install-dotnet-sdk.yml template above
+    # Hack: .NET 8 no longer installs the x86 bits and they must be installed separately. However, it is not
+    # trivial to get it into the path and to get it to pass the minimum SDK version check in runbuild.ps1.
+    # So, we install it afterward and set the environment variable so the above SDK can delegate to it.
+    # This code only works on Windows.
+- pwsh: |
+    $sdkVersion = '6.0.421'
+    $architecture = '${{ parameters.vsTestPlatform }}'
+    $installScriptPath = "${env:AGENT_TEMPDIRECTORY}/dotnet-install.ps1"
+    $installScriptUrl = "https://raw.githubusercontent.com/dotnet/install-scripts/main/src/dotnet-install.ps1"
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest $installScriptUrl -OutFile $installScriptPath -TimeoutSec 60
+    $installPath = "${env:ProgramFiles(x86)}/dotnet"
+    & $installScriptPath -Version $sdkVersion -Architecture $architecture -InstallDir $installPath
+    Write-Host "##vso[task.setvariable variable=DOTNET_ROOT_X86;]$installPath"
+  displayName: 'Use .NET SDK 6.0.421 (x86)'
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net6.'), eq('${{ parameters.vsTestPlatform }}', 'x86'))
+
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK 5.0.408'
+  inputs:
+    packageType: 'sdk'
+    version: '5.0.408'
+    performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net5.'))
+
+    # Hack: .NET 8 no longer installs the x86 bits and they must be installed separately. However, it is not
+    # trivial to get it into the path and to get it to pass the minimum SDK version check in runbuild.ps1.
+    # So, we install it afterward and set the environment variable so the above SDK can delegate to it.
+    # This code only works on Windows.
+- pwsh: |
+    $sdkVersion = '5.0.408'
+    $architecture = '${{ parameters.vsTestPlatform }}'
+    $installScriptPath = "${env:AGENT_TEMPDIRECTORY}/dotnet-install.ps1"
+    $installScriptUrl = "https://raw.githubusercontent.com/dotnet/install-scripts/main/src/dotnet-install.ps1"
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest $installScriptUrl -OutFile $installScriptPath -TimeoutSec 60
+    $installPath = "${env:ProgramFiles(x86)}/dotnet"
+    & $installScriptPath -Version $sdkVersion -Architecture $architecture -InstallDir $installPath
+    Write-Host "##vso[task.setvariable variable=DOTNET_ROOT_X86;]$installPath"
+  displayName: 'Use .NET SDK 5.0.408 (x86)'
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net5.'), eq('${{ parameters.vsTestPlatform }}', 'x86'))
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
 - pwsh: |
