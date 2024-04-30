@@ -77,11 +77,11 @@ jobs:
           - os: ubuntu-latest
             framework: net48
           - os: ubuntu-latest
-            framework: net461
+            framework: net472
           - os: macos-latest
             framework: net48
           - os: macos-latest
-            framework: net461
+            framework: net472
     env:
       project_path: './src/dotnet/tools/Lucene.Net.Tests.Cli/Lucene.Net.Tests.Cli.csproj'
       project_under_test_path: './src/dotnet/tools/lucene-cli/lucene-cli.csproj'

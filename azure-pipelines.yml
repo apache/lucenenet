@@ -253,7 +253,7 @@ stages:
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
-        framework: 'net461'
+        framework: 'net472'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
@@ -505,7 +505,7 @@ stages:
         maximumAllowedFailures: $(maximumAllowedFailures)
         dotNetSdkVersion: '$(DotNetSDKVersion)'
 
-  - job: Test_net461_x64
+  - job: Test_net472_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
       matrix:
@@ -514,14 +514,14 @@ stages:
           imageName: 'windows-2019'
           maximumParallelJobs: 8
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-    displayName: 'Test net461,x64 on'
+    displayName: 'Test net472,x64 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        framework: 'net461'
+        framework: 'net472'
         vsTestPlatform: 'x64'
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'
@@ -530,7 +530,7 @@ stages:
         maximumAllowedFailures: $(maximumAllowedFailures)
         dotNetSdkVersion: '$(DotNetSDKVersion)'
 
-  - job: Test_net461_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
+  - job: Test_net472_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
     condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
     strategy:
       matrix:
@@ -539,14 +539,14 @@ stages:
           imageName: 'windows-2019'
           maximumParallelJobs: 8
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-    displayName: 'Test net461,x86 on'
+    displayName: 'Test net472,x86 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: '.build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        framework: 'net461'
+        framework: 'net472'
         vsTestPlatform: 'x86'
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'

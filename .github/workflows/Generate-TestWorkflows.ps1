@@ -68,7 +68,7 @@ param(
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net8.0', 'net5.0','net461','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net462
+    [string[]]$TestFrameworks = @('net8.0', 'net5.0','net472','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net462
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
@@ -251,11 +251,11 @@ jobs:
           - os: ubuntu-latest
             framework: net48
           - os: ubuntu-latest
-            framework: net461
+            framework: net472
           - os: macos-latest
             framework: net48
           - os: macos-latest
-            framework: net461
+            framework: net472
     env:
       project_path: '$projectRelativePath'"
 

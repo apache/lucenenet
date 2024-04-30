@@ -63,11 +63,11 @@ jobs:
           - os: ubuntu-latest
             framework: net48
           - os: ubuntu-latest
-            framework: net461
+            framework: net472
           - os: macos-latest
             framework: net48
           - os: macos-latest
-            framework: net461
+            framework: net472
     env:
       project_path: './src/Lucene.Net.Tests.Analysis.OpenNLP/Lucene - Backup.Net.Tests.Analysis.OpenNLP.csproj'
       run_slow_tests: 'false'

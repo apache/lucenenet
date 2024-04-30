@@ -56,11 +56,11 @@ jobs:
           - os: ubuntu-latest
             framework: net48
           - os: ubuntu-latest
-            framework: net461
+            framework: net472
           - os: macos-latest
             framework: net48
           - os: macos-latest
-            framework: net461
+            framework: net472
     env:
       project_path: './src/dotnet/Lucene.Net.Tests.CodeAnalysis/Lucene.Net.Tests.CodeAnalysis.csproj'
       run_slow_tests: 'false'

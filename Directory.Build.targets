@@ -136,8 +136,8 @@
   </PropertyGroup>
 
   <!-- Features in .NET Framework 4.5+ and .NET 6.0+ but not in .NET Standard 2.0 or .NET Standard 2.1 -->
-  <!-- net461 is used to test .NET Standard 2.0, so we treat it like it is not part of this group -->
-  <PropertyGroup Condition=" ($(TargetFramework.StartsWith('net4')) And '$(TargetFramework)' != 'net461') Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) ">
+  <!-- net472 is used to test .NET Standard 2.0, so we treat it like it is not part of this group -->
+  <PropertyGroup Condition=" ($(TargetFramework.StartsWith('net4')) And '$(TargetFramework)' != 'net472') Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_OPENNLP</DefineConstants>
 

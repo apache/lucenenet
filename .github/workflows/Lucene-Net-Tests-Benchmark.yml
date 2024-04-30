@@ -63,18 +63,18 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
-        framework: [net8.0, net5.0, net48, net461]
+        framework: [net8.0, net5.0, net48, net472]
         platform: [x64]
         configuration: [Release]
         exclude:
           - os: ubuntu-latest
             framework: net48
           - os: ubuntu-latest
-            framework: net461
+            framework: net472
           - os: macos-latest
             framework: net48
           - os: macos-latest
-            framework: net461
+            framework: net472
     env:
       project_path: './src/Lucene.Net.Tests.Benchmark/Lucene.Net.Tests.Benchmark.csproj'
       run_slow_tests: 'false'

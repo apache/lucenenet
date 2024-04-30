@@ -32,13 +32,14 @@
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' Or $(TargetFramework.StartsWith('net5.')) ">
+  <!-- NOTE: Technically, we can test on net472, but we don't want to publish net472 assemblies when we are testing netstandard2.0. -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' Or $(TargetFramework.StartsWith('net5.')) ">
     <!-- For CI, we don't publish the projects and exclude them from the test run by setting IsPublishable=false and IsTestProject=false -->
     <IsPublishable>false</IsPublishable>
     <IsTestProject>false</IsTestProject>
     <!-- For the IDE, the above doesn't work. Redirect to a supported test framework instead. -->
     <TargetFramework Condition=" $(TargetFramework.StartsWith('net5.')) ">net8.0</TargetFramework>
-    <TargetFramework Condition=" '$(TargetFramework)' == 'net461' ">net48</TargetFramework>
+    <TargetFramework Condition=" '$(TargetFramework)' == 'net472' ">net48</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
