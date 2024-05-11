@@ -531,10 +531,10 @@ namespace Lucene.Net.Util
             if (isDir && Constants.WINDOWS)
             {
                 // opening a directory on Windows fails, directories can not be fsynced there
-                if (fileToSync.Exists == false)
+                if (System.IO.Directory.Exists(fileToSync.FullName) == false)
                 {
                     // yet do not suppress trying to fsync directories that do not exist
-                    throw new DirectoryNotFoundException(fileToSync.ToString());
+                    throw new DirectoryNotFoundException($"Directory does not exist: {fileToSync}");
                 }
                 return;
             }

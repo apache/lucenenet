@@ -378,7 +378,7 @@ namespace Lucene.Net.Store
                 Fsync(name);
             }
 
-            // fsync the directory itsself, but only if there was any file fsynced before
+            // fsync the directory itself, but only if there was any file fsynced before
             // (otherwise it can happen that the directory does not yet exist)!
             if (toSync.Count > 0)
             {
