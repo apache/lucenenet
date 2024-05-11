@@ -45,6 +45,9 @@ namespace Lucene.Net.Support.IO
 
         private static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
+        // https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-
+        private const int ERROR_FILE_NOT_FOUND = 2;
+        private const int ERROR_PATH_NOT_FOUND = 3;
         private const int ERROR_ACCESS_DENIED = 5;
 
         // https://learn.microsoft.com/en-us/windows/win32/secauthz/generic-access-rights
@@ -79,7 +82,13 @@ namespace Lucene.Net.Support.IO
                 if (handle == INVALID_HANDLE_VALUE)
                 {
                     int error = Marshal.GetLastWin32Error();
-                    throw new IOException($"Unable to open directory, error: 0x{error:x8}", error);
+
+                    throw error switch {
+                        ERROR_FILE_NOT_FOUND => new FileNotFoundException($"File not found: {path}"),
+                        ERROR_PATH_NOT_FOUND => new DirectoryNotFoundException($"Directory/path not found: {path}"),
+                        ERROR_ACCESS_DENIED => new UnauthorizedAccessException($"Access denied to {(isDir ? "directory" : "file")}: {path}"),
+                        _ => new IOException($"Unable to open {(isDir ? "directory" : "file")}, error: 0x{error:x8}", error)
+                    };
                 }
             }
 
