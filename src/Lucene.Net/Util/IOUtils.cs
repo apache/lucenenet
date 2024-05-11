@@ -1,10 +1,13 @@
 ﻿using J2N;
 using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -516,8 +519,53 @@ namespace Lucene.Net.Util
             }
         }
 
-        // LUCENENET specific: Fsync is pointless in .NET, since we are
-        // calling FileStream.Flush(true) before the stream is disposed
-        // which means we never need it at the point in Java where it is called.
+        public static void Fsync(FileSystemInfo fileToSync, bool isDir)
+        {
+            // LUCENENET NOTE: there is a bug in 4.8 where it tries to fsync a directory on Windows,
+            // which is not supported in OpenJDK. This change adopts the latest Lucene code as of 9.10
+            // and only fsyncs directories on Linux and macOS.
+
+            // If the file is a directory we have to open read-only, for regular files we must open r/w for
+            // the fsync to have an effect.
+            // See http://blog.httrack.com/blog/2013/11/15/everything-you-always-wanted-to-know-about-fsync/
+            if (isDir && Constants.WINDOWS)
+            {
+                // opening a directory on Windows fails, directories can not be fsynced there
+                if (fileToSync.Exists == false)
+                {
+                    // yet do not suppress trying to fsync directories that do not exist
+                    throw new DirectoryNotFoundException(fileToSync.ToString());
+                }
+                return;
+            }
+
+            try
+            {
+                // LUCENENET specific: was: file.force(true);
+                // We must call fsync on the parent directory, requiring some custom P/Invoking
+                if (Constants.WINDOWS)
+                {
+                    WindowsFsyncSupport.Fsync(fileToSync.FullName, isDir);
+                }
+                else
+                {
+                    PosixFsyncSupport.Fsync(fileToSync.FullName, isDir);
+                }
+            }
+            catch (Exception e) when (e.IsIOException())
+            {
+                if (isDir)
+                {
+                    Debug.Assert((Constants.LINUX || Constants.MAC_OS_X) == false,
+                        "On Linux and MacOSX fsyncing a directory should not throw IOException, "
+                        + "we just don't want to rely on that in production (undocumented). Got: "
+                        + e);
+                    // Ignore exception if it is a directory
+                    return;
+                }
+                // Throw original exception
+                throw;
+            }
+        }
     }
 }

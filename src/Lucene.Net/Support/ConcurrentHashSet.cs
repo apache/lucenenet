@@ -204,16 +204,16 @@ namespace Lucene.Net.Support
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConcurrentHashSet{T}"/> 
-        /// class that contains elements copied from the specified <see cref="T:System.Collections.IEnumerable"/>, 
-        /// has the specified concurrency level, has the specified initial capacity, and uses the specified 
+        /// Initializes a new instance of the <see cref="ConcurrentHashSet{T}"/>
+        /// class that contains elements copied from the specified <see cref="T:System.Collections.IEnumerable"/>,
+        /// has the specified concurrency level, has the specified initial capacity, and uses the specified
         /// <see cref="T:System.Collections.Generic.IEqualityComparer{T}"/>.
         /// </summary>
-        /// <param name="concurrencyLevel">The estimated number of threads that will update the 
+        /// <param name="concurrencyLevel">The estimated number of threads that will update the
         /// <see cref="ConcurrentHashSet{T}"/> concurrently.</param>
-        /// <param name="collection">The <see cref="T:System.Collections.IEnumerable{T}"/> whose elements are copied to the new 
+        /// <param name="collection">The <see cref="T:System.Collections.IEnumerable{T}"/> whose elements are copied to the new
         /// <see cref="ConcurrentHashSet{T}"/>.</param>
-        /// <param name="comparer">The <see cref="T:System.Collections.Generic.IEqualityComparer{T}"/> implementation to use 
+        /// <param name="comparer">The <see cref="T:System.Collections.Generic.IEqualityComparer{T}"/> implementation to use
         /// when comparing items.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="collection"/> is a null reference.
@@ -638,7 +638,7 @@ namespace Lucene.Net.Support
                     // We want to make sure that GrowTable will not be called again, since table is at the maximum size.
                     // To achieve that, we set the budget to int.MaxValue.
                     //
-                    // (There is one special case that would allow GrowTable() to be called in the future: 
+                    // (There is one special case that would allow GrowTable() to be called in the future:
                     // calling Clear() on the ConcurrentHashSet will shrink the table and lower the budget.)
                     _budget = int.MaxValue;
                 }
@@ -753,7 +753,16 @@ namespace Lucene.Net.Support
 
         public void ExceptWith(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            if (ReferenceEquals(this, other))
+            {
+                Clear();
+                return;
+            }
+
+            foreach (var item in other)
+            {
+                TryRemove(item);
+            }
         }
 
         public void IntersectWith(IEnumerable<T> other)
