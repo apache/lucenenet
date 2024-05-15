@@ -74,14 +74,29 @@ namespace Lucene.Net.Support
                 {
                     AcquireAllLocks(ref acquiredLocks);
 
-                    for (var i = 0; i < _tables.CountPerLock.Length; i++)
+                    foreach (var t in _tables.CountPerLock)
                     {
-                        count += _tables.CountPerLock[i];
+                        count += t;
                     }
                 }
                 finally
                 {
                     ReleaseLocks(0, acquiredLocks);
+                }
+
+                return count;
+            }
+        }
+
+        private int CountInternal
+        {
+            get
+            {
+                int count = 0;
+
+                foreach (var t in _tables.CountPerLock)
+                {
+                    count += t;
                 }
 
                 return count;
@@ -298,14 +313,19 @@ namespace Lucene.Net.Support
             {
                 AcquireAllLocks(ref locksAcquired);
 
-                var newTables = new Tables(new Node[DefaultCapacity], _tables.Locks, new int[_tables.CountPerLock.Length]);
-                _tables = newTables;
-                _budget = Math.Max(1, newTables.Buckets.Length / newTables.Locks.Length);
+                ClearInternal();
             }
             finally
             {
                 ReleaseLocks(0, locksAcquired);
             }
+        }
+
+        private void ClearInternal()
+        {
+            var newTables = new Tables(new Node[DefaultCapacity], _tables.Locks, new int[_tables.CountPerLock.Length]);
+            _tables = newTables;
+            _budget = Math.Max(1, newTables.Buckets.Length / newTables.Locks.Length);
         }
 
         /// <summary>
@@ -347,6 +367,11 @@ namespace Lucene.Net.Support
         public bool TryRemove(T item)
         {
             var hashcode = _comparer.GetHashCode(item);
+            return TryRemoveInternal(item, hashcode, acquireLock: true);
+        }
+
+        private bool TryRemoveInternal(T item, int hashcode, bool acquireLock)
+        {
             while (true)
             {
                 var tables = _tables;
@@ -354,9 +379,13 @@ namespace Lucene.Net.Support
                 GetBucketAndLockNo(hashcode, out int bucketNo, out int lockNo, tables.Buckets.Length, tables.Locks.Length);
 
                 object syncRoot = tables.Locks[lockNo];
-                UninterruptableMonitor.Enter(syncRoot);
+                var lockTaken = false;
+
                 try
                 {
+                    if (acquireLock)
+                        UninterruptableMonitor.Enter(syncRoot, ref lockTaken);
+
                     // If the table just got resized, we may not be holding the right lock, and must retry.
                     // This should be a rare occurrence.
                     if (tables != _tables)
@@ -388,7 +417,8 @@ namespace Lucene.Net.Support
                 }
                 finally
                 {
-                    UninterruptableMonitor.Exit(syncRoot);
+                    if (lockTaken)
+                        UninterruptableMonitor.Exit(syncRoot);
                 }
 
                 return false;
@@ -753,15 +783,33 @@ namespace Lucene.Net.Support
 
         public void ExceptWith(IEnumerable<T> other)
         {
-            if (ReferenceEquals(this, other))
-            {
-                Clear();
-                return;
-            }
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
 
-            foreach (var item in other)
+            var locksAcquired = 0;
+            try
             {
-                TryRemove(item);
+                AcquireAllLocks(ref locksAcquired);
+
+                if (CountInternal == 0)
+                {
+                    return;
+                }
+
+                if (ReferenceEquals(this, other))
+                {
+                    ClearInternal();
+                    return;
+                }
+
+                foreach (var item in other)
+                {
+                    TryRemoveInternal(item, _comparer.GetHashCode(item), acquireLock: false);
+                }
+            }
+            finally
+            {
+                ReleaseLocks(0, locksAcquired);
             }
         }
 
