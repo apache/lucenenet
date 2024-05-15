@@ -4,13 +4,13 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
-using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
         public override void TestNRTThreads_Mem()
         {
             //if we are not the fork
-            if (SystemProperties.GetProperty("tests:crashmode") is null)
+            if (!SystemProperties.GetPropertyAsBoolean("tests:crashmode", false))
             {
                 // try up to 10 times to create an index
                 for (int i = 0; i < 10; i++)
@@ -63,18 +63,18 @@ namespace Lucene.Net.Index
                     // lexicographical order rather than checking the one we create in the current iteration.
                     DirectoryInfo tempDir = CreateTempDir("netcrash");
 
-                    FileInfo tempProcessToKillFile = CreateTempFile(prefix: "netcrash-processToKill", suffix: ".txt");
-                    tempProcessToKillFile.Delete(); // We use the creation of this file as a signal to parse it.
+                    // Set up a TCP listener to receive the process ID
+                    int port = SetupSocketListener(out TcpListener listener);
 
                     // Note this is the vstest.console process we are tracking here.
-                    Process p = ForkTest(tempDir.FullName, tempProcessToKillFile.FullName);
+                    Process p = ForkTest(tempDir.FullName, port);
 
                     TextWriter childOut = BeginOutput(p, out ThreadJob stdOutPumper, out ThreadJob stdErrPumper);
 
                     // LUCENENET: Note that ForkTest() creates the vstest.console.exe process.
                     // This spawns testhost.exe, which runs our test. We wait until
-                    // the process starts and logs its own Id so we know who to kill later.
-                    int processIdToKill = WaitForProcessToKillLogFile(tempProcessToKillFile.FullName);
+                    // the process starts and transmits its own Id so we know who to kill later.
+                    int processIdToKill = WaitForProcessId(listener);
 
                     // Setup a time to crash the forked thread
                     int crashTime = TestUtil.NextInt32(Random, 4000, 5000); // LUCENENET: Adjusted these up by 1 second to give our tests some more time to spin up
@@ -100,13 +100,12 @@ namespace Lucene.Net.Index
 
                 // we are the fork, log our processId so the original test can kill us.
                 int processIdToKill = Process.GetCurrentProcess().Id;
-                string processIdToKillFile = SystemProperties.GetProperty("tests:tempProcessToKillFile");
+                int port = SystemProperties.GetPropertyAsInt32("tests:crashtestport", -1);
 
-                assertNotNull("No tests:tempProcessToKillFile value was passed to the fork. This is a required system property.", processIdToKillFile);
+                assertTrue("No tests:crashtestport value was passed to the fork. This is a required system property.", port > 0);
 
-                // Writing this file will kick off the thread that crashes us.
-                using (var writer = new StreamWriter(processIdToKillFile, append: false, Encoding.UTF8, bufferSize: 32))
-                    writer.WriteLine(processIdToKill.ToString(CultureInfo.InvariantCulture));
+                // Sending the process id will kick off the thread that crashes us.
+                SendProcessId(processIdToKill, port);
 
                 // run the test until we crash.
                 for (int i = 0; i < 100; i++)
@@ -145,7 +144,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public Process ForkTest(string tempDir, string tempProcessToKillFile)
+        public Process ForkTest(string tempDir, int port)
         {
             //get the full location of the assembly with DaoTests in it
             string testAssemblyPath = Assembly.GetAssembly(typeof(TestIndexWriterOnJRECrash)).Location;
@@ -174,8 +173,8 @@ namespace Lucene.Net.Index
                     // passing NIGHTLY to this test makes it run for much longer, easier to catch it in the act...
                     TestRunParameter("tests:nightly", "true"),
                     TestRunParameter("tempDir", tempDir),
-                    // This file is for passing the process ID of the fork back to the original test so it can kill it.
-                    TestRunParameter("tests:tempProcessToKillFile", tempProcessToKillFile),
+                    // This port is for passing the process ID of the fork back to the original test so it can kill it.
+                    TestRunParameter("tests:crashtestport", port.ToString(CultureInfo.InvariantCulture)),
                 }),
                 WorkingDirectory = theDirectory,
                 RedirectStandardOutput = true,
@@ -335,25 +334,38 @@ namespace Lucene.Net.Index
             return false;
         }
 
-        // LUCENENET: Wait for our test to spin up and log its PID so we can kill it.
-        private static int WaitForProcessToKillLogFile(string processToKillFile)
+        private int SetupSocketListener(out TcpListener listener)
         {
-            bool exists = false;
-            Thread.Sleep(500);
-            for (int i = 0; i < 150; i++)
+            // Pick a random port that is available on the local machine.
+            listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            return ((IPEndPoint)listener.LocalEndpoint).Port;
+        }
+
+        // LUCENENET: Wait for our test to spin up and send its process ID so we can kill it.
+        private int WaitForProcessId(TcpListener listener)
+        {
+            try
             {
-                if (File.Exists(processToKillFile))
-                {
-                    exists = true;
-                    break;
-                }
-                Thread.Sleep(200);
+                using var client = listener.AcceptTcpClient();
+                using var stream = client.GetStream();
+                // Directly read the process ID as a 32-bit integer
+                using var reader = new BinaryReader(stream);
+                return reader.ReadInt32();
             }
-            // If the fork didn't log its process id, it is a failure.
-            assertTrue("The test fork didn't log its process id, so we cannot kill it", exists);
-            using var reader = new StreamReader(processToKillFile, Encoding.UTF8);
-            // LUCENENET: Our file only has one line with the process Id in it
-            return int.Parse(reader.ReadLine().Trim(), CultureInfo.InvariantCulture);
+            finally
+            {
+                listener.Stop();
+            }
+        }
+
+        private void SendProcessId(int processId, int port)
+        {
+            using var client = new TcpClient("127.0.0.1", port);
+            using var stream = client.GetStream();
+            // Directly write the process ID as a 32-bit integer
+            using var writer = new BinaryWriter(stream);
+            writer.Write(processId);
         }
 
         public virtual void CrashDotNet(int processIdToKill)
@@ -361,22 +373,29 @@ namespace Lucene.Net.Index
             Process process = null;
             try
             {
-                process = Process.GetProcessById(processIdToKill);
-            }
-            catch (ArgumentException)
-            {
-                // We get here if the process wasn't running for some reason.
-                // We should fix the forked test to make it run longer if we get here.
-                fail("The test completed before we could kill it.");
-            }
+                try
+                {
+                    process = Process.GetProcessById(processIdToKill);
+                }
+                catch (ArgumentException)
+                {
+                    // We get here if the process wasn't running for some reason.
+                    // We should fix the forked test to make it run longer if we get here.
+                    fail("The test completed before we could kill it.");
+                }
 #if FEATURE_PROCESS_KILL_ENTIREPROCESSTREE
-            process.Kill(entireProcessTree: true);
+                process.Kill(entireProcessTree: true);
 #else
-            process.Kill();
+                process.Kill();
 #endif
-            process.WaitForExit(10000);
-            // We couldn't get .NET to crash for some reason.
-            assertTrue(process.HasExited);
+                process.WaitForExit(10000);
+                // We couldn't get .NET to crash for some reason.
+                assertTrue(process.HasExited);
+            }
+            finally
+            {
+                process?.Dispose();
+            }
         }
     }
 }
