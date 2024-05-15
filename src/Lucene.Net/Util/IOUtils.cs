@@ -1,4 +1,5 @@
 ﻿using J2N;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
@@ -557,10 +558,13 @@ namespace Lucene.Net.Util
             {
                 if (isDir)
                 {
-                    Debug.Assert((Constants.LINUX || Constants.MAC_OS_X) == false,
-                        "On Linux and MacOSX fsyncing a directory should not throw IOException, "
-                        + "we just don't want to rely on that in production (undocumented). Got: "
-                        + e);
+                    if (Debugging.AssertsEnabled)
+                    {
+                        Debugging.Assert((Constants.LINUX || Constants.MAC_OS_X) == false,
+                            "On Linux and MacOSX fsyncing a directory should not throw IOException, we just don't want to rely on that in production (undocumented). Got: {0}",
+                            e);
+                    }
+
                     // Ignore exception if it is a directory
                     return;
                 }
