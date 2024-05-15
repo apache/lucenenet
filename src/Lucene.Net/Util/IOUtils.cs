@@ -554,22 +554,20 @@ namespace Lucene.Net.Util
                     PosixFsyncSupport.Fsync(fileToSync, isDir);
                 }
             }
-            catch (Exception e) when (e.IsIOException())
+            catch (Exception e) when (e.IsIOException() && isDir && e is not DirectoryNotFoundException)
             {
-                if (isDir)
-                {
-                    if (Debugging.AssertsEnabled)
-                    {
-                        Debugging.Assert((Constants.LINUX || Constants.MAC_OS_X) == false,
-                            "On Linux and MacOSX fsyncing a directory should not throw IOException, we just don't want to rely on that in production (undocumented). Got: {0}",
-                            e);
-                    }
+                // LUCENENET specific - make catch specific to IOExceptions when it's a directory,
+                // but allow DirectoryNotFoundException to pass through as an equivalent would normally be
+                // thrown by the FileChannel.open call in Java which is outside the try block.
 
-                    // Ignore exception if it is a directory
-                    return;
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert((Constants.LINUX || Constants.MAC_OS_X) == false,
+                        "On Linux and MacOSX fsyncing a directory should not throw IOException, we just don't want to rely on that in production (undocumented). Got: {0}",
+                        e);
                 }
-                // Throw original exception
-                throw;
+
+                // Ignore exception if it is a directory
             }
         }
     }

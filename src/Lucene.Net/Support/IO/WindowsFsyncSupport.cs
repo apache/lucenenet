@@ -83,7 +83,8 @@ namespace Lucene.Net.Support.IO
                 {
                     int error = Marshal.GetLastWin32Error();
 
-                    throw error switch {
+                    throw error switch
+                    {
                         ERROR_FILE_NOT_FOUND => new FileNotFoundException($"File not found: {path}"),
                         ERROR_PATH_NOT_FOUND => new DirectoryNotFoundException($"Directory/path not found: {path}"),
                         ERROR_ACCESS_DENIED => new UnauthorizedAccessException($"Access denied to {(isDir ? "directory" : "file")}: {path}"),

@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -46,6 +47,9 @@ namespace Lucene.Net.Support.IO
         // https://opensource.apple.com/source/xnu/xnu-6153.81.5/bsd/sys/fcntl.h.auto.html
         private const int F_FULLFSYNC = 51;
 
+        private const int EACCES = 13;
+        private const int ENOENT = 2;
+
         public static void Fsync(string path, bool isDir)
         {
             using DescriptorWrapper handle = new DescriptorWrapper(path, isDir);
@@ -63,7 +67,14 @@ namespace Lucene.Net.Support.IO
                 if (fd == -1)
                 {
                     int error = Marshal.GetLastWin32Error();
-                    throw new IOException($"Unable to open path, error: 0x{error:x8}", error);
+
+                    throw error switch
+                    {
+                        ENOENT when isDir => new DirectoryNotFoundException($"Directory/path not found: {path}"),
+                        ENOENT => new FileNotFoundException($"File not found: {path}"),
+                        EACCES => new UnauthorizedAccessException($"Access denied to {(isDir ? "directory" : "file")}: {path}"),
+                        _ => new IOException($"Unable to open path, error: 0x{error:x8}", error)
+                    };
                 }
             }
 
@@ -74,12 +85,14 @@ namespace Lucene.Net.Support.IO
                 {
                     if (fcntl(fd, F_FULLFSYNC, 0) == -1)
                     {
-                        throw new IOException("fcntl failed", Marshal.GetLastWin32Error());
+                        int error = Marshal.GetLastWin32Error();
+                        throw new IOException($"fcntl failed, error: 0x{error:x8}", error);
                     }
                 }
                 else if (fsync(fd) == -1)
                 {
-                    throw new IOException("fsync failed", Marshal.GetLastWin32Error());
+                    int error = Marshal.GetLastWin32Error();
+                    throw new IOException($"fsync failed, error: 0x{error:x8}", error);
                 }
             }
 
@@ -87,7 +100,8 @@ namespace Lucene.Net.Support.IO
             {
                 if (close(fd) == -1)
                 {
-                    throw new IOException("close failed", Marshal.GetLastWin32Error());
+                    int error = Marshal.GetLastWin32Error();
+                    throw new IOException($"close failed, error: 0x{error:x8}", error);
                 }
             }
         }
