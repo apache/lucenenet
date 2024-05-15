@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using static Lucene.Net.Support.Native.Interop.Win32;
 
 namespace Lucene.Net.Support.IO
 {
@@ -23,42 +24,6 @@ namespace Lucene.Net.Support.IO
 
     public static class WindowsFsyncSupport
     {
-        // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        private static extern IntPtr CreateFileW(
-            string lpFileName,
-            uint dwDesiredAccess,
-            uint dwShareMode,
-            IntPtr lpSecurityAttributes,
-            uint dwCreationDisposition,
-            uint dwFlagsAndAttributes,
-            IntPtr hTemplateFile
-        );
-
-        // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-flushfilebuffers
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool FlushFileBuffers(IntPtr hFile);
-
-        // https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool CloseHandle(IntPtr hObject);
-
-        private static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-
-        // https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-
-        private const int ERROR_FILE_NOT_FOUND = 2;
-        private const int ERROR_PATH_NOT_FOUND = 3;
-        private const int ERROR_ACCESS_DENIED = 5;
-
-        // https://learn.microsoft.com/en-us/windows/win32/secauthz/generic-access-rights
-        private const int GENERIC_WRITE = 0x40000000;
-
-        private const int FILE_SHARE_READ = 0x00000001;
-        private const int FILE_SHARE_WRITE = 0x00000002;
-        private const int FILE_SHARE_DELETE = 0x00000004;
-        private const int FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
-        private const int OPEN_EXISTING = 3;
-
         public static void Fsync(string path, bool isDir)
         {
             using HandleWrapper handle = new HandleWrapper(path, isDir);
