@@ -47,6 +47,7 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow]
+        [Repeat(25)]
         public override void TestNRTThreads_Mem()
         {
             //if we are not the fork
