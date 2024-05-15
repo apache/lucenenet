@@ -519,7 +519,8 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static void Fsync(FileSystemInfo fileToSync, bool isDir)
+        // LUCENENET specific: using string instead of FileSystemInfo to avoid extra allocation
+        public static void Fsync(string fileToSync, bool isDir)
         {
             // LUCENENET NOTE: there is a bug in 4.8 where it tries to fsync a directory on Windows,
             // which is not supported in OpenJDK. This change adopts the latest Lucene code as of 9.10
@@ -531,7 +532,7 @@ namespace Lucene.Net.Util
             if (isDir && Constants.WINDOWS)
             {
                 // opening a directory on Windows fails, directories can not be fsynced there
-                if (System.IO.Directory.Exists(fileToSync.FullName) == false)
+                if (System.IO.Directory.Exists(fileToSync) == false)
                 {
                     // yet do not suppress trying to fsync directories that do not exist
                     throw new DirectoryNotFoundException($"Directory does not exist: {fileToSync}");
@@ -545,11 +546,11 @@ namespace Lucene.Net.Util
                 // We must call fsync on the parent directory, requiring some custom P/Invoking
                 if (Constants.WINDOWS)
                 {
-                    WindowsFsyncSupport.Fsync(fileToSync.FullName, isDir);
+                    WindowsFsyncSupport.Fsync(fileToSync, isDir);
                 }
                 else
                 {
-                    PosixFsyncSupport.Fsync(fileToSync.FullName, isDir);
+                    PosixFsyncSupport.Fsync(fileToSync, isDir);
                 }
             }
             catch (Exception e) when (e.IsIOException())

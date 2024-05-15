@@ -382,7 +382,7 @@ namespace Lucene.Net.Store
             // (otherwise it can happen that the directory does not yet exist)!
             if (toSync.Count > 0)
             {
-                IOUtils.Fsync(m_directory, true);
+                IOUtils.Fsync(m_directory.FullName, true);
             }
 
             m_staleFiles.ExceptWith(toSync);
@@ -579,7 +579,7 @@ namespace Lucene.Net.Store
 
         protected virtual void Fsync(string name)
         {
-            IOUtils.Fsync(new FileInfo(Path.Combine(m_directory.FullName, name)), false);
+            IOUtils.Fsync(Path.Combine(m_directory.FullName, name), false);
         }
     }
 }
