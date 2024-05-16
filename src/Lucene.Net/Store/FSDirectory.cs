@@ -99,10 +99,10 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <remarks>
         /// LUCENENET NOTE: This is a non-thread-safe collection so that we can synchronize access to it
-        /// using the <see cref="syncLock"/> field. This is to prevent race conditions, i.e. one thread
+        /// using the <see cref="m_syncLock"/> field. This is to prevent race conditions, i.e. one thread
         /// adding a file to the collection while another thread is trying to sync the files, which could
         /// cause a missed sync. If you need to access this collection from a derived type, you should
-        /// synchronize access to it using the protected <see cref="syncLock"/> field.
+        /// synchronize access to it using the protected <see cref="m_syncLock"/> field.
         /// </remarks>
         protected readonly ISet<string> m_staleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Store
         /// A <see cref="Monitor"/> object to synchronize access to the <see cref="m_staleFiles"/> collection.
         /// You should synchronize access to <see cref="m_staleFiles"/> using this object from derived types.
         /// </summary>
-        protected readonly object syncLock = new object();
+        protected readonly object m_syncLock = new object();
 
 #pragma warning disable 612, 618
         private int chunkSize = DEFAULT_READ_CHUNK_SIZE;
@@ -318,7 +318,7 @@ namespace Lucene.Net.Store
             string file = Path.Combine(m_directory.FullName, name);
 
             // LUCENENET Specific: See remarks for m_staleFiles field.
-            UninterruptableMonitor.Enter(syncLock);
+            UninterruptableMonitor.Enter(m_syncLock);
             try
             {
                 // LUCENENET specific: We need to explicitly throw when the file has already been deleted,
@@ -346,7 +346,7 @@ namespace Lucene.Net.Store
             }
             finally
             {
-                UninterruptableMonitor.Exit(syncLock);
+                UninterruptableMonitor.Exit(m_syncLock);
             }
         }
 
@@ -391,14 +391,14 @@ namespace Lucene.Net.Store
         protected virtual void OnIndexOutputClosed(FSIndexOutput io)
         {
             // LUCENENET Specific: See remarks for m_staleFiles field.
-            UninterruptableMonitor.Enter(syncLock);
+            UninterruptableMonitor.Enter(m_syncLock);
             try
             {
                 m_staleFiles.Add(io.name);
             }
             finally
             {
-                UninterruptableMonitor.Exit(syncLock);
+                UninterruptableMonitor.Exit(m_syncLock);
             }
         }
 
@@ -409,7 +409,7 @@ namespace Lucene.Net.Store
             ISet<string> toSync = new HashSet<string>(names);
 
             // LUCENENET Specific: See remarks for m_staleFiles field.
-            UninterruptableMonitor.Enter(syncLock);
+            UninterruptableMonitor.Enter(m_syncLock);
             try
             {
                 toSync.IntersectWith(m_staleFiles);
@@ -430,7 +430,7 @@ namespace Lucene.Net.Store
             }
             finally
             {
-                UninterruptableMonitor.Exit(syncLock);
+                UninterruptableMonitor.Exit(m_syncLock);
             }
         }
 
