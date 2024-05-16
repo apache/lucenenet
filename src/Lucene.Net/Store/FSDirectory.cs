@@ -1,5 +1,7 @@
 ﻿using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -28,9 +30,6 @@ namespace Lucene.Net.Store
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Constants = Lucene.Net.Util.Constants;
-    using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
     /// Base class for <see cref="Directory"/> implementations that store index
@@ -80,7 +79,7 @@ namespace Lucene.Net.Store
     /// <see cref="Thread.Interrupt()"/> in .NET
     /// in conjunction with an open <see cref="FSDirectory"/> because it is not guaranteed to exit atomically.
     /// Any <c>lock</c> statement or <see cref="Monitor.Enter(object)"/> call can throw a
-    /// <see cref="ThreadInterruptedException"/>, which makes shutting down unpredictable.
+    /// <see cref="System.Threading.ThreadInterruptedException"/>, which makes shutting down unpredictable.
     /// To exit parallel tasks safely, we recommend using <see cref="Task"/>s
     /// and "interrupt" them with <see cref="CancellationToken"/>s.</font>
     /// </summary>
@@ -94,7 +93,24 @@ namespace Lucene.Net.Store
         public const int DEFAULT_READ_CHUNK_SIZE = 8192;
 
         protected readonly DirectoryInfo m_directory; // The underlying filesystem directory
-        protected readonly ISet<string> m_staleFiles = new ConcurrentHashSet<string>(); // Files written, but not yet sync'ed
+
+        /// <summary>
+        /// The collection of stale files that need to be <see cref="Sync"/>'ed
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET NOTE: This is a non-thread-safe collection so that we can synchronize access to it
+        /// using the <see cref="syncLock"/> field. This is to prevent race conditions, i.e. one thread
+        /// adding a file to the collection while another thread is trying to sync the files, which could
+        /// cause a missed sync. If you need to access this collection from a derived type, you should
+        /// synchronize access to it using the protected <see cref="syncLock"/> field.
+        /// </remarks>
+        protected readonly ISet<string> m_staleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
+
+        /// <summary>
+        /// A <see cref="Monitor"/> object to synchronize access to the <see cref="m_staleFiles"/> collection.
+        /// You should synchronize access to <see cref="m_staleFiles"/> using this object from derived types.
+        /// </summary>
+        protected readonly object syncLock = new object();
 
 #pragma warning disable 612, 618
         private int chunkSize = DEFAULT_READ_CHUNK_SIZE;
@@ -299,28 +315,39 @@ namespace Lucene.Net.Store
         public override void DeleteFile(string name)
         {
             EnsureOpen();
-            FileInfo file = new FileInfo(Path.Combine(m_directory.FullName, name));
-            // LUCENENET specific: We need to explicitly throw when the file has already been deleted,
-            // since FileInfo doesn't do that for us.
-            // (An enhancement carried over from Lucene 8.2.0)
-            if (!File.Exists(file.FullName))
-            {
-                throw new FileNotFoundException("Cannot delete " + file + " because it doesn't exist.");
-            }
+            string file = Path.Combine(m_directory.FullName, name);
+
+            // LUCENENET Specific: See remarks for m_staleFiles field.
+            UninterruptableMonitor.Enter(syncLock);
             try
             {
-                file.Delete();
-                if (File.Exists(file.FullName))
+                // LUCENENET specific: We need to explicitly throw when the file has already been deleted,
+                // since FileInfo doesn't do that for us.
+                // (An enhancement carried over from Lucene 8.2.0)
+                if (!File.Exists(file))
                 {
-                    throw new IOException("Cannot delete " + file);
+                    throw new FileNotFoundException("Cannot delete " + file + " because it doesn't exist.");
                 }
-            }
-            catch (Exception e)
-            {
-                throw new IOException("Cannot delete " + file, e);
-            }
 
-            m_staleFiles.Remove(name);
+                try
+                {
+                    File.Delete(file);
+                    if (File.Exists(file))
+                    {
+                        throw new IOException("Cannot delete " + file);
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new IOException("Cannot delete " + file, e);
+                }
+
+                m_staleFiles.Remove(name);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         /// <summary>
@@ -363,7 +390,16 @@ namespace Lucene.Net.Store
 
         protected virtual void OnIndexOutputClosed(FSIndexOutput io)
         {
-            m_staleFiles.Add(io.name);
+            // LUCENENET Specific: See remarks for m_staleFiles field.
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
+                m_staleFiles.Add(io.name);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
         }
 
         public override void Sync(ICollection<string> names)
@@ -371,21 +407,31 @@ namespace Lucene.Net.Store
             EnsureOpen();
 
             ISet<string> toSync = new HashSet<string>(names);
-            toSync.IntersectWith(m_staleFiles);
 
-            foreach (var name in toSync)
+            // LUCENENET Specific: See remarks for m_staleFiles field.
+            UninterruptableMonitor.Enter(syncLock);
+            try
             {
-                Fsync(name);
-            }
+                toSync.IntersectWith(m_staleFiles);
 
-            // fsync the directory itself, but only if there was any file fsynced before
-            // (otherwise it can happen that the directory does not yet exist)!
-            if (toSync.Count > 0)
+                foreach (var name in toSync)
+                {
+                    Fsync(name);
+                }
+
+                // fsync the directory itself, but only if there was any file fsynced before
+                // (otherwise it can happen that the directory does not yet exist)!
+                if (toSync.Count > 0)
+                {
+                    IOUtils.Fsync(m_directory.FullName, true);
+                }
+
+                m_staleFiles.ExceptWith(toSync);
+            }
+            finally
             {
-                IOUtils.Fsync(m_directory.FullName, true);
+                UninterruptableMonitor.Exit(syncLock);
             }
-
-            m_staleFiles.ExceptWith(toSync);
         }
 
         public override string GetLockID()
