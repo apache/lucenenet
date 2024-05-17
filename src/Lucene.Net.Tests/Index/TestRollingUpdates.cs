@@ -191,6 +191,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        [Repeat(1000)]
         public virtual void TestUpdateSameDoc()
         {
             Directory dir = NewDirectory();
