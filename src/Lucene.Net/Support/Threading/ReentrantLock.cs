@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Support.Threading
+﻿using System.Runtime.CompilerServices;
+
+namespace Lucene.Net.Support.Threading
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,12 +25,14 @@
         private readonly object _lock = new object();
 
         // .NET Port: mimic ReentrantLock -- Monitor is re-entrant
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Lock()
         {
             UninterruptableMonitor.Enter(_lock);
         }
 
         // .NET Port: mimic ReentrantLock -- Monitor is re-entrant
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Unlock()
         {
             UninterruptableMonitor.Exit(_lock);
