@@ -38,6 +38,7 @@ namespace Lucene.Net.Support.Threading
             UninterruptableMonitor.Exit(_lock);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryLock()
         {
             // NOTE: In Java, the ReentrantLock.tryEnter() method will "barge" to the
@@ -46,9 +47,7 @@ namespace Lucene.Net.Support.Threading
             // false immediately when it cannot lock. So, our next best option is to use the overload
             // of Monitor.Enter that always returns true when the lock is taken. It may throw a
             // ThreadInterruptedException, but that will be handled by UninterruptableMonitor.
-            bool lockTaken = false;
-            UninterruptableMonitor.Enter(_lock, ref lockTaken);
-            return lockTaken;
+            return UninterruptableMonitor.TryEnter(_lock);
         }
 
         public bool IsHeldByCurrentThread => UninterruptableMonitor.IsEntered(_lock);
