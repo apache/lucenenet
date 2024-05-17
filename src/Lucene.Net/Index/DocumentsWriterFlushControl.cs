@@ -457,29 +457,30 @@ namespace Lucene.Net.Index
             }
             try
             {
-                if (perThread.TryLock())
+                // LUCENENET specific - Use Lock() instead of TryLock() here because Java
+                // relies on "barging" behavior that breaks locking fairness. See the comment
+                // in ReentrantLock.TryLock() for details.
+                perThread.Lock();
+                try
                 {
-                    try
+                    // We are pending so all memory is already moved to flushBytes
+                    if (perThread.IsInitialized)
                     {
-                        // We are pending so all memory is already moved to flushBytes
-                        if (perThread.IsInitialized)
-                        {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsHeldByCurrentThread);
-                            DocumentsWriterPerThread dwpt;
-                            long bytes = perThread.bytesUsed; // do that before
-                                                              // replace!
-                            dwpt = DocumentsWriterPerThreadPool.Reset(perThread, closed); // LUCENENET specific - made method static per CA1822
-                            if (Debugging.AssertsEnabled) Debugging.Assert(!flushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
-                            // Record the flushing DWPT to reduce flushBytes in doAfterFlush
-                            flushingWriters[dwpt] = bytes;
-                            numPending--; // write access synced
-                            return dwpt;
-                        }
+                        if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsHeldByCurrentThread);
+                        DocumentsWriterPerThread dwpt;
+                        long bytes = perThread.bytesUsed; // do that before
+                                                            // replace!
+                        dwpt = DocumentsWriterPerThreadPool.Reset(perThread, closed); // LUCENENET specific - made method static per CA1822
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!flushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
+                        // Record the flushing DWPT to reduce flushBytes in doAfterFlush
+                        flushingWriters[dwpt] = bytes;
+                        numPending--; // write access synced
+                        return dwpt;
                     }
-                    finally
-                    {
-                        perThread.Unlock();
-                    }
+                }
+                finally
+                {
+                    perThread.Unlock();
                 }
                 return null;
             }
