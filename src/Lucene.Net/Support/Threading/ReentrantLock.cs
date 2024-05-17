@@ -49,10 +49,17 @@ namespace Lucene.Net.Support.Threading
         public bool TryLock()
         {
             Interlocked.Increment(ref _queueLength);
-            bool success = UninterruptableMonitor.TryEnter(_lock);
+            // NOTE: In Java, the ReentrantLock.tryEnter() method will "barge" to the
+            // front of the queue when called, so there is not a chance (or a very small chance)
+            // that it will return false. This differs from Monitor.TryEnter() in .NET, which returns
+            // false immediately when it cannot lock. So, our next best option is to use the overload
+            // of Monitor.Enter that always returns true when the lock is taken. It may throw a
+            // ThreadInterruptedException, but that will be handled by UninterruptableMonitor.
+            bool lockTaken = false;
+            UninterruptableMonitor.Enter(_lock, ref lockTaken);
             Interlocked.Decrement(ref _queueLength);
 
-            return success;
+            return lockTaken;
         }
 
         public int QueueLength
