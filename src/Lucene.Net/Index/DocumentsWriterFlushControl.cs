@@ -791,10 +791,16 @@ namespace Lucene.Net.Index
                 Debugging.Assert(fullFlush);
                 Debugging.Assert(dwpt.deleteQueue != documentsWriter.deleteQueue);
             }
-            if (dwpt.NumDocsInRAM > 0)
+            // LUCENENET specific - Calling DocumentsWriterPerThreadPool.Reset() without locking this
+            // can cause an issue inside of InternalTryCheckoutForFlush() when 2 threads enter this method
+            // when the call to Reset() happens between when perThread.IsInitialized and
+            // DocumentsWriterPerThreadPool.Reset(perThread, closed), causing it to return null.
+            // So, we lock outside of the check for NumDocsInRAM to ensure that DocumentsWriterPerThreadPool.Reset()
+            // is called inside of the lock.
+            UninterruptableMonitor.Enter(this);
+            try
             {
-                UninterruptableMonitor.Enter(this);
-                try
+                if (dwpt.NumDocsInRAM > 0)
                 {
                     if (!perThread.flushPending)
                     {
@@ -808,14 +814,14 @@ namespace Lucene.Net.Index
                     }
                     fullFlushBuffer.Add(flushingDWPT);
                 }
-                finally
+                else
                 {
-                    UninterruptableMonitor.Exit(this);
+                    DocumentsWriterPerThreadPool.Reset(perThread, closed); // make this state inactive // LUCENENET specific - made method static per CA1822
                 }
             }
-            else
+            finally
             {
-                DocumentsWriterPerThreadPool.Reset(perThread, closed); // make this state inactive // LUCENENET specific - made method static per CA1822
+                UninterruptableMonitor.Exit(this);
             }
         }
 
