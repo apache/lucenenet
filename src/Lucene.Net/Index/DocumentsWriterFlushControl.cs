@@ -418,7 +418,10 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                return perThread.flushPending ? InternalTryCheckOutForFlush(perThread) : null;
+                // LUCENENET specific - We need to allow some time to acuqire the lock to emulate the "barging" behavior
+                // of Java's ReentrantLock.tryLock(). We don't actually barge, but we give it a little more time to
+                // reach the beginning of the wait queue.
+                return perThread.flushPending ? InternalTryCheckOutForFlush(perThread, TimeSpan.FromMilliseconds(10)) : null;
             }
             finally
             {
@@ -448,7 +451,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private DocumentsWriterPerThread InternalTryCheckOutForFlush(ThreadState perThread)
+        private DocumentsWriterPerThread InternalTryCheckOutForFlush(ThreadState perThread, TimeSpan timeout)
         {
             if (Debugging.AssertsEnabled)
             {
@@ -457,30 +460,32 @@ namespace Lucene.Net.Index
             }
             try
             {
-                // LUCENENET specific - Use Lock() instead of TryLock() here because Java
+                // LUCENENET specific - Pass a timeout here because Java
                 // relies on "barging" behavior that breaks locking fairness. See the comment
                 // in ReentrantLock.TryLock() for details.
-                perThread.Lock();
-                try
+                if (perThread.TryLock(timeout))
                 {
-                    // We are pending so all memory is already moved to flushBytes
-                    if (perThread.IsInitialized)
+                    try
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsHeldByCurrentThread);
-                        DocumentsWriterPerThread dwpt;
-                        long bytes = perThread.bytesUsed; // do that before
-                                                            // replace!
-                        dwpt = DocumentsWriterPerThreadPool.Reset(perThread, closed); // LUCENENET specific - made method static per CA1822
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!flushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
-                        // Record the flushing DWPT to reduce flushBytes in doAfterFlush
-                        flushingWriters[dwpt] = bytes;
-                        numPending--; // write access synced
-                        return dwpt;
+                        // We are pending so all memory is already moved to flushBytes
+                        if (perThread.IsInitialized)
+                        {
+                            if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsHeldByCurrentThread);
+                            DocumentsWriterPerThread dwpt;
+                            long bytes = perThread.bytesUsed; // do that before
+                                                              // replace!
+                            dwpt = DocumentsWriterPerThreadPool.Reset(perThread, closed); // LUCENENET specific - made method static per CA1822
+                            if (Debugging.AssertsEnabled) Debugging.Assert(!flushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
+                            // Record the flushing DWPT to reduce flushBytes in doAfterFlush
+                            flushingWriters[dwpt] = bytes;
+                            numPending--; // write access synced
+                            return dwpt;
+                        }
                     }
-                }
-                finally
-                {
-                    perThread.Unlock();
+                    finally
+                    {
+                        perThread.Unlock();
+                    }
                 }
                 return null;
             }
@@ -807,7 +812,12 @@ namespace Lucene.Net.Index
                     {
                         SetFlushPending(perThread);
                     }
-                    DocumentsWriterPerThread flushingDWPT = InternalTryCheckOutForFlush(perThread);
+                    // LUCENENET specific - since this is never expected to return null, we wait for 2 minutes as an absolute
+                    // worst case scenario under heavy load for this to reach the beginning of the wait queue. In practice during
+                    // testing, 50 ms was enough to get the tests to pass, but each of these threads could be processing up to 2GB
+                    // of data, so we need to provide time to get through the queue, but still fail in a reasonable amount of time
+                    // instead of waiting indefinitely.
+                    DocumentsWriterPerThread flushingDWPT = InternalTryCheckOutForFlush(perThread, TimeSpan.FromMinutes(2));
                     if (Debugging.AssertsEnabled)
                     {
                         Debugging.Assert(flushingDWPT != null, "DWPT must never be null here since we hold the lock and it holds documents");
