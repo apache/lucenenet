@@ -2,9 +2,9 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -420,8 +420,10 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific - We need to allow some time to acuqire the lock to emulate the "barging" behavior
                 // of Java's ReentrantLock.tryLock(). We don't actually barge, but we give it a little more time to
-                // reach the beginning of the wait queue.
-                return perThread.flushPending ? InternalTryCheckOutForFlush(perThread, TimeSpan.FromMilliseconds(10)) : null;
+                // reach the beginning of the wait queue, but we are somewhat conservative so this doesn't slow down the
+                // process for when there are no threads waiting for a lock.
+                return perThread.flushPending ? InternalTryCheckOutForFlush(perThread,
+                    TimeSpan.FromMilliseconds(Constants.RUNTIME_IS_64BIT ? 25 : 50)) : null;
             }
             finally
             {
