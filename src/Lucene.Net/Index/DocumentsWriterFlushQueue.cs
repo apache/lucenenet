@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
                 Debugging.Assert(!UninterruptableMonitor.IsEntered(this));
                 Debugging.Assert(!UninterruptableMonitor.IsEntered(writer));
             }
-            if (purgeLock.TryLock())
+            if (purgeLock.TryLock(DocumentsWriter.TryLockTimeoutMilliseconds))
             {
                 try
                 {

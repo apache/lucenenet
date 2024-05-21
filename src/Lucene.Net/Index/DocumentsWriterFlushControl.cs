@@ -422,8 +422,7 @@ namespace Lucene.Net.Index
                 // of Java's ReentrantLock.tryLock(). We don't actually barge, but we give it a little more time to
                 // reach the beginning of the wait queue, but we are somewhat conservative so this doesn't slow down the
                 // process for when there are no threads waiting for a lock.
-                return perThread.flushPending ? InternalTryCheckOutForFlush(perThread,
-                    TimeSpan.FromMilliseconds(Constants.RUNTIME_IS_64BIT ? 25 : 50)) : null;
+                return perThread.flushPending ? InternalTryCheckOutForFlush(perThread, DocumentsWriter.TryLockTimeoutMilliseconds) : null;
             }
             finally
             {
