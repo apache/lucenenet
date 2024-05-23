@@ -418,11 +418,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                // LUCENENET specific - We need to allow some time to acuqire the lock to emulate the "barging" behavior
-                // of Java's ReentrantLock.tryLock(). We don't actually barge, but we give it a little more time to
-                // reach the beginning of the wait queue, but we are somewhat conservative so this doesn't slow down the
-                // process for when there are no threads waiting for a lock.
-                return perThread.flushPending ? InternalTryCheckOutForFlush(perThread, DocumentsWriter.TryLockTimeoutMilliseconds) : null;
+                return perThread.flushPending ? InternalTryCheckOutForFlush(perThread) : null;
             }
             finally
             {
@@ -452,7 +448,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private DocumentsWriterPerThread InternalTryCheckOutForFlush(ThreadState perThread, TimeSpan timeout)
+        private DocumentsWriterPerThread InternalTryCheckOutForFlush(ThreadState perThread)
         {
             if (Debugging.AssertsEnabled)
             {
@@ -461,10 +457,7 @@ namespace Lucene.Net.Index
             }
             try
             {
-                // LUCENENET specific - Pass a timeout here because Java
-                // relies on "barging" behavior that breaks locking fairness. See the comment
-                // in ReentrantLock.TryLock() for details.
-                if (perThread.TryLock(timeout))
+                if (perThread.TryLock())
                 {
                     try
                     {
@@ -813,12 +806,7 @@ namespace Lucene.Net.Index
                     {
                         SetFlushPending(perThread);
                     }
-                    // LUCENENET specific - since this is never expected to return null, we wait for 2 minutes as an absolute
-                    // worst case scenario under heavy load for this to reach the beginning of the wait queue. In practice during
-                    // testing, 50 ms was enough to get the tests to pass, but each of these threads could be processing up to 2GB
-                    // of data, so we need to provide time to get through the queue, but still fail in a reasonable amount of time
-                    // instead of waiting indefinitely.
-                    DocumentsWriterPerThread flushingDWPT = InternalTryCheckOutForFlush(perThread, TimeSpan.FromMinutes(2));
+                    DocumentsWriterPerThread flushingDWPT = InternalTryCheckOutForFlush(perThread);
                     if (Debugging.AssertsEnabled)
                     {
                         Debugging.Assert(flushingDWPT != null, "DWPT must never be null here since we hold the lock and it holds documents");

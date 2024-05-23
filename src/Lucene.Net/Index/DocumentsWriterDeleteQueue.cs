@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
 
         internal void TryApplyGlobalSlice()
         {
-            if (globalBufferLock.TryLock(DocumentsWriter.TryLockTimeoutMilliseconds))
+            if (globalBufferLock.TryLock())
             {
                 /*
                  * The global buffer must be locked but we don't need to update them if

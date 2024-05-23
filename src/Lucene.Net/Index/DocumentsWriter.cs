@@ -103,12 +103,6 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class DocumentsWriter : IDisposable
     {
-        // LUCENENET specific - used to allow TryLock threads to wait a little for the current thread to
-        // obtain a lock. In Java, TryLock() "barges" ahead of the queue, but since this does not happen in
-        // .NET, we need to provide some time to wait for the thread to reach the beginning of the queue.
-        // This improves the hit rate when calling TryLock().
-        internal static TimeSpan TryLockTimeoutMilliseconds = new TimeSpan(Constants.RUNTIME_IS_64BIT ? 50 : 100);
-
         private readonly Directory directory;
 
         private volatile bool closed;
