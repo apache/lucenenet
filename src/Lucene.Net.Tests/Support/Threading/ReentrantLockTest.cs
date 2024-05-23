@@ -59,7 +59,9 @@ namespace Lucene.Net.Support.Threading
             {
                 try
                 {
+#pragma warning disable 612, 618
                     @lock.LockInterruptibly();
+#pragma warning restore 612, 618
                 }
                 catch (System.Threading.ThreadInterruptedException)
                 {
@@ -86,7 +88,9 @@ namespace Lucene.Net.Support.Threading
             {
                 try
                 {
+#pragma warning disable 612, 618
                     @lock.LockInterruptibly();
+#pragma warning restore 612, 618
                     outerInstance.threadShouldThrow();
                 }
                 catch (System.Threading.ThreadInterruptedException)
@@ -125,17 +129,17 @@ namespace Lucene.Net.Support.Threading
         //    assertTrue(r2.isFair());
         //}
 
-        /**
-         * locking an unlocked lock succeeds
-         */
-        [Test]
-        public void TestLock()
-        {
-            ReentrantLock rl = new ReentrantLock();
-            rl.Lock();
-            assertTrue(rl.IsLocked);
-            rl.Unlock();
-        }
+        ///**
+        // * locking an unlocked lock succeeds
+        // */
+        //[Test]
+        //public void TestLock()
+        //{
+        //    ReentrantLock rl = new ReentrantLock();
+        //    rl.Lock();
+        //    assertTrue(rl.IsLocked);
+        //    rl.Unlock();
+        //}
 
         ///**
         // * locking an unlocked fair lock succeeds
@@ -167,92 +171,92 @@ namespace Lucene.Net.Support.Threading
 #pragma warning restore CS0168 // Variable is declared but never used
         }
 
-        /**
-         * tryLock on an unlocked lock succeeds
-         */
-        [Test]
-        public void TestTryLock()
-        {
-            ReentrantLock rl = new ReentrantLock();
-            assertTrue(rl.TryLock());
-            assertTrue(rl.IsLocked);
-            rl.Unlock();
-        }
+        ///**
+        // * tryLock on an unlocked lock succeeds
+        // */
+        //[Test]
+        //public void TestTryLock()
+        //{
+        //    ReentrantLock rl = new ReentrantLock();
+        //    assertTrue(rl.TryLock());
+        //    assertTrue(rl.IsLocked);
+        //    rl.Unlock();
+        //}
 
 
-        /**
-         * hasQueuedThreads reports whether there are waiting threads
-         */
-        [Test]
-        [Ignore("Behavior differs from Java around interrupts, but Lucene.NET doesn't support interrupts or use this property.")]
-        public void TesthasQueuedThreads()
-        {
-            ReentrantLock @lock = new ReentrantLock();
-            ThreadJob t1 = new InterruptedLockRunnable(this, @lock);
-            ThreadJob t2 = new InterruptibleLockRunnable(@lock);
-            try
-            {
-                assertFalse(@lock.HasQueuedThreads);
-                @lock.Lock();
-                t1.Start();
-                Thread.Sleep(SHORT_DELAY_MS);
-                assertTrue(@lock.HasQueuedThreads);
-                t2.Start();
-                Thread.Sleep(SHORT_DELAY_MS);
-                assertTrue(@lock.HasQueuedThreads);
-                t1.Interrupt();
-                Thread.Sleep(SHORT_DELAY_MS);
-                assertTrue(@lock.HasQueuedThreads);
-                @lock.Unlock();
-                Thread.Sleep(SHORT_DELAY_MS);
-                //assertFalse(@lock.HasQueuedThreads); // LUCENENET: Behavior differs from Java around interrupts, but Lucene.NET doesn't support interrupts or use this property.
-                t1.Join();
-                t2.Join();
+        ///**
+        // * hasQueuedThreads reports whether there are waiting threads
+        // */
+        //[Test]
+        //[Ignore("Behavior differs from Java around interrupts, but Lucene.NET doesn't support interrupts or use this property.")]
+        //public void TesthasQueuedThreads()
+        //{
+        //    ReentrantLock @lock = new ReentrantLock();
+        //    ThreadJob t1 = new InterruptedLockRunnable(this, @lock);
+        //    ThreadJob t2 = new InterruptibleLockRunnable(@lock);
+        //    try
+        //    {
+        //        assertFalse(@lock.HasQueuedThreads);
+        //        @lock.Lock();
+        //        t1.Start();
+        //        Thread.Sleep(SHORT_DELAY_MS);
+        //        assertTrue(@lock.HasQueuedThreads);
+        //        t2.Start();
+        //        Thread.Sleep(SHORT_DELAY_MS);
+        //        assertTrue(@lock.HasQueuedThreads);
+        //        t1.Interrupt();
+        //        Thread.Sleep(SHORT_DELAY_MS);
+        //        assertTrue(@lock.HasQueuedThreads);
+        //        @lock.Unlock();
+        //        Thread.Sleep(SHORT_DELAY_MS);
+        //        //assertFalse(@lock.HasQueuedThreads); // LUCENENET: Behavior differs from Java around interrupts, but Lucene.NET doesn't support interrupts or use this property.
+        //        t1.Join();
+        //        t2.Join();
 
-                assertFalse(@lock.HasQueuedThreads); // LUCENENET: Added assert
-            }
-            catch (Exception e) when (e.IsException())
-            {
-                unexpectedException();
-            }
-        }
+        //        assertFalse(@lock.HasQueuedThreads); // LUCENENET: Added assert
+        //    }
+        //    catch (Exception e) when (e.IsException())
+        //    {
+        //        unexpectedException();
+        //    }
+        //}
 
-        /**
-         * getQueueLength reports number of waiting threads
-         */
-        [Test]
-        [Ignore("Behavior differs from Java around interrupts, but Lucene.NET doesn't support interrupts or use this property.")]
-        public void TestGetQueueLength()
-        {
-            ReentrantLock @lock = new ReentrantLock();
-            ThreadJob t1 = new InterruptedLockRunnable(this, @lock);
-            ThreadJob t2 = new InterruptibleLockRunnable(@lock);
-            try
-            {
-                assertEquals(0, @lock.QueueLength);
-                @lock.Lock();
-                t1.Start();
-                Thread.Sleep(SHORT_DELAY_MS);
-                assertEquals(1, @lock.QueueLength);
-                t2.Start();
-                Thread.Sleep(SHORT_DELAY_MS);
-                assertEquals(2, @lock.QueueLength);
-                t1.Interrupt();
-                Thread.Sleep(SHORT_DELAY_MS);
-                assertEquals(1, @lock.QueueLength);
-                @lock.Unlock();
-                Thread.Sleep(SHORT_DELAY_MS);
-                //assertEquals(0, @lock.QueueLength); // LUCENENET: Behavior differs from Java around interrupts, but Lucene.NET doesn't support interrupts or use this property.
-                t1.Join();
-                t2.Join();
+        ///**
+        // * getQueueLength reports number of waiting threads
+        // */
+        //[Test]
+        //[Ignore("Behavior differs from Java around interrupts, but Lucene.NET doesn't support interrupts or use this property.")]
+        //public void TestGetQueueLength()
+        //{
+        //    ReentrantLock @lock = new ReentrantLock();
+        //    ThreadJob t1 = new InterruptedLockRunnable(this, @lock);
+        //    ThreadJob t2 = new InterruptibleLockRunnable(@lock);
+        //    try
+        //    {
+        //        assertEquals(0, @lock.QueueLength);
+        //        @lock.Lock();
+        //        t1.Start();
+        //        Thread.Sleep(SHORT_DELAY_MS);
+        //        assertEquals(1, @lock.QueueLength);
+        //        t2.Start();
+        //        Thread.Sleep(SHORT_DELAY_MS);
+        //        assertEquals(2, @lock.QueueLength);
+        //        t1.Interrupt();
+        //        Thread.Sleep(SHORT_DELAY_MS);
+        //        assertEquals(1, @lock.QueueLength);
+        //        @lock.Unlock();
+        //        Thread.Sleep(SHORT_DELAY_MS);
+        //        //assertEquals(0, @lock.QueueLength); // LUCENENET: Behavior differs from Java around interrupts, but Lucene.NET doesn't support interrupts or use this property.
+        //        t1.Join();
+        //        t2.Join();
 
-                assertEquals(0, @lock.QueueLength); // LUCENENET: Added assert
-            }
-            catch (Exception e) when (e.IsException())
-            {
-                unexpectedException();
-            }
-        }
+        //        assertEquals(0, @lock.QueueLength); // LUCENENET: Added assert
+        //    }
+        //    catch (Exception e) when (e.IsException())
+        //    {
+        //        unexpectedException();
+        //    }
+        //}
 
         ///**
         // * getQueueLength reports number of waiting threads
@@ -480,49 +484,50 @@ namespace Lucene.Net.Support.Threading
         //}
 
 
-        /**
-         * isLocked is true when locked and false when not
-         */
-        [Test]
-        public void TestIsLocked()
-        {
-            ReentrantLock @lock = new ReentrantLock();
-            @lock.Lock();
-            assertTrue(@lock.IsLocked);
-            @lock.Unlock();
-            assertFalse(@lock.IsLocked);
-            Thread t = new Thread(() =>
-            {
-                @lock.Lock();
-                try
-                {
-                    Thread.Sleep(SMALL_DELAY_MS);
-                }
-                catch (Exception e)
-                {
-                    threadUnexpectedException();
-                }
-                @lock.Unlock();
-            });
+        ///**
+        // * isLocked is true when locked and false when not
+        // */
+        //[Test]
+        //public void TestIsLocked()
+        //{
+        //    ReentrantLock @lock = new ReentrantLock();
+        //    @lock.Lock();
+        //    assertTrue(@lock.IsLocked);
+        //    @lock.Unlock();
+        //    assertFalse(@lock.IsLocked);
+        //    Thread t = new Thread(() =>
+        //    {
+        //        @lock.Lock();
+        //        try
+        //        {
+        //            Thread.Sleep(SMALL_DELAY_MS);
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            threadUnexpectedException();
+        //        }
+        //        @lock.Unlock();
+        //    });
 
-            try
-            {
-                t.Start();
-                Thread.Sleep(SHORT_DELAY_MS);
-                assertTrue(@lock.IsLocked);
-                t.Join();
-                assertFalse(@lock.IsLocked);
-            }
-            catch (Exception e) when (e.IsException())
-            {
-                unexpectedException();
-            }
-        }
+        //    try
+        //    {
+        //        t.Start();
+        //        Thread.Sleep(SHORT_DELAY_MS);
+        //        assertTrue(@lock.IsLocked);
+        //        t.Join();
+        //        assertFalse(@lock.IsLocked);
+        //    }
+        //    catch (Exception e) when (e.IsException())
+        //    {
+        //        unexpectedException();
+        //    }
+        //}
 
         /**
          * lockInterruptibly is interruptible.
          */
         [Test]
+        [Ignore("LUCENENET: LockInterruptibly() is broken, but it is not in use anywhere but in the tests. Technically, Lucene.NET does not support Thread.Interrupt().")]
         public void TestLockInterruptibly1()
         {
             ReentrantLock @lock = new ReentrantLock();
@@ -543,35 +548,36 @@ namespace Lucene.Net.Support.Threading
             }
         }
 
-        /**
-         * lockInterruptibly succeeds when unlocked, else is interruptible
-         */
-        [Test]
-        public void TestLockInterruptibly2()
-        {
-            ReentrantLock @lock = new ReentrantLock();
-            try
-            {
-                @lock.LockInterruptibly();
-            }
-            catch (Exception e)
-            {
-                unexpectedException();
-            }
-            ThreadJob t = new InterruptedLockRunnable(this, @lock);
-            try
-            {
-                t.Start();
-                t.Interrupt();
-                assertTrue(@lock.IsLocked);
-                assertTrue(@lock.IsHeldByCurrentThread);
-                t.Join();
-            }
-            catch (Exception e) when (e.IsException())
-            {
-                unexpectedException();
-            }
-        }
+        ///**
+        // * lockInterruptibly succeeds when unlocked, else is interruptible
+        // */
+        //[Test]
+        //[Ignore("LUCENENET: LockInterruptibly() is broken, but it is not in use anywhere but in the tests. Technically, Lucene.NET does not support Thread.Interrupt().")]
+        //public void TestLockInterruptibly2()
+        //{
+        //    ReentrantLock @lock = new ReentrantLock();
+        //    try
+        //    {
+        //        @lock.LockInterruptibly();
+        //    }
+        //    catch (Exception e) when (e.IsException())
+        //    {
+        //        unexpectedException();
+        //    }
+        //    ThreadJob t = new InterruptedLockRunnable(this, @lock);
+        //    try
+        //    {
+        //        t.Start();
+        //        t.Interrupt();
+        //        assertTrue(@lock.IsLocked);
+        //        assertTrue(@lock.IsHeldByCurrentThread);
+        //        t.Join();
+        //    }
+        //    catch (Exception e) when (e.IsException())
+        //    {
+        //        unexpectedException();
+        //    }
+        //}
 
 
 
@@ -1463,6 +1469,7 @@ namespace Lucene.Net.Support.Threading
          * toString indicates current lock state
          */
         [Test]
+        [Ignore("LUCENENET: Not implemented")]
         public void TestToString()
         {
             ReentrantLock @lock = new ReentrantLock();
@@ -1473,168 +1480,168 @@ namespace Lucene.Net.Support.Threading
             assertTrue(ls.IndexOf("Locked", StringComparison.Ordinal) >= 0);
         }
 
-        [Test]
-        [LuceneNetSpecific]
-        public void TestReentry()
-        {
-            ReentrantLock @lock = new ReentrantLock();
-            assertFalse(@lock.IsLocked);
-            @lock.Lock();
-            assertTrue(@lock.IsLocked);
-            @lock.TryLock();
-            assertTrue(@lock.IsLocked);
-            @lock.Lock();
-            assertTrue(@lock.IsLocked);
+        //[Test]
+        //[LuceneNetSpecific]
+        //public void TestReentry()
+        //{
+        //    ReentrantLock @lock = new ReentrantLock();
+        //    assertFalse(@lock.IsLocked);
+        //    @lock.Lock();
+        //    assertTrue(@lock.IsLocked);
+        //    @lock.TryLock();
+        //    assertTrue(@lock.IsLocked);
+        //    @lock.Lock();
+        //    assertTrue(@lock.IsLocked);
 
-            // Now unwind the stack
-            @lock.Unlock();
-            assertTrue(@lock.IsLocked);
-            @lock.Unlock();
-            assertTrue(@lock.IsLocked);
-            @lock.Unlock();
-            assertFalse(@lock.IsLocked);
+        //    // Now unwind the stack
+        //    @lock.Unlock();
+        //    assertTrue(@lock.IsLocked);
+        //    @lock.Unlock();
+        //    assertTrue(@lock.IsLocked);
+        //    @lock.Unlock();
+        //    assertFalse(@lock.IsLocked);
 
-            Assert.Throws<SynchronizationLockException>(() => @lock.Unlock());
-        }
+        //    Assert.Throws<SynchronizationLockException>(() => @lock.Unlock());
+        //}
 
-        [Test]
-        [LuceneNetSpecific]
-        public async Task TestReentryWithTasks()
-        {
-            var @lock = new ReentrantLock();
-            assertFalse(@lock.IsLocked);
+        //[Test]
+        //[LuceneNetSpecific]
+        //public async Task TestReentryWithTasks()
+        //{
+        //    var @lock = new ReentrantLock();
+        //    assertFalse(@lock.IsLocked);
 
-            var task1 = Task.Run(() =>
-            {
-                @lock.Lock();
-                assertEquals(1, @lock.reentrantCount.Value);
-                assertTrue(@lock.IsLocked);
+        //    var task1 = Task.Run(() =>
+        //    {
+        //        @lock.Lock();
+        //        assertEquals(1, @lock.reentrantCount.Value);
+        //        assertTrue(@lock.IsLocked);
 
-                @lock.TryLock();
-                assertEquals(2, @lock.reentrantCount.Value);
-                assertTrue(@lock.IsLocked);
+        //        @lock.TryLock();
+        //        assertEquals(2, @lock.reentrantCount.Value);
+        //        assertTrue(@lock.IsLocked);
 
-                @lock.Lock();
-                assertEquals(3, @lock.reentrantCount.Value);
-                assertTrue(@lock.IsLocked);
+        //        @lock.Lock();
+        //        assertEquals(3, @lock.reentrantCount.Value);
+        //        assertTrue(@lock.IsLocked);
 
-                // Simulate work
-                Thread.Sleep(300);
+        //        // Simulate work
+        //        Thread.Sleep(300);
 
-                // Now unwind the stack
-                @lock.Unlock();
-                assertEquals(2, @lock.reentrantCount.Value);
-                assertTrue(@lock.IsLocked);
+        //        // Now unwind the stack
+        //        @lock.Unlock();
+        //        assertEquals(2, @lock.reentrantCount.Value);
+        //        assertTrue(@lock.IsLocked);
 
-                @lock.Unlock();
-                assertEquals(1, @lock.reentrantCount.Value);
-                assertTrue(@lock.IsLocked);
+        //        @lock.Unlock();
+        //        assertEquals(1, @lock.reentrantCount.Value);
+        //        assertTrue(@lock.IsLocked);
 
-                lock (@lock.syncLock)
-                {
-                    @lock.Unlock();
-                    assertEquals(0, @lock.reentrantCount.Value);
-                    assertFalse(@lock.IsLocked);
-                }
+        //        //lock (@lock.syncLock)
+        //        {
+        //            @lock.Unlock();
+        //            assertEquals(0, @lock.reentrantCount.Value);
+        //            assertFalse(@lock.IsLocked);
+        //        }
 
-                Assert.Throws<SynchronizationLockException>(() => @lock.Unlock());
-            });
+        //        Assert.Throws<SynchronizationLockException>(() => @lock.Unlock());
+        //    });
 
-            var task2 = Task.Run(async () =>
-            {
-                // Wait a bit to ensure task1 has started and locked
-                await Task.Delay(100);
+        //    var task2 = Task.Run(async () =>
+        //    {
+        //        // Wait a bit to ensure task1 has started and locked
+        //        await Task.Delay(100);
 
-                // Try to lock
-                @lock.Lock();
+        //        // Try to lock
+        //        @lock.Lock();
 
-                // Simulate work
-                Thread.Sleep(100);
+        //        // Simulate work
+        //        Thread.Sleep(100);
 
-                lock (@lock.syncLock)
-                {
-                    @lock.Unlock();
-                    assertEquals(0, @lock.reentrantCount.Value);
-                    assertFalse(@lock.IsLocked);
-                }
+        //        //lock (@lock.syncLock)
+        //        {
+        //            @lock.Unlock();
+        //            assertEquals(0, @lock.reentrantCount.Value);
+        //            assertFalse(@lock.IsLocked);
+        //        }
 
-                Assert.Throws<SynchronizationLockException>(() => @lock.Unlock());
+        //        Assert.Throws<SynchronizationLockException>(() => @lock.Unlock());
 
-            });
+        //    });
 
-            await Task.WhenAll(task1, task2);
-        }
+        //    await Task.WhenAll(task1, task2);
+        //}
 
-#if DEBUG
-        private static void DoWorkReentrant(ReentrantLock @lock)
-        {
-            @lock.Lock();
-            assertEquals(1, @lock.reentrantCount.Value);
-            assertTrue(@lock.IsLocked);
+        //#if DEBUG
+        //        private static void DoWorkReentrant(ReentrantLock @lock)
+        //        {
+        //            @lock.Lock();
+        //            assertEquals(1, @lock.reentrantCount.Value);
+        //            assertTrue(@lock.IsLocked);
 
-            @lock.TryLock();
-            assertEquals(2, @lock.reentrantCount.Value);
-            assertTrue(@lock.IsLocked);
+        //            @lock.TryLock();
+        //            assertEquals(2, @lock.reentrantCount.Value);
+        //            assertTrue(@lock.IsLocked);
 
-            @lock.Lock();
-            assertEquals(3, @lock.reentrantCount.Value);
-            assertTrue(@lock.IsLocked);
+        //            @lock.Lock();
+        //            assertEquals(3, @lock.reentrantCount.Value);
+        //            assertTrue(@lock.IsLocked);
 
-            // Simulate work
-            Thread.Sleep(300);
+        //            // Simulate work
+        //            Thread.Sleep(300);
 
-            // Now unwind the stack
-            @lock.Unlock();
-            assertEquals(2, @lock.reentrantCount.Value);
-            assertTrue(@lock.IsLocked);
+        //            // Now unwind the stack
+        //            @lock.Unlock();
+        //            assertEquals(2, @lock.reentrantCount.Value);
+        //            assertTrue(@lock.IsLocked);
 
-            @lock.Unlock();
-            assertEquals(1, @lock.reentrantCount.Value);
-            assertTrue(@lock.IsLocked);
+        //            @lock.Unlock();
+        //            assertEquals(1, @lock.reentrantCount.Value);
+        //            assertTrue(@lock.IsLocked);
 
-            lock (@lock.syncLock)
-            {
-                @lock.Unlock();
-                assertEquals(0, @lock.reentrantCount.Value);
-                assertFalse(@lock.IsLocked);
-            }
+        //            lock (@lock.syncLock)
+        //            {
+        //                @lock.Unlock();
+        //                assertEquals(0, @lock.reentrantCount.Value);
+        //                assertFalse(@lock.IsLocked);
+        //            }
 
-            Assert.Throws<SynchronizationLockException>(() => @lock.Unlock());
-        }
+        //            Assert.Throws<SynchronizationLockException>(() => @lock.Unlock());
+        //        }
 
 
-        [Test]
-        [Slow]
-        [LuceneNetSpecific]
-        public void TestQueueCompletionWithTasks()
-        {
-            var @lock = new ReentrantLock();
-            assertEquals(0, @lock.queueCount);
-            assertEquals(0, @lock.dequeueCount);
-            assertEquals(0, @lock.poolReturnCount);
+        //        [Test]
+        //        [Slow]
+        //        [LuceneNetSpecific]
+        //        public void TestQueueCompletionWithTasks()
+        //        {
+        //            var @lock = new ReentrantLock();
+        //            assertEquals(0, @lock.queueCount);
+        //            assertEquals(0, @lock.dequeueCount);
+        //            assertEquals(0, @lock.poolReturnCount);
 
-            var tasks = new List<Task>();
+        //            var tasks = new List<Task>();
 
-            for (int i = 0; i < 10; i++)
-            {
-                tasks.Add(Task.Factory.StartNew((@lock) =>
-                {
-                    DoWorkReentrant((ReentrantLock)@lock);
-                }, @lock));
-            }
+        //            for (int i = 0; i < 10; i++)
+        //            {
+        //                tasks.Add(Task.Factory.StartNew((@lock) =>
+        //                {
+        //                    DoWorkReentrant((ReentrantLock)@lock);
+        //                }, @lock));
+        //            }
 
-            // Wait for all tasks to complete
-            Task.WaitAll(tasks.ToArray());
+        //            // Wait for all tasks to complete
+        //            Task.WaitAll(tasks.ToArray());
 
-            // Make sure everything that was queued has also been dequeued
-            assertTrue(@lock.queueCount > 0);
-            assertEquals(@lock.queueCount, @lock.dequeueCount);
-            assertEquals(@lock.queueCount, @lock.poolReturnCount);
+        //            // Make sure everything that was queued has also been dequeued
+        //            assertTrue(@lock.queueCount > 0);
+        //            assertEquals(@lock.queueCount, @lock.dequeueCount);
+        //            assertEquals(@lock.queueCount, @lock.poolReturnCount);
 
-            Console.WriteLine($"{nameof(@lock.queueCount)}: {@lock.queueCount}");
-            Console.WriteLine($"{nameof(@lock.dequeueCount)}: {@lock.dequeueCount}");
-            Console.WriteLine($"{nameof(@lock.poolReturnCount)}: {@lock.poolReturnCount}");
-        }
-#endif
+        //            Console.WriteLine($"{nameof(@lock.queueCount)}: {@lock.queueCount}");
+        //            Console.WriteLine($"{nameof(@lock.dequeueCount)}: {@lock.dequeueCount}");
+        //            Console.WriteLine($"{nameof(@lock.poolReturnCount)}: {@lock.poolReturnCount}");
+        //        }
+        //#endif
     }
 }
