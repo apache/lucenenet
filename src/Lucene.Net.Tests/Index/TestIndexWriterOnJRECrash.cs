@@ -13,6 +13,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -42,7 +43,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriterOnJRECrash : TestNRTThreads
     {
-        // LUCENENET: Setup unnecessary because we create a new temp directory
+        // LUCENENET: Setup of directory unnecessary because we create a new temp directory
         // in each iteration of the test.
 
         [Test]
@@ -64,33 +65,44 @@ namespace Lucene.Net.Index
                     DirectoryInfo tempDir = CreateTempDir("netcrash");
 
                     // Set up a TCP listener to receive the process ID
-                    int port = SetupSocketListener(out TcpListener listener);
-
-                    // Note this is the vstest.console process we are tracking here.
-                    Process p = ForkTest(tempDir.FullName, port);
-
-                    TextWriter childOut = BeginOutput(p, out ThreadJob stdOutPumper, out ThreadJob stdErrPumper);
-
-                    // LUCENENET: Note that ForkTest() creates the vstest.console.exe process.
-                    // This spawns testhost.exe, which runs our test. We wait until
-                    // the process starts and transmits its own Id so we know who to kill later.
-                    int processIdToKill = WaitForProcessId(listener);
-
-                    // Setup a time to crash the forked thread
-                    int crashTime = TestUtil.NextInt32(Random, 4000, 5000); // LUCENENET: Adjusted these up by 1 second to give our tests some more time to spin up
-                    ThreadJob t = new ThreadAnonymousClass(this, crashTime, processIdToKill);
-
-                    t.Priority = ThreadPriority.Highest;
-                    t.Start();
-                    t.Join(); // Wait for our thread to kill the other process
-
-                    // if we succeeded in finding an index, we are done.
-                    if (CheckIndexes(tempDir))
+                    TcpListener listener = SetupSocketListener();
+                    Process p = null;
+                    try
                     {
+                        // Get the port that we picked at random.
+                        int port = ((IPEndPoint)listener.LocalEndpoint).Port;
+
+                        // Note this is the vstest.console process we are tracking here.
+                        p = ForkTest(tempDir.FullName, port);
+
+                        TextWriter childOut = BeginOutput(p, out ThreadJob stdOutPumper, out ThreadJob stdErrPumper);
+
+                        // LUCENENET: Note that ForkTest() creates the vstest.console.exe process.
+                        // This spawns testhost.exe, which runs our test. We wait until
+                        // the process starts and transmits its own PID so we know who to kill later.
+                        int processIdToKill = WaitForProcessId(listener);
+
+                        // Setup a time to crash the forked thread
+                        int crashTime = TestUtil.NextInt32(Random, 4000, 5000); // LUCENENET: Adjusted these up by 1 second to give our tests some more time to spin up
+                        ThreadJob t = new ThreadAnonymousClass(this, crashTime, processIdToKill);
+
+                        t.Priority = ThreadPriority.Highest;
+                        t.Start();
+                        t.Join(); // Wait for our thread to kill the other process
+
+                        // if we succeeded in finding an index, we are done.
+                        if (CheckIndexes(tempDir))
+                        {
+                            EndOutput(p, childOut, stdOutPumper, stdErrPumper);
+                            return;
+                        }
                         EndOutput(p, childOut, stdOutPumper, stdErrPumper);
-                        return;
                     }
-                    EndOutput(p, childOut, stdOutPumper, stdErrPumper);
+                    finally
+                    {
+                        listener.Stop();
+                        p?.Dispose();
+                    }
                 }
             }
             else
@@ -100,7 +112,7 @@ namespace Lucene.Net.Index
 
                 // we are the fork, log our processId so the original test can kill us.
                 int processIdToKill = Process.GetCurrentProcess().Id;
-                int port = SystemProperties.GetPropertyAsInt32("tests:crashtestport", -1);
+                int port = SystemProperties.GetPropertyAsInt32("tests:crashtestport");
 
                 assertTrue("No tests:crashtestport value was passed to the fork. This is a required system property.", port > 0);
 
@@ -334,29 +346,22 @@ namespace Lucene.Net.Index
             return false;
         }
 
-        private int SetupSocketListener(out TcpListener listener)
+        private TcpListener SetupSocketListener()
         {
             // Pick a random port that is available on the local machine.
-            listener = new TcpListener(IPAddress.Loopback, 0);
+            TcpListener listener = new TcpListener(IPAddress.Loopback, 0);
             listener.Start();
-            return ((IPEndPoint)listener.LocalEndpoint).Port;
+            return listener;
         }
 
         // LUCENENET: Wait for our test to spin up and send its process ID so we can kill it.
         private int WaitForProcessId(TcpListener listener)
         {
-            try
-            {
-                using var client = listener.AcceptTcpClient();
-                using var stream = client.GetStream();
-                // Directly read the process ID as a 32-bit integer
-                using var reader = new BinaryReader(stream);
-                return reader.ReadInt32();
-            }
-            finally
-            {
-                listener.Stop();
-            }
+            using var client = listener.AcceptTcpClient();
+            using var stream = client.GetStream();
+            // Directly read the process ID as a 32-bit integer
+            using var reader = new BinaryReader(stream);
+            return reader.ReadInt32();
         }
 
         private void SendProcessId(int processId, int port)
