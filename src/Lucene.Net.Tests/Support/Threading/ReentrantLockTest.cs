@@ -166,9 +166,10 @@ namespace Lucene.Net.Support.Threading
                 rl.Unlock();
                 shouldThrow();
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (SynchronizationLockException success) { }
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (SynchronizationLockException)
+            {
+                // success
+            }
         }
 
         ///**
