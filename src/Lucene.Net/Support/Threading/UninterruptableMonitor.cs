@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Lucene.Net.Support.Threading
@@ -89,76 +90,91 @@ namespace Lucene.Net.Support.Threading
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Exit(object obj)
         {
             Monitor.Exit(obj);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsEntered(object obj)
         {
             return Monitor.IsEntered(obj);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryEnter(object obj)
         {
             return Monitor.TryEnter(obj);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryEnter(object obj, ref bool lockTaken)
         {
             Monitor.TryEnter(obj, ref lockTaken);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryEnter(object obj, int millisecondsTimeout)
         {
             return Monitor.TryEnter(obj, millisecondsTimeout);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryEnter(object obj, TimeSpan timeout)
         {
             return Monitor.TryEnter(obj, timeout);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryEnter(object obj, int millisecondsTimeout, ref bool lockTaken)
         {
             Monitor.TryEnter(obj, millisecondsTimeout, ref lockTaken);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryEnter(object obj, TimeSpan timeout, ref bool lockTaken)
         {
             Monitor.TryEnter(obj, timeout, ref lockTaken);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Pulse(object obj)
         {
             Monitor.Pulse(obj);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PulseAll(object obj)
         {
             Monitor.PulseAll(obj);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Wait(object obj)
         {
             Monitor.Wait(obj);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Wait(object obj, int millisecondsTimeout)
         {
             Monitor.Wait(obj, millisecondsTimeout);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Wait(object obj, TimeSpan timeout)
         {
             Monitor.Wait(obj, timeout);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Wait(object obj, int millisecondsTimeout, bool exitContext)
         {
             Monitor.Wait(obj, millisecondsTimeout, exitContext);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Wait(object obj, TimeSpan timeout, bool exitContext)
         {
             Monitor.Wait(obj, timeout, exitContext);
