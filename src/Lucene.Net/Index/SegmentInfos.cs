@@ -1452,6 +1452,7 @@ namespace Lucene.Net.Index
         {
             RollbackSegmentInfos(other.AsList());
             lastGeneration = other.lastGeneration;
+            userData = other.userData;
         }
 
         /// <summary>
