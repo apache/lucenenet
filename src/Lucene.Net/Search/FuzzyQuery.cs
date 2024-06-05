@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
-            if (maxEdits == 0 || prefixLength >= term.Text.Length) // can only match if it's exact
+            if (maxEdits == 0 ) // can only match if it's exact
             {
                 return new SingleTermsEnum(terms.GetEnumerator(), term.Bytes);
             }
