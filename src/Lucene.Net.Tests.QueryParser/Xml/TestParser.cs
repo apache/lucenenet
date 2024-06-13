@@ -107,13 +107,21 @@ namespace Lucene.Net.QueryParsers.Xml
         public void TestDisjunctionMaxQueryXML()
         {
             Query q = Parse("DisjunctionMaxQuery.xml");
-            assertTrue(q is DisjunctionMaxQuery);
-            DisjunctionMaxQuery d = (DisjunctionMaxQuery)q;
-            assertEquals(0.0f, d.TieBreakerMultiplier, 0.0001f);
-            assertEquals(2, d.Disjuncts.size());
-            DisjunctionMaxQuery ndq = (DisjunctionMaxQuery)d.Disjuncts[1];
-            assertEquals(1.2f, ndq.TieBreakerMultiplier, 0.0001f);
-            assertEquals(1, ndq.Disjuncts.size());
+            // assertTrue(q is DisjunctionMaxQuery);
+            // DisjunctionMaxQuery d = (DisjunctionMaxQuery)q;
+            // assertEquals(0.0f, d.TieBreakerMultiplier, 0.0001f);
+            // assertEquals(2, d.Disjuncts.size());
+            // DisjunctionMaxQuery ndq = (DisjunctionMaxQuery)d.Disjuncts[1];
+            // assertEquals(1.2f, ndq.TieBreakerMultiplier, 0.0001f);
+            // assertEquals(1, ndq.Disjuncts.size());
+            Query expected =
+                new DisjunctionMaxQuery(
+                    new List<Query>{
+                        new TermQuery(new Term("a", "merger")),
+                        new DisjunctionMaxQuery(
+                            new List<Query>{new TermQuery(new Term("b", "verger"))}, 1.2f)},
+                    0.0f);
+            assertEquals(expected, q);
         }
 
         [Test]
