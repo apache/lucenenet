@@ -106,9 +106,15 @@ $DocFxGlobalJson = Join-Path -Path $ApiDocsFolder "docfx.global.json"
 $DocFxJsonContent = Get-Content $DocFxGlobalJson | ConvertFrom-Json
 $DocFxJsonContent._appFooter = "Copyright &copy; $((Get-Date).Year) The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>"
 $DocFxJsonContent._appTitle = "Apache Lucene.NET $LuceneNetVersion Documentation"
-$DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
-$DocFxJsonContent._gitContribute.tag = "$VCSLabel"
+#$DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
+#$DocFxJsonContent._gitContribute.tag = "$VCSLabel"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
+
+# update the docfx.json file
+#$DocFxJson = Join-Path -Path $ApiDocsFolder "docfx.json"
+#$DocFxJsonContent = Get-Content $DocFxJson | ConvertFrom-Json
+#$DocFxJsonContent.build.globalMetadata._gitContribute.branch = "docs/$LuceneNetVersion"
+#$DocFxJsonContent.build.globalMetadata._gitContribute.tag = "$VCSLabel"
 
 # NOTE: The order of these depends on if one of the projects requries the xref map of another, normally all require the core xref map
 $DocFxJsonMeta = @(
@@ -150,7 +156,7 @@ if ($? -and $DisableMetaData -eq $false) {
 
         # build the output
         Write-Host "Building api metadata for $projFile..."
-        & docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel
+        & docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel --disableGitFeatures
     }
 }
 
@@ -174,7 +180,7 @@ if ($? -and $DisableBuild -eq $false) {
 
         # build the output
         Write-Host "Building site output for $projFile..."
-        & docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug
+        & docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug --disableGitFeatures
 
         # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
         $projFileJson = Get-Content $projFile | ConvertFrom-Json
