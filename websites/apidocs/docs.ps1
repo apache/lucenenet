@@ -23,6 +23,7 @@ param (
     [string] $LuceneNetVersion,
     [switch] $ServeDocs = $false,
     [switch] $Clean = $false,
+    [switch] $SkipToolInstall = $false, # to speed up iteration if you already have the tool installed
     [switch] $DisableMetaData = $false,
     [switch] $DisableBuild = $false,
     [switch] $DisablePlugins = $false,
@@ -34,7 +35,7 @@ param (
     [Parameter(Mandatory = $false)]
     [int] $StagingPort = 8080
 )
-$MinimumSdkVersion = "3.1.100" # Minimum Required .NET SDK (must not be a pre-release)
+$MinimumSdkVersion = "8.0.204" # Minimum Required .NET SDK (must not be a pre-release)
 
 $ErrorActionPreference = "Stop"
 
@@ -57,35 +58,16 @@ $env:LuceneNetReleaseTag = $VCSLabel
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 $RepoRoot = (get-item $PSScriptFilePath).Directory.Parent.Parent.FullName;
 $ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "websites\apidocs";
-$ToolsFolder = Join-Path -Path $ApiDocsFolder -ChildPath "tools";
 $CliIndexPath = Join-Path -Path $RepoRoot -ChildPath "src\dotnet\tools\lucene-cli\docs\index.md";
 $TocPath1 = Join-Path -Path $ApiDocsFolder -ChildPath "toc.yml"
 $TocPath2 = Join-Path -Path $ApiDocsFolder -ChildPath "toc\toc.yml"
 $BreadcrumbPath = Join-Path -Path $ApiDocsFolder -ChildPath "docfx.global.subsite.json"
 
-#ensure the /build/tools folder
-New-Item $ToolsFolder -type directory -force
-
-if ($Clean) {
-    Write-Host "Cleaning tools..."
-    Remove-Item (Join-Path -Path $ToolsFolder "\*") -recurse -force -ErrorAction SilentlyContinue
+# install docfx tool
+if ($SkipToolInstall -eq $false) {
+    Write-Host "Installing docfx global tool..."
+    dotnet tool install -g docfx --version 2.76.0
 }
-
-New-Item "$ToolsFolder\tmp" -type directory -force
-
-# Go get docfx.exe if we don't have it
-New-Item "$ToolsFolder\docfx" -type directory -force
-$DocFxExe = "$ToolsFolder\docfx\docfx.exe"
-if (-not (test-path $DocFxExe)) {
-    Write-Host "Retrieving docfx..."
-    $DocFxZip = "$ToolsFolder\tmp\docfx.zip"
-    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.58/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60
-
-    #unzip
-    Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
-}
-
-Remove-Item  -Recurse -Force "$ToolsFolder\tmp"
 
 # delete anything that already exists
 if ($Clean) {
@@ -168,13 +150,7 @@ if ($? -and $DisableMetaData -eq $false) {
 
         # build the output
         Write-Host "Building api metadata for $projFile..."
-
-        if ($Clean) {
-            & $DocFxExe metadata $projFile --log "$DocFxLog" --loglevel $LogLevel --force
-        }
-        else {
-            & $DocFxExe metadata $projFile --log "$DocFxLog" --loglevel $LogLevel
-        }
+        & docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel
     }
 }
 
@@ -198,21 +174,7 @@ if ($? -and $DisableBuild -eq $false) {
 
         # build the output
         Write-Host "Building site output for $projFile..."
-
-        # Specifying --force, --forcePostProcess and --cleanupCacheHistory
-        # seems to be required in order for all xref links to resolve consistently across
-        # all of the docfx builds (see https://dotnet.github.io/docfx/RELEASENOTE.html?tabs=csharp).
-        # Previously we used to do this:
-        #   Remove-Item (Join-Path -Path $ApiDocsFolder "obj\.cache") -recurse -force -ErrorAction SilentlyContinue
-        # to force remove the cache else the xref's wouldn't work correctly. So far with these new parameters
-        # it seems much happier.
-
-        if ($Clean) {
-            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --force --debug --cleanupCacheHistory --force --forcePostProcess
-        }
-        else {
-            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --debug --cleanupCacheHistory --force --forcePostProcess
-        }
+        & docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug
 
         # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
         $projFileJson = Get-Content $projFile | ConvertFrom-Json
@@ -239,18 +201,12 @@ if ($?) {
 
         # build the output
         Write-Host "Building docs..."
-
-        if ($Clean) {
-            & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --force --debug
-        }
-        else {
-            & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --debug
-        }
+        & docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --debug
     }
     else {
         # build + serve (for testing)
         Write-Host "starting website..."
-        & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --serve --port $StagingPort --debug
+        & docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --serve --port $StagingPort --debug
     }
 }
 
