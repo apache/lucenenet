@@ -3,9 +3,11 @@ using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
+
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
 using Lucene.Net.Util.Events;
 #endif
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -81,7 +83,7 @@ namespace Lucene.Net.Index
         private bool closedByChild = false;
         private readonly AtomicInt32 refCount = new AtomicInt32(1);
 
-        private protected IndexReader() // LUCENENET: Changed from internal to private protected
+        protected IndexReader() // LUCENENET: Changed from internal to private protected
         {
             if (!(this is CompositeReader || this is AtomicReader))
             {
@@ -656,10 +658,10 @@ namespace Lucene.Net.Index
         }
 
         // LUCENENET specific: Clean up the weak event handler if this class goes out of scope
-        ~IndexReader()
-        {
-            Dispose(false);
-        }
+        //~IndexReader()
+        //{
+        //    Dispose(false);
+        //}
 
         // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
         private void OnGetParentReaders(WeakEvents.GetParentReadersEventArgs e)

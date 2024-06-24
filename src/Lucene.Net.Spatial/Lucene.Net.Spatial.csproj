@@ -25,6 +25,8 @@
   <PropertyGroup>
     <Description>Geospatial search for the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
     <PackageDocumentationRelativeUrl>spatial/Lucene.Net.Spatial.html</PackageDocumentationRelativeUrl>
+	  <PackageVersion>4.9.0-finalizerFix</PackageVersion>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir).build/nuget.props" />
