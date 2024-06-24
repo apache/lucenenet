@@ -657,12 +657,6 @@ namespace Lucene.Net.Index
                 getCacheKeysEvent.Subscribe(OnGetCacheKeys);
         }
 
-        // LUCENENET specific: Clean up the weak event handler if this class goes out of scope
-        //~IndexReader()
-        //{
-        //    Dispose(false);
-        //}
-
         // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use
         private void OnGetParentReaders(WeakEvents.GetParentReadersEventArgs e)
         {

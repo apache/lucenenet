@@ -25,8 +25,6 @@
   <PropertyGroup>
     <Description>Analyzers for indexing content in different languages and domains for the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
     <PackageDocumentationRelativeUrl>analysis-common/overview.html</PackageDocumentationRelativeUrl>
-	  <PackageVersion>4.9.0-finalizerFix</PackageVersion>
-	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   
   <Import Project="$(SolutionDir).build/nuget.props" />

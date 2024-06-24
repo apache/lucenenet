@@ -32,12 +32,7 @@
 		<!--<PackageReadmeFile>readme.md</PackageReadmeFile>-->
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 		<NoWarn>$(NoWarn);1591;1573</NoWarn>
-		<PackageVersion>4.9.0-finalizerFix</PackageVersion>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
-		<AnalysisLevel>latest</AnalysisLevel>
 	</PropertyGroup>
 
 
@@ -124,14 +119,14 @@
 		<InternalsVisibleTo Include="Lucene.Net.Tests.Facet" />
 		<InternalsVisibleTo Include="Lucene.Net.Tests.Grouping" />
 		<InternalsVisibleTo Include="Lucene.Net.Tests.Highlighter" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.ICU" />
 		<!-- For Analysis.Util.TestSegmentingTokenizerBase -->
+		<InternalsVisibleTo Include="Lucene.Net.Tests.ICU" />
 		<InternalsVisibleTo Include="Lucene.Net.Tests.Join" />
 		<InternalsVisibleTo Include="Lucene.Net.Tests.Misc" />
 		<InternalsVisibleTo Include="Lucene.Net.Tests.Queries" />
 		<InternalsVisibleTo Include="Lucene.Net.Tests.QueryParser" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Cli" />
 		<!-- For lucene-cli -->
+		<InternalsVisibleTo Include="Lucene.Net.Tests.Cli" />
 		<InternalsVisibleTo Include="Lucene.Net.Tests.Replicator" />
 		<InternalsVisibleTo Include="Lucene.Net.Tests.Sandbox" />
 		<InternalsVisibleTo Include="Lucene.Net.Tests.Spatial" />
