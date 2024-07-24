@@ -26,11 +26,11 @@
     <Description>Analyzers for indexing content in different languages and domains for the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
     <PackageDocumentationRelativeUrl>analysis-common/overview.html</PackageDocumentationRelativeUrl>
   </PropertyGroup>
-  
+
   <Import Project="$(SolutionDir).build/nuget.props" />
-  
+
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
 
     <AssemblyTitle>Lucene.Net.Analysis.Common</AssemblyTitle>
     <PackageTags>$(PackageTags);analysis</PackageTags>
@@ -38,7 +38,7 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-  
+
 
   <ItemGroup>
     <EmbeddedResource Include="**/*.rslp" Exclude="bin/**/*;obj/**/*" Label="RSLP Test Data" />
