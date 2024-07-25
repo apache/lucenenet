@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
             [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
             [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
-            public static readonly TermsEnumIndex[] EMPTY_ARRAY = Arrays.Empty<TermsEnumIndex>();
+            public static readonly TermsEnumIndex[] EMPTY_ARRAY = Array.Empty<TermsEnumIndex>();
             internal int SubIndex { get; private set; }
             internal TermsEnum TermsEnum { get; private set; }
 
@@ -67,8 +67,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns how many sub-reader slices contain the current 
-        /// term.</summary> 
+        /// Returns how many sub-reader slices contain the current
+        /// term.</summary>
         /// <seealso cref="MatchArray"/>
         public int MatchCount => numTop;
 

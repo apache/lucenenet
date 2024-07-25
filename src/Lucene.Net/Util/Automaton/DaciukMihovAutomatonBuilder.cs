@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using J2N.Runtime.CompilerServices;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
@@ -43,11 +43,11 @@ namespace Lucene.Net.Util.Automaton
         {
             /// <summary>
             /// An empty set of labels. </summary>
-            private static readonly int[] NO_LABELS = Arrays.Empty<int>();
+            private static readonly int[] NO_LABELS = Array.Empty<int>();
 
             /// <summary>
             /// An empty set of states. </summary>
-            private static readonly State[] NO_STATES = Arrays.Empty<State>();
+            private static readonly State[] NO_STATES = Array.Empty<State>();
 
             /// <summary>
             /// Labels of outgoing transitions. Indexed identically to <see cref="states"/>.

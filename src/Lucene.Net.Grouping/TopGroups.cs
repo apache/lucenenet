@@ -25,8 +25,8 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// Represents result returned by a grouping search.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public class TopGroups<TGroupValue> : ITopGroups<TGroupValue>
     {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Grouping
 
         /// <summary>
         /// Highest score across all hits, or
-        /// <see cref="float.NaN"/> if scores were not computed. 
+        /// <see cref="float.NaN"/> if scores were not computed.
         /// </summary>
         public float MaxScore { get; private set; }
 
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Grouping
     }
 
     /// <summary>
-    /// LUCENENET specific class used to nest types to mimic the syntax used 
+    /// LUCENENET specific class used to nest types to mimic the syntax used
     /// by Lucene (that is, without specifying the generic closing type of <see cref="TopGroups{TGroupValue}"/>)
     /// </summary>
     public static class TopGroups // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
@@ -116,11 +116,11 @@ namespace Lucene.Net.Search.Grouping
         }
 
         /// <summary>
-        /// Merges an array of TopGroups, for example obtained from the second-pass 
+        /// Merges an array of TopGroups, for example obtained from the second-pass
         /// collector across multiple shards. Each TopGroups must have been sorted by the
-        /// same groupSort and docSort, and the top groups passed to all second-pass 
+        /// same groupSort and docSort, and the top groups passed to all second-pass
         /// collectors must be the same.
-        /// 
+        ///
         /// <b>NOTE</b>: We can't always compute an exact totalGroupCount.
         /// Documents belonging to a group may occur on more than
         /// one shard and thus the merged totalGroupCount can be
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search.Grouping
         /// totalGroupCount represents a upper bound. If the documents
         /// of one group do only reside in one shard then the
         /// totalGroupCount is exact.
-        /// 
+        ///
         /// <b>NOTE</b>: the topDocs in each GroupDocs is actually
         /// an instance of TopDocsAndShards
         /// </summary>
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search.Grouping
                 }
                 else if (docOffset >= mergedTopDocs.ScoreDocs.Length)
                 {
-                    mergedScoreDocs = Arrays.Empty<ScoreDoc>();
+                    mergedScoreDocs = Array.Empty<ScoreDoc>();
                 }
                 else
                 {
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Grouping
 
         /// <summary>
         /// Highest score across all hits, or
-        /// <see cref="float.NaN"/> if scores were not computed. 
+        /// <see cref="float.NaN"/> if scores were not computed.
         /// </summary>
         float MaxScore { get; }
     }

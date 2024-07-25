@@ -39,12 +39,12 @@ namespace Lucene.Net.Search.Spell
     /// <para>
     /// A practical benefit of this spellchecker is that it requires no additional
     /// datastructures (neither in RAM nor on disk) to do its work.
-    /// 
+    ///
     /// </para>
     /// </summary>
     /// <seealso cref="LevenshteinAutomata"/>
     /// <seealso cref="FuzzyTermsEnum"/>
-    /// 
+    ///
     /// @lucene.experimental
     public class DirectSpellChecker
     {
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Spell
         private float accuracy = SpellChecker.DEFAULT_ACCURACY;
         /// <summary>
         /// value in [0..1] (or absolute number >=1) representing the minimum
-        /// number of documents (of the total) where a term should appear. 
+        /// number of documents (of the total) where a term should appear.
         /// </summary>
         private float thresholdFrequency = 0f;
         /// <summary>
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// value in [0..1] (or absolute number >=1) representing the maximum
         ///  number of documents (of the total) a query term can appear in to
-        ///  be corrected. 
+        ///  be corrected.
         /// </summary>
         private float maxQueryFrequency = 0.01f;
         /// <summary>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Spell
         private CultureInfo lowerCaseTermsCulture = null; // LUCENENET specific
 
         /// <summary>
-        /// Creates a DirectSpellChecker with default configuration values 
+        /// Creates a DirectSpellChecker with default configuration values
         /// </summary>
         public DirectSpellChecker()
         {
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Gets or sets the maximum number of Levenshtein edit-distances to draw
         /// candidate terms from.This value can be 1 or 2. The default is 2.
-        /// 
+        ///
         /// Note: a large number of spelling errors occur with an edit distance
         /// of 1, by setting this value to 1 you can increase both performance
         /// and precision at the cost of recall.
@@ -130,8 +130,8 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Gets or sets the minimal number of characters that must match exactly.
-        /// 
-        /// This can improve both performance and accuracy of results, 
+        ///
+        /// This can improve both performance and accuracy of results,
         /// as misspellings are commonly not the first character.
         /// </summary>
         public virtual int MinPrefix
@@ -143,8 +143,8 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Get the maximum number of top-N inspections per suggestion.
-        /// 
-        /// Increasing this number can improve the accuracy of results, at the cost 
+        ///
+        /// Increasing this number can improve the accuracy of results, at the cost
         /// of performance.
         /// </summary>
         public virtual int MaxInspections
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Spell
 
 
         /// <summary>
-        /// Gets or sets the minimal accuracy required (default: 0.5f) from a StringDistance 
+        /// Gets or sets the minimal accuracy required (default: 0.5f) from a StringDistance
         /// for a suggestion match.
         /// </summary>
         public virtual float Accuracy
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search.Spell
 
 
         /// <summary>
-        /// Gets or sets the maximum threshold (default: 0.01f) of documents a query term can 
+        /// Gets or sets the maximum threshold (default: 0.01f) of documents a query term can
         /// appear in order to provide suggestions.
         /// <para/>
         /// Very high-frequency terms are typically spelled correctly. Additionally,
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Gets or sets the comparer for sorting suggestions.
-        /// The default is <see cref="SuggestWordQueue.DEFAULT_COMPARER"/> 
+        /// The default is <see cref="SuggestWordQueue.DEFAULT_COMPARER"/>
         /// </summary>
         public virtual IComparer<SuggestWord> Comparer
         {
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search.Spell
         /// dictionary using Damerau-Levenshtein, it works best with an edit-distance-like
         /// string metric. If you use a different metric than the default,
         /// you might want to consider increasing <see cref="MaxInspections"/>
-        /// to draw more candidates for your metric to rank. 
+        /// to draw more candidates for your metric to rank.
         /// </summary>
         public virtual IStringDistance Distance
         {
@@ -304,7 +304,7 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Suggest similar words.
-        /// 
+        ///
         /// <para>
         /// Unlike <see cref="SpellChecker"/>, the similarity used to fetch the most
         /// relevant terms is an edit distance, therefore typically a low value
@@ -318,14 +318,14 @@ namespace Lucene.Net.Search.Spell
         /// <param name="accuracy"> return only suggested words that match with this similarity </param>
         /// <returns> sorted list of the suggested words according to the comparer </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-        public virtual SuggestWord[] SuggestSimilar(Term term, int numSug, IndexReader ir, 
+        public virtual SuggestWord[] SuggestSimilar(Term term, int numSug, IndexReader ir,
             SuggestMode suggestMode, float accuracy)
         {
             CharsRef spare = new CharsRef();
             string text = term.Text;
             if (minQueryLength > 0 && text.CodePointCount(0, text.Length) < minQueryLength)
             {
-                return Arrays.Empty<SuggestWord>();
+                return Array.Empty<SuggestWord>();
             }
 
             if (lowerCaseTerms)
@@ -337,18 +337,18 @@ namespace Lucene.Net.Search.Spell
 
             if (suggestMode == SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX && docfreq > 0)
             {
-                return Arrays.Empty<SuggestWord>();
+                return Array.Empty<SuggestWord>();
             }
 
             int maxDoc = ir.MaxDoc;
 
             if (maxQueryFrequency >= 1f && docfreq > maxQueryFrequency)
             {
-                return Arrays.Empty<SuggestWord>();
+                return Array.Empty<SuggestWord>();
             }
             else if (docfreq > (int)Math.Ceiling(maxQueryFrequency * maxDoc))
             {
-                return Arrays.Empty<SuggestWord>();
+                return Array.Empty<SuggestWord>();
             }
 
             if (suggestMode != SuggestMode.SUGGEST_MORE_POPULAR)
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="spare"> a chars scratch </param>
         /// <returns> a collection of spelling corrections sorted by <code>ScoreTerm</code>'s natural order. </returns>
         /// <exception cref="IOException"> If I/O related errors occur </exception>
-        protected internal virtual ICollection<ScoreTerm> SuggestSimilar(Term term, int numSug, IndexReader ir, 
+        protected internal virtual ICollection<ScoreTerm> SuggestSimilar(Term term, int numSug, IndexReader ir,
             int docfreq, int editDistance, float accuracy, CharsRef spare)
         {
 

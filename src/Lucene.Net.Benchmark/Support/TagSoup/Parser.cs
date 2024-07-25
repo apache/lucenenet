@@ -10,13 +10,12 @@
 // is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
 // OF ANY KIND, either express or implied; not even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// 
-// 
+//
+//
 // The TagSoup parser
 
 using J2N.Text;
 using Lucene;
-using Lucene.Net.Support;
 using Sax;
 using Sax.Ext;
 using Sax.Helpers;
@@ -59,7 +58,7 @@ namespace TagSoup
         private const bool DEFAULT_IGNORABLE_WHITESPACE = false;
         private const bool DEFAULT_CDATA_ELEMENTS = true;
 
-        // Feature flags.  
+        // Feature flags.
 
         private bool namespaces = DEFAULT_NAMESPACES;
         private bool ignoreBogons = DEFAULT_IGNORE_BOGONS;
@@ -1132,7 +1131,7 @@ namespace TagSoup
             val = val.Trim();
             if (val.Length == 0)
             {
-                return Arrays.Empty<string>();
+                return Array.Empty<string>();
             }
             var l = new JCG.List<string>();
             int s = 0;

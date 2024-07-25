@@ -66,7 +66,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     ///     enables one to construct queries which search multiple fields.
     ///     </description></item>
     /// </list>
-    /// 
+    ///
     /// A clause may be either:
     /// <list type="bullet">
     ///     <item><description>
@@ -77,13 +77,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     ///     a <c>+</c>/<c>-</c> prefix to require any of a set of terms.
     ///     </description></item>
     /// </list>
-    /// 
+    ///
     /// Thus, in BNF, the query grammar is:
     /// <code>
     ///     Query  ::= ( Clause )*
     ///     Clause ::= [&quot;+&quot;, &quot;-&quot;] [&lt;TERM&gt; &quot;:&quot;] ( &lt;TERM&gt; | &quot;(&quot; Query &quot;)&quot; )
     /// </code>
-    /// 
+    ///
     /// <para>
     /// Examples of appropriately formatted queries can be found in the query syntax documentation.
     /// </para>
@@ -212,7 +212,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         /// <summary>
-        /// By default, it uses 
+        /// By default, it uses
         /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/> when creating a
         /// prefix, wildcard and range queries. This implementation is generally
         /// preferable because it a) Runs faster b) Does not have the scarcity of terms
@@ -237,7 +237,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             if (fields is null)
             {
-                fields = Arrays.Empty<string>();
+                fields = Array.Empty<string>();
             }
 
             QueryConfigHandler.Set(ConfigurationKeys.MULTI_FIELDS, fields);

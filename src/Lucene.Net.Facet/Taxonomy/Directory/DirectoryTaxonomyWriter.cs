@@ -5,7 +5,6 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -73,7 +72,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// <para>
     /// For extending classes that need to control the <see cref="IndexWriter"/> instance that is used,
     /// please see <see cref="DirectoryTaxonomyIndexWriterFactory"/> class.
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>
@@ -146,7 +145,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// This method is unnecessary if your <see cref="Store.Directory"/> uses a
         /// <see cref="NativeFSLockFactory"/> instead of the default
         /// <see cref="SimpleFSLockFactory"/>. When the "native" lock is used, a lock
-        /// does not stay behind forever when the process using it dies. 
+        /// does not stay behind forever when the process using it dies.
         /// </summary>
         public static void Unlock(Directory directory)
         {
@@ -211,7 +210,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         ///    If null or missing, <see cref="CreateDefaultTaxonomyWriterCache()"/> is used. </param>
         /// <param name="indexWriterFactory">
         ///    A <see cref="DirectoryTaxonomyIndexWriterFactory"/> implementation that can be used to
-        ///    customize the <see cref="IndexWriter"/> configuration and writer itself that's used to 
+        ///    customize the <see cref="IndexWriter"/> configuration and writer itself that's used to
         ///    store the taxonomy index.</param>
         /// <exception cref="CorruptIndexException">
         ///     if the taxonomy is corrupted. </exception>
@@ -234,7 +233,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IndexWriterConfig config = indexWriterFactory.CreateIndexWriterConfig(openMode);
             indexWriter = indexWriterFactory.OpenIndexWriter(dir, config);
 
-            // verify (to some extent) that merge policy in effect would preserve category docids 
+            // verify (to some extent) that merge policy in effect would preserve category docids
             if (indexWriter != null)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(!(indexWriter.Config.MergePolicy is TieredMergePolicy), "for preserving category docids, merging none-adjacent segments is not allowed");
@@ -309,7 +308,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// so a factory approach was used instead.
 
         /// <summary>
-        /// Opens a <see cref="ReaderManager"/> from the internal <see cref="IndexWriter"/>. 
+        /// Opens a <see cref="ReaderManager"/> from the internal <see cref="IndexWriter"/>.
         /// </summary>
         private void InitReaderManager()
         {
@@ -346,7 +345,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Defines the default <see cref="ITaxonomyWriterCache"/> to use in constructors
         /// which do not specify one.
-        /// <para>  
+        /// <para>
         /// The current default is <see cref="Cl2oTaxonomyWriterCache"/> constructed
         /// with the parameters (1024, 0.15f, 3), i.e., the entire taxonomy is
         /// cached in memory while building it.
@@ -626,7 +625,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // backward-compatible with existing indexes, we can't just fix what
             // we write here (e.g., to write parent+2), and need to do a workaround
             // in the reader (which knows that anyway only category 0 has a parent
-            // -1).    
+            // -1).
             parentStream.Set(Math.Max(parent + 1, 1));
             Document d = new Document
             {
@@ -714,7 +713,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // If cache.put() returned true, it means the cache was limited in
                 // size, became full, and parts of it had to be evicted. It is
                 // possible that a relatively-new category that isn't yet visible
-                // to our 'reader' was evicted, and therefore we must now refresh 
+                // to our 'reader' was evicted, and therefore we must now refresh
                 // the reader.
                 RefreshReaderManager();
                 cacheIsComplete = false;
@@ -728,7 +727,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 // this method is synchronized since it cannot happen concurrently with
                 // addCategoryDocument -- when this method returns, we must know that the
-                // reader manager's state is current. also, it sets shouldRefresh to false, 
+                // reader manager's state is current. also, it sets shouldRefresh to false,
                 // and this cannot overlap with addCatDoc too.
                 // NOTE: since this method is sync'ed, it can call maybeRefresh, instead of
                 // maybeRefreshBlocking. If ever this is changed, make sure to change the
@@ -1031,14 +1030,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Mapping from old ordinal to new ordinals, used when merging indexes 
+        /// Mapping from old ordinal to new ordinals, used when merging indexes
         /// wit separate taxonomies.
-        /// <para/> 
+        /// <para/>
         /// <see cref="AddMapping"/> merges one or more taxonomies into the given taxonomy
         /// (this). An <see cref="IOrdinalMap"/> is filled for each of the added taxonomies,
         /// containing the new ordinal (in the merged taxonomy) of each of the
         /// categories in the old taxonomy.
-        /// <para/>  
+        /// <para/>
         /// There exist two implementations of <see cref="IOrdinalMap"/>: <see cref="MemoryOrdinalMap"/> and
         /// <see cref="DiskOrdinalMap"/>. As their names suggest, the former keeps the map in
         /// memory and the latter in a temporary disk file. Because these maps will
@@ -1053,7 +1052,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             /// Set the size of the map. This MUST be called before <see cref="AddMapping"/>.
             /// It is assumed (but not verified) that <see cref="AddMapping"/> will then be
             /// called exactly 'size' times, with different <c>origOrdinals</c> between 0
-            /// and size - 1.  
+            /// and size - 1.
             /// </summary>
             void SetSize(int taxonomySize);
 
@@ -1063,7 +1062,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             /// <summary>
             /// Call <see cref="AddDone()"/> to say that all <see cref="AddMapping"/> have been done.
-            /// In some implementations this might free some resources. 
+            /// In some implementations this might free some resources.
             /// </summary>
             void AddDone();
 
@@ -1086,11 +1085,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             internal int[] map;
 
             /// <summary>
-            /// Sole constructor. 
+            /// Sole constructor.
             /// </summary>
             public MemoryOrdinalMap()
             {
-                map = Arrays.Empty<int>();
+                map = Array.Empty<int>();
             }
 
             public void SetSize(int taxonomySize)
@@ -1131,7 +1130,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             internal OutputStreamDataOutput @out;
 
             /// <summary>
-            /// Sole constructor. 
+            /// Sole constructor.
             /// </summary>
             public DiskOrdinalMap(string tmpfile)
             {
@@ -1273,10 +1272,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Expert: returns current index epoch, if this is a
-        /// near-real-time reader.  Used by 
-        /// <see cref="DirectoryTaxonomyReader"/> to support NRT. 
-        /// 
-        /// @lucene.internal 
+        /// near-real-time reader.  Used by
+        /// <see cref="DirectoryTaxonomyReader"/> to support NRT.
+        ///
+        /// @lucene.internal
         /// </summary>
         public long TaxonomyEpoch => indexEpoch;
     }

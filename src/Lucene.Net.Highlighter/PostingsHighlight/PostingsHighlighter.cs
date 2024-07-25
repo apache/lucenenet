@@ -37,13 +37,13 @@ namespace Lucene.Net.Search.PostingsHighlight
 
     /// <summary>
     /// Simple highlighter that does not analyze fields nor use
-    /// term vectors. Instead it requires 
+    /// term vectors. Instead it requires
     /// <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/>.
     /// </summary>
     /// <remarks>
     /// PostingsHighlighter treats the single original document as the whole corpus, and then scores individual
-    /// passages as if they were documents in this corpus. It uses a <see cref="BreakIterator"/> to find 
-    /// passages in the text; by default it breaks using <see cref="BreakIterator.GetSentenceInstance(CultureInfo)"/> (for sentence breaking). 
+    /// passages as if they were documents in this corpus. It uses a <see cref="BreakIterator"/> to find
+    /// passages in the text; by default it breaks using <see cref="BreakIterator.GetSentenceInstance(CultureInfo)"/> (for sentence breaking).
     /// It then iterates in parallel (merge sorting by offset) through
     /// the positions of all terms from the query, coalescing those hits that occur in a single passage
     /// into a <see cref="Passage"/>, and then scores each Passage using a separate <see cref="PassageScorer"/>.
@@ -65,8 +65,8 @@ namespace Lucene.Net.Search.PostingsHighlight
     ///     IndexableFieldType offsetsType = new IndexableFieldType(TextField.TYPE_STORED);
     ///     offsetsType.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
     ///     Field body = new Field("body", "foobar", offsetsType);
-    ///     
-    ///     // retrieve highlights at query time 
+    ///
+    ///     // retrieve highlights at query time
     ///     ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
     ///     Query query = new TermQuery(new Term("body", "highlighting"));
     ///     TopDocs topDocs = searcher.Search(query, n);
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="searcher">searcher that was previously used to execute the query.</param>
         /// <param name="topDocs">TopDocs containing the summary result documents to highlight.</param>
         /// <returns>
-        /// <see cref="T:IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets 
+        /// <see cref="T:IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets
         /// corresponding to the documents in <paramref name="topDocs"/>.
         /// If no highlights were found for a document, the
         /// first sentence from the field will be returned.
@@ -308,7 +308,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="docidsIn">containing the document IDs to highlight.</param>
         /// <param name="maxPassagesIn">The maximum number of top-N ranked passages per-field used to form the highlighted snippets.</param>
         /// <returns>
-        /// <see cref="F:IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets 
+        /// <see cref="F:IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets
         /// corresponding to the documents in <paramref name="docidsIn"/>.
         /// If no highlights were found for a document, the
         /// first <c>maxPassages</c> from the field will
@@ -525,7 +525,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // check if we should do any multiterm processing
             Analyzer analyzer = GetIndexAnalyzer(field);
-            CharacterRunAutomaton[] automata = Arrays.Empty<CharacterRunAutomaton>();
+            CharacterRunAutomaton[] automata = Array.Empty<CharacterRunAutomaton>();
             if (analyzer != null)
             {
                 automata = MultiTermHighlighting.ExtractAutomata(query, field);
@@ -601,7 +601,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             return highlights;
         }
-        
+
         // algorithm: treat sentence snippets as miniature documents
         // we can intersect these with the postings lists via BreakIterator.preceding(offset),s
         // score each sentence as norm(sentenceStartOffset) * sum(weight * tf(freq))
@@ -685,8 +685,8 @@ namespace Lucene.Net.Search.PostingsHighlight
                     throw new ArgumentException("field '" + field + "' was indexed without offsets, cannot highlight");
                 }
                 int end = dp.EndOffset;
-                // LUCENE-5166: this hit would span the content limit... however more valid 
-                // hits may exist (they are sorted by start). so we pretend like we never 
+                // LUCENE-5166: this hit would span the content limit... however more valid
+                // hits may exist (they are sorted by start). so we pretend like we never
                 // saw this term, it won't cause a passage to be added to passageQueue or anything.
                 if (Debugging.AssertsEnabled) Debugging.Assert(EMPTY.StartOffset == int.MaxValue);
                 if (start < contentLength && end > contentLength)
@@ -699,7 +699,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                     {
                         // finalize current
                         current.score *= scorer.Norm(current.startOffset);
-                        // new sentence: first add 'current' to queue 
+                        // new sentence: first add 'current' to queue
                         if (passageQueue.Count == n && current.score < passageQueue.Peek().score)
                         {
                             current.Reset(); // can't compete, just reset it

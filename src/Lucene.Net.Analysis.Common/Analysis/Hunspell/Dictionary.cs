@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Hunspell
     /// </summary>
     public class Dictionary
     {
-        private static readonly char[] NOFLAGS = Arrays.Empty<char>();
+        private static readonly char[] NOFLAGS = Array.Empty<char>();
 
         private const string ALIAS_KEY = "AF";
         private const string MORPH_ALIAS_KEY = "AM";
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="dictionary"> <see cref="Stream"/> for reading the hunspell dictionary file (won't be disposed). </param>
         /// <exception cref="IOException"> Can be thrown while reading from the <see cref="Stream"/>s </exception>
         /// <exception cref="Exception"> Can be thrown if the content of the files does not meet expected formats </exception>
-        public Dictionary(Stream affix, Stream dictionary) 
+        public Dictionary(Stream affix, Stream dictionary)
             : this(affix, new JCG.List<Stream>() { dictionary }, false)
         {
         }
@@ -752,12 +752,12 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             // .NET doesn't recognize the encoding without a dash between ISO and the number
             // https://msdn.microsoft.com/en-us/library/system.text.encodinginfo.getencoding(v=vs.110).aspx
-            if (encoding.Length > 3 && encoding.StartsWith("ISO", StringComparison.OrdinalIgnoreCase) && 
+            if (encoding.Length > 3 && encoding.StartsWith("ISO", StringComparison.OrdinalIgnoreCase) &&
                 encoding[3] != '-')
             {
                 encoding = "iso-" + encoding.Substring(3);
             }
-            // Special case - for codepage 1250-1258, we need to change to 
+            // Special case - for codepage 1250-1258, we need to change to
             // windows-1251, etc.
             else if (windowsCodePagePattern.IsMatch(encoding))
             {
@@ -1285,7 +1285,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
                 for (int i = 0; i < rawFlagParts.Length; i++)
                 {
-                    // note, removing the trailing X/leading I for nepali... what is the rule here?! 
+                    // note, removing the trailing X/leading I for nepali... what is the rule here?!
                     string replacement = leadingDigitPattern.Replace(rawFlagParts[i], "");
                     // note, ignoring empty flags (this happens in danish, for example)
                     if (replacement.Length == 0)
@@ -1313,7 +1313,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 if (rawFlags.Length == 0)
                 {
-                    return Arrays.Empty<char>(); // LUCENENET: Optimized char[] creation
+                    return Array.Empty<char>(); // LUCENENET: Optimized char[] creation
                 }
 
                 StringBuilder builder = new StringBuilder();

@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
             query.Add(new TermQuery(new Term(field, "w3")), Occur.MUST_NOT);
             query.Add(new TermQuery(new Term(field, "xx")), Occur.MUST_NOT);
             query.Add(new TermQuery(new Term(field, "w5")), Occur.MUST_NOT);
-            int[] expDocNrs = Arrays.Empty<int>(); // LUCENENET: instead of new int[] { };
+            int[] expDocNrs = Array.Empty<int>(); // LUCENENET: instead of new int[] { };
             QueriesTest(query, expDocNrs);
         }
 

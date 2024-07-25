@@ -129,7 +129,7 @@ namespace Lucene.Net.Expressions.JS
         // delegates
         public virtual Parser[] GetDelegates()
         {
-            return Arrays.Empty<Parser>();
+            return Array.Empty<Parser>();
         }
 
         public JavascriptParser(CommonTokenStream input)

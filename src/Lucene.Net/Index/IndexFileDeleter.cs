@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
             catch (Exception e) when (e.IsNoSuchDirectoryException())
             {
                 // it means the directory is empty, so ignore it.
-                files = Arrays.Empty<string>();
+                files = Array.Empty<string>();
             }
 
             if (currentSegmentsFile != null)

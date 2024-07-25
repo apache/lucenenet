@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Support;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
-        public static readonly ReaderSlice[] EMPTY_ARRAY = Arrays.Empty<ReaderSlice>();
+        public static readonly ReaderSlice[] EMPTY_ARRAY = Array.Empty<ReaderSlice>();
 
         /// <summary>
         /// Document ID this slice starts from. </summary>

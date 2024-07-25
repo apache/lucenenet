@@ -54,7 +54,7 @@ namespace Lucene.Net.Util
         private byte[] currentBlock;
         private readonly long bytesUsedPerBlock;
 
-        private static readonly byte[] EMPTY_BYTES = Arrays.Empty<byte>();
+        private static readonly byte[] EMPTY_BYTES = Array.Empty<byte>();
 
         /// <summary>
         /// Provides methods to read <see cref="BytesRef"/>s from a frozen

@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
     /// Unit tests) to check at run time if the FieldCache contains "insane"
     /// usages of the FieldCache.
     /// </para>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     /// <seealso cref="IFieldCache"/>
     /// <seealso cref="FieldCacheSanityChecker.Insanity"/>
@@ -107,7 +107,7 @@ namespace Lucene.Net.Util
         {
             if (null == cacheEntries || 0 == cacheEntries.Length)
             {
-                return Arrays.Empty<Insanity>();
+                return Array.Empty<Insanity>();
             }
 
             if (estimateRam)
@@ -354,7 +354,7 @@ namespace Lucene.Net.Util
                 }
 
                 ReaderField other = (ReaderField)that;
-                return (object.ReferenceEquals(this.readerKey, other.readerKey) 
+                return (object.ReferenceEquals(this.readerKey, other.readerKey)
                     && this.FieldName.Equals(other.FieldName, StringComparison.Ordinal));
             }
 

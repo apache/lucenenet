@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -33,14 +32,14 @@ namespace Lucene.Net.Sandbox.Queries
     /// Fuzzifies ALL terms provided as strings and then picks the best n differentiating terms.
     /// In effect this mixes the behaviour of <see cref="FuzzyQuery"/> and MoreLikeThis but with special consideration
     /// of fuzzy scoring factors.
-    /// This generally produces good results for queries where users may provide details in a number of 
+    /// This generally produces good results for queries where users may provide details in a number of
     /// fields and have no knowledge of boolean query syntax and also want a degree of fuzzy matching and
     /// a fast query.
     /// <para/>
     /// For each source term the fuzzy variants are held in a <see cref="BooleanQuery"/> with no coord factor (because
     /// we are not looking for matches on multiple variants in any one doc). Additionally, a specialized
-    /// <see cref="TermQuery"/> is used for variants and does not use that variant term's IDF because this would favour rarer 
-    /// terms eg misspellings. Instead, all variants use the same IDF ranking (the one for the source query 
+    /// <see cref="TermQuery"/> is used for variants and does not use that variant term's IDF because this would favour rarer
+    /// terms eg misspellings. Instead, all variants use the same IDF ranking (the one for the source query
     /// term) and this is factored into the variant's boost. If the source query term does not exist in the
     /// index the average IDF of the variants is used.
     /// </summary>
@@ -48,7 +47,7 @@ namespace Lucene.Net.Sandbox.Queries
     {
         // TODO: generalize this query (at least it should not reuse this static sim!
         // a better way might be to convert this into multitermquery rewrite methods.
-        // the rewrite method can 'average' the TermContext's term statistics (docfreq,totalTermFreq) 
+        // the rewrite method can 'average' the TermContext's term statistics (docfreq,totalTermFreq)
         // provided to TermQuery, so that the general idea is agnostic to any scoring system...
         internal static TFIDFSimilarity sim = new DefaultSimilarity();
         private Query rewrittenQuery = null;
@@ -107,7 +106,7 @@ namespace Lucene.Net.Sandbox.Queries
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="maxNumTerms">The total number of terms clauses that will appear once rewritten as a <see cref="BooleanQuery"/></param>
         /// <param name="analyzer"></param>
@@ -178,7 +177,7 @@ namespace Lucene.Net.Sandbox.Queries
         }
 
         /// <summary>
-        /// Adds user input for "fuzzification" 
+        /// Adds user input for "fuzzification"
         /// </summary>
         /// <param name="queryString">The string which will be parsed by the analyzer and for which fuzzy variants will be parsed</param>
         /// <param name="fieldName">The minimum similarity of the term variants (see <see cref="FuzzyTermsEnum"/>)</param>
@@ -323,7 +322,7 @@ namespace Lucene.Net.Sandbox.Queries
                         // found a match
                         Query tq = ignoreTF ? (Query)new ConstantScoreQuery(new TermQuery(st.Term)) : new TermQuery(st.Term, 1);
                         tq.Boost = st.Score; // set the boost using the ScoreTerm's score
-                        termVariants.Add(tq, Occur.SHOULD);          // add to query                    
+                        termVariants.Add(tq, Occur.SHOULD);          // add to query
                     }
                     bq.Add(termVariants, Occur.SHOULD);          // add to query
                 }

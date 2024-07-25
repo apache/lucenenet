@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Search.Spell;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using System;
@@ -45,7 +44,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a new sorted wrapper, using <see cref="BytesRef.UTF8SortedAsUnicodeComparer"/>
-        /// for sorting. 
+        /// for sorting.
         /// </summary>
         public SortedTermFreqEnumeratorWrapper(ITermFreqEnumerator source)
             : this(source, BytesRef.UTF8SortedAsUnicodeComparer)
@@ -135,7 +134,7 @@ namespace Lucene.Net.Search.Suggest
             bool success = false;
             try
             {
-                byte[] buffer = Arrays.Empty<byte>();
+                byte[] buffer = Array.Empty<byte>();
                 ByteArrayDataOutput output = new ByteArrayDataOutput(buffer);
 
                 while (source.MoveNext())

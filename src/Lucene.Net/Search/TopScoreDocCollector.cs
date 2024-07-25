@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
                 // LUCENENET specific - optimized empty array creation
-                return results is null ? new TopDocs(m_totalHits, Arrays.Empty<ScoreDoc>(), float.NaN) : new TopDocs(m_totalHits, results);
+                return results is null ? new TopDocs(m_totalHits, Array.Empty<ScoreDoc>(), float.NaN) : new TopDocs(m_totalHits, results);
             }
         }
 
@@ -254,7 +254,7 @@ namespace Lucene.Net.Search
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
                 // LUCENENET specific - optimized empty array creation
-                return results is null ? new TopDocs(m_totalHits, Arrays.Empty<ScoreDoc>(), float.NaN) : new TopDocs(m_totalHits, results);
+                return results is null ? new TopDocs(m_totalHits, Array.Empty<ScoreDoc>(), float.NaN) : new TopDocs(m_totalHits, results);
             }
         }
 

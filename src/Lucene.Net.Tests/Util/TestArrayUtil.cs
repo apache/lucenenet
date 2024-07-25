@@ -342,7 +342,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestEmptyArraySort()
         {
-            int[] a = Arrays.Empty<int>();
+            int[] a = Array.Empty<int>();
 
             ArrayUtil.IntroSort(a);
             ArrayUtil.TimSort(a);

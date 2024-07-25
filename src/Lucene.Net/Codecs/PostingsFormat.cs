@@ -37,25 +37,25 @@ namespace Lucene.Net.Codecs
     /// <list type="number">
     ///     <item><description>Subclass this class.</description></item>
     ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/>, override <see cref="DefaultPostingsFormatFactory.Initialize()"/>,
-    ///         and add the line <c>base.ScanForPostingsFormats(typeof(YourPostingsFormat).Assembly)</c>. 
-    ///         If you have any format classes in your assembly 
-    ///         that are not meant for reading, you can add the <see cref="ExcludePostingsFormatFromScanAttribute"/> 
+    ///         and add the line <c>base.ScanForPostingsFormats(typeof(YourPostingsFormat).Assembly)</c>.
+    ///         If you have any format classes in your assembly
+    ///         that are not meant for reading, you can add the <see cref="ExcludePostingsFormatFromScanAttribute"/>
     ///         to them so they are ignored by the scan.</description></item>
-    ///     <item><description>Set the new <see cref="IPostingsFormatFactory"/> by calling <see cref="SetPostingsFormatFactory(IPostingsFormatFactory)"/> 
+    ///     <item><description>Set the new <see cref="IPostingsFormatFactory"/> by calling <see cref="SetPostingsFormatFactory(IPostingsFormatFactory)"/>
     ///         at application startup.</description></item>
     /// </list>
-    /// If your format has dependencies, you may also override <see cref="DefaultPostingsFormatFactory.GetPostingsFormat(Type)"/> to inject 
+    /// If your format has dependencies, you may also override <see cref="DefaultPostingsFormatFactory.GetPostingsFormat(Type)"/> to inject
     /// them via pure DI or a DI container. See <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framework/">DI-Friendly Framework</a>
     /// to understand the approach used.
     /// <para/>
     /// <b>PostingsFormat Names</b>
     /// <para/>
-    /// Unlike the Java version, format names are by default convention-based on the class name. 
-    /// If you name your custom format class "MyCustomPostingsFormat", the codec name will the same name 
+    /// Unlike the Java version, format names are by default convention-based on the class name.
+    /// If you name your custom format class "MyCustomPostingsFormat", the codec name will the same name
     /// without the "PostingsFormat" suffix: "MyCustom".
     /// <para/>
     /// You can override this default behavior by using the <see cref="PostingsFormatNameAttribute"/> to
-    /// name the format differently than this convention. Format names must be all ASCII alphanumeric, 
+    /// name the format differently than this convention. Format names must be all ASCII alphanumeric,
     /// and less than 128 characters in length.
     /// <para/>
     /// @lucene.experimental
@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
-        public static readonly PostingsFormat[] EMPTY = Arrays.Empty<PostingsFormat>();
+        public static readonly PostingsFormat[] EMPTY = Array.Empty<PostingsFormat>();
 
         /// <summary>
         /// Unique name that's used to retrieve this format when
@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs
         /// The provided name will be written into the index segment in some configurations
         /// (such as when using <see cref="PerField.PerFieldPostingsFormat"/>): in such configurations,
         /// for the segment to be read this class should be registered by subclassing <see cref="DefaultPostingsFormatFactory"/> and
-        /// calling <see cref="DefaultPostingsFormatFactory.ScanForPostingsFormats(System.Reflection.Assembly)"/> in the class constructor. 
+        /// calling <see cref="DefaultPostingsFormatFactory.ScanForPostingsFormats(System.Reflection.Assembly)"/> in the class constructor.
         /// The new <see cref="IPostingsFormatFactory"/> can be registered by calling <see cref="SetPostingsFormatFactory(IPostingsFormatFactory)"/> at application startup.</summary>
         protected PostingsFormat()
         {

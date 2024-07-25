@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             // LUCENENET specific - To avoid boxing/unboxing, we don't
             // call GetNumericValue(). Instead, we check the field.NumericType and then
-            // call the appropriate conversion method. 
+            // call the appropriate conversion method.
             if (field.NumericType != NumericFieldType.NONE)
             {
                 switch (field.NumericType)
@@ -430,7 +430,7 @@ namespace Lucene.Net.Codecs.Compressing
                     {
                         // not all docs were deleted
                         CompressingStoredFieldsReader.ChunkIterator it = matchingFieldsReader.GetChunkIterator(docID);
-                        int[] startOffsets = Arrays.Empty<int>();
+                        int[] startOffsets = Array.Empty<int>();
                         do
                         {
                             // go to the next chunk that contains docID

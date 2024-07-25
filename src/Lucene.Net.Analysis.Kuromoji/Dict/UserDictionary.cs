@@ -1,6 +1,5 @@
 ﻿using J2N.Text;
 using Lucene.Net.Analysis.Ja.Util;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -126,7 +125,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             this.data = data.ToArray(/*new string[data.Count]*/);
             this.segmentations = segmentations.ToArray(/*new int[segmentations.Count][]*/);
         }
-        
+
         /// <summary>
         /// Lookup words in text.
         /// </summary>
@@ -171,7 +170,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         public TokenInfoFST FST => fst;
 
-        private static readonly int[][] EMPTY_RESULT = Arrays.Empty<int[]>();
+        private static readonly int[][] EMPTY_RESULT = Array.Empty<int[]>();
 
         /// <summary>
         /// Convert Map of index and wordIdAndLength to array of {wordId, index, length}

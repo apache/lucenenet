@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -120,7 +119,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             else
             {
-                this.rootArcs = Arrays.Empty<FST.Arc<object>>();
+                this.rootArcs = Array.Empty<FST.Arc<object>>();
             }
             this.higherWeightsFirst = higherWeightsFirst;
             this.exactFirst = exactFirst;
@@ -339,14 +338,14 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <see cref="Lookup.LookupResult"/> to the first
         /// position.
         /// </summary>
-        /// <returns> 
+        /// <returns>
         /// Returns <c>true</c> if and only if <paramref name="list"/> contained
         /// <paramref name="key"/>.
         /// </returns>
         private static bool CheckExistingAndReorder(IList<Completion> list, BytesRef key) // LUCENENET: CA1822: Mark members as static
         {
             // We assume list does not have duplicates (because of how the FST is created).
-            for (int i = list.Count; --i >= 0; )
+            for (int i = list.Count; --i >= 0;)
             {
                 if (key.Equals(list[i].Utf8))
                 {
@@ -406,7 +405,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 output.Bytes = ArrayUtil.Grow(output.Bytes);
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(output.Offset == 0);
-            output.Bytes[output.Length++] = (byte) arc.Label;
+            output.Bytes[output.Length++] = (byte)arc.Label;
             FST.BytesReader fstReader = automaton.GetBytesReader();
             automaton.ReadFirstTargetArc(arc, arc, fstReader);
             while (true)

@@ -51,7 +51,7 @@ namespace Lucene.Net.Util.Automaton
         public Transition[] TransitionsArray => transitionsArray;
 
         // LUCENENET NOTE: Setter removed because it is apparently not in use outside of this class
-        private Transition[] transitionsArray = Arrays.Empty<Transition>();
+        private Transition[] transitionsArray = Array.Empty<Transition>();
 
         internal int numTransitions = 0;// LUCENENET NOTE: Made internal because we already have a public property for access
 
@@ -74,7 +74,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         internal void ResetTransitions()
         {
-            transitionsArray = Arrays.Empty<Transition>();
+            transitionsArray = Array.Empty<Transition>();
             numTransitions = 0;
         }
 
@@ -220,7 +220,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Virtually adds an epsilon transition to the target
         /// <paramref name="to"/> state.  this is implemented by copying all
-        /// transitions from <paramref name="to"/> to this state, and if 
+        /// transitions from <paramref name="to"/> to this state, and if
         /// <paramref name="to"/> is an accept state then set accept for this state.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

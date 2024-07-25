@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// Constructs a filter for docs matching any of the terms added to this class.
     /// Unlike a RangeFilter this can be used for filtering on multiple terms that are not necessarily in
@@ -38,11 +38,11 @@ namespace Lucene.Net.Queries
     {
         /*
          * this class is often used for large number of terms in a single field.
-         * to optimize for this case and to be filter-cache friendly we 
+         * to optimize for this case and to be filter-cache friendly we
          * serialize all terms into a single byte array and store offsets
          * in a parallel array to keep the # of object constant and speed up
          * equals / hashcode.
-         * 
+         *
          * This adds quite a bit of complexity but allows large term filters to
          * be efficient for GC and cache-lookups
          */
@@ -62,7 +62,7 @@ namespace Lucene.Net.Queries
         }
 
         private sealed class FieldAndTermEnumAnonymousClass : FieldAndTermEnum
-        {            
+        {
             public FieldAndTermEnumAnonymousClass(IList<Term> terms)
             {
                 // LUCENENET specific - added guard clause for null
@@ -166,9 +166,9 @@ namespace Lucene.Net.Queries
 
             // TODO: yet another option is to build the union of the terms in
             // an automaton an call intersect on the termsenum if the density is high
-            
+
             int hash = 9;
-            var serializedTerms = Arrays.Empty<byte>();
+            var serializedTerms = Array.Empty<byte>();
             this.offsets = new int[length + 1];
             int lastEndOffset = 0;
             int index = 0;
