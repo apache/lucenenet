@@ -1,5 +1,7 @@
 ﻿using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -28,9 +30,6 @@ namespace Lucene.Net.Store
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Constants = Lucene.Net.Util.Constants;
-    using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
     /// Base class for <see cref="Directory"/> implementations that store index
@@ -67,11 +66,11 @@ namespace Lucene.Net.Store
     /// the best <see cref="FSDirectory"/> implementation given your
     /// environment, and the known limitations of each
     /// implementation. For users who have no reason to prefer a
-    /// specific implementation, it's best to simply use 
+    /// specific implementation, it's best to simply use
     /// <see cref="Open(string)"/>  (or one of its overloads). For all others, you should instantiate the
     /// desired implementation directly.
     ///
-    /// <para/>The locking implementation is by default 
+    /// <para/>The locking implementation is by default
     /// <see cref="NativeFSLockFactory"/>, but can be changed by
     /// passing in a custom <see cref="LockFactory"/> instance.
     ///
@@ -80,7 +79,7 @@ namespace Lucene.Net.Store
     /// <see cref="Thread.Interrupt()"/> in .NET
     /// in conjunction with an open <see cref="FSDirectory"/> because it is not guaranteed to exit atomically.
     /// Any <c>lock</c> statement or <see cref="Monitor.Enter(object)"/> call can throw a
-    /// <see cref="ThreadInterruptedException"/>, which makes shutting down unpredictable.
+    /// <see cref="System.Threading.ThreadInterruptedException"/>, which makes shutting down unpredictable.
     /// To exit parallel tasks safely, we recommend using <see cref="Task"/>s
     /// and "interrupt" them with <see cref="CancellationToken"/>s.</font>
     /// </summary>
@@ -95,9 +94,24 @@ namespace Lucene.Net.Store
 
         protected readonly DirectoryInfo m_directory; // The underlying filesystem directory
 
-        // LUCENENET specific: No such thing as "stale files" in .NET, since Flush(true) writes everything to disk before
-        // our FileStream is disposed.
-        //protected readonly ISet<string> m_staleFiles = new ConcurrentHashSet<string>(); // Files written, but not yet sync'ed
+        /// <summary>
+        /// The collection of stale files that need to be <see cref="Sync"/>'ed
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET NOTE: This is a non-thread-safe collection so that we can synchronize access to it
+        /// using the <see cref="m_syncLock"/> field. This is to prevent race conditions, i.e. one thread
+        /// adding a file to the collection while another thread is trying to sync the files, which could
+        /// cause a missed sync. If you need to access this collection from a derived type, you should
+        /// synchronize access to it using the protected <see cref="m_syncLock"/> field.
+        /// </remarks>
+        protected readonly ISet<string> m_staleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
+
+        /// <summary>
+        /// A <see cref="Monitor"/> object to synchronize access to the <see cref="m_staleFiles"/> collection.
+        /// You should synchronize access to <see cref="m_staleFiles"/> using this object from derived types.
+        /// </summary>
+        protected readonly object m_syncLock = new object();
+
 #pragma warning disable 612, 618
         private int chunkSize = DEFAULT_READ_CHUNK_SIZE;
 #pragma warning restore 612, 618
@@ -301,29 +315,39 @@ namespace Lucene.Net.Store
         public override void DeleteFile(string name)
         {
             EnsureOpen();
-            FileInfo file = new FileInfo(Path.Combine(m_directory.FullName, name));
-            // LUCENENET specific: We need to explicitly throw when the file has already been deleted,
-            // since FileInfo doesn't do that for us.
-            // (An enhancement carried over from Lucene 8.2.0)
-            if (!File.Exists(file.FullName))
-            {
-                throw new FileNotFoundException("Cannot delete " + file + " because it doesn't exist.");
-            }
+            string file = Path.Combine(m_directory.FullName, name);
+
+            // LUCENENET Specific: See remarks for m_staleFiles field.
+            UninterruptableMonitor.Enter(m_syncLock);
             try
             {
-                file.Delete();
-                if (File.Exists(file.FullName))
+                // LUCENENET specific: We need to explicitly throw when the file has already been deleted,
+                // since FileInfo doesn't do that for us.
+                // (An enhancement carried over from Lucene 8.2.0)
+                if (!File.Exists(file))
                 {
-                    throw new IOException("Cannot delete " + file);
+                    throw new FileNotFoundException("Cannot delete " + file + " because it doesn't exist.");
                 }
+
+                try
+                {
+                    File.Delete(file);
+                    if (File.Exists(file))
+                    {
+                        throw new IOException("Cannot delete " + file);
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new IOException("Cannot delete " + file, e);
+                }
+
+                m_staleFiles.Remove(name);
             }
-            catch (Exception e)
+            finally
             {
-                throw new IOException("Cannot delete " + file, e);
+                UninterruptableMonitor.Exit(m_syncLock);
             }
-            // LUCENENET specific: No such thing as "stale files" in .NET, since Flush(true) writes everything to disk before
-            // our FileStream is disposed.
-            //m_staleFiles.Remove(name);
         }
 
         /// <summary>
@@ -366,35 +390,48 @@ namespace Lucene.Net.Store
 
         protected virtual void OnIndexOutputClosed(FSIndexOutput io)
         {
-            // LUCENENET specific: No such thing as "stale files" in .NET, since Flush(true) writes everything to disk before
-            // our FileStream is disposed.
-            //m_staleFiles.Add(io.name);
+            // LUCENENET Specific: See remarks for m_staleFiles field.
+            UninterruptableMonitor.Enter(m_syncLock);
+            try
+            {
+                m_staleFiles.Add(io.name);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_syncLock);
+            }
         }
 
         public override void Sync(ICollection<string> names)
         {
             EnsureOpen();
 
-            // LUCENENET specific: No such thing as "stale files" in .NET, since Flush(true) writes everything to disk before
-            // our FileStream is disposed. Therefore, there is nothing else to do in this method.
-            //ISet<string> toSync = new HashSet<string>(names);
-            //toSync.IntersectWith(m_staleFiles);
+            ISet<string> toSync = new HashSet<string>(names);
 
-            //// LUCENENET specific: Fsync breaks concurrency here.
-            //// Part of a solution suggested by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
-            ////foreach (var name in toSync)
-            ////{
-            ////    Fsync(name);
-            ////}
+            // LUCENENET Specific: See remarks for m_staleFiles field.
+            UninterruptableMonitor.Enter(m_syncLock);
+            try
+            {
+                toSync.IntersectWith(m_staleFiles);
 
-            //// fsync the directory itsself, but only if there was any file fsynced before
-            //// (otherwise it can happen that the directory does not yet exist)!
-            //if (toSync.Count > 0)
-            //{
-            //    IOUtils.Fsync(m_directory.FullName, true);
-            //}
+                foreach (var name in toSync)
+                {
+                    Fsync(name);
+                }
 
-            //m_staleFiles.ExceptWith(toSync);
+                // fsync the directory itself, but only if there was any file fsynced before
+                // (otherwise it can happen that the directory does not yet exist)!
+                if (toSync.Count > 0)
+                {
+                    IOUtils.Fsync(m_directory.FullName, true);
+                }
+
+                m_staleFiles.ExceptWith(toSync);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(m_syncLock);
+            }
         }
 
         public override string GetLockID()
@@ -546,7 +583,7 @@ namespace Lucene.Net.Store
                         Exception priorE = null; // LUCENENET: No need to cast to IOExcpetion
                         try
                         {
-                            file.Flush(flushToDisk: true);
+                            file.Flush(flushToDisk: false);
                         }
                         catch (Exception ioe) when (ioe.IsIOException())
                         {
@@ -586,12 +623,9 @@ namespace Lucene.Net.Store
             public override long Position => file.Position; // LUCENENET specific - need to override, since we are buffering locally, renamed from getFilePointer() to match FileStream
         }
 
-        // LUCENENET specific: Fsync is pointless in .NET, since we are 
-        // calling FileStream.Flush(true) before the stream is disposed
-        // which means we never need it at the point in Java where it is called.
-        //protected virtual void Fsync(string name)
-        //{
-        //    IOUtils.Fsync(Path.Combine(m_directory.FullName, name), false);
-        //}
+        protected virtual void Fsync(string name)
+        {
+            IOUtils.Fsync(Path.Combine(m_directory.FullName, name), false);
+        }
     }
 }
