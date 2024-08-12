@@ -2,8 +2,8 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using static Lucene.Net.Support.Native.Interop.Posix;
-using static Lucene.Net.Support.Native.Interop.MacOS;
+using static Lucene.Net.Native.Interop.Posix;
+using static Lucene.Net.Native.Interop.MacOS;
 
 namespace Lucene.Net.Support.IO
 {

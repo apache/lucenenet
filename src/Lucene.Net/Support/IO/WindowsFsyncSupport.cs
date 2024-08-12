@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using static Lucene.Net.Support.Native.Interop.Win32;
+using static Lucene.Net.Native.Interop.Win32;
 
 namespace Lucene.Net.Support.IO
 {

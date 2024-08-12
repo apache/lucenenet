@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Lucene.Net.Support.Native
+namespace Lucene.Net.Native
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
