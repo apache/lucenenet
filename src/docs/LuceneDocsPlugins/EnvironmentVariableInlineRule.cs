@@ -1,5 +1,4 @@
-﻿using Microsoft.DocAsCode.MarkdownLite;
-using System;
+﻿using System;
 
 namespace LuceneDocsPlugins
 {

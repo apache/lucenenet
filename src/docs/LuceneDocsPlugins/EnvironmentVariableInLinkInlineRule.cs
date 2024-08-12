@@ -1,6 +1,4 @@
-﻿using Microsoft.DocAsCode.MarkdownLite;
-using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 
 namespace LuceneDocsPlugins
