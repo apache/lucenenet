@@ -4,9 +4,9 @@ using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Query

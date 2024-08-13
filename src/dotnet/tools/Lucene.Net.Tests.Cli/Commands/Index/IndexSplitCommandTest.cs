@@ -1,9 +1,8 @@
 ﻿using Lucene.Net.Attributes;
-using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace Lucene.Net.Cli.Commands
 {

@@ -27,6 +27,7 @@ using System.Runtime.Serialization;
 #endif
 using Antlr.Runtime;
 using J2N.Text;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Expressions.JS
 {
@@ -785,21 +786,21 @@ namespace Lucene.Net.Expressions.JS
                         switch (alt1)
                         {
                             case 1:
-                                {
-                                    // src/java/org/apache/lucene/expressions/js/Javascript.g:334:11: AT_DOT ID
-                                    MAT_DOT();
-                                    MID();
-                                    break;
-                                }
+                            {
+                                // src/java/org/apache/lucene/expressions/js/Javascript.g:334:11: AT_DOT ID
+                                MAT_DOT();
+                                MID();
+                                break;
+                            }
 
                             default:
-                                {
-                                    goto loop1_break;
-                                }
+                            {
+                                goto loop1_break;
+                            }
                         }
-                        //loop1_continue: // LUCENENET NOTE: Not used
+//loop1_continue: // LUCENENET NOTE: Not used
                     }
-                loop1_break: {/* LUCENENET: intentionally blank */}
+loop1_break: {/* LUCENENET: intentionally blank */}
                 }
                 state.type = _type;
                 state.channel = _channel;
@@ -844,30 +845,30 @@ namespace Lucene.Net.Expressions.JS
                         switch (alt2)
                         {
                             case 1:
+                            {
+                                // src/java/org/apache/lucene/expressions/js/Javascript.g:
+                                if ((input.LA(1) >= '0' && input.LA(1) <= '9') || (input.LA(1) >= 'A' && input.LA
+                                    (1) <= 'Z') || input.LA(1) == '_' || (input.LA(1) >= 'a' && input.LA(1) <= 'z'))
                                 {
-                                    // src/java/org/apache/lucene/expressions/js/Javascript.g:
-                                    if ((input.LA(1) >= '0' && input.LA(1) <= '9') || (input.LA(1) >= 'A' && input.LA
-                                        (1) <= 'Z') || input.LA(1) == '_' || (input.LA(1) >= 'a' && input.LA(1) <= 'z'))
-                                    {
-                                        input.Consume();
-                                    }
-                                    else
-                                    {
-                                        MismatchedSetException mse = new MismatchedSetException(null, input);
-                                        Recover(mse);
-                                        throw mse;
-                                    }
-                                    break;
+                                    input.Consume();
                                 }
+                                else
+                                {
+                                    MismatchedSetException mse = new MismatchedSetException(null, input);
+                                    Recover(mse);
+                                    throw mse;
+                                }
+                                break;
+                            }
 
                             default:
-                                {
-                                    goto loop2_break;
-                                }
+                            {
+                                goto loop2_break;
+                            }
                         }
-                        //loop2_continue: // LUCENENET NOTE: Not used
+//loop2_continue: // LUCENENET NOTE: Not used
                     }
-                loop2_break: {/* LUCENENET: intentionally blank */}
+loop2_break: {/* LUCENENET: intentionally blank */}
                 }
             }
             finally
@@ -901,36 +902,36 @@ namespace Lucene.Net.Expressions.JS
                         switch (alt3)
                         {
                             case 1:
+                            {
+                                // src/java/org/apache/lucene/expressions/js/Javascript.g:
+                                if ((input.LA(1) >= '\t' && input.LA(1) <= '\n') || input.LA(1) == '\r' || input.
+                                    LA(1) == ' ')
                                 {
-                                    // src/java/org/apache/lucene/expressions/js/Javascript.g:
-                                    if ((input.LA(1) >= '\t' && input.LA(1) <= '\n') || input.LA(1) == '\r' || input.
-                                        LA(1) == ' ')
-                                    {
-                                        input.Consume();
-                                    }
-                                    else
-                                    {
-                                        MismatchedSetException mse = new MismatchedSetException(null, input);
-                                        Recover(mse);
-                                        throw mse;
-                                    }
-                                    break;
+                                    input.Consume();
                                 }
+                                else
+                                {
+                                    MismatchedSetException mse = new MismatchedSetException(null, input);
+                                    Recover(mse);
+                                    throw mse;
+                                }
+                                break;
+                            }
 
                             default:
+                            {
+                                if (cnt3 >= 1)
                                 {
-                                    if (cnt3 >= 1)
-                                    {
-                                        goto loop3_break;
-                                    }
-                                    EarlyExitException eee = new EarlyExitException(3, input);
-                                    throw eee;
+                                    goto loop3_break;
                                 }
+                                EarlyExitException eee = new EarlyExitException(3, input);
+                                throw eee;
+                            }
                         }
                         cnt3++;
                         //loop3_continue: // LUCENENET NOTE: Not used
                     }
-                loop3_break:
+                    loop3_break:
                     Skip();
                 }
                 state.type = _type;
@@ -956,151 +957,151 @@ namespace Lucene.Net.Expressions.JS
                 switch (alt9)
                 {
                     case 1:
+                    {
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:347:7: DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )?
+                        MDECIMALINTEGER();
+                        MAT_DOT();
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:347:29: ( DECIMALDIGIT )*
+                        while (true)
                         {
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:347:7: DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )?
-                            MDECIMALINTEGER();
-                            MAT_DOT();
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:347:29: ( DECIMALDIGIT )*
-                            while (true)
+                            int alt4 = 2;
+                            int LA4_0 = input.LA(1);
+                            if (((LA4_0 >= '0' && LA4_0 <= '9')))
                             {
-                                int alt4 = 2;
-                                int LA4_0 = input.LA(1);
-                                if (((LA4_0 >= '0' && LA4_0 <= '9')))
-                                {
-                                    alt4 = 1;
-                                }
-                                switch (alt4)
-                                {
-                                    case 1:
-                                        {
-                                            // src/java/org/apache/lucene/expressions/js/Javascript.g:
-                                            if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
-                                            {
-                                                input.Consume();
-                                            }
-                                            else
-                                            {
-                                                MismatchedSetException mse = new MismatchedSetException(null, input);
-                                                Recover(mse);
-                                                throw mse;
-                                            }
-                                            break;
-                                        }
-
-                                    default:
-                                        {
-                                            goto loop4_break;
-                                        }
-                                }
-                                //loop4_continue: // LUCENENET NOTE: Not used
+                                alt4 = 1;
                             }
-                        loop4_break:
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:347:43: ( EXPONENT )?
-                            int alt5 = 2;
-                            int LA5_0 = input.LA(1);
-                            if ((LA5_0 == 'E' || LA5_0 == 'e'))
-                            {
-                                alt5 = 1;
-                            }
-                            switch (alt5)
+                            switch (alt4)
                             {
                                 case 1:
+                                {
+                                    // src/java/org/apache/lucene/expressions/js/Javascript.g:
+                                    if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
                                     {
-                                        // src/java/org/apache/lucene/expressions/js/Javascript.g:347:43: EXPONENT
-                                        MEXPONENT();
-                                        break;
+                                        input.Consume();
                                     }
+                                    else
+                                    {
+                                        MismatchedSetException mse = new MismatchedSetException(null, input);
+                                        Recover(mse);
+                                        throw mse;
+                                    }
+                                    break;
+                                }
+
+                                default:
+                                {
+                                    goto loop4_break;
+                                }
                             }
-                            break;
+                                //loop4_continue: // LUCENENET NOTE: Not used
                         }
+                        loop4_break:
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:347:43: ( EXPONENT )?
+                        int alt5 = 2;
+                        int LA5_0 = input.LA(1);
+                        if ((LA5_0 == 'E' || LA5_0 == 'e'))
+                        {
+                            alt5 = 1;
+                        }
+                        switch (alt5)
+                        {
+                            case 1:
+                            {
+                                // src/java/org/apache/lucene/expressions/js/Javascript.g:347:43: EXPONENT
+                                MEXPONENT();
+                                break;
+                            }
+                        }
+                        break;
+                    }
 
                     case 2:
+                    {
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:348:7: AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )?
+                        MAT_DOT();
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:348:14: ( DECIMALDIGIT )+
+                        int cnt6 = 0;
+                        while (true)
                         {
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:348:7: AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )?
-                            MAT_DOT();
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:348:14: ( DECIMALDIGIT )+
-                            int cnt6 = 0;
-                            while (true)
+                            int alt6 = 2;
+                            int LA6_0 = input.LA(1);
+                            if (((LA6_0 >= '0' && LA6_0 <= '9')))
                             {
-                                int alt6 = 2;
-                                int LA6_0 = input.LA(1);
-                                if (((LA6_0 >= '0' && LA6_0 <= '9')))
+                                alt6 = 1;
+                            }
+                            switch (alt6)
+                            {
+                                case 1:
                                 {
-                                    alt6 = 1;
+                                    // src/java/org/apache/lucene/expressions/js/Javascript.g:
+                                    if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
+                                    {
+                                        input.Consume();
+                                    }
+                                    else
+                                    {
+                                        MismatchedSetException mse = new MismatchedSetException(null, input);
+                                        Recover(mse);
+                                        throw mse;
+                                    }
+                                    break;
                                 }
-                                switch (alt6)
-                                {
-                                    case 1:
-                                        {
-                                            // src/java/org/apache/lucene/expressions/js/Javascript.g:
-                                            if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
-                                            {
-                                                input.Consume();
-                                            }
-                                            else
-                                            {
-                                                MismatchedSetException mse = new MismatchedSetException(null, input);
-                                                Recover(mse);
-                                                throw mse;
-                                            }
-                                            break;
-                                        }
 
-                                    default:
-                                        {
-                                            if (cnt6 >= 1)
-                                            {
-                                                goto loop6_break;
-                                            }
-                                            EarlyExitException eee = new EarlyExitException(6, input);
-                                            throw eee;
-                                        }
+                                default:
+                                {
+                                    if (cnt6 >= 1)
+                                    {
+                                        goto loop6_break;
+                                    }
+                                    EarlyExitException eee = new EarlyExitException(6, input);
+                                    throw eee;
                                 }
-                                cnt6++;
+                            }
+                            cnt6++;
                                 //loop6_continue: // LUCENENET NOTE: Not used
                             }
-                        loop6_break:
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:348:28: ( EXPONENT )?
-                            int alt7 = 2;
-                            int LA7_0 = input.LA(1);
-                            if ((LA7_0 == 'E' || LA7_0 == 'e'))
-                            {
-                                alt7 = 1;
-                            }
-                            switch (alt7)
-                            {
-                                case 1:
-                                    {
-                                        // src/java/org/apache/lucene/expressions/js/Javascript.g:348:28: EXPONENT
-                                        MEXPONENT();
-                                        break;
-                                    }
-                            }
-                            break;
+                            loop6_break:
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:348:28: ( EXPONENT )?
+                        int alt7 = 2;
+                        int LA7_0 = input.LA(1);
+                        if ((LA7_0 == 'E' || LA7_0 == 'e'))
+                        {
+                            alt7 = 1;
                         }
+                        switch (alt7)
+                        {
+                            case 1:
+                            {
+                                // src/java/org/apache/lucene/expressions/js/Javascript.g:348:28: EXPONENT
+                                MEXPONENT();
+                                break;
+                            }
+                        }
+                        break;
+                    }
 
                     case 3:
+                    {
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:349:7: DECIMALINTEGER ( EXPONENT )?
+                        MDECIMALINTEGER();
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:349:22: ( EXPONENT )?
+                        int alt8 = 2;
+                        int LA8_0 = input.LA(1);
+                        if ((LA8_0 == 'E' || LA8_0 == 'e'))
                         {
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:349:7: DECIMALINTEGER ( EXPONENT )?
-                            MDECIMALINTEGER();
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:349:22: ( EXPONENT )?
-                            int alt8 = 2;
-                            int LA8_0 = input.LA(1);
-                            if ((LA8_0 == 'E' || LA8_0 == 'e'))
-                            {
-                                alt8 = 1;
-                            }
-                            switch (alt8)
-                            {
-                                case 1:
-                                    {
-                                        // src/java/org/apache/lucene/expressions/js/Javascript.g:349:22: EXPONENT
-                                        MEXPONENT();
-                                        break;
-                                    }
-                            }
-                            break;
+                            alt8 = 1;
                         }
+                        switch (alt8)
+                        {
+                            case 1:
+                            {
+                                // src/java/org/apache/lucene/expressions/js/Javascript.g:349:22: EXPONENT
+                                MEXPONENT();
+                                break;
+                            }
+                        }
+                        break;
+                    }
                 }
                 state.type = type;
                 state.channel = channel;
@@ -1137,35 +1138,35 @@ namespace Lucene.Net.Expressions.JS
                         switch (alt10)
                         {
                             case 1:
+                            {
+                                // src/java/org/apache/lucene/expressions/js/Javascript.g:
+                                if ((input.LA(1) >= '0' && input.LA(1) <= '7'))
                                 {
-                                    // src/java/org/apache/lucene/expressions/js/Javascript.g:
-                                    if ((input.LA(1) >= '0' && input.LA(1) <= '7'))
-                                    {
-                                        input.Consume();
-                                    }
-                                    else
-                                    {
-                                        MismatchedSetException mse = new MismatchedSetException(null, input);
-                                        Recover(mse);
-                                        throw mse;
-                                    }
-                                    break;
+                                    input.Consume();
                                 }
+                                else
+                                {
+                                    MismatchedSetException mse = new MismatchedSetException(null, input);
+                                    Recover(mse);
+                                    throw mse;
+                                }
+                                break;
+                            }
 
                             default:
+                            {
+                                if (cnt10 >= 1)
                                 {
-                                    if (cnt10 >= 1)
-                                    {
-                                        goto loop10_break;
-                                    }
-                                    EarlyExitException eee = new EarlyExitException(10, input);
-                                    throw eee;
+                                    goto loop10_break;
                                 }
+                                EarlyExitException eee = new EarlyExitException(10, input);
+                                throw eee;
+                            }
                         }
                         cnt10++;
                         //loop10_continue: // LUCENENET NOTE: Not used
                     }
-                loop10_break: {/* LUCENENET: intentionally blank */}
+                    loop10_break: {/* LUCENENET: intentionally blank */}
                 }
                 state.type = _type;
                 state.channel = _channel;
@@ -1228,18 +1229,18 @@ namespace Lucene.Net.Expressions.JS
                     switch (alt11)
                     {
                         case 1:
-                            {
-                                // src/java/org/apache/lucene/expressions/js/Javascript.g:357:8: '0x'
-                                Match("0x");
-                                break;
-                            }
+                        {
+                            // src/java/org/apache/lucene/expressions/js/Javascript.g:357:8: '0x'
+                            Match("0x");
+                            break;
+                        }
 
                         case 2:
-                            {
-                                // src/java/org/apache/lucene/expressions/js/Javascript.g:357:13: '0X'
-                                Match("0X");
-                                break;
-                            }
+                        {
+                            // src/java/org/apache/lucene/expressions/js/Javascript.g:357:13: '0X'
+                            Match("0X");
+                            break;
+                        }
                     }
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:357:19: ( HEXDIGIT )+
                     int cnt12 = 0;
@@ -1255,36 +1256,36 @@ namespace Lucene.Net.Expressions.JS
                         switch (alt12)
                         {
                             case 1:
+                            {
+                                // src/java/org/apache/lucene/expressions/js/Javascript.g:
+                                if ((input.LA(1) >= '0' && input.LA(1) <= '9') || (input.LA(1) >= 'A' && input.LA
+                                    (1) <= 'F') || (input.LA(1) >= 'a' && input.LA(1) <= 'f'))
                                 {
-                                    // src/java/org/apache/lucene/expressions/js/Javascript.g:
-                                    if ((input.LA(1) >= '0' && input.LA(1) <= '9') || (input.LA(1) >= 'A' && input.LA
-                                        (1) <= 'F') || (input.LA(1) >= 'a' && input.LA(1) <= 'f'))
-                                    {
-                                        input.Consume();
-                                    }
-                                    else
-                                    {
-                                        MismatchedSetException mse = new MismatchedSetException(null, input);
-                                        Recover(mse);
-                                        throw mse;
-                                    }
-                                    break;
+                                    input.Consume();
                                 }
+                                else
+                                {
+                                    MismatchedSetException mse = new MismatchedSetException(null, input);
+                                    Recover(mse);
+                                    throw mse;
+                                }
+                                break;
+                            }
 
                             default:
+                            {
+                                if (cnt12 >= 1)
                                 {
-                                    if (cnt12 >= 1)
-                                    {
-                                        goto loop12_break;
-                                    }
-                                    EarlyExitException eee = new EarlyExitException(12, input);
-                                    throw eee;
+                                    goto loop12_break;
                                 }
+                                EarlyExitException eee = new EarlyExitException(12, input);
+                                throw eee;
+                            }
                         }
                         cnt12++;
                         //loop12_continue: // LUCENENET NOTE: Not used
                     }
-                loop12_break: {/* LUCENENET: intentionally blank */}
+                    loop12_break: {/* LUCENENET: intentionally blank */}
                 }
                 state.type = _type;
                 state.channel = _channel;
@@ -1324,53 +1325,53 @@ namespace Lucene.Net.Expressions.JS
                 switch (alt14)
                 {
                     case 1:
-                        {
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:363:7: '0'
-                            Match('0');
-                            break;
-                        }
+                    {
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:363:7: '0'
+                        Match('0');
+                        break;
+                    }
 
                     case 2:
+                    {
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:364:7: '1' .. '9' ( DECIMALDIGIT )*
+                        MatchRange('1', '9');
+                        // src/java/org/apache/lucene/expressions/js/Javascript.g:364:16: ( DECIMALDIGIT )*
+                        while (true)
                         {
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:364:7: '1' .. '9' ( DECIMALDIGIT )*
-                            MatchRange('1', '9');
-                            // src/java/org/apache/lucene/expressions/js/Javascript.g:364:16: ( DECIMALDIGIT )*
-                            while (true)
+                            int alt13 = 2;
+                            int LA13_0 = input.LA(1);
+                            if (((LA13_0 >= '0' && LA13_0 <= '9')))
                             {
-                                int alt13 = 2;
-                                int LA13_0 = input.LA(1);
-                                if (((LA13_0 >= '0' && LA13_0 <= '9')))
+                                alt13 = 1;
+                            }
+                            switch (alt13)
+                            {
+                                case 1:
                                 {
-                                    alt13 = 1;
+                                    // src/java/org/apache/lucene/expressions/js/Javascript.g:
+                                    if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
+                                    {
+                                        input.Consume();
+                                    }
+                                    else
+                                    {
+                                        MismatchedSetException mse = new MismatchedSetException(null, input);
+                                        Recover(mse);
+                                        throw mse;
+                                    }
+                                    break;
                                 }
-                                switch (alt13)
-                                {
-                                    case 1:
-                                        {
-                                            // src/java/org/apache/lucene/expressions/js/Javascript.g:
-                                            if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
-                                            {
-                                                input.Consume();
-                                            }
-                                            else
-                                            {
-                                                MismatchedSetException mse = new MismatchedSetException(null, input);
-                                                Recover(mse);
-                                                throw mse;
-                                            }
-                                            break;
-                                        }
 
-                                    default:
-                                        {
-                                            goto loop13_break;
-                                        }
+                                default:
+                                {
+                                    goto loop13_break;
                                 }
+                            }
                                 //loop13_continue: // LUCENENET NOTE: Not used
                             }
-                        loop13_break:
-                            break;
-                        }
+                            loop13_break:
+                        break;
+                    }
                 }
             }
             finally
@@ -1409,20 +1410,20 @@ namespace Lucene.Net.Expressions.JS
                     switch (alt15)
                     {
                         case 1:
+                        {
+                            // src/java/org/apache/lucene/expressions/js/Javascript.g:
+                            if (input.LA(1) == '+' || input.LA(1) == '-')
                             {
-                                // src/java/org/apache/lucene/expressions/js/Javascript.g:
-                                if (input.LA(1) == '+' || input.LA(1) == '-')
-                                {
-                                    input.Consume();
-                                }
-                                else
-                                {
-                                    MismatchedSetException mse = new MismatchedSetException(null, input);
-                                    Recover(mse);
-                                    throw mse;
-                                }
-                                break;
+                                input.Consume();
                             }
+                            else
+                            {
+                                MismatchedSetException mse = new MismatchedSetException(null, input);
+                                Recover(mse);
+                                throw mse;
+                            }
+                            break;
+                        }
                     }
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:369:28: ( DECIMALDIGIT )+
                     int cnt16 = 0;
@@ -1437,35 +1438,35 @@ namespace Lucene.Net.Expressions.JS
                         switch (alt16)
                         {
                             case 1:
+                            {
+                                // src/java/org/apache/lucene/expressions/js/Javascript.g:
+                                if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
                                 {
-                                    // src/java/org/apache/lucene/expressions/js/Javascript.g:
-                                    if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
-                                    {
-                                        input.Consume();
-                                    }
-                                    else
-                                    {
-                                        MismatchedSetException mse = new MismatchedSetException(null, input);
-                                        Recover(mse);
-                                        throw mse;
-                                    }
-                                    break;
+                                    input.Consume();
                                 }
+                                else
+                                {
+                                    MismatchedSetException mse = new MismatchedSetException(null, input);
+                                    Recover(mse);
+                                    throw mse;
+                                }
+                                break;
+                            }
 
                             default:
+                            {
+                                if (cnt16 >= 1)
                                 {
-                                    if (cnt16 >= 1)
-                                    {
-                                        goto loop16_break;
-                                    }
-                                    EarlyExitException eee = new EarlyExitException(16, input);
-                                    throw eee;
+                                    goto loop16_break;
                                 }
+                                EarlyExitException eee = new EarlyExitException(16, input);
+                                throw eee;
+                            }
                         }
                         cnt16++;
                         //loop16_continue: // LUCENENET NOTE: Not used
                     }
-                loop16_break: {/* LUCENENET: intentionally blank */}
+                    loop16_break: {/* LUCENENET: intentionally blank */}
                 }
             }
             finally
@@ -1568,196 +1569,196 @@ namespace Lucene.Net.Expressions.JS
             switch (input.LA(1))
             {
                 case '+':
-                    {
-                        alt17 = 1;
-                        break;
-                    }
+                {
+                    alt17 = 1;
+                    break;
+                }
 
                 case '&':
+                {
+                    int LA17_2 = input.LA(2);
+                    if ((LA17_2 == '&'))
                     {
-                        int LA17_2 = input.LA(2);
-                        if ((LA17_2 == '&'))
-                        {
-                            alt17 = 9;
-                        }
-                        else
-                        {
-                            alt17 = 2;
-                        }
-                        break;
+                        alt17 = 9;
                     }
+                    else
+                    {
+                        alt17 = 2;
+                    }
+                    break;
+                }
 
                 case '~':
-                    {
-                        alt17 = 3;
-                        break;
-                    }
+                {
+                    alt17 = 3;
+                    break;
+                }
 
                 case '|':
+                {
+                    int LA17_4 = input.LA(2);
+                    if ((LA17_4 == '|'))
                     {
-                        int LA17_4 = input.LA(2);
-                        if ((LA17_4 == '|'))
-                        {
-                            alt17 = 11;
-                        }
-                        else
-                        {
-                            alt17 = 4;
-                        }
-                        break;
+                        alt17 = 11;
                     }
+                    else
+                    {
+                        alt17 = 4;
+                    }
+                    break;
+                }
 
                 case '<':
+                {
+                    switch (input.LA(2))
                     {
-                        switch (input.LA(2))
+                        case '<':
                         {
-                            case '<':
-                                {
-                                    alt17 = 5;
-                                    break;
-                                }
-
-                            case '=':
-                                {
-                                    alt17 = 18;
-                                    break;
-                                }
-
-                            default:
-                                {
-                                    alt17 = 17;
-                                    break;
-                                }
+                            alt17 = 5;
+                            break;
                         }
-                        break;
+
+                        case '=':
+                        {
+                            alt17 = 18;
+                            break;
+                        }
+
+                        default:
+                        {
+                            alt17 = 17;
+                            break;
+                        }
                     }
+                    break;
+                }
 
                 case '>':
+                {
+                    switch (input.LA(2))
                     {
-                        switch (input.LA(2))
+                        case '>':
                         {
-                            case '>':
-                                {
-                                    int LA17_31 = input.LA(3);
-                                    if ((LA17_31 == '>'))
-                                    {
-                                        alt17 = 7;
-                                    }
-                                    else
-                                    {
-                                        alt17 = 6;
-                                    }
-                                    break;
-                                }
-
-                            case '=':
-                                {
-                                    alt17 = 16;
-                                    break;
-                                }
-
-                            default:
-                                {
-                                    alt17 = 15;
-                                    break;
-                                }
+                            int LA17_31 = input.LA(3);
+                            if ((LA17_31 == '>'))
+                            {
+                                alt17 = 7;
+                            }
+                            else
+                            {
+                                alt17 = 6;
+                            }
+                            break;
                         }
-                        break;
+
+                        case '=':
+                        {
+                            alt17 = 16;
+                            break;
+                        }
+
+                        default:
+                        {
+                            alt17 = 15;
+                            break;
+                        }
                     }
+                    break;
+                }
 
                 case '^':
-                    {
-                        alt17 = 8;
-                        break;
-                    }
+                {
+                    alt17 = 8;
+                    break;
+                }
 
                 case '!':
+                {
+                    int LA17_8 = input.LA(2);
+                    if ((LA17_8 == '='))
                     {
-                        int LA17_8 = input.LA(2);
-                        if ((LA17_8 == '='))
-                        {
-                            alt17 = 19;
-                        }
-                        else
-                        {
-                            alt17 = 10;
-                        }
-                        break;
+                        alt17 = 19;
                     }
+                    else
+                    {
+                        alt17 = 10;
+                    }
+                    break;
+                }
 
                 case ':':
-                    {
-                        alt17 = 12;
-                        break;
-                    }
+                {
+                    alt17 = 12;
+                    break;
+                }
 
                 case ',':
-                    {
-                        alt17 = 13;
-                        break;
-                    }
+                {
+                    alt17 = 13;
+                    break;
+                }
 
                 case '=':
-                    {
-                        alt17 = 14;
-                        break;
-                    }
+                {
+                    alt17 = 14;
+                    break;
+                }
 
                 case '?':
-                    {
-                        alt17 = 20;
-                        break;
-                    }
+                {
+                    alt17 = 20;
+                    break;
+                }
 
                 case '/':
-                    {
-                        alt17 = 21;
-                        break;
-                    }
+                {
+                    alt17 = 21;
+                    break;
+                }
 
                 case '.':
+                {
+                    int LA17_14 = input.LA(2);
+                    if (((LA17_14 >= '0' && LA17_14 <= '9')))
                     {
-                        int LA17_14 = input.LA(2);
-                        if (((LA17_14 >= '0' && LA17_14 <= '9')))
-                        {
-                            alt17 = 30;
-                        }
-                        else
-                        {
-                            alt17 = 22;
-                        }
-                        break;
+                        alt17 = 30;
                     }
+                    else
+                    {
+                        alt17 = 22;
+                    }
+                    break;
+                }
 
                 case '(':
-                    {
-                        alt17 = 23;
-                        break;
-                    }
+                {
+                    alt17 = 23;
+                    break;
+                }
 
                 case '%':
-                    {
-                        alt17 = 24;
-                        break;
-                    }
+                {
+                    alt17 = 24;
+                    break;
+                }
 
                 case '*':
-                    {
-                        alt17 = 25;
-                        break;
-                    }
+                {
+                    alt17 = 25;
+                    break;
+                }
 
                 case ')':
-                    {
-                        alt17 = 26;
-                        break;
-                    }
+                {
+                    alt17 = 26;
+                    break;
+                }
 
                 case '-':
-                    {
-                        alt17 = 27;
-                        break;
-                    }
+                {
+                    alt17 = 27;
+                    break;
+                }
 
                 case 'A':
                 case 'B':
@@ -1812,52 +1813,52 @@ namespace Lucene.Net.Expressions.JS
                 case 'x':
                 case 'y':
                 case 'z':
-                    {
-                        alt17 = 28;
-                        break;
-                    }
+                {
+                    alt17 = 28;
+                    break;
+                }
 
                 case '\t':
                 case '\n':
                 case '\r':
                 case ' ':
-                    {
-                        alt17 = 29;
-                        break;
-                    }
+                {
+                    alt17 = 29;
+                    break;
+                }
 
                 case '0':
+                {
+                    switch (input.LA(2))
                     {
-                        switch (input.LA(2))
+                        case 'X':
+                        case 'x':
                         {
-                            case 'X':
-                            case 'x':
-                                {
-                                    alt17 = 32;
-                                    break;
-                                }
-
-                            case '0':
-                            case '1':
-                            case '2':
-                            case '3':
-                            case '4':
-                            case '5':
-                            case '6':
-                            case '7':
-                                {
-                                    alt17 = 31;
-                                    break;
-                                }
-
-                            default:
-                                {
-                                    alt17 = 30;
-                                    break;
-                                }
+                            alt17 = 32;
+                            break;
                         }
-                        break;
+
+                        case '0':
+                        case '1':
+                        case '2':
+                        case '3':
+                        case '4':
+                        case '5':
+                        case '6':
+                        case '7':
+                        {
+                            alt17 = 31;
+                            break;
+                        }
+
+                        default:
+                        {
+                            alt17 = 30;
+                            break;
+                        }
                     }
+                    break;
+                }
 
                 case '1':
                 case '2':
@@ -1868,242 +1869,242 @@ namespace Lucene.Net.Expressions.JS
                 case '7':
                 case '8':
                 case '9':
-                    {
-                        alt17 = 30;
-                        break;
-                    }
+                {
+                    alt17 = 30;
+                    break;
+                }
 
                 default:
-                    {
-                        NoViableAltException nvae = new NoViableAltException(string.Empty, 17, 0, input);
-                        throw nvae;
-                    }
+                {
+                    NoViableAltException nvae = new NoViableAltException(string.Empty, 17, 0, input);
+                    throw nvae;
+                }
             }
             switch (alt17)
             {
                 case 1:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:10: AT_ADD
-                        MAT_ADD();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:10: AT_ADD
+                    MAT_ADD();
+                    break;
+                }
 
                 case 2:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:17: AT_BIT_AND
-                        MAT_BIT_AND();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:17: AT_BIT_AND
+                    MAT_BIT_AND();
+                    break;
+                }
 
                 case 3:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:28: AT_BIT_NOT
-                        MAT_BIT_NOT();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:28: AT_BIT_NOT
+                    MAT_BIT_NOT();
+                    break;
+                }
 
                 case 4:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:39: AT_BIT_OR
-                        MAT_BIT_OR();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:39: AT_BIT_OR
+                    MAT_BIT_OR();
+                    break;
+                }
 
                 case 5:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:49: AT_BIT_SHL
-                        MAT_BIT_SHL();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:49: AT_BIT_SHL
+                    MAT_BIT_SHL();
+                    break;
+                }
 
                 case 6:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:60: AT_BIT_SHR
-                        MAT_BIT_SHR();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:60: AT_BIT_SHR
+                    MAT_BIT_SHR();
+                    break;
+                }
 
                 case 7:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:71: AT_BIT_SHU
-                        MAT_BIT_SHU();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:71: AT_BIT_SHU
+                    MAT_BIT_SHU();
+                    break;
+                }
 
                 case 8:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:82: AT_BIT_XOR
-                        MAT_BIT_XOR();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:82: AT_BIT_XOR
+                    MAT_BIT_XOR();
+                    break;
+                }
 
                 case 9:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:93: AT_BOOL_AND
-                        MAT_BOOL_AND();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:93: AT_BOOL_AND
+                    MAT_BOOL_AND();
+                    break;
+                }
 
                 case 10:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:105: AT_BOOL_NOT
-                        MAT_BOOL_NOT();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:105: AT_BOOL_NOT
+                    MAT_BOOL_NOT();
+                    break;
+                }
 
                 case 11:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:117: AT_BOOL_OR
-                        MAT_BOOL_OR();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:117: AT_BOOL_OR
+                    MAT_BOOL_OR();
+                    break;
+                }
 
                 case 12:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:128: AT_COLON
-                        MAT_COLON();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:128: AT_COLON
+                    MAT_COLON();
+                    break;
+                }
 
                 case 13:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:137: AT_COMMA
-                        MAT_COMMA();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:137: AT_COMMA
+                    MAT_COMMA();
+                    break;
+                }
 
                 case 14:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:146: AT_COMP_EQ
-                        MAT_COMP_EQ();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:146: AT_COMP_EQ
+                    MAT_COMP_EQ();
+                    break;
+                }
 
                 case 15:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:157: AT_COMP_GT
-                        MAT_COMP_GT();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:157: AT_COMP_GT
+                    MAT_COMP_GT();
+                    break;
+                }
 
                 case 16:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:168: AT_COMP_GTE
-                        MAT_COMP_GTE();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:168: AT_COMP_GTE
+                    MAT_COMP_GTE();
+                    break;
+                }
 
                 case 17:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:180: AT_COMP_LT
-                        MAT_COMP_LT();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:180: AT_COMP_LT
+                    MAT_COMP_LT();
+                    break;
+                }
 
                 case 18:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:191: AT_COMP_LTE
-                        MAT_COMP_LTE();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:191: AT_COMP_LTE
+                    MAT_COMP_LTE();
+                    break;
+                }
 
                 case 19:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:203: AT_COMP_NEQ
-                        MAT_COMP_NEQ();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:203: AT_COMP_NEQ
+                    MAT_COMP_NEQ();
+                    break;
+                }
 
                 case 20:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:215: AT_COND_QUE
-                        MAT_COND_QUE();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:215: AT_COND_QUE
+                    MAT_COND_QUE();
+                    break;
+                }
 
                 case 21:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:227: AT_DIVIDE
-                        MAT_DIVIDE();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:227: AT_DIVIDE
+                    MAT_DIVIDE();
+                    break;
+                }
 
                 case 22:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:237: AT_DOT
-                        MAT_DOT();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:237: AT_DOT
+                    MAT_DOT();
+                    break;
+                }
 
                 case 23:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:244: AT_LPAREN
-                        MAT_LPAREN();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:244: AT_LPAREN
+                    MAT_LPAREN();
+                    break;
+                }
 
                 case 24:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:254: AT_MODULO
-                        MAT_MODULO();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:254: AT_MODULO
+                    MAT_MODULO();
+                    break;
+                }
 
                 case 25:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:264: AT_MULTIPLY
-                        MAT_MULTIPLY();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:264: AT_MULTIPLY
+                    MAT_MULTIPLY();
+                    break;
+                }
 
                 case 26:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:276: AT_RPAREN
-                        MAT_RPAREN();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:276: AT_RPAREN
+                    MAT_RPAREN();
+                    break;
+                }
 
                 case 27:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:286: AT_SUBTRACT
-                        MAT_SUBTRACT();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:286: AT_SUBTRACT
+                    MAT_SUBTRACT();
+                    break;
+                }
 
                 case 28:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:298: NAMESPACE_ID
-                        MNAMESPACE_ID();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:298: NAMESPACE_ID
+                    MNAMESPACE_ID();
+                    break;
+                }
 
                 case 29:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:311: WS
-                        MWS();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:311: WS
+                    MWS();
+                    break;
+                }
 
                 case 30:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:314: DECIMAL
-                        MDECIMAL();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:314: DECIMAL
+                    MDECIMAL();
+                    break;
+                }
 
                 case 31:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:322: OCTAL
-                        MOCTAL();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:322: OCTAL
+                    MOCTAL();
+                    break;
+                }
 
                 case 32:
-                    {
-                        // src/java/org/apache/lucene/expressions/js/Javascript.g:1:328: HEX
-                        MHEX();
-                        break;
-                    }
+                {
+                    // src/java/org/apache/lucene/expressions/js/Javascript.g:1:328: HEX
+                    MHEX();
+                    break;
+                }
             }
         }
 
@@ -2129,9 +2130,9 @@ namespace Lucene.Net.Expressions.JS
 
         internal static readonly short[] DFA9_eof = DFA.UnpackEncodedString(DFA9_eofS);
 
-        internal static readonly char[] DFA9_min = { '.', '.', '.', '?', '?', '?', '.' }; //DFA.UnpackEncodedStringToUnsignedChars(DFA9_minS);
+        internal static readonly char[] DFA9_min = {'.','.','.','?','?','?','.'}; //DFA.UnpackEncodedStringToUnsignedChars(DFA9_minS);
 
-        internal static readonly char[] DFA9_max = { '9', '.', '9', '?', '?', '?', '9' }; //DFA.UnpackEncodedStringToUnsignedChars(DFA9_maxS);
+        internal static readonly char[] DFA9_max = {'9', '.', '9', '?', '?', '?', '9'}; //DFA.UnpackEncodedStringToUnsignedChars(DFA9_maxS);
 
         internal static readonly short[] DFA9_accept = DFA.UnpackEncodedString(DFA9_acceptS
             );

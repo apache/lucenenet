@@ -1,9 +1,9 @@
 ﻿using Lucene.Net.Store;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
