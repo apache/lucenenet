@@ -125,7 +125,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private volatile TaxonomyIndexArrays taxoArrays;
         private volatile int nextID;
 
-        private readonly object syncLock = new object(); // LUCENENET specific - avoid lock (this)
+        private readonly System.Threading.Lock syncLock = new System.Threading.Lock(); // LUCENENET specific - avoid lock (this)
 
         /// <summary>
         /// Reads the commit data from a <see cref="Store.Directory"/>. </summary>
