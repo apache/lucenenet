@@ -1,5 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search.Spans;
 using System;
 using System.Collections.Generic;
@@ -28,14 +27,14 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// SpanNearClauseFactory:
     /// <para/>
     /// Operations:
-    /// 
+    ///
     /// <list type="bullet">
     ///     <item><description>create for a field name and an indexreader.</description></item>
-    /// 
+    ///
     ///     <item><description>add a weighted Term - this should add a corresponding SpanTermQuery, or increase the weight of an existing one.</description></item>
-    /// 
+    ///
     ///     <item><description>add a weighted subquery SpanNearQuery</description></item>
-    /// 
+    ///
     ///     <item><description>create a clause for SpanNearQuery from the things added above.</description></item>
     /// </list>
     /// <para/>
@@ -57,17 +56,18 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     ///                via getTerms(); are the corresponding weights available?
     /// - SpanFirstQuery: treat similar to subquery SpanNearQuery. (ok?)
     /// - SpanNotQuery: treat similar to subquery SpanNearQuery. (ok?)
-    /// 
+    ///
     /// Factory for <see cref="SpanOrQuery"/>
     /// </summary>
     public class SpanNearClauseFactory
     {
-        public SpanNearClauseFactory(IndexReader reader, string fieldName, BasicQueryFactory qf) {
+        public SpanNearClauseFactory(IndexReader reader, string fieldName, BasicQueryFactory qf)
+        {
             this.reader = reader;
             this.fieldName = fieldName;
             this.weightBySpanQuery = new JCG.Dictionary<SpanQuery, float>();
             this.qf = qf;
-          }
+        }
 
         private readonly IndexReader reader; // LUCENENET: marked readonly
         private readonly string fieldName; // LUCENENET: marked readonly

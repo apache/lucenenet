@@ -5,6 +5,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Spans
@@ -373,8 +374,8 @@ namespace Lucene.Net.Search.Spans
         [Test]
         public virtual void TestSpanOrEmpty()
         {
-            // LUCENENET: Using Arrays.Empty<T>() instead of new string[0] to reduce allocations
-            Spans spans = OrSpans(Arrays.Empty<string>());
+            // LUCENENET: Using Array.Empty<T>() instead of new string[0] to reduce allocations
+            Spans spans = OrSpans(Array.Empty<string>());
             Assert.IsFalse(spans.MoveNext(), "empty next");
 
             SpanOrQuery a = new SpanOrQuery();

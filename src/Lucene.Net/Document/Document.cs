@@ -36,7 +36,7 @@ namespace Lucene.Net.Documents
     /// it.
     /// <para/>
     /// Note that fields which are <i>not</i> <see cref="Lucene.Net.Index.IIndexableFieldType.IsStored"/> are
-    /// <i>not</i> available in documents retrieved from the index, e.g. with 
+    /// <i>not</i> available in documents retrieved from the index, e.g. with
     /// <see cref="Search.ScoreDoc.Doc"/> or <see cref="IndexReader.Document(int)"/>.
     /// </summary>
     public sealed class Document : IEnumerable<IIndexableField>, IFormattable
@@ -214,19 +214,19 @@ namespace Lucene.Net.Documents
         /// Returns a List of all the fields in a document.
         /// <para>Note that fields which are <i>not</i> stored are
         /// <i>not</i> available in documents retrieved from the
-        /// index, e.g. <see cref="Search.IndexSearcher.Doc(int)"/> or 
+        /// index, e.g. <see cref="Search.IndexSearcher.Doc(int)"/> or
         /// <see cref="IndexReader.Document(int)"/>.
         /// </para>
         /// </summary>
         public IList<IIndexableField> Fields => fields;
 
-        private static readonly string[] NO_STRINGS = Arrays.Empty<string>();
+        private static readonly string[] NO_STRINGS = Array.Empty<string>();
 
         /// <summary>
         /// Returns an array of values of the field specified as the method parameter.
         /// This method returns an empty array when there are no
         /// matching fields. It never returns <c>null</c>.
-        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>, 
+        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>,
         /// <see cref="SingleField"/> and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
         /// the actual numeric field instances back, use <see cref="GetFields(string)"/>. </summary>
         /// <param name="name"> the name of the field </param>
@@ -255,7 +255,7 @@ namespace Lucene.Net.Documents
         /// Returns an array of values of the field specified as the method parameter.
         /// This method returns an empty array when there are no
         /// matching fields. It never returns <c>null</c>.
-        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>, 
+        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>,
         /// <see cref="SingleField"/> and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
         /// the actual numeric field instances back, use <see cref="GetFields(string)"/>. </summary>
         /// <param name="name"> the name of the field </param>
@@ -286,7 +286,7 @@ namespace Lucene.Net.Documents
         /// Returns an array of values of the field specified as the method parameter.
         /// This method returns an empty array when there are no
         /// matching fields. It never returns <c>null</c>.
-        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>, 
+        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>,
         /// <see cref="SingleField"/> and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
         /// the actual numeric field instances back, use <see cref="GetFields(string)"/>. </summary>
         /// <param name="name"> the name of the field </param>
@@ -317,7 +317,7 @@ namespace Lucene.Net.Documents
         /// Returns an array of values of the field specified as the method parameter.
         /// This method returns an empty array when there are no
         /// matching fields. It never returns <c>null</c>.
-        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>, 
+        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>,
         /// <see cref="SingleField"/> and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
         /// the actual numeric field instances back, use <see cref="GetFields(string)"/>. </summary>
         /// <param name="name"> the name of the field </param>
@@ -350,7 +350,7 @@ namespace Lucene.Net.Documents
         /// this document, or <c>null</c>.  If multiple fields exist with this name, this
         /// method returns the first value added. If only binary fields with this name
         /// exist, returns <c>null</c>.
-        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>, 
+        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>,
         /// <see cref="SingleField"/> and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
         /// the actual numeric field instance back, use <see cref="GetField(string)"/>.
         /// </summary>
@@ -372,7 +372,7 @@ namespace Lucene.Net.Documents
         /// this document, or <c>null</c>.  If multiple fields exist with this name, this
         /// method returns the first value added. If only binary fields with this name
         /// exist, returns <c>null</c>.
-        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>, 
+        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>,
         /// <see cref="SingleField"/> and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
         /// the actual numeric field instance back, use <see cref="GetField(string)"/>.
         /// </summary>
@@ -396,7 +396,7 @@ namespace Lucene.Net.Documents
         /// this document, or <c>null</c>.  If multiple fields exist with this name, this
         /// method returns the first value added. If only binary fields with this name
         /// exist, returns <c>null</c>.
-        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>, 
+        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>,
         /// <see cref="SingleField"/> and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
         /// the actual numeric field instance back, use <see cref="GetField(string)"/>.
         /// </summary>
@@ -420,7 +420,7 @@ namespace Lucene.Net.Documents
         /// this document, or <c>null</c>.  If multiple fields exist with this name, this
         /// method returns the first value added. If only binary fields with this name
         /// exist, returns <c>null</c>.
-        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>, 
+        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>,
         /// <see cref="SingleField"/> and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
         /// the actual numeric field instance back, use <see cref="GetField(string)"/>.
         /// </summary>
@@ -448,7 +448,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Prints the fields of a document for human consumption. 
+        /// Prints the fields of a document for human consumption.
         /// </summary>
         /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
         // LUCENENET specific - method added for better .NET compatibility
@@ -458,7 +458,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Prints the fields of a document for human consumption. 
+        /// Prints the fields of a document for human consumption.
         /// </summary>
         /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
         /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
@@ -488,7 +488,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Prints the fields of a document for human consumption. 
+        /// Prints the fields of a document for human consumption.
         /// </summary>
         /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
         /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>

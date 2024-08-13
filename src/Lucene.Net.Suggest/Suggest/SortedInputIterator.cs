@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a new sorted wrapper, using <see cref="BytesRef.UTF8SortedAsUnicodeComparer"/>
-        /// for sorting. 
+        /// for sorting.
         /// </summary>
         public SortedInputEnumerator(IInputEnumerator source)
             : this(source, BytesRef.UTF8SortedAsUnicodeComparer)
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Suggest
             bool success = false;
             try
             {
-                byte[] buffer = Arrays.Empty<byte>();
+                byte[] buffer = Array.Empty<byte>();
                 var output = new ByteArrayDataOutput(buffer);
 
                 while (source.MoveNext())

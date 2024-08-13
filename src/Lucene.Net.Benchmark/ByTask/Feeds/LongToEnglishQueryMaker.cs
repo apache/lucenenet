@@ -4,7 +4,6 @@ using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -29,7 +28,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
      */
 
     /// <summary>
-    /// Creates queries whose content is a spelled-out <see cref="long"/> number 
+    /// Creates queries whose content is a spelled-out <see cref="long"/> number
     /// starting from <c><see cref="long.MinValue"/> + 10</c>.
     /// </summary>
     public class Int64ToEnglishQueryMaker : IQueryMaker

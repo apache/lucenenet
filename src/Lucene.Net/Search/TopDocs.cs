@@ -28,8 +28,8 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Represents hits returned by 
-    /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> and 
+    /// Represents hits returned by
+    /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> and
     /// <see cref="IndexSearcher.Search(Query,int)"/>.
     /// </summary>
     public class TopDocs
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns a new <see cref="TopDocs"/>, containing <paramref name="topN"/> results across
-        /// the provided <see cref="TopDocs"/>, sorting by the specified 
+        /// the provided <see cref="TopDocs"/>, sorting by the specified
         /// <see cref="Sort"/>.  Each of the <see cref="TopDocs"/> must have been sorted by
         /// the same <see cref="Sort"/>, and sort field values must have been
         /// filled (ie, <c>fillFields=true</c> must be
@@ -307,7 +307,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Same as <see cref="Merge(Sort, int, TopDocs[])"/> but also slices the result at the same time based
-        /// on the provided start and size. The return <c>TopDocs</c> will always have a scoreDocs with length of 
+        /// on the provided start and size. The return <c>TopDocs</c> will always have a scoreDocs with length of
         /// at most <see cref="Util.PriorityQueue{T}.Count"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="shardHits"/> is <c>null</c>.</exception>
@@ -365,7 +365,7 @@ namespace Lucene.Net.Search
                 ScoreDoc[] hits;
                 if (availHitCount <= start)
                 {
-                    hits = Arrays.Empty<ScoreDoc>();
+                    hits = Array.Empty<ScoreDoc>();
                 }
                 else
                 {

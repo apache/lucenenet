@@ -49,7 +49,7 @@ namespace Lucene.Net.Queries
         /// Create a <see cref="CustomScoreQuery"/> over input <paramref name="subQuery"/>. </summary>
         /// <param name="subQuery"> the sub query whose scored is being customized. Must not be <c>null</c>.  </param>
         public CustomScoreQuery(Query subQuery)
-            : this(subQuery, Arrays.Empty<FunctionQuery>())
+            : this(subQuery, Array.Empty<FunctionQuery>())
         {
         }
 
@@ -59,7 +59,7 @@ namespace Lucene.Net.Queries
         /// <param name="scoringQuery"> a value source query whose scores are used in the custom score
         /// computation.  This parameter is optional - it can be null. </param>
         public CustomScoreQuery(Query subQuery, FunctionQuery scoringQuery)
-            : this(subQuery, scoringQuery != null ? new FunctionQuery[] { scoringQuery } : Arrays.Empty<FunctionQuery>())
+            : this(subQuery, scoringQuery != null ? new FunctionQuery[] { scoringQuery } : Array.Empty<FunctionQuery>())
         // don't want an array that contains a single null..
         {
         }
@@ -72,7 +72,7 @@ namespace Lucene.Net.Queries
         public CustomScoreQuery(Query subQuery, params FunctionQuery[] scoringQueries)
         {
             this.subQuery = subQuery;
-            this.scoringQueries = scoringQueries ?? Arrays.Empty<Query>();
+            this.scoringQueries = scoringQueries ?? Array.Empty<Query>();
             if (subQuery is null)
             {
                 throw new ArgumentNullException(nameof(subQuery), "<subquery> must not be null!"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
@@ -247,8 +247,8 @@ namespace Lucene.Net.Queries
             /// </summary>
             public override void Normalize(float norm, float topLevelBoost)
             {
-                // note we DONT incorporate our boost, nor pass down any topLevelBoost 
-                // (e.g. from outer BQ), as there is no guarantee that the CustomScoreProvider's 
+                // note we DONT incorporate our boost, nor pass down any topLevelBoost
+                // (e.g. from outer BQ), as there is no guarantee that the CustomScoreProvider's
                 // function obeys the distributive law... it might call sqrt() on the subQuery score
                 // or some other arbitrary function other than multiplication.
                 // so, instead boosts are applied directly in score()
@@ -394,16 +394,16 @@ namespace Lucene.Net.Queries
         }
 
         public override Weight CreateWeight(IndexSearcher searcher)
-        {                
+        {
             return new CustomWeight(this, searcher);
         }
 
         /// <summary>
         /// Checks if this is strict custom scoring.
         /// In strict custom scoring, the <see cref="ValueSource"/> part does not participate in weight normalization.
-        /// This may be useful when one wants full control over how scores are modified, and does 
+        /// This may be useful when one wants full control over how scores are modified, and does
         /// not care about normalizing by the <see cref="ValueSource"/> part.
-        /// One particular case where this is useful if for testing this query.   
+        /// One particular case where this is useful if for testing this query.
         /// <para/>
         /// Note: only has effect when the <see cref="ValueSource"/> part is not <c>null</c>.
         /// </summary>

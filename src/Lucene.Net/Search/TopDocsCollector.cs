@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
         /// This is used in case <see cref="GetTopDocs()"/> is called with illegal parameters, or there
         /// simply aren't (enough) results.
         /// </summary>
-        protected static readonly TopDocs EMPTY_TOPDOCS = new TopDocs(0, Arrays.Empty<ScoreDoc>(), float.NaN);
+        protected static readonly TopDocs EMPTY_TOPDOCS = new TopDocs(0, Array.Empty<ScoreDoc>(), float.NaN);
 
         /// <summary>
         /// The priority queue which holds the top documents. Note that different
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// The number of valid priority queue entries 
+        /// The number of valid priority queue entries
         /// </summary>
         protected virtual int TopDocsCount =>
             // In case pq was populated with sentinel values, there might be less
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search
         ///
         /// <para> Most Lucene Query implementations will visit
         /// matching docIDs in order.  However, some queries
-        /// (currently limited to certain cases of <see cref="BooleanQuery"/>) 
+        /// (currently limited to certain cases of <see cref="BooleanQuery"/>)
         /// can achieve faster searching if the
         /// <see cref="ICollector"/> allows them to deliver the
         /// docIDs out of order.</para>

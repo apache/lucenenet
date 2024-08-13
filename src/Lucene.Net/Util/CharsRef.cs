@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
-        public static readonly char[] EMPTY_CHARS = Arrays.Empty<char>();
+        public static readonly char[] EMPTY_CHARS = Array.Empty<char>();
 
         bool ICharSequence.HasValue => true;
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new <see cref="CharsRef"/> initialized with the given <paramref name="chars"/>, 
+        /// Creates a new <see cref="CharsRef"/> initialized with the given <paramref name="chars"/>,
         /// <paramref name="offset"/> and <paramref name="length"/>.
         /// </summary>
         public CharsRef(char[] chars, int offset, int length)
@@ -326,7 +326,7 @@ namespace Lucene.Net.Util
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE
         [Serializable]

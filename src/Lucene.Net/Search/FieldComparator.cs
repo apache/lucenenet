@@ -37,10 +37,10 @@ namespace Lucene.Net.Search
     /// classes here correspond to the <see cref="SortField"/> types.
     ///
     /// <para>This API is designed to achieve high performance
-    /// sorting, by exposing a tight interaction with 
+    /// sorting, by exposing a tight interaction with
     /// <see cref="FieldValueHitQueue"/> as it visits hits.  Whenever a hit is
     /// competitive, it's enrolled into a virtual slot, which is
-    /// an <see cref="int"/> ranging from 0 to numHits-1.  The 
+    /// an <see cref="int"/> ranging from 0 to numHits-1.  The
     /// <see cref="FieldComparer"/> is made aware of segment transitions
     /// during searching in case any internal state it's tracking
     /// needs to be recomputed during these transitions.</para>
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
         public abstract override void SetBottom(int slot);
 
         /// <summary>
-        /// Record the top value, for future calls to 
+        /// Record the top value, for future calls to
         /// <see cref="CompareTop(int)"/>.  This is only called for searches that
         /// use SearchAfter (deep paging), and is called before any
         /// calls to <see cref="SetNextReader(AtomicReaderContext)"/>.
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Record the top value, for future calls to 
+        /// Record the top value, for future calls to
         /// <see cref="CompareTop(int)"/>.  This is only called for searches that
         /// use SearchAfter (deep paging), and is called before any
         /// calls to <see cref="SetNextReader(AtomicReaderContext)"/>.
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Compare the bottom of the queue with this doc.  This will
         /// only invoked after <see cref="SetBottom(int)"/> has been called.  This
-        /// should return the same result as 
+        /// should return the same result as
         /// <see cref="Compare(int, int)"/> as if bottom were slot1 and the new
         /// document were slot 2.
         ///
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Compare the top value with this doc. This will
         /// only invoked after <see cref="SetTopValue(T)"/> has been called. This
-        /// should return the same result as 
+        /// should return the same result as
         /// <see cref="Compare(int, int)"/> as if topValue were slot1 and the new
         /// document were slot 2.  This is only called for searches that
         /// use SearchAfter (deep paging).
@@ -284,7 +284,7 @@ namespace Lucene.Net.Search
         public abstract void SetBottom(int slot);
 
         /// <summary>
-        /// Record the top value, for future calls to 
+        /// Record the top value, for future calls to
         /// <see cref="CompareTop(int)"/>.  This is only called for searches that
         /// use SearchAfter (deep paging), and is called before any
         /// calls to <see cref="SetNextReader(AtomicReaderContext)"/>.
@@ -294,7 +294,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Compare the bottom of the queue with this doc.  This will
         /// only invoked after setBottom has been called.  This
-        /// should return the same result as 
+        /// should return the same result as
         /// <see cref="Compare(int, int)"/> as if bottom were slot1 and the new
         /// document were slot 2.
         ///
@@ -312,7 +312,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Compare the top value with this doc.  This will
         /// only invoked after <see cref="SetTopValue{TValue}(TValue)"/> has been called.  This
-        /// should return the same result as 
+        /// should return the same result as
         /// <see cref="Compare(int, int)"/> as if topValue were slot1 and the new
         /// document were slot 2.  This is only called for searches that
         /// use SearchAfter (deep paging).
@@ -402,7 +402,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as <see cref="byte"/> (using 
+        /// Parses field's values as <see cref="byte"/> (using
         /// <see cref="IFieldCache.GetBytes(Index.AtomicReader, string, FieldCache.IByteParser, bool)"/> and sorts by ascending value
         /// </summary>
         [Obsolete, CLSCompliant(false)] // LUCENENET NOTE: marking non-CLS compliant because of sbyte - it is obsolete, anyway
@@ -487,7 +487,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as <see cref="double"/> (using 
+        /// Parses field's values as <see cref="double"/> (using
         /// <see cref="IFieldCache.GetDoubles(Index.AtomicReader, string, FieldCache.IDoubleParser, bool)"/> and sorts by ascending value
         /// </summary>
         public sealed class DoubleComparer : NumericComparer<J2N.Numerics.Double>
@@ -580,7 +580,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as <see cref="float"/> (using 
+        /// Parses field's values as <see cref="float"/> (using
         /// <see cref="IFieldCache.GetSingles(Index.AtomicReader, string, FieldCache.ISingleParser, bool)"/>  and sorts by ascending value
         /// <para/>
         /// NOTE: This was FloatComparator in Lucene
@@ -676,7 +676,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as <see cref="short"/> (using 
+        /// Parses field's values as <see cref="short"/> (using
         /// <see cref="IFieldCache.GetInt16s(Index.AtomicReader, string, FieldCache.IInt16Parser, bool)"/> and sorts by ascending value
         /// <para/>
         /// NOTE: This was ShortComparator in Lucene
@@ -738,7 +738,7 @@ namespace Lucene.Net.Search
                 return base.SetNextReader(context);
             }
 
-            public override void SetBottom(int slot) 
+            public override void SetBottom(int slot)
             {
                 bottom = values[slot];
             }
@@ -764,7 +764,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as <see cref="int"/> (using 
+        /// Parses field's values as <see cref="int"/> (using
         /// <see cref="IFieldCache.GetInt32s(Index.AtomicReader, string, FieldCache.IInt32Parser, bool)"/> and sorts by ascending value
         /// <para/>
         /// NOTE: This was IntComparator in Lucene
@@ -1106,7 +1106,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Sorts by field's natural <see cref="Index.Term"/> sort order, using
-        /// ordinals.  This is functionally equivalent to 
+        /// ordinals.  This is functionally equivalent to
         /// <see cref="Lucene.Net.Search.FieldComparer.TermValComparer"/>, but it first resolves the string
         /// to their relative ordinal positions (using the index
         /// returned by <see cref="IFieldCache.GetTermsIndex(Index.AtomicReader, string, float)"/>), and

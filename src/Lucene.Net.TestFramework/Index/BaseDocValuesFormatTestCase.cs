@@ -1526,7 +1526,7 @@ namespace Lucene.Net.Index
             {
                 Document doc = new Document();
                 Field idField = new StringField("id", "", Field.Store.NO);
-                Field storedField = new StoredField("stored", Arrays.Empty<byte>());
+                Field storedField = new StoredField("stored", Array.Empty<byte>());
                 Field dvField = new BinaryDocValuesField("dv", new BytesRef());
                 doc.Add(idField);
                 doc.Add(storedField);
@@ -1612,7 +1612,7 @@ namespace Lucene.Net.Index
             {
                 Document doc = new Document();
                 Field idField = new StringField("id", "", Field.Store.NO);
-                Field storedField = new StoredField("stored", Arrays.Empty<byte>());
+                Field storedField = new StoredField("stored", Array.Empty<byte>());
                 Field dvField = new SortedDocValuesField("dv", new BytesRef());
                 doc.Add(idField);
                 doc.Add(storedField);
@@ -3064,7 +3064,7 @@ namespace Lucene.Net.Index
                         for (int docID = 0; docID < docBytes.Count; docID++)
                         {
                             Document doc = ar.Document(docID);
-                            
+
                             s.Get(docID, bytes);
                             var expected = docBytes[Convert.ToInt32(doc.Get("id"), CultureInfo.InvariantCulture)];
                             Assert.AreEqual(expected.Length, bytes.Length);
@@ -3197,7 +3197,7 @@ namespace Lucene.Net.Index
             {
                 Document doc = new Document();
                 Field idField = new StringField("id", "", Field.Store.NO);
-                Field storedBinField = new StoredField("storedBin", Arrays.Empty<byte>());
+                Field storedBinField = new StoredField("storedBin", Array.Empty<byte>());
                 Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
                 Field dvSortedField = new SortedDocValuesField("dvSorted", new BytesRef());
                 Field storedNumericField = new StoredField("storedNum", "");
@@ -3313,7 +3313,7 @@ namespace Lucene.Net.Index
             using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
             {
                 Field idField = new StringField("id", "", Field.Store.NO);
-                Field storedBinField = new StoredField("storedBin", Arrays.Empty<byte>());
+                Field storedBinField = new StoredField("storedBin", Array.Empty<byte>());
                 Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
                 Field dvSortedField = new SortedDocValuesField("dvSorted", new BytesRef());
                 Field storedNumericField = new StoredField("storedNum", "");

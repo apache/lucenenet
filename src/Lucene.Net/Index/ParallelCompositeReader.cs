@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                     throw new ArgumentException("There must be at least one main reader if storedFieldsReaders are used.");
                 }
                 // LUCENENET: Optimized empty string array creation
-                return Arrays.Empty<IndexReader>();
+                return Array.Empty<IndexReader>();
             }
             else
             {

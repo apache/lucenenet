@@ -1,6 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -29,12 +28,12 @@ namespace Lucene.Net.Analysis.Shingle
     /// <summary>
     /// <para>A <see cref="ShingleFilter"/> constructs shingles (token n-grams) from a token stream.
     /// In other words, it creates combinations of tokens as a single token.
-    /// 
+    ///
     /// </para>
     /// <para>For example, the sentence "please divide this sentence into shingles"
     /// might be tokenized into shingles "please divide", "divide this",
     /// "this sentence", "sentence into", and "into shingles".
-    /// 
+    ///
     /// </para>
     /// <para>This filter handles position increments > 1 by inserting filler tokens
     /// (tokens with termtext "_"). It does not handle a position increment of 0.
@@ -58,7 +57,7 @@ namespace Lucene.Net.Analysis.Shingle
         public const int DEFAULT_MIN_SHINGLE_SIZE = 2;
 
         /// <summary>
-        /// default token type attribute value is "shingle" 
+        /// default token type attribute value is "shingle"
         /// </summary>
         public const string DEFAULT_TOKEN_TYPE = "shingle";
 
@@ -131,7 +130,7 @@ namespace Lucene.Net.Analysis.Shingle
         /// <summary>
         /// When the next input stream token has a position increment greater than
         /// one, it is stored in this field until sufficient filler tokens have been
-        /// inserted to account for the position increment. 
+        /// inserted to account for the position increment.
         /// </summary>
         private AttributeSource nextInputStreamToken;
 
@@ -141,7 +140,7 @@ namespace Lucene.Net.Analysis.Shingle
         private bool isNextInputStreamToken = false;
 
         /// <summary>
-        /// Whether at least one unigram or shingle has been output at the current 
+        /// Whether at least one unigram or shingle has been output at the current
         /// position.
         /// </summary>
         private bool isOutputHere = false;
@@ -244,7 +243,7 @@ namespace Lucene.Net.Analysis.Shingle
         /// </para>
         /// <para>Note that if outputUnigrams==true, then unigrams are always output,
         /// regardless of whether any shingles are available.
-        /// 
+        ///
         /// </para>
         /// </summary>
         /// <param name="outputUnigramsIfNoShingles"> Whether or not to output a single
@@ -275,7 +274,7 @@ namespace Lucene.Net.Analysis.Shingle
         /// calling this method.
         /// </para>
         /// <para>The unigram output option is independent of the min shingle size.
-        /// 
+        ///
         /// </para>
         /// </summary>
         /// <param name="minShingleSize"> min size of output shingles </param>
@@ -308,7 +307,7 @@ namespace Lucene.Net.Analysis.Shingle
         /// <param name="fillerToken"> string to insert at each position where there is no token </param>
         public void SetFillerToken(string fillerToken)
         {
-            this.fillerToken = null == fillerToken ? Arrays.Empty<char>() : fillerToken.ToCharArray();
+            this.fillerToken = null == fillerToken ? Array.Empty<char>() : fillerToken.ToCharArray();
         }
 
         public override bool IncrementToken()
@@ -434,7 +433,7 @@ namespace Lucene.Net.Analysis.Shingle
                     }
                     if (posIncrAtt.PositionIncrement > 1)
                     {
-                        // Each output shingle must contain at least one input token, 
+                        // Each output shingle must contain at least one input token,
                         // so no more than (maxShingleSize - 1) filler tokens will be inserted.
                         numFillerTokensToInsert = Math.Min(posIncrAtt.PositionIncrement - 1, maxShingleSize - 1);
                         // Save the current token as the next input stream token
@@ -499,7 +498,7 @@ namespace Lucene.Net.Analysis.Shingle
         }
 
         /// <summary>
-        /// <para>Fills <see cref="inputWindow"/> with input stream tokens, if available, 
+        /// <para>Fills <see cref="inputWindow"/> with input stream tokens, if available,
         /// shifting to the right if the window was previously full.
         /// </para>
         /// <para>
@@ -577,7 +576,7 @@ namespace Lucene.Net.Analysis.Shingle
         /// <para><code>gramSize</code> will take on values from the circular sequence
         /// <b>{ [ 1, ] <see cref="minShingleSize"/> [ , ... , <see cref="maxShingleSize"/> ] }</b>.
         /// </para>
-        /// <para>1 is included in the circular sequence only if 
+        /// <para>1 is included in the circular sequence only if
         /// <see cref="outputUnigrams"/> = true.
         /// </para>
         /// </summary>
@@ -606,7 +605,7 @@ namespace Lucene.Net.Analysis.Shingle
             /// <code>gramSize</code> will take on values from the circular sequence
             /// <b>{ [ 1, ] <see cref="minShingleSize"/> [ , ... , <see cref="maxShingleSize"/> ] }</b>.
             /// </para>
-            /// <para>1 is included in the circular sequence only if 
+            /// <para>1 is included in the circular sequence only if
             /// <see cref="outputUnigrams"/> = true.
             /// </para>
             /// </summary>
@@ -628,13 +627,13 @@ namespace Lucene.Net.Analysis.Shingle
             }
 
             /// <summary>
-            /// <para>Sets this circular number's value to the first member of the 
+            /// <para>Sets this circular number's value to the first member of the
             /// circular sequence
             /// </para>
             /// <para><code>gramSize</code> will take on values from the circular sequence
             /// <b>{ [ 1, ] <see cref="minShingleSize"/> [ , ... , <see cref="maxShingleSize"/> ] }</b>.
             /// </para>
-            /// <para>1 is included in the circular sequence only if 
+            /// <para>1 is included in the circular sequence only if
             /// <see cref="outputUnigrams"/> = true.
             /// </para>
             /// </summary>
@@ -650,7 +649,7 @@ namespace Lucene.Net.Analysis.Shingle
             /// </para>
             /// <para>If <see cref="outputUnigrams"/> = true, the first member of the circular
             /// sequence will be 1; otherwise, it will be <see cref="minShingleSize"/>.
-            /// 
+            ///
             /// </para>
             /// </summary>
             /// <returns> true if the current value is the first member of the circular

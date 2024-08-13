@@ -3,8 +3,8 @@ using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Index;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
@@ -30,11 +30,11 @@ namespace Lucene.Net.Analysis.Query
 
     /// <summary>
     /// An <see cref="Analyzer"/> used primarily at query time to wrap another analyzer and provide a layer of protection
-    /// which prevents very common words from being passed into queries. 
+    /// which prevents very common words from being passed into queries.
     /// <para>
     /// For very large indexes the cost
     /// of reading TermDocs for a very common word can be  high. This analyzer was created after experience with
-    /// a 38 million doc index which had a term in around 50% of docs and was causing TermQueries for 
+    /// a 38 million doc index which had a term in around 50% of docs and was causing TermQueries for
     /// this term to take 2 seconds.
     /// </para>
     /// </summary>
@@ -169,9 +169,9 @@ namespace Lucene.Net.Analysis.Query
         ///                  method calls will be returned </param>
         /// <returns> the stop words identified for a field </returns>
         public string[] GetStopWords(string fieldName)
-        {            
+        {
             var stopWords = stopWordsPerField[fieldName];
-            return stopWords != null ? stopWords.ToArray() : Arrays.Empty<string>();
+            return stopWords != null ? stopWords.ToArray() : Array.Empty<string>();
         }
 
         /// <summary>

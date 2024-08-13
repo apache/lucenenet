@@ -125,7 +125,7 @@ namespace Lucene.Net.Expressions.JS
         // delegators
         public virtual Lexer[] GetDelegates()
         {
-            return Arrays.Empty<Lexer>();
+            return Array.Empty<Lexer>();
         }
 
         public JavascriptLexer()

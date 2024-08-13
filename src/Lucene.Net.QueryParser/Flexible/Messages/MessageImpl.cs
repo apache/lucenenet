@@ -36,7 +36,7 @@
 //    {
 //        private readonly string key; // LUCENENET: marked readonly
 
-//        private readonly object[] arguments = Arrays.Empty<object>(); // LUCENENET: marked readonly
+//        private readonly object[] arguments = Array.Empty<object>(); // LUCENENET: marked readonly
 
 //        public Message(string key)
 //        {

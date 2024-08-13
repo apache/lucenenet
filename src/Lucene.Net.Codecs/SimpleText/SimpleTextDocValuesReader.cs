@@ -1,6 +1,5 @@
 ﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -67,7 +66,7 @@ namespace Lucene.Net.Codecs.SimpleText
             data = state.Directory.OpenInput(
                     IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, ext), state.Context);
             maxDoc = state.SegmentInfo.DocCount;
-            
+
             while (true)
             {
                 ReadLine();
@@ -79,7 +78,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (Debugging.AssertsEnabled) Debugging.Assert(StartsWith(SimpleTextDocValuesWriter.FIELD), "{0}", new BytesRefFormatter(scratch, BytesRefFormat.UTF8));
                 var fieldName = StripPrefix(SimpleTextDocValuesWriter.FIELD);
                 var field = new OneField();
-                
+
                 fields[fieldName] = field;
 
                 ReadLine();
@@ -98,7 +97,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     if (Debugging.AssertsEnabled) Debugging.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
                     field.DataStartFilePointer = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
-                    data.Seek(data.Position + (1 + field.Pattern.Length + 2)*maxDoc); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    data.Seek(data.Position + (1 + field.Pattern.Length + 2) * maxDoc); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
                 else if (dvType == DocValuesType.BINARY)
                 {
@@ -109,7 +108,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     if (Debugging.AssertsEnabled) Debugging.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
                     field.DataStartFilePointer = data.Position;
-                    data.Seek(data.Position + (9 + field.Pattern.Length + field.MaxLength + 2)*maxDoc);
+                    data.Seek(data.Position + (9 + field.Pattern.Length + field.MaxLength + 2) * maxDoc);
                 }
                 else if (dvType == DocValuesType.SORTED || dvType == DocValuesType.SORTED_SET)
                 {
@@ -126,8 +125,8 @@ namespace Lucene.Net.Codecs.SimpleText
                     if (Debugging.AssertsEnabled) Debugging.Assert(StartsWith(SimpleTextDocValuesWriter.ORDPATTERN));
                     field.OrdPattern = StripPrefix(SimpleTextDocValuesWriter.ORDPATTERN);
                     field.DataStartFilePointer = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
-                    data.Seek(data.Position + (9 + field.Pattern.Length + field.MaxLength)*field.NumValues +
-                              (1 + field.OrdPattern.Length)*maxDoc); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                    data.Seek(data.Position + (9 + field.Pattern.Length + field.MaxLength) * field.NumValues +
+                              (1 + field.OrdPattern.Length) * maxDoc); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 }
                 else
                 {
@@ -153,7 +152,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             var @in = (IndexInput)data.Clone();
             var scratch = new BytesRef();
-            
+
             return new NumericDocValuesAnonymousClass(this, field, @in, scratch);
         }
 
@@ -470,9 +469,9 @@ namespace Lucene.Net.Codecs.SimpleText
             // valid:
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
 
-            var input = (IndexInput) data.Clone();
+            var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
-            
+
             return new SortedSetDocValuesAnonymousClass(this, field, input, scratch);
         }
 
@@ -491,7 +490,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 _field = field;
                 _input = input;
                 _scratch = scratch;
-                _currentOrds = Arrays.Empty<string>();
+                _currentOrds = Array.Empty<string>();
                 _currentIndex = 0;
             }
 
@@ -515,7 +514,7 @@ namespace Lucene.Net.Codecs.SimpleText
                                 docID * (1 + _field.OrdPattern.Length));
                     SimpleTextUtil.ReadLine(_input, _scratch);
                     var ordList = _scratch.Utf8ToString().Trim();
-                    _currentOrds = ordList.Length == 0 ? Arrays.Empty<string>() : ordList.Split(',').TrimEnd();
+                    _currentOrds = ordList.Length == 0 ? Array.Empty<string>() : ordList.Split(',').TrimEnd();
                     _currentIndex = 0;
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
@@ -614,7 +613,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void CheckIntegrity()
         {
             var iScratch = new BytesRef();
-            var clone = (IndexInput) data.Clone();
+            var clone = (IndexInput)data.Clone();
             clone.Seek(0);
             ChecksumIndexInput input = new BufferedChecksumIndexInput(clone);
             while (true)

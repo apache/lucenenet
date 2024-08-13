@@ -32,27 +32,27 @@ namespace Lucene.Net.Search.Join
     /// BlockJoinQuery clauses, sorted by the
     /// specified parent <see cref="Sort"/>.  Note that this cannot perform
     /// arbitrary joins; rather, it requires that all joined
-    /// documents are indexed as a doc block (using 
+    /// documents are indexed as a doc block (using
     /// <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>
-    /// or <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>. 
+    /// or <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>.
     /// Ie, the join is computed
     /// at index time.
-    /// 
+    ///
     /// <para>The parent <see cref="Sort"/> must only use
     /// fields from the parent documents; sorting by field in
     /// the child documents is not supported.</para>
-    /// 
+    ///
     /// <para>You should only use this
     /// collector if one or more of the clauses in the query is
     /// a <see cref="ToParentBlockJoinQuery"/>.  This collector will find those query
     /// clauses and record the matching child documents for the
     /// top scoring parent documents.</para>
-    /// 
+    ///
     /// <para>Multiple joins (star join) and nested joins and a mix
     /// of the two are allowed, as long as in all cases the
     /// documents corresponding to a single row of each joined
     /// parent table were indexed as a doc block.</para>
-    /// 
+    ///
     /// <para>For the simple star join you can retrieve the
     /// <see cref="ITopGroups{T}"/> instance containing each <see cref="ToParentBlockJoinQuery"/>'s
     /// matching child documents for the top parent groups,
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Join
     /// a single query, which will contain two or more
     /// <see cref="ToParentBlockJoinQuery"/>'s as clauses representing the star join,
     /// can then retrieve two or more <see cref="ITopGroups{T}"/> instances.</para>
-    /// 
+    ///
     /// <para>For nested joins, the query will run correctly (ie,
     /// match the right parent and child documents), however,
     /// because <see cref="TopGroups{T}"/> is currently unable to support nesting
@@ -68,10 +68,10 @@ namespace Lucene.Net.Search.Join
     /// are only able to retrieve the <see cref="TopGroups{T}"/> of the first
     /// join.  The <see cref="TopGroups{T}"/> of the nested joins will not be
     /// correct.</para>
-    /// 
+    ///
     /// See <a href="http://lucene.apache.org/core/4_8_0/join/">http://lucene.apache.org/core/4_8_0/join/</a> for a code
     /// sample.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class ToParentBlockJoinCollector : ICollector
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Join
         private readonly bool trackScores;
 
         private int docBase;
-        private ToParentBlockJoinQuery.BlockJoinScorer[] joinScorers = Arrays.Empty<ToParentBlockJoinQuery.BlockJoinScorer>();
+        private ToParentBlockJoinQuery.BlockJoinScorer[] joinScorers = Array.Empty<ToParentBlockJoinQuery.BlockJoinScorer>();
         private AtomicReaderContext currentReaderContext;
         private Scorer scorer;
         private bool queueFull;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search.Join
         /// Creates a <see cref="ToParentBlockJoinCollector"/>.  The provided <paramref name="sort"/> must
         /// not be null.  If you pass true <paramref name="trackScores"/>, all
         /// ToParentBlockQuery instances must not use
-        /// <see cref="ScoreMode.None"/>. 
+        /// <see cref="ScoreMode.None"/>.
         /// </summary>
         public ToParentBlockJoinCollector(Sort sort, int numParentHits, bool trackScores, bool trackMaxScore)
         {
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Join
 
         private sealed class OneGroup : FieldValueHitQueue.Entry
         {
-            public OneGroup(int comparerSlot, int parentDoc, float parentScore, int numJoins, bool doScores) 
+            public OneGroup(int comparerSlot, int parentDoc, float parentScore, int numJoins, bool doScores)
                 : base(comparerSlot, parentDoc, parentScore)
             {
                 //System.out.println("make OneGroup parentDoc=" + parentDoc);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search.Join
             internal float[][] scores;
             internal int[] counts;
         }
-        
+
         public virtual void Collect(int parentDoc)
         {
             //System.out.println("\nC parentDoc=" + parentDoc);
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search.Join
                 }
             }
         }
-        
+
         public virtual void SetNextReader(AtomicReaderContext context)
         {
             currentReaderContext = context;
@@ -509,15 +509,15 @@ namespace Lucene.Net.Search.Join
                 TopDocs topDocs;
                 if (withinGroupSort is null)
                 {
-                    var tempCollector = (TopScoreDocCollector) collector;
+                    var tempCollector = (TopScoreDocCollector)collector;
                     topDocs = tempCollector.GetTopDocs(withinGroupOffset, numDocsInGroup);
                 }
                 else
                 {
-                    var tempCollector = (TopFieldCollector) collector;
+                    var tempCollector = (TopFieldCollector)collector;
                     topDocs = tempCollector.GetTopDocs(withinGroupOffset, numDocsInGroup);
                 }
-                
+
                 groups[groupIdx - offset] = new GroupDocs<int>(og.Score, topDocs.MaxScore, numChildDocs, topDocs.ScoreDocs, og.Doc, groupSortValues);
             }
 
@@ -525,8 +525,8 @@ namespace Lucene.Net.Search.Join
         }
 
         /// <summary>
-        /// Returns the <see cref="TopGroups{T}"/> for the specified BlockJoinQuery. The groupValue of each 
-        /// GroupDocs will be the parent docID for that group. The number of documents within 
+        /// Returns the <see cref="TopGroups{T}"/> for the specified BlockJoinQuery. The groupValue of each
+        /// GroupDocs will be the parent docID for that group. The number of documents within
         /// each group equals to the total number of matched child documents for that group.
         /// Returns <c>null</c> if no groups matched.
         /// </summary>

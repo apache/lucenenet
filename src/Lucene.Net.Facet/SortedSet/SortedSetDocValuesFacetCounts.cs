@@ -1,6 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -37,20 +36,20 @@ namespace Lucene.Net.Facet.SortedSet
     /// indexed <see cref="SortedSetDocValuesFacetField"/>,
     /// without require a separate taxonomy index.  Faceting is
     /// a bit slower (~25%), and there is added cost on every
-    /// <see cref="IndexReader"/> open to create a new 
+    /// <see cref="IndexReader"/> open to create a new
     /// <see cref="SortedSetDocValuesReaderState"/>.  Furthermore, this does
     /// not support hierarchical facets; only flat (dimension +
     /// label) facets, but it uses quite a bit less RAM to do
     /// so.
-    /// 
+    ///
     /// <para><b>NOTE</b>: this class should be instantiated and
     /// then used from a single thread, because it holds a
     /// thread-private instance of <see cref="SortedSetDocValues"/>.
-    /// 
+    ///
     /// </para>
     /// <para><b>NOTE:</b>: tie-break is by unicode sort order
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </para>
     /// </summary>
     public class SortedSetDocValuesFacetCounts : Facets
@@ -62,7 +61,7 @@ namespace Lucene.Net.Facet.SortedSet
 
         /// <summary>
         /// Sparse faceting: returns any dimension that had any
-        /// hits, topCount labels per dimension. 
+        /// hits, topCount labels per dimension.
         /// </summary>
         public SortedSetDocValuesFacetCounts(SortedSetDocValuesReaderState state, FacetsCollector hits)
         {
@@ -143,7 +142,7 @@ namespace Lucene.Net.Facet.SortedSet
                 labelValues[i] = new LabelAndValue(parts[1], ordAndValue.Value);
             }
 
-            return new FacetResult(dim, Arrays.Empty<string>(), dimCount, labelValues, childCount);
+            return new FacetResult(dim, Array.Empty<string>(), dimCount, labelValues, childCount);
         }
 
         /// <summary>

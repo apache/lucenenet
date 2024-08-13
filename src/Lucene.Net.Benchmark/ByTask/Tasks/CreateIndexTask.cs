@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Codecs;
 using Lucene.Net.Index;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;

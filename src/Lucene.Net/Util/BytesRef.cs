@@ -52,7 +52,7 @@ namespace Lucene.Net.Util
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
-        public static readonly byte[] EMPTY_BYTES = Arrays.Empty<byte>();
+        public static readonly byte[] EMPTY_BYTES = Array.Empty<byte>();
 
         /// <summary>
         /// The contents of the BytesRef. Should never be <c>null</c>.
@@ -206,7 +206,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Calculates the hash code as required by <see cref="Index.TermsHash"/> during indexing.
         /// <para/> This is currently implemented as MurmurHash3 (32
-        /// bit), using the seed from 
+        /// bit), using the seed from
         /// <see cref="StringHelper.GoodFastHashSeed"/>, but is subject to
         /// change from release to release.
         /// </summary>
@@ -402,7 +402,7 @@ namespace Lucene.Net.Util
         }
     }
 
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -443,7 +443,7 @@ namespace Lucene.Net.Util
 
     /// @deprecated this comparer is only a transition mechanism
     [Obsolete("this comparer is only a transition mechanism")]
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -516,7 +516,7 @@ namespace Lucene.Net.Util
         UTF8AsHex
     }
 
-    // LUCENENET specific - when this object is a parameter of 
+    // LUCENENET specific - when this object is a parameter of
     // a method that calls string.Format(),
     // defers execution of building a string until
     // string.Format() is called.

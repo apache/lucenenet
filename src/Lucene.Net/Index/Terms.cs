@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns a <see cref="TermsEnum"/> that iterates over all terms that
-        /// are accepted by the provided 
+        /// are accepted by the provided
         /// <see cref="CompiledAutomaton"/>.  If the <paramref name="startTerm"/> is
         /// provided then the returned enum will only accept terms
         /// &gt; <paramref name="startTerm"/>, but you still must call
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
         /// measures, this measure does not take deleted documents
         /// into account.
         /// </summary>
-        public abstract long SumTotalTermFreq { get; } 
+        public abstract long SumTotalTermFreq { get; }
 
         /// <summary>
         /// Returns the sum of <see cref="TermsEnum.DocFreq"/> for
@@ -187,6 +187,6 @@ namespace Lucene.Net.Index
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
-        public static readonly Terms[] EMPTY_ARRAY = Arrays.Empty<Terms>();
+        public static readonly Terms[] EMPTY_ARRAY = Array.Empty<Terms>();
     }
 }

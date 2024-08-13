@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
         /// Returns the number of terms for all fields, or -1 if this
         /// measure isn't stored by the codec. Note that, just like
         /// other term measures, this measure does not take deleted
-        /// documents into account. 
+        /// documents into account.
         /// </summary>
         /// <seealso cref="Index.Terms.Count"></seealso>
         [Obsolete("Iterate fields and add their Count instead. This method is only provided as a transition mechanism to access this statistic for 3.x indexes, which do not have this statistic per-field.")]
@@ -102,6 +102,6 @@ namespace Lucene.Net.Index
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Performance", "S3887:Use an immutable collection or reduce the accessibility of the non-private readonly field", Justification = "Collection is immutable")]
         [SuppressMessage("Performance", "S2386:Use an immutable collection or reduce the accessibility of the public static field", Justification = "Collection is immutable")]
-        public static readonly Fields[] EMPTY_ARRAY = Arrays.Empty<Fields>();
+        public static readonly Fields[] EMPTY_ARRAY = Array.Empty<Fields>();
     }
 }

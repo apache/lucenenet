@@ -110,7 +110,7 @@ namespace Lucene.Net.Util.Fst
         /// <seealso cref= #shouldExpand(UnCompiledNode) </seealso>
         internal const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;*/
 
-        private int[] bytesPerArc = Arrays.Empty<int>();
+        private int[] bytesPerArc = Array.Empty<int>();
 
         /*// Increment version to change it
         private const string FILE_FORMAT_NAME = "FST";
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util.Fst
             nodeRefToAddress = null;
         }
 
-        
+
 
         /// <summary>
         /// Load a previously saved FST. </summary>
@@ -447,7 +447,7 @@ namespace Lucene.Net.Util.Fst
                     // LUCENENET NOTE: In .NET, IEnumerable will not equal another identical IEnumerable
                     // because it checks for reference equality, not that the list contents
                     // are the same. StructuralEqualityComparer.Default.Equals() will make that check.
-                    Debugging.Assert(typeof(T).IsValueType 
+                    Debugging.Assert(typeof(T).IsValueType
                         ? JCG.EqualityComparer<T>.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput)
                         : StructuralEqualityComparer.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput));
                     Debugging.Assert(root.Node == asserting.Node);

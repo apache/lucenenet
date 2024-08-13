@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
                 queue.SetComparer(0, comparer.SetNextReader(context));
                 comparer = queue.FirstComparer;
             }
-            
+
             public override void SetScorer(Scorer scorer)
             {
                 comparer.SetScorer(scorer);
@@ -1134,7 +1134,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private static readonly ScoreDoc[] EMPTY_SCOREDOCS = Arrays.Empty<ScoreDoc>();
+        private static readonly ScoreDoc[] EMPTY_SCOREDOCS = Array.Empty<ScoreDoc>();
 
         private readonly bool fillFields;
 

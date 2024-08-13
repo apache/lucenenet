@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
         /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
         /// <exception cref="IOException">If any I/O related errors occur</exception>
-        // LUCENENET additional method signature. Makes discovering the return type easier. 
+        // LUCENENET additional method signature. Makes discovering the return type easier.
         public virtual ITopGroups<object> Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
         {
             return Search<object>(searcher, null, query, groupOffset, groupLimit);
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
         /// <returns>the grouped result as a <see cref="ITopGroups{Object}"/> instance</returns>
         /// <exception cref="IOException">If any I/O related errors occur</exception>
-        // LUCENENET additional method signature. Makes discovering the return type easier. 
+        // LUCENENET additional method signature. Makes discovering the return type easier.
         public virtual ITopGroups<object> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             if (groupFunction != null)
@@ -382,13 +382,13 @@ namespace Lucene.Net.Search.Grouping
             if (topSearchGroups is null)
             {
                 // LUCENENET specific - optimized empty array creation
-                return new TopGroups<TGroupValue>(Arrays.Empty<SortField>(), Arrays.Empty<SortField>(), 0, 0, Arrays.Empty<GroupDocs<TGroupValue>>(), float.NaN);
+                return new TopGroups<TGroupValue>(Array.Empty<SortField>(), Array.Empty<SortField>(), 0, 0, Array.Empty<GroupDocs<TGroupValue>>(), float.NaN);
             }
 
             int topNInsideGroup = groupDocsOffset + groupDocsLimit;
             IAbstractSecondPassGroupingCollector<TGroupValue> secondPassCollector;
-            
-            secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups as IEnumerable<ISearchGroup<BytesRef>>, 
+
+            secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups as IEnumerable<ISearchGroup<BytesRef>>,
                 groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields)
                 as IAbstractSecondPassGroupingCollector<TGroupValue>;
 
@@ -426,7 +426,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 throw IllegalStateException.Create("groupFunction must be set via the constructor by specifying a ValueSource.");
             }
-           
+
             firstPassCollector = new FunctionFirstPassGroupingCollector<TMutableValue>(groupFunction, valueSourceContext, groupSort, topN);
             if (allGroups)
             {
@@ -444,7 +444,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 allGroupHeadsCollector = null;
             }
-            
+
 
             ICollector firstRound;
             if (allGroupHeads || allGroups)
@@ -506,16 +506,16 @@ namespace Lucene.Net.Search.Grouping
             if (topSearchGroups is null)
             {
                 // LUCENENET specific - optimized empty array creation
-                return new TopGroups<TMutableValue>(Arrays.Empty<SortField>(), Arrays.Empty<SortField>(), 0, 0, Arrays.Empty<GroupDocs<TMutableValue>>(), float.NaN);
+                return new TopGroups<TMutableValue>(Array.Empty<SortField>(), Array.Empty<SortField>(), 0, 0, Array.Empty<GroupDocs<TMutableValue>>(), float.NaN);
             }
 
             int topNInsideGroup = groupDocsOffset + groupDocsLimit;
             IAbstractSecondPassGroupingCollector<TMutableValue> secondPassCollector;
-           
+
             secondPassCollector = new FunctionSecondPassGroupingCollector<TMutableValue>(topSearchGroups as IEnumerable<ISearchGroup<TMutableValue>>,
                 groupSort, sortWithinGroup, topNInsideGroup, includeScores, includeMaxScore, fillSortFields, groupFunction, valueSourceContext)
                 as IAbstractSecondPassGroupingCollector<TMutableValue>;
-            
+
 
             if (cachedCollector != null && cachedCollector.IsCached)
             {
@@ -687,7 +687,7 @@ namespace Lucene.Net.Search.Grouping
         /// If <see cref="SetAllGroups(bool)"/> was set to <c>true</c> then all matching groups are returned, otherwise
         /// an empty collection is returned.
         /// </summary>
-        /// <typeparam name="T">The group value type. This can be a <see cref="BytesRef"/> or a <see cref="MutableValue"/> instance. 
+        /// <typeparam name="T">The group value type. This can be a <see cref="BytesRef"/> or a <see cref="MutableValue"/> instance.
         /// If grouping by doc block this the group value is always <c>null</c>.</typeparam>
         /// <returns>all matching groups are returned, or an empty collection</returns>
         public virtual ICollection<T> GetAllMatchingGroups<T>()

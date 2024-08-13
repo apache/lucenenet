@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Util
     /// etc.  It is designed to be quick to retrieve items
     /// by <see cref="T:char[]"/> keys without the necessity of converting
     /// to a <see cref="string"/> first.
-    /// 
+    ///
     /// <a name="version"></a>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="CharArrayDictionary{TValue}"/>:
@@ -99,10 +99,10 @@ namespace Lucene.Net.Analysis.Util
         /// we could constrain it with the new() constraint, which isn't possible because
         /// some types such as <see cref="string"/> don't have a default constructor.
         /// So, this is a workaround that allows any type regardless of the type of constructor.
-        /// 
+        ///
         /// <para>
         /// Note also that we gain the ability to use value types for <typeparamref name="TValue"/>, but
-        /// also create a difference in behavior from Java Lucene where the actual values 
+        /// also create a difference in behavior from Java Lucene where the actual values
         /// returned could be <c>null</c>.
         /// </para>
         /// </summary>
@@ -260,7 +260,7 @@ namespace Lucene.Net.Analysis.Util
         /// Adds the <see cref="T:KeyValuePair{string, V}.Value"/> for the passed in <see cref="T:KeyValuePair{string, V}.Key"/>.
         /// Note that the <see cref="T:KeyValuePair{string, V}"/> instance is not added to the dictionary.
         /// </summary>
-        /// <param name="item">A <see cref="T:KeyValuePair{string, V}"/> whose <see cref="T:KeyValuePair{string, V}.Value"/> 
+        /// <param name="item">A <see cref="T:KeyValuePair{string, V}"/> whose <see cref="T:KeyValuePair{string, V}.Value"/>
         /// will be added for the corresponding <see cref="T:KeyValuePair{string, V}.Key"/>. </param>
         void ICollection<KeyValuePair<string, TValue>>.Add(KeyValuePair<string, TValue> item)
         {
@@ -351,8 +351,8 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Clears all entries in this dictionary. This method is supported for reusing, but not 
-        /// <see cref="IDictionary{TKey, TValue}.Remove(TKey)"/>. 
+        /// Clears all entries in this dictionary. This method is supported for reusing, but not
+        /// <see cref="IDictionary{TKey, TValue}.Remove(TKey)"/>.
         /// </summary>
         public virtual void Clear()
         {
@@ -458,7 +458,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// <c>true</c> if the <paramref name="length"/> chars of <paramref name="text"/> starting at <paramref name="startIndex"/>
-        /// are in the <see cref="Keys"/> 
+        /// are in the <see cref="Keys"/>
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> or <paramref name="length"/> is less than zero.</exception>
@@ -469,8 +469,8 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// <c>true</c> if the entire <see cref="Keys"/> is the same as the 
-        /// <paramref name="text"/> <see cref="T:char[]"/> being passed in; 
+        /// <c>true</c> if the entire <see cref="Keys"/> is the same as the
+        /// <paramref name="text"/> <see cref="T:char[]"/> being passed in;
         /// otherwise <c>false</c>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
@@ -483,7 +483,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="text"/> <see cref="string"/> is in the <see cref="Keys"/>; 
+        /// <c>true</c> if the <paramref name="text"/> <see cref="string"/> is in the <see cref="Keys"/>;
         /// otherwise <c>false</c>
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
@@ -493,7 +493,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// <c>true</c> if the <paramref name="text"/> <see cref="ICharSequence"/> is in the <see cref="Keys"/>; 
+        /// <c>true</c> if the <paramref name="text"/> <see cref="ICharSequence"/> is in the <see cref="Keys"/>;
         /// otherwise <c>false</c>
         /// </summary>
         /// <exception cref="ArgumentNullException">
@@ -897,7 +897,7 @@ namespace Lucene.Net.Analysis.Util
                 throw new ArgumentNullException(nameof(text));
 
             if (text is CharArrayCharSequence charArrayCs)
-                return PutImpl(charArrayCs.Value ?? Arrays.Empty<char>(), value);
+                return PutImpl(charArrayCs.Value ?? Array.Empty<char>(), value);
             if (text is StringBuilderCharSequence stringBuilderCs) // LUCENENET: Indexing into a StringBuilder is slow, so materialize
             {
                 var sb = stringBuilderCs.Value!;
@@ -928,7 +928,7 @@ namespace Lucene.Net.Analysis.Util
 
             // LUCENENET NOTE: Testing for *is* is at least 10x faster
             // than casting using *as* and then checking for null.
-            // http://stackoverflow.com/q/1583050/181087 
+            // http://stackoverflow.com/q/1583050/181087
             if (text is string str)
                 return PutImpl(str, value);
             if (text is char[] charArray)
@@ -1291,7 +1291,7 @@ namespace Lucene.Net.Analysis.Util
 
             if (text is CharArrayCharSequence charArrayCs)
             {
-                SetImpl(charArrayCs.Value ?? Arrays.Empty<char>(), value);
+                SetImpl(charArrayCs.Value ?? Array.Empty<char>(), value);
                 return;
             }
             if (text is StringBuilderCharSequence stringBuilderCs) // LUCENENET: Indexing into a StringBuilder is slow, so materialize
@@ -1904,7 +1904,7 @@ namespace Lucene.Net.Analysis.Util
         #region For .NET Support LUCENENET
 
         /// <summary>
-        /// The Lucene version corresponding to the compatibility behavior 
+        /// The Lucene version corresponding to the compatibility behavior
         /// that this instance emulates
         /// </summary>
         public virtual LuceneVersion MatchVersion => matchVersion;
@@ -2031,8 +2031,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="text">The text of the value to get.</param>
         /// <param name="startIndex">The position of the <paramref name="text"/> where the target text begins.</param>
         /// <param name="length">The total length of the <paramref name="text"/>.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified text, 
-        /// if the text is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="value">When this method returns, contains the value associated with the specified text,
+        /// if the text is found; otherwise, the default value for the type of the value parameter.
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
@@ -2054,8 +2054,8 @@ namespace Lucene.Net.Analysis.Util
         /// Gets the value associated with the specified text.
         /// </summary>
         /// <param name="text">The text of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified text, 
-        /// if the text is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="value">When this method returns, contains the value associated with the specified text,
+        /// if the text is found; otherwise, the default value for the type of the value parameter.
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
@@ -2078,8 +2078,8 @@ namespace Lucene.Net.Analysis.Util
         /// Gets the value associated with the specified text.
         /// </summary>
         /// <param name="text">The text of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified text, 
-        /// if the text is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="value">When this method returns, contains the value associated with the specified text,
+        /// if the text is found; otherwise, the default value for the type of the value parameter.
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException">
@@ -2115,8 +2115,8 @@ namespace Lucene.Net.Analysis.Util
         /// Gets the value associated with the specified text.
         /// </summary>
         /// <param name="text">The text of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified text, 
-        /// if the text is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="value">When this method returns, contains the value associated with the specified text,
+        /// if the text is found; otherwise, the default value for the type of the value parameter.
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
@@ -2136,8 +2136,8 @@ namespace Lucene.Net.Analysis.Util
         /// Gets the value associated with the specified text.
         /// </summary>
         /// <param name="text">The text of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified text, 
-        /// if the text is found; otherwise, the default value for the type of the value parameter. 
+        /// <param name="value">When this method returns, contains the value associated with the specified text,
+        /// if the text is found; otherwise, the default value for the type of the value parameter.
         /// This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the <see cref="CharArrayDictionary{TValue}"/> contains an element with the specified text; otherwise, <c>false</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
@@ -2247,8 +2247,8 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Gets a collection containing the values in the <see cref="CharArrayDictionary{TValue}"/>.
-        /// This specialized collection can be enumerated in order to read its values and 
-        /// overrides <see cref="object.ToString()"/> in order to display a string 
+        /// This specialized collection can be enumerated in order to read its values and
+        /// overrides <see cref="object.ToString()"/> in order to display a string
         /// representation of the values.
         /// </summary>
         public ValueCollection Values
@@ -2812,7 +2812,7 @@ namespace Lucene.Net.Analysis.Util
             return sb.Append('}').ToString();
         }
 
-   
+
 
         // LUCENENET: Removed entrySet because in .NET we use the collection itself as the IEnumerable
         private CharArraySet? keySet = null;
@@ -2824,7 +2824,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Returns an <see cref="CharArraySet"/> view on the dictionary's keys.
-        /// The set will use the same <see cref="matchVersion"/> as this dictionary. 
+        /// The set will use the same <see cref="matchVersion"/> as this dictionary.
         /// </summary>
         private CharArraySet KeySet
         {
@@ -3213,7 +3213,7 @@ namespace Lucene.Net.Analysis.Util
 
         #endregion Nested Class: Enumerator
 
-        // LUCENENET NOTE: The Java Lucene type MapEntry was removed here because it is not possible 
+        // LUCENENET NOTE: The Java Lucene type MapEntry was removed here because it is not possible
         // to inherit the value type KeyValuePair{TKey, TValue} in .NET.
 
         // LUCENENET: EntrySet class removed because in .NET we get the entries by calling GetEnumerator() on the dictionary.
@@ -3318,7 +3318,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Used by <see cref="CharArraySet"/> to copy <see cref="CharArrayDictionary{TValue}"/> without knowing 
+        /// Used by <see cref="CharArraySet"/> to copy <see cref="CharArrayDictionary{TValue}"/> without knowing
         /// its generic type.
         /// </summary>
         internal static CharArrayDictionary<TValue> Copy<TValue>(LuceneVersion matchVersion, [DisallowNull] ICharArrayDictionary map)
@@ -3715,7 +3715,7 @@ namespace Lucene.Net.Analysis.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static CharReturnType ConvertObjectToChars<T>(T key, out char[] chars, out string str, Span<char> reuse)
         {
-            chars = Arrays.Empty<char>();
+            chars = Array.Empty<char>();
             str = string.Empty;
 
             if (key is null)
@@ -3757,7 +3757,7 @@ namespace Lucene.Net.Analysis.Util
             }
             else if (key is CharArrayCharSequence charArrayCs)
             {
-                chars = charArrayCs.Value ?? Arrays.Empty<char>();
+                chars = charArrayCs.Value ?? Array.Empty<char>();
                 return CharReturnType.CharArray;
             }
             else if (key is StringBuilderCharSequence stringBuilderCs && stringBuilderCs.HasValue)

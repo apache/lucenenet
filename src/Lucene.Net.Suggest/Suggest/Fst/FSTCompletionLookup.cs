@@ -30,29 +30,29 @@ namespace Lucene.Net.Search.Suggest.Fst
 
     /// <summary>
     /// An adapter from <see cref="Lookup"/> API to <see cref="FSTCompletion"/>.
-    /// 
+    ///
     /// <para>This adapter differs from <see cref="FSTCompletion"/> in that it attempts
     /// to discretize any "weights" as passed from in <see cref="IInputEnumerator.Weight"/>
     /// to match the number of buckets. For the rationale for bucketing, see
     /// <see cref="FSTCompletion"/>.
-    /// 
+    ///
     /// </para>
     /// <para><b>Note:</b>Discretization requires an additional sorting pass.
-    /// 
+    ///
     /// </para>
-    /// <para>The range of weights for bucketing/ discretization is determined 
+    /// <para>The range of weights for bucketing/ discretization is determined
     /// by sorting the input by weight and then dividing into
-    /// equal ranges. Then, scores within each range are assigned to that bucket. 
-    /// 
+    /// equal ranges. Then, scores within each range are assigned to that bucket.
+    ///
     /// </para>
-    /// <para>Note that this means that even large differences in weights may be lost 
+    /// <para>Note that this means that even large differences in weights may be lost
     /// during automaton construction, but the overall distinction between "classes"
-    /// of weights will be preserved regardless of the distribution of weights. 
-    /// 
+    /// of weights will be preserved regardless of the distribution of weights.
+    ///
     /// </para>
     /// <para>For fine-grained control over which weights are assigned to which buckets,
     /// use <see cref="FSTCompletion"/> directly or <see cref="Tst.TSTLookup"/>, for example.
-    /// 
+    ///
     /// </para>
     /// </summary>
     /// <seealso cref="FSTCompletion"/>
@@ -68,9 +68,9 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// Shared tail length for conflating in the created automaton. Setting this
-        /// to larger values (<see cref="int.MaxValue"/>) will create smaller (or minimal) 
-        /// automata at the cost of RAM for keeping nodes hash in the <see cref="FST"/>. 
-        ///  
+        /// to larger values (<see cref="int.MaxValue"/>) will create smaller (or minimal)
+        /// automata at the cost of RAM for keeping nodes hash in the <see cref="FST"/>.
+        ///
         /// <para>Empirical pick.
         /// </para>
         /// </summary>
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// This constructor takes a pre-built automaton.
         /// </summary>
-        ///  <param name="completion"> 
+        ///  <param name="completion">
         ///          An instance of <see cref="FSTCompletion"/>. </param>
         ///  <param name="exactMatchFirst">
         ///          If <code>true</code> exact matches are promoted to the top of the
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             count = 0;
             try
             {
-                byte[] buffer = Arrays.Empty<byte>();
+                byte[] buffer = Array.Empty<byte>();
                 ByteArrayDataOutput output = new ByteArrayDataOutput(buffer);
                 BytesRef spare;
                 while (enumerator.MoveNext())
