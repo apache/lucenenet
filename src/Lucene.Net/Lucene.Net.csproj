@@ -21,118 +21,117 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<Import Project="$(SolutionDir).build/nuget.props" />
+  <Import Project="$(SolutionDir).build/nuget.props" />
+  
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
-	<PropertyGroup>
-		<TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
+    <AssemblyTitle>Lucene.Net</AssemblyTitle>
+    <Description>Lucene.Net is a full-text search engine library capable of advanced text analysis, indexing, and searching. It can be used to easily add search capabilities to applications. Lucene.Net is a C# port of the popular Java Lucene search engine framework from The Apache Software Foundation, targeted at .NET Framework and .NET Core users.</Description>
+    <!-- Since including a readme in the NuGet package makes the info read-only, we are excluding it for now -->
+    <!--<PackageReadmeFile>readme.md</PackageReadmeFile>-->
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591;1573</NoWarn>
 
-		<AssemblyTitle>Lucene.Net</AssemblyTitle>
-		<Description>Lucene.Net is a full-text search engine library capable of advanced text analysis, indexing, and searching. It can be used to easily add search capabilities to applications. Lucene.Net is a C# port of the popular Java Lucene search engine framework from The Apache Software Foundation, targeted at .NET Framework and .NET Core users.</Description>
-		<!-- Since including a readme in the NuGet package makes the info read-only, we are excluding it for now -->
-		<!--<PackageReadmeFile>readme.md</PackageReadmeFile>-->
-		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-		<NoWarn>$(NoWarn);1591;1573</NoWarn>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	</PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
 
+  
 
+  <PropertyGroup Label="NuGet Package File Paths">
+    <LuceneNetDotNetDir>$(SolutionDir)src\dotnet\</LuceneNetDotNetDir>
+    <LuceneNetCodeAnalysisToolsDir>$(LuceneNetDotNetDir)Lucene.Net.CodeAnalysis\tools\</LuceneNetCodeAnalysisToolsDir>
+    <LuceneNetCodeAnalysisCSAssemblyFile>$(LuceneNetDotNetDir)\Lucene.Net.CodeAnalysis.CSharp\bin\$(Configuration)\netstandard1.3\*.dll</LuceneNetCodeAnalysisCSAssemblyFile>
+    <LuceneNetCodeAnalysisVBAssemblyFile>$(LuceneNetDotNetDir)\Lucene.Net.CodeAnalysis.VisualBasic\bin\$(Configuration)\netstandard1.3\*.dll</LuceneNetCodeAnalysisVBAssemblyFile>
+  </PropertyGroup>
 
-	<PropertyGroup Label="NuGet Package File Paths">
-		<LuceneNetDotNetDir>$(SolutionDir)src\dotnet\</LuceneNetDotNetDir>
-		<LuceneNetCodeAnalysisToolsDir>$(LuceneNetDotNetDir)Lucene.Net.CodeAnalysis\tools\</LuceneNetCodeAnalysisToolsDir>
-		<LuceneNetCodeAnalysisCSAssemblyFile>$(LuceneNetDotNetDir)\Lucene.Net.CodeAnalysis.CSharp\bin\$(Configuration)\netstandard1.3\*.dll</LuceneNetCodeAnalysisCSAssemblyFile>
-		<LuceneNetCodeAnalysisVBAssemblyFile>$(LuceneNetDotNetDir)\Lucene.Net.CodeAnalysis.VisualBasic\bin\$(Configuration)\netstandard1.3\*.dll</LuceneNetCodeAnalysisVBAssemblyFile>
-	</PropertyGroup>
+  <ItemGroup Label="NuGet Package Files">
+    <!-- Since including a readme in the NuGet package makes the info read-only, we are excluding it for now -->
+    <!--<None Include="readme-nuget.md" Pack="true" PackagePath="\readme.md" />-->
+    <None Include="$(LuceneNetCodeAnalysisToolsDir)*.ps1" Pack="true" PackagePath="tools" />
+    <None Include="$(LuceneNetCodeAnalysisCSAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(LuceneNetCodeAnalysisVBAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/vb" Visible="false" />
+  </ItemGroup>
 
-	<ItemGroup Label="NuGet Package Files">
-		<!-- Since including a readme in the NuGet package makes the info read-only, we are excluding it for now -->
-		<!--<None Include="readme-nuget.md" Pack="true" PackagePath="\readme.md" />-->
-		<None Include="$(LuceneNetCodeAnalysisToolsDir)*.ps1" Pack="true" PackagePath="tools" />
-		<None Include="$(LuceneNetCodeAnalysisCSAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(LuceneNetCodeAnalysisVBAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/vb" Visible="false" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)" />
-	</ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
+    <!-- NOTE: This is a transitive dependency only, but we are forcing an upgrade to ensure there are no conflicts with dependencies. -->
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="$(SystemRuntimeCompilerServicesUnsafePackageVersion)" />
+  </ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-		<PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
-		<!-- NOTE: This is a transitive dependency only, but we are forcing an upgrade to ensure there are no conflicts with dependencies. -->
-		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="$(SystemRuntimeCompilerServicesUnsafePackageVersion)" />
-	</ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
+    <!-- NOTE: This is a transitive dependency only, but we are forcing an upgrade to ensure there are no conflicts with dependencies. -->
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="$(SystemRuntimeCompilerServicesUnsafePackageVersion)" />
+  </ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
-		<PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
-		<!-- NOTE: This is a transitive dependency only, but we are forcing an upgrade to ensure there are no conflicts with dependencies. -->
-		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="$(SystemRuntimeCompilerServicesUnsafePackageVersion)" />
-	</ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Lucene.Net.Analysis.Common" />
+    <InternalsVisibleTo Include="Lucene.Net.Analysis.Kuromoji" />
+    <InternalsVisibleTo Include="Lucene.Net.Analysis.Morfologik" />
+    <InternalsVisibleTo Include="Lucene.Net.Analysis.Nori" />
+    <InternalsVisibleTo Include="Lucene.Net.Analysis.OpenNLP" />
+    <InternalsVisibleTo Include="Lucene.Net.Analysis.Phonetic" />
+    <InternalsVisibleTo Include="Lucene.Net.Analysis.SmartCn" />
+    <InternalsVisibleTo Include="Lucene.Net.Analysis.Stempel" />
+    <InternalsVisibleTo Include="Lucene.Net.Benchmark" />
+    <InternalsVisibleTo Include="Lucene.Net.Classification" />
+    <InternalsVisibleTo Include="Lucene.Net.Codecs" />
+    <InternalsVisibleTo Include="Lucene.Net.Demo" />
+    <InternalsVisibleTo Include="Lucene.Net.Expressions" />
+    <InternalsVisibleTo Include="Lucene.Net.Facet" />
+    <InternalsVisibleTo Include="Lucene.Net.Grouping" />
+    <InternalsVisibleTo Include="Lucene.Net.Highlighter" />
+    <InternalsVisibleTo Include="Lucene.Net.ICU" />
+    <InternalsVisibleTo Include="Lucene.Net.Join" />
+    <InternalsVisibleTo Include="Lucene.Net.Memory" />
+    <InternalsVisibleTo Include="Lucene.Net.Misc" />
+    <InternalsVisibleTo Include="Lucene.Net.Queries" />
+    <InternalsVisibleTo Include="Lucene.Net.QueryParser" />
+    <InternalsVisibleTo Include="Lucene.Net.Replicator" />
+    <InternalsVisibleTo Include="Lucene.Net.Sandbox" />
+    <InternalsVisibleTo Include="Lucene.Net.Spatial" />
+    <InternalsVisibleTo Include="Lucene.Net.Suggest" />
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="Lucene.Net.Analysis.Common" />
-		<InternalsVisibleTo Include="Lucene.Net.Analysis.Kuromoji" />
-		<InternalsVisibleTo Include="Lucene.Net.Analysis.Morfologik" />
-		<InternalsVisibleTo Include="Lucene.Net.Analysis.Nori" />
-		<InternalsVisibleTo Include="Lucene.Net.Analysis.OpenNLP" />
-		<InternalsVisibleTo Include="Lucene.Net.Analysis.Phonetic" />
-		<InternalsVisibleTo Include="Lucene.Net.Analysis.SmartCn" />
-		<InternalsVisibleTo Include="Lucene.Net.Analysis.Stempel" />
-		<InternalsVisibleTo Include="Lucene.Net.Benchmark" />
-		<InternalsVisibleTo Include="Lucene.Net.Classification" />
-		<InternalsVisibleTo Include="Lucene.Net.Codecs" />
-		<InternalsVisibleTo Include="Lucene.Net.Demo" />
-		<InternalsVisibleTo Include="Lucene.Net.Expressions" />
-		<InternalsVisibleTo Include="Lucene.Net.Facet" />
-		<InternalsVisibleTo Include="Lucene.Net.Grouping" />
-		<InternalsVisibleTo Include="Lucene.Net.Highlighter" />
-		<InternalsVisibleTo Include="Lucene.Net.ICU" />
-		<InternalsVisibleTo Include="Lucene.Net.Join" />
-		<InternalsVisibleTo Include="Lucene.Net.Memory" />
-		<InternalsVisibleTo Include="Lucene.Net.Misc" />
-		<InternalsVisibleTo Include="Lucene.Net.Queries" />
-		<InternalsVisibleTo Include="Lucene.Net.QueryParser" />
-		<InternalsVisibleTo Include="Lucene.Net.Replicator" />
-		<InternalsVisibleTo Include="Lucene.Net.Sandbox" />
-		<InternalsVisibleTo Include="Lucene.Net.Spatial" />
-		<InternalsVisibleTo Include="Lucene.Net.Suggest" />
+    <InternalsVisibleTo Include="Lucene.Net.TestFramework" />
+    
+    <InternalsVisibleTo Include="Lucene.Net.Tests._A-D" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests._E-I" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests._I-J" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests._J-S" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests._T-Z" />
 
-		<InternalsVisibleTo Include="Lucene.Net.TestFramework" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.AllProjects" />
 
-		<InternalsVisibleTo Include="Lucene.Net.Tests._A-D" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests._E-I" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests._I-J" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests._J-S" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests._T-Z" />
-
-		<InternalsVisibleTo Include="Lucene.Net.Tests.AllProjects" />
-
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Common" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Kuromoji" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Morfologik" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Phonetic" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.SmartCn" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Stempel" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Benchmark" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Classification" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Expressions" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Facet" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Grouping" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Highlighter" />
-		<!-- For Analysis.Util.TestSegmentingTokenizerBase -->
-		<InternalsVisibleTo Include="Lucene.Net.Tests.ICU" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Join" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Misc" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Queries" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.QueryParser" />
-		<!-- For lucene-cli -->
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Cli" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Replicator" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Sandbox" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Spatial" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.Suggest" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework" />
-		<InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework.DependencyInjection" />
-	</ItemGroup>
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Common" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Kuromoji" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Morfologik" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Phonetic" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.SmartCn" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Stempel" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Benchmark" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Classification" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Expressions" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Facet" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Grouping" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Highlighter" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.ICU" /> <!-- For Analysis.Util.TestSegmentingTokenizerBase -->
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Join" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Misc" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Queries" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.QueryParser" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Cli" /> <!-- For lucene-cli -->
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Replicator" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Sandbox" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Spatial" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Suggest" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework.DependencyInjection" />
+  </ItemGroup>
 
 </Project>
