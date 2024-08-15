@@ -3,9 +3,11 @@ using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
+
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
 using Lucene.Net.Util.Events;
 #endif
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -653,12 +655,6 @@ namespace Lucene.Net.Index
                 throw new ArgumentNullException(nameof(getCacheKeysEvent));
             if (getCacheKeysEvents.Add(getCacheKeysEvent))
                 getCacheKeysEvent.Subscribe(OnGetCacheKeys);
-        }
-
-        // LUCENENET specific: Clean up the weak event handler if this class goes out of scope
-        ~IndexReader()
-        {
-            Dispose(false);
         }
 
         // LUCENENET specific: Add weak event handler for .NET Standard 2.0 and .NET Framework, since we don't have an enumerator to use

@@ -39,6 +39,7 @@ namespace Lucene.Net.Index
         private sealed class ReaderCloseListenerWrapper : IReaderDisposedListener
         {
             private readonly IReaderClosedListener listener;
+
             public ReaderCloseListenerWrapper(IReaderClosedListener listener)
             {
                 this.listener = listener ?? throw new ArgumentNullException(nameof(listener));
@@ -47,7 +48,9 @@ namespace Lucene.Net.Index
             public void OnDispose(IndexReader reader) => listener.OnClose(reader);
 
             public override bool Equals(object obj) => listener.Equals(obj);
+
             public override int GetHashCode() => listener.GetHashCode();
+
             public override string ToString() => listener.ToString();
         }
 
@@ -57,7 +60,7 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        [Obsolete("Use AddReaderDisposedListerner method instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        [Obsolete("Use AddReaderDisposedListener method instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public void AddReaderClosedListener(IReaderClosedListener listener)
         {
             EnsureOpen();
@@ -69,7 +72,7 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        [Obsolete("Use RemoveReaderDisposedListerner method instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        [Obsolete("Use RemoveReaderDisposedListener method instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public void RemoveReaderClosedListener(IReaderClosedListener listener)
         {
             EnsureOpen();
