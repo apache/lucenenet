@@ -335,7 +335,7 @@ namespace Lucene.Net.Util.Automaton
             Queue<State> worklist = new Queue<State>(); // LUCENENET specific - Queue is much more performant than LinkedList
             worklist.Enqueue(initial);
             visited.Add(initial);
-            while (worklist.TryDequeue(out var s))
+            while (worklist.TryDequeue(out State s))
             {
                 if (s.accept)
                 {

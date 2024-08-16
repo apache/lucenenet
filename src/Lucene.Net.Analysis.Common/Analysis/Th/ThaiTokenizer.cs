@@ -237,7 +237,7 @@ namespace Lucene.Net.Analysis.Th
         {
             get
             {
-                if (transitions.TryPeek(out var current))
+                if (transitions.TryPeek(out int current))
                 {
                     return current;
                 }
