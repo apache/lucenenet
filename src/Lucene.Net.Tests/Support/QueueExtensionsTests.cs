@@ -28,6 +28,7 @@ namespace Lucene.Net
 
     public class QueueExtensionsTests : LuceneTestCase
     {
+#if !FEATURE_QUEUE_TRYDEQUEUE_TRYPEEK
         [Test, LuceneNetSpecific]
         public void TryDequeue_ThrowsWhenQueueNull()
         {
@@ -87,5 +88,7 @@ namespace Lucene.Net
             Assert.That(result, Is.EqualTo(item));
             Assert.That(queue.Count, Is.EqualTo(countBefore));
         }
+
+#endif
     }
 }
