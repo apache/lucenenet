@@ -1,5 +1,6 @@
 ﻿using J2N;
 using J2N.Runtime.CompilerServices;
+using Lucene.Net.Support;
 using Lucene.Net.Diagnostics;
 using RandomizedTesting.Generators;
 using System;

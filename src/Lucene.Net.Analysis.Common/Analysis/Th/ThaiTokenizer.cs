@@ -5,6 +5,7 @@ using ICU4N.Text;
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -236,8 +237,10 @@ namespace Lucene.Net.Analysis.Th
         {
             get
             {
-                if (transitions.Count > 0)
-                    return transitions.Peek();
+                if (transitions.TryPeek(out var current))
+                {
+                    return current;
+                }
 
                 return wordBreaker.Current;
             }
@@ -296,10 +299,10 @@ namespace Lucene.Net.Analysis.Th
                     prevWasNonThai = isNonThai;
                 }
 
-                if (transitions.Count > 0)
+                if (transitions.TryPeek(out int transition))
                 {
                     transitions.Enqueue(current);
-                    return transitions.Peek();
+                    return transition;
                 }
             }
 

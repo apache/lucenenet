@@ -1,5 +1,6 @@
 ﻿using J2N;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;

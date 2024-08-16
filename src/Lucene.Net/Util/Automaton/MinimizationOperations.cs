@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using JCG = J2N.Collections.Generic;
+using Lucene.Net.Support;
 
 /*
  * dk.brics.automaton

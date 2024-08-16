@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
