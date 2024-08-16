@@ -404,9 +404,8 @@ namespace Lucene.Net.Util.Automaton
             StatePair p = new StatePair(c.initial, a1.initial, a2.initial);
             worklist.Enqueue(p);
             newstates[p] = p;
-            while (worklist.Count > 0)
+            while (worklist.TryDequeue(out p))
             {
-                p = worklist.Dequeue();
                 p.s.accept = p.s1.accept && p.s2.accept;
                 Transition[] t1 = transitions1[p.s1.number];
                 Transition[] t2 = transitions2[p.s2.number];
@@ -497,9 +496,8 @@ namespace Lucene.Net.Util.Automaton
             StatePair p = new StatePair(a1.initial, a2.initial);
             worklist.Enqueue(p);
             visited.Add(p);
-            while (worklist.Count > 0)
+            while (worklist.TryDequeue(out p))
             {
-                p = worklist.Dequeue();
                 if (p.s1.accept && !p.s2.accept)
                 {
                     return false;
@@ -822,9 +820,8 @@ namespace Lucene.Net.Util.Automaton
             // like SortedMap<Integer,Integer>
             SortedInt32Set statesSet = new SortedInt32Set(5);
 
-            while (worklist.Count > 0)
+            while (worklist.TryDequeue(out SortedInt32Set.FrozenInt32Set s))
             {
-                SortedInt32Set.FrozenInt32Set s = worklist.Dequeue();
                 //worklist.Remove(s);
 
                 // Collate all outgoing transitions by min/1+max:
@@ -912,7 +909,7 @@ namespace Lucene.Net.Util.Automaton
                     points.points[i].starts.count = 0;
                 }
                 points.Reset();
-                if (Debugging.AssertsEnabled) Debugging.Assert(statesSet.upto == 0,"upto={0}", statesSet.upto);
+                if (Debugging.AssertsEnabled) Debugging.Assert(statesSet.upto == 0, "upto={0}", statesSet.upto);
             }
             a.deterministic = true;
             a.SetNumberedStates(newStatesArray, newStateUpto);

@@ -245,11 +245,10 @@ namespace Lucene.Net.Analysis.Th
 
         public int Next()
         {
-            if (transitions.Count > 0)
-                transitions.Dequeue();
-
-            if (transitions.Count > 0)
-                return transitions.Peek();
+            if (transitions.TryDequeue(out _) && transitions.TryPeek(out int next))
+            {
+                return next;
+            }
 
             return GetNext();
         }

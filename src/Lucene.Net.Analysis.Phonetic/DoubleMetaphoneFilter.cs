@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Phonetic
         private readonly IPositionIncrementAttribute posAtt;
 
         /// <summary>
-        /// Creates a <see cref="DoubleMetaphoneFilter"/> with the specified maximum code length, 
+        /// Creates a <see cref="DoubleMetaphoneFilter"/> with the specified maximum code length,
         /// and either adding encoded forms as synonyms (<c>inject=true</c>) or
         /// replacing them.
         /// </summary>
@@ -52,12 +52,11 @@ namespace Lucene.Net.Analysis.Phonetic
 
         public override bool IncrementToken()
         {
-            for (;;)
+            for (; ; )
             {
-                if (!(remainingTokens.Count == 0))
+                if (remainingTokens.TryDequeue(out State first))
                 {
                     // clearAttributes();  // not currently necessary
-                    var first = remainingTokens.Dequeue();
                     RestoreState(first);
                     return true;
                 }

@@ -158,8 +158,7 @@ namespace Lucene.Net.Index
                 UninterruptableMonitor.Enter(this);
                 try
                 {
-                    queue.TryPeek(out head);
-                    canPublish = head != null && head.CanPublish; // do this synced
+                    canPublish = queue.TryPeek(out head) && head.CanPublish; // do this synced
                 }
                 finally
                 {

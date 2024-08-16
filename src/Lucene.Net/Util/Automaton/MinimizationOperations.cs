@@ -85,7 +85,7 @@ namespace Lucene.Net.Util.Automaton
             StateListNode[,] active2 = new StateListNode[statesLen, sigmaLen];
             Queue<Int32Pair> pending = new Queue<Int32Pair>(); // LUCENENET specific - Queue is much more performant than LinkedList
             OpenBitSet pending2 = new OpenBitSet(sigmaLen * statesLen);
-            OpenBitSet split = new OpenBitSet(statesLen), 
+            OpenBitSet split = new OpenBitSet(statesLen),
                 refine = new OpenBitSet(statesLen), refine2 = new OpenBitSet(statesLen);
             for (int q = 0; q < statesLen; q++)
             {
@@ -137,9 +137,8 @@ namespace Lucene.Net.Util.Automaton
             }
             // process pending until fixed point
             int k = 2;
-            while (pending.Count > 0)
+            while (pending.TryDequeue(out Int32Pair ip))
             {
-                Int32Pair ip = pending.Dequeue();
                 int p = ip.n1;
                 int x = ip.n2;
                 pending2.Clear(x * statesLen + p);
