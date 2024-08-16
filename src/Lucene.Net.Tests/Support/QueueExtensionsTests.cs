@@ -32,7 +32,7 @@ namespace Lucene.Net
         public void TryDequeue_ThrowsWhenQueueNull()
         {
             Queue<int> queue = null;
-            var ex = Assert.Throws<ArgumentNullException>(() => QueueExtensions.TryDequeue(queue, out var _));
+            var ex = Assert.Throws<ArgumentNullException>(() => queue.TryDequeue(out int _));
             Assert.That(ex.ParamName, Is.EqualTo("queue"));
         }
 
@@ -40,7 +40,7 @@ namespace Lucene.Net
         public void TryDequeue_QueueEmpty()
         {
             Queue<int> queue = new Queue<int>();
-            var found = QueueExtensions.TryDequeue(queue, out var result);
+            bool found = queue.TryDequeue(out int result);
             Assert.That(found, Is.EqualTo(false));
             Assert.That(result, Is.EqualTo(default(int)));
         }
@@ -49,10 +49,10 @@ namespace Lucene.Net
         public void TryDequeue_QueueNotEmpty()
         {
             Queue<int> queue = new Queue<int>();
-            var item = 1;
+            int item = 1;
             queue.Enqueue(item);
-            var countBefore = queue.Count;
-            var found = QueueExtensions.TryDequeue(queue, out var result);
+            int countBefore = queue.Count;
+            bool found = queue.TryDequeue(out int result);
             Assert.That(found, Is.EqualTo(true));
             Assert.That(result, Is.EqualTo(item));
             Assert.That(queue.Count, Is.EqualTo(countBefore - 1));
@@ -62,7 +62,7 @@ namespace Lucene.Net
         public void TryPeek_ThrowsWhenQueueNull()
         {
             Queue<int> queue = null;
-            var ex = Assert.Throws<ArgumentNullException>(() => QueueExtensions.TryPeek(queue, out var _));
+            var ex = Assert.Throws<ArgumentNullException>(() => queue.TryPeek(out int _));
             Assert.That(ex.ParamName, Is.EqualTo("queue"));
         }
 
@@ -70,7 +70,7 @@ namespace Lucene.Net
         public void TryPeek_QueueEmpty()
         {
             Queue<int> queue = new Queue<int>();
-            var found = QueueExtensions.TryPeek(queue, out var result);
+            bool found = queue.TryPeek(out int result);
             Assert.That(found, Is.EqualTo(false));
             Assert.That(result, Is.EqualTo(default(int)));
         }
@@ -79,10 +79,10 @@ namespace Lucene.Net
         public void TryPeek_QueueNotEmpty()
         {
             Queue<int> queue = new Queue<int>();
-            var item = 1;
+            int item = 1;
             queue.Enqueue(item);
-            var countBefore = queue.Count;
-            var found = QueueExtensions.TryPeek(queue, out var result);
+            int countBefore = queue.Count;
+            bool found = queue.TryPeek(out int result);
             Assert.That(found, Is.EqualTo(true));
             Assert.That(result, Is.EqualTo(item));
             Assert.That(queue.Count, Is.EqualTo(countBefore));
