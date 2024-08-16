@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(ticketCount >= 0,"ticketCount should be >= 0 but was: {0}", ticketCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(ticketCount >= 0, "ticketCount should be >= 0 but was: {0}", ticketCount);
                 return ticketCount != 0;
             }
         }
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
                 UninterruptableMonitor.Enter(this);
                 try
                 {
-                    head = queue.Count <= 0 ? null : queue.Peek();
+                    queue.TryPeek(out head);
                     canPublish = head != null && head.CanPublish; // do this synced
                 }
                 finally
