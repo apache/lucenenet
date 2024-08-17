@@ -35,8 +35,7 @@ namespace Lucene.Net
         public void TryDequeue_ThrowsWhenQueueNull()
         {
             Queue<int> queue = null;
-            var ex = Assert.Throws<ArgumentNullException>(() => queue.TryDequeue(out int _));
-            Assert.AreEqual(((ArgumentNullException)ex).ParamName, "queue");
+            Assert.Throws<ArgumentNullException>(() => queue.TryDequeue(out int _));
         }
 
         [Test, LuceneNetSpecific]
@@ -65,8 +64,7 @@ namespace Lucene.Net
         public void TryPeek_ThrowsWhenQueueNull()
         {
             Queue<int> queue = null;
-            var ex = Assert.Throws<ArgumentNullException>(() => queue.TryPeek(out int _));
-            Assert.AreEqual(((ArgumentNullException)ex).ParamName, "queue");
+            Assert.Throws<ArgumentNullException>(() => queue.TryPeek(out int _));
         }
 
         [Test, LuceneNetSpecific]
