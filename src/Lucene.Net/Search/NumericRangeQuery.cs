@@ -488,12 +488,12 @@ namespace Lucene.Net.Search
             {
                 while (currentUpperBound is null || termComp.Compare(term, currentUpperBound) > 0)
                 {
-                    if (!rangeBounds.TryPeek(out BytesRef rangeBound))
+                    if (rangeBounds.Count == 0)
                     {
                         return AcceptStatus.END;
                     }
                     // peek next sub-range, only seek if the current term is smaller than next lower bound
-                    if (termComp.Compare(term, rangeBound) < 0)
+                    if (termComp.Compare(term, rangeBounds.Peek()) < 0)
                     {
                         return AcceptStatus.NO_AND_SEEK;
                     }

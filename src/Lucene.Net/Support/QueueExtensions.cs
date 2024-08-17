@@ -35,8 +35,7 @@ namespace Lucene.Net.Support
         /// <param name="queue">The <see cref="Queue{T}"/> to be checked</param>
         /// <param name="result">The removed object</param>
         /// <returns><c>true</c> if the object was successfully removed; <c>false</c> if the <see cref="Queue{T}"/> is empty.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <exception cref="ArgumentNullException">is null</exception>
         public static bool TryDequeue<T>(this Queue<T> queue, out T result)
         {
             if (queue is null)
@@ -60,8 +59,7 @@ namespace Lucene.Net.Support
         /// <param name="queue">The <see cref="Queue{T}"/> to be checked</param>
         /// <param name="result">If present, the object at the beginning of the <see cref="Queue{T}"/>; otherwise, the default value of <typeparamref name="T"/></param>
         /// <returns><c>true</c> if there is an object at the beginning of the <see cref="Queue{T}"/>; <c>false</c> if the <see cref="Queue{T}"/> is empty.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <exception cref="ArgumentNullException">is null</exception>
         public static bool TryPeek<T>(this Queue<T> queue, out T result)
         {
             if (queue is null)

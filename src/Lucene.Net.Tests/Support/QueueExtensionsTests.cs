@@ -6,6 +6,8 @@ using Lucene.Net.Util;
 using Lucene.Net.Support;
 using System;
 
+using Assert = Lucene.Net.TestFramework.Assert;
+
 
 namespace Lucene.Net
 {
@@ -34,7 +36,7 @@ namespace Lucene.Net
         {
             Queue<int> queue = null;
             var ex = Assert.Throws<ArgumentNullException>(() => queue.TryDequeue(out int _));
-            Assert.That(ex.ParamName, Is.EqualTo("queue"));
+            Assert.AreEqual(((ArgumentNullException)ex).ParamName, "queue");
         }
 
         [Test, LuceneNetSpecific]
@@ -42,8 +44,8 @@ namespace Lucene.Net
         {
             Queue<int> queue = new Queue<int>();
             bool found = queue.TryDequeue(out int result);
-            Assert.That(found, Is.EqualTo(false));
-            Assert.That(result, Is.EqualTo(default(int)));
+            Assert.AreEqual(found, false);
+            Assert.AreEqual(result, default(int));
         }
 
         [Test, LuceneNetSpecific]
@@ -54,9 +56,9 @@ namespace Lucene.Net
             queue.Enqueue(item);
             int countBefore = queue.Count;
             bool found = queue.TryDequeue(out int result);
-            Assert.That(found, Is.EqualTo(true));
-            Assert.That(result, Is.EqualTo(item));
-            Assert.That(queue.Count, Is.EqualTo(countBefore - 1));
+            Assert.AreEqual(found, true);
+            Assert.AreEqual(result, item);
+            Assert.AreEqual(queue.Count, countBefore - 1);
         }
 
         [Test, LuceneNetSpecific]
@@ -64,7 +66,7 @@ namespace Lucene.Net
         {
             Queue<int> queue = null;
             var ex = Assert.Throws<ArgumentNullException>(() => queue.TryPeek(out int _));
-            Assert.That(ex.ParamName, Is.EqualTo("queue"));
+            Assert.AreEqual(((ArgumentNullException)ex).ParamName, "queue");
         }
 
         [Test, LuceneNetSpecific]
@@ -72,8 +74,8 @@ namespace Lucene.Net
         {
             Queue<int> queue = new Queue<int>();
             bool found = queue.TryPeek(out int result);
-            Assert.That(found, Is.EqualTo(false));
-            Assert.That(result, Is.EqualTo(default(int)));
+            Assert.AreEqual(found, false);
+            Assert.AreEqual(result, default(int));
         }
 
         [Test, LuceneNetSpecific]
@@ -84,11 +86,10 @@ namespace Lucene.Net
             queue.Enqueue(item);
             int countBefore = queue.Count;
             bool found = queue.TryPeek(out int result);
-            Assert.That(found, Is.EqualTo(true));
-            Assert.That(result, Is.EqualTo(item));
-            Assert.That(queue.Count, Is.EqualTo(countBefore));
+            Assert.AreEqual(found, true);
+            Assert.AreEqual(result, item);
+            Assert.AreEqual(queue.Count, countBefore);
         }
-
 #endif
     }
 }

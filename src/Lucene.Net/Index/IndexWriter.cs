@@ -2685,17 +2685,22 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public virtual MergePolicy.OneMerge NextMerge()
+        public virtual MergePolicy.OneMerge NextMerge() // LUCENENET TODO: API - Revert name to GetNextMerge() to match Java
         {
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (pendingMerges.TryDequeue(out MergePolicy.OneMerge merge))
+                if (pendingMerges.Count == 0)
+                {
+                    return null;
+                }
+                else
                 {
                     // Advance the merge from pending to running
+                    MergePolicy.OneMerge merge = pendingMerges.Dequeue();
                     runningMerges.Add(merge);
+                    return merge;
                 }
-                return merge;
             }
             finally
             {
