@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
+
+#nullable enable
 
 namespace Lucene.Net.Support
 {
@@ -36,7 +38,7 @@ namespace Lucene.Net.Support
         /// <param name="result">The removed object</param>
         /// <returns><c>true</c> if the object was successfully removed; <c>false</c> if the <see cref="Queue{T}"/> is empty.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="queue"/> is <c>null</c>.</exception>
-        public static bool TryDequeue<T>(this Queue<T> queue, out T result)
+        public static bool TryDequeue<T>(this Queue<T> queue, [MaybeNullWhen(false)] out T result)
         {
             if (queue is null)
                 throw new ArgumentNullException(nameof(queue));
@@ -60,7 +62,7 @@ namespace Lucene.Net.Support
         /// <param name="result">If present, the object at the beginning of the <see cref="Queue{T}"/>; otherwise, the default value of <typeparamref name="T"/></param>
         /// <returns><c>true</c> if there is an object at the beginning of the <see cref="Queue{T}"/>; <c>false</c> if the <see cref="Queue{T}"/> is empty.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="queue"/> is <c>null</c>.</exception>
-        public static bool TryPeek<T>(this Queue<T> queue, out T result)
+        public static bool TryPeek<T>(this Queue<T> queue, [MaybeNullWhen(false)] out T result)
         {
             if (queue is null)
                 throw new ArgumentNullException(nameof(queue));
