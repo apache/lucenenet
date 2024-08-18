@@ -1,6 +1,7 @@
 ﻿using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -142,7 +143,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(ticketCount >= 0,"ticketCount should be >= 0 but was: {0}", ticketCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(ticketCount >= 0, "ticketCount should be >= 0 but was: {0}", ticketCount);
                 return ticketCount != 0;
             }
         }
@@ -158,8 +159,7 @@ namespace Lucene.Net.Index
                 UninterruptableMonitor.Enter(this);
                 try
                 {
-                    head = queue.Count <= 0 ? null : queue.Peek();
-                    canPublish = head != null && head.CanPublish; // do this synced
+                    canPublish = queue.TryPeek(out head) && head.CanPublish; // do this synced
                 }
                 finally
                 {

@@ -1,6 +1,7 @@
 ﻿using J2N.Runtime.CompilerServices;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -501,8 +502,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                DocumentsWriterPerThread poll;
-                if (flushQueue.Count > 0 && (poll = flushQueue.Dequeue()) != null)
+                if (flushQueue.TryDequeue(out DocumentsWriterPerThread poll))
                 {
                     UpdateStallState();
                     return poll;
@@ -641,7 +641,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public bool GetAndResetApplyAllDeletes() 
+        public bool GetAndResetApplyAllDeletes()
         {
             return flushDeletes.GetAndSet(false);
         }
@@ -688,7 +688,7 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled)
                 {
                     Debugging.Assert(!fullFlush, "called DWFC#markForFullFlush() while full flush is still running");
-                    Debugging.Assert(fullFlushBuffer.Count == 0,"full flush buffer should be empty: {0}", fullFlushBuffer);
+                    Debugging.Assert(fullFlushBuffer.Count == 0, "full flush buffer should be empty: {0}", fullFlushBuffer);
                 }
                 fullFlush = true;
                 flushingQueue = documentsWriter.deleteQueue;
@@ -765,7 +765,7 @@ namespace Lucene.Net.Index
                 next.@Lock();
                 try
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!next.IsInitialized || next.dwpt.deleteQueue == queue,"isInitialized: {0} numDocs: {1}", next.IsInitialized, (next.IsInitialized ? next.dwpt.NumDocsInRAM : 0));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(!next.IsInitialized || next.dwpt.deleteQueue == queue, "isInitialized: {0} numDocs: {1}", next.IsInitialized, (next.IsInitialized ? next.dwpt.NumDocsInRAM : 0));
                 }
                 finally
                 {

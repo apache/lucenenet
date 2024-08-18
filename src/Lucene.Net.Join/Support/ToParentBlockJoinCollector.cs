@@ -351,11 +351,10 @@ namespace Lucene.Net.Join
             var queue = new Queue<Scorer>();
             //System.out.println("\nqueue: add top scorer=" + value);
             queue.Enqueue(scorer);
-            while (queue.Count > 0)
+            // LUCENENET NOTE: This reuses the scorer argument variable, which
+            // differs from this.scorer.
+            while (queue.TryDequeue(out scorer))
             {
-                // LUCENENET NOTE: This reuses the scorer argument variable, which
-                // differs from this.scorer.
-                scorer = queue.Dequeue();
                 //System.out.println("  poll: " + value + "; " + value.getWeight().getQuery());
                 if (scorer is ToParentBlockJoinQuery.BlockJoinScorer blockJoinScorer)
                 {

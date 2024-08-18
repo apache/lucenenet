@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -508,11 +509,7 @@ namespace Lucene.Net.Analysis.Shingle
         /// <exception cref="IOException"> if there's a problem getting the next token </exception>
         private void ShiftInputWindow()
         {
-            InputWindowToken firstToken = null;
-            if (inputWindow.Count > 0)
-            {
-                firstToken = inputWindow.Dequeue();
-            }
+            inputWindow.TryDequeue(out InputWindowToken firstToken); // LUCENENET: firstToken will be null if the queue is empty
             while (inputWindow.Count < maxShingleSize)
             {
                 if (null != firstToken) // recycle the firstToken, if available

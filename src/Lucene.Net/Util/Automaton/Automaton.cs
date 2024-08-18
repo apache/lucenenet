@@ -264,9 +264,8 @@ namespace Lucene.Net.Util.Automaton
                 initial.number = upto;
                 states[upto] = initial;
                 upto++;
-                while (worklist.Count > 0)
+                while (worklist.TryDequeue(out State s))
                 {
-                    State s = worklist.Dequeue();
                     for (int i = 0; i < s.numTransitions; i++)
                     {
                         Transition t = s.TransitionsArray[i];
@@ -336,9 +335,8 @@ namespace Lucene.Net.Util.Automaton
             Queue<State> worklist = new Queue<State>(); // LUCENENET specific - Queue is much more performant than LinkedList
             worklist.Enqueue(initial);
             visited.Add(initial);
-            while (worklist.Count > 0)
+            while (worklist.TryDequeue(out State s))
             {
-                State s = worklist.Dequeue();
                 if (s.accept)
                 {
                     accepts.Add(s);
@@ -626,10 +624,10 @@ namespace Lucene.Net.Util.Automaton
             //throw UnsupportedOperationException.Create("use BasicOperations.sameLanguage instead");
         }
 
-        // LUCENENET specific - in .NET, we can't simply throw an exception here because 
+        // LUCENENET specific - in .NET, we can't simply throw an exception here because
         // collections use this to determine equality. Most of this code was pieced together from
         // BasicOperations.SubSetOf (which, when done both ways determines equality).
-        public override int GetHashCode() 
+        public override int GetHashCode()
         {
             if (IsSingleton)
             {
@@ -644,12 +642,10 @@ namespace Lucene.Net.Util.Automaton
             Queue<State> worklist = new Queue<State>(); // LUCENENET specific - Queue is much more performant than LinkedList
             JCG.HashSet<State> visited = new JCG.HashSet<State>();
 
-            State current;
             worklist.Enqueue(this.initial);
             visited.Add(this.initial);
-            while (worklist.Count > 0)
+            while (worklist.TryDequeue(out State current))
             {
-                current = worklist.Dequeue();
                 hash = 31 * hash + current.accept.GetHashCode();
 
                 Transition[] t1 = transitions[current.number];

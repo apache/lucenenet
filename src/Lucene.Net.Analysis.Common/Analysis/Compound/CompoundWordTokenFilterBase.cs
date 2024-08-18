@@ -4,6 +4,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -109,10 +110,9 @@ namespace Lucene.Net.Analysis.Compound
 
         public override sealed bool IncrementToken()
         {
-            if (m_tokens.Count > 0)
+            if (m_tokens.TryDequeue(out CompoundToken token))
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(current != null);
-                CompoundToken token = m_tokens.Dequeue();
                 RestoreState(current); // keep all other attributes untouched
                 m_termAtt.SetEmpty().Append(token.Text);
                 m_offsetAtt.SetOffset(token.StartOffset, token.EndOffset);

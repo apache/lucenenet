@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Util;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,10 +36,10 @@ namespace Lucene.Net.Search
     /// <summary>
     /// <para>A <see cref="Query"/> that matches numeric values within a
     /// specified range.  To use this, you must first index the
-    /// numeric values using <see cref="Int32Field"/>, 
-    /// <see cref="SingleField"/>, <see cref="Int64Field"/> or <see cref="DoubleField"/> (expert: 
+    /// numeric values using <see cref="Int32Field"/>,
+    /// <see cref="SingleField"/>, <see cref="Int64Field"/> or <see cref="DoubleField"/> (expert:
     /// <see cref="Analysis.NumericTokenStream"/>).  If your terms are instead textual,
-    /// you should use <see cref="TermRangeQuery"/>.  
+    /// you should use <see cref="TermRangeQuery"/>.
     /// <see cref="NumericRangeFilter"/> is the filter equivalent of this
     /// query.</para>
     ///
@@ -68,7 +69,7 @@ namespace Lucene.Net.Search
     /// classes.  See <a href="#precisionStepDesc">below</a> for
     /// details.</para>
     ///
-    /// <para>This query defaults to 
+    /// <para>This query defaults to
     /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>.
     /// With precision steps of &lt;=4, this query can be run with
     /// one of the <see cref="BooleanQuery"/> rewrite methods without changing

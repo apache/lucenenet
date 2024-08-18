@@ -67,6 +67,7 @@
     <DefineConstants>$(DefineConstants);FEATURE_NUMBER_PARSE_READONLYSPAN</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STREAM_READ_SPAN</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STRINGBUILDER_APPEND_READONLYSPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_QUEUE_TRYDEQUEUE_TRYPEEK</DefineConstants>
 
   </PropertyGroup>
 

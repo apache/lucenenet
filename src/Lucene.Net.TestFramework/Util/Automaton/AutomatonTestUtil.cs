@@ -1,5 +1,6 @@
 ﻿using J2N;
 using J2N.Runtime.CompilerServices;
+using Lucene.Net.Support;
 using Lucene.Net.Diagnostics;
 using RandomizedTesting.Generators;
 using System;
@@ -305,9 +306,8 @@ namespace Lucene.Net.Util.Automaton
             worklist.Enqueue(initialset);
             a.initial = new State();
             newstate[initialset] = a.initial;
-            while (worklist.Count > 0)
+            while (worklist.TryDequeue(out ISet<State> s))
             {
-                ISet<State> s = worklist.Dequeue();
                 State r = newstate[s];
                 foreach (State q in s)
                 {
@@ -466,9 +466,8 @@ namespace Lucene.Net.Util.Automaton
 
             // Breadth-first search, from accept states,
             // backwards:
-            while (q.Count > 0)
+            while (q.TryDequeue(out State s))
             {
-                State s = q.Dequeue();
                 if (allArriving.TryGetValue(s, out IList<ArrivingTransition> arriving) && arriving != null)
                 {
                     foreach (ArrivingTransition at in arriving)
