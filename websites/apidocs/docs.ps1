@@ -36,6 +36,7 @@ param (
     [int] $StagingPort = 8080
 )
 $MinimumSdkVersion = "8.0.204" # Minimum Required .NET SDK (must not be a pre-release)
+$DocFxVersion = "2.77.0" # Required DocFx version
 
 $ErrorActionPreference = "Stop"
 
@@ -65,8 +66,26 @@ $BreadcrumbPath = Join-Path -Path $ApiDocsFolder -ChildPath "docfx.global.subsit
 
 # install docfx tool
 if ($SkipToolInstall -eq $false) {
-    Write-Host "Installing docfx global tool..."
-    dotnet tool install -g docfx --version 2.76.0
+    $InstallDocFx = $false
+    try {
+        $InstalledDocFxVersion = (& docfx --version).Trim().Split('+')[0]
+
+        if ([version]$InstalledDocFxVersion -lt [version]$DocFxVersion) {
+            Write-Host "DocFx is installed, but the version is less than $DocFxVersion, will install it."
+            $InstallDocFx = $true
+        }
+        else {
+            Write-Host "DocFx is installed and the version is $InstalledDocFxVersion."
+        }
+    } catch {
+        Write-Host "DocFx is not installed or not in the PATH, will install it."
+        $InstallDocFx = $true
+    }
+
+    if ($InstallDocFx -eq $true) {
+        Write-Host "Installing docfx global tool..."
+        dotnet tool install -g docfx --version $DocFxVersion
+    }
 }
 
 # delete anything that already exists
@@ -118,8 +137,8 @@ $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
 
 # NOTE: The order of these depends on if one of the projects requries the xref map of another, normally all require the core xref map
 $DocFxJsonMeta = @(
-    "docfx.codecs.json",
     "docfx.core.json",
+    "docfx.codecs.json",
     "docfx.analysis-common.json",
     "docfx.analysis-kuromoji.json",
     "docfx.analysis-morfologik.json",
