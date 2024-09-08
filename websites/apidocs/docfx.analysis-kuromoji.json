@@ -15,7 +15,7 @@
       ],
       "dest": "obj/docfx/api/analysis-kuromoji",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],

@@ -15,7 +15,7 @@
       ],
       "dest": "obj/docfx/api/analysis-morfologik",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],
