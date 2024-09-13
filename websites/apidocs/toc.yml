@@ -1,4 +1,4 @@
-﻿- name: Lucene.Net API
+- name: Lucene.Net API
   topicHref: https://lucenenet.apache.org/docs/4.8.0-beta00016/
 - name: Lucene.Net CLI
   href: ../../src/dotnet/tools/lucene-cli/docs/

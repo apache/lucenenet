@@ -23,6 +23,7 @@ param (
     [string] $LuceneNetVersion,
     [switch] $ServeDocs = $false,
     [switch] $Clean = $false,
+    [switch] $SkipToolInstall = $false, # to speed up iteration if you already have the tool installed
     [switch] $DisableMetaData = $false,
     [switch] $DisableBuild = $false,
     [switch] $DisablePlugins = $false,
@@ -34,7 +35,8 @@ param (
     [Parameter(Mandatory = $false)]
     [int] $StagingPort = 8080
 )
-$MinimumSdkVersion = "3.1.100" # Minimum Required .NET SDK (must not be a pre-release)
+$MinimumSdkVersion = "8.0.204" # Minimum Required .NET SDK (must not be a pre-release)
+$DocFxVersion = "2.77.0" # Required DocFx version
 
 $ErrorActionPreference = "Stop"
 
@@ -57,35 +59,34 @@ $env:LuceneNetReleaseTag = $VCSLabel
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 $RepoRoot = (get-item $PSScriptFilePath).Directory.Parent.Parent.FullName;
 $ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "websites\apidocs";
-$ToolsFolder = Join-Path -Path $ApiDocsFolder -ChildPath "tools";
 $CliIndexPath = Join-Path -Path $RepoRoot -ChildPath "src\dotnet\tools\lucene-cli\docs\index.md";
 $TocPath1 = Join-Path -Path $ApiDocsFolder -ChildPath "toc.yml"
 $TocPath2 = Join-Path -Path $ApiDocsFolder -ChildPath "toc\toc.yml"
 $BreadcrumbPath = Join-Path -Path $ApiDocsFolder -ChildPath "docfx.global.subsite.json"
 
-#ensure the /build/tools folder
-New-Item $ToolsFolder -type directory -force
+# install docfx tool
+if ($SkipToolInstall -eq $false) {
+    $InstallDocFx = $false
+    try {
+        $InstalledDocFxVersion = (& docfx --version).Trim().Split('+')[0]
 
-if ($Clean) {
-    Write-Host "Cleaning tools..."
-    Remove-Item (Join-Path -Path $ToolsFolder "\*") -recurse -force -ErrorAction SilentlyContinue
+        if ([version]$InstalledDocFxVersion -lt [version]$DocFxVersion) {
+            Write-Host "DocFx is installed, but the version is less than $DocFxVersion, will install it."
+            $InstallDocFx = $true
+        }
+        else {
+            Write-Host "DocFx is installed and the version is $InstalledDocFxVersion."
+        }
+    } catch {
+        Write-Host "DocFx is not installed or not in the PATH, will install it."
+        $InstallDocFx = $true
+    }
+
+    if ($InstallDocFx -eq $true) {
+        Write-Host "Installing docfx global tool..."
+        dotnet tool install -g docfx --version $DocFxVersion
+    }
 }
-
-New-Item "$ToolsFolder\tmp" -type directory -force
-
-# Go get docfx.exe if we don't have it
-New-Item "$ToolsFolder\docfx" -type directory -force
-$DocFxExe = "$ToolsFolder\docfx\docfx.exe"
-if (-not (test-path $DocFxExe)) {
-    Write-Host "Retrieving docfx..."
-    $DocFxZip = "$ToolsFolder\tmp\docfx.zip"
-    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.58/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60
-
-    #unzip
-    Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
-}
-
-Remove-Item  -Recurse -Force "$ToolsFolder\tmp"
 
 # delete anything that already exists
 if ($Clean) {
@@ -124,14 +125,20 @@ $DocFxGlobalJson = Join-Path -Path $ApiDocsFolder "docfx.global.json"
 $DocFxJsonContent = Get-Content $DocFxGlobalJson | ConvertFrom-Json
 $DocFxJsonContent._appFooter = "Copyright &copy; $((Get-Date).Year) The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>"
 $DocFxJsonContent._appTitle = "Apache Lucene.NET $LuceneNetVersion Documentation"
-$DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
-$DocFxJsonContent._gitContribute.tag = "$VCSLabel"
+#$DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
+#$DocFxJsonContent._gitContribute.tag = "$VCSLabel"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
+
+# update the docfx.json file
+#$DocFxJson = Join-Path -Path $ApiDocsFolder "docfx.json"
+#$DocFxJsonContent = Get-Content $DocFxJson | ConvertFrom-Json
+#$DocFxJsonContent.build.globalMetadata._gitContribute.branch = "docs/$LuceneNetVersion"
+#$DocFxJsonContent.build.globalMetadata._gitContribute.tag = "$VCSLabel"
 
 # NOTE: The order of these depends on if one of the projects requries the xref map of another, normally all require the core xref map
 $DocFxJsonMeta = @(
-    "docfx.codecs.json",
     "docfx.core.json",
+    "docfx.codecs.json",
     "docfx.analysis-common.json",
     "docfx.analysis-kuromoji.json",
     "docfx.analysis-morfologik.json",
@@ -168,13 +175,7 @@ if ($? -and $DisableMetaData -eq $false) {
 
         # build the output
         Write-Host "Building api metadata for $projFile..."
-
-        if ($Clean) {
-            & $DocFxExe metadata $projFile --log "$DocFxLog" --loglevel $LogLevel --force
-        }
-        else {
-            & $DocFxExe metadata $projFile --log "$DocFxLog" --loglevel $LogLevel
-        }
+        & docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel --disableGitFeatures
     }
 }
 
@@ -196,23 +197,11 @@ if ($? -and $DisableBuild -eq $false) {
 
         $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\${proj}.build.log"
 
+        Start-Sleep -Seconds 1
+
         # build the output
         Write-Host "Building site output for $projFile..."
-
-        # Specifying --force, --forcePostProcess and --cleanupCacheHistory
-        # seems to be required in order for all xref links to resolve consistently across
-        # all of the docfx builds (see https://dotnet.github.io/docfx/RELEASENOTE.html?tabs=csharp).
-        # Previously we used to do this:
-        #   Remove-Item (Join-Path -Path $ApiDocsFolder "obj\.cache") -recurse -force -ErrorAction SilentlyContinue
-        # to force remove the cache else the xref's wouldn't work correctly. So far with these new parameters
-        # it seems much happier.
-
-        if ($Clean) {
-            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --force --debug --cleanupCacheHistory --force --forcePostProcess
-        }
-        else {
-            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --debug --cleanupCacheHistory --force --forcePostProcess
-        }
+        & docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug --disableGitFeatures
 
         # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
         $projFileJson = Get-Content $projFile | ConvertFrom-Json
@@ -239,18 +228,12 @@ if ($?) {
 
         # build the output
         Write-Host "Building docs..."
-
-        if ($Clean) {
-            & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --force --debug
-        }
-        else {
-            & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --debug
-        }
+        & docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --debug
     }
     else {
         # build + serve (for testing)
         Write-Host "starting website..."
-        & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --serve --port $StagingPort --debug
+        & docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --serve --port $StagingPort --debug
     }
 }
 

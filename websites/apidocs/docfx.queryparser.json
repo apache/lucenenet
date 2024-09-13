@@ -15,34 +15,34 @@
       ],
       "dest": "obj/docfx/api/queryparser",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],
   "build": {
-    "content": [  
+    "content": [
       {
         "files": [
           "overview.md"
         ],
         "src": "../../src/Lucene.Net.QueryParser"
-      },          
+      },
       {
         "files": [
           "**.yml",
           "**.md"
         ],
         "src": "obj/docfx/api/queryparser"
-      },   
+      },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "queryparser/toc.yml"
         ],
         "src": "toc"
       }
-    ],    
-    "overwrite": [   
+    ],
+    "overwrite": [
       {
         "files": [
           "**/package.md",
@@ -52,7 +52,7 @@
         "exclude": [
           "overview.md"
         ]
-      },     
+      },
       {
         "files": [
           "apiSpec/queryparser/**/*.md"
@@ -72,7 +72,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

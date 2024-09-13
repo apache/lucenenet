@@ -15,28 +15,28 @@
       ],
       "dest": "obj/docfx/api/replicator",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],
   "build": {
-    "content": [             
+    "content": [
       {
         "files": [
           "**.yml",
           "**.md"
         ],
         "src": "obj/docfx/api/replicator"
-      },   
+      },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "replicator/toc.yml"
         ],
         "src": "toc"
       }
-    ],    
-    "overwrite": [   
+    ],
+    "overwrite": [
       {
         "files": [
           "**/package.md",
@@ -46,7 +46,7 @@
         "exclude": [
           "overview.md"
         ]
-      },     
+      },
       {
         "files": [
           "apiSpec/replicator/**/*.md"
@@ -66,7 +66,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

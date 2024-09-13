@@ -15,34 +15,34 @@
       ],
       "dest": "obj/docfx/api/sandbox",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],
   "build": {
-    "content": [     
+    "content": [
       {
         "files": [
           "overview.md"
         ],
         "src": "../../src/Lucene.Net.Sandbox"
-      },             
+      },
       {
         "files": [
           "**.yml",
           "**.md"
         ],
         "src": "obj/docfx/api/sandbox"
-      },   
+      },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "sandbox/toc.yml"
         ],
         "src": "toc"
       }
-    ],    
-    "overwrite": [   
+    ],
+    "overwrite": [
       {
         "files": [
           "**/package.md",
@@ -52,7 +52,7 @@
         "exclude": [
           "overview.md"
         ]
-      },     
+      },
       {
         "files": [
           "apiSpec/sandbox/**/*.md"
@@ -72,7 +72,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

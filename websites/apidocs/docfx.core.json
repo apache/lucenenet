@@ -15,7 +15,7 @@
       ],
       "dest": "obj/docfx/api/core",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],
@@ -37,7 +37,7 @@
       },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "core/toc.yml"
         ],
         "src": "toc"
@@ -48,8 +48,8 @@
         ],
         "src": "../../src/dotnet/docs"
       }
-    ],    
-    "overwrite": [  
+    ],
+    "overwrite": [
       {
         "files": [
           "**/package.md",
@@ -59,7 +59,7 @@
         "exclude": [
           "overview.md"
         ]
-      },    
+      },
       {
         "files": [
           "apiSpec/core/**/*.md"
@@ -67,7 +67,8 @@
       }
     ],
     "xref": [
-      "_site/api/codecs/xrefmap.yml"
+      "_site/api/codecs/xrefmap.yml",
+      "https://learn.microsoft.com/en-us/dotnet/.xrefmap.json"
     ],
     "dest": "_site/api/core",
     "globalMetadataFiles": [
@@ -79,7 +80,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,
