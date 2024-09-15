@@ -175,7 +175,7 @@ if ($? -and $DisableMetaData -eq $false) {
 
         # build the output
         Write-Host "Building api metadata for $projFile..."
-        & docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel --disableGitFeatures
+        & docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel
     }
 }
 
@@ -199,7 +199,7 @@ if ($? -and $DisableBuild -eq $false) {
 
         # build the output
         Write-Host "Building site output for $projFile..."
-        & docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug --disableGitFeatures
+        & docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug --maxParallelism 1
 
         # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
         $projFileJson = Get-Content $projFile | ConvertFrom-Json
