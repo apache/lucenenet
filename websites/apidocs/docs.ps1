@@ -197,6 +197,8 @@ if ($? -and $DisableBuild -eq $false) {
 
         $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\${proj}.build.log"
 
+        Start-Sleep -Seconds 1
+
         # build the output
         Write-Host "Building site output for $projFile..."
         & docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug --maxParallelism 1

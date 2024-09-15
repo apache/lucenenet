@@ -37,7 +37,7 @@
       },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "core/toc.yml"
         ],
         "src": "toc"
@@ -48,8 +48,8 @@
         ],
         "src": "../../src/dotnet/docs"
       }
-    ],    
-    "overwrite": [  
+    ],
+    "overwrite": [
       {
         "files": [
           "**/package.md",
@@ -59,7 +59,7 @@
         "exclude": [
           "overview.md"
         ]
-      },    
+      },
       {
         "files": [
           "apiSpec/core/**/*.md"
@@ -80,7 +80,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

@@ -26,23 +26,23 @@
           "package.md"
         ],
         "src": "../../src/Lucene.Net.Join"
-      },    
+      },
       {
         "files": [
           "**.yml",
           "**.md"
         ],
         "src": "obj/docfx/api/join"
-      },   
+      },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "join/toc.yml"
         ],
         "src": "toc"
       }
-    ],    
-    "overwrite": [   
+    ],
+    "overwrite": [
       {
         "files": [
           "**/package.md",
@@ -52,7 +52,7 @@
         "exclude": [
           "package.md"
         ]
-      },     
+      },
       {
         "files": [
           "apiSpec/join/**/*.md"
@@ -72,7 +72,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

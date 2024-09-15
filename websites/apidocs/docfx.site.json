@@ -1,9 +1,9 @@
-{  
+{
   "build": {
     "content": [
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "*.md"
         ]
       },
@@ -44,7 +44,7 @@
       "_site/api/grouping/xrefmap.yml",
       "_site/api/highlighter/xrefmap.yml",
       "_site/api/icu/xrefmap.yml",
-      "_site/api/join/xrefmap.yml",      
+      "_site/api/join/xrefmap.yml",
       "_site/api/memory/xrefmap.yml",
       "_site/api/misc/xrefmap.yml",
       "_site/api/queries/xrefmap.yml",
@@ -52,18 +52,22 @@
       "_site/api/replicator/xrefmap.yml",
       "_site/api/sandbox/xrefmap.yml",
       "_site/api/spatial/xrefmap.yml",
-      "_site/api/suggest/xrefmap.yml",      
+      "_site/api/suggest/xrefmap.yml",
       "_site/api/test-framework/xrefmap.yml",
       "_site/api/demo/xrefmap.yml"
     ],
     "dest": "_site",
-    "globalMetadataFiles": ["docfx.global.json"],
+    "globalMetadataFiles": [
+      "docfx.global.json"
+    ],
     "template": [
       "default",
       "Templates/LuceneTemplate",
       "Templates/LuceneTemplateAssets"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

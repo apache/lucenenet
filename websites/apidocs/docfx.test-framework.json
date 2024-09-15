@@ -36,13 +36,13 @@
       },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "test-framework/toc.yml"
         ],
         "src": "toc"
       }
-    ],   
-    "overwrite": [     
+    ],
+    "overwrite": [
       {
         "files": [
           "apiSpec/test-framework/**/*.md"
@@ -59,7 +59,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

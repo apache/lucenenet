@@ -33,15 +33,15 @@
           "**.md"
         ],
         "src": "obj/docfx/api/analysis-common"
-      },   
+      },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "analysis-common/toc.yml"
         ],
         "src": "toc"
       }
-    ],    
+    ],
     "overwrite": [
       {
         "files": [
@@ -72,7 +72,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

@@ -559,7 +559,7 @@
       },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "*.md",
           "web.config"
         ]
@@ -621,7 +621,7 @@
       "default",
       "LuceneTemplate"
     ],
-    "postProcessors": [],
+    "postProcessors": ["EnvironmentVariableProcessor"],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

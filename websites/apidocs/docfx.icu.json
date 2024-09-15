@@ -33,15 +33,15 @@
           "**.md"
         ],
         "src": "obj/docfx/api/icu"
-      },   
+      },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "icu/toc.yml"
         ],
         "src": "toc"
       }
-    ],    
+    ],
     "overwrite": [
       {
         "files": [
@@ -52,7 +52,7 @@
         "exclude": [
           "package.md"
         ]
-      },     
+      },
       {
         "files": [
           "apiSpec/icu/**/*.md"
@@ -72,7 +72,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

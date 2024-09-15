@@ -20,29 +20,29 @@
     }
   ],
   "build": {
-    "content": [  
+    "content": [
       {
         "files": [
           "package.md"
         ],
         "src": "../../src/Lucene.Net.Facet"
-      },    
+      },
       {
         "files": [
           "**.yml",
           "**.md"
         ],
         "src": "obj/docfx/api/facet"
-      },   
+      },
       {
         "files": [
-          "toc.yml",
+          "./toc.yml",
           "facet/toc.yml"
         ],
         "src": "toc"
       }
-    ],    
-    "overwrite": [    
+    ],
+    "overwrite": [
       {
         "files": [
           "**/package.md",
@@ -52,7 +52,7 @@
         "exclude": [
           "package.md"
         ]
-      },   
+      },
       {
         "files": [
           "apiSpec/facet/**/*.md"
@@ -72,7 +72,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "EnvironmentVariableProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,
