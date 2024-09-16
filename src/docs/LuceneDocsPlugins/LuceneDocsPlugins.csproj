@@ -51,4 +51,17 @@ under the License.
     <PackageReference Include="System.Composition" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="EnvironmentVariableInlineRule.cs" />
+    <Compile Remove="EnvironmentVariableInLinkInlineRule.cs" />
+    <Compile Remove="RendererPartProvider.cs" />
+    <Compile Remove="LuceneNoteTokenRendererPart.cs" />
+    <Compile Remove="LuceneNoteBlockToken.cs" />
+    <Compile Remove="LuceneNoteBlockRule.cs" />
+    <Compile Remove="LuceneDfmEngineCustomizer.cs" />
+    <Compile Remove="EnvironmentVariableRendererPart.cs" />
+    <Compile Remove="EnvironmentVariableInCodeBlockRule.cs" />
+    <Compile Remove="EnvironmentVariableDfmTextInlineRule.cs" />
+  </ItemGroup>
+
 </Project>
