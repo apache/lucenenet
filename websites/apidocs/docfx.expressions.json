@@ -73,7 +73,7 @@
       "Templates/LuceneApiDocs"
     ],
     "postProcessors": [
-      "EnvironmentVariableProcessor"
+      "AggregatePostProcessor"
     ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,

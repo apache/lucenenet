@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,44 +15,37 @@
  * limitations under the License.
  */
 
-using Docfx.Common;
 using Docfx.Plugins;
+using System;
 using System.Collections.Immutable;
-using System.IO;
-using System.Linq;
+using System.Composition;
 
 namespace LuceneDocsPlugins;
 
-public class EnvironmentVariableProcessor : IPostProcessor
+[Export(nameof(AggregatePostProcessor), typeof(IPostProcessor))]
+public class AggregatePostProcessor : IPostProcessor
 {
+    private readonly IPostProcessor[] _postProcessors =
+    [
+        new LuceneNoteProcessor(),
+        new EnvironmentVariableProcessor(),
+    ];
+
     public ImmutableDictionary<string, object> PrepareMetadata(ImmutableDictionary<string, object> metadata)
     {
+        foreach (var postProcessor in _postProcessors)
+        {
+            metadata = postProcessor.PrepareMetadata(metadata);
+        }
+
         return metadata;
     }
 
     public Manifest Process(Manifest manifest, string outputFolder)
     {
-        foreach (var manifestItem in manifest.Files.Where(x => x.Type == "Conceptual"))
+        foreach (var postProcessor in _postProcessors)
         {
-            foreach (var manifestItemOutputFile in manifestItem.Output)
-            {
-                var outputPath = Path.Combine(outputFolder, manifestItemOutputFile.Value.RelativePath);
-
-                var content = File.ReadAllText(outputPath);
-
-                Logger.LogInfo($"Replacing environment variables in {outputPath}");
-
-                var newContent = EnvironmentVariableUtil.ReplaceEnvironmentVariables(content);
-
-                if (content == newContent)
-                {
-                    continue;
-                }
-
-                Logger.LogInfo($"Writing new content to {outputPath}");
-
-                File.WriteAllText(outputPath, newContent);
-            }
+            manifest = postProcessor.Process(manifest, outputFolder);
         }
 
         return manifest;

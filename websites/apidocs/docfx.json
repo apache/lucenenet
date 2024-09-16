@@ -621,7 +621,7 @@
       "default",
       "LuceneTemplate"
     ],
-    "postProcessors": ["EnvironmentVariableProcessor"],
+    "postProcessors": ["AggregatePostProcessor"],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,
