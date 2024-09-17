@@ -180,10 +180,6 @@ if ($? -and $DisableMetaData -eq $false) {
 }
 
 if ($? -and $DisableBuild -eq $false) {
-    # HACK: DocFx doesn't seem to work with fenced code blocks, so we update the lucene-cli index file manually.
-    # Note it works better this way anyway because we can store a real version number in the file in the repo.
-    (Get-Content -Path $CliIndexPath -Raw) -Replace '(?<=--version\s)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $CliIndexPath
-
     # Update our TOC to the latest LuceneNetVersion
     (Get-Content -Path $TocPath1 -Raw) -Replace '(?<=lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $TocPath1
     (Get-Content -Path $TocPath2 -Raw) -Replace '(?<=lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $TocPath2

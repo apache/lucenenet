@@ -16,7 +16,6 @@
  */
 
 using Docfx.Plugins;
-using System;
 using System.Collections.Immutable;
 using System.Composition;
 
