@@ -5,3 +5,6 @@ apiRules:
 - exclude:
     uidRegex: ^Lucene\.Net\.Test$
     type: Namespace
+- exclude:
+    uidRegex: ^Lucene\.Net\.RandomExtensions$
+    type: Class
