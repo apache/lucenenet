@@ -26,11 +26,14 @@
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/benchmark"
       },
       {
         "files": [
-          "./toc.yml",
+          "toc.yml",
           "benchmark/toc.yml"
         ],
         "src": "toc"

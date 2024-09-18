@@ -3,7 +3,7 @@
     "content": [
       {
         "files": [
-          "./toc.yml",
+          "toc.yml",
           "*.md"
         ]
       },
@@ -68,7 +68,6 @@
     "postProcessors": [
       "AggregatePostProcessor"
     ],
-    "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,
     "cleanupCacheHistory": false,

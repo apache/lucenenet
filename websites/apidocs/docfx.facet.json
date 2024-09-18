@@ -32,11 +32,14 @@
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/facet"
       },
       {
         "files": [
-          "./toc.yml",
+          "toc.yml",
           "facet/toc.yml"
         ],
         "src": "toc"

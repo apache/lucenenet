@@ -26,11 +26,14 @@
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/analysis-morfologik"
       },
       {
         "files": [
-          "./toc.yml",
+          "toc.yml",
           "analysis-morfologik/toc.yml"
         ],
         "src": "toc"

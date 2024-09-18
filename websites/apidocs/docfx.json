@@ -559,7 +559,7 @@
       },
       {
         "files": [
-          "./toc.yml",
+          "toc.yml",
           "*.md",
           "web.config"
         ]

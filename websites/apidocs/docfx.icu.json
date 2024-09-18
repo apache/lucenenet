@@ -32,11 +32,14 @@
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/icu"
       },
       {
         "files": [
-          "./toc.yml",
+          "toc.yml",
           "icu/toc.yml"
         ],
         "src": "toc"

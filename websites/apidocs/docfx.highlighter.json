@@ -32,11 +32,14 @@
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/highlighter"
       },
       {
         "files": [
-          "./toc.yml",
+          "toc.yml",
           "highlighter/toc.yml"
         ],
         "src": "toc"

@@ -26,11 +26,14 @@
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/analysis-stempel"
       },
       {
         "files": [
-          "./toc.yml",
+          "toc.yml",
           "analysis-stempel/toc.yml"
         ],
         "src": "toc"

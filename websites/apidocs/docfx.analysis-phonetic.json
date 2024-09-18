@@ -26,11 +26,14 @@
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/analysis-phonetic"
       },
       {
         "files": [
-          "./toc.yml",
+          "toc.yml",
           "analysis-phonetic/toc.yml"
         ],
         "src": "toc"

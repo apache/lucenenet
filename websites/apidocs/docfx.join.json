@@ -32,11 +32,14 @@
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/join"
       },
       {
         "files": [
-          "./toc.yml",
+          "toc.yml",
           "join/toc.yml"
         ],
         "src": "toc"
