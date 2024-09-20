@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 
         private readonly ReentrantLock refreshLock = new ReentrantLock();
 
-        private readonly ISet<ReferenceManager.IRefreshListener> refreshListeners = new ConcurrentHashSet<ReferenceManager.IRefreshListener>();
+        private readonly ConcurrentHashSet<ReferenceManager.IRefreshListener> refreshListeners = new ConcurrentHashSet<ReferenceManager.IRefreshListener>();
 
         private void EnsureOpen()
         {
@@ -367,7 +367,7 @@ namespace Lucene.Net.Search
             {
                 throw new ArgumentNullException(nameof(listener), "Listener cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            refreshListeners.Remove(listener);
+            refreshListeners.TryRemove(listener);
         }
     }
 
