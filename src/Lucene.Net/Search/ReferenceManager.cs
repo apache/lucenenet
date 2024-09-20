@@ -367,7 +367,7 @@ namespace Lucene.Net.Search
             {
                 throw new ArgumentNullException(nameof(listener), "Listener cannot be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
-            refreshListeners.Remove(listener);
+            refreshListeners.TryRemove(listener);
         }
     }
 
