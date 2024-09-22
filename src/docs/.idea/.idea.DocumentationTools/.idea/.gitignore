@@ -1,4 +1,4 @@
-# Default ignored files
+﻿# Default ignored files
 /shelf/
 /workspace.xml
 # Rider ignored files
@@ -11,3 +11,5 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+/material_theme_project_new.xml
+
