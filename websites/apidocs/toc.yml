@@ -1,4 +1,4 @@
-items:
+﻿items:
 - name: Lucene.Net API
   topicHref: https://lucenenet.apache.org/docs/4.8.0-ci/
 - name: Lucene.Net CLI
@@ -6,18 +6,4 @@ items:
   topicHref: ../../src/dotnet/tools/lucene-cli/docs/index.md
 - name: Lucene.Net Website
   href: https://lucenenet.apache.org/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
