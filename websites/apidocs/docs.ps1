@@ -127,6 +127,7 @@ $DocFxJsonContent._appFooter = "Copyright &copy; $((Get-Date).Year) The Apache S
 $DocFxJsonContent._appTitle = "Apache Lucene.NET $LuceneNetVersion Documentation"
 #$DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
 #$DocFxJsonContent._gitContribute.tag = "$VCSLabel"
+$DocFxJsonContent._luceneNetRel = $BaseUrl + "/"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
 
 # update the docfx.json file

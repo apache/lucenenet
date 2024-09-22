@@ -66,6 +66,7 @@
       "Templates/LuceneTemplateAssets"
     ],
     "postProcessors": [
+      "ExtractSearchIndex",
       "AggregatePostProcessor"
     ],
     "noLangKeyword": false,
