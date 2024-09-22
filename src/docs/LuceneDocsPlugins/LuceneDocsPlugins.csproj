@@ -46,22 +46,9 @@ under the License.
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Docfx.Plugins" Version="2.76.0" />
-    <PackageReference Include="Docfx.Common" Version="2.76.0" />
+    <PackageReference Include="Docfx.Plugins" Version="2.77.0" />
+    <PackageReference Include="Docfx.Common" Version="2.77.0" />
     <PackageReference Include="System.Composition" Version="8.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="EnvironmentVariableInlineRule.cs" />
-    <Compile Remove="EnvironmentVariableInLinkInlineRule.cs" />
-    <Compile Remove="RendererPartProvider.cs" />
-    <Compile Remove="LuceneNoteTokenRendererPart.cs" />
-    <Compile Remove="LuceneNoteBlockToken.cs" />
-    <Compile Remove="LuceneNoteBlockRule.cs" />
-    <Compile Remove="LuceneDfmEngineCustomizer.cs" />
-    <Compile Remove="EnvironmentVariableRendererPart.cs" />
-    <Compile Remove="EnvironmentVariableInCodeBlockRule.cs" />
-    <Compile Remove="EnvironmentVariableDfmTextInlineRule.cs" />
   </ItemGroup>
 
 </Project>
