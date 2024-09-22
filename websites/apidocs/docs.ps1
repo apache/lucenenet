@@ -34,7 +34,7 @@ param (
     [Parameter(Mandatory = $false)]
     [int] $StagingPort = 8080
 )
-$MinimumSdkVersion = "8.0.204" # Minimum Required .NET SDK (must not be a pre-release)
+$MinimumSdkVersion = "8.0.100" # Minimum Required .NET SDK (must not be a pre-release)
 $DocFxVersion = "2.77.0" # Required DocFx version
 
 $ErrorActionPreference = "Stop"
