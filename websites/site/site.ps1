@@ -29,6 +29,8 @@ param (
 	$StagingPort = 8081
 )
 
+$DocFxVersion = "2.77.0" # Required DocFx version
+
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
@@ -43,21 +45,27 @@ if ($Clean) {
 	Remove-Item (Join-Path -Path $ToolsFolder "\*") -recurse -force -ErrorAction SilentlyContinue
 }
 
-New-Item "$ToolsFolder\tmp" -type directory -force
+# install docfx tool
+$InstallDocFx = $false
+try {
+	$InstalledDocFxVersion = (& docfx --version).Trim().Split('+')[0]
 
-# Go get docfx.exe if we don't have it
-New-Item "$ToolsFolder\docfx" -type directory -force
-$DocFxExe = "$ToolsFolder\docfx\docfx.exe"
-if (-not (test-path $DocFxExe))
-{
-	Write-Host "Retrieving docfx..."
-	$DocFxZip = "$ToolsFolder\tmp\docfx.zip"
-	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.58/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60
-	#unzip
-	Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
+	if ([version]$InstalledDocFxVersion -lt [version]$DocFxVersion) {
+		Write-Host "DocFx is installed, but the version is less than $DocFxVersion, will install it."
+		$InstallDocFx = $true
+	}
+	else {
+		Write-Host "DocFx is installed and the version is $InstalledDocFxVersion."
+	}
+} catch {
+	Write-Host "DocFx is not installed or not in the PATH, will install it."
+	$InstallDocFx = $true
 }
 
- Remove-Item  -Recurse -Force "$ToolsFolder\tmp"
+if ($InstallDocFx -eq $true) {
+	Write-Host "Installing docfx global tool..."
+	dotnet tool install -g docfx --version $DocFxVersion
+}
 
 # delete anything that already exists
 if ($Clean) {
@@ -75,11 +83,11 @@ if($?) {
 	if ($ServeDocs -eq $false) {
 		# build the output
 		Write-Host "Building docs..."
-		& $DocFxExe build $DocFxJson -l "$DocFxLog" --loglevel $LogLevel
+		& docfx build $DocFxJson -l "$DocFxLog" --logLevel $LogLevel
 	}
 	else {
 		# build + serve (for testing)
 		Write-Host "starting website..."
-		& $DocFxExe $DocFxJson --serve --port $StagingPort
+		& docfx $DocFxJson --serve --port $StagingPort
 	}
 }

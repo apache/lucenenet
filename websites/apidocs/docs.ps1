@@ -23,7 +23,6 @@ param (
     [string] $LuceneNetVersion,
     [switch] $ServeDocs = $false,
     [switch] $Clean = $false,
-    [switch] $SkipToolInstall = $false, # to speed up iteration if you already have the tool installed
     [switch] $DisableMetaData = $false,
     [switch] $DisableBuild = $false,
     [switch] $DisablePlugins = $false,
@@ -65,27 +64,25 @@ $TocPath2 = Join-Path -Path $ApiDocsFolder -ChildPath "toc\toc.yml"
 $BreadcrumbPath = Join-Path -Path $ApiDocsFolder -ChildPath "docfx.global.subsite.json"
 
 # install docfx tool
-if ($SkipToolInstall -eq $false) {
-    $InstallDocFx = $false
-    try {
-        $InstalledDocFxVersion = (& docfx --version).Trim().Split('+')[0]
+$InstallDocFx = $false
+try {
+    $InstalledDocFxVersion = (& docfx --version).Trim().Split('+')[0]
 
-        if ([version]$InstalledDocFxVersion -lt [version]$DocFxVersion) {
-            Write-Host "DocFx is installed, but the version is less than $DocFxVersion, will install it."
-            $InstallDocFx = $true
-        }
-        else {
-            Write-Host "DocFx is installed and the version is $InstalledDocFxVersion."
-        }
-    } catch {
-        Write-Host "DocFx is not installed or not in the PATH, will install it."
+    if ([version]$InstalledDocFxVersion -lt [version]$DocFxVersion) {
+        Write-Host "DocFx is installed, but the version is less than $DocFxVersion, will install it."
         $InstallDocFx = $true
     }
-
-    if ($InstallDocFx -eq $true) {
-        Write-Host "Installing docfx global tool..."
-        dotnet tool install -g docfx --version $DocFxVersion
+    else {
+        Write-Host "DocFx is installed and the version is $InstalledDocFxVersion."
     }
+} catch {
+    Write-Host "DocFx is not installed or not in the PATH, will install it."
+    $InstallDocFx = $true
+}
+
+if ($InstallDocFx -eq $true) {
+    Write-Host "Installing docfx global tool..."
+    dotnet tool install -g docfx --version $DocFxVersion
 }
 
 # delete anything that already exists
