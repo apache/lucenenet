@@ -122,7 +122,7 @@ namespace Lucene.Net.Misc
 
             for (int i = 0; i < terms.Length; i++)
             {
-                string termtext = terms[i].termtext.Utf8ToString();
+                string termtext = terms[i].TermText.Utf8ToString();
                 // hardcoded highTF or highTFmedDF
                 if (termtext.Contains("highTF"))
                 {
@@ -195,7 +195,7 @@ namespace Lucene.Net.Misc
 
             for (int i = 0; i < terms.Length; i++)
             {
-                string text = terms[i].termtext.Utf8ToString();
+                string text = terms[i].TermText.Utf8ToString();
                 if (text.Contains("highTF"))
                 {
                     if (text.Contains("medDF"))

@@ -156,7 +156,7 @@ namespace Lucene.Net.Misc
                     res = a.Field.CompareToOrdinal(b.Field);
                     if (res == 0)
                     {
-                        res = a.termtext.CompareTo(b.termtext);
+                        res = a.TermText.CompareTo(b.TermText);
                     }
                 }
                 return res;
@@ -180,7 +180,7 @@ namespace Lucene.Net.Misc
                     res = a.Field.CompareToOrdinal(b.Field);
                     if (res == 0)
                     {
-                        res = a.termtext.CompareTo(b.termtext);
+                        res = a.TermText.CompareTo(b.TermText);
                     }
                 }
                 return res;
