@@ -25,14 +25,14 @@ namespace Lucene.Net.Misc
     /// </summary>
     public sealed class TermStats
     {
-        internal readonly BytesRef termtext;
+        public readonly BytesRef TermText;
         public string Field { get; set; }
         public int DocFreq { get; set; }
         public long TotalTermFreq { get; set; }
 
         internal TermStats(string field, BytesRef termtext, int df, long tf)
         {
-            this.termtext = BytesRef.DeepCopyOf(termtext);
+            this.TermText = BytesRef.DeepCopyOf(termtext);
             this.Field = field;
             this.DocFreq = df;
             this.TotalTermFreq = tf;
@@ -40,12 +40,12 @@ namespace Lucene.Net.Misc
 
         internal string GetTermText()
         {
-            return termtext.Utf8ToString();
+            return TermText.Utf8ToString();
         }
 
         public override string ToString()
         {
-            return ("TermStats: Term=" + termtext.Utf8ToString() + " DocFreq=" + DocFreq + " TotalTermFreq=" + TotalTermFreq);
+            return ("TermStats: Term=" + TermText.Utf8ToString() + " DocFreq=" + DocFreq + " TotalTermFreq=" + TotalTermFreq);
         }
     }
 }
