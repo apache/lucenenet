@@ -37,10 +37,27 @@ namespace Lucene.Net.Demo
 {
     /// <summary>
     /// Simple command-line based search demo.
+    /// <para>
+    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
+    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+    /// with a command that maps to that method: demo search-files. 
+    /// </para>
     /// </summary>
     public static class SearchFiles // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        /// <summary>Simple command-line based search demo.</summary>
+        /// <summary>
+        /// Simple command-line based search demo.
+        /// <para>
+        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
+        /// it was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with a command that maps to this method: demo search-files. 
+        /// </para>
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             // The <CONSOLE_APP_NAME> should be the assembly name of the application

@@ -41,6 +41,14 @@ namespace Lucene.Net.Index
     /// @lucene.experimental You can easily
     /// accidentally remove segments from your index so be
     /// careful!
+    /// <para>
+    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
+    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+    /// with three commands that map to that method: index copy-segments, index delete-segments,
+    /// and index list-segments. 
+    /// </para>
     /// </summary>
     public class IndexSplitter
     {
@@ -50,6 +58,16 @@ namespace Lucene.Net.Index
 
         internal DirectoryInfo dir;
 
+
+        /// <summary>
+        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
+        /// it was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with three commands that map to this method: index copy-segments, index delete-segments,
+        /// and index list-segments. 
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             if (args.Length < 2)

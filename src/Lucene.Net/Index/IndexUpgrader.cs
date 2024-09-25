@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,12 +29,21 @@ namespace Lucene.Net.Index
     using FSDirectory = Lucene.Net.Store.FSDirectory;
     using InfoStream = Lucene.Net.Util.InfoStream;
 
+    // LUCENENET: Not used
+    ///// <code>
+    /////  java -cp lucene-core.jar Lucene.Net.Index.IndexUpgrader [-delete-prior-commits] [-verbose] indexDir
+    ///// </code>
+
     /// <summary>
     /// This is an easy-to-use tool that upgrades all segments of an index from previous Lucene versions
-    /// to the current segment file format. It can be used from command line:
-    /// <code>
-    ///  java -cp lucene-core.jar Lucene.Net.Index.IndexUpgrader [-delete-prior-commits] [-verbose] indexDir
-    /// </code>
+    /// to the current segment file format. It can be used from command line.
+    /// <para>
+    /// LUCENENET specific: In the Java implementation this class' Main
+    /// method was intended to be called from the command line. However in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+    /// with a command that maps to that method: index upgrade. 
+    /// </para>
     /// Alternatively this class can be instantiated and <see cref="Upgrade()"/> invoked. It uses <see cref="UpgradeIndexMergePolicy"/>
     /// and triggers the upgrade via an <see cref="IndexWriter.ForceMerge(int)"/> request to <see cref="IndexWriter"/>.
     /// <para/>
@@ -73,7 +82,16 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Main method to run <see cref="IndexUpgrader"/> from the
         /// command-line.
+        /// <para>
+        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
+        /// it was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with a command that maps to this method: index upgrade. 
+        /// </para>
         /// </summary>
+        /// <param name="args"></param>
+        /// <exception cref="ArgumentException"></exception>
         public static void Main(string[] args)
         {
             ParseArgs(args).Upgrade();

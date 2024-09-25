@@ -120,6 +120,16 @@ namespace Lucene.Net.Index
             Console.Error.WriteLine("Done.");
         }
 
+
+        /// <summary>
+        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
+        /// it was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with a command that maps to this method: index split. 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <exception cref="ArgumentException"></exception>
         public static void Main(string[] args)
         {
             if (args.Length < 5)
