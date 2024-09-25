@@ -25,7 +25,7 @@ namespace Lucene.Net.Misc
     /// </summary>
     public sealed class TermStats
     {
-        public readonly BytesRef TermText;
+        public BytesRef TermText { get; private set; }
         public string Field { get; set; }
         public int DocFreq { get; set; }
         public long TotalTermFreq { get; set; }
