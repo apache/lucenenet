@@ -31,15 +31,35 @@ using System.Text;
 
 namespace Lucene.Net.Demo
 {
+    // LUCENENET: Not used
+    ///// Run it with no command-line arguments for usage information.
+
+
     /// <summary>
     /// Index all text files under a directory.
     /// <para/>
     /// This is a command-line application demonstrating simple Lucene indexing.
-    /// Run it with no command-line arguments for usage information.
+    /// <para>
+    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
+    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+    /// with a command that maps to that method: demo index-files.  
+    /// </para>
     /// </summary>
     public static class IndexFiles // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        /// <summary>Index all text files under a directory.</summary>
+        /// <summary>
+        /// Index all text files under a directory.
+        /// <para>
+        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
+        /// it was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with a command that maps to this method: demo index-files. 
+        /// </para>
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             // The <CONSOLE_APP_NAME> should be the assembly name of the application

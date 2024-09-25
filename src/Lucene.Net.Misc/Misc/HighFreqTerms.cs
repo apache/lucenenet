@@ -27,14 +27,20 @@ namespace Lucene.Net.Misc
      * limitations under the License.
      */
 
+    // LUCENENET: Not used
+    // If the -t flag is given, both document frequency and total tf (total
+    // number of occurrences) are reported, ordered by descending total tf.
+
     /// <summary>
     /// <see cref="HighFreqTerms"/> class extracts the top n most frequent terms
     /// (by document frequency) from an existing Lucene index and reports their
     /// document frequency.
     /// <para>
-    /// If the -t flag is given, both document frequency and total tf (total
-    /// number of occurrences) are reported, ordered by descending total tf.
-    /// 
+    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
+    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+    /// with a command that maps to that method: index list-high-freq-terms. 
     /// </para>
     /// </summary>
     public static class HighFreqTerms // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
@@ -42,6 +48,16 @@ namespace Lucene.Net.Misc
         // The top numTerms will be displayed
         public const int DEFAULT_NUMTERMS = 100;
 
+
+        /// <summary>
+        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
+        /// it was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with a command that maps to this method: index list-high-freq-terms. 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <exception cref="ArgumentException"></exception>
         public static void Main(string[] args)
         {
             string field = null;
@@ -81,7 +97,7 @@ namespace Lucene.Net.Misc
             }
         }
 
-        // LUCENENET specific - our wrapper console shows the correct usage
+        // LUCENENET specific - The lucene-cli docs show the correct usage
         //private static void Usage()
         //{
         //    Console.WriteLine("\n\n" + "java org.apache.lucene.misc.HighFreqTerms <index dir> [-t] [number_terms] [field]\n\t -t: order by totalTermFreq\n\n");
