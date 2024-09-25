@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Benchmarks.Quality.Trec;
+using Lucene.Net.Benchmarks.Quality.Utils;
 
 namespace Lucene.Net.Cli
 {
@@ -25,7 +26,7 @@ namespace Lucene.Net.Cli
         {
             public Configuration(CommandLineOptions options)
             {
-                this.Main = (args) => QueryDriver.Main(args);
+                this.Main = (args) => QualityQueriesFinder.Main(args);
 
                 this.Name = "find-quality-queries";
                 this.Description = FromResource("Description");
