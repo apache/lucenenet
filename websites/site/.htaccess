@@ -1,0 +1,42 @@
+﻿# -----------------------------------------------------------------------------------
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the ""License""); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an ""AS IS"" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# -----------------------------------------------------------------------------------
+
+
+# The Lucene.NET site uses .htaccess to implement helpful URL redirection into the
+# Lucene.NET API documentation.
+#
+# We use rewrite rules to enable the following:
+# - /doc/latest/ redirects to the API docs corresponding to the latest
+#   officially released version of Lucene.NET.
+# - /doc/absolute-latest/ redirects to the API docs for the absolute
+#   latest version, including pre-release versions.
+#
+# Using URLs that start with /doc/latest/ and /doc/absolute-latest/ from the
+# main website content into the API documentation always points to the appropriate
+# version, with [R=301] signaling permanent redirects and [L] preventing further
+# rule processing.
+
+
+RewriteEngine On
+
+# Redirect /docs/latest/ to /docs/3.0.3/
+RewriteRule ^docs/latest/(.*)$ /docs/3.0.3/$1 [R=301,L]
+
+# Redirect /docs/absolute-latest/ to /docs/4.8.0-beta00016/
+RewriteRule ^docs/absolute-latest/(.*)$ /docs/4.8.0-beta00016/$1 [R=301,L]

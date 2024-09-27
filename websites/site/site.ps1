@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------------
+﻿# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -67,6 +67,9 @@ if ($Clean) {
 	Remove-Item (Join-Path -Path $SiteFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
 	Remove-Item (Join-Path -Path $SiteFolder "obj") -force -ErrorAction SilentlyContinue
 }
+
+# Copy the .htaccess file to the _site directory after cleaning
+Copy-Item -Path (Join-Path -Path $SiteFolder ".htaccess") -Destination (Join-Path -Path $SiteFolder "_site\.htaccess") -Force
 
 $DocFxJson = Join-Path -Path $SiteFolder "docfx.json"
 $DocFxLog = Join-Path -Path $SiteFolder "obj\docfx.log"
