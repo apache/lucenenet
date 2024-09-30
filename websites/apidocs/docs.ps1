@@ -122,16 +122,8 @@ $DocFxGlobalJson = Join-Path -Path $ApiDocsFolder "docfx.global.json"
 $DocFxJsonContent = Get-Content $DocFxGlobalJson | ConvertFrom-Json
 $DocFxJsonContent._appFooter = "Copyright &copy; $((Get-Date).Year) The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>"
 $DocFxJsonContent._appTitle = "Apache Lucene.NET $LuceneNetVersion Documentation"
-#$DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
-#$DocFxJsonContent._gitContribute.tag = "$VCSLabel"
 $DocFxJsonContent._luceneNetRel = $BaseUrl + "/"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
-
-# update the docfx.json file
-#$DocFxJson = Join-Path -Path $ApiDocsFolder "docfx.json"
-#$DocFxJsonContent = Get-Content $DocFxJson | ConvertFrom-Json
-#$DocFxJsonContent.build.globalMetadata._gitContribute.branch = "docs/$LuceneNetVersion"
-#$DocFxJsonContent.build.globalMetadata._gitContribute.tag = "$VCSLabel"
 
 # NOTE: The order of these depends on if one of the projects requries the xref map of another, normally all require the core xref map
 $DocFxJsonMeta = @(
@@ -178,6 +170,12 @@ if ($? -and $DisableMetaData -eq $false) {
 }
 
 if ($? -and $DisableBuild -eq $false) {
+    # Update the lucene-cli docs `--version` argument to match the current version.
+    # This is to strike a balance between having the file have a real version number in source control
+    # and not having to remember to update the version in that file every time we release.
+    # Do not commit this change to the file unless you are doing a real version release.
+    (Get-Content -Path $CliIndexPath -Raw) -Replace '(?<=--version\s)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $CliIndexPath
+
     # Update our TOC to the latest LuceneNetVersion
     (Get-Content -Path $TocPath1 -Raw) -Replace '(?<=lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $TocPath1
     (Get-Content -Path $TocPath2 -Raw) -Replace '(?<=lucenenet\.apache\.org\/docs\/)\d+?\.\d+?\.\d+?(?:\.\d+?)?(?:-\w+)?', $LuceneNetVersion | Set-Content -Path $TocPath2

@@ -8,14 +8,31 @@ The Lucene.NET command line interface (CLI) is a new cross-platform toolchain wi
 
 ## Installation
 
-Perform a one-time install of the lucene-cli tool using the following dotnet CLI command:
+Perform a one-time install of the lucene-cli tool using the [dotnet tool install](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install) command,
+which will install the specified version:
 
 ```console
-dotnet tool install lucene-cli -g --prerelease
+dotnet tool install lucene-cli -g --version 4.8.0-beta00016
 ```
+
+<!--
+Note for source readers: The version argument above is updated by the
+docs.ps1 script when the docs are built, and this file should have that change
+committed when a new version of the CLI is released. This is to help strike
+a balance between having a real version number in this file for readers of
+the source and not having to manually update the version number in the docs
+every time a new version is released. You should still consult the NOTE
+below to ensure the version number is correct for the version of Lucene.NET
+you are using.
+-->
 
 > [!NOTE]
 > The version of the CLI you install should match the version of Lucene.NET you use.
+> The version can be specified using the [`--version` option](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install#options)
+> of the [`dotnet tool install`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install) command.
+> For a list of available versions, see the [versions tab of the lucene-cli NuGet package](https://www.nuget.org/packages/lucene-cli#versions-body-tab)
+> or run the [dotnet tool list](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-list)
+> command using the package id `lucene-cli`.
 
 You may then use the lucene-cli tool to analyze and update Lucene.NET indexes and use its demos.
 
@@ -44,4 +61,3 @@ CLI command structure consists of the driver ("lucene"), the command, and possib
 lucene index check C:\my-index --verbose
 lucene index fix C:\my-index
 ```
-
