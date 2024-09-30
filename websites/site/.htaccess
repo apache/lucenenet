@@ -31,6 +31,8 @@
 # main website content into the API documentation always points to the appropriate
 # version, with [R=301] signaling permanent redirects and [L] preventing further
 # rule processing.
+#
+# Note: This file is line ending sensitive. MUST use LF line endings.
 
 
 RewriteEngine On
