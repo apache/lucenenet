@@ -68,8 +68,9 @@ if ($Clean) {
 	Remove-Item (Join-Path -Path $SiteFolder "obj") -force -ErrorAction SilentlyContinue
 }
 
-# Copy the .htaccess file to the _site directory after cleaning
+# Copy the .htaccess  & .gitattributes files to the _site directory after cleaning
 Copy-Item -Path (Join-Path -Path $SiteFolder ".htaccess") -Destination (Join-Path -Path $SiteFolder "_site\.htaccess") -Force
+Copy-Item -Path (Join-Path -Path $SiteFolder ".gitattributes") -Destination (Join-Path -Path $SiteFolder "_site\.gitattributes") -Force
 
 $DocFxJson = Join-Path -Path $SiteFolder "docfx.json"
 $DocFxLog = Join-Path -Path $SiteFolder "obj\docfx.log"
