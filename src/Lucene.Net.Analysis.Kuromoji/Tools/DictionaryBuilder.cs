@@ -20,6 +20,13 @@ namespace Lucene.Net.Analysis.Ja.Util
      * limitations under the License.
      */
 
+    /// <summary>
+    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
+    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+    /// with a command that maps to that method: analysis kuromoji-build-dictionary. 
+    /// </summary>
     public static class DictionaryBuilder // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public enum DictionaryFormat { IPADIC, UNIDIC };
@@ -62,6 +69,13 @@ namespace Lucene.Net.Analysis.Ja.Util
             Console.WriteLine("done");
         }
 
+        /// <summary>
+        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
+        /// it was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with a command that maps to this method: analysis kuromoji-build-dictionary.
+        /// </summary>
         public static void Main(string[] args)
         {
             DictionaryFormat format;
