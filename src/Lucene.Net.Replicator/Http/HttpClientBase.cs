@@ -181,7 +181,7 @@ namespace Lucene.Net.Replicator.Http
             //.NET Note: No headers? No ContentType?... Bad use of Http?
             HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, QueryString(request, parameters));
 
-            req.Content = new StringContent(JToken.FromObject(entity, JsonSerializer.Create(ReplicationService.JSON_SERIALIZER_SETTINGS))
+            req.Content = new StringContent(JToken.FromObject(entity, JsonSerializer.Create())
                 .ToString(Formatting.None), Encoding.UTF8, "application/json");
 
             return Execute(req);
