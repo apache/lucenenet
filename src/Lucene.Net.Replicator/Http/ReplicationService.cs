@@ -81,15 +81,6 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         public const string REPLICATE_FILENAME_PARAM = "filename";
 
-        /// <summary>
-        /// Json Serializer Settings to use when serializing and deserializing errors.
-        /// </summary>
-        // LUCENENET specific
-        public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings()
-        {
-            TypeNameHandling = TypeNameHandling.All
-        };
-
         private const int SHARD_IDX = 0, ACTION_IDX = 1;
 
         private readonly string context;
@@ -188,19 +179,9 @@ namespace Lucene.Net.Replicator.Http
                         break;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 response.StatusCode = (int)HttpStatusCode.InternalServerError; // propagate the failure
-                try
-                {
-                    TextWriter writer = new StreamWriter(response.Body);
-                    JsonSerializer serializer = JsonSerializer.Create(JSON_SERIALIZER_SETTINGS);
-                    serializer.Serialize(writer, e, e.GetType());
-                }
-                catch (Exception e2) when (e2.IsException())
-                {
-                    throw new IOException("Could not serialize", e2);
-                }
             }
             finally
             {
