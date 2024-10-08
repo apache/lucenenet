@@ -188,19 +188,9 @@ namespace Lucene.Net.Replicator.Http
                         break;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 response.StatusCode = (int)HttpStatusCode.InternalServerError; // propagate the failure
-                try
-                {
-                    TextWriter writer = new StreamWriter(response.Body);
-                    JsonSerializer serializer = JsonSerializer.Create(JSON_SERIALIZER_SETTINGS);
-                    serializer.Serialize(writer, e, e.GetType());
-                }
-                catch (Exception e2) when (e2.IsException())
-                {
-                    throw new IOException("Could not serialize", e2);
-                }
             }
             finally
             {
