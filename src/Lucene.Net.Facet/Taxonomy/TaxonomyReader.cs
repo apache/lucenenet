@@ -155,7 +155,7 @@ namespace Lucene.Net.Facet.Taxonomy
         // set refCount to 1 at start
         private readonly AtomicInt32 refCount = new AtomicInt32(1);
 
-        private readonly object syncLock = new object(); // LUCENENET specific - avoid lock (this)
+        private readonly Lock syncLock = new Lock(); // LUCENENET specific - avoid lock (this)
 
         // LUCENENET specific - Removed DoClose() and replaced with Dispose(true)
 

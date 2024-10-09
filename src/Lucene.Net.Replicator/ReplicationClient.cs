@@ -132,7 +132,7 @@ namespace Lucene.Net.Replicator
 
         private readonly byte[] copyBuffer = new byte[16384];
         private readonly ReentrantLock updateLock = new ReentrantLock();
-        private readonly object syncLock = new object(); // LUCENENET specific to avoid lock (this)
+        private readonly System.Threading.Lock syncLock = new System.Threading.Lock(); // LUCENENET specific to avoid lock (this)
 
         private ReplicationThread updateThread;
         private bool disposed = false;

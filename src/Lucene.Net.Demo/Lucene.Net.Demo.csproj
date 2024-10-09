@@ -24,7 +24,7 @@
   <!-- Demo is deployed through the dotnet/tools/lucene-cli package -->
   
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
+    <TargetFrameworks>net9.0;net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Demo</AssemblyTitle>
     <Description>Simple example code for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
