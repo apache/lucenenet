@@ -40,6 +40,9 @@ on some of the conceptual or inner details of Lucene:
 
 ## Libraries
 
+<!-- NOTE: The namespace collisions in test-framework require it to be linked without
+    a xref style link. This also is why test-framework's xrefmap is not in docfx.site.json. -->
+
 - <xref:Lucene.Net> - Core library
 - <xref:Lucene.Net.Analysis.Common> - Analyzers for indexing content in different languages and domains
 - [Lucene.Net.Analysis.Kuromoji](xref:Lucene.Net.Analysis.Ja) - Japanese Morphological Analyzer
@@ -65,7 +68,7 @@ on some of the conceptual or inner details of Lucene:
 - <xref:Lucene.Net.Sandbox> - Various third party contributions and new ideas
 - [Lucene.Net.Spatial](xref:Lucene.Net.Spatial) - Geospatial search
 - <xref:Lucene.Net.Suggest> - Auto-suggest and Spell-checking support
-- <xref:Lucene.Net.TestFramework> - Framework for testing Lucene-based applications
+- [Lucene.Net.TestFramework](api/test-framework/overview.html) - Framework for testing Lucene-based applications
 
 ### Tools
 

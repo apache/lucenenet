@@ -192,23 +192,18 @@ if ($? -and $DisableBuild -eq $false) {
 }
 
 if ($?) {
-
-    # Before we build the site we have to clear the frickin docfx cache!
-    # else the xref links don't work on the home page. That is crazy.
-    Remove-Item (Join-Path -Path $ApiDocsFolder "obj\.cache") -recurse -force -ErrorAction SilentlyContinue
-
     $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\docfx.site.json.log"
 
     if ($ServeDocs -eq $false) {
 
         # build the output
         Write-Host "Building docs..."
-        & dotnet tool run docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --debug
+        & dotnet tool run docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --debug --maxParallelism 1
     }
     else {
         # build + serve (for testing)
         Write-Host "starting website..."
-        & dotnet tool run docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --serve --port $StagingPort --debug
+        & dotnet tool run docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --serve --port $StagingPort --debug --maxParallelism 1
     }
 }
 
