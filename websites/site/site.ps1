@@ -29,8 +29,6 @@ param (
 	$StagingPort = 8081
 )
 
-$DocFxVersion = "2.77.0" # Required DocFx version
-
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
@@ -46,26 +44,10 @@ if ($Clean) {
 }
 
 # install docfx tool
-$InstallDocFx = $false
-try {
-	$InstalledDocFxVersion = (& docfx --version).Trim().Split('+')[0]
-
-	if ([version]$InstalledDocFxVersion -lt [version]$DocFxVersion) {
-		Write-Host "DocFx is installed, but the version is less than $DocFxVersion, will install it."
-		$InstallDocFx = $true
-	}
-	else {
-		Write-Host "DocFx is installed and the version is $InstalledDocFxVersion."
-	}
-} catch {
-	Write-Host "DocFx is not installed or not in the PATH, will install it."
-	$InstallDocFx = $true
-}
-
-if ($InstallDocFx -eq $true) {
-	Write-Host "Installing docfx global tool..."
-	dotnet tool install -g docfx --version $DocFxVersion
-}
+$PreviousLocation = Get-Location
+Set-Location $RepoRoot
+dotnet tool restore
+Set-Location $PreviousLocation
 
 # delete anything that already exists
 if ($Clean) {
@@ -83,11 +65,11 @@ if($?) {
 	if ($ServeDocs -eq $false) {
 		# build the output
 		Write-Host "Building docs..."
-		& docfx build $DocFxJson -l "$DocFxLog" --logLevel $LogLevel
+		& dotnet tool run docfx build $DocFxJson -l "$DocFxLog" --logLevel $LogLevel
 	}
 	else {
 		# build + serve (for testing)
 		Write-Host "starting website..."
-		& docfx $DocFxJson --serve --port $StagingPort
+		& dotnet tool run docfx $DocFxJson --serve --port $StagingPort
 	}
 }
