@@ -29,8 +29,8 @@ on some of the conceptual or inner details of Lucene:
 
 ## Reference Documents
 
-- [Changes](https://github.com/apache/lucenenet/releases/tag/[EnvVar:LuceneNetReleaseTag]): List of changes in this release.
 <!-- - System Requirements: Minimum and supported .NET versions. LUCENENT TODO: Add link -->
+- [Changes](https://github.com/apache/lucenenet/releases/tag/EnvVar:LuceneNetReleaseTag): List of changes in this release.
 - [Migration Guide](xref:Lucene.Net.Migration.Guide): What changed in Lucene 4; how to migrate code from Lucene 3.x.
 - [Source Stepping](xref:source-stepping): How to use the Visual Studio debugger to step into Lucene.NET source code.
 - [File Formats](xref:Lucene.Net.Codecs.Lucene46): Guide to the supported index format used by Lucene. This can be customized by using [an alternate codec](xref:Lucene.Net.Codecs).
