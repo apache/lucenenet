@@ -35,7 +35,6 @@ param (
     [int] $StagingPort = 8080
 )
 $MinimumSdkVersion = "8.0.100" # Minimum Required .NET SDK (must not be a pre-release)
-$DocFxVersion = "2.77.0" # Required DocFx version
 
 $ErrorActionPreference = "Stop"
 
@@ -64,26 +63,10 @@ $TocPath2 = Join-Path -Path $ApiDocsFolder -ChildPath "toc\toc.yml"
 $BreadcrumbPath = Join-Path -Path $ApiDocsFolder -ChildPath "docfx.global.subsite.json"
 
 # install docfx tool
-$InstallDocFx = $false
-try {
-    $InstalledDocFxVersion = (& docfx --version).Trim().Split('+')[0]
-
-    if ([version]$InstalledDocFxVersion -lt [version]$DocFxVersion) {
-        Write-Host "DocFx is installed, but the version is less than $DocFxVersion, will install it."
-        $InstallDocFx = $true
-    }
-    else {
-        Write-Host "DocFx is installed and the version is $InstalledDocFxVersion."
-    }
-} catch {
-    Write-Host "DocFx is not installed or not in the PATH, will install it."
-    $InstallDocFx = $true
-}
-
-if ($InstallDocFx -eq $true) {
-    Write-Host "Installing docfx global tool..."
-    dotnet tool install -g docfx --version $DocFxVersion
-}
+$PreviousLocation = Get-Location
+Set-Location $RepoRoot
+dotnet tool restore
+Set-Location $PreviousLocation
 
 # delete anything that already exists
 if ($Clean) {
@@ -165,7 +148,7 @@ if ($? -and $DisableMetaData -eq $false) {
 
         # build the output
         Write-Host "Building api metadata for $projFile..."
-        & docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel
+        & dotnet tool run docfx metadata $projFile --log "$DocFxLog" --logLevel $LogLevel
     }
 }
 
@@ -193,7 +176,7 @@ if ($? -and $DisableBuild -eq $false) {
 
         # build the output
         Write-Host "Building site output for $projFile..."
-        & docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug --maxParallelism 1
+        & dotnet tool run docfx build $projFile --log "$DocFxLog" --logLevel $LogLevel --debug --maxParallelism 1
 
         # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
         $projFileJson = Get-Content $projFile | ConvertFrom-Json
@@ -220,12 +203,12 @@ if ($?) {
 
         # build the output
         Write-Host "Building docs..."
-        & docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --debug
+        & dotnet tool run docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --debug
     }
     else {
         # build + serve (for testing)
         Write-Host "starting website..."
-        & docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --serve --port $StagingPort --debug
+        & dotnet tool run docfx $DocFxJsonSite --log "$DocFxLog" --logLevel $LogLevel --serve --port $StagingPort --debug
     }
 }
 
