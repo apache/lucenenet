@@ -287,13 +287,13 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Writes a <see cref="T:IDictionary{string, string}"/>.
+        /// Writes a <see cref="T:IDictionary{string,string}"/>.
         /// <para/>
         /// First the size is written as an <see cref="WriteInt32(int)"/>,
         /// followed by each key-value pair written as two consecutive
         /// <see cref="WriteString(string)"/>s.
         /// </summary>
-        /// <param name="map"> Input <see cref="T:IDictionary{string, string}"/>. May be <c>null</c> (equivalent to an empty dictionary) </param>
+        /// <param name="map"> Input <see cref="T:IDictionary{string,string}"/>. May be <c>null</c> (equivalent to an empty dictionary) </param>
         public virtual void WriteStringStringMap(IDictionary<string, string> map)
         {
             if (map is null)

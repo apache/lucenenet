@@ -15,7 +15,7 @@
       ],
       "dest": "obj/docfx/api/join",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],
@@ -26,14 +26,17 @@
           "package.md"
         ],
         "src": "../../src/Lucene.Net.Join"
-      },    
+      },
       {
         "files": [
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/join"
-      },   
+      },
       {
         "files": [
           "toc.yml",
@@ -41,8 +44,8 @@
         ],
         "src": "toc"
       }
-    ],    
-    "overwrite": [   
+    ],
+    "overwrite": [
       {
         "files": [
           "**/package.md",
@@ -52,7 +55,7 @@
         "exclude": [
           "package.md"
         ]
-      },     
+      },
       {
         "files": [
           "apiSpec/join/**/*.md"
@@ -72,7 +75,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "AggregatePostProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

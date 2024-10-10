@@ -501,11 +501,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Retrieve the <see cref="T:float?"/> indexed by key, increment it by one unit
-        /// and store the new <see cref="T:float?"/>.
+        /// Retrieve the <see cref="T:Nullable{float}"/> indexed by key, increment it by one unit
+        /// and store the new <see cref="T:Nullable{float}"/>.
         /// </summary>
         /// <param name="key"> A <see cref="string"/> index. </param>
-        /// <returns> The <see cref="T:float?"/> retrieved from the Ternary Search Trie. </returns>
+        /// <returns> The <see cref="T:Nullable{float}"/> retrieved from the Ternary Search Trie. </returns>
         public virtual float? GetAndIncrement(string key)
         {
             string key2 = culture.TextInfo.ToLower(key.Trim());

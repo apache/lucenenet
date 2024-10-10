@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="matchVersion">
         ///          compatibility match version see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
         /// <param name="collection">
-        ///          a dictionary (<see cref="T:IDictionary{string, V}"/>) whose mappings to be copied. </param>
+        ///          a dictionary (<see cref="T:IDictionary{string,V}"/>) whose mappings to be copied. </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
@@ -191,7 +191,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="matchVersion">
         ///          compatibility match version see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
         /// <param name="collection">
-        ///          a dictionary (<see cref="T:IDictionary{char[], V}"/>) whose mappings to be copied. </param>
+        ///          a dictionary (<see cref="T:IDictionary{char[],V}"/>) whose mappings to be copied. </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="matchVersion">
         ///          compatibility match version see <see cref="CharArrayDictionary{TValue}"/> for details. </param>
         /// <param name="collection">
-        ///          a dictionary (<see cref="T:IDictionary{ICharSequence, V}"/>) whose mappings to be copied. </param>
+        ///          a dictionary (<see cref="T:IDictionary{ICharSequence,V}"/>) whose mappings to be copied. </param>
         /// <param name="ignoreCase">
         ///          <c>false</c> if and only if the set should be case sensitive;
         ///          otherwise <c>true</c>. </param>
@@ -1754,7 +1754,7 @@ namespace Lucene.Net.Analysis.Util
         /// LUCENENET Specific - test for value equality similar to how it is done in Java
         /// </summary>
         /// <param name="obj">Another dictionary to test the values of</param>
-        /// <returns><c>true</c> if the given object is an <see cref="T:IDictionary{object, V}"/> that contains
+        /// <returns><c>true</c> if the given object is an <see cref="T:IDictionary{object,V}"/> that contains
         /// the same text value pairs as the current dictionary</returns>
         public override bool Equals(object? obj)
         {

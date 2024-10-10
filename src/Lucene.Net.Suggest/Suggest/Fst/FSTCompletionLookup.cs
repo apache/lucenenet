@@ -289,7 +289,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         /// <summary>
-        /// Returns the bucket (weight) as a <see cref="T:long?"/> for the provided key if it exists,
+        /// Returns the bucket (weight) as a <see cref="T:Nullable{long}"/> for the provided key if it exists,
         /// otherwise null if it does not.
         /// </summary>
         public virtual long? Get(string key)

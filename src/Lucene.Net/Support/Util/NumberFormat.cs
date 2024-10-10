@@ -97,7 +97,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// When overridden in a subclass, provides the numeric format as a <see cref="string"/>.
-        /// Generally, this is the same format that is passed into the <see cref="M:string.Format(IFormatProvider, string, object)"/>
+        /// Generally, this is the same format that is passed into the <see cref="string.Format(IFormatProvider, string, object)"/>
         /// method.
         /// </summary>
         /// <returns>A numeric format string.</returns>

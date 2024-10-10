@@ -121,7 +121,12 @@ jobs:
       - name: Setup .NET 6 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.101'
+          dotnet-version: '6.0.x'
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
 
       - name: Build docs
         run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}

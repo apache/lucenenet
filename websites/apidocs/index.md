@@ -3,16 +3,16 @@ title: Lucene.Net Docs - The documentation website for Lucene.NET
 description: The documentation website for Lucene.NET
 ---
 
-Apache Lucene.Net <EnvVar:LuceneNetVersion> Documentation
+Apache Lucene.Net EnvVar:LuceneNetVersion Documentation
 ===============
 
 ---------------
 
-Lucene.NET is a _.NET full-text search engine_. Lucene.NET is not a complete application, 
+Lucene.NET is a _.NET full-text search engine_. Lucene.NET is not a complete application,
 but rather a code library and API that can easily be used to add search capabilities
 to applications.
 
-This is the official API documentation for __Apache Lucene.NET <EnvVar:LuceneNetVersion>__.
+This is the official API documentation for __Apache Lucene.NET EnvVar:LuceneNetVersion__.
 
 ## Getting Started
 
@@ -29,8 +29,8 @@ on some of the conceptual or inner details of Lucene:
 
 ## Reference Documents
 
-- [Changes](https://github.com/apache/lucenenet/releases/tag/[EnvVar:LuceneNetReleaseTag]): List of changes in this release.
 <!-- - System Requirements: Minimum and supported .NET versions. LUCENENT TODO: Add link -->
+- [Changes](https://github.com/apache/lucenenet/releases/tag/EnvVar:LuceneNetReleaseTag): List of changes in this release.
 - [Migration Guide](xref:Lucene.Net.Migration.Guide): What changed in Lucene 4; how to migrate code from Lucene 3.x.
 - [Source Stepping](xref:source-stepping): How to use the Visual Studio debugger to step into Lucene.NET source code.
 - [File Formats](xref:Lucene.Net.Codecs.Lucene46): Guide to the supported index format used by Lucene. This can be customized by using [an alternate codec](xref:Lucene.Net.Codecs).
@@ -39,6 +39,9 @@ on some of the conceptual or inner details of Lucene:
 - [Classic QueryParser Syntax](xref:Lucene.Net.QueryParsers.Classic): Overview of the Classic QueryParser's syntax and features.
 
 ## Libraries
+
+<!-- NOTE: The namespace collisions in test-framework require it to be linked without
+    a xref style link. This also is why test-framework's xrefmap is not in docfx.site.json. -->
 
 - <xref:Lucene.Net> - Core library
 - <xref:Lucene.Net.Analysis.Common> - Analyzers for indexing content in different languages and domains
@@ -65,7 +68,7 @@ on some of the conceptual or inner details of Lucene:
 - <xref:Lucene.Net.Sandbox> - Various third party contributions and new ideas
 - [Lucene.Net.Spatial](xref:Lucene.Net.Spatial) - Geospatial search
 - <xref:Lucene.Net.Suggest> - Auto-suggest and Spell-checking support
-- <xref:Lucene.Net.TestFramework> - Framework for testing Lucene-based applications
+- [Lucene.Net.TestFramework](api/test-framework/overview.html) - Framework for testing Lucene-based applications
 
 ### Tools
 
