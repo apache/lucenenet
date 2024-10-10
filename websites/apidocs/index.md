@@ -3,16 +3,16 @@ title: Lucene.Net Docs - The documentation website for Lucene.NET
 description: The documentation website for Lucene.NET
 ---
 
-Apache Lucene.Net <EnvVar:LuceneNetVersion> Documentation
+Apache Lucene.Net EnvVar:LuceneNetVersion Documentation
 ===============
 
 ---------------
 
-Lucene.NET is a _.NET full-text search engine_. Lucene.NET is not a complete application, 
+Lucene.NET is a _.NET full-text search engine_. Lucene.NET is not a complete application,
 but rather a code library and API that can easily be used to add search capabilities
 to applications.
 
-This is the official API documentation for __Apache Lucene.NET <EnvVar:LuceneNetVersion>__.
+This is the official API documentation for __Apache Lucene.NET EnvVar:LuceneNetVersion__.
 
 ## Getting Started
 
