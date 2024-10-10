@@ -52,6 +52,9 @@ a:focus {
 a:hover {
   text-decoration: underline;
 }
+.expand-stub + a {
+  font-weight: normal;
+}
 nav.navbar {
   background-color: white;
   min-height: 80px;
