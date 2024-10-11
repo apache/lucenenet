@@ -46,7 +46,8 @@ When a `<PackageReference>` is included for this NuGet package in your SDK-style
 
 The `<MavenReference>` item group operates similar to a dependency in Maven. All transitive dependencies are collected and resolved, and then the final output is produced. However, unlike `PackageReference`s, `MavenReference`s are collected by the final output project, and reassessed. That is, each dependent Project within your .NET SDK-style solution contributes its `MavenReference`s to project(s) which include it, and each project makes its own dependency graph. Projects do not contribute their final built assemblies up. They only contribute their dependencies. Allowing each project in a complicated solution to make its own local conflict resolution attempt.
 
-> **NOTE** `<MavenReference>` is only supported on SDK-style MSBuild projects.
+> [!NOTE]
+> `<MavenReference>` is only supported on SDK-style MSBuild projects.
 
 ## MavenReference Example
 
