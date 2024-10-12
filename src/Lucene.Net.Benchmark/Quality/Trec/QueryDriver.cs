@@ -31,9 +31,26 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
 
     /// <summary>
     /// Command-line tool for doing a TREC evaluation run.
+    /// <para>
+    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
+    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+    /// with a command that maps to that method: benchmark run-trec-eval.
+    /// </para>
     /// </summary>
     public static class QueryDriver // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
+
+        /// <summary>
+        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
+        /// it was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with a command that maps to this method: benchmark run-trec-eval.
+        /// </summary>
+        /// <param name="args">Must contain 4 or 5 values</param>
+        /// <exception cref="ArgumentException"></exception>
         public static void Main(string[] args)
         {
             if (args.Length < 4 || args.Length > 5)

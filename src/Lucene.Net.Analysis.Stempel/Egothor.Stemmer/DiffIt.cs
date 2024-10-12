@@ -65,6 +65,13 @@ using JCG = J2N.Collections.Generic;
 namespace Egothor.Stemmer
 {
     /// <summary>
+    /// <para>
+    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
+    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+    /// with a command that maps to that method: analysis stempel-patch-stems. 
+    /// </para>
     /// The DiffIt class is a means generate patch commands from an already prepared
     /// stemmer table.
     /// </summary>
@@ -82,6 +89,13 @@ namespace Egothor.Stemmer
         }
 
         /// <summary>
+        /// <para>
+        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
+        /// it was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with a command that maps to this method: analysis stempel-patch-stems. 
+        /// </para>
         /// Entry point to the DiffIt application.
         /// <para>
         /// This application takes one argument, the path to a file containing a

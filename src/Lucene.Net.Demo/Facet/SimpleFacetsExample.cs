@@ -233,7 +233,17 @@ namespace Lucene.Net.Demo.Facet
             return DrillSideways();
         }
 
-        /// <summary>Runs the search and drill-down examples and prints the results.</summary>
+        /// <summary>
+        /// Runs the search and drill-down examples and prints the results.
+        /// <para>
+        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
+        /// it was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with a command that maps to this method: demo simple-facets. 
+        /// </para>
+        /// </summary>
+        /// <param name="args">Unused</param>
         public static void Main(string[] args)
         {
             Console.WriteLine("Facet counting example:");
