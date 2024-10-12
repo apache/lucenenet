@@ -63,6 +63,7 @@ $TocPath2 = Join-Path -Path $ApiDocsFolder -ChildPath "toc\toc.yml"
 $BreadcrumbPath = Join-Path -Path $ApiDocsFolder -ChildPath "docfx.global.subsite.json"
 
 # install docfx tool
+Write-Host "Restoring docfx tool..."
 $PreviousLocation = Get-Location
 Set-Location $RepoRoot
 dotnet tool restore
