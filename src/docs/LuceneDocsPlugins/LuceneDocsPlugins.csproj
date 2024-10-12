@@ -20,13 +20,13 @@ under the License.
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyTitle>LuceneDocsPlugins</AssemblyTitle>
     <Product>LuceneDocsPlugins</Product>
   </PropertyGroup>
-  
+
   <PropertyGroup>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Version Info">
@@ -39,32 +39,16 @@ under the License.
   <PropertyGroup Label="Assembly Publishing">
     <IsPublishable>true</IsPublishable>
   </PropertyGroup>
-  
+
   <PropertyGroup Label="Assembly Signing">
     <!-- Ensure this doesn't inherit the strong naming since this tool will no work with a signed assembly due to it's references -->
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <Compile Remove="packages\**" />
-    <EmbeddedResource Remove="packages\**" />
-    <None Remove="packages\**" />
-  </ItemGroup>
 
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Composition" Version="1.0.31" />
-    <PackageReference Include="Microsoft.DocAsCode.Dfm" Version="2.58.0" />
-    <PackageReference Include="YamlDotNet" Version="6.0.0" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Web" />
+    <PackageReference Include="Docfx.Plugins" Version="2.77.0" />
+    <PackageReference Include="Docfx.Common" Version="2.77.0" />
+    <PackageReference Include="System.Composition" Version="8.0.0" />
   </ItemGroup>
 
 </Project>

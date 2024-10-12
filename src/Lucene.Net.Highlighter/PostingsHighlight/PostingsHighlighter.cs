@@ -245,7 +245,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="searcher">searcher that was previously used to execute the query.</param>
         /// <param name="topDocs">TopDocs containing the summary result documents to highlight.</param>
         /// <returns>
-        /// <see cref="T:IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets
+        /// <see cref="T:IDictionary{string,string[]}"/> keyed on field name, containing the array of formatted snippets
         /// corresponding to the documents in <paramref name="topDocs"/>.
         /// If no highlights were found for a document, the
         /// first sentence from the field will be returned.
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="topDocs">TopDocs containing the summary result documents to highlight.</param>
         /// <param name="maxPassages">The maximum number of top-N ranked passages per-field used to form the highlighted snippets.</param>
         /// <returns>
-        /// <see cref="T:IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets
+        /// <see cref="T:IDictionary{string,string[]}"/> keyed on field name, containing the array of formatted snippets
         /// corresponding to the documents in <paramref name="topDocs"/>.
         /// If no highlights were found for a document, the
         /// first <paramref name="maxPassages"/> sentences from the
@@ -308,7 +308,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="docidsIn">containing the document IDs to highlight.</param>
         /// <param name="maxPassagesIn">The maximum number of top-N ranked passages per-field used to form the highlighted snippets.</param>
         /// <returns>
-        /// <see cref="F:IDictionary{string, string[]}"/> keyed on field name, containing the array of formatted snippets
+        /// <see cref="T:IDictionary{string,string[]}"/> keyed on field name, containing the array of formatted snippets
         /// corresponding to the documents in <paramref name="docidsIn"/>.
         /// If no highlights were found for a document, the
         /// first <c>maxPassages</c> from the field will
@@ -375,7 +375,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="docidsIn">containing the document IDs to highlight.</param>
         /// <param name="maxPassagesIn">The maximum number of top-N ranked passages per-field used to form the highlighted snippets.</param>
         /// <returns>
-        /// <see cref="T:IDictionary{string, object[]}"/> keyed on field name, containing the array of formatted snippets
+        /// <see cref="T:IDictionary{string,object[]}"/> keyed on field name, containing the array of formatted snippets
         /// corresponding to the documents in <paramref name="docidsIn"/>.
         /// If no highlights were found for a document, the
         /// first <paramref name="maxPassagesIn"/> from the field will

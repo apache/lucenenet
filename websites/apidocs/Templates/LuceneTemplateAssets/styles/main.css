@@ -41,15 +41,19 @@
 }
 button,
 a {
-  color: #1764aa;
-  /* #0095eb */
+  color: #0098ff;
 }
 button:hover,
 button:focus,
 a:hover,
 a:focus {
-  color: #143653;
-  text-decoration: none;
+  color: #0098ff;
+}
+a:hover {
+  text-decoration: underline;
+}
+.expand-stub + a {
+  font-weight: normal;
 }
 nav.navbar {
   background-color: white;

@@ -1,67 +1,63 @@
-﻿using System;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using Docfx.Common;
+using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace LuceneDocsPlugins
+namespace LuceneDocsPlugins;
+
+public partial class EnvironmentVariableUtil
 {
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+    [GeneratedRegex(@"EnvVar\:(\w+)", RegexOptions.Compiled)]
+    private static partial Regex EnvVarRegex();
 
-    public class EnvironmentVariableUtil
+    public static string ReplaceEnvironmentVariables(string sourceText)
     {
-        public const string EnvVarRegexString = @"[\<\[]EnvVar\:(\w+?)[\>\]]";
-        public static readonly Regex EnvVarRegex = new Regex("^" + EnvVarRegexString, RegexOptions.Compiled);
-        public static readonly Regex EnvVarRegexInline = new Regex(EnvVarRegexString, RegexOptions.Compiled | RegexOptions.Multiline);
+        var matches = EnvVarRegex().Matches(sourceText);
 
-
-        public static string ReplaceEnvironmentVariables(string sourceText, Match match)
-            => ReplaceEnvironmentVariables(sourceText, match, reuse: null);
-
-        public static string ReplaceEnvironmentVariables(string sourceText, Match match, StringBuilder reuse)
+        if (matches.Count > 0)
         {
-            if (match.Success)
+            var sb = new StringBuilder(sourceText.Length);
+
+            int lastMatchEnd = 0;
+
+            foreach (Match match in matches)
             {
-                if (reuse is null)
-                    reuse = new StringBuilder();
-                else
-                    reuse.Clear();
+                var envVar = match.Groups[1].Value;
 
-                int lastMatchEnd = 0;
+                // Append the prefix that didn't match the regex (or text since last match)
+                sb.Append(sourceText.AsSpan(lastMatchEnd, match.Index - lastMatchEnd));
 
-                do
-                {
-                    var envVar = match.Groups[1].Value;
+                // Do the replacement of the regex match
+                string envVarValue = Environment.GetEnvironmentVariable(envVar);
+                sb.Append(envVarValue);
 
-                    // Append the prefix that didn't match the regex (or text since last match)
-                    reuse.Append(sourceText.Substring(lastMatchEnd, match.Index - lastMatchEnd));
-
-                    // Do the replacement of the regex match
-                    reuse.Append(Environment.GetEnvironmentVariable(envVar));
-
-                    lastMatchEnd = match.Index + match.Length;
-
-                } while ((match = match.NextMatch()).Success);
-
-                // Append the suffix that didn't match the regex
-                reuse.Append(sourceText.Substring(lastMatchEnd));
-
-                return reuse.ToString();
+                Logger.LogInfo($"Replaced environment variable '{envVar}' with value '{envVarValue}' on match {match.Value}");
+                lastMatchEnd = match.Index + match.Length;
             }
-            return sourceText;
+
+            // Append the suffix that didn't match the regex
+            sb.Append(sourceText.AsSpan(lastMatchEnd));
+
+            return sb.ToString();
         }
+
+        return sourceText;
     }
 }

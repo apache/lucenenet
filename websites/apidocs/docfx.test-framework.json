@@ -14,8 +14,9 @@
         }
       ],
       "dest": "obj/docfx/api/test-framework",
+      "filter": "filterConfig.yml",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],
@@ -32,6 +33,9 @@
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/test-framework"
       },
       {
@@ -41,8 +45,8 @@
         ],
         "src": "toc"
       }
-    ],   
-    "overwrite": [     
+    ],
+    "overwrite": [
       {
         "files": [
           "apiSpec/test-framework/**/*.md"
@@ -59,7 +63,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "AggregatePostProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

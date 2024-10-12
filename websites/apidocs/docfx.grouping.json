@@ -15,25 +15,28 @@
       ],
       "dest": "obj/docfx/api/grouping",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],
   "build": {
-    "content": [  
+    "content": [
       {
         "files": [
           "package.md"
         ],
         "src": "../../src/Lucene.Net.Grouping"
-      },    
+      },
       {
         "files": [
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/grouping"
-      },   
+      },
       {
         "files": [
           "toc.yml",
@@ -41,8 +44,8 @@
         ],
         "src": "toc"
       }
-    ],    
-    "overwrite": [     
+    ],
+    "overwrite": [
       {
         "files": [
           "**/package.md",
@@ -52,7 +55,7 @@
         "exclude": [
           "package.md"
         ]
-      },  
+      },
       {
         "files": [
           "apiSpec/grouping/**/*.md"
@@ -72,7 +75,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "AggregatePostProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

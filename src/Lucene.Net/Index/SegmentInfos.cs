@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
     ///   <item><description>SegCodec is the <see cref="Codec.Name"/> of the <see cref="Codec"/> that encoded
     ///       this segment.</description></item>
     ///   <item><description>CommitUserData stores an optional user-supplied opaque
-    ///       <see cref="T:IDictionary{string, string}"/> that was passed to
+    ///       <see cref="T:IDictionary{string,string}"/> that was passed to
     ///       <see cref="IndexWriter.SetCommitData(IDictionary{string, string})"/>.</description></item>
     ///   <item><description>FieldInfosGen is the generation count of the fieldInfos file. If this is -1,
     ///       there are no updates to the fieldInfos in that segment. Anything above zero

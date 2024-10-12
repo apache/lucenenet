@@ -15,19 +15,22 @@
       ],
       "dest": "obj/docfx/api/analysis-stempel",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],
   "build": {
-    "content": [      
+    "content": [
       {
         "files": [
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/analysis-stempel"
-      },   
+      },
       {
         "files": [
           "toc.yml",
@@ -35,7 +38,7 @@
         ],
         "src": "toc"
       }
-    ],    
+    ],
     "overwrite": [
       {
         "files": [
@@ -46,7 +49,7 @@
         "exclude": [
           "package.md"
         ]
-      }, 
+      },
       {
         "files": [
           "apiSpec/analysis-stempel/**/*.md"
@@ -66,7 +69,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "AggregatePostProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

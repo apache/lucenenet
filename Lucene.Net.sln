@@ -7,9 +7,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -281,6 +281,10 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "websites", "websites\", "{8
 		VWDPort = "59352"
 		SlnRelativePath = "websites\"
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{42599646-275F-4970-BC60-A3349F6498CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuceneDocsPlugins", "src\docs\LuceneDocsPlugins\LuceneDocsPlugins.csproj", "{FED4A824-1F32-4948-8D37-2B7610804DB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -554,6 +558,10 @@ Global
 		{9880B87D-8D14-476B-B093-9C3AA0DA8B24}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8988CDA4-8420-4BEE-869A-66825055EED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8988CDA4-8420-4BEE-869A-66825055EED2}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED4A824-1F32-4948-8D37-2B7610804DB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED4A824-1F32-4948-8D37-2B7610804DB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED4A824-1F32-4948-8D37-2B7610804DB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED4A824-1F32-4948-8D37-2B7610804DB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -574,6 +582,7 @@ Global
 		{5CD4D4E8-6132-4384-98FC-6AB1C97E0B80} = {8CA61D33-3590-4024-A304-7B1F75B50653}
 		{E5E8C5DC-7048-4818-B884-FB2D037D2EF2} = {8CA61D33-3590-4024-A304-7B1F75B50653}
 		{4D0ED7D9-ABEE-4890-B06C-477E3A32B9A0} = {E5E8C5DC-7048-4818-B884-FB2D037D2EF2}
+		{FED4A824-1F32-4948-8D37-2B7610804DB5} = {42599646-275F-4970-BC60-A3349F6498CC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9F2179CC-CFD2-4419-AB74-D72856931F36}

@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Similarities
     ///     </item>
     /// </list>
     /// <para/>
-    /// 
+    ///
     ///
     /// Where <i>V(q)</i> &#183; <i>V(d)</i> is the
     /// <a href="http://en.wikipedia.org/wiki/Dot_product">dot product</a>
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search.Similarities
     ///
     /// <para/>Under the simplifying assumption of a single field in the index,
     /// we get <i>Lucene's Conceptual scoring formula</i>:
-    /// 
+    ///
     /// <para/>
     /// <list type="table">
     ///     <item>
@@ -280,198 +280,198 @@ namespace Lucene.Net.Search.Similarities
     ///
     /// <para/> where
     /// <list type="number">
-    ///    <item><description>
-    ///      <a name="formula_tf"></a>
-    ///      <b><i>tf(t in d)</i></b>
-    ///      correlates to the term's <i>frequency</i>,
-    ///      defined as the number of times term <i>t</i> appears in the currently scored document <i>d</i>.
-    ///      Documents that have more occurrences of a given term receive a higher score.
-    ///      Note that <i>tf(t in q)</i> is assumed to be <i>1</i> and therefore it does not appear in this equation,
-    ///      However if a query contains twice the same term, there will be
-    ///      two term-queries with that same term and hence the computation would still be correct (although
-    ///      not very efficient).
-    ///      The default computation for <i>tf(t in d)</i> in
-    ///      DefaultSimilarity (<see cref="Lucene.Net.Search.Similarities.DefaultSimilarity.Tf(float)"/>) is:
+    /// <item><description>
+    /// <a name="formula_tf"></a>
+    /// <b><i>tf(t in d)</i></b>
+    /// correlates to the term's <i>frequency</i>,
+    /// defined as the number of times term <i>t</i> appears in the currently scored document <i>d</i>.
+    /// Documents that have more occurrences of a given term receive a higher score.
+    /// Note that <i>tf(t in q)</i> is assumed to be <i>1</i> and therefore it does not appear in this equation,
+    /// However if a query contains twice the same term, there will be
+    /// two term-queries with that same term and hence the computation would still be correct (although
+    /// not very efficient).
+    /// The default computation for <i>tf(t in d)</i> in
+    /// DefaultSimilarity (<see cref="Lucene.Net.Search.Similarities.DefaultSimilarity.Tf(float)"/>) is:
     ///
-    ///         <para/>
-    ///         <list type="table">
-    ///             <item>
-    ///                 <term>
-    ///                     tf(t in d) &#160; = &#160;
-    ///                 </term>
-    ///                 <term>
-    ///                     frequency<sup><big>&#189;</big></sup>
-    ///                 </term>
-    ///             </item>
-    ///         </list>
-    ///         <para/>
-    ///         
-    ///    </description></item>
+    /// <para/>
+    /// <list type="table">
+    ///     <item>
+    ///         <term>
+    ///             tf(t in d) &#160; = &#160;
+    ///         </term>
+    ///         <term>
+    ///             frequency<sup><big>&#189;</big></sup>
+    ///         </term>
+    ///     </item>
+    /// </list>
+    /// <para/>
     ///
-    ///    <item><description>
-    ///      <a name="formula_idf"></a>
-    ///      <b><i>idf(t)</i></b> stands for Inverse Document Frequency. this value
-    ///      correlates to the inverse of <i>DocFreq</i>
-    ///      (the number of documents in which the term <i>t</i> appears).
-    ///      this means rarer terms give higher contribution to the total score.
-    ///      <i>idf(t)</i> appears for <i>t</i> in both the query and the document,
-    ///      hence it is squared in the equation.
-    ///      The default computation for <i>idf(t)</i> in
-    ///      DefaultSimilarity (<see cref="Lucene.Net.Search.Similarities.DefaultSimilarity.Idf(long, long)"/>) is:
+    /// </description></item>
     ///
-    ///         <para/>
-    ///         <list type="table">
-    ///             <item>
-    ///                 <term>idf(t) &#160; = &#160;</term>
-    ///                 <term>1 + log <big>(</big></term>
-    ///                 <term>
-    ///                     <list type="table">
-    ///                         <item><term><small>NumDocs</small></term></item>
-    ///                         <item><term>&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;</term></item>
-    ///                         <item><term><small>DocFreq+1</small></term></item>
-    ///                     </list>
-    ///                 </term>
-    ///                 <term><big>)</big></term>
-    ///             </item>
-    ///         </list>
-    ///         <para/>
-    /// 
-    ///    </description></item>
+    /// <item><description>
+    /// <a name="formula_idf"></a>
+    /// <b><i>idf(t)</i></b> stands for Inverse Document Frequency. this value
+    /// correlates to the inverse of <i>DocFreq</i>
+    /// (the number of documents in which the term <i>t</i> appears).
+    /// this means rarer terms give higher contribution to the total score.
+    /// <i>idf(t)</i> appears for <i>t</i> in both the query and the document,
+    /// hence it is squared in the equation.
+    /// The default computation for <i>idf(t)</i> in
+    /// DefaultSimilarity (<see cref="Lucene.Net.Search.Similarities.DefaultSimilarity.Idf(long, long)"/>) is:
     ///
-    ///    <item><description>
-    ///      <a name="formula_coord"></a>
-    ///      <b><i>coord(q,d)</i></b>
-    ///      is a score factor based on how many of the query terms are found in the specified document.
-    ///      Typically, a document that contains more of the query's terms will receive a higher score
-    ///      than another document with fewer query terms.
-    ///      this is a search time factor computed in
-    ///      coord(q,d) (<see cref="Coord(int, int)"/>)
-    ///      by the Similarity in effect at search time.
-    ///      <para/>
-    ///    </description></item>
+    /// <para/>
+    /// <list type="table">
+    ///     <item>
+    ///         <term>idf(t) &#160; = &#160;</term>
+    ///         <term>1 + log <big>(</big></term>
+    ///         <term>
+    ///             <list type="table">
+    ///                 <item><term><small>NumDocs</small></term></item>
+    ///                 <item><term>&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;</term></item>
+    ///                 <item><term><small>DocFreq+1</small></term></item>
+    ///             </list>
+    ///         </term>
+    ///         <term><big>)</big></term>
+    ///     </item>
+    /// </list>
+    /// <para/>
     ///
-    ///    <item><description><b>
-    ///      <a name="formula_queryNorm"></a>
-    ///      <i>queryNorm(q)</i>
-    ///      </b>
-    ///      is a normalizing factor used to make scores between queries comparable.
-    ///      this factor does not affect document ranking (since all ranked documents are multiplied by the same factor),
-    ///      but rather just attempts to make scores from different queries (or even different indexes) comparable.
-    ///      this is a search time factor computed by the Similarity in effect at search time.
+    /// </description></item>
     ///
-    ///      The default computation in
-    ///      DefaultSimilarity (<see cref="Lucene.Net.Search.Similarities.DefaultSimilarity.QueryNorm(float)"/>)
-    ///      produces a <a href="http://en.wikipedia.org/wiki/Euclidean_norm#Euclidean_norm">Euclidean norm</a>:
-    ///      
-    ///      <para/>
-    ///      <list type="table">
-    ///         <item>
-    ///             <term>
-    ///                 queryNorm(q)  &#160; = &#160;
-    ///                 queryNorm(sumOfSquaredWeights)
-    ///                 &#160; = &#160;
-    ///             </term>
-    ///             <term>
-    ///                 <list type="table">
-    ///                     <item><term><big>1</big></term></item>
-    ///                     <item><term><big>&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;</big></term></item>
-    ///                     <item><term>sumOfSquaredWeights<sup><big>&#189;</big></sup></term></item>
-    ///                 </list>
-    ///             </term>
-    ///         </item>
-    ///      </list>
-    ///      <para/>
+    /// <item><description>
+    ///   <a name="formula_coord"></a>
+    ///   <b><i>coord(q,d)</i></b>
+    ///   is a score factor based on how many of the query terms are found in the specified document.
+    ///   Typically, a document that contains more of the query's terms will receive a higher score
+    ///   than another document with fewer query terms.
+    ///   this is a search time factor computed in
+    ///   coord(q,d) (<see cref="Coord(int, int)"/>)
+    ///   by the Similarity in effect at search time.
+    ///   <para/>
+    /// </description></item>
     ///
-    ///      The sum of squared weights (of the query terms) is
-    ///      computed by the query <see cref="Lucene.Net.Search.Weight"/> object.
-    ///      For example, a <see cref="Lucene.Net.Search.BooleanQuery"/>
-    ///      computes this value as:
-    ///      
-    ///      <para/>
-    ///      <list type="table">
-    ///         <item>
-    ///             <term>
-    ///                 sumOfSquaredWeights &#160; = &#160;
-    ///                 q.Boost <sup><big>2</big></sup>
-    ///                 &#160;&#183;&#160;
-    ///             </term> 
-    ///             <term><big><big><big>&#8721;</big></big></big></term>
-    ///             <term>
-    ///                 <big><big>(</big></big>
-    ///                 <a href="#formula_idf">idf(t)</a> &#160;&#183;&#160;
-    ///                 <a href="#formula_termBoost">t.Boost</a>
-    ///                 <big><big>) <sup>2</sup> </big></big>
-    ///             </term>
-    ///         </item>
-    ///         <item>
-    ///             <term></term>
-    ///             <term><small>t in q</small></term>
-    ///             <term></term>
-    ///         </item>
-    ///      </list>
-    ///      where sumOfSquaredWeights is <see cref="Weight.GetValueForNormalization()"/> and
-    ///      q.Boost is <see cref="Query.Boost"/>
-    ///      <para/>
-    ///    </description></item>
+    /// <item><description><b>
+    /// <a name="formula_queryNorm"></a>
+    /// <i>queryNorm(q)</i>
+    /// </b>
+    /// is a normalizing factor used to make scores between queries comparable.
+    /// this factor does not affect document ranking (since all ranked documents are multiplied by the same factor),
+    /// but rather just attempts to make scores from different queries (or even different indexes) comparable.
+    /// this is a search time factor computed by the Similarity in effect at search time.
     ///
-    ///    <item><description>
-    ///      <a name="formula_termBoost"></a>
-    ///      <b><i>t.Boost</i></b>
-    ///      is a search time boost of term <i>t</i> in the query <i>q</i> as
-    ///      specified in the query text
-    ///      (see <a href="{@docRoot}/../queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Boosting_a_Term">query syntax</a>),
-    ///      or as set by application calls to
-    ///      <see cref="Lucene.Net.Search.Query.Boost"/>.
-    ///      Notice that there is really no direct API for accessing a boost of one term in a multi term query,
-    ///      but rather multi terms are represented in a query as multi
-    ///      <see cref="Lucene.Net.Search.TermQuery"/> objects,
-    ///      and so the boost of a term in the query is accessible by calling the sub-query
-    ///      <see cref="Lucene.Net.Search.Query.Boost"/>.
-    ///      <para/>
-    ///    </description></item>
+    /// The default computation in
+    /// DefaultSimilarity (<see cref="Lucene.Net.Search.Similarities.DefaultSimilarity.QueryNorm(float)"/>)
+    /// produces a <a href="http://en.wikipedia.org/wiki/Euclidean_norm#Euclidean_norm">Euclidean norm</a>:
     ///
-    ///    <item><description>
-    ///      <a name="formula_norm"></a>
-    ///      <b><i>norm(t,d)</i></b> encapsulates a few (indexing time) boost and length factors:
+    /// <para/>
+    /// <list type="table">
+    ///    <item>
+    ///        <term>
+    ///            queryNorm(q)  &#160; = &#160;
+    ///            queryNorm(sumOfSquaredWeights)
+    ///            &#160; = &#160;
+    ///        </term>
+    ///        <term>
+    ///            <list type="table">
+    ///                <item><term><big>1</big></term></item>
+    ///                <item><term><big>&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;&#8211;</big></term></item>
+    ///                <item><term>sumOfSquaredWeights<sup><big>&#189;</big></sup></term></item>
+    ///            </list>
+    ///        </term>
+    ///    </item>
+    /// </list>
+    /// <para/>
     ///
-    ///      <list type="bullet">
-    ///        <item><description><b>Field boost</b> - set
-    ///        <see cref="Documents.Field.Boost"/>
-    ///        before adding the field to a document.
-    ///        </description></item>
-    ///        <item><description><b>lengthNorm</b> - computed
-    ///        when the document is added to the index in accordance with the number of tokens
-    ///        of this field in the document, so that shorter fields contribute more to the score.
-    ///        LengthNorm is computed by the <see cref="Similarity"/> class in effect at indexing.
-    ///        </description></item>
-    ///      </list>
-    ///      The <see cref="ComputeNorm(FieldInvertState)"/> method is responsible for
-    ///      combining all of these factors into a single <see cref="float"/>.
+    /// The sum of squared weights (of the query terms) is
+    /// computed by the query <see cref="Lucene.Net.Search.Weight"/> object.
+    /// For example, a <see cref="Lucene.Net.Search.BooleanQuery"/>
+    /// computes this value as:
     ///
-    ///      <para/>
-    ///      When a document is added to the index, all the above factors are multiplied.
-    ///      If the document has multiple fields with the same name, all their boosts are multiplied together:
-    ///      
-    ///      <para/>
-    ///      <list type="table">
-    ///         <item>
-    ///             <term>
-    ///                 norm(t,d) &#160; = &#160;
-    ///                 lengthNorm
-    ///                 &#160;&#183;&#160;
-    ///             </term>
-    ///             <term><big><big><big>&#8719;</big></big></big></term>
-    ///             <term><see cref="Index.IIndexableField.Boost"/></term>
-    ///         </item>
-    ///         <item>
-    ///             <term></term>
-    ///             <term><small>field <i><b>f</b></i> in <i>d</i> named as <i><b>t</b></i></small></term>
-    ///             <term></term>
-    ///         </item>
-    ///      </list>
-    ///      Note that search time is too late to modify this <i>norm</i> part of scoring,
-    ///      e.g. by using a different <see cref="Similarity"/> for search.
-    ///    </description></item>
+    /// <para/>
+    /// <list type="table">
+    ///    <item>
+    ///        <term>
+    ///            sumOfSquaredWeights &#160; = &#160;
+    ///            q.Boost <sup><big>2</big></sup>
+    ///            &#160;&#183;&#160;
+    ///        </term>
+    ///        <term><big><big><big>&#8721;</big></big></big></term>
+    ///        <term>
+    ///            <big><big>(</big></big>
+    ///            <a href="#formula_idf">idf(t)</a> &#160;&#183;&#160;
+    ///            <a href="#formula_termBoost">t.Boost</a>
+    ///            <big><big>) <sup>2</sup> </big></big>
+    ///        </term>
+    ///    </item>
+    ///    <item>
+    ///        <term></term>
+    ///        <term><small>t in q</small></term>
+    ///        <term></term>
+    ///    </item>
+    /// </list>
+    /// where sumOfSquaredWeights is <see cref="Weight.GetValueForNormalization()"/> and
+    /// q.Boost is <see cref="Query.Boost"/>
+    /// <para/>
+    /// </description></item>
+    ///
+    /// <item><description>
+    ///   <a name="formula_termBoost"></a>
+    ///   <b><i>t.Boost</i></b>
+    ///   is a search time boost of term <i>t</i> in the query <i>q</i> as
+    ///   specified in the query text
+    ///   (see <a href="{@docRoot}/../queryparser/org/apache/lucene/queryparser/classic/package-summary.html#Boosting_a_Term">query syntax</a>),
+    ///   or as set by application calls to
+    ///   <see cref="Lucene.Net.Search.Query.Boost"/>.
+    ///   Notice that there is really no direct API for accessing a boost of one term in a multi term query,
+    ///   but rather multi terms are represented in a query as multi
+    ///   <see cref="Lucene.Net.Search.TermQuery"/> objects,
+    ///   and so the boost of a term in the query is accessible by calling the sub-query
+    ///   <see cref="Lucene.Net.Search.Query.Boost"/>.
+    ///   <para/>
+    /// </description></item>
+    ///
+    /// <item><description>
+    ///   <a name="formula_norm"></a>
+    ///   <b><i>norm(t,d)</i></b> encapsulates a few (indexing time) boost and length factors:
+    ///
+    ///   <list type="bullet">
+    ///     <item><description><b>Field boost</b> - set
+    ///     <see cref="Documents.Field.Boost"/>
+    ///     before adding the field to a document.
+    ///     </description></item>
+    ///     <item><description><b>lengthNorm</b> - computed
+    ///     when the document is added to the index in accordance with the number of tokens
+    ///     of this field in the document, so that shorter fields contribute more to the score.
+    ///     LengthNorm is computed by the <see cref="Similarity"/> class in effect at indexing.
+    ///     </description></item>
+    ///   </list>
+    ///   The <see cref="ComputeNorm(FieldInvertState)"/> method is responsible for
+    ///   combining all of these factors into a single <see cref="float"/>.
+    ///
+    ///   <para/>
+    ///   When a document is added to the index, all the above factors are multiplied.
+    ///   If the document has multiple fields with the same name, all their boosts are multiplied together:
+    ///
+    ///   <para/>
+    ///   <list type="table">
+    ///      <item>
+    ///          <term>
+    ///              norm(t,d) &#160; = &#160;
+    ///              lengthNorm
+    ///              &#160;&#183;&#160;
+    ///          </term>
+    ///          <term><big><big><big>&#8719;</big></big></big></term>
+    ///          <term><see cref="Index.IIndexableField.Boost"/></term>
+    ///      </item>
+    ///      <item>
+    ///          <term></term>
+    ///          <term><small>field <i><b>f</b></i> in <i>d</i> named as <i><b>t</b></i></small></term>
+    ///          <term></term>
+    ///      </item>
+    ///   </list>
+    ///   Note that search time is too late to modify this <i>norm</i> part of scoring,
+    ///   e.g. by using a different <see cref="Similarity"/> for search.
+    /// </description></item>
     /// </list>
     /// </summary>
     /// <seealso cref="Lucene.Net.Index.IndexWriterConfig.Similarity"/>

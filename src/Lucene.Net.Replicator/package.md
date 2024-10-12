@@ -25,7 +25,7 @@ application should publish an [IndexAndTaxonomyRevision](xref:Lucene.Net.Replica
 When the replication client detects that there is a newer revision available, it copies the files of the revision and
 then invokes the handler to complete the operation (e.g. copy the files to the index directory, sync them, reopen an
 index reader etc.). By default, only files that do not exist in the handler's
-[current revision files](xref:Lucene.Net.Replicator.IReplicationHandler.html#Lucene_Net_Replicator_IReplicationHandler_CurrentRevisionFiles) are copied,
+[current revision files](xref:Lucene.Net.Replicator.IReplicationHandler#Lucene_Net_Replicator_IReplicationHandler_CurrentRevisionFiles) are copied,
 however this can be overridden by extending the client.
 
 <!-- Old Code Sample - not sure whether this is useful
@@ -83,16 +83,16 @@ public class AspNetCoreReplicationRequest : IReplicationRequest
     private readonly HttpRequest request;
 
     // Inject the actual request object in the constructor.
-    public AspNetCoreReplicationRequest(HttpRequest request) 
+    public AspNetCoreReplicationRequest(HttpRequest request)
         => this.request = request;
 
     // Provide the full path relative to the host.
     // In the common case in AspNetCore this should just return the full path, so PathBase + Path are concatenated and returned.
-    // 
+    //
     // The path expected by the ReplicatorService is {context}/{shard}/{action} where:
     //  - action may be Obtain, Release or Update
     //  - context is the same context that is provided to the ReplicatorService constructor and defaults to '/replicate'
-    public string Path 
+    public string Path
         => request.PathBase + request.Path;
 
     // Return values for parameters used by the ReplicatorService
@@ -103,7 +103,7 @@ public class AspNetCoreReplicationRequest : IReplicationRequest
     // - filename: The file name
     //
     // In this implementation a exception is thrown in the case that parameters are provided multiple times.
-    public string QueryParam(string name) 
+    public string QueryParam(string name)
         => request.Query[name].SingleOrDefault();
 }
 ```
@@ -118,7 +118,7 @@ This is also very straight forward.
 public class AspNetCoreReplicationResponse : IReplicationResponse
 {
     private readonly HttpResponse response;
-    
+
     // Inject the actual response object in the constructor.
     public AspNetCoreReplicationResponse(HttpResponse response)
         => this.response = response;
@@ -174,7 +174,7 @@ IndexWriter writer = new IndexWriter(FSDirectory.Open("..."), config);
 For the absolute minimal solution we can wire the <xref:Lucene.Net.Replicator.Http.ReplicationService> up on the server side as:
 
 ```cs
-LocalReplicator replicator = new LocalReplicator(); 
+LocalReplicator replicator = new LocalReplicator();
 ReplicatorService service = new ReplicationService(new Dictionary<string, IReplicator>{
     ["shard_name"] = replicator
 }, "/api/replicate");
@@ -182,7 +182,7 @@ ReplicatorService service = new ReplicationService(new Dictionary<string, IRepli
 app.Map("/api/replicate", builder => {
     builder.Run(async context => {
         await Task.Yield();
-        service.Perform(context.Request, context.Response); 
+        service.Perform(context.Request, context.Response);
     });
 });
 ```
@@ -200,10 +200,10 @@ On the client side create a new <xref:Lucene.Net.Replicator.Http.HttpReplicator>
 ```cs
 IReplicator replicator = new HttpReplicator("http://{host}:{port}/api/replicate/shard_name");
 ReplicationClient client = new ReplicationClient(
-    replicator, 
+    replicator,
     new IndexReplicationHandler(
-        FSDirectory.Open(...directory...), 
-        () => ...onUpdate...), 
+        FSDirectory.Open(...directory...),
+        () => ...onUpdate...),
         new PerSessionDirectoryFactory(...temp-working-directory...));
 
 //Now either start the Update Thread or do manual pulls periodically.

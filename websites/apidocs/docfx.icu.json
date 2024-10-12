@@ -15,7 +15,7 @@
       ],
       "dest": "obj/docfx/api/icu",
       "properties": {
-        "TargetFramework": "netstandard2.0"
+        "TargetFramework": "net6.0"
       }
     }
   ],
@@ -32,8 +32,11 @@
           "**.yml",
           "**.md"
         ],
+        "exclude": [
+          "toc.yml"
+        ],
         "src": "obj/docfx/api/icu"
-      },   
+      },
       {
         "files": [
           "toc.yml",
@@ -41,7 +44,7 @@
         ],
         "src": "toc"
       }
-    ],    
+    ],
     "overwrite": [
       {
         "files": [
@@ -52,7 +55,7 @@
         "exclude": [
           "package.md"
         ]
-      },     
+      },
       {
         "files": [
           "apiSpec/icu/**/*.md"
@@ -60,7 +63,8 @@
       }
     ],
     "xref": [
-      "_site/api/core/xrefmap.yml"
+      "_site/api/core/xrefmap.yml",
+      "_site/api/analysis-common/xrefmap.yml"
     ],
     "dest": "_site/api/icu",
     "globalMetadataFiles": [
@@ -72,7 +76,9 @@
       "Templates/LuceneTemplate",
       "Templates/LuceneApiDocs"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "AggregatePostProcessor"
+    ],
     "markdownEngineName": "dfm",
     "noLangKeyword": false,
     "keepFileLink": false,

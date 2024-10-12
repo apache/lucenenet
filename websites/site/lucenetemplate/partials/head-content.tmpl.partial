@@ -9,7 +9,7 @@
   <meta name="generator" content="docfx {{_docfxVersion}}">
   {{#_description}}<meta name="description" content="{{_description}}">{{/_description}}
   <link rel="shortcut icon" href="{{_rel}}{{{_appFaviconPath}}}{{^_appFaviconPath}}favicon.ico{{/_appFaviconPath}}">
-  <link rel="stylesheet" href="{{_rel}}styles/docfx.vendor.css">
+  <link rel="stylesheet" href="{{_rel}}styles/docfx.vendor.min.css">
   <link rel="stylesheet" href="{{_rel}}styles/docfx.css">
   <link rel="stylesheet" href="{{_rel}}styles/main.css">
   <meta property="docfx:navrel" content="{{_navRel}}">
@@ -17,10 +17,10 @@
   {{#_noindex}}<meta name="searchOption" content="noindex">{{/_noindex}}
   {{#_enableSearch}}<meta property="docfx:rel" content="{{_rel}}">{{/_enableSearch}}
   {{#_enableNewTab}}<meta property="docfx:newtab" content="true">{{/_enableNewTab}}
-  
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.0/css/academicons.min.css" integrity="sha512-GGGNUPDhnG8LEAEDsjqYIQns+Gu8RBs4j5XGlxl7UfRaZBhCCm5jenJkeJL8uPuOXGqgl8/H1gjlWQDRjd3cUQ==" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
-  
+
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather%7CRoboto+Mono">
   <link rel="stylesheet" href="/styles/site.css">
 
