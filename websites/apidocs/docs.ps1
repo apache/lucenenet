@@ -109,9 +109,11 @@ $DocFxJsonContent._luceneNetRel = $BaseUrl + "/"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
 
 # NOTE: The order of these depends on if one of the projects requries the xref map of another, normally all require the core xref map
+# Some might also be duplicated; this is intentional - do not remove duplicates!
+# This is because of circular dependencies between projects' xref maps.
 $DocFxJsonMeta = @(
-    "docfx.core.json",
     "docfx.codecs.json",
+    "docfx.core.json",
     "docfx.analysis-common.json",
     "docfx.analysis-kuromoji.json",
     "docfx.analysis-morfologik.json",
@@ -124,8 +126,8 @@ $DocFxJsonMeta = @(
     "docfx.expressions.json",
     "docfx.facet.json",
     "docfx.grouping.json",
-    "docfx.highlighter.json",
     "docfx.icu.json",
+    "docfx.highlighter.json",
     "docfx.join.json",
     "docfx.memory.json",
     "docfx.misc.json",
@@ -136,7 +138,10 @@ $DocFxJsonMeta = @(
     "docfx.spatial.json",
     "docfx.suggest.json",
     "docfx.test-framework.json",
-    "docfx.demo.json"
+    "docfx.demo.json",
+    # intentional duplicates
+    "docfx.codecs.json",
+    "docfx.core.json"
 )
 $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
 

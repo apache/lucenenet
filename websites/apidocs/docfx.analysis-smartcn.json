@@ -57,7 +57,8 @@
       }
     ],
     "xref": [
-      "_site/api/core/xrefmap.yml"
+      "_site/api/core/xrefmap.yml",
+      "_site/api/analysis-common/xrefmap.yml"
     ],
     "dest": "_site/api/analysis-smartcn",
     "globalMetadataFiles": [

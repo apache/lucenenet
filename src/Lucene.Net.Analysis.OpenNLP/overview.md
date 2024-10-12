@@ -27,7 +27,7 @@ This module exposes functionality from Apache OpenNLP to Apache Lucene.NET. The 
 
 For an introduction to Lucene's analysis API, see the [Lucene.Net.Analysis](../core/Lucene.Net.Analysis.html) namespace documentation.
 
-The OpenNLP Tokenizer behavior is similar to the <xref:Lucene.Net.Analysis.Core.WhiteSpaceTokenizer> but is smart about inter-word punctuation. The term stream looks very much like the way you parse words and punctuation while reading. The major difference between this tokenizer and most other tokenizers shipped with Lucene is that punctuation is tokenized. This is required for the following taggers to operate properly.
+The OpenNLP Tokenizer behavior is similar to the <xref:Lucene.Net.Analysis.Core.WhitespaceTokenizer> but is smart about inter-word punctuation. The term stream looks very much like the way you parse words and punctuation while reading. The major difference between this tokenizer and most other tokenizers shipped with Lucene is that punctuation is tokenized. This is required for the following taggers to operate properly.
 
 The OpenNLP taggers annotate terms using the <xref:Lucene.Net.Analysis.TokenAttributes.ITypeAttribute>.
 

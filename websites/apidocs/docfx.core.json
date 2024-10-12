@@ -71,6 +71,7 @@
     ],
     "xref": [
       "_site/api/codecs/xrefmap.yml",
+      "_site/api/analysis-common/xrefmap.yml",
       "https://learn.microsoft.com/en-us/dotnet/.xrefmap.json"
     ],
     "dest": "_site/api/core",
