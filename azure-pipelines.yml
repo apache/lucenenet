@@ -456,7 +456,7 @@ stages:
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-latest'
+          imageName: 'ubuntu-22.04' # NOTE: ubuntu-24.04 currently breaks the .NET 5 build
           maximumParallelJobs: 7
           maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
         macOS:
