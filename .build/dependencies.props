@@ -40,7 +40,7 @@
     <ICU4NTransliteratorPackageVersion>$(ICU4NPackageVersion)</ICU4NTransliteratorPackageVersion>
     <IKVMPackageVersion>8.7.5</IKVMPackageVersion>
     <IKVMMavenSdkPackageVersion>1.6.7</IKVMMavenSdkPackageVersion>
-    <J2NPackageVersion>2.0.0</J2NPackageVersion>
+    <J2NPackageVersion>2.1.0-alpha-0103</J2NPackageVersion>
     <LiquidTestReportsMarkdownPackageVersion>1.0.9</LiquidTestReportsMarkdownPackageVersion>
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.0.0</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>5.0.0</MicrosoftAspNetCoreTestHostPackageVersion>
