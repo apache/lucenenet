@@ -54,7 +54,7 @@
     <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>6.0.0</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
     <MicrosoftExtensionsDependencyInjectionPackageVersion>$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)</MicrosoftExtensionsDependencyInjectionPackageVersion>
     <MicrosoftExtensionsOptionsPackageVersion>6.0.0</MicrosoftExtensionsOptionsPackageVersion>
-    <MicrosoftNETFrameworkReferenceAssembliesPackageReferenceVersion>1.0.2</MicrosoftNETFrameworkReferenceAssembliesPackageReferenceVersion>
+    <MicrosoftNETFrameworkReferenceAssembliesPackageReferenceVersion>1.0.3</MicrosoftNETFrameworkReferenceAssembliesPackageReferenceVersion>
     <MicrosoftNETTestSdkPackageVersion>17.9.0</MicrosoftNETTestSdkPackageVersion>
     <MicrosoftSourceLinkAzureReposGitPackageReferenceVersion>1.1.1</MicrosoftSourceLinkAzureReposGitPackageReferenceVersion>
     <MicrosoftSourceLinkGitHubPackageReferenceVersion>$(MicrosoftSourceLinkAzureReposGitPackageReferenceVersion)</MicrosoftSourceLinkGitHubPackageReferenceVersion>
