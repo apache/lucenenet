@@ -2,6 +2,7 @@
 using ICU4N;
 using ICU4N.Globalization;
 using ICU4N.Text;
+using System;
 
 namespace Lucene.Net.Analysis.Icu.Segmentation
 {
@@ -93,7 +94,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
             while (index < limit)
             {
-                int ch = UTF16.CharAt(text, start, limit, index - start);
+                int ch = UTF16.CharAt(text.AsSpan(start, limit), index - start);
                 int sc = GetScript(ch);
 
                 /*

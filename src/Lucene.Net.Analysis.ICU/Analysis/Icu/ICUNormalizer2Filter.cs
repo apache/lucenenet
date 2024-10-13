@@ -1,7 +1,9 @@
 ﻿// Lucene version compatibility level 7.1.0
 using ICU4N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
+using System;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Icu
@@ -60,7 +62,7 @@ namespace Lucene.Net.Analysis.Icu
     {
         private readonly ICharTermAttribute termAtt;
         private readonly Normalizer2 normalizer;
-        private readonly StringBuilder buffer = new StringBuilder();
+        private readonly OpenStringBuilder buffer = new OpenStringBuilder(); // LUCENENET specific - Using OpenStringBuilder because StringBuilder cannot be directly converted to ReadOnlySpan<char>
 
         /// <summary>
         /// Create a new <see cref="ICUNormalizer2Filter"/> that combines NFKC normalization, Case
@@ -88,10 +90,10 @@ namespace Lucene.Net.Analysis.Icu
         {
             if (m_input.IncrementToken())
             {
-                if (normalizer.QuickCheck(termAtt) != QuickCheckResult.Yes)
+                if (normalizer.QuickCheck(termAtt.Buffer.AsSpan(0, termAtt.Length)) != QuickCheckResult.Yes)
                 {
                     buffer.Length = 0;
-                    normalizer.Normalize(termAtt, buffer);
+                    normalizer.Normalize(termAtt.Buffer.AsSpan(0, termAtt.Length), buffer);
                     termAtt.SetEmpty().Append(buffer);
                 }
                 return true;

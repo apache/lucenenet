@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level < 7.1.0
 using J2N;
+using J2N.Text;
 using ICU4N.Text;
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.Util;
@@ -37,7 +38,7 @@ namespace Lucene.Net.Analysis.Icu
     public sealed class ICUNormalizer2CharFilter : BaseCharFilter
     {
         private readonly Normalizer2 normalizer;
-        private readonly StringBuilder inputBuffer = new StringBuilder();
+        private readonly OpenStringBuilder inputBuffer = new OpenStringBuilder(); // LUCENENET specific - Using OpenStringBuilder because StringBuilder cannot be directly converted to ReadOnlySpan<char>
         private readonly StringBuilder resultBuffer = new StringBuilder();
 
         private bool inputFinished;
@@ -162,10 +163,10 @@ namespace Lucene.Net.Analysis.Icu
 
         private int ReadFromInputWhileSpanQuickCheckYes()
         {
-            int end = normalizer.SpanQuickCheckYes(inputBuffer);
+            int end = normalizer.SpanQuickCheckYes(inputBuffer.Array.AsSpan(0, inputBuffer.Length));
             if (end > 0)
             {
-                resultBuffer.Append(inputBuffer.ToString(0, end));
+                resultBuffer.Append(inputBuffer.Array.AsSpan(0, end));
                 inputBuffer.Remove(0, end);
                 checkedInputBoundary = Math.Max(checkedInputBoundary - end, 0);
                 charCount += end;
@@ -212,7 +213,7 @@ namespace Lucene.Net.Analysis.Icu
         private int NormalizeInputUpto(int length)
         {
             int destOrigLen = resultBuffer.Length;
-            normalizer.NormalizeSecondAndAppend(resultBuffer, inputBuffer.ToString(0, length));
+            normalizer.NormalizeSecondAndAppend(resultBuffer, inputBuffer.Array.AsSpan(0, length));
 
             inputBuffer.Remove(0, length);
             checkedInputBoundary = Math.Max(checkedInputBoundary - length, 0);
