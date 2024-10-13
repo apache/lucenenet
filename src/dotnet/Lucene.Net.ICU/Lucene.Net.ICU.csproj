@@ -72,6 +72,8 @@
 
   <ItemGroup>
     <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
+    <!-- This is a transitive dependency of ICU4N.Resources. We need a direct reference to ensure the version matches other dependencies.-->
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup>
