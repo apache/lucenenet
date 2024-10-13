@@ -2,6 +2,7 @@
 using ICU4N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Analysis.Icu
 {
@@ -128,7 +129,7 @@ namespace Lucene.Net.Analysis.Icu
                 this.length = token.Length;
             }
 
-            public int Char32At(int pos) => UTF16.CharAt(buffer, 0, length, pos);
+            public int Char32At(int pos) => UTF16.CharAt(buffer.AsSpan(0, length), pos);
 
             public char this[int pos] => buffer[pos];
 
@@ -137,6 +138,11 @@ namespace Lucene.Net.Analysis.Icu
                 char[] text = new char[length]; // LUCENENET: Corrected length
                 CopyTo(startIndex, text, 0, length); // LUCENENET: Corrected length
                 Replace(destinationIndex, destinationIndex - destinationIndex, text, 0, length); // LUCENENET: Corrected length & charsLen
+            }
+
+            public void CopyTo(int sourceIndex, Span<char> destination, int count)
+            {
+                buffer.AsSpan(sourceIndex, count).CopyTo(destination);
             }
 
             public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count)
@@ -154,6 +160,15 @@ namespace Lucene.Net.Analysis.Icu
                 int newLength = ShiftForReplace(start, length + start, charsLen); // LUCENENET: Changed 2nd parameter to calculate limit
                 // insert the replacement text
                 text.CopyTo(0, buffer, start, charsLen);
+                token.Length = (this.length = newLength);
+            }
+
+            public void Replace(int start, int length, ReadOnlySpan<char> text) // LUCENENET: Changed 2nd parameter from limit to length
+            {
+                int charsLen = text.Length;
+                int newLength = ShiftForReplace(start, length + start, charsLen); // LUCENENET: Changed 2nd parameter to calculate limit
+                // insert the replacement text
+                text.CopyTo(buffer.AsSpan(start, charsLen));
                 token.Length = (this.length = newLength);
             }
 
