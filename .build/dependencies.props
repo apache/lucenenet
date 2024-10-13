@@ -33,8 +33,7 @@
         Just make sure they are adjusted to the right version of ICU/Lucene.
     <ICU4NPackageVersion>[60.1,60.2)</ICU4NPackageVersion> -->
     <ICU4NPackageVersion>60.1.0-alpha.430</ICU4NPackageVersion>
-    <IKVMPackageVersion>8.7.5</IKVMPackageVersion>
-    <IKVMMavenSdkPackageVersion>1.6.7</IKVMMavenSdkPackageVersion>
+    <IKVMMavenSdkPackageVersion>1.8.2</IKVMMavenSdkPackageVersion>
     <J2NPackageVersion>2.1.0-alpha-0103</J2NPackageVersion>
     <LiquidTestReportsMarkdownPackageVersion>1.0.9</LiquidTestReportsMarkdownPackageVersion>
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.0.0</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
