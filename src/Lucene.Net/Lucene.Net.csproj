@@ -64,6 +64,11 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <PackageReference Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimeInformationPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup>
