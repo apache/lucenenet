@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -30,7 +30,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
     {
         /// <summary>
         /// Copies the contents of buffer, starting at offset for
-        /// length characters, into the termBuffer array. </summary>
+        /// length characters, into the termBuffer array.
+        /// </summary>
         /// <param name="buffer"> the buffer to copy </param>
         /// <param name="offset"> the index in the buffer of the first character to copy </param>
         /// <param name="length"> the number of characters to copy </param>
