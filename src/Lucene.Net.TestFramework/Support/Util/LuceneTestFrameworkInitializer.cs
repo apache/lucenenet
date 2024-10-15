@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
     /// <b>Example:</b>
     /// <code>
     /// using RandomizedTesting.Generators;
-    /// 
+    ///
     /// public class Startup : LuceneTestFrameworkInitializer
     /// {
     ///     // Run first
@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
     ///     {
     ///         // Inject a custom configuration factory
     ///         ConfigurationFactory = new MyConfigurationFactory();
-    /// 
+    ///
     ///         // Do any additional dependency injection setup here
     ///     }
     ///
@@ -301,7 +301,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// Repeatable random setup can be done by calling <see cref="Random"/> or by using methods of <see cref="LuceneTestCase"/>.
         /// <para/>
-        /// It is not possible to set <see cref="CodecFactory"/>, <see cref="PostingsFormatFactory"/>, 
+        /// It is not possible to set <see cref="CodecFactory"/>, <see cref="PostingsFormatFactory"/>,
         /// <see cref="DocValuesFormatFactory"/> and <see cref="ConfigurationFactory"/>
         /// from this method. Those must be called in <see cref="Initialize()"/>.
         /// </summary>
@@ -334,6 +334,10 @@ namespace Lucene.Net.Util
         /// </summary>
         internal void InitializeStaticState()
         {
+            // Enable console output
+            SystemConsole.Out = Console.Out;
+            SystemConsole.Error = Console.Error;
+
             // Setup the factories
             ConfigurationSettings.SetConfigurationFactory(ConfigurationFactory);
             Codec.SetCodecFactory(CodecFactory);

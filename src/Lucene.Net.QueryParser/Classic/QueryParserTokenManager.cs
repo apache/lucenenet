@@ -1,4 +1,4 @@
-using Lucene.Net.Support.IO;
+﻿using Lucene.Net.Support.IO;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Classic
     {
         /// <summary>Debug output. </summary>
 #pragma warning disable IDE0052 // Remove unread private members
-        private TextWriter debugStream; // LUCENENET specific - made private, since we already have a setter
+        private TextWriter debugStream = Console.Out; // LUCENENET specific - made private, since we already have a setter
 #pragma warning restore IDE0052 // Remove unread private members
         /// <summary>Set debug output. </summary>
         public virtual void SetDebugStream(TextWriter ds)
@@ -1162,7 +1162,7 @@ namespace Lucene.Net.QueryParsers.Classic
             m_input_stream = stream;
         }
 
-        /// <summary>Constructor. 
+        /// <summary>Constructor.
         /// <para>Note that this constructor calls a virtual method <see cref="SwitchTo(int)" />. If you
         /// are subclassing this class, use <see cref="QueryParserTokenManager(ICharStream)" /> constructor and
         /// call SwitchTo if needed.</para>

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Configuration;
+using Lucene.Net.Util;
 using Microsoft.Extensions.Configuration;
 using System;
 
@@ -24,8 +25,12 @@ namespace Lucene.Net.Cli
     {
         public static int Main(string[] args)
         {
+            // Enable console output
+            SystemConsole.Out = Console.Out;
+            SystemConsole.Error = Console.Error;
+
             var configuration = new ConfigurationBuilder()
-                .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings 
+                .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings
                 .AddJsonFile("appsettings.json", optional: true)
                 .Build();
             ConfigurationSettings.SetConfigurationFactory(new ConfigurationFactory(configuration));

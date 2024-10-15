@@ -1,4 +1,4 @@
-using Lucene.Net.Support.IO;
+﻿using Lucene.Net.Support.IO;
 using System.Diagnostics.CodeAnalysis;
 using System;
 using System.IO;
@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     {
         /// <summary>Debug output.</summary>
 #pragma warning disable IDE0052 // Remove unread private members
-        private TextWriter debugStream; // LUCENENET specific - made private, since we already have a setter
+        private TextWriter debugStream = Console.Out; // LUCENENET specific - made private, since we already have a setter
 #pragma warning restore IDE0052 // Remove unread private members
         /// <summary>Set debug output.</summary>
         public void SetDebugStream(TextWriter ds) { debugStream = new SafeTextWriterWrapper(ds); }
@@ -869,7 +869,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             Token matchedToken;
             int curPos = 0;
 
-            
+
             for (;;)
             {
                 try
