@@ -204,15 +204,14 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
             }
 
             $logPath = "$outDirectory/$framework"
-            $outputPath = "$logPath"
 
             # Do this first so there is no conflict
-            Ensure-Directory-Exists $outputPath
+            Ensure-Directory-Exists $logPath
 
             Write-Host "Configuration: $configuration"
 
-            $expression = "dotnet publish `"$solutionFile`" --configuration `"$configuration`" --framework `"$framework`" --output `"$outputPath`""
-            $expression = "$expression --no-build --no-restore --verbosity Normal /p:TestFrameworks=true /p:Platform=`"$platform`""
+            $expression = "dotnet publish `"$solutionFile`" --configuration `"$configuration`" --framework `"$framework`""
+            $expression = "$expression --no-build --no-restore --verbosity Normal /p:TestFrameworks=true /p:Platform=`"$platform`" /p:AlternatePublishRootDirectory=`"$outDirectory`""
             $expression = "$expression > `"$logPath/dotnet-publish.log`" 2> `"$logPath/dotnet-publish-error.log`""
 
             $scriptBlock = {
