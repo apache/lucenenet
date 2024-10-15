@@ -44,8 +44,6 @@ properties {
     [string]$platform   = $(if ($platform) { $platform } else { if ($env:BuildPlatform) { $env:BuildPlatform } else { "Any CPU" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
     [bool]$backupFiles       = $true
     [bool]$prepareForBuild    = $true
-    [bool]$zipPublishedArtifacts = $false
-    [string]$publishedArtifactZipFileName = "artifact.zip"
 
     [int]$maximumParallelJobs = 8
 
@@ -195,12 +193,7 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 
     try {
         $frameworksToTest = Get-FrameworksToTest
-
-        if ($zipPublishedArtifacts) {
-            $outDirectory = New-TemporaryDirectory
-        } else {
-            $outDirectory = $publishDirectory
-        }
+        $outDirectory = $publishDirectory
 
         foreach ($framework in $frameworksToTest) {
 
@@ -245,12 +238,6 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 
         # Getting the information back from the jobs (time consuming)
         #Get-Job | Receive-Job
-
-        if ($zipPublishedArtifacts) {
-            Ensure-Directory-Exists $publishDirectory
-            Add-Type -assembly "System.IO.Compression.Filesystem"
-            [System.IO.Compression.ZipFile]::CreateFromDirectory($outDirectory, "$publishDirectory/$publishedArtifactZipFileName")
-        }
 
         $success = $true
     } finally {
