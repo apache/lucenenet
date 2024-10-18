@@ -1,4 +1,4 @@
-# Licensed to the Apache Software Foundation (ASF) under one
+﻿# Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -26,8 +26,33 @@ parameters:
   framework: '' # The target framework
   binaryArtifactName: '' # The prefix of the binary artifact to publish $(BinaryArtifactName)
   testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/lucene.testsettings.json' #The name of the lucene test settings file
+  solution: '$(Build.SourcesDirectory)/Lucene.Net.sln'
+  configration: '$(BuildConfiguration)' # The build configuration
+  platform: '$(BuildPlatform)' # The build platform
 
 steps:
+- pwsh: |
+    $solution = "${{ parameters.solution }}"
+    $configuration = "${{ parameters.configration }}"
+    $framework = "${{ parameters.framework }}"
+    $publishDirectory = "${{ parameters.publishDirectory }}"
+    Write-Host "solution: $solution"
+    Write-Host "configuration: $configuration"
+    Write-Host "framework: $framework"
+    Write-Host "publishDirectory: $publishDirectory"
+    &dotnet publish "${{ parameters.solution }}" --configuration "${{ parameters.configration }}" --framework: "${{ parameters.framework }}" --no-build --no-restore --verbosity normal /p:TestFrameworks=true /p:Platform="${{ parameters.platform }}" /p:AlternatePublishRootDirectory="${{ parameters.publishDirectory }}"
+  displayName: 'Publish Projects for ${{ parameters.framework }}'
+  condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+
+#- task: DotNetCoreCLI@2
+#  displayName: 'Publish Projects for ${{ parameters.framework }}'
+#  inputs:
+#    command: custom
+#    projects: '**/*.sln'
+#    custom: publish
+#    arguments: '--configuration "${{ parameters.configuration }}" --framework: "${{ parameters.framework }}" --no-build --no-restore --verbosity normal /p:TestFrameworks=true /p:Platform="${{ parameters.platform }}" /p:AlternatePublishRootDirectory="${{ parameters.publishDirectory }}"'
+#  condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+
 - pwsh: |
     Copy-Item -Path "${{ parameters.testSettingsFilePath }}" -Destination "${{ parameters.publishDirectory }}/${{ parameters.framework }}/" -Force
   displayName: 'Copy lucene.testsettings.json File to: ${{ parameters.publishDirectory }}/${{ parameters.framework }}'
@@ -39,4 +64,9 @@ steps:
     targetPath: '${{ parameters.publishDirectory }}/${{ parameters.framework }}'
     artifact: '${{ parameters.binaryArtifactName }}_${{ parameters.framework }}'
     publishLocation: 'pipeline'
+  condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+
+- pwsh: |
+    Remove-Item -Path "${{ parameters.publishDirectory }}/${{ parameters.framework }}/*" -Recurse -Force
+  displayName: 'Delete temp publish location: ${{ parameters.publishDirectory }}/${{ parameters.framework }}'
   condition: and(succeeded(), ne(variables['RunTests'], 'false'))
