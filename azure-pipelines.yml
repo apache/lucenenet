@@ -132,16 +132,12 @@ stages:
         $parameters = @{}
         $properties = @{
             backupFiles='false';
-            publishDirectory='$(PublishTempDirectory)';
             nugetPackageDirectory='$(NuGetArtifactDirectory)'
         }
         [string[]]$tasks = @($primaryCommand)
-        if ($env:RunTests -ne 'false') {
-            [string[]]$tasks = $primaryCommand,'Publish'
-        }
         Invoke-Psake $(BuildDirectory)/runbuild.ps1 -Task $tasks -properties $properties -parameters $parameters
         exit !($psake.build_success)
-      displayName: 'PSake Build, Pack, and Publish'
+      displayName: 'PSake Build and Pack'
 
     #- template: '.build/azure-templates/show-all-environment-variables.yml' # Uncomment for debugging
 
@@ -235,6 +231,8 @@ stages:
         framework: 'net8.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
@@ -242,6 +240,8 @@ stages:
         framework: 'net6.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
@@ -249,6 +249,8 @@ stages:
         framework: 'net5.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
@@ -256,6 +258,8 @@ stages:
         framework: 'net472'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
@@ -263,6 +267,8 @@ stages:
         framework: 'net48'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
   - job: Docs
     condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))
