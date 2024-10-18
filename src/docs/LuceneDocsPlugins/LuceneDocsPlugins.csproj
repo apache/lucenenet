@@ -38,6 +38,7 @@ under the License.
 
   <PropertyGroup Label="Assembly Publishing">
     <IsPublishable>true</IsPublishable>
+    <IsPublishable Condition="'$(TargetFramework)' != 'net8.0'">false</IsPublishable>
   </PropertyGroup>
 
   <PropertyGroup Label="Assembly Signing">
