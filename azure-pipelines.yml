@@ -210,6 +210,14 @@ stages:
       condition: and(succeeded(), ne(variables['ArtifactFeedID'], ''))
 
     - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: $(DebugArtifactName)'
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
+        artifact: '$(DebugArtifactName)'
+        publishLocation: 'pipeline'
+      condition: and(succeeded(), ne(variables['ArtifactFeedID'], ''))
+
+    - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(NuGetArtifactName)'
       inputs:
         targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
@@ -217,13 +225,10 @@ stages:
         publishLocation: 'pipeline'
       condition: and(succeeded(), ne(variables['RunPack'], 'false'))
 
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: $(DebugArtifactName)'
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
-        artifact: '$(DebugArtifactName)'
-        publishLocation: 'pipeline'
-      condition: and(succeeded(), ne(variables['ArtifactFeedID'], ''))
+    - pwsh: |
+        Remove-Item -Path "$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)/*" -Recurse -Force
+      displayName: 'Delete temp publish location: $(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+      condition: and(succeeded(), ne(variables['RunPack'], 'false'))
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
