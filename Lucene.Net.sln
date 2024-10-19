@@ -119,6 +119,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net", "src\Lucene.Net\Lucene.Net.csproj", "{3A0AA37E-2B7B-4416-B528-DA4E0E6A6706}"
+	ProjectSection(ProjectDependencies) = postProject
+		{441876AF-F691-408C-85EC-6A934E60F627} = {441876AF-F691-408C-85EC-6A934E60F627}
+		{5CD4D4E8-6132-4384-98FC-6AB1C97E0B80} = {5CD4D4E8-6132-4384-98FC-6AB1C97E0B80}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Analysis.Common", "src\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj", "{3D0366A8-515D-44F0-835F-4118853CFA14}"
 EndProject
@@ -284,7 +288,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "websites", "websites\", "{8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{42599646-275F-4970-BC60-A3349F6498CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuceneDocsPlugins", "src\docs\LuceneDocsPlugins\LuceneDocsPlugins.csproj", "{FED4A824-1F32-4948-8D37-2B7610804DB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuceneDocsPlugins", "src\docs\LuceneDocsPlugins\LuceneDocsPlugins.csproj", "{FED4A824-1F32-4948-8D37-2B7610804DB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
