@@ -109,6 +109,8 @@ stages:
     - pwsh: |
         $configuration = if ($env:BUILDCONFIGURATION) { $env:BUILDCONFIGURATION } else { "Release" }
         Write-Host "##vso[task.setvariable variable=BuildConfiguration;]$configuration"
+        $platform = if ($env:BUILDPLATFORM) { $env:BUILDPLATFORM } else { "Any CPU" }
+        Write-Host "##vso[task.setvariable variable=BuildPlatform;]$platform"
         $isRelease = if ($env:ISRELEASE -eq 'true') { 'true' } else { 'false' }
         Write-Host "##vso[task.setvariable variable=IsRelease;]$isRelease"
         $isNightly = if ($env:ISNIGHTLY -eq 'true') { 'true' } else { 'false' }
