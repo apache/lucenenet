@@ -101,9 +101,6 @@ stages:
     pool:
       vmImage: 'windows-2019'
 
-    variables:
-      PublishTempDirectory: '$(Build.ArtifactStagingDirectory)/publish'
-
     steps:
 
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
@@ -220,19 +217,19 @@ stages:
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(NuGetArtifactName)'
       inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+        targetPath: '$(NuGetArtifactDirectory)'
         artifact: '$(NuGetArtifactName)'
         publishLocation: 'pipeline'
       condition: and(succeeded(), ne(variables['RunPack'], 'false'))
 
     - pwsh: |
-        Remove-Item -Path "$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)/*" -Recurse -Force
-      displayName: 'Delete temp publish location: $(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+        Remove-Item -Path "$(NuGetArtifactDirectory)/*" -Recurse -Force
+      displayName: 'Delete temp publish location: $(NuGetArtifactDirectory)'
       condition: and(succeeded(), ne(variables['RunPack'], 'false'))
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
-        publishDirectory: $(PublishTempDirectory)
+        publishDirectory: $(PublishDirectory)
         framework: 'net8.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
@@ -241,7 +238,7 @@ stages:
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
-        publishDirectory: $(PublishTempDirectory)
+        publishDirectory: $(PublishDirectory)
         framework: 'net6.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
@@ -250,7 +247,7 @@ stages:
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
-        publishDirectory: $(PublishTempDirectory)
+        publishDirectory: $(PublishDirectory)
         framework: 'net5.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
@@ -259,7 +256,7 @@ stages:
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
-        publishDirectory: $(PublishTempDirectory)
+        publishDirectory: $(PublishDirectory)
         framework: 'net472'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
@@ -268,7 +265,7 @@ stages:
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
-        publishDirectory: $(PublishTempDirectory)
+        publishDirectory: $(PublishDirectory)
         framework: 'net48'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
