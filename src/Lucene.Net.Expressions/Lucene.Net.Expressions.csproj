@@ -46,6 +46,11 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" Version="$(Antlr3RuntimePackageVersion)" />
+
+    <!-- These are transitive dependencies, but Antlr3.Runtime doesn't provide a secure alternative on netstandard2.0, so we need to include them. -->
+    <PackageReference Include="NETStandard.Library" Version="$(NETStandardLibrary10PackageVersion)" />
+    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpPackageVersion)" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="$(SystemTextRegularExpressionsPackageVersion)" />
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">

@@ -60,6 +60,7 @@
     <MorfologikFsaPackageVersion>2.1.7</MorfologikFsaPackageVersion>
     <MorfologikPolishPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikPolishPackageVersion>
     <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>
+    <NETStandardLibrary10PackageVersion>1.6.1</NETStandardLibrary10PackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
     <NewtonsoftJsonPackageVersion>13.0.1</NewtonsoftJsonPackageVersion>
     <NUnit3TestAdapterPackageVersion>4.5.0</NUnit3TestAdapterPackageVersion>
