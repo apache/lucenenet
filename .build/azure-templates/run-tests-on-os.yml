@@ -205,15 +205,6 @@ steps:
             if (!(Test-Path "$testResultDirectory")) {
                 New-Item "$testResultDirectory" -ItemType Directory -Force
             }
-            # Test binaries are copied to a temp directory so locking behavior of other processes doesn't interfere with this test run
-            $tempTestDirectory = "$tempDirectory/$framework/$testName"
-            if (!(Test-Path "$tempTestDirectory")) {
-                New-Item "$tempTestDirectory" -ItemType Directory -Force
-            }
-            $testTarget = "$tempTestDirectory/$($testBinary.Name)"
-            $sourceDirectory = $testBinary.Directory.FullName
-
-            Copy-Item -Path "$sourceDirectory/*" -Destination "$tempTestDirectory" -Recurse -Force
 
             if ($isNightly -ne 'true' -and $isWeekly -ne 'true') {
                 $blameHangTimeout = "--blame-hang-timeout 15minutes"
@@ -223,7 +214,7 @@ steps:
 
             Write-Host "Running with $blameHangTimeout"
 
-            $testExpression = "dotnet test ""$testTarget"" --framework ""$framework"" --blame --no-build --no-restore" + `
+            $testExpression = "dotnet test ""$($testBinary.FullName)"" --framework ""$framework"" --blame --no-build --no-restore" + `
                 " --logger:""console;verbosity=normal"" --logger:""trx;LogFileName=$testResultsFileName""" + `
                 " --results-directory:""$testResultDirectory""" + `
                 " --blame-hang --blame-hang-dump-type mini $blameHangTimeout"

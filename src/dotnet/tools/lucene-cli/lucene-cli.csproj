@@ -27,8 +27,8 @@
     <TargetFrameworks>net8.0;net6.0</TargetFrameworks>
     <RollForward Condition=" $(TargetFramework.StartsWith('net8.')) ">Major</RollForward>
 
-    <IsPublishable>true</IsPublishable>
-    <IsPublishable Condition="$(TargetFramework.StartsWith('net4'))">false</IsPublishable>
+    <IsPublishable>false</IsPublishable>
+    <IsPublishable Condition="'$(TargetFramework)' == 'net8.0' Or '$(TargetFramework)' == 'net6.0'">true</IsPublishable>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>lucene</ToolCommandName>
 

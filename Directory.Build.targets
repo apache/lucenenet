@@ -22,6 +22,10 @@
 
   <Import Project=".build/dependencies.props" Condition="Exists('.build/dependencies.props')" />
 
+  <PropertyGroup Label="Solution-level Publish to Project-specific Directory">
+    <PublishDir Condition="'$(AlternatePublishRootDirectory)' != ''">$(AlternatePublishRootDirectory)/$(TargetFramework)/$(MSBuildProjectName)/</PublishDir>
+  </PropertyGroup>
+
   <!-- Features in .NET 6.x, .NET 7.x, and .NET 8.x only -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) ">
 

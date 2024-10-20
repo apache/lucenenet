@@ -101,9 +101,6 @@ stages:
     pool:
       vmImage: 'windows-2019'
 
-    variables:
-      PublishTempDirectory: '$(Build.ArtifactStagingDirectory)/publish'
-
     steps:
 
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
@@ -112,6 +109,8 @@ stages:
     - pwsh: |
         $configuration = if ($env:BUILDCONFIGURATION) { $env:BUILDCONFIGURATION } else { "Release" }
         Write-Host "##vso[task.setvariable variable=BuildConfiguration;]$configuration"
+        $platform = if ($env:BUILDPLATFORM) { $env:BUILDPLATFORM } else { "Any CPU" }
+        Write-Host "##vso[task.setvariable variable=BuildPlatform;]$platform"
         $isRelease = if ($env:ISRELEASE -eq 'true') { 'true' } else { 'false' }
         Write-Host "##vso[task.setvariable variable=IsRelease;]$isRelease"
         $isNightly = if ($env:ISNIGHTLY -eq 'true') { 'true' } else { 'false' }
@@ -132,16 +131,12 @@ stages:
         $parameters = @{}
         $properties = @{
             backupFiles='false';
-            publishDirectory='$(PublishTempDirectory)';
             nugetPackageDirectory='$(NuGetArtifactDirectory)'
         }
         [string[]]$tasks = @($primaryCommand)
-        if ($env:RunTests -ne 'false') {
-            [string[]]$tasks = $primaryCommand,'Publish'
-        }
         Invoke-Psake $(BuildDirectory)/runbuild.ps1 -Task $tasks -properties $properties -parameters $parameters
         exit !($psake.build_success)
-      displayName: 'PSake Build, Pack, and Publish'
+      displayName: 'PSake Build and Pack'
 
     #- template: '.build/azure-templates/show-all-environment-variables.yml' # Uncomment for debugging
 
@@ -214,14 +209,6 @@ stages:
       condition: and(succeeded(), ne(variables['ArtifactFeedID'], ''))
 
     - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: $(NuGetArtifactName)'
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
-        artifact: '$(NuGetArtifactName)'
-        publishLocation: 'pipeline'
-      condition: and(succeeded(), ne(variables['RunPack'], 'false'))
-
-    - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(DebugArtifactName)'
       inputs:
         targetPath: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
@@ -229,40 +216,63 @@ stages:
         publishLocation: 'pipeline'
       condition: and(succeeded(), ne(variables['ArtifactFeedID'], ''))
 
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: $(NuGetArtifactName)'
+      inputs:
+        targetPath: '$(NuGetArtifactDirectory)'
+        artifact: '$(NuGetArtifactName)'
+        publishLocation: 'pipeline'
+      condition: and(succeeded(), ne(variables['RunPack'], 'false'))
+
+    - pwsh: |
+        Remove-Item -Path "$(NuGetArtifactDirectory)/*" -Recurse -Force
+      displayName: 'Delete temp publish location: $(NuGetArtifactDirectory)'
+      condition: and(succeeded(), ne(variables['RunPack'], 'false'))
+
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
-        publishDirectory: $(PublishTempDirectory)
+        publishDirectory: $(PublishDirectory)
         framework: 'net8.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
-        publishDirectory: $(PublishTempDirectory)
+        publishDirectory: $(PublishDirectory)
         framework: 'net6.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
-        publishDirectory: $(PublishTempDirectory)
+        publishDirectory: $(PublishDirectory)
         framework: 'net5.0'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
-        publishDirectory: $(PublishTempDirectory)
+        publishDirectory: $(PublishDirectory)
         framework: 'net472'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
-        publishDirectory: $(PublishTempDirectory)
+        publishDirectory: $(PublishDirectory)
         framework: 'net48'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+        configration: '$(BuildConfiguration)'
+        platform: '$(BuildPlatform)'
 
   - job: Docs
     condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))
