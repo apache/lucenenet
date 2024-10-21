@@ -471,13 +471,8 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
-#if FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION
-            private readonly IDictionary<SegmentCommitInfo, ReadersAndUpdates> readerMap = new Dictionary<SegmentCommitInfo, ReadersAndUpdates>();
-#else
-            // LUCENENET: We use ConcurrentDictionary<TKey, TValue> because Dictionary<TKey, TValue> doesn't support
-            // deletion while iterating, but ConcurrentDictionary does.
-            private readonly IDictionary<SegmentCommitInfo, ReadersAndUpdates> readerMap = new ConcurrentDictionary<SegmentCommitInfo, ReadersAndUpdates>();
-#endif
+            // LUCENENET specific - using concrete type for the readerMap field, since it will eliminate boxing to an interface on GetEnumerator() calls
+            private readonly JCG.Dictionary<SegmentCommitInfo, ReadersAndUpdates> readerMap = new JCG.Dictionary<SegmentCommitInfo, ReadersAndUpdates>();
 
             // used only by asserts
             public virtual bool InfoIsLive(SegmentCommitInfo info)

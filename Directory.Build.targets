@@ -46,7 +46,6 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_PROCESS_KILL_ENTIREPROCESSTREE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STRING_CONCAT_READONLYSPAN</DefineConstants>
 
