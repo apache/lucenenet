@@ -53,7 +53,7 @@
 
   <ItemGroup>
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
-    <PackageReference Include="ICU4N.Collation" Version="$(ICU4NCollationPackageVersion)" />
+    <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
     <PackageReference Include="SharpZipLib" Version="$(SharpZipLibPackageVersion)" />
     <PackageReference Include="Spatial4n" Version="$(Spatial4nPackageVersion)" />
   </ItemGroup>

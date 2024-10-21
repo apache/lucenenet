@@ -42,6 +42,9 @@
   
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="$(MicrosoftAspNetCoreHttpAbstractionsPackageVersion)" />
+
+    <!-- This is a transitive dependency of Microsoft.AspNetCore.Http.Abstractions, but the referenced version of System.Text.Encodings.Web has high severity vulnerabilities, so we are upgrading it. -->
+    <PackageReference Include="System.Text.Encodings.Web" Version="$(SystemTextEncodingsWebPackageVersion)" />
   </ItemGroup>
 
 </Project>

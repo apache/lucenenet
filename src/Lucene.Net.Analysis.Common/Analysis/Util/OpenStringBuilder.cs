@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Util
     /// <summary>
     /// A StringBuilder that allows one to access the array.
     /// </summary>
-    public class OpenStringBuilder : IAppendable, ICharSequence
+    public class OpenStringBuilder : IAppendable, ISpanAppendable, ICharSequence // LUCENENET specific - implemented ISpanAppendable to support ReadOnlySpan<char>
     {
         protected char[] m_buf;
         protected int m_len;
@@ -90,6 +90,13 @@ namespace Lucene.Net.Analysis.Util
         {
             EnsureCapacity(count);
             UnsafeWrite(csq, startIndex, count);
+            return this;
+        }
+
+        public virtual OpenStringBuilder Append(ReadOnlySpan<char> value) // LUCENENET specific - added to support ReadOnlySpan<char>
+        {
+            EnsureCapacity(value.Length);
+            UnsafeWrite(value);
             return this;
         }
 
@@ -190,6 +197,13 @@ namespace Lucene.Net.Analysis.Util
         public virtual void UnsafeWrite(int b)
         {
             UnsafeWrite((char)b);
+        }
+
+        public virtual void UnsafeWrite(ReadOnlySpan<char> b) // LUCENENET specific - added to support ReadOnlySpan<char>
+        {
+            int len = b.Length;
+            b.CopyTo(m_buf.AsSpan(this.m_len, len));
+            this.m_len += len;
         }
 
         public virtual void UnsafeWrite(char[] b, int off, int len)
@@ -319,6 +333,23 @@ namespace Lucene.Net.Analysis.Util
             return new string(m_buf, 0, Length);
         }
 
+        public virtual OpenStringBuilder Remove(int startIndex, int length) // LUCENENET specific - added missing remove method
+        {
+            if (m_len == length && startIndex == 0)
+            {
+                m_len = 0;
+                return this;
+            }
+
+            if (length > 0)
+            {
+                int endIndex = startIndex + length;
+                m_buf.AsSpan(endIndex).CopyTo(m_buf.AsSpan(startIndex));
+                m_len -= length;
+            }
+            return this;
+        }
+
         #region IAppendable Members
 
         IAppendable IAppendable.Append(char value)
@@ -365,6 +396,8 @@ namespace Lucene.Net.Analysis.Util
         {
             return Append(value, startIndex, count);
         }
+
+        ISpanAppendable ISpanAppendable.Append(ReadOnlySpan<char> value) => Append(value);
 
         #endregion IAppendable Members
     }

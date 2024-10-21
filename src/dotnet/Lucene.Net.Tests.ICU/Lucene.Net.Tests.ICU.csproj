@@ -77,19 +77,6 @@
 
   <ItemGroup>
     <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
-    <PackageReference Include="ICU4N.Collation" Version="$(ICU4NCollationPackageVersion)" />
-    <PackageReference Include="ICU4N.CurrencyData" Version="$(ICU4NCurrencyDataPackageVersion)" />
-    <PackageReference Include="ICU4N.LanguageData" Version="$(ICU4NLanguageDataPackageVersion)" />
-    <PackageReference Include="ICU4N.RegionData" Version="$(ICU4NRegionDataPackageVersion)" />
-    <PackageReference Include="ICU4N.Transliterator" Version="$(ICU4NTransliteratorPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsOptionsPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-    <PackageReference Include="Microsoft.Extensions.Options" Version="$(MicrosoftExtensionsOptionsPackageVersion)" />
   </ItemGroup>
 
 </Project>

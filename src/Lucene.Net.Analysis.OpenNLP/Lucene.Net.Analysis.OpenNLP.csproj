@@ -52,6 +52,10 @@
     <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
     <PackageReference Include="IKVM" Version="$(IKVMPackageVersion)" />
     <PackageReference Include="IKVM.Maven.Sdk" Version="$(IKVMMavenSdkPackageVersion)" />
+
+    <!-- This is a transitive dependency of IKVM, but the version it references is vulnerable. We are currently blocked from upgrading
+        IKVM due to the Azure DevOps limitation of 10GB for a single build agent, so we have to add this reference instead. -->
+    <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup>

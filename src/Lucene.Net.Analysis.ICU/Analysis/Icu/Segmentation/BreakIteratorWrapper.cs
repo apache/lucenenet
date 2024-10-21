@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 8.6.1
 using ICU4N.Text;
 using J2N;
+using System;
 
 namespace Lucene.Net.Analysis.Icu.Segmentation
 {
@@ -79,7 +80,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         {
             int begin = start + current;
             int end = start + next;
-            int codepoint = UTF16.CharAt(text, 0, end, begin);
+            int codepoint = UTF16.CharAt(text.AsSpan(0, end), begin); // LUCENENET: Checked 2nd argument
             if (EMOJI.Contains(codepoint))
             {
                 if (EMOJI_RK.Contains(codepoint))
