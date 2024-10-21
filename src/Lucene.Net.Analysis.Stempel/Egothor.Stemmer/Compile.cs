@@ -66,6 +66,13 @@ namespace Egothor.Stemmer
 {
     /// <summary>
     /// The Compile class is used to compile a stemmer table.
+    /// <para>
+    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
+    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+    /// with a command that maps to that method: analysis stempel-compile-stems
+    /// </para>
     /// </summary>
     public static class Compile // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
@@ -74,6 +81,13 @@ namespace Egothor.Stemmer
         private static Trie trie;
 
         /// <summary>
+        /// <para>
+        /// LUCENENET specific: This class is not for direct use.  In the Java implementation
+        /// it's Main method was intended to be called from the command line. However in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
+        /// with a command that maps to that method: analysis stempel-compile-stems. 
+        /// </para>
         /// Entry point to the Compile application.
         /// <para/>
         /// This program takes any number of arguments: the first is the name of the
