@@ -25,11 +25,11 @@
 
   <PropertyGroup>
     <!-- Allow specific target framework to flow in from TestTargetFrameworks.props -->
-    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net8.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net8.0</TargetFrameworks>
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net5.')) ">
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) ">
     <!-- For CI, we don't publish the projects and exclude them from the test run by setting IsPublishable=false and IsTestProject=false -->
     <IsPublishable>false</IsPublishable>
     <IsTestProject>false</IsTestProject>
