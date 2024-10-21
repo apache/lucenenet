@@ -81,21 +81,11 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
-# Special case: Only supports net8.0 and net6.0
+# Special case: Only supports net8.0
 - template: publish-test-results.yml
   parameters:
     testProjectName: 'Lucene.Net.Tests.Cli'
     framework: 'net8.0' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
-    vsTestPlatform: '${{ parameters.vsTestPlatform }}'
-    osName: '${{ parameters.osName }}'
-    testResultsFormat: '${{ parameters.testResultsFormat }}'
-    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
-    testResultsFileName: '${{ parameters.testResultsFileName }}'
-
-- template: publish-test-results.yml
-  parameters:
-    testProjectName: 'Lucene.Net.Tests.Cli'
-    framework: 'net6.0' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
     vsTestPlatform: '${{ parameters.vsTestPlatform }}'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'
