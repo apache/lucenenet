@@ -28,9 +28,9 @@
   </PropertyGroup>
 
   <Import Project="$(SolutionDir).build/nuget.props" />
-  
+
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Expressions</AssemblyTitle>
     <PackageTags>$(PackageTags);expression</PackageTags>
@@ -38,7 +38,7 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-  
+
 
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
@@ -51,13 +51,13 @@
     <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpPackageVersion)" />
     <PackageReference Include="System.Text.RegularExpressions" Version="$(SystemTextRegularExpressionsPackageVersion)" />
   </ItemGroup>
-  
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
     <PackageReference Include="System.Reflection.Emit" Version="$(SystemReflectionEmitPackageVersion)" />
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="$(SystemReflectionEmitILGenerationPackageVersion)" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="$(SystemReflectionTypeExtensionsPackageVersion)" />
   </ItemGroup>
-  
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="System.Reflection.Emit" Version="$(SystemReflectionEmitPackageVersion)" />
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="$(SystemReflectionEmitILGenerationPackageVersion)" />

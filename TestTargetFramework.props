@@ -23,7 +23,7 @@
 <Project>
 
   <PropertyGroup>
-    <!-- Changing this setting will allow testing on all target frameworks within Visual Studio 2019.
+    <!-- Changing this setting will allow testing on all target frameworks within Visual Studio.
     Note that the main libraries are multi-targeted, so this has no effect on how they are compiled,
     this setting only affects the test projects. -->
     <!--<TargetFramework>net472</TargetFramework>-->
@@ -38,7 +38,7 @@
 
     <!-- Test Client to DLL target works as follows:
       Test Client       | Target Under Test
-      net8.0            | net6.0
+      net8.0            | net8.0
       net6.0            | net6.0
       net5.0            | netstandard2.1
       net48             | net462
@@ -67,6 +67,7 @@
 
     <!-- We purposely test on EoL frameworks for testing netstandard2.1, but we want to keep this warning in production code. -->
     <CheckEolTargetFramework Condition=" '$(TargetFramework)' == 'net5.0' ">false</CheckEolTargetFramework>
+    <SuppressTfmSupportBuildWarnings Condition=" '$(TargetFramework)' == 'net5.0' ">true</SuppressTfmSupportBuildWarnings>
 
     <NoWarn Label="Nested types should not be visible">$(NoWarn);CA1034</NoWarn>
     <NoWarn Label="Use Literals Where Appropriate">$(NoWarn);CA1802</NoWarn>

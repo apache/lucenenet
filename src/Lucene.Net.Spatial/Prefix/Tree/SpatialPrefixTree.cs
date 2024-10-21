@@ -1,5 +1,5 @@
-﻿using J2N.Collections.Generic.Extensions;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
@@ -191,7 +191,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// ~20-25% fewer cells.
         /// </param>
         /// <returns>a set of cells (no dups), sorted, immutable, non-null</returns>
-        public virtual IList<Cell> GetCells(IShape? shape, int detailLevel, bool inclParents, 
+        public virtual IList<Cell> GetCells(IShape? shape, int detailLevel, bool inclParents,
             bool simplify)
         {
             //TODO consider an on-demand iterator -- it won't build up all cells in memory.
@@ -214,8 +214,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// descends.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="cell"/> is <c>null</c>.</exception>
-        private bool RecursiveGetCells(Cell cell, IShape? shape, int detailLevel, 
-            bool inclParents, bool simplify, 
+        private bool RecursiveGetCells(Cell cell, IShape? shape, int detailLevel,
+            bool inclParents, bool simplify,
             IList<Cell> result)
         {
             // LUCENENET specific - added guard clause
@@ -286,7 +286,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             Cell cell = GetCell(p, detailLevel);
             if (!inclParents)
             {
-                return new[] { cell }.AsReadOnly();
+                return Collections.AsReadOnly(new[] { cell });
             }
             string endToken = cell.TokenString;
             if (Debugging.AssertsEnabled) Debugging.Assert(endToken.Length == detailLevel);

@@ -1,5 +1,4 @@
 ﻿// Lucene version compatibility level 4.8.1
-using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -98,7 +97,7 @@ namespace Lucene.Net.Analysis.Util
                         services.Add(name, service);
                     }
                 }
-                this.services = services.AsReadOnly();
+                this.services = Collections.AsReadOnly(services);
             }
             finally
             {

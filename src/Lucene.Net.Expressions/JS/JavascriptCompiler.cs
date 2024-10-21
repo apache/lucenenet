@@ -1,5 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
-using J2N.Text;
+﻿using J2N.Text;
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
 using Lucene.Net.Queries.Function;
@@ -97,7 +96,7 @@ namespace Lucene.Net.Expressions.JS
 
         private readonly IDictionary<string, MethodInfo> functions;
 
-        
+
 
         private ILGenerator gen;
         private AssemblyBuilder asmBuilder;
@@ -202,7 +201,7 @@ namespace Lucene.Net.Expressions.JS
             dynamicType = modBuilder.DefineType(COMPILED_EXPRESSION_CLASS,
                 TypeAttributes.AnsiClass | TypeAttributes.AutoClass | TypeAttributes.Public | TypeAttributes.Class |
                 TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout, EXPRESSION_TYPE);
-            
+
             ConstructorBuilder constructorBuilder = dynamicType.DefineConstructor(MethodAttributes.Public,
                 CallingConventions.HasThis,
                 new[] { typeof(string), typeof(string[]) });
@@ -634,7 +633,7 @@ namespace Lucene.Net.Expressions.JS
             {
                 throw Error.Create("Cannot resolve function", e);
             }
-            return map.AsReadOnly();
+            return Collections.AsReadOnly(map);
         }
 
         private static Type GetType(string typeName)

@@ -30,7 +30,7 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.ICU</AssemblyTitle>
     <PackageTags>$(PackageTags);icu;international;unicode</PackageTags>
@@ -39,7 +39,7 @@
     <DefineConstants>$(DefineConstants);FEATURE_BREAKITERATOR</DefineConstants>
   </PropertyGroup>
 
-  
+
 
   <ItemGroup>
     <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\**\*.cs" LinkBase="Analysis\Th" />

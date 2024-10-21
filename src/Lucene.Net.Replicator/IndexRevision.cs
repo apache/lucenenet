@@ -2,6 +2,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -79,14 +80,14 @@ namespace Lucene.Net.Replicator
             }
             revisionFiles.Add(CreateRevisionFile(segmentsFile, dir)); // segments_N must be last
 
-            return new Dictionary<string, IList<RevisionFile>>
+            return Collections.AsReadOnly(new Dictionary<string, IList<RevisionFile>>
             {
                 { SOURCE, revisionFiles }
-            }.AsReadOnly();
+            });
         }
-   
+
         /// <summary>
-        /// Returns a string representation of a revision's version from the given 
+        /// Returns a string representation of a revision's version from the given
         /// <see cref="IndexCommit"/>
         /// </summary>
         public static string RevisionVersion(IndexCommit commit)

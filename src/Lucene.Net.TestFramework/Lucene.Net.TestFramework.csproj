@@ -30,20 +30,20 @@
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.TestFramework</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
     <PackageTags>$(PackageTags);testframework;test;framework;nunit</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    
-    
+
+
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <NoWarn Label="Collection initialization can be simplified">$(NoWarn);IDE0028</NoWarn>
   </PropertyGroup>
 
-  
-  
+
+
   <ItemGroup>
     <None Remove="Util\europarl.lines.txt.gz" />
     <EmbeddedResource Include="Util\europarl.lines.txt.gz" />
@@ -71,12 +71,12 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <!--  Note that some of the APIs we use to test Lucene.Net are internal because they are only meant to
           make porting tests from Java easier. This means that every Lucene.Net test project requires
           InternalsVisibleTo, now and in the future to keep these APIs from public view. -->
-    
+
     <InternalsVisibleTo Include="Lucene.Net.Tests._A-D" />
     <InternalsVisibleTo Include="Lucene.Net.Tests._E-I" />
     <InternalsVisibleTo Include="Lucene.Net.Tests._I-J" />
@@ -84,7 +84,7 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests._T-Z" />
 
     <InternalsVisibleTo Include="Lucene.Net.Tests.AllProjects" />
-    
+
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Common" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Kuromoji" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Morfologik" />
@@ -92,7 +92,7 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Phonetic" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.SmartCn" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Stempel" />
-    
+
     <InternalsVisibleTo Include="Lucene.Net.Tests.Benchmark" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Classification" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Cli" />

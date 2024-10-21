@@ -26,11 +26,11 @@
     <Description>System for benchmarking the Lucene.NET full-text search engine library from The Apache Software Foundation.</Description>
     <PackageDocumentationRelativeUrl>benchmark/Lucene.Net.Benchmarks.html</PackageDocumentationRelativeUrl>
   </PropertyGroup>
-  
+
   <Import Project="$(SolutionDir).build/nuget.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Benchmark</AssemblyTitle>
     <PackageTags>$(PackageTags);benchmark</PackageTags>
@@ -38,7 +38,7 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-  
+
 
   <ItemGroup>
     <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />

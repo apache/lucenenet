@@ -1,13 +1,12 @@
-using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 using Directory = Lucene.Net.Store.Directory;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -41,7 +40,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// <summary>
     /// Lucene 3x implementation of <see cref="SegmentInfoReader"/>.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [Obsolete("Only for reading existing 3.x indexes")]
     public class Lucene3xSegmentInfoReader : SegmentInfoReader
@@ -292,7 +291,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            SegmentInfo info = new SegmentInfo(dir, version, name, docCount, isCompoundFile, null, diagnostics, attributes.AsReadOnly());
+            SegmentInfo info = new SegmentInfo(dir, version, name, docCount, isCompoundFile, null, diagnostics, Collections.AsReadOnly(attributes));
             info.SetFiles(files);
 
             SegmentCommitInfo infoPerCommit = new SegmentCommitInfo(info, delCount, delGen, -1);
@@ -314,7 +313,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             ISet<string> files = input.ReadStringSet();
 
-            SegmentInfo info = new SegmentInfo(dir, version, name, docCount, isCompoundFile, null, diagnostics, attributes.AsReadOnly());
+            SegmentInfo info = new SegmentInfo(dir, version, name, docCount, isCompoundFile, null, diagnostics, Collections.AsReadOnly(attributes));
             info.SetFiles(files);
             return info;
         }

@@ -1,8 +1,8 @@
 ﻿using J2N;
-using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Replicator
             internal readonly CountdownEvent stop = new CountdownEvent(1);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="intervalMillis">The interval in milliseconds.</param>
             /// <param name="threadName">The thread name.</param>
@@ -206,7 +206,7 @@ namespace Lucene.Net.Replicator
                             output = directory.CreateOutput(file.FileName, IOContext.DEFAULT);
 
                             CopyBytes(output, input);
-                            
+
                             cpFiles.Add(file.FileName);
                             // TODO add some validation, on size / checksum
                         }
@@ -230,7 +230,7 @@ namespace Lucene.Net.Replicator
                     finally
                     {
                         if (!notify)
-                        { 
+                        {
                             // cleanup after ourselves
                             IOUtils.Dispose(sourceDirectory.Values);
                             factory.CleanupSession(session.Id);
@@ -247,7 +247,7 @@ namespace Lucene.Net.Replicator
                 if (notify && !disposed)
                 { // no use to notify if we are closed already
                     // LUCENENET specific - pass the copiedFiles as read only
-                    handler.RevisionReady(session.Version, session.SourceFiles, copiedFiles.AsReadOnly(), sourceDirectory);
+                    handler.RevisionReady(session.Version, session.SourceFiles, Collections.AsReadOnly(copiedFiles), sourceDirectory);
                 }
             }
             finally
@@ -451,7 +451,7 @@ namespace Lucene.Net.Replicator
         /// is running or not.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public virtual void UpdateNow() 
+        public virtual void UpdateNow()
         {
             EnsureOpen();
 
@@ -467,8 +467,8 @@ namespace Lucene.Net.Replicator
             }
         }
 
-        /// <summary> 
-        /// Gets or sets the <see cref="Util.InfoStream"/> to use for logging messages. 
+        /// <summary>
+        /// Gets or sets the <see cref="Util.InfoStream"/> to use for logging messages.
         /// </summary>
         public virtual InfoStream InfoStream
         {
@@ -519,7 +519,7 @@ namespace Lucene.Net.Replicator
         Directory GetDirectory(string sessionId, string source); //throws IOException;
 
         /// <summary>
-        /// Called to denote that the replication actions for this session were finished and the directory is no longer needed. 
+        /// Called to denote that the replication actions for this session were finished and the directory is no longer needed.
         /// </summary>
         /// <exception cref="IOException"></exception>
         void CleanupSession(string sessionId);

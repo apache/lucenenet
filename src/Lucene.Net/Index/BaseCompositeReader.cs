@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     /// as documents are added to and deleted from an index.  Clients should thus not
     /// rely on a given document having the same number between sessions.
     ///
-    /// <para/><b>NOTE</b>: 
+    /// <para/><b>NOTE</b>:
     /// <see cref="IndexReader"/> instances are completely thread
     /// safe, meaning multiple threads can call any of its methods,
     /// concurrently.  If your application requires external
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
         protected BaseCompositeReader(R[] subReaders)
         {
             this.subReaders = subReaders;
-            this.subReadersList = ((IndexReader[])subReaders).AsReadOnly(); // LUCENENET: Work around generic casting from R to IndexWriter
+            this.subReadersList = Collections.AsReadOnly((IndexReader[])subReaders); // LUCENENET: Work around generic casting from R to IndexWriter
             starts = new int[subReaders.Length + 1]; // build starts array
             int maxDoc = 0, numDocs = 0;
             for (int i = 0; i < subReaders.Length; i++)

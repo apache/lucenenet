@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the per generation updates files. </summary>
-        public virtual IDictionary<long, ISet<string>> UpdatesFiles => genUpdatesFiles.AsReadOnly();
+        public virtual IDictionary<long, ISet<string>> UpdatesFiles => Collections.AsReadOnly(genUpdatesFiles);
 
         /// <summary>
         /// Sets the updates file names per generation. Does not deep clone the map. </summary>
