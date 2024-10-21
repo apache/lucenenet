@@ -833,13 +833,9 @@ namespace Lucene.Net.Util.Fst
 
             // build all prefixes
 
-#if FEATURE_DICTIONARY_REMOVE_CONTINUEENUMERATION
-            IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new Dictionary<Int32sRef, CountMinOutput<T>>();
-#else
-            // LUCENENET: We use ConcurrentDictionary<TKey, TValue> because Dictionary<TKey, TValue> doesn't support
-            // deletion while iterating, but ConcurrentDictionary does.
-            IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new ConcurrentDictionary<Int32sRef, CountMinOutput<T>>();
-#endif
+            // LUCENENET specific - using concrete type for the readerMap field, since it will eliminate boxing to an interface on GetEnumerator() calls
+            JCG.Dictionary<Int32sRef, CountMinOutput<T>> prefixes = new JCG.Dictionary<Int32sRef, CountMinOutput<T>>();
+
             Int32sRef scratch = new Int32sRef(10);
             foreach (InputOutput<T> pair in pairs)
             {
@@ -927,7 +923,7 @@ namespace Lucene.Net.Util.Fst
                     if (!keep)
                     {
                         //it.remove();
-                        prefixes.Remove(ent);
+                        prefixes.Remove(prefix);
                         //System.out.println("    remove");
                     }
                     else
