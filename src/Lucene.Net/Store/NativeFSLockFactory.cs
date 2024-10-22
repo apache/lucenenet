@@ -1,10 +1,9 @@
 ﻿using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
-using System.IO;
 using System.Collections.Generic;
-using Lucene.Net.Support.Threading;
-using System.Runtime.Versioning;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
