@@ -218,11 +218,6 @@ namespace Lucene.Net.Support
             return new ReadOnlyList<T>(list);
         }
 
-        public static ReadOnlyCollection<T> AsReadOnly<T>(ICollection<T> collection)
-        {
-            return new ReadOnlyCollection<T>(collection);
-        }
-
         public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
         {
             return new ReadOnlyDictionary<TKey, TValue>(dictionary);
