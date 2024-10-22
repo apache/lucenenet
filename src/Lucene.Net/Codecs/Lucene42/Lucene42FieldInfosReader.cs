@@ -1,5 +1,5 @@
-﻿using J2N.Collections.Generic.Extensions;
-using J2N.Numerics;
+﻿using J2N.Numerics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -56,8 +56,8 @@ namespace Lucene.Net.Codecs.Lucene42
             bool success = false;
             try
             {
-                CodecUtil.CheckHeader(input, Lucene42FieldInfosFormat.CODEC_NAME, 
-                                            Lucene42FieldInfosFormat.FORMAT_START, 
+                CodecUtil.CheckHeader(input, Lucene42FieldInfosFormat.CODEC_NAME,
+                                            Lucene42FieldInfosFormat.FORMAT_START,
                                             Lucene42FieldInfosFormat.FORMAT_CURRENT);
 
                 int size = input.ReadVInt32(); //read in the size
@@ -99,8 +99,8 @@ namespace Lucene.Net.Codecs.Lucene42
                     DocValuesType docValuesType = GetDocValuesType(input, (byte)(val & 0x0F));
                     DocValuesType normsType = GetDocValuesType(input, (byte)((val.TripleShift(4)) & 0x0F));
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
-                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, 
-                        omitNorms, storePayloads, indexOptions, docValuesType, normsType, attributes.AsReadOnly());
+                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector,
+                        omitNorms, storePayloads, indexOptions, docValuesType, normsType, Collections.AsReadOnly(attributes));
                 }
 
                 CodecUtil.CheckEOF(input);

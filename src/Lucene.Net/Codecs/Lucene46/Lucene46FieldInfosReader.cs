@@ -1,5 +1,5 @@
-﻿using J2N.Collections.Generic.Extensions;
-using J2N.Numerics;
+﻿using J2N.Numerics;
+using Lucene.Net.Support;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene46
@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs.Lucene46
     /// <summary>
     /// Lucene 4.6 FieldInfos reader.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     /// <seealso cref="Lucene46FieldInfosFormat"/>
     internal sealed class Lucene46FieldInfosReader : FieldInfosReader
@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Lucene46
                     DocValuesType normsType = GetDocValuesType(input, (byte)((val.TripleShift(4)) & 0x0F));
                     long dvGen = input.ReadInt64();
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
-                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, attributes.AsReadOnly());
+                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, Collections.AsReadOnly(attributes));
                     infos[i].DocValuesGen = dvGen;
                 }
 

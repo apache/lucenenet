@@ -1,5 +1,4 @@
 ﻿// Lucene version compatibility level 4.8.1
-using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -38,7 +37,7 @@ namespace Lucene.Net.Analysis.Util
     /// The typical lifecycle for a factory consumer is:
     /// <list type="bullet">
     ///     <item><description>Create factory via its constructor (or via XXXFactory.ForName)</description></item>
-    ///     <item><description>(Optional) If the factory uses resources such as files, 
+    ///     <item><description>(Optional) If the factory uses resources such as files,
     ///         <see cref="IResourceLoaderAware.Inform(IResourceLoader)"/> is called to initialize those resources.</description></item>
     ///     <item><description>Consumer calls create() to obtain instances.</description></item>
     /// </list>
@@ -62,7 +61,7 @@ namespace Lucene.Net.Analysis.Util
         protected AbstractAnalysisFactory(IDictionary<string, string> args)
         {
             IsExplicitLuceneMatchVersion = false;
-            originalArgs = args.AsReadOnly();
+            originalArgs = Collections.AsReadOnly(args);
             string version = Get(args, LUCENE_MATCH_VERSION_PARAM);
             // LUCENENET TODO: What should we do if the version is null?
             //luceneMatchVersion = version is null ? (LuceneVersion?)null : LuceneVersionHelpers.ParseLeniently(version);
@@ -79,7 +78,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// this method can be called in the <see cref="TokenizerFactory.Create(TextReader)"/>
         /// or <see cref="TokenFilterFactory.Create(TokenStream)"/> methods,
-        /// to inform user, that for this factory a <see cref="m_luceneMatchVersion"/> is required 
+        /// to inform user, that for this factory a <see cref="m_luceneMatchVersion"/> is required
         /// </summary>
         [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "By design")]
         protected void AssureMatchVersion() // LUCENENET TODO: Remove this method (not used anyway in .NET)
@@ -296,7 +295,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Compiles a pattern for the value of the specified argument key <paramref name="name"/> 
+        /// Compiles a pattern for the value of the specified argument key <paramref name="name"/>
         /// </summary>
         protected Regex GetPattern(IDictionary<string, string> args, string name)
         {
@@ -372,7 +371,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Same as <see cref="GetWordSet(IResourceLoader, string, bool)"/>,
-        /// except the input is in snowball format. 
+        /// except the input is in snowball format.
         /// </summary>
         protected CharArraySet GetSnowballWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
         {
@@ -428,7 +427,7 @@ namespace Lucene.Net.Analysis.Util
 
         private const string CLASS_NAME = "class";
 
-        /// <returns> the string used to specify the concrete class name in a serialized representation: the class arg.  
+        /// <returns> the string used to specify the concrete class name in a serialized representation: the class arg.
         ///         If the concrete class name was not specified via a class arg, returns <c>GetType().Name</c>. </returns>
         public virtual string GetClassArg()
         {

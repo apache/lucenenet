@@ -1,5 +1,5 @@
-﻿using J2N.Collections.Generic.Extensions;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
         private CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader, int ordInParent, int docbaseInParent, IList<IndexReaderContext> children, IList<AtomicReaderContext> leaves)
             : base(parent, ordInParent, docbaseInParent)
         {
-            this.children = children.AsReadOnly();
+            this.children = Collections.AsReadOnly(children);
             this.leaves = leaves;
             this.reader = reader;
         }

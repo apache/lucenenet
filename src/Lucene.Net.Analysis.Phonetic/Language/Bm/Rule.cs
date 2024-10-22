@@ -1,6 +1,5 @@
 ﻿// commons-codec version compatibility level: 1.9
 using J2N;
-using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -150,10 +149,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                         rs["common"] = ParseRules(CreateScanner(s, rt, "common"), CreateResourceName(s, rt, "common"));
                     }
 
-                    rts[rt] = rs.AsReadOnly();
+                    rts[rt] = Collections.AsReadOnly(rs);
                 }
 
-                rules[s] = rts.AsReadOnly();
+                rules[s] = Collections.AsReadOnly(rts);
             }
             return rules;
         }
@@ -217,7 +216,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static TextReader CreateScanner(string lang)
         {
-            string resName = string.Format("{0}.txt", lang); 
+            string resName = string.Format("{0}.txt", lang);
             Stream rulesIS = typeof(Languages).FindAndGetManifestResourceStream(resName);
 
             if (rulesIS is null)
@@ -869,7 +868,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         /// <param name="i">The int position within the input.</param>
         /// <returns><c>true</c> if the pattern and left/right context match, <c>false</c> otherwise.</returns>
         // LUCENENET specific
-        public virtual bool PatternAndContextMatches(string input, int i) 
+        public virtual bool PatternAndContextMatches(string input, int i)
         {
             if (i < 0)
             {
@@ -940,7 +939,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
     public sealed class Phoneme : IPhonemeExpr
     {
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE
         [Serializable]

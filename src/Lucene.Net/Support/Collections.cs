@@ -88,7 +88,7 @@ namespace Lucene.Net.Support
 
         public static IDictionary<TKey, TValue> SingletonMap<TKey, TValue>(TKey key, TValue value)
         {
-            return new Dictionary<TKey, TValue> { { key, value } }.AsReadOnly();
+            return AsReadOnly(new Dictionary<TKey, TValue> { { key, value } });
         }
 
 
@@ -211,6 +211,16 @@ namespace Lucene.Net.Support
         {
             using var context = new CultureContext(culture);
             return ToString(obj);
+        }
+
+        public static ReadOnlyList<T> AsReadOnly<T>(IList<T> list)
+        {
+            return new ReadOnlyList<T>(list);
+        }
+
+        public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
+        {
+            return new ReadOnlyDictionary<TKey, TValue>(dictionary);
         }
 
         #region Nested Types

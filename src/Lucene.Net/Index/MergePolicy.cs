@@ -1,5 +1,5 @@
-﻿using J2N.Collections.Generic.Extensions;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
     /// then return the necessary merges.</para>
     ///
     /// <para>Note that the policy can return more than one merge at
-    /// a time.  In this case, if the writer is using 
+    /// a time.  In this case, if the writer is using
     /// <see cref="SerialMergeScheduler"/>, the merges will be run
     /// sequentially but if it is using
     /// <see cref="ConcurrentMergeScheduler"/> they will be run concurrently.</para>
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
                         readers.Add(reader);
                     }
                 }
-                return readers.AsReadOnly();
+                return Collections.AsReadOnly(readers);
             }
 
             /// <summary>
@@ -450,7 +450,7 @@ namespace Lucene.Net.Index
             public IList<OneMerge> Merges { get; private set; }
 
             /// <summary>
-            /// Sole constructor.  Use 
+            /// Sole constructor.  Use
             /// <see cref="Add(OneMerge)"/> to add merges.
             /// </summary>
             public MergeSpecification()
@@ -488,7 +488,7 @@ namespace Lucene.Net.Index
         /// Exception thrown if there are any problems while
         /// executing a merge.
         /// </summary>
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
@@ -544,7 +544,7 @@ namespace Lucene.Net.Index
         /// <c>false</c>.  Normally this exception is
         /// privately caught and suppresed by <see cref="IndexWriter"/>.
         /// </summary>
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
@@ -736,7 +736,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the byte size of the provided 
+        /// Return the byte size of the provided
         /// <see cref="SegmentCommitInfo"/>, pro-rated by percentage of
         /// non-deleted documents is set.
         /// </summary>
@@ -763,7 +763,7 @@ namespace Lucene.Net.Index
 #pragma warning disable 612, 618
                 && !info.Info.HasSeparateNorms
 #pragma warning restore 612, 618
-                && info.Info.Dir == w.Directory 
+                && info.Info.Dir == w.Directory
                 && UseCompoundFile(infos, info) == info.Info.UseCompoundFile;
         }
 

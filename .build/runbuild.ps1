@@ -109,6 +109,7 @@ task Init -depends CheckSDK, UpdateLocalSDKVersion -description "This task makes
     Write-Host "Powershell Version: $($PSVersionTable.PSVersion)"
 
     Ensure-Directory-Exists "$artifactsDirectory"
+    Ensure-Directory-Exists "$nugetPackageDirectory" # helpful when adding this path to your nuget sources for local installs
 }
 
 task Restore -description "This task restores the dependencies" {
