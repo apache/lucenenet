@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Lucene.Net.Support.Threading;
+using System.Runtime.Versioning;
 
 namespace Lucene.Net.Store
 {
@@ -625,7 +626,7 @@ namespace Lucene.Net.Store
     }
 
     // Uses FileStream locking of file pages.
-#if NET6_0
+#if FEATURE_SUPPORTEDOSPLATFORMATTRIBUTE
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
 #endif
     internal class NativeFSLock : Lock

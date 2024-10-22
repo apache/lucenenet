@@ -31,6 +31,7 @@
 
     <DefineConstants>$(DefineConstants);FEATURE_RANDOM_NEXTINT64_NEXTSINGLE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SPANFORMATTABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_SUPPORTEDOSPLATFORMATTRIBUTE</DefineConstants>
 
   </PropertyGroup>
 
