@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,22 +29,33 @@ namespace Lucene.Net.Index
     using FSDirectory = Lucene.Net.Store.FSDirectory;
     using InfoStream = Lucene.Net.Util.InfoStream;
 
+    // LUCENENET: Not used
+    ///// <code>
+    /////  java -cp lucene-core.jar Lucene.Net.Index.IndexUpgrader [-delete-prior-commits] [-verbose] indexDir
+    ///// </code>
+
     /// <summary>
     /// This is an easy-to-use tool that upgrades all segments of an index from previous Lucene versions
-    /// to the current segment file format. It can be used from command line:
-    /// <code>
-    ///  java -cp lucene-core.jar Lucene.Net.Index.IndexUpgrader [-delete-prior-commits] [-verbose] indexDir
-    /// </code>
+    /// to the current segment file format. It can be used from command line.
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// index upgrade
+    /// <para />
     /// Alternatively this class can be instantiated and <see cref="Upgrade()"/> invoked. It uses <see cref="UpgradeIndexMergePolicy"/>
     /// and triggers the upgrade via an <see cref="IndexWriter.ForceMerge(int)"/> request to <see cref="IndexWriter"/>.
-    /// <para/>
+    /// <para />
     /// This tool keeps only the last commit in an index; for this
     /// reason, if the incoming index has more than one commit, the tool
     /// refuses to run by default. Specify <c>-delete-prior-commits</c>
     /// to override this, allowing the tool to delete all but the last commit.
     /// From .NET code this can be enabled by passing <c>true</c> to
     /// <see cref="IndexUpgrader(Directory, LuceneVersion, TextWriter, bool)"/>.
-    /// <para/>
+    /// <para />
     /// <b>Warning:</b> this tool may reorder documents if the index was partially
     /// upgraded before execution (e.g., documents were added). If your application relies
     /// on &quot;monotonicity&quot; of doc IDs (which means that the order in which the documents
@@ -73,7 +84,17 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Main method to run <see cref="IndexUpgrader"/> from the
         /// command-line.
+        /// <para />
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// index upgrade
         /// </summary>
+        /// <param name="args">The command line arguments</param>
+        /// <exception cref="ArgumentException">Thrown if any incorrect arguments are provided</exception>
         public static void Main(string[] args)
         {
             ParseArgs(args).Upgrade();

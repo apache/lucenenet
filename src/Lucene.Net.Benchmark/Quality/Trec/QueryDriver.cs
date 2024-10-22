@@ -31,9 +31,28 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
 
     /// <summary>
     /// Command-line tool for doing a TREC evaluation run.
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// benchmark run-trec-eval
     /// </summary>
     public static class QueryDriver // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
+        /// <summary>
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// benchmark run-trec-eval
+        /// </summary>
+        /// <param name="args">Must contain 4 or 5 values</param>
+        /// <exception cref="ArgumentException">Thrown if the incorrect number of arguments are provided.</exception>
         public static void Main(string[] args)
         {
             if (args.Length < 4 || args.Length > 5)

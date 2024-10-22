@@ -41,11 +41,12 @@ namespace Lucene.Net.Demo
     public static class SearchFiles // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>Simple command-line based search demo.</summary>
+        /// <param name="args">The command line arguments</param>
         public static void Main(string[] args)
         {
             // The <CONSOLE_APP_NAME> should be the assembly name of the application
             // this code is compiled into. In .NET Framework, it is the name of the EXE file.
-            // In .NET Core, you have the option of compiling this into either a DLL or an EXE  
+            // In .NET Core, you have the option of compiling this into either a DLL or an EXE
             // (see https://docs.microsoft.com/en-us/dotnet/core/deploying/index).
             // In the first case, the <CONSOLE_APP_NAME> will be "dotnet <DLL_NAME>.dll".
             string usage = "Usage: <CONSOLE_APP_NAME> <INDEX_DIRECTORY> [-f|--field <FIELD>] " +
@@ -53,7 +54,7 @@ namespace Lucene.Net.Demo
                 "[--raw] [-p|--page-size <NUMBER>]\n\n" +
                 "Use no --query or --queries-file option for interactive mode.\n\n" +
                 "See http://lucene.apache.org/core/4_8_0/demo/ for details.";
-            if (args.Length < 1 || args.Length > 0 && 
+            if (args.Length < 1 || args.Length > 0 &&
                 ("?".Equals(args[0], StringComparison.Ordinal) || "-h".Equals(args[0], StringComparison.Ordinal) || "--help".Equals(args[0], StringComparison.Ordinal)))
             {
                 Console.WriteLine(usage);
@@ -167,7 +168,7 @@ namespace Lucene.Net.Demo
         }
 
         /// <summary>
-        /// This demonstrates a typical paging search scenario, where the search engine presents 
+        /// This demonstrates a typical paging search scenario, where the search engine presents
         /// pages of size n to the user. The user can then go to the next page if interested in
         /// the next hits.
         /// <para/>
@@ -209,7 +210,7 @@ namespace Lucene.Net.Demo
                 for (int i = start; i < end; i++)
                 {
                     if (raw) // output raw format
-                    {                   
+                    {
                         Console.WriteLine("doc=" + hits[i].Doc + " score=" + hits[i].Score);
                         continue;
                     }

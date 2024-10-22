@@ -26,9 +26,29 @@ namespace Lucene.Net.Misc
     /// <summary>
     /// Merges indices specified on the command line into the index
     /// specified as the first command line argument.
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// index merge
     /// </summary>
     public static class IndexMergeTool // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
+
+        /// <summary>
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// index merge
+        /// </summary>
+        /// <param name="args">The command line arguments</param>
+        /// <exception cref="ArgumentException">Thrown if the incorrect number of arguments are provided</exception>
         public static void Main(string[] args)
         {
             if (args.Length < 3)

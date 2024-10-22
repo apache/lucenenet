@@ -27,21 +27,39 @@ namespace Lucene.Net.Misc
      * limitations under the License.
      */
 
+    // LUCENENET: Not used
+    // If the -t flag is given, both document frequency and total tf (total
+    // number of occurrences) are reported, ordered by descending total tf.
+
     /// <summary>
     /// <see cref="HighFreqTerms"/> class extracts the top n most frequent terms
     /// (by document frequency) from an existing Lucene index and reports their
     /// document frequency.
-    /// <para>
-    /// If the -t flag is given, both document frequency and total tf (total
-    /// number of occurrences) are reported, ordered by descending total tf.
-    /// 
-    /// </para>
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// index list-high-freq-terms
     /// </summary>
     public static class HighFreqTerms // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         // The top numTerms will be displayed
         public const int DEFAULT_NUMTERMS = 100;
 
+        /// <summary>
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// index list-high-freq-terms
+        /// </summary>
+        /// <param name="args"></param>
+        /// <exception cref="ArgumentException"></exception>
         public static void Main(string[] args)
         {
             string field = null;
@@ -81,7 +99,7 @@ namespace Lucene.Net.Misc
             }
         }
 
-        // LUCENENET specific - our wrapper console shows the correct usage
+        // LUCENENET specific - The lucene-cli docs show the correct usage
         //private static void Usage()
         //{
         //    Console.WriteLine("\n\n" + "java org.apache.lucene.misc.HighFreqTerms <index dir> [-t] [number_terms] [field]\n\t -t: order by totalTermFreq\n\n");
@@ -156,7 +174,7 @@ namespace Lucene.Net.Misc
                     res = a.Field.CompareToOrdinal(b.Field);
                     if (res == 0)
                     {
-                        res = a.termtext.CompareTo(b.termtext);
+                        res = a.TermText.CompareTo(b.TermText);
                     }
                 }
                 return res;
@@ -164,7 +182,7 @@ namespace Lucene.Net.Misc
         }
 
         /// <summary>
-        /// Compares terms by <see cref="TermStats.TotalTermFreq"/> 
+        /// Compares terms by <see cref="TermStats.TotalTermFreq"/>
         /// </summary>
         public sealed class TotalTermFreqComparer : IComparer<TermStats>
         {
@@ -180,7 +198,7 @@ namespace Lucene.Net.Misc
                     res = a.Field.CompareToOrdinal(b.Field);
                     if (res == 0)
                     {
-                        res = a.termtext.CompareTo(b.termtext);
+                        res = a.TermText.CompareTo(b.TermText);
                     }
                 }
                 return res;
@@ -189,14 +207,14 @@ namespace Lucene.Net.Misc
 
         /// <summary>
         /// Priority queue for <see cref="TermStats"/> objects
-        /// 
+        ///
         /// </summary>
         internal sealed class TermStatsQueue : PriorityQueue<TermStats>
         {
             internal readonly IComparer<TermStats> comparer;
 
 #nullable enable
-            internal TermStatsQueue(int size, IComparer<TermStats> comparer) 
+            internal TermStatsQueue(int size, IComparer<TermStats> comparer)
                 : base(size)
             {
                 this.comparer = comparer ?? throw new ArgumentNullException(nameof(comparer)); // LUCENENET: Added null guard clause

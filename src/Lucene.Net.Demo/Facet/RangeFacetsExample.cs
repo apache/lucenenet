@@ -40,8 +40,8 @@ namespace Lucene.Net.Demo.Facet
         /// <summary>
         /// Using a constant for all functionality related to a specific index
         /// is the best strategy. This allows you to upgrade Lucene.Net first
-        /// and plan the upgrade of the index binary format for a later time. 
-        /// Once the index is upgraded, you simply need to update the constant 
+        /// and plan the upgrade of the index binary format for a later time.
+        /// Once the index is upgraded, you simply need to update the constant
         /// version and redeploy your application.
         /// </summary>
         private const LuceneVersion EXAMPLE_VERSION = LuceneVersion.LUCENE_48;
@@ -126,6 +126,7 @@ namespace Lucene.Net.Demo.Facet
         }
 
         /// <summary>Runs the search and drill-down examples and prints the results.</summary>
+        /// <param name="args">The command line arguments</param>
         public static void Main(string[] args)
         {
             using RangeFacetsExample example = new RangeFacetsExample();

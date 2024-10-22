@@ -132,6 +132,16 @@ namespace Lucene.Net.Benchmarks.Utils
             }
         }
 
+        /// <summary>
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// benchmark extract-reuters
+        /// </summary>
+        /// <param name="args">The command line arguments</param>
         public static void Main(string[] args)
         {
             if (args.Length != 2)

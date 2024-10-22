@@ -24,9 +24,28 @@ namespace Lucene.Net.Benchmarks.ByTask.Programmatic
 
     /// <summary>
     /// Sample performance test written programmatically - no algorithm file is needed here.
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// benchmark sample
     /// </summary>
     public static class Sample // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
+
+        /// <summary>
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// benchmark sample
+        /// </summary>
+        /// <param name="args">The command line arguments</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Sample shows optional args[] parameter")]
         public static void Main(string[] args)
         {

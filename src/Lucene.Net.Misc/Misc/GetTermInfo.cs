@@ -24,10 +24,30 @@ namespace Lucene.Net.Misc
      */
 
     /// <summary>
-    /// Utility to get document frequency and total number of occurrences (sum of the tf for each doc)  of a term. 
+    /// Utility to get document frequency and total number of occurrences (sum of the tf for each doc)  of a term.
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// index list-term-info
     /// </summary>
     public static class GetTermInfo // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
+
+        /// <summary>
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// index list-term-info
+        /// </summary>
+        /// <param name="args">The command line arguments</param>
+        /// <exception cref="ArgumentException">Thrown if the incorrect number of arguments are provided</exception>
         public static void Main(string[] args)
         {
 

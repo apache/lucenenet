@@ -66,6 +66,14 @@ namespace Egothor.Stemmer
 {
     /// <summary>
     /// The Compile class is used to compile a stemmer table.
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// analysis stempel-compile-stems
     /// </summary>
     public static class Compile // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
@@ -75,11 +83,19 @@ namespace Egothor.Stemmer
 
         /// <summary>
         /// Entry point to the Compile application.
-        /// <para/>
+        /// <para />
         /// This program takes any number of arguments: the first is the name of the
         /// desired stemming algorithm to use (a list is available in the package
         /// description) , all of the rest should be the path or paths to a file or
         /// files containing a stemmer table to compile.
+        /// <para />
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// analysis stempel-compile-stems
         /// </summary>
         /// <param name="args">the command line arguments</param>
         public static void Main(string[] args)
