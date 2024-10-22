@@ -25,26 +25,29 @@ namespace Lucene.Net.Misc
 
     /// <summary>
     /// Utility to get document frequency and total number of occurrences (sum of the tf for each doc)  of a term.
-    /// <para>
-    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
-    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
     /// method within a DLL can't be directly called from the command line so we
-    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-    /// with a command that maps to that method: index list-term-info. 
-    /// </para>
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// index list-term-info
     /// </summary>
     public static class GetTermInfo // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
 
         /// <summary>
-        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
-        /// it was intended to be called from the command line. However in .NET a
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
         /// method within a DLL can't be directly called from the command line so we
-        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-        /// with a command that maps to this method: index list-term-info. 
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// index list-term-info
         /// </summary>
-        /// <param name="args"></param>
-        /// <exception cref="ArgumentException"></exception>
+        /// <param name="args">The command line arguments</param>
+        /// <exception cref="ArgumentException">Thrown if the incorrect number of arguments are provided</exception>
         public static void Main(string[] args)
         {
 

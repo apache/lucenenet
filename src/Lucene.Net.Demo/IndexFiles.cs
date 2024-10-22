@@ -31,47 +31,27 @@ using System.Text;
 
 namespace Lucene.Net.Demo
 {
-    // LUCENENET: Not used
-    ///// Run it with no command-line arguments for usage information.
-
-
     /// <summary>
     /// Index all text files under a directory.
     /// <para/>
     /// This is a command-line application demonstrating simple Lucene indexing.
-    /// <para>
-    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
-    /// it's Main method was intended to be called from the command line. However in .NET a
-    /// method within a DLL can't be directly called from the command line so we
-    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-    /// with a command that maps to that method: demo index-files.  
-    /// </para>
     /// </summary>
     public static class IndexFiles // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        /// <summary>
-        /// Index all text files under a directory.
-        /// <para>
-        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
-        /// it was intended to be called from the command line. However in .NET a
-        /// method within a DLL can't be directly called from the command line so we
-        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-        /// with a command that maps to this method: demo index-files. 
-        /// </para>
-        /// </summary>
-        /// <param name="args"></param>
+        /// <summary>Index all text files under a directory.</summary>
+        /// <param name="args">The command line arguments</param>
         public static void Main(string[] args)
         {
             // The <CONSOLE_APP_NAME> should be the assembly name of the application
             // this code is compiled into. In .NET Framework, it is the name of the EXE file.
-            // In .NET Core, you have the option of compiling this into either an EXE or a DLL 
+            // In .NET Core, you have the option of compiling this into either an EXE or a DLL
             // (see https://docs.microsoft.com/en-us/dotnet/core/deploying/index).
             // In the latter case, the <CONSOLE_APP_NAME> will be "dotnet <DLL_NAME>.dll".
             string usage = "Usage: <CONSOLE_APP_NAME> <INDEX_DIRECTORY> <SOURCE_DIRECTORY> "
                         + "[-u|--update]\n\n"
                         + "This indexes the documents in <SOURCE_DIRECTORY>, creating a Lucene index"
                         + "in <INDEX_DIRECTORY> that can be searched with the search-files demo.";
-            
+
             // Validate required arguments are present.
             // If not, show usage information.
             if (args.Length < 2)
@@ -150,15 +130,15 @@ namespace Lucene.Net.Demo
         }
 
         /// <summary>
-        /// Recurses over files and directories found under the 
+        /// Recurses over files and directories found under the
         /// given directory and indexes each file.<para/>
-        /// 
-        /// NOTE: This method indexes one document per input file. 
-        /// This is slow. For good throughput, put multiple documents 
+        ///
+        /// NOTE: This method indexes one document per input file.
+        /// This is slow. For good throughput, put multiple documents
         /// into your input file(s).
         /// </summary>
         /// <param name="writer">
-        ///     <see cref="IndexWriter"/> to the index where the given 
+        ///     <see cref="IndexWriter"/> to the index where the given
         ///     file/dir info will be stored
         /// </param>
         /// <param name="directoryInfo">
@@ -183,7 +163,7 @@ namespace Lucene.Net.Demo
         /// Indexes the given file using the given writer.<para/>
         /// </summary>
         /// <param name="writer">
-        ///     <see cref="IndexWriter"/> to the index where the given 
+        ///     <see cref="IndexWriter"/> to the index where the given
         ///     file info will be stored.
         /// </param>
         /// <param name="file">
@@ -199,7 +179,7 @@ namespace Lucene.Net.Demo
             Document doc = new Document();
 
             // Add the path of the file as a field named "path".  Use a
-            // field that is indexed (i.e. searchable), but don't tokenize 
+            // field that is indexed (i.e. searchable), but don't tokenize
             // the field into separate words and don't index term frequency
             // or positional information:
             Field pathField = new StringField("path", file.FullName, Field.Store.YES);
@@ -228,8 +208,8 @@ namespace Lucene.Net.Demo
             }
             else
             {
-                // Existing index (an old copy of this document may have been indexed) so 
-                // we use updateDocument instead to replace the old one matching the exact 
+                // Existing index (an old copy of this document may have been indexed) so
+                // we use updateDocument instead to replace the old one matching the exact
                 // path, if present:
                 Console.WriteLine("updating " + file);
                 writer.UpdateDocument(new Term("path", file.FullName), doc);

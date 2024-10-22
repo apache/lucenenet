@@ -65,15 +65,16 @@ using JCG = J2N.Collections.Generic;
 namespace Egothor.Stemmer
 {
     /// <summary>
-    /// <para>
-    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
-    /// it's Main method was intended to be called from the command line. However in .NET a
-    /// method within a DLL can't be directly called from the command line so we
-    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-    /// with a command that maps to that method: analysis stempel-patch-stems. 
-    /// </para>
     /// The DiffIt class is a means generate patch commands from an already prepared
     /// stemmer table.
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
+    /// method within a DLL can't be directly called from the command line so we
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// analysis stempel-patch-stems
     /// </summary>
     public static class DiffIt // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
@@ -89,19 +90,19 @@ namespace Egothor.Stemmer
         }
 
         /// <summary>
-        /// <para>
-        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
-        /// it was intended to be called from the command line. However in .NET a
-        /// method within a DLL can't be directly called from the command line so we
-        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-        /// with a command that maps to this method: analysis stempel-patch-stems. 
-        /// </para>
         /// Entry point to the DiffIt application.
-        /// <para>
+        /// <para />
         /// This application takes one argument, the path to a file containing a
         /// stemmer table. The program reads the file and generates the patch commands
         /// for the stems.
-        /// </para>
+        /// <para />
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
+        /// method within a DLL can't be directly called from the command line so we
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// analysis stempel-patch-stems
         /// </summary>
         /// <param name="args">the path to a file containing a stemmer table</param>
         public static void Main(string[] args)

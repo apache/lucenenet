@@ -29,26 +29,27 @@ namespace Lucene.Net.Index
     /// Command-line tool that enables listing segments in an
     /// index, copying specific segments to another index, and
     /// deleting segments from an index.
-    /// 
-    /// <para>This tool does file-level copying of segments files.
+    ///
+    /// <para />
+    /// This tool does file-level copying of segments files.
     /// This means it's unable to split apart a single segment
     /// into multiple segments.  For example if your index is a
     /// single segment, this tool won't help.  Also, it does basic
     /// file-level copying (using simple
     /// Stream) so it will not work with non
-    /// FSDirectory Directory impls.</para>
-    /// 
+    /// FSDirectory Directory impls.
+    ///
     /// @lucene.experimental You can easily
     /// accidentally remove segments from your index so be
     /// careful!
-    /// <para>
-    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
-    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
     /// method within a DLL can't be directly called from the command line so we
-    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-    /// with three commands that map to that method: index copy-segments, index delete-segments,
-    /// and index list-segments. 
-    /// </para>
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with three commands that map to that method:
+    /// index copy-segments, index delete-segments, and index list-segments
     /// </summary>
     public class IndexSplitter
     {
@@ -58,16 +59,16 @@ namespace Lucene.Net.Index
 
         internal DirectoryInfo dir;
 
-
         /// <summary>
-        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
-        /// it was intended to be called from the command line. However in .NET a
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
         /// method within a DLL can't be directly called from the command line so we
-        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-        /// with three commands that map to this method: index copy-segments, index delete-segments,
-        /// and index list-segments. 
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with three commands that map to this method:
+        /// index copy-segments, index delete-segments, and index list-segments
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">The command line arguments</param>
         public static void Main(string[] args)
         {
             if (args.Length < 2)

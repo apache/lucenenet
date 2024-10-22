@@ -43,8 +43,8 @@ namespace Lucene.Net.Demo.Facet
         /// <summary>
         /// Using a constant for all functionality related to a specific index
         /// is the best strategy. This allows you to upgrade Lucene.Net first
-        /// and plan the upgrade of the index binary format for a later time. 
-        /// Once the index is upgraded, you simply need to update the constant 
+        /// and plan the upgrade of the index binary format for a later time.
+        /// Once the index is upgraded, you simply need to update the constant
         /// version and redeploy your application.
         /// </summary>
         private const LuceneVersion EXAMPLE_VERSION = LuceneVersion.LUCENE_48;
@@ -157,17 +157,8 @@ namespace Lucene.Net.Demo.Facet
         }
 
 
-        /// <summary>
-        /// Runs the sum int/float associations examples and prints the results.
-        /// <para>
-        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
-        /// it was intended to be called from the command line. However in .NET a
-        /// method within a DLL can't be directly called from the command line so we
-        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-        /// with a command that maps to this method: demo associations-facets. 
-        /// </para>
-        /// </summary>
-        /// <param name="args">Unused</param>
+        /// <summary>Runs the sum int/float associations examples and prints the results.</summary>
+        /// <param name="args">The command line arguments</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Demo shows use of optional args argument")]
         public static void Main(string[] args)
         {

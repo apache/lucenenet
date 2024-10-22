@@ -33,19 +33,18 @@ namespace Lucene.Net.Index
     /// here uses <see cref="IndexWriter.AddIndexes(IndexReader[])"/> where the input data
     /// comes from the input index with artificially applied deletes to the document
     /// id-s that fall outside the selected partition.
-    /// <para>Note 1: Deletes are only applied to a buffered list of deleted docs and
+    /// <para />
+    /// Note 1: Deletes are only applied to a buffered list of deleted docs and
     /// don't affect the source index - this tool works also with read-only indexes.
-    /// </para>
-    /// <para>Note 2: the disadvantage of this tool is that source index needs to be
+    /// <para />
+    /// Note 2: the disadvantage of this tool is that source index needs to be
     /// read as many times as there are parts to be created, hence the name of this
     /// tool.
-    /// 
-    /// </para>
-    /// <para><b>NOTE</b>: this tool is unaware of documents added
-    /// atomically via <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/> or 
+    /// <para />
+    /// <b>NOTE</b>: this tool is unaware of documents added
+    /// atomically via <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/> or
     /// <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>, which means it can easily
     /// break up such document groups.
-    /// </para>
     /// </summary>
     public class MultiPassIndexSplitter
     {
@@ -122,11 +121,13 @@ namespace Lucene.Net.Index
 
 
         /// <summary>
-        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
-        /// it was intended to be called from the command line. However in .NET a
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
         /// method within a DLL can't be directly called from the command line so we
-        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-        /// with a command that maps to this method: index split. 
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// index split
         /// </summary>
         /// <param name="args"></param>
         /// <exception cref="ArgumentException"></exception>

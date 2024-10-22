@@ -26,19 +26,17 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-    // LUCENENET: Not used
-    /////Run without any args to see usage.
-
     /// <summary>
     /// Simple standalone tool that forever acquires &amp; releases a
     /// lock using a specific <see cref="LockFactory"/>.
-    /// <para>
-    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
-    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
     /// method within a DLL can't be directly called from the command line so we
-    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-    /// with a command that maps to that method: lock stress-test. 
-    /// </para>
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// lock stress-test
     /// </summary>
     /// <seealso cref="VerifyingLockFactory"/>
     /// <seealso cref="LockVerifyServer"/>
@@ -46,14 +44,16 @@ namespace Lucene.Net.Store
     {
 
         /// <summary>
-        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
-        /// it was intended to be called from the command line. However in .NET a
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
         /// method within a DLL can't be directly called from the command line so we
-        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-        /// with a command that maps to this method: lock stress-test. 
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// lock stress-test
         /// </summary>
-        /// <param name="args"></param>
-        /// <exception cref="ArgumentException"></exception>
+        /// <param name="args">The command line arguments</param>
+        /// <exception cref="ArgumentException">Thrown if the incorrect number of arguments are provided</exception>
         [STAThread]
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Security Hotspot", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive", Justification = "The Random class is only used to generate a timeout value")]
@@ -63,20 +63,20 @@ namespace Lucene.Net.Store
             {
                 // LUCENENET specific - our lucene-cli wrapper console shows the correct usage
                 throw new ArgumentException();
-                //Console.WriteLine("Usage: java Lucene.Net.Store.LockStressTest myID verifierHost verifierPort lockFactoryClassName lockDirName sleepTimeMS count\n" + 
-                //    "\n" + 
-                //    "  myID = int from 0 .. 255 (should be unique for test process)\n" + 
-                //    "  verifierHost = hostname that LockVerifyServer is listening on\n" + 
-                //    "  verifierPort = port that LockVerifyServer is listening on\n" + 
-                //    "  lockFactoryClassName = primary LockFactory class that we will use\n" + 
-                //    "  lockDirName = path to the lock directory (only set for Simple/NativeFSLockFactory\n" + 
-                //    "  sleepTimeMS = milliseconds to pause betweeen each lock obtain/release\n" + 
-                //    "  count = number of locking tries\n" + 
-                //    "\n" + 
-                //    "You should run multiple instances of this process, each with its own\n" + 
-                //    "unique ID, and each pointing to the same lock directory, to verify\n" + 
-                //    "that locking is working correctly.\n" + 
-                //    "\n" + 
+                //Console.WriteLine("Usage: java Lucene.Net.Store.LockStressTest myID verifierHost verifierPort lockFactoryClassName lockDirName sleepTimeMS count\n" +
+                //    "\n" +
+                //    "  myID = int from 0 .. 255 (should be unique for test process)\n" +
+                //    "  verifierHost = hostname that LockVerifyServer is listening on\n" +
+                //    "  verifierPort = port that LockVerifyServer is listening on\n" +
+                //    "  lockFactoryClassName = primary LockFactory class that we will use\n" +
+                //    "  lockDirName = path to the lock directory (only set for Simple/NativeFSLockFactory\n" +
+                //    "  sleepTimeMS = milliseconds to pause betweeen each lock obtain/release\n" +
+                //    "  count = number of locking tries\n" +
+                //    "\n" +
+                //    "You should run multiple instances of this process, each with its own\n" +
+                //    "unique ID, and each pointing to the same lock directory, to verify\n" +
+                //    "that locking is working correctly.\n" +
+                //    "\n" +
                 //    "Make sure you are first running LockVerifyServer.");
                 //Environment.FailFast("1");
             }

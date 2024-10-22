@@ -25,34 +25,32 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Command-line tool for extracting sub-files out of a compound file.
-    /// <para>
-    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
-    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
     /// method within a DLL can't be directly called from the command line so we
-    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-    /// with two commands that map to that method: index extract-cfs and index list-cfs.  
-    /// </para>
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with two commands that map to that method:
+    /// index extract-cfs and index list-cfs
     /// </summary>
     public static class CompoundFileExtractor // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        // LUCENENET: Not used
-        ///// <param name="args"> Usage: org.apache.lucene.index.IndexReader [-extract] &lt;cfsfile&gt; </param>
-
-
         /// <summary>
         /// Prints the filename and size of each file within a given compound file.
         /// Add the -extract flag to extract files to the current working directory.
         /// In order to make the extracted version of the index work, you have to copy
         /// the segments file from the compound index into the directory where the extracted files are stored.
-        /// <para>
-        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
-        /// it was intended to be called from the command line. However in .NET a
+        /// <para />
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
         /// method within a DLL can't be directly called from the command line so we
-        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-        /// with two commands that map to this method: index extract-cfs and index list-cfs. 
-        /// </para>
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with two commands that map to this method:
+        /// index extract-cfs and index list-cfs
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">The command line arguments</param>
         public static void Main(string[] args)
         {
             string filename = null;

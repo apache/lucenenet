@@ -27,13 +27,14 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
     /// <summary>
     /// Suggest Quality queries based on an index contents.
     /// Utility class, used for making quality test benchmarks.
-    /// <para>
-    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
-    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
     /// method within a DLL can't be directly called from the command line so we
-    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-    /// with a command that maps to that method: benchmark find-quality-queries.  
-    /// </para>
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// benchmark find-quality-queries
     /// </summary>
     public class QualityQueriesFinder
     {
@@ -50,11 +51,13 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
         }
 
         /// <summary>
-        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
-        /// it was intended to be called from the command line. However in .NET a
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
         /// method within a DLL can't be directly called from the command line so we
-        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-        /// with a command that maps to this method: benchmark find-quality-queries. 
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// benchmark find-quality-queries
         /// </summary>
         /// <param name="args">{index-dir}</param>
         /// <exception cref="IOException">if cannot access the index.</exception>

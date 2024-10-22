@@ -30,20 +30,18 @@ namespace Lucene.Net.Store
 
     using IOUtils = Lucene.Net.Util.IOUtils;
 
-    // LUCENENET: Not used
-    ///// Run without any args to see usage.
-
     /// <summary>
     /// Simple standalone server that must be running when you
     /// use <see cref="VerifyingLockFactory"/>.  This server simply
     /// verifies at most one process holds the lock at a time.
-    /// <para>
-    /// LUCENENET specific: This class is not for direct use.  In the Java implementation
-    /// it's Main method was intended to be called from the command line. However in .NET a
+    /// <para />
+    /// LUCENENET specific: In the Java implementation, this class' Main method
+    /// was intended to be called from the command line. However, in .NET a
     /// method within a DLL can't be directly called from the command line so we
-    /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-    /// with a command that maps to that method: lock verify-server. 
-    /// </para>
+    /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+    /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+    /// with a command that maps to that method:
+    /// lock verify-server
     /// </summary>
     /// <seealso cref="VerifyingLockFactory"/>
     /// <seealso cref="LockStressTest"/>
@@ -51,14 +49,16 @@ namespace Lucene.Net.Store
     {
 
         /// <summary>
-        /// LUCENENET specific: This method is not for direct use.  In the Java implementation
-        /// it was intended to be called from the command line. However in .NET a
+        /// LUCENENET specific: In the Java implementation, this Main method
+        /// was intended to be called from the command line. However, in .NET a
         /// method within a DLL can't be directly called from the command line so we
-        /// provide a <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>
-        /// with a command that maps to this method: lock verify-server. 
+        /// provide a <see href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">.NET tool</see>,
+        /// <see href="https://www.nuget.org/packages/lucene-cli">lucene-cli</see>,
+        /// with a command that maps to this method:
+        /// lock verify-server
         /// </summary>
-        /// <param name="args"></param>
-        /// <exception cref="ArgumentException"></exception>
+        /// <param name="args">The command line arguments</param>
+        /// <exception cref="ArgumentException">Thrown if the incorrect number of arguments are provided</exception>
         [STAThread]
         public static void Main(string[] args)
         {
