@@ -11,7 +11,7 @@ version: 4.8.0-beta00017
 
 _Status:_ **`Beta`**
 
-_Released:_ `2023-03-31`
+_Released:_ `2024-10-23`
 
 - Binary release: **[Lucene.Net-4.8.0-beta00017.bin.zip](https://www.apache.org/dyn/closer.lua/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.bin.zip)** [[PGP](https://downloads.apache.org/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.bin.zip.asc)] [[SHA512](https://downloads.apache.org/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.bin.zip.sha512)]
 - Source release: **[Lucene.Net-4.8.0-beta00017.src.zip](https://www.apache.org/dyn/closer.lua/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.src.zip)** [[PGP](https://downloads.apache.org/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.src.zip.asc)] [[SHA512](https://downloads.apache.org/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.src.zip.sha512)]
@@ -27,10 +27,11 @@ _Released:_ `2023-03-31`
 
 ### Supported Frameworks
 
+- .NET 8.0
 - .NET 6.0
 - [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
-- .NET Framework 4.62
+- .NET Framework 4.6.2
 
 ### Remaining work
 
