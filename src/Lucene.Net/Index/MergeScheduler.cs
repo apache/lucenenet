@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Run the merges provided by <see cref="IndexWriter.NextMerge()"/>. </summary>
+        /// Run the merges provided by <see cref="IndexWriter.GetNextMerge()"/>. </summary>
         /// <param name="writer"> the <see cref="IndexWriter"/> to obtain the merges from. </param>
         /// <param name="trigger"> the <see cref="MergeTrigger"/> that caused this merge to happen </param>
         /// <param name="newMergesFound"> <c>true</c> iff any new merges were found by the caller; otherwise <c>false</c>

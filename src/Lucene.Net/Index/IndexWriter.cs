@@ -2680,7 +2680,7 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public virtual MergePolicy.OneMerge NextMerge() // LUCENENET TODO: API - Revert name to GetNextMerge() to match Java
+        public virtual MergePolicy.OneMerge GetNextMerge()
         {
             UninterruptableMonitor.Enter(this);
             try
