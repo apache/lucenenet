@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                 UninterruptableMonitor.Enter(this);
                 try
                 {
-                    if (!mayMerge.Value && writer.NextMerge() != null)
+                    if (!mayMerge.Value && writer.GetNextMerge() != null)
                     {
                         throw AssertionError.Create();
                     }
