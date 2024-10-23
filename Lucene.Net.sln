@@ -112,6 +112,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CONTRIBUTING.md = CONTRIBUTING.md
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
+		global.json = global.json
 		LICENSE.txt = LICENSE.txt
 		NOTICE.txt = NOTICE.txt
 		NuGet.config = NuGet.config
@@ -265,30 +266,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4D0ED7D9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.AllProjects", "src\Lucene.Net.Tests.AllProjects\Lucene.Net.Tests.AllProjects.csproj", "{9880B87D-8D14-476B-B093-9C3AA0DA8B24}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "websites", "websites\", "{8988CDA4-8420-4BEE-869A-66825055EED2}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_59352"
-		Debug.AspNetCompiler.PhysicalPath = "websites\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59352\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_59352"
-		Release.AspNetCompiler.PhysicalPath = "websites\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_59352\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "59352"
-		SlnRelativePath = "websites\"
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{42599646-275F-4970-BC60-A3349F6498CC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuceneDocsPlugins", "src\docs\LuceneDocsPlugins\LuceneDocsPlugins.csproj", "{FED4A824-1F32-4948-8D37-2B7610804DB5}"
+EndProject
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "websites", "websites\websites.msbuildproj", "{C0448DD3-68D2-485F-B31A-D2806E589FA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -560,12 +542,14 @@ Global
 		{9880B87D-8D14-476B-B093-9C3AA0DA8B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9880B87D-8D14-476B-B093-9C3AA0DA8B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9880B87D-8D14-476B-B093-9C3AA0DA8B24}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8988CDA4-8420-4BEE-869A-66825055EED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8988CDA4-8420-4BEE-869A-66825055EED2}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{FED4A824-1F32-4948-8D37-2B7610804DB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FED4A824-1F32-4948-8D37-2B7610804DB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FED4A824-1F32-4948-8D37-2B7610804DB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FED4A824-1F32-4948-8D37-2B7610804DB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0448DD3-68D2-485F-B31A-D2806E589FA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0448DD3-68D2-485F-B31A-D2806E589FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0448DD3-68D2-485F-B31A-D2806E589FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0448DD3-68D2-485F-B31A-D2806E589FA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -587,6 +571,7 @@ Global
 		{E5E8C5DC-7048-4818-B884-FB2D037D2EF2} = {8CA61D33-3590-4024-A304-7B1F75B50653}
 		{4D0ED7D9-ABEE-4890-B06C-477E3A32B9A0} = {E5E8C5DC-7048-4818-B884-FB2D037D2EF2}
 		{FED4A824-1F32-4948-8D37-2B7610804DB5} = {42599646-275F-4970-BC60-A3349F6498CC}
+		{C0448DD3-68D2-485F-B31A-D2806E589FA7} = {42599646-275F-4970-BC60-A3349F6498CC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9F2179CC-CFD2-4419-AB74-D72856931F36}
