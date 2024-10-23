@@ -1,5 +1,7 @@
 ﻿using System;
+
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
+using System.ComponentModel;
 using System.Runtime.Serialization;
 #endif
 
@@ -43,6 +45,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        [Obsolete("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         protected NoMoreDataException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

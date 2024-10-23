@@ -4,7 +4,9 @@ using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
+using System.ComponentModel;
 using System.Runtime.Serialization;
 #endif
 using System.Text;
@@ -94,6 +96,8 @@ namespace Lucene.Net.Search
             /// </summary>
             /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
             /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+            [Obsolete("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
+            [EditorBrowsable(EditorBrowsableState.Never)]
             protected TooManyClausesException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
             {

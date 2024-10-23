@@ -25,4 +25,6 @@
     <PackageReference Include="NUnit" Version="$(NUnitPackageVersion)" />
     <PackageReference Include="NUnit3TestAdapter" Version="$(NUnit3TestAdapterPackageVersion)" />
   </ItemGroup>
+
+  <Import Label="Binary Serialization Support for Tests" Project="$(SolutionDir).build/TestSerialization.targets" />
 </Project>
