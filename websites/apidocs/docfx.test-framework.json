@@ -16,7 +16,7 @@
       "dest": "obj/docfx/api/test-framework",
       "filter": "filterConfig.yml",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     }
   ],

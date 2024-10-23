@@ -15,7 +15,7 @@
       ],
       "dest": "obj/docfx/api/sandbox",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     }
   ],

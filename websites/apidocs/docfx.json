@@ -16,7 +16,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -35,7 +35,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.Common",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -54,7 +54,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.Kuromoji",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -73,7 +73,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.Morfologik",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -92,7 +92,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.OpenNLP",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -111,7 +111,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.Phonetic",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -130,7 +130,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.SmartCn",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -149,7 +149,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.Stempel",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -168,7 +168,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Benchmarks",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -187,7 +187,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Classification",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -206,7 +206,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Codecs",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -225,7 +225,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Expressions",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -244,7 +244,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Facet",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -263,7 +263,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Grouping",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -282,7 +282,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Highlighter",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -301,7 +301,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.ICU",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -320,7 +320,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Join",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -339,7 +339,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Memory",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -358,7 +358,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Misc",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -377,7 +377,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Queries",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -396,7 +396,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.QueryParser",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -415,7 +415,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Replicator",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -434,7 +434,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Sandbox",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -453,7 +453,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Spatial",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -472,7 +472,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Suggest",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -490,7 +490,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.TestFramework",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     },
     {
@@ -509,7 +509,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Demo",
       "properties": {
-        "TargetFramework": "net6.0"
+        "TargetFramework": "net8.0"
       }
     }
   ],
