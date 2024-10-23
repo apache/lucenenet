@@ -18,84 +18,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # under the License.
 VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 15.0.26730.8
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "azure-templates", "azure-templates", "{05CE3A39-40D4-452D-AFE0-E57E536A08C6}"
-	ProjectSection(SolutionItems) = preProject
-		.build\azure-templates\install-dotnet-sdk.yml = .build\azure-templates\install-dotnet-sdk.yml
-		.build\azure-templates\publish-nuget-packages.yml = .build\azure-templates\publish-nuget-packages.yml
-		.build\azure-templates\publish-test-binaries.yml = .build\azure-templates\publish-test-binaries.yml
-		.build\azure-templates\publish-test-results-for-test-projects.yml = .build\azure-templates\publish-test-results-for-test-projects.yml
-		.build\azure-templates\publish-test-results.yml = .build\azure-templates\publish-test-results.yml
-		.build\azure-templates\run-tests-on-os.yml = .build\azure-templates\run-tests-on-os.yml
-		.build\azure-templates\show-all-environment-variables.yml = .build\azure-templates\show-all-environment-variables.yml
-		.build\azure-templates\show-all-files.yml = .build\azure-templates\show-all-files.yml
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{8CA61D33-3590-4024-A304-7B1F75B50653}"
 	ProjectSection(SolutionItems) = preProject
 		src\dotnet\Directory.Build.props = src\dotnet\Directory.Build.props
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{4016BDAB-6C33-4D1E-9439-57B416EA45D5}"
-	ProjectSection(SolutionItems) = preProject
-		azure-pipelines.yml = azure-pipelines.yml
-		build = build
-		build.bat = build.bat
-		build.ps1 = build.ps1
-		.build\dependencies.props = .build\dependencies.props
-		.build\nuget.props = .build\nuget.props
-		.build\release.targets = .build\release.targets
-		.build\runbuild.ps1 = .build\runbuild.ps1
-		.build\TestReferences.Common.targets = .build\TestReferences.Common.targets
-		TestTargetFramework.props = TestTargetFramework.props
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "psake", "psake", "{4BFE738F-3D99-4408-85D4-E882737F9CEC}"
-	ProjectSection(SolutionItems) = preProject
-		.build\psake\psake = .build\psake\psake
-		.build\psake\psake-config.ps1 = .build\psake\psake-config.ps1
-		.build\psake\psake.cmd = .build\psake\psake.cmd
-		.build\psake\psake.ps1 = .build\psake\psake.ps1
-		.build\psake\psake.psd1 = .build\psake\psake.psd1
-		.build\psake\psake.psm1 = .build\psake\psake.psm1
-		.build\psake\readme.md = .build\psake\readme.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "public", "public", "{DB6B3C48-B1B1-4977-9FB0-333ED71E84E1}"
-	ProjectSection(SolutionItems) = preProject
-		.build\psake\public\Assert.ps1 = .build\psake\public\Assert.ps1
-		.build\psake\public\BuildSetup.ps1 = .build\psake\public\BuildSetup.ps1
-		.build\psake\public\BuildTearDown.ps1 = .build\psake\public\BuildTearDown.ps1
-		.build\psake\public\Exec.ps1 = .build\psake\public\Exec.ps1
-		.build\psake\public\FormatTaskName.ps1 = .build\psake\public\FormatTaskName.ps1
-		.build\psake\public\Framework.ps1 = .build\psake\public\Framework.ps1
-		.build\psake\public\Get-PSakeScriptTasks.ps1 = .build\psake\public\Get-PSakeScriptTasks.ps1
-		.build\psake\public\Include.ps1 = .build\psake\public\Include.ps1
-		.build\psake\public\Invoke-psake.ps1 = .build\psake\public\Invoke-psake.ps1
-		.build\psake\public\Invoke-Task.ps1 = .build\psake\public\Invoke-Task.ps1
-		.build\psake\public\Properties.ps1 = .build\psake\public\Properties.ps1
-		.build\psake\public\Task.ps1 = .build\psake\public\Task.ps1
-		.build\psake\public\TaskSetup.ps1 = .build\psake\public\TaskSetup.ps1
-		.build\psake\public\TaskTearDown.ps1 = .build\psake\public\TaskTearDown.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "private", "private", "{BC910C84-EF7C-4F69-AA76-47C0EC06D809}"
-	ProjectSection(SolutionItems) = preProject
-		.build\psake\private\CleanupEnvironment.ps1 = .build\psake\private\CleanupEnvironment.ps1
-		.build\psake\private\ConfigureBuildEnvironment.ps1 = .build\psake\private\ConfigureBuildEnvironment.ps1
-		.build\psake\private\CreateConfigurationForNewContext.ps1 = .build\psake\private\CreateConfigurationForNewContext.ps1
-		.build\psake\private\ExecuteInBuildFileScope.ps1 = .build\psake\private\ExecuteInBuildFileScope.ps1
-		.build\psake\private\FormatErrorMessage.ps1 = .build\psake\private\FormatErrorMessage.ps1
-		.build\psake\private\Get-DefaultBuildFile.ps1 = .build\psake\private\Get-DefaultBuildFile.ps1
-		.build\psake\private\GetCurrentConfigurationOrDefault.ps1 = .build\psake\private\GetCurrentConfigurationOrDefault.ps1
-		.build\psake\private\GetTasksFromContext.ps1 = .build\psake\private\GetTasksFromContext.ps1
-		.build\psake\private\LoadConfiguration.ps1 = .build\psake\private\LoadConfiguration.ps1
-		.build\psake\private\LoadModules.ps1 = .build\psake\private\LoadModules.ps1
-		.build\psake\private\ResolveError.ps1 = .build\psake\private\ResolveError.ps1
-		.build\psake\private\SelectObjectWithDefault.ps1 = .build\psake\private\SelectObjectWithDefault.ps1
-		.build\psake\private\Test-ModuleVersion.ps1 = .build\psake\private\Test-ModuleVersion.ps1
-		.build\psake\private\WriteColoredOutput.ps1 = .build\psake\private\WriteColoredOutput.ps1
-		.build\psake\private\WriteDocumentation.ps1 = .build\psake\private\WriteDocumentation.ps1
-		.build\psake\private\WriteTaskTimeSummary.ps1 = .build\psake\private\WriteTaskTimeSummary.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4DF7EACE-2B25-43F6-B558-8520BF20BD76}"
@@ -112,11 +37,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CONTRIBUTING.md = CONTRIBUTING.md
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
+		.config\dotnet-tools.json = .config\dotnet-tools.json
 		global.json = global.json
 		LICENSE.txt = LICENSE.txt
 		NOTICE.txt = NOTICE.txt
 		NuGet.config = NuGet.config
 		README.md = README.md
+		TestTargetFramework.props = TestTargetFramework.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net", "src\Lucene.Net\Lucene.Net.csproj", "{3A0AA37E-2B7B-4416-B528-DA4E0E6A6706}"
@@ -271,6 +198,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuceneDocsPlugins", "src\docs\LuceneDocsPlugins\LuceneDocsPlugins.csproj", "{FED4A824-1F32-4948-8D37-2B7610804DB5}"
 EndProject
 Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "websites", "websites\websites.msbuildproj", "{C0448DD3-68D2-485F-B31A-D2806E589FA7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{9D88BB9B-A226-4C6F-BC99-7AB2D923EDCA}"
+EndProject
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "build", ".build\build.msbuildproj", "{5C5253E9-BAF2-493C-B4D4-EE01D2E1769F}"
+EndProject
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "github", ".github\github.msbuildproj", "{E71152A0-48CC-4334-981F-F5FBFFA50891}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -550,15 +483,19 @@ Global
 		{C0448DD3-68D2-485F-B31A-D2806E589FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0448DD3-68D2-485F-B31A-D2806E589FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0448DD3-68D2-485F-B31A-D2806E589FA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C5253E9-BAF2-493C-B4D4-EE01D2E1769F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C5253E9-BAF2-493C-B4D4-EE01D2E1769F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C5253E9-BAF2-493C-B4D4-EE01D2E1769F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C5253E9-BAF2-493C-B4D4-EE01D2E1769F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E71152A0-48CC-4334-981F-F5FBFFA50891}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E71152A0-48CC-4334-981F-F5FBFFA50891}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E71152A0-48CC-4334-981F-F5FBFFA50891}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E71152A0-48CC-4334-981F-F5FBFFA50891}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{05CE3A39-40D4-452D-AFE0-E57E536A08C6} = {4016BDAB-6C33-4D1E-9439-57B416EA45D5}
-		{4BFE738F-3D99-4408-85D4-E882737F9CEC} = {4016BDAB-6C33-4D1E-9439-57B416EA45D5}
-		{DB6B3C48-B1B1-4977-9FB0-333ED71E84E1} = {4BFE738F-3D99-4408-85D4-E882737F9CEC}
-		{BC910C84-EF7C-4F69-AA76-47C0EC06D809} = {4BFE738F-3D99-4408-85D4-E882737F9CEC}
 		{4DF7EACE-2B25-43F6-B558-8520BF20BD76} = {8CA61D33-3590-4024-A304-7B1F75B50653}
 		{EFB2E31A-5917-49D5-A808-FE5061A550B4} = {8CA61D33-3590-4024-A304-7B1F75B50653}
 		{119BBACD-D4DB-4E3B-922F-3DA83E0B29E2} = {4DF7EACE-2B25-43F6-B558-8520BF20BD76}
@@ -572,6 +509,8 @@ Global
 		{4D0ED7D9-ABEE-4890-B06C-477E3A32B9A0} = {E5E8C5DC-7048-4818-B884-FB2D037D2EF2}
 		{FED4A824-1F32-4948-8D37-2B7610804DB5} = {42599646-275F-4970-BC60-A3349F6498CC}
 		{C0448DD3-68D2-485F-B31A-D2806E589FA7} = {42599646-275F-4970-BC60-A3349F6498CC}
+		{5C5253E9-BAF2-493C-B4D4-EE01D2E1769F} = {9D88BB9B-A226-4C6F-BC99-7AB2D923EDCA}
+		{E71152A0-48CC-4334-981F-F5FBFFA50891} = {9D88BB9B-A226-4C6F-BC99-7AB2D923EDCA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9F2179CC-CFD2-4419-AB74-D72856931F36}

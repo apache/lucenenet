@@ -5,6 +5,6 @@
     <OutputPath>bin\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-	  <None Include="**/*.*" Exclude="obj/**/*;bin/**/*;*.msbuildproj"/>
+    <None Include="**/*.*" Exclude="obj/**/*;bin/**/*;*.msbuildproj"/>
   </ItemGroup>
 </Project>
