@@ -67,7 +67,7 @@ task Clean -description "This task cleans up the build directory" {
 
 task UpdateLocalSDKVersion -description "Backs up the project.json file and pins the version to $minimumSdkVersion" {
     Backup-File $globalJsonFile
-    Generate-Global-Json `
+    Update-Global-Json `
         -sdkVersion $minimumSdkVersion `
         -file $globalJsonFile
 }
@@ -484,25 +484,43 @@ function Update-LuceneCLI-Readme-For-Pack([string]$version) {
     } | Set-Content $luceneCLIReadmeFile -Force
 }
 
-function Generate-Global-Json {
+function Update-Global-Json {
 param(
     [string]$sdkVersion,
     [string]$file = $(throw "file is a required parameter.")
 )
 
-$fileText = "{
-  ""sources"": [ ""src"" ],
-  ""sdk"": {
-    ""version"": ""$sdkVersion"",
-    ""rollForward"": ""latestMajor""
-  }
-}"
     $dir = [System.IO.Path]::GetDirectoryName($file)
     Ensure-Directory-Exists $dir
 
+    # Read existing JSON file if it exists
+    if (Test-Path $file) {
+        $jsonContent = Get-Content $file -Raw | ConvertFrom-Json
+    } else {
+        # Create a new object if the file doesn't exist
+        $jsonContent = [pscustomobject]@{
+            "msbuild-sdks" = @{
+                "Microsoft.Build.NoTargets" = "3.7.56"
+            }
+            "sources" = @("src")
+        }
+    }
+
+    # Ensure sdk is an object, even if it exists but is null
+    if (-not $jsonContent.PSObject.Properties.Match('sdk') -or $null -eq $jsonContent.sdk) {
+        # Add the "sdk" property if it doesn't exist
+        $jsonContent | Add-Member -MemberType NoteProperty -Name "sdk" -Value @{}
+    }
+
+    # Now update the sdk properties
+    $jsonContent.sdk.version = $sdkVersion
+    $jsonContent.sdk.rollForward = "latestMajor"
+
     Write-Host "Generating global.json file: $(Normalize-FileSystemSlashes "$file")"
     Track-Added-File $file
-    Out-File -filePath $file -encoding UTF8 -inputObject $fileText
+
+    # Convert the updated object back to JSON and write it to the file
+    $jsonContent | ConvertTo-Json -Depth 10 | Set-Content -Path $file -Encoding UTF8
 }
 
 function Generate-Version-Props {
