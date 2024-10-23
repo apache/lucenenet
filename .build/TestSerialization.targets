@@ -1,0 +1,102 @@
+﻿<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project>
+
+  <!-- Edits the .runtime.config file to enable binary serialization, which is disabled by default in .NET 8+.
+
+       IMPORTANT: This is only meant for testing purposes for the (now deprecated) binary serialization support.
+       Enabling this in a production environment is highly discouraged. -->
+
+  <UsingTask TaskName="UpdateRuntimeConfigProperty" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <RuntimeConfigFile ParameterType="System.String" Required="true" />
+      <PropertyName ParameterType="System.String" Required="true" />
+      <PropertyValue ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        if (File.Exists(RuntimeConfigFile))
+        {
+            // Read the file content
+            string jsonContent = File.ReadAllText(RuntimeConfigFile);
+
+            // Ensure runtimeOptions and configProperties sections exist
+            if (!jsonContent.Contains("\"runtimeOptions\""))
+            {
+                jsonContent = jsonContent.TrimEnd('}', '\n', '\r') + ",\n  \"runtimeOptions\": {\n    \"configProperties\": {\n    }\n  }\n}";
+            }
+            if (!jsonContent.Contains("\"configProperties\""))
+            {
+                int runtimeOptionsIndex = jsonContent.IndexOf("\"runtimeOptions\"");
+                int insertPosition = jsonContent.IndexOf('}', runtimeOptionsIndex);
+                jsonContent = jsonContent.Insert(insertPosition, ",\n    \"configProperties\": {\n    }\n");
+            }
+
+            // Check if the property already exists
+            int configPropertiesIndex = jsonContent.IndexOf("\"configProperties\"");
+            int propertyIndex = jsonContent.IndexOf("\"" + PropertyName + "\"", configPropertiesIndex);
+
+            if (propertyIndex != -1)
+            {
+                // Property exists, update its value
+                int valueStartIndex = jsonContent.IndexOf(':', propertyIndex) + 1;
+                int valueEndIndex = jsonContent.IndexOfAny(new char[] { ',', '}', '\n' }, valueStartIndex);
+                jsonContent = jsonContent.Remove(valueStartIndex, valueEndIndex - valueStartIndex)
+                                         .Insert(valueStartIndex, " " + PropertyValue);
+            }
+            else
+            {
+                // Property does not exist, add it
+                int closingBraceIndex = jsonContent.IndexOf('}', configPropertiesIndex);
+                jsonContent = jsonContent.Insert(closingBraceIndex, "  \"" + PropertyName + "\": " + PropertyValue + ",\n");
+            }
+
+            // Write the updated content back to the file
+            File.WriteAllText(RuntimeConfigFile, jsonContent);
+        }
+        else
+        {
+            Log.LogError("File not found: " + RuntimeConfigFile);
+        }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <!-- Target to invoke the task after build -->
+  <Target Name="UpdateRuntimeConfig" AfterTargets="Build">
+    <PropertyGroup>
+      <RuntimeConfigFile>$(TargetDir)$(AssemblyName).runtimeconfig.json</RuntimeConfigFile>
+      <DotNet_8_0_OrGreater>false</DotNet_8_0_OrGreater>
+      <DotNet_8_0_OrGreater Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And ($(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or ($(TargetFramework.StartsWith('net')) And $(TargetFramework.IndexOf('.')) > 4))">true</DotNet_8_0_OrGreater>
+    </PropertyGroup>
+
+    <UpdateRuntimeConfigProperty 
+        RuntimeConfigFile="$(RuntimeConfigFile)" 
+        PropertyName="System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization" 
+        PropertyValue="true" 
+        Condition="Exists('$(RuntimeConfigFile)') And '$(DotNet_8_0_OrGreater)' == 'true'" />
+  </Target>
+
+</Project>
