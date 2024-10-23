@@ -22,6 +22,10 @@
 
   <Import Project=".build/dependencies.props" Condition="Exists('.build/dependencies.props')" />
 
+  <PropertyGroup Label="Warnings to be Disabled in Solution">
+    <NoWarn Label="Legacy serialization support APIs are obsolete">$(NoWarn);SYSLIB0051</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup Label="Solution-level Publish to Project-specific Directory">
     <PublishDir Condition="'$(AlternatePublishRootDirectory)' != ''">$(AlternatePublishRootDirectory)/$(TargetFramework)/$(MSBuildProjectName)/</PublishDir>
   </PropertyGroup>

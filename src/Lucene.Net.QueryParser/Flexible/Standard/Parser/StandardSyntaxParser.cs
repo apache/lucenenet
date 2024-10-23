@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
+using System.ComponentModel;
 using System.Runtime.Serialization;
 #endif
 using JCG = J2N.Collections.Generic;
@@ -1094,6 +1095,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             /// </summary>
             /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
             /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+            [Obsolete("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
+            [EditorBrowsable(EditorBrowsableState.Never)]
             public LookaheadSuccess(SerializationInfo info, StreamingContext context)
                 : base(info, context)
             {

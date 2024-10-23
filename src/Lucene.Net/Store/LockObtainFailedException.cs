@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
+using System.ComponentModel;
 using System.Runtime.Serialization;
 #endif
 
@@ -52,6 +53,8 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        [Obsolete("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         protected LockObtainFailedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
@@ -69,6 +70,8 @@ namespace Lucene
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        [Obsolete("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         protected OutOfMemoryError(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

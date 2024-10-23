@@ -22,9 +22,6 @@
 // ANTLR GENERATED CODE: DO NOT EDIT (LUCENENET: Not really auto generated in the port)
 
 using System;
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-using System.Runtime.Serialization;
-#endif
 using Antlr.Runtime;
 using J2N.Text;
 using Lucene.Net.Support;

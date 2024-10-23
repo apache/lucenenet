@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
+using System.ComponentModel;
 using System.Runtime.Serialization;
 #endif
 #if FEATURE_CODE_ACCESS_SECURITY
@@ -102,6 +103,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        [Obsolete("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         protected ParseException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -113,7 +116,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 #if FEATURE_CODE_ACCESS_SECURITY
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 #endif
+        [Obsolete("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+#pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
+#pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
         {
             base.GetObjectData(info, context);
             info.AddValue("CurrentToken", CurrentToken, typeof(Token));
