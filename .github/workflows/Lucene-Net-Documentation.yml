@@ -132,6 +132,10 @@ jobs:
         run: dotnet tool list --local
         shell: powershell
 
+      - name: Check Global Tools
+        run: dotnet tool list --global
+        shell: powershell
+
       - name: Build docs
         run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}
         shell: powershell
