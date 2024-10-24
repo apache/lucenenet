@@ -75,13 +75,7 @@ if (-not (Test-Path "$InstallDir/docfx")) {
     Write-Host "docfx is not installed. Installing as a local tool..."
     
     # Install docfx as a local tool if it isn't listed in dotnet-tools.json
-    $installOutput = dotnet tool install --local docfx -v diag 2>&1
-
-    # Output the installation details to the console
-    Write-Host $installOutput
-
-    # Add the local tool's path to the environment
-    $env:PATH = "$installOutput;$env:PATH"
+    dotnet tool install --local docfx
 } else {
     Write-Host "docfx is already installed. Restoring tools..."
 
