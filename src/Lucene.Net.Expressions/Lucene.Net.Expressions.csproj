@@ -38,15 +38,13 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-
-
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Antlr3.Runtime" Version="$(Antlr3RuntimePackageVersion)" />
-
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="$(Antlr4RuntimeStandardPackageVersion)" />
+    <PackageReference Include="Antlr4BuildTasks" Version="$(Antlr4BuildTasksPackageVersion)" />
     <!-- These are transitive dependencies, but Antlr3.Runtime doesn't provide a secure alternative on netstandard2.0, so we need to include them. -->
     <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpPackageVersion)" />
     <PackageReference Include="System.Text.RegularExpressions" Version="$(SystemTextRegularExpressionsPackageVersion)" />
@@ -66,6 +64,14 @@
 
   <ItemGroup>
     <EmbeddedResource Include="JS\JavascriptCompiler.properties" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Antlr4 Include="JS\Javascript.g4">
+      <Listener>true</Listener>
+      <Visitor>false</Visitor>
+      <Package>Lucene.Net.Expressions.JS</Package>
+    </Antlr4>
   </ItemGroup>
 
 </Project>

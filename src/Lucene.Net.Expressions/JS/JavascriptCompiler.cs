@@ -1,6 +1,6 @@
-﻿using J2N.Text;
-using Antlr.Runtime;
-using Antlr.Runtime.Tree;
+﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
+using J2N.Text;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Support;
 using System;
@@ -79,7 +79,6 @@ namespace Lucene.Net.Expressions.JS
         private static readonly MethodInfo DOUBLE_VAL_METHOD = GetMethod(FUNCTION_VALUES_TYPE, "DoubleVal",
             new[] { typeof(int) });
 
-
         // We use the same class name for all generated classes as they all have their own class loader.
         // The source code is displayed as "source file name" in stack trace.
         // to work around import clash:
@@ -96,13 +95,10 @@ namespace Lucene.Net.Expressions.JS
 
         private readonly IDictionary<string, MethodInfo> functions;
 
-
-
         private ILGenerator gen;
         private AssemblyBuilder asmBuilder;
         private MethodBuilder evalMethod;
         private ModuleBuilder modBuilder;
-
 
         // This maximum length is theoretically 65535 bytes, but as its CESU-8 encoded we dont know how large it is in bytes, so be safe
         // rcmuir: "If your ranking function is that large you need to check yourself into a mental institution!"
@@ -174,10 +170,9 @@ namespace Lucene.Net.Expressions.JS
         {
             try
             {
-
-                ITree antlrTree = GetAntlrComputedExpressionTree();
+                var antlrTree = GetAntlrComputedExpressionTree();
                 BeginCompile();
-                RecursiveCompile(antlrTree, typeof(double));
+                RecursiveCompile(antlrTree);
                 EndCompile();
                 return
                     (Expression)
@@ -220,329 +215,470 @@ namespace Lucene.Net.Expressions.JS
             gen = evalMethod.GetILGenerator();
         }
 
-        private void RecursiveCompile(ITree current, Type expected)
+        private void RecursiveCompile(JavascriptParser.ExpressionContext context)
         {
-            int type = current.Type;
-            string text = current.Text;
+            var listener = new JavascriptListener(this);
+            listener.EnterExpression(context);
+        }
 
-            switch (type)
+        // LUCENENET-specific: these methods use the ANTLRv4 listener API to
+        // be equivalent to what RecursiveCompile was doing previously
+        private class JavascriptListener : JavascriptBaseListener
+        {
+            private readonly JavascriptCompiler _compiler;
+
+            public JavascriptListener(JavascriptCompiler compiler)
             {
-                case JavascriptParser.AT_CALL:
-                    {
-                        ITree identifier = current.GetChild(0);
-                        string call = identifier.Text;
-                        int arguments = current.ChildCount - 1;
-                        if (!functions.TryGetValue(call, out MethodInfo method) || method is null)
-                        {
-                            throw new ArgumentException("Unrecognized method call (" + call + ").");
-                        }
-                        int arity = method.GetParameters().Length;
-                        if (arguments != arity)
-                        {
-                            throw new ArgumentException("Expected (" + arity + ") arguments for method call ("
-                                                        + call + "), but found (" + arguments + ").");
-                        }
-                        for (int argument = 1; argument <= arguments; ++argument)
-                        {
-                            RecursiveCompile(current.GetChild(argument), typeof(double));
-                        }
-                        gen.Emit(OpCodes.Call, method);
-                        break;
-                    }
-                case JavascriptParser.NAMESPACE_ID:
-                    {
-                        if (!externalsMap.TryGetValue(text, out int index))
-                        {
-                            externalsMap[text] = index = externalsMap.Count;
-                        }
+                _compiler = compiler;
+            }
 
-                        gen.Emit(OpCodes.Nop);
+            public override void EnterExpression(JavascriptParser.ExpressionContext context)
+            {
+                EnterConditional(context.conditional());
+            }
 
-                        gen.Emit(OpCodes.Ldarg_2);
-                        gen.Emit(OpCodes.Ldc_I4, index);
+            public override void EnterCall(JavascriptParser.CallContext context)
+            {
+                ITerminalNode identifier = context.NAMESPACE_ID();
+                string call = identifier.GetText();
+                // LUCENENET: logic changed to get arguments from parse context
+                var arguments = context.arguments().conditional();
+                int argumentCount = arguments.Length;
+                if (!_compiler.functions.TryGetValue(call, out MethodInfo method) || method is null)
+                {
+                    throw new ArgumentException("Unrecognized method call (" + call + ").");
+                }
+                int arity = method.GetParameters().Length;
+                if (argumentCount != arity)
+                {
+                    throw new ArgumentException("Expected (" + arity + ") arguments for method call ("
+                                                + call + "), but found (" + argumentCount + ").");
+                }
+                for (int argument = 0; argument < argumentCount; ++argument) // LUCENENET: was 1 to and including arguments
+                {
+                    EnterConditional(arguments[argument]);
+                }
+                _compiler.gen.Emit(OpCodes.Call, method);
+            }
 
-                        gen.Emit(OpCodes.Ldelem_Ref);
-                        gen.Emit(OpCodes.Ldarg_1);
-                        gen.Emit(OpCodes.Callvirt, DOUBLE_VAL_METHOD);
-                        break;
-                    }
-                case JavascriptParser.HEX:
+            public override void EnterPrimary(JavascriptParser.PrimaryContext context)
+            {
+                if (context.NAMESPACE_ID() is { } namespaceId)
+                {
+                    string text = namespaceId.GetText();
+
+                    if (!_compiler.externalsMap.TryGetValue(text, out int index))
                     {
-                        PushInt64(Convert.ToInt64(text, 16));
-                        break;
-                    }
-                case JavascriptParser.OCTAL:
-                    {
-                        PushInt64(Convert.ToInt64(text, 8));
-                        break;
+                        _compiler.externalsMap[text] = index = _compiler.externalsMap.Count;
                     }
 
-                case JavascriptParser.DECIMAL:
-                    {
-                        //.NET Port. This is a bit hack-y but was needed since .NET can't perform bitwise ops on longs & doubles
-                        var bitwiseOps = new[]{ ">>","<<","&","~","|","^"};
+                    _compiler.gen.Emit(OpCodes.Nop);
 
-                        if (bitwiseOps.Any(s => sourceText.Contains(s)))
+                    _compiler.gen.Emit(OpCodes.Ldarg_2);
+                    _compiler.gen.Emit(OpCodes.Ldc_I4, index);
+
+                    _compiler.gen.Emit(OpCodes.Ldelem_Ref);
+                    _compiler.gen.Emit(OpCodes.Ldarg_1);
+                    _compiler.gen.Emit(OpCodes.Callvirt, DOUBLE_VAL_METHOD);
+                }
+                else if (context.numeric() is { } numeric)
+                {
+                    EnterNumeric(numeric);
+                }
+                else if (context.conditional() is { } conditional)
+                {
+                    EnterConditional(conditional);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unknown primary alternative");
+                }
+            }
+
+            public override void EnterNumeric(JavascriptParser.NumericContext context)
+            {
+                string text = context.GetText();
+
+                if (context.HEX() is not null)
+                {
+                    _compiler.PushInt64(Convert.ToInt64(text, 16));
+                }
+                else if (context.OCTAL() is not null)
+                {
+                    _compiler.PushInt64(Convert.ToInt64(text, 8));
+                }
+                else
+                {
+                    // decimal
+                    //.NET Port. This is a bit hack-y but was needed since .NET can't perform bitwise ops on longs & doubles
+                    var bitwiseOps = new[]{ ">>", "<<", "&", "~", "|", "^" };
+
+                    if (bitwiseOps.Any(s => text.Contains(s)))
+                    {
+                        if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int val))
                         {
-                            if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int val))
-                            {
-                                gen.Emit(OpCodes.Ldc_I4, val);
-                            }
-                            else
-                            {
-                                gen.Emit(OpCodes.Ldc_I8, long.Parse(text, CultureInfo.InvariantCulture));
-                                gen.Emit(OpCodes.Conv_Ovf_U4_Un);
-                            }
+                            _compiler.gen.Emit(OpCodes.Ldc_I4, val);
                         }
                         else
                         {
-                            gen.Emit(OpCodes.Ldc_R8, double.Parse(text, CultureInfo.InvariantCulture));
+                            _compiler.gen.Emit(OpCodes.Ldc_I8, long.Parse(text, CultureInfo.InvariantCulture));
+                            _compiler.gen.Emit(OpCodes.Conv_Ovf_U4_Un);
                         }
-                        break;
                     }
-
-                case JavascriptParser.AT_NEGATE:
+                    else
                     {
-                        RecursiveCompile(current.GetChild(0), typeof(double));
-                        gen.Emit(OpCodes.Neg);
-                        break;
+                        _compiler.gen.Emit(OpCodes.Ldc_R8, double.Parse(text, CultureInfo.InvariantCulture));
                     }
-
-                case JavascriptParser.AT_ADD:
-                    {
-                        PushArith(OpCodes.Add, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_SUBTRACT:
-                    {
-                        PushArith(OpCodes.Sub, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_MULTIPLY:
-                    {
-                        PushArith(OpCodes.Mul, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_DIVIDE:
-                    {
-                        PushArith(OpCodes.Div, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_MODULO:
-                    {
-                        PushArith(OpCodes.Rem, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_BIT_SHL:
-                    {
-                        PushShift(OpCodes.Shl, current);
-                        break;
-                    }
-
-                case JavascriptParser.AT_BIT_SHR:
-                    {
-                        PushShift(OpCodes.Shr, current);
-                        break;
-                    }
-
-                case JavascriptParser.AT_BIT_SHU:
-                    {
-                        PushShift(OpCodes.Shr_Un, current);
-                        break;
-                    }
-
-                case JavascriptParser.AT_BIT_AND:
-                    {
-                        PushBitwise(OpCodes.And, current);
-                        break;
-                    }
-
-                case JavascriptParser.AT_BIT_OR:
-                    {
-                        PushBitwise(OpCodes.Or, current);
-                        break;
-                    }
-
-                case JavascriptParser.AT_BIT_XOR:
-                    {
-                        PushBitwise(OpCodes.Xor, current);
-                        break;
-                    }
-
-                case JavascriptParser.AT_BIT_NOT:
-                    {
-                        RecursiveCompile(current.GetChild(0), typeof(long));
-                        gen.Emit(OpCodes.Not);
-                        gen.Emit(OpCodes.Conv_R8);
-                        break;
-                    }
-
-                case JavascriptParser.AT_COMP_EQ:
-                    {
-                        PushCond(OpCodes.Ceq, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_COMP_NEQ:
-                    {
-                        PushCondEq(OpCodes.Ceq, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_COMP_LT:
-                    {
-                        PushCond(OpCodes.Clt, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_COMP_GT:
-                    {
-                        PushCond(OpCodes.Cgt, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_COMP_LTE:
-                    {
-                        PushCondEq(OpCodes.Cgt, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_COMP_GTE:
-                    {
-                        PushCondEq(OpCodes.Clt, current, expected);
-                        break;
-                    }
-
-                case JavascriptParser.AT_BOOL_NOT:
-                    {
-                        RecursiveCompile(current.GetChild(0), typeof(int));
-                        gen.Emit(OpCodes.Ldc_I4_0);
-                        gen.Emit(OpCodes.Ceq);
-                        gen.Emit(OpCodes.Conv_R8);
-                        break;
-                    }
-
-                case JavascriptParser.AT_BOOL_AND:
-                    {
-
-                        RecursiveCompile(current.GetChild(0), typeof(int));
-                        gen.Emit(OpCodes.Ldc_I4_0);
-                        gen.Emit(OpCodes.Ceq);
-                        RecursiveCompile(current.GetChild(1), typeof(int));
-
-                        gen.Emit(OpCodes.Ldc_I4_0);
-                        gen.Emit(OpCodes.Ceq);
-
-                        gen.Emit(OpCodes.Or);
-
-                        gen.Emit(OpCodes.Ldc_I4_0);
-                        gen.Emit(OpCodes.Ceq);
-
-                        gen.Emit(OpCodes.Conv_R8);
-
-
-                        break;
-                    }
-
-                case JavascriptParser.AT_BOOL_OR:
-                    {
-                        RecursiveCompile(current.GetChild(0), typeof(int));
-                        gen.Emit(OpCodes.Ldc_I4_0);
-                        gen.Emit(OpCodes.Ceq);
-                        gen.Emit(OpCodes.Ldc_I4_1);
-                        gen.Emit(OpCodes.Xor);
-                        RecursiveCompile(current.GetChild(1), typeof(int));
-
-                        gen.Emit(OpCodes.Ldc_I4_0);
-                        gen.Emit(OpCodes.Ceq);
-                        gen.Emit(OpCodes.Ldc_I4_1);
-                        gen.Emit(OpCodes.Xor);
-                        gen.Emit(OpCodes.Or);
-
-                        gen.Emit(OpCodes.Ldc_I4_1);
-                        gen.Emit(OpCodes.Ceq);
-
-                        gen.Emit(OpCodes.Conv_R8);
-                        break;
-                    }
-
-                case JavascriptParser.AT_COND_QUE:
-                    {
-                        Label condFalse = gen.DefineLabel();
-                        Label condEnd = gen.DefineLabel();
-                        RecursiveCompile(current.GetChild(0), typeof(int));
-                        gen.Emit(OpCodes.Ldc_I4_0);
-                        gen.Emit(OpCodes.Beq,condFalse);
-                        RecursiveCompile(current.GetChild(1), expected);
-                        gen.Emit(OpCodes.Br_S,condEnd);
-                        gen.MarkLabel(condFalse);
-                        RecursiveCompile(current.GetChild(2), expected);
-                        gen.MarkLabel(condEnd);
-                        break;
-                    }
-
-                default:
-                    {
-                        throw IllegalStateException.Create("Unknown operation specified: (" + current.Text + ").");
-                    }
+                }
             }
 
+            public override void EnterPostfix(JavascriptParser.PostfixContext context)
+            {
+                if (context.primary() is { } primary)
+                {
+                    EnterPrimary(primary);
+                }
+                else if (context.call() is { } call)
+                {
+                    EnterCall(call);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unknown postfix alternative");
+                }
+            }
+
+            public override void EnterUnary(JavascriptParser.UnaryContext context)
+            {
+                if (context.postfix() is { } postfix)
+                {
+                    EnterPostfix(postfix);
+                }
+                else if (context.AT_ADD() is not null)
+                {
+                    // LUCENENET-specific: it appears that 4.8 had a bug where
+                    // it would push an "add" opcode here, but that is not correct
+                    // for the unary + operator.
+                    throw new NotImplementedException("Unary + is not supported");
+                }
+                else if (context.unary_operator() is { } unaryOperator)
+                {
+                    EnterUnary(context.unary());
+
+                    if (unaryOperator.AT_SUBTRACT() is not null)
+                    {
+                        _compiler.gen.Emit(OpCodes.Neg);
+                    }
+                    else if (unaryOperator.AT_BIT_NOT() is not null)
+                    {
+                        _compiler.gen.Emit(OpCodes.Not);
+                        _compiler.gen.Emit(OpCodes.Conv_R8);
+                    }
+                    else if (unaryOperator.AT_BOOL_NOT() is not null)
+                    {
+                        _compiler.gen.Emit(OpCodes.Ldc_I4_0);
+                        _compiler.gen.Emit(OpCodes.Ceq);
+                        _compiler.gen.Emit(OpCodes.Conv_R8);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unknown unary_operator alternative");
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unknown unary alternative");
+                }
+            }
+
+            public override void EnterAdditive(JavascriptParser.AdditiveContext context)
+            {
+                CompileBinary(context, context.multiplicative, EnterMultiplicative, terminalNode =>
+                {
+                    if (terminalNode.Symbol.Type == JavascriptParser.AT_ADD)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Add);
+                    }
+                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_SUBTRACT)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Sub);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unknown additive token");
+                    }
+                });
+            }
+
+            public override void EnterMultiplicative(JavascriptParser.MultiplicativeContext context)
+            {
+                CompileBinary(context, context.unary, EnterUnary, terminalNode =>
+                {
+                    if (terminalNode.Symbol.Type == JavascriptParser.AT_MULTIPLY)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Mul);
+                    }
+                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_DIVIDE)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Div);
+                    }
+                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_MODULO)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Rem);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unknown multiplicative token");
+                    }
+                });
+            }
+
+            public override void EnterShift(JavascriptParser.ShiftContext context)
+            {
+                CompileBinary(context, context.additive, EnterAdditive, terminalNode =>
+                {
+                    if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHL)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Shl);
+                    }
+                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHR)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Shr);
+                    }
+                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHU)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Shr_Un);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unknown shift token");
+                    }
+                });
+            }
+
+            public override void EnterRelational(JavascriptParser.RelationalContext context)
+            {
+                CompileBinary(context, context.shift, EnterShift, terminalNode => {
+                    if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_LT)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Clt);
+                    }
+                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_GT)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Cgt);
+                    }
+                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_LTE)
+                    {
+                        _compiler.PushCondEq(OpCodes.Cgt);
+                    }
+                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_GTE)
+                    {
+                        _compiler.PushCondEq(OpCodes.Clt);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unknown relational token");
+                    }
+                });
+            }
+
+            public override void EnterEquality(JavascriptParser.EqualityContext context)
+            {
+                CompileBinary(context, context.relational, EnterRelational, terminalNode =>
+                {
+                    if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_EQ)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Ceq);
+                    }
+                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_NEQ)
+                    {
+                        _compiler.PushCondEq(OpCodes.Ceq);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unknown equality token");
+                    }
+                });
+            }
+
+            public override void EnterBitwise_and(JavascriptParser.Bitwise_andContext context)
+            {
+                CompileBinary(context, context.equality, EnterEquality, terminalNode =>
+                {
+                    if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_AND)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.And);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unknown bitwise_and token");
+                    }
+                });
+            }
+
+            public override void EnterBitwise_xor(JavascriptParser.Bitwise_xorContext context)
+            {
+                CompileBinary(context, context.bitwise_and, EnterBitwise_and, terminalNode =>
+                {
+                    if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_XOR)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Xor);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unknown bitwise_xor token");
+                    }
+                });
+            }
+
+            public override void EnterBitwise_or(JavascriptParser.Bitwise_orContext context)
+            {
+                CompileBinary(context, context.bitwise_xor, EnterBitwise_xor, terminalNode =>
+                {
+                    if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_OR)
+                    {
+                        _compiler.PushOpWithConvert(OpCodes.Or);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unknown bitwise_or token");
+                    }
+                });
+            }
+
+            public override void EnterLogical_and(JavascriptParser.Logical_andContext context)
+            {
+                // Evaluate the first operand and check if it is false
+                EnterBitwise_or(context.bitwise_or(0));
+                _compiler.gen.Emit(OpCodes.Ldc_I4_0);
+                _compiler.gen.Emit(OpCodes.Ceq);
+
+                // Iterate over the remaining operands
+                for (int i = 2; i < context.children.Count; i += 2)
+                {
+                    if (context.children[i] is not JavascriptParser.Bitwise_orContext bitwiseOrContext)
+                    {
+                        throw new InvalidOperationException("Unexpected child of logical_and");
+                    }
+
+                    // Evaluate the next operand and check if it is false
+                    EnterBitwise_or(bitwiseOrContext);
+                    _compiler.gen.Emit(OpCodes.Ldc_I4_0);
+                    _compiler.gen.Emit(OpCodes.Ceq);
+
+                    // Combine the results using OR
+                    _compiler.gen.Emit(OpCodes.Or);
+                }
+
+                // Check if the combined result is false
+                _compiler.gen.Emit(OpCodes.Ldc_I4_0);
+                _compiler.gen.Emit(OpCodes.Ceq);
+
+                // Convert the result to a double
+                _compiler.gen.Emit(OpCodes.Conv_R8);
+            }
+
+            public override void EnterLogical_or(JavascriptParser.Logical_orContext context)
+            {
+                // Evaluate the first operand and check if it is true
+                EnterLogical_and(context.logical_and(0));
+                _compiler.gen.Emit(OpCodes.Ldc_I4_0);
+                _compiler.gen.Emit(OpCodes.Ceq);
+                _compiler.gen.Emit(OpCodes.Ldc_I4_1);
+                _compiler.gen.Emit(OpCodes.Xor);
+
+                // Iterate over the remaining operands
+                for (int i = 2; i < context.children.Count; i += 2)
+                {
+                    if (context.children[i] is not JavascriptParser.Logical_andContext logicalAndContext)
+                    {
+                        throw new InvalidOperationException("Unexpected child of logical_or");
+                    }
+
+                    // Evaluate the next operand and check if it is true
+                    EnterLogical_and(logicalAndContext);
+                    _compiler.gen.Emit(OpCodes.Ldc_I4_0);
+                    _compiler.gen.Emit(OpCodes.Ceq);
+                    _compiler.gen.Emit(OpCodes.Ldc_I4_1);
+                    _compiler.gen.Emit(OpCodes.Xor);
+
+                    // Combine the results using OR
+                    _compiler.gen.Emit(OpCodes.Or);
+                }
+
+                // Check if the combined result is true
+                _compiler.gen.Emit(OpCodes.Ldc_I4_1);
+                _compiler.gen.Emit(OpCodes.Ceq);
+
+                // Convert the result to a double
+                _compiler.gen.Emit(OpCodes.Conv_R8);
+            }
+
+            public override void EnterConditional(JavascriptParser.ConditionalContext context)
+            {
+                if (context.children.Count == 1)
+                {
+                    EnterLogical_or(context.logical_or());
+                }
+                else
+                {
+                    Label condFalse = _compiler.gen.DefineLabel();
+                    Label condEnd = _compiler.gen.DefineLabel();
+
+                    // Evaluate the condition
+                    EnterLogical_or(context.logical_or());
+                    _compiler.gen.Emit(OpCodes.Ldc_I4_0);
+                    _compiler.gen.Emit(OpCodes.Beq, condFalse);
+
+                    // Evaluate the true branch
+                    EnterConditional(context.conditional(0));
+                    _compiler.gen.Emit(OpCodes.Br_S, condEnd);
+
+                    // Evaluate the false branch
+                    _compiler.gen.MarkLabel(condFalse);
+                    EnterConditional(context.conditional(1));
+
+                    // Mark the end of the conditional
+                    _compiler.gen.MarkLabel(condEnd);
+                }
+            }
+
+            private static void CompileBinary<TContext, TArg>(
+                TContext context,
+                Func<int, TArg> getArg,
+                Action<TArg> enterArg,
+                Action<ITerminalNode> enterOp)
+                where TContext : ParserRuleContext
+                where TArg : ParserRuleContext
+            {
+                int argIndex = 0;
+                enterArg(getArg(argIndex++));
+
+                for (int i = 1; i < context.children.Count; i += 2)
+                {
+                    if (context.children[i] is ITerminalNode terminalNode)
+                    {
+                        enterArg(getArg(argIndex++));
+                        enterOp(terminalNode);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unexpected child");
+                    }
+                }
+            }
         }
 
-        private void PushCondEq(OpCode opCode, ITree current, Type expected)
+        private void PushCondEq(OpCode opCode)
         {
-            RecursiveCompile(current.GetChild(0), expected);
-            RecursiveCompile(current.GetChild(1), expected);
             gen.Emit(opCode);
             gen.Emit(OpCodes.Ldc_I4_1);
             gen.Emit(OpCodes.Xor);
             gen.Emit(OpCodes.Conv_R8);
         }
 
-#pragma warning disable IDE0060 // Remove unused parameter
-        private void PushArith(OpCode op, ITree current, Type expected)
-#pragma warning restore IDE0060 // Remove unused parameter
+        private void PushOpWithConvert(OpCode opCode)
         {
-            PushBinaryOp(op, current, typeof(double), typeof(double));
-        }
-
-        private void PushShift(OpCode op, ITree current)
-        {
-            PushBinaryShiftOp(op, current, typeof(int), typeof(int));
-        }
-
-        private void PushBinaryShiftOp(OpCode op, ITree current, Type arg1, Type arg2)
-        {
-            gen.Emit(OpCodes.Nop);
-            RecursiveCompile(current.GetChild(0), arg1);
-            RecursiveCompile(current.GetChild(1), arg2);
-            gen.Emit(op);
-            gen.Emit(OpCodes.Conv_R8);
-        }
-
-        private void PushBitwise(OpCode op, ITree current)
-        {
-            PushBinaryOp(op, current, typeof(long), typeof(long));
-        }
-
-        private void PushBinaryOp(OpCode op, ITree current, Type arg1, Type arg2)
-        {
-            gen.Emit(OpCodes.Nop);
-            RecursiveCompile(current.GetChild(0), arg1);
-            RecursiveCompile(current.GetChild(1), arg2);
-            gen.Emit(op);
-            gen.Emit(OpCodes.Conv_R8);
-        }
-
-        private void PushCond(OpCode opCode, ITree current, Type expected)
-        {
-            RecursiveCompile(current.GetChild(0), expected);
-            RecursiveCompile(current.GetChild(1), expected);
             gen.Emit(opCode);
             gen.Emit(OpCodes.Conv_R8);
         }
@@ -565,15 +701,15 @@ namespace Lucene.Net.Expressions.JS
             dynamicType.DefineMethodOverride(evalMethod, EVALUATE_METHOD);
         }
 
-        private ITree GetAntlrComputedExpressionTree()
+        private JavascriptParser.ExpressionContext GetAntlrComputedExpressionTree()
         {
-            ICharStream input = new ANTLRStringStream(sourceText);
+            ICharStream input = new AntlrInputStream(sourceText);
             JavascriptLexer lexer = new JavascriptLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             JavascriptParser parser = new JavascriptParser(tokens);
             try
             {
-                return parser.Expression().Tree;
+                return parser.expression();
             }
             catch (RecognitionException re)
             {
@@ -652,19 +788,19 @@ namespace Lucene.Net.Expressions.JS
         {
             var settings = new Dictionary<string, string>();
             var type = typeof(JavascriptCompiler);
-            using  (var reader = new StreamReader(type.FindAndGetManifestResourceStream(type.Name + ".properties"), Encoding.UTF8))
-                settings.LoadProperties(reader);
+            using var reader = new StreamReader(type.FindAndGetManifestResourceStream(type.Name + ".properties"), Encoding.UTF8);
+            settings.LoadProperties(reader);
             return settings;
         }
 
         private static void CheckFunction(MethodInfo method)
         {
             // do some checks if the signature is "compatible":
-            if (!(method.IsStatic))
+            if (!method.IsStatic)
             {
                 throw new ArgumentException(method + " is not static.");
             }
-            if (!(method.IsPublic))
+            if (!method.IsPublic)
             {
                 throw new ArgumentException(method + " is not public.");
             }
