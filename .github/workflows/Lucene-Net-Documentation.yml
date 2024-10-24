@@ -133,10 +133,9 @@ jobs:
         shell: powershell
 
       - name: Set up PATH for global tools
-        shell: pwsh
+        shell: powershell
         run: |
-          $env:PATH += ";$HOME/.dotnet/tools"
-          Write-Host "Updated PATH: $env:PATH"
+          echo "$HOME/.dotnet/tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Build docs
         run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}
