@@ -42,7 +42,7 @@ Named Entity Recognition is also supported by OpenNLP, but there is no OpenNLPNE
 
 ## MavenReference Primer
 
-When a `<PackageReference>` is included for this NuGet package in your SDK-style MSBuild project, it will automatically include transient dependencies to [`opennlp-tools` on maven.org](https://search.maven.org/artifact/org.apache.opennlp/opennlp-tools/1.9.4/bundle). The transient dependency will automatically include a `<MavenReference>` in your MSBuild project.
+When a `<PackageReference>` is included for this NuGet package in your SDK-style MSBuild project, it will automatically include transitive dependencies to [`opennlp-tools` on maven.org](https://search.maven.org/artifact/org.apache.opennlp/opennlp-tools/1.9.4/bundle). The transitive dependency will automatically include a `<MavenReference>` in your MSBuild project.
 
 The `<MavenReference>` item group operates similar to a dependency in Maven. All transitive dependencies are collected and resolved, and then the final output is produced. However, unlike `PackageReference`s, `MavenReference`s are collected by the final output project, and reassessed. That is, each dependent Project within your .NET SDK-style solution contributes its `MavenReference`s to project(s) which include it, and each project makes its own dependency graph. Projects do not contribute their final built assemblies up. They only contribute their dependencies. Allowing each project in a complicated solution to make its own local conflict resolution attempt.
 
