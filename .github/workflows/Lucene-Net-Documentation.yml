@@ -129,7 +129,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Check Local Tools
-        run: &dotnet tool list --local
+        run: dotnet tool list --local
         shell: powershell
 
       - name: Build docs
