@@ -24,10 +24,11 @@ The Apache Lucene.NET website is at:
 
 ### Lucene.NET 4.8.0
 
+- [.NET 8.0](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 - [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
-- .NET Framework 4.5
+- .NET Framework 4.6.2
 
 ## Status
 
@@ -37,9 +38,9 @@ Working toward Lucene.NET 4.8.0 (currently in BETA)
 
 * The beta version is extremely stable
 * Has more than 7800+ passing unit tests
-* Integrates well with .NET 6.0, .NET 5.0 and .NET Core 2+
+* Integrates well with .NET 8.0 and .NET 6.0 (as well as other unsupported versions)
 * Supports .NET Standard 2.1 and .NET Standard 2.0 
-* Supports .NET Framework 4.5+
+* Supports .NET Framework 4.6.2+
 * Some developers already use it in production environments
 
 ## Download
@@ -125,7 +126,7 @@ There are several demos implemented as simple console applications that can be c
 
 There is also a dotnet command line tool available on NuGet. It contains all of the demos as well as tools maintaining your Lucene.NET index, featuring operations such as splitting, merging, listing segment info, fixing, deleting segments, upgrading, etc. Always be sure to back up your index before running any commands against it!
 
-- [Prerequisite: .NET 6.0 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
+- [Prerequisite: .NET 8.0 Runtime or Higher](https://dotnet.microsoft.com/en-us/download/dotnet)
 
 ```
 dotnet tool install lucene-cli -g --version 4.8.0-beta00015
