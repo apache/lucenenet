@@ -26,6 +26,7 @@ param (
     [switch] $DisableMetaData = $false,
     [switch] $DisableBuild = $false,
     [switch] $DisablePlugins = $false,
+    [switch] $SkipToolRestore = $false,
     # LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
     [Parameter(Mandatory = $false)]
     [string] $LogLevel = 'Warning',
@@ -62,12 +63,14 @@ $TocPath1 = Join-Path -Path $ApiDocsFolder -ChildPath "toc.yml"
 $TocPath2 = Join-Path -Path $ApiDocsFolder -ChildPath "toc\toc.yml"
 $BreadcrumbPath = Join-Path -Path $ApiDocsFolder -ChildPath "docfx.global.subsite.json"
 
-# install docfx tool
-Write-Host "Restoring docfx tool..."
-$PreviousLocation = Get-Location
-Set-Location $RepoRoot
-dotnet tool restore
-Set-Location $PreviousLocation
+if ($SkipToolRestore -eq $false) {
+    # install docfx tool
+    Write-Host "Restoring docfx tool..."
+    $PreviousLocation = Get-Location
+    Set-Location $RepoRoot
+    dotnet tool restore
+    Set-Location $PreviousLocation
+}
 
 # delete anything that already exists
 if ($Clean) {
