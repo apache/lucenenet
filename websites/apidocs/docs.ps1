@@ -69,6 +69,13 @@ Set-Location $RepoRoot
 dotnet tool restore
 Set-Location $PreviousLocation
 
+&dotnet tool list --local
+dotnet tool list --global
+
+$loc = Get-Location
+Write-Host "Location: $loc"
+
+
 # delete anything that already exists
 if ($Clean) {
     Write-Host "Cleaning..."
