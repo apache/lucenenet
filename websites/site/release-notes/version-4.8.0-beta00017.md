@@ -7,51 +7,61 @@ version: 4.8.0-beta00017
 
 ---
 
-> This release contains many bug fixes, performance improvements, and other housekeeing/cleanup tasks in prepartion of the production 4.8 release.
+> This release contains many bug fixes, performance improvements, and other housekeeping/cleanup tasks in preparation of the production 4.8 release.
 
 ## Change Log
 
 ### Breaking Changes
 
-- BREAKING: Lucene.Net.Util.OfflineSorter: Refactored to base file tracking on FileStream rather than FileInfo, which gives us better control over temp file deletion by specifying the FileOptions.DeleteOnClose option. We also use random access so we don't need to reopen streams over files except in the case of ExternalRefSorter.
-- BREAKING: Refactored CharArraySet and CharArrayMap (now CharArrayDictionary) ([#762]\(https://github.com/apache/lucenenet/pull/762\))
-- BREAKING: Lucene.Net.Analysis.Kuromoji.Token: Renamed IsKnown() > IsKnown, IsUnknown() > IsUnknown, IsUser() > IsUser.
+- Lucene.Net.Util.OfflineSorter: Refactored to base file tracking on FileStream rather than FileInfo, which gives us better control over temp file deletion by specifying the `FileOptions.DeleteOnClose` option. We also use random access so we don't need to reopen streams over files except in the case of ExternalRefSorter.
+- Refactored CharArraySet and CharArrayMap (now CharArrayDictionary) ([#762](https://github.com/apache/lucenenet/pull/762))
+- Lucene.Net.Analysis.Kuromoji.Token: Changed these methods into properties: `IsKnown()` to `IsKnown`, `IsUnknown()` to `IsUnknown`, `IsUser()` to `IsUser`.
 - SWEEP: Added guard clauses for all TokenAttribute members
 - SWEEP: Renamed interface TokenAttribute type file names removing the prefix "I" so the file it was ported from is clear.
 - SWEEP: Renamed concrete TokenAttribute type file names to be suffixed with "Impl" so the file it was ported from is clear.
-- BREAKING: Lucene.Net.Index.IndexReader: De-nested IReaderClosedListener and renamed to IReaderDisposedListener.
-- BREAKING: Lucene.Net.Index.IndexWriter: Fixed Dispose() overloads so there is no method signature conflict between the public Dispose(waitForMerges) method and the protected Dispose(disposing) method that can be overridden and called from a finalizer. See [#265]\(https://github.com/apache/lucenenet/pull/265\).
-- BREAKING: Lucene.Net.Search.FieldCacheRangeFilter<T>: Changed accessibility from protected internal to private protected. This class was not intended to be subclassed by users. (see [#677]\(https://github.com/apache/lucenenet/pull/677\))
-- Lucene.Net.Search.Suggest.Fst.ExternalRefSorter: Changed temp path generation to use FileSupport.CreateTempFile() with named prefix and extension because it more closely matches Lucene and makes the files more easily identifiable.
-- Removed .NET Core 3.1 tests and lucene-cli support for it.  ([#735]\(https://github.com/apache/lucenenet/pull/735\))
-- BREAKING: Lucene.Net.Util.OfflineSorter: Changed DefaultTempDir() > GetDefaultTempDir().
+- Lucene.Net.Index.IndexReader: De-nested IReaderClosedListener and renamed to IReaderDisposedListener.
+- Lucene.Net.Index.IndexWriter: Fixed `Dispose()` overloads so there is no method signature conflict between the public `Dispose(waitForMerges)` method and the protected `Dispose(disposing)` method that can be overridden and called from a finalizer. See [#265](https://github.com/apache/lucenenet/pull/265).
+- Lucene.Net.Search.FieldCacheRangeFilter&lt;T&gt;: Changed accessibility from protected internal to private protected. This class was not intended to be subclassed by users. (see [#677](https://github.com/apache/lucenenet/pull/677))
+- Lucene.Net.Search.Suggest.Fst.ExternalRefSorter: Changed temp path generation to use `FileSupport.CreateTempFile()` with named prefix and extension because it more closely matches Lucene and makes the files more easily identifiable.
+- Removed .NET Core 3.1 tests and lucene-cli support for it.  ([#735](https://github.com/apache/lucenenet/pull/735))
+- Lucene.Net.Util.OfflineSorter: Changed `DefaultTempDir()` to `GetDefaultTempDir()`.
 - Disabled Json Source Generator.  ([#727]\(https://github.com/apache/lucenenet/pull/727\))
-- Lucene.Net.Analysis.SmartCn.SmartChineseAnalyzer: Changed GetDefaultStopSet() to DefaultStopSet. Marked GetDefaultStopSet() obsolete.
-- Lucene.Net.Analysis.Kuromoji.JapaneseAnalyzer: Changed GetDefaultStopSet() and GetDefaultStopTags() to DefaultStopSet and DefaultStopTags, respectively. Marked the old methods obsolete.
-- SWEEP: Fixed ArgumentOutOfRange parameters so the message is passed into the 2nd parameter, not the first (which is for argumentName). Fixes [#665]\(https://github.com/apache/lucenenet/pull/665\). Also addressed potential int overflow issues when checking for "index + length must be <= array length".
-- Remove NET45, NET451, NET452 Support & update website framework ver ([#650]\(https://github.com/apache/lucenenet/pull/650\))
-- BREAKING: Lucene.Net.IndexWriter.IEvent: Marked internal (as it was in Java). This interface is only used in non-public contexts by Lucene.
+- Lucene.Net.Analysis.SmartCn.SmartChineseAnalyzer: Changed `GetDefaultStopSet()` to `DefaultStopSet`. Marked `GetDefaultStopSet()` obsolete.
+- Lucene.Net.Analysis.Kuromoji.JapaneseAnalyzer: Changed `GetDefaultStopSet()` and `GetDefaultStopTags()` to `DefaultStopSet` and `DefaultStopTags`, respectively. Marked the old methods obsolete.
+- SWEEP: Fixed ArgumentOutOfRange parameters so the message is passed into the 2nd parameter, not the first (which is for argumentName). Fixes [#665](https://github.com/apache/lucenenet/pull/665). Also addressed potential int overflow issues when checking for "index + length must be <= array length".
+- Remove NET45, NET451, NET452 Support & update website framework ver ([#650](https://github.com/apache/lucenenet/pull/650))
+- Lucene.Net.IndexWriter.IEvent: Marked internal (as it was in Java). This interface is only used in non-public contexts by Lucene.
+- Remove virtual on methods that are being called from constructors
+([#670](https://github.com/apache/lucenenet/issues/670) - see PRs linked to this issue)
+- Lucene.Net.Util.PriorityQueue&lt;T&gt;: Replaced `(int, bool)` constructor and removed constructor call to virtual `GetSentinelObject()` method ([#820](https://github.com/apache/lucenenet/pull/820))
+- Lucene.Net.Util: Added ValuePriorityQueue&lt;T&gt; to utilize stack allocations where possible ([#826](https://github.com/apache/lucenenet/pull/826))
+- Use factory classes for DirectoryTaxonomyWriter and DirectoryTaxonomyReader to get configs ([#847](https://github.com/apache/lucenenet/pull/847))
 
 
 ### Bug Fixes
 
 - Lucene.Net.Util.OfflineSorter: Added back original tests using FileInfo and fixed bugs that were preventing the original behavior
 - Lucene.Net.Tests.Store.TestRAMDirectory: Fixed teardown to retry file deletion if they are locked by another process.
-- fix: Aligned disposable patterns ([#746]\(https://github.com/apache/lucenenet/pull/746\))
+- fix: Aligned disposable patterns ([#746](https://github.com/apache/lucenenet/pull/746))
 - BUG: Changed TokenAttribute usage from concrete implementation type to interface type to align with Lucene 4.8.0. We were using the concrete type in several places where it shouldn't have been.
-- BUG: Lucene.Net.Util.OfflineSorter: Fixed the Sort() and SortPartition() methods so they use the tempDirectory parameter that is passed through the constructor, as was the case in Lucene. Added a constructor overload to specify the directory as a string (a .NET convention).
+- BUG: Lucene.Net.Util.OfflineSorter: Fixed the `Sort()` and `SortPartition()` methods so they use the tempDirectory parameter that is passed through the constructor, as was the case in Lucene. Added a constructor overload to specify the directory as a string (a .NET convention).
 - Update SlowSynonymFilter.cs
-- Lucene.Net.Analysis.Kuromoji.Util.CSVUtil: Applied SOLR-9413 patch to fix the QuoteEscape() method and add tests. Fixes [#660]\(https://github.com/apache/lucenenet/pull/660\).
-- Lucene.Net.Search.Similarities: Statically imported SimilarityBase where appropriate so the Log2 method doesn't have to be qualified (like in Lucene). Fixes [#694]\(https://github.com/apache/lucenenet/pull/694\).
+- Lucene.Net.Analysis.Kuromoji.Util.CSVUtil: Applied SOLR-9413 patch to fix the `QuoteEscape()` method and add tests. Fixes [#660](https://github.com/apache/lucenenet/pull/660).
+- Lucene.Net.Search.Similarities: Statically imported SimilarityBase where appropriate so the Log2 method doesn't have to be qualified (like in Lucene). Fixes [#694](https://github.com/apache/lucenenet/pull/694).
 - SWEEP: Fixed a bug where the CharArraySet returned from DefaultStopSet in all analyzers was returning a static writable instance instead of a readonly instance as per the docs.
-- BUG: Lucene.Net.Tests.Index.TestIndexWriter: Finished port of RandomFailingFieldEnumerable. Fixes [#695]\(https://github.com/apache/lucenenet/pull/695\).
+- BUG: Lucene.Net.Tests.Index.TestIndexWriter: Finished port of RandomFailingFieldEnumerable. Fixes [#695](https://github.com/apache/lucenenet/pull/695).
 - BUG: Lucene.Net.Benchmark.Support.TagSoup.Parser::SetProperty(): Removed duplicate guard clause
-- BUG: Lucene.Net.Analysis.Cjk.CJKBigramFilter: Changed the value of ALL to set all flags (was 0xff instead of 0xffff). Fixes [#657]\(https://github.com/apache/lucenenet/pull/657\).
-- fix: Order of precedence for translation of Remove() method args in FrenchStemmer.cs  ([#654]\(https://github.com/apache/lucenenet/pull/654\))
+- BUG: Lucene.Net.Analysis.Cjk.CJKBigramFilter: Changed the value of ALL to set all flags (was 0xff instead of 0xffff). Fixes [#657](https://github.com/apache/lucenenet/pull/657).
+- fix: Order of precedence for translation of `Remove()` method args in FrenchStemmer.cs  ([#654](https://github.com/apache/lucenenet/pull/654))
 - fix: Fixed Infinite loop in HttpClientBase
 - fix: Fixed throw statement in BinaryDictionary
-- fix: Fixed use of insecure 'Path.GetTempFileName' in ExternalRefSorter.cs ([#651]\(https://github.com/apache/lucenenet/pull/651\))
+- fix: Fixed use of insecure `Path.GetTempFileName` in ExternalRefSorter ([#651](https://github.com/apache/lucenenet/pull/651))
 - BUG: Lucene.Net.Search.package.md: Corrected link to TooManyClausesException
+- Fix AssertionError in JapaneseTokenizer backtrace LUCENE-10059 ([#777](https://github.com/apache/lucenenet/pull/777))
+- Lucene.Net.Util.RandomizedContext: Create a separate instance of `Randomizer()` for each thread initialized with the same seed. Fixes [#843](https://github.com/apache/lucenenet/issues/843).
+- TestIndexWriterOnJRECrash: Removed using block to ensure that our original CheckIndex error bubbles up instead of any issue disposing (or double-disposing) the directory.
+- Lucene.Net.Documents.DateTools: Convert `DateTimeKind.Unspecified` dates to UTC, otherwise they can produce ArgumentOutOfRangeException. Fixes [#772](https://github.com/apache/lucenenet/issues/772).
+- Lucene.Net.Store: Fixed several `Dispose()` methods so they are safe to be called multiple times ([#854](https://github.com/apache/lucenenet/pull/854))
 
 ### Performance
 
@@ -63,7 +73,7 @@ version: 4.8.0-beta00017
 - PERFORMANCE: Lucene.Net.Analysis.Sinks.DateRecognizerSinkFilter: Prefer ReadOnlySpan<char> overloads of DateTime.TryParse() and DateTime.TryParseExact(), when available.
 - PERFORMANCE: Lucene.Net.Analsis.Util.HTMLStripCharFilter: Refactored to remove YyText property (method) which allocates a string every time it is called. Instead, we pass the underlying array to J2N.Numerics.TryParse() and OpenStringBuilder.Append() with the calculated startIndex and length to directly copy the characters without allocating substrings.
 - PERFORMANCE: Lucene.Net.Analysis.Util.OpenStringBuilder: Added overloads of UnsafeWrite() for string an ICharSequence. Optimized Append() methods to call UnsafeWrite with index and count to optimize the operation depending on the type of object passed.
-- PERFORAMANCE: Lucene.Net.Analysis.Ga.IrishLowerCaseFilter: Use stack and spans to reduce allocations and improve throughput.
+- PERFORMANCE: Lucene.Net.Analysis.Ga.IrishLowerCaseFilter: Use stack and spans to reduce allocations and improve throughput.
 - PERFORMANCE: Lucene.Net.Analysis.Th.ThaiWordBreaker: Removed unnecessary string allocations and concatenation. Use CharsRef to reuse the same memory. Removed Regex and replaced with UnicodeSet to detect Thai code points.
 - PERFORMANCE: Lucene.Net.Analysis.In.IndicNormalizer: Refactored ScriptData to change Dictionary<Regex, ScriptData> to List<ScriptData> and eliminated unnecessary hashtable lookup. Use static fields for unknownScript and [ThreadStatic] previousScriptData to optimize character script matching.
 - PERFORMANCE: Lucene.Net.Analysis.In.IndicNormalizer: Replaced static constructor with inline LoadScripts() method. Moved location of scripts field to ensure decompositions is initialized first.
@@ -81,7 +91,7 @@ version: 4.8.0-beta00017
 
 ### Improvements
 
-- net7.0 support
+- net8.0 support
 - Lucene.Net.Support.IO (BinaryReaderDataInput + BinaryReaderDataOutput): Deleted, as they are no longer in use.
 - Lucene.Net.Support.IO.FileSupport: Added CreateTempFileAsStream() method overloads to return an open stream for the file so we don't have to rely on the operating system to close the file handle before we attempt to reopen it.
 - Lucene.Net.Support.IO: Added FileStreamOptions class similar to the one in .NET 6 to easily pass as a method parameter.
@@ -118,3 +128,6 @@ version: 4.8.0-beta00017
 - chore(deps): Update Newtonsoft.Json to 13.0.1 to avoid vulnerability ([#647]\(https://github.com/apache/lucenenet/pull/647\))
 - Added PersianStemmer ([#571]\(https://github.com/apache/lucenenet/pull/571\))
 - SWEEP: Increased timeouts on tests to keep them from intermittently failing during nightly builds.
+- Ported missing test: TestIndexWriterOnJRECrash ([#786](https://github.com/apache/lucenenet/pull/786))
+- Fix slow test: use different sleep method if resolution is low ([#838](https://github.com/apache/lucenenet/pull/838))
+- Lucene.Net.Documents.DateTools: Added exceptions to documentation and added nullable reference type support.
