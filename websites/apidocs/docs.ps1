@@ -64,6 +64,8 @@ $BreadcrumbPath = Join-Path -Path $ApiDocsFolder -ChildPath "docfx.global.subsit
 
 # The default local tools directory
 $InstallDir = "$RepoRoot/.dotnet/tools"
+$DocFxVersion = "2.77.0"
+$VersionedInstallDir = "$InstallDir/docfx/$DocFxVersion"
 
 # install docfx tool
 $PreviousLocation = Get-Location
@@ -71,26 +73,17 @@ Set-Location $RepoRoot
 
 
 # Ensure docfx is installed
-if (-not (Test-Path "$InstallDir/docfx")) {
-    Write-Host "docfx is not installed. Installing as a local tool..."
+if (-not (Test-Path "$VersionedInstallDir")) {
+    Write-Host "docfx $DocFxVersion is not installed. Installing as a local tool..."
     
     # Install docfx as a local tool if it isn't listed in dotnet-tools.json
-    dotnet tool install --local docfx
-} else {
-    Write-Host "docfx is already installed. Restoring tools..."
-
-    # Restore local tools listed in dotnet-tools.json
-    dotnet tool restore
+    dotnet tool install --local docfx --tool-path "$VersionedInstallDir"
 }
-
-# Verify that docfx is accessible
-docfx --version
-
 Set-Location $PreviousLocation
 
-&dotnet tool list --local
-dotnet tool list --global
-
+& dotnet tool list --local
+# Verify that docfx is accessible
+& "$VersionedInstallDir/docfx" --version
 
 # delete anything that already exists
 if ($Clean) {
