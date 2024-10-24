@@ -62,18 +62,31 @@ $TocPath1 = Join-Path -Path $ApiDocsFolder -ChildPath "toc.yml"
 $TocPath2 = Join-Path -Path $ApiDocsFolder -ChildPath "toc\toc.yml"
 $BreadcrumbPath = Join-Path -Path $ApiDocsFolder -ChildPath "docfx.global.subsite.json"
 
+# The default local tools directory
+$InstallDir = "$RepoRoot/.dotnet/tools"
+
 # install docfx tool
 Write-Host "Restoring docfx tool..."
 $PreviousLocation = Get-Location
 Set-Location $RepoRoot
-dotnet tool restore
+
+# Ensure docfx is installed
+if (-not (Test-Path "$InstallDir/docfx")) {
+    Write-Host "DocFX is not installed. Installing as a local tool..."
+    
+    # Install docfx as a local tool if it isn't listed in dotnet-tools.json
+    dotnet tool install --local docfx
+} else {
+    Write-Host "DocFX is already installed. Restoring tools..."
+
+    # Restore local tools listed in dotnet-tools.json
+    dotnet tool restore
+}
+
 Set-Location $PreviousLocation
 
 &dotnet tool list --local
 dotnet tool list --global
-
-$loc = Get-Location
-Write-Host "Location: $loc"
 
 
 # delete anything that already exists
