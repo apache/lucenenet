@@ -128,13 +128,15 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Check Local Tools
-        run: dotnet tool list --local
+      - name: Install docfx globally
+        run: dotnet tool install --global docfx --version 2.77.0
         shell: powershell
 
-      - name: Check Global Tools
-        run: dotnet tool list --global
-        shell: powershell
+      - name: Set up PATH for global tools
+        shell: pwsh
+        run: |
+          $env:PATH += ";$HOME/.dotnet/tools"
+          Write-Host "Updated PATH: $env:PATH"
 
       - name: Build docs
         run: ./main-repo/websites/apidocs/docs.ps1 -Clean -LuceneNetVersion ${{ env.RELEASE_VERSION }}
