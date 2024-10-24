@@ -48,10 +48,10 @@ namespace Lucene.Net.Search
     /// <para/>
     /// Collection initializer note: To create and populate a <see cref="DisjunctionMaxQuery"/>
     /// in a single statement, you can use the following example as a guide:
-    /// 
+    ///
     /// <code>
     /// var disjunctionMaxQuery = new DisjunctionMaxQuery(0.1f) {
-    ///     new TermQuery(new Term("field1", "albino")), 
+    ///     new TermQuery(new Term("field1", "albino")),
     ///     new TermQuery(new Term("field2", "elephant"))
     /// };
     /// </code>
@@ -61,7 +61,8 @@ namespace Lucene.Net.Search
         /// <summary>
         /// The subqueries
         /// </summary>
-        private IList<Query> disjuncts = new JCG.List<Query>();
+        // private IList<Query> disjuncts = new JCG.List<Query>();
+        private Multiset<Query> disjuncts = new();
 
         /// <summary>
         /// Multiple of the non-max disjunct scores added into our final score.  Non-zero values support tie-breaking.
@@ -128,7 +129,7 @@ namespace Lucene.Net.Search
         }
 
         /// <returns> The disjuncts. </returns>
-        public virtual IList<Query> Disjuncts => disjuncts;
+        public virtual Multiset<Query> Disjuncts => disjuncts;
 
         /// <returns> Tie breaker value for multiple matches. </returns>
         public virtual float TieBreakerMultiplier => tieBreakerMultiplier;
@@ -253,9 +254,12 @@ namespace Lucene.Net.Search
         public override Query Rewrite(IndexReader reader)
         {
             int numDisjunctions = disjuncts.Count;
+            var it = disjuncts.GetEnumerator();
             if (numDisjunctions == 1)
             {
-                Query singleton = disjuncts[0];
+                it.MoveNext();
+                Query singleton = it.Current;
+                it.Dispose();
                 Query result = singleton.Rewrite(reader);
                 if (Boost != 1.0f)
                 {
@@ -267,28 +271,17 @@ namespace Lucene.Net.Search
                 }
                 return result;
             }
-            DisjunctionMaxQuery clone = null;
-            for (int i = 0; i < numDisjunctions; i++)
+            // DisjunctionMaxQuery clone = null;
+            bool actuallyRewritten = false;
+            IList<Query> rewrittenDisjuncts = new JCG.List<Query>();;
+            foreach (var sub in disjuncts)
             {
-                Query clause = disjuncts[i];
-                Query rewrite = clause.Rewrite(reader);
-                if (rewrite != clause)
-                {
-                    if (clone is null)
-                    {
-                        clone = (DisjunctionMaxQuery)this.Clone();
-                    }
-                    clone.disjuncts[i] = rewrite;
-                }
+                Query rewrittenSub = sub.Rewrite(reader);
+                actuallyRewritten |= !rewrittenSub.Equals(sub);
+                rewrittenDisjuncts.Add(rewrittenSub);
             }
-            if (clone != null)
-            {
-                return clone;
-            }
-            else
-            {
-                return this;
-            }
+
+            return actuallyRewritten ? new DisjunctionMaxQuery(rewrittenDisjuncts, tieBreakerMultiplier) : this;
         }
 
         /// <summary>
@@ -297,7 +290,7 @@ namespace Lucene.Net.Search
         public override object Clone()
         {
             DisjunctionMaxQuery clone = (DisjunctionMaxQuery)base.Clone();
-            clone.disjuncts = new JCG.List<Query>(this.disjuncts);
+            clone.disjuncts = new Multiset<Query>(this.disjuncts);
             return clone;
         }
 
@@ -322,10 +315,8 @@ namespace Lucene.Net.Search
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append('(');
-            int numDisjunctions = disjuncts.Count;
-            for (int i = 0; i < numDisjunctions; i++)
+            foreach (var subquery in disjuncts)
             {
-                Query subquery = disjuncts[i];
                 if (subquery is BooleanQuery) // wrap sub-bools in parens
                 {
                     buffer.Append('(');
@@ -336,11 +327,11 @@ namespace Lucene.Net.Search
                 {
                     buffer.Append(subquery.ToString(field));
                 }
-                if (i != numDisjunctions - 1)
-                {
-                    buffer.Append(" | ");
-                }
+
+                buffer.Append(" | ");
             }
+
+            buffer.Remove(buffer.Length - 3, 3);
             buffer.Append(')');
             if (tieBreakerMultiplier != 0.0f)
             {
@@ -377,8 +368,8 @@ namespace Lucene.Net.Search
         /// <returns> the hash code </returns>
         public override int GetHashCode()
         {
-            return J2N.BitConversion.SingleToInt32Bits(Boost) 
-                + J2N.BitConversion.SingleToInt32Bits(tieBreakerMultiplier) 
+            return J2N.BitConversion.SingleToInt32Bits(Boost)
+                + J2N.BitConversion.SingleToInt32Bits(tieBreakerMultiplier)
                 + disjuncts.GetHashCode();
         }
     }
