@@ -157,7 +157,7 @@ version: 4.8.0-beta00017
 - TryDequeue and TryPeek Queue extension methods ([#957](https://github.com/apache/lucenenet/pull/957))
 - Website support for `/latest/` and `/absolute-latest/` redirection ([#965](https://github.com/apache/lucenenet/pull/965))
 - Docfx Documentation Fixes, Upgrade docfx, Cross-platform support ([#961](https://github.com/apache/lucenenet/pull/961))
--
+
 ## New Contributors
 * @raminmjj made their first contribution in [#571](https://github.com/apache/lucenenet/pull/571)
 * @BrandonStudio made their first contribution in [#634](https://github.com/apache/lucenenet/pull/634)
