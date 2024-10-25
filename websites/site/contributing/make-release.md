@@ -1,4 +1,4 @@
----
+﻿---
 uid: contributing/make-release
 ---
 
@@ -170,6 +170,9 @@ Perform basic checks against the release binary:
 - Check presence and appropriateness of LICENSE, NOTICE, and README files.
 
 - Check the `nupkg` files to ensure they can be referenced in Visual Studio.
+
+- Check the `nupkg` files in NuGet Package Explorer to ensure all 3 badges (Source Link, Deterministic, and Valid) are green.
+  - Ensure that the repository URL is https://github.com/apache/lucenenet. If the URL is wrong, these are not the original packages you downloaded from Azure DevOps, and you should proceed only with the originals.
 
 ### Sign the Release
 
