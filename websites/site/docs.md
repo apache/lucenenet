@@ -11,7 +11,6 @@ _disableBreadcrumb: true
 
 The API docs are slightly different between versions, each one is listed below:
 
-- [4.8.0-beta00017](https://lucenenet.apache.org/docs/4.8.0-beta00017/)
 - [4.8.0-beta00016](https://lucenenet.apache.org/docs/4.8.0-beta00016/)
 - [4.8.0-beta00015](https://lucenenet.apache.org/docs/4.8.0-beta00015/)
 - [4.8.0-beta00014](https://lucenenet.apache.org/docs/4.8.0-beta00014/)
