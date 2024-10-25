@@ -58,6 +58,10 @@ if ($Clean) {
 	Remove-Item (Join-Path -Path $SiteFolder "obj") -force -ErrorAction SilentlyContinue
 }
 
+if (!(Test-Path $SiteFolder)) {
+    New-Item $SiteFolder -ItemType Directory
+}
+
 # Copy the .htaccess  & .gitattributes files to the _site directory after cleaning
 Copy-Item -Path (Join-Path -Path $SiteFolder ".htaccess") -Destination (Join-Path -Path $SiteFolder "_site\.htaccess") -Force
 Copy-Item -Path (Join-Path -Path $SiteFolder ".gitattributes") -Destination (Join-Path -Path $SiteFolder "_site\.gitattributes") -Force
