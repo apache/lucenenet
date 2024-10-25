@@ -185,4 +185,4 @@ version: 4.8.0-beta00017
 * @devklick made their first contribution in [#957](https://github.com/apache/lucenenet/pull/957)
 * @JayOfemi made their first contribution in [#952](https://github.com/apache/lucenenet/pull/952)
 
-**Full Changelog**: https://github.com/apache/lucenenet/compare/Lucene.Net_4_8_0_beta00016...v4.8.0-beta00017-prep
+**Full Changelog**: https://github.com/apache/lucenenet/compare/Lucene.Net_4_8_0_beta00016...Lucene.Net_4_8_0_beta00017
