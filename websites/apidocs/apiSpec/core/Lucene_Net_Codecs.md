@@ -193,7 +193,7 @@ Here is an example project file for .NET 5 for testing a project named `MyCodecs
     <PackageReference Include="nunit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-    <PackageReference Include="Lucene.Net.TestFramework" Version="4.8.0-beta00017" />
+    <PackageReference Include="Lucene.Net.TestFramework" Version="4.8.0-beta00016" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.0"/>
     </ItemGroup>
 

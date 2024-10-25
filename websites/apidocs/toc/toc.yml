@@ -1,6 +1,6 @@
 ﻿- name: Lucene.Net API
-  topicHref: https://lucenenet.apache.org/docs/4.8.0-beta00017
+  topicHref: https://lucenenet.apache.org/docs/4.8.0-beta00016
 - name: Lucene.Net CLI
-  topicHref: https://lucenenet.apache.org/docs/4.8.0-beta00017/cli/index.html
+  topicHref: https://lucenenet.apache.org/docs/4.8.0-beta00016/cli/index.html
 - name: Lucene.Net Website
   topicHref: https://lucenenet.apache.org/
