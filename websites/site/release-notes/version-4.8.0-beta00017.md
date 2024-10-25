@@ -1,4 +1,4 @@
----
+﻿---
 uid: releasenotes/4.8.0-beta00017
 version: 4.8.0-beta00017
 ---
@@ -7,7 +7,11 @@ version: 4.8.0-beta00017
 
 ---
 
-> This release contains many bug fixes, performance improvements, and other housekeeping/cleanup tasks in preparation of the production 4.8 release.
+> This release contains many bug fixes, performance improvements, and other housekeeping/cleanup tasks. It is the largest update to Lucene.NET 4.8.0 to date.
+>
+> [J2N 2.1](https://github.com/NightOwl888/J2N/releases/tag/v2.1.0) and [ICU4N 60.1.0-alpha.436](https://github.com/NightOwl888/ICU4N/releases/tag/v60.1.0-alpha.436) have had major updates which will lay the groundwork for supporting System.Memory types in Lucene.NET, but those updates will be included in a later release. However, both libraries have had a significant reduction in the number of heap allocations used across their codebases and those improvements have a direct impact on how Lucene.NET performs.
+>
+> We are including .NET Core support for Lucene.Net.OpenNLP for the first time using the IKVM `MavenRefernence` feature. The IKVM distribution is quite large and due to disk space limitations of our CI enviornment we had to reference an older version of both IKVM and IKVM.Maven.Sdk. These package references may be upgraded by end users to use a newer version without any risk of breaking changes.
 
 ## Change Log
 
@@ -17,27 +21,23 @@ version: 4.8.0-beta00017
 - Refactored CharArraySet and CharArrayMap (now CharArrayDictionary) ([#762](https://github.com/apache/lucenenet/pull/762))
 - Lucene.Net.Analysis.Kuromoji.Token: Changed these methods into properties: `IsKnown()` to `IsKnown`, `IsUnknown()` to `IsUnknown`, `IsUser()` to `IsUser`.
 - Added guard clauses for all TokenAttribute members
-- Renamed interface TokenAttribute type file names removing the prefix "I" so the file it was ported from is clear.
-- Renamed concrete TokenAttribute type file names to be suffixed with "Impl" so the file it was ported from is clear.
 - Lucene.Net.Index.IndexReader: De-nested IReaderClosedListener and renamed to IReaderDisposedListener.
 - Lucene.Net.Index.IndexWriter: Fixed `Dispose()` overloads so there is no method signature conflict between the public `Dispose(waitForMerges)` method and the protected `Dispose(disposing)` method that can be overridden and called from a finalizer. See [#265](https://github.com/apache/lucenenet/pull/265).
 - Lucene.Net.Search.FieldCacheRangeFilter&lt;T&gt;: Changed accessibility from protected internal to private protected. This class was not intended to be subclassed by users. (see [#677](https://github.com/apache/lucenenet/pull/677))
 - Lucene.Net.Search.Suggest.Fst.ExternalRefSorter: Changed temp path generation to use `FileSupport.CreateTempFile()` with named prefix and extension because it more closely matches Lucene and makes the files more easily identifiable.
-- Removed .NET Core 3.1 tests and lucene-cli support for it.  ([#735](https://github.com/apache/lucenenet/pull/735))
 - Lucene.Net.Util.OfflineSorter: Changed `DefaultTempDir()` to `GetDefaultTempDir()`.
 - Lucene.Net.Analysis.SmartCn.SmartChineseAnalyzer: Changed `GetDefaultStopSet()` to `DefaultStopSet`. Marked `GetDefaultStopSet()` obsolete.
 - Lucene.Net.Analysis.Kuromoji.JapaneseAnalyzer: Changed `GetDefaultStopSet()` and `GetDefaultStopTags()` to `DefaultStopSet` and `DefaultStopTags`, respectively. Marked the old methods obsolete.
 - Fixed ArgumentOutOfRange parameters so the message is passed into the 2nd parameter, not the first (which is for argumentName). Fixes [#665](https://github.com/apache/lucenenet/pull/665). Also addressed potential int overflow issues when checking for "index + length must be <= array length".
 - Remove .NET 4.5, .NET 4.5.1, and .NET 4.5.2 support and update website framework versions ([#650](https://github.com/apache/lucenenet/pull/650))
 - Lucene.Net.IndexWriter.IEvent: Marked internal (as it was in Java). This interface is only used in non-public contexts by Lucene.
-- Remove virtual on methods that are being called from constructors
-([#670](https://github.com/apache/lucenenet/issues/670) - see PRs linked to this issue)
+- Remove virtual on methods that are being called from constructors ([#670](https://github.com/apache/lucenenet/issues/670) - see PRs linked to this issue)
 - Lucene.Net.Util.PriorityQueue&lt;T&gt;: Replaced `(int, bool)` constructor and removed constructor call to virtual `GetSentinelObject()` method ([#820](https://github.com/apache/lucenenet/pull/820))
 - Lucene.Net.Util: Added ValuePriorityQueue&lt;T&gt; to utilize stack allocations where possible ([#826](https://github.com/apache/lucenenet/pull/826))
 - Use factory classes for DirectoryTaxonomyWriter and DirectoryTaxonomyReader to get configs ([#847](https://github.com/apache/lucenenet/pull/847))
-- The Lucene CLI now runs on the .NET 8 runtime.
 - Replicator no longer attempts to deserialize exception types ([#968](https://github.com/apache/lucenenet/pull/968))
 - Rename `IndexWriter.NextMerge()` to `GetNextMerge()` ([#990](https://github.com/apache/lucenenet/pull/990))
+- Lucene.Net.Search.ReferenceContext&lt;T&gt;: Converted to ref struct and reworked `TestControlledRealTimeReopenThread.TestStraightForwardDemonstration()` to verify functionality ([#925](https://github.com/apache/lucenenet/pull/925))
 
 ### Bug Fixes
 
@@ -101,8 +101,7 @@ version: 4.8.0-beta00017
 
 ### Improvements
 
-- .NET 8.0 target ([#982](https://github.com/apache/lucenenet/pull/982))
-- Updated many dependencies, including J2N and ICU4N
+- Bumped version of most dependencies, including J2N and ICU4N. Fixed minimum versions of transitive dependencies that were vulnerable or deprecated.
 - Lucene.Net.Support.IO (BinaryReaderDataInput + BinaryReaderDataOutput): Deleted, as they are no longer in use.
 - Lucene.Net.Support.IO.FileSupport: Added `CreateTempFileAsStream()` method overloads to return an open stream for the file so we don't have to rely on the operating system to close the file handle before we attempt to reopen it.
 - Lucene.Net.Support.IO: Added FileStreamOptions class similar to the one in .NET 6 to easily pass as a method parameter.
@@ -135,28 +134,38 @@ version: 4.8.0-beta00017
 - Prefer 'AsSpan' over 'Substring' when span-based overloads are available. Fixes [#675](https://github.com/apache/lucenenet/pull/675).
 - Lucene.Net.Analysis.Cn.Smart.Utility: Changed SPACES to use an encoded character for `'\u3000'` so it is visible in the designer. Fixes [#680](https://github.com/apache/lucenenet/pull/680).
 - Lucene.Net.Tests.Analysis.SmartCn.TestHMMChineseTokenizerFactory: Added LuceneNetSpecificAttribute to `TestHHMMSegmenter()` and renamed `TestHHMMSegmenterInitialization()`, since this is a smoke test that was added to test initialization of HHMMSegmenter.
-- Added PersianStemmer ([#571](https://github.com/apache/lucenenet/pull/571))
 - Increased timeouts on tests to keep them from intermittently failing during nightly builds.
 - Ported missing test: TestIndexWriterOnJRECrash ([#786](https://github.com/apache/lucenenet/pull/786))
 - Fix slow test: use different sleep method if resolution is low ([#838](https://github.com/apache/lucenenet/pull/838))
 - Lucene.Net.Documents.DateTools: Added exceptions to documentation and added nullable reference type support.
 - Lucene.Net.Store (BaseDirectory + BaseDirectoryWrapper): Fixed XML comments so they don't produce warnings ([#855](https://github.com/apache/lucenenet/pull/855))
-- Fix two typos in quick-start introduction.md ([#863](https://github.com/apache/lucenenet/pull/863))
-- Remove a repetition from the quick-start index.md page ([#862](https://github.com/apache/lucenenet/pull/862))
-- Update introduction.md and tutorial.md ([#870](https://github.com/apache/lucenenet/pull/870)) and ([#871](https://github.com/apache/lucenenet/pull/871))
 - Removed dependency on Prism.Core (Fixes #872) ([#875](https://github.com/apache/lucenenet/pull/875))
 - Lucene.Net.Util.PriorityQueue: Removed `[Serializable]` attribute. ([#876](https://github.com/apache/lucenenet/pull/876))
 - Lucene.Net.Facet.Taxonomy.WriterCache.CharBlockArray: Implemented IAppendable to align with Lucene ([#901](https://github.com/apache/lucenenet/pull/901))
-- Added the slack channel to the contributing page of the website (Fixes #893) ([#908](https://github.com/apache/lucenenet/pull/908))
-- Added missing namespaces to tutorial ([#909](https://github.com/apache/lucenenet/pull/909))
-- Added net6.0 target to Lucene.Net.Analysis.OpenNLP and changed to using MavenReference ([#892](https://github.com/apache/lucenenet/pull/892))
-- Lucene.Net.Search.ReferenceContext&lt;T&gt;: Converted to ref struct and reworked `TestControlledRealTimeReopenThread.TestStraightForwardDemonstration()` to verify functionality ([#925](https://github.com/apache/lucenenet/pull/925))
 - Reviewed usage of atomic numeric type methods ([#927](https://github.com/apache/lucenenet/pull/927))
-- Upgrade tests and CLI to .NET 8, fix benchmark formatting issue ([#930](https://github.com/apache/lucenenet/pull/930))
 - Conversion to native `Array.Empty<T>()` ([#953](https://github.com/apache/lucenenet/pull/953))
 - TryDequeue and TryPeek Queue extension methods ([#957](https://github.com/apache/lucenenet/pull/957))
+- Renamed interface TokenAttribute type file names removing the prefix "I" so the file it was ported from is clear.
+- Renamed concrete TokenAttribute type file names to be suffixed with "Impl" so the file it was ported from is clear.
+- Removed .NET Core 3.1 tests and lucene-cli support for it.  ([#735](https://github.com/apache/lucenenet/pull/735))
+
+### Website and Docs
+
 - Website support for `/latest/` and `/absolute-latest/` redirection ([#965](https://github.com/apache/lucenenet/pull/965))
 - Docfx Documentation Fixes, Upgrade docfx, Cross-platform support ([#961](https://github.com/apache/lucenenet/pull/961))
+- Added missing namespaces to tutorial ([#909](https://github.com/apache/lucenenet/pull/909))
+- Added the slack channel to the contributing page of the website (Fixes #893) ([#908](https://github.com/apache/lucenenet/pull/908))
+- Fix two typos in quick-start introduction.md ([#863](https://github.com/apache/lucenenet/pull/863))
+- Remove a repetition from the quick-start index.md page ([#862](https://github.com/apache/lucenenet/pull/862))
+- Update introduction.md and tutorial.md ([#870](https://github.com/apache/lucenenet/pull/870)) and ([#871](https://github.com/apache/lucenenet/pull/871))
+
+### New Features
+
+- Added net6.0 target to Lucene.Net.Analysis.OpenNLP and changed to using MavenReference ([#892](https://github.com/apache/lucenenet/pull/892))
+- .NET 8.0 target ([#982](https://github.com/apache/lucenenet/pull/982))
+- Upgrade tests and CLI to .NET 8, fix benchmark formatting issue ([#930](https://github.com/apache/lucenenet/pull/930))
+- The Lucene CLI now runs on the .NET 8 runtime.
+- Added PersianStemmer ([#571](https://github.com/apache/lucenenet/pull/571))
 
 ## New Contributors
 * @raminmjj made their first contribution in [#571](https://github.com/apache/lucenenet/pull/571)
@@ -175,3 +184,5 @@ version: 4.8.0-beta00017
 * @stesee made their first contribution in [#951](https://github.com/apache/lucenenet/pull/951)
 * @devklick made their first contribution in [#957](https://github.com/apache/lucenenet/pull/957)
 * @JayOfemi made their first contribution in [#952](https://github.com/apache/lucenenet/pull/952)
+
+**Full Changelog**: https://github.com/apache/lucenenet/compare/Lucene.Net_4_8_0_beta00016...v4.8.0-beta00017-prep
