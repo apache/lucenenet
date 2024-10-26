@@ -1,19 +1,19 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using J2N;
 using J2N.Text;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using JCG = J2N.Collections.Generic;
-using J2N;
 using System.Text;
-using System.Diagnostics.CodeAnalysis;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Expressions.JS
 {
@@ -548,70 +548,84 @@ namespace Lucene.Net.Expressions.JS
 
             public override void EnterLogical_and(JavascriptParser.Logical_andContext context)
             {
-                // Evaluate the first operand and check if it is false
-                EnterBitwise_or(context.bitwise_or(0));
-                _compiler.gen.Emit(OpCodes.Ldc_I4_0);
-                _compiler.gen.Emit(OpCodes.Ceq);
-
-                // Iterate over the remaining operands
-                for (int i = 2; i < context.children.Count; i += 2)
+                if (context.children.Count == 1)
                 {
-                    if (context.children[i] is not JavascriptParser.Bitwise_orContext bitwiseOrContext)
-                    {
-                        throw new InvalidOperationException("Unexpected child of logical_and");
-                    }
-
-                    // Evaluate the next operand and check if it is false
-                    EnterBitwise_or(bitwiseOrContext);
+                    EnterBitwise_or(context.bitwise_or(0));
+                }
+                else
+                {
+                    // Evaluate the first operand and check if it is false
+                    EnterBitwise_or(context.bitwise_or(0));
                     _compiler.gen.Emit(OpCodes.Ldc_I4_0);
                     _compiler.gen.Emit(OpCodes.Ceq);
 
-                    // Combine the results using OR
-                    _compiler.gen.Emit(OpCodes.Or);
+                    // Iterate over the remaining operands
+                    for (int i = 2; i < context.children.Count; i += 2)
+                    {
+                        if (context.children[i] is not JavascriptParser.Bitwise_orContext bitwiseOrContext)
+                        {
+                            throw new InvalidOperationException("Unexpected child of logical_and");
+                        }
+
+                        // Evaluate the next operand and check if it is false
+                        EnterBitwise_or(bitwiseOrContext);
+                        _compiler.gen.Emit(OpCodes.Ldc_I4_0);
+                        _compiler.gen.Emit(OpCodes.Ceq);
+
+                        // Combine the results using OR
+                        _compiler.gen.Emit(OpCodes.Or);
+                    }
+
+                    // Check if the combined result is false
+                    _compiler.gen.Emit(OpCodes.Ldc_I4_0);
+                    _compiler.gen.Emit(OpCodes.Ceq);
+
+                    // Convert the result to a double
+                    _compiler.gen.Emit(OpCodes.Conv_R8);
                 }
-
-                // Check if the combined result is false
-                _compiler.gen.Emit(OpCodes.Ldc_I4_0);
-                _compiler.gen.Emit(OpCodes.Ceq);
-
-                // Convert the result to a double
-                _compiler.gen.Emit(OpCodes.Conv_R8);
             }
 
             public override void EnterLogical_or(JavascriptParser.Logical_orContext context)
             {
-                // Evaluate the first operand and check if it is true
-                EnterLogical_and(context.logical_and(0));
-                _compiler.gen.Emit(OpCodes.Ldc_I4_0);
-                _compiler.gen.Emit(OpCodes.Ceq);
-                _compiler.gen.Emit(OpCodes.Ldc_I4_1);
-                _compiler.gen.Emit(OpCodes.Xor);
-
-                // Iterate over the remaining operands
-                for (int i = 2; i < context.children.Count; i += 2)
+                if (context.children.Count == 1)
                 {
-                    if (context.children[i] is not JavascriptParser.Logical_andContext logicalAndContext)
-                    {
-                        throw new InvalidOperationException("Unexpected child of logical_or");
-                    }
-
-                    // Evaluate the next operand and check if it is true
-                    EnterLogical_and(logicalAndContext);
+                    EnterLogical_and(context.logical_and(0));
+                }
+                else
+                {
+                    // Evaluate the first operand and check if it is true
+                    EnterLogical_and(context.logical_and(0));
                     _compiler.gen.Emit(OpCodes.Ldc_I4_0);
                     _compiler.gen.Emit(OpCodes.Ceq);
                     _compiler.gen.Emit(OpCodes.Ldc_I4_1);
                     _compiler.gen.Emit(OpCodes.Xor);
 
-                    // Combine the results using OR
-                    _compiler.gen.Emit(OpCodes.Or);
+                    // Iterate over the remaining operands
+                    for (int i = 2; i < context.children.Count; i += 2)
+                    {
+                        if (context.children[i] is not JavascriptParser.Logical_andContext logicalAndContext)
+                        {
+                            throw new InvalidOperationException("Unexpected child of logical_or");
+                        }
+
+                        // Evaluate the next operand and check if it is true
+                        EnterLogical_and(logicalAndContext);
+                        _compiler.gen.Emit(OpCodes.Ldc_I4_0);
+                        _compiler.gen.Emit(OpCodes.Ceq);
+                        _compiler.gen.Emit(OpCodes.Ldc_I4_1);
+                        _compiler.gen.Emit(OpCodes.Xor);
+
+                        // Combine the results using OR
+                        _compiler.gen.Emit(OpCodes.Or);
+                    }
+
+                    // Check if the combined result is true
+                    _compiler.gen.Emit(OpCodes.Ldc_I4_1);
+                    _compiler.gen.Emit(OpCodes.Ceq);
+
+                    // Convert the result to a double
+                    _compiler.gen.Emit(OpCodes.Conv_R8);
                 }
-
-                // Check if the combined result is true
-                _compiler.gen.Emit(OpCodes.Ldc_I4_1);
-                _compiler.gen.Emit(OpCodes.Ceq);
-
-                // Convert the result to a double
-                _compiler.gen.Emit(OpCodes.Conv_R8);
             }
 
             public override void EnterConditional(JavascriptParser.ConditionalContext context)
