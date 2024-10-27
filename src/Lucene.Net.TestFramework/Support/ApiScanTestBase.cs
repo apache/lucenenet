@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -407,7 +408,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = GetTypesToTest(assembly).Where(t => t.IsClass);
 
             foreach (var c in classes)
             {
@@ -443,7 +444,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = GetTypesToTest(assembly).Where(t => t.IsClass);
 
             foreach (var c in classes)
             {
@@ -489,7 +490,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass && !t.HasAttribute<CompilerGeneratedAttribute>(inherit: false));
+            var classes = GetTypesToTest(assembly).Where(t => t.IsClass);
 
             foreach (var c in classes)
             {
@@ -535,7 +536,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = GetTypesToTest(assembly).Where(t => t.IsClass);
 
             foreach (var c in classes)
             {
@@ -567,7 +568,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var interfaces = assembly.GetTypes().Where(t => t.IsInterface);
+            var interfaces = GetTypesToTest(assembly).Where(t => t.IsInterface);
 
             foreach (var i in interfaces)
             {
@@ -584,7 +585,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = GetTypesToTest(assembly).Where(t => t.IsClass);
 
             foreach (var c in classes)
             {
@@ -611,7 +612,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = GetTypesToTest(assembly).Where(t => t.IsClass);
 
             foreach (var c in classes)
             {
@@ -633,7 +634,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = GetTypesToTest(assembly).Where(t => t.IsClass);
 
             foreach (var c in classes)
             {
@@ -667,7 +668,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = GetTypesToTest(assembly).Where(t => t.IsClass);
 
             foreach (var c in classes)
             {
@@ -699,7 +700,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var types = assembly.GetTypes();
+            var types = GetTypesToTest(assembly);
 
             foreach (var t in types)
             {
@@ -737,7 +738,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var types = assembly.GetTypes();
+            var types = GetTypesToTest(assembly);
 
             foreach (var t in types)
             {
@@ -772,7 +773,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var types = assembly.GetTypes();
+            var types = GetTypesToTest(assembly);
 
             foreach (var t in types)
             {
@@ -816,7 +817,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var types = assembly.GetTypes();
+            var types = GetTypesToTest(assembly);
 
             foreach (var t in types)
             {
@@ -838,7 +839,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = GetTypesToTest(assembly).Where(t => t.IsClass);
 
             foreach (var c in classes)
             {
@@ -892,7 +893,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var types = assembly.GetTypes();
+            var types = GetTypesToTest(assembly);
 
             foreach (var t in types)
             {
@@ -1004,7 +1005,7 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var types = assembly.GetTypes();
+            var types = GetTypesToTest(assembly);
 
             foreach (var t in types)
             {
@@ -1105,5 +1106,10 @@ namespace Lucene.Net.Util
 
             return result.ToArray();
         }
+
+        private static IEnumerable<Type> GetTypesToTest(Assembly assembly) =>
+            assembly.GetTypes()
+                .Where(t => !t.HasAttribute<GeneratedCodeAttribute>(inherit: false)
+                            && !t.HasAttribute<CompilerGeneratedAttribute>(inherit: false));
     }
 }
