@@ -225,11 +225,11 @@ namespace Lucene.Net.Expressions.JS
         // be equivalent to what RecursiveCompile was doing previously
         private class JavascriptListener : JavascriptBaseListener
         {
-            private readonly JavascriptCompiler _compiler;
+            private readonly JavascriptCompiler compiler;
 
             public JavascriptListener(JavascriptCompiler compiler)
             {
-                _compiler = compiler;
+                this.compiler = compiler;
             }
 
             public override void EnterExpression(JavascriptParser.ExpressionContext context)
@@ -244,7 +244,7 @@ namespace Lucene.Net.Expressions.JS
                 // LUCENENET: logic changed to get arguments from parse context
                 var arguments = context.arguments().conditional();
                 int argumentCount = arguments.Length;
-                if (!_compiler.functions.TryGetValue(call, out MethodInfo method) || method is null)
+                if (!compiler.functions.TryGetValue(call, out MethodInfo method) || method is null)
                 {
                     throw new ArgumentException("Unrecognized method call (" + call + ").");
                 }
@@ -258,7 +258,7 @@ namespace Lucene.Net.Expressions.JS
                 {
                     EnterConditional(arguments[argument]);
                 }
-                _compiler.gen.Emit(OpCodes.Call, method);
+                compiler.Emit(OpCodes.Call, method);
             }
 
             public override void EnterPrimary(JavascriptParser.PrimaryContext context)
@@ -267,19 +267,19 @@ namespace Lucene.Net.Expressions.JS
                 {
                     string text = namespaceId.GetText();
 
-                    if (!_compiler.externalsMap.TryGetValue(text, out int index))
+                    if (!compiler.externalsMap.TryGetValue(text, out int index))
                     {
-                        _compiler.externalsMap[text] = index = _compiler.externalsMap.Count;
+                        compiler.externalsMap[text] = index = compiler.externalsMap.Count;
                     }
 
-                    _compiler.gen.Emit(OpCodes.Nop);
+                    compiler.Emit(OpCodes.Nop);
 
-                    _compiler.gen.Emit(OpCodes.Ldarg_2);
-                    _compiler.gen.Emit(OpCodes.Ldc_I4, index);
+                    compiler.Emit(OpCodes.Ldarg_2);
+                    compiler.Emit(OpCodes.Ldc_I4, index);
 
-                    _compiler.gen.Emit(OpCodes.Ldelem_Ref);
-                    _compiler.gen.Emit(OpCodes.Ldarg_1);
-                    _compiler.gen.Emit(OpCodes.Callvirt, DOUBLE_VAL_METHOD);
+                    compiler.Emit(OpCodes.Ldelem_Ref);
+                    compiler.Emit(OpCodes.Ldarg_1);
+                    compiler.Emit(OpCodes.Callvirt, DOUBLE_VAL_METHOD);
                 }
                 else if (context.numeric() is { } numeric)
                 {
@@ -291,7 +291,7 @@ namespace Lucene.Net.Expressions.JS
                 }
                 else
                 {
-                    throw new InvalidOperationException("Unknown primary alternative");
+                    throw new ParseException("Unknown primary alternative", context.Start.StartIndex);
                 }
             }
 
@@ -301,34 +301,15 @@ namespace Lucene.Net.Expressions.JS
 
                 if (context.HEX() is not null)
                 {
-                    _compiler.PushInt64(Convert.ToInt64(text, 16));
+                    compiler.PushInt64(Convert.ToInt64(text, 16));
                 }
                 else if (context.OCTAL() is not null)
                 {
-                    _compiler.PushInt64(Convert.ToInt64(text, 8));
+                    compiler.PushInt64(Convert.ToInt64(text, 8));
                 }
                 else
                 {
-                    // decimal
-                    //.NET Port. This is a bit hack-y but was needed since .NET can't perform bitwise ops on longs & doubles
-                    var bitwiseOps = new[]{ ">>", "<<", "&", "~", "|", "^" };
-
-                    if (bitwiseOps.Any(s => text.Contains(s)))
-                    {
-                        if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int val))
-                        {
-                            _compiler.gen.Emit(OpCodes.Ldc_I4, val);
-                        }
-                        else
-                        {
-                            _compiler.gen.Emit(OpCodes.Ldc_I8, long.Parse(text, CultureInfo.InvariantCulture));
-                            _compiler.gen.Emit(OpCodes.Conv_Ovf_U4_Un);
-                        }
-                    }
-                    else
-                    {
-                        _compiler.gen.Emit(OpCodes.Ldc_R8, double.Parse(text, CultureInfo.InvariantCulture));
-                    }
+                    compiler.Emit(OpCodes.Ldc_R8, double.Parse(text, CultureInfo.InvariantCulture));
                 }
             }
 
@@ -344,7 +325,7 @@ namespace Lucene.Net.Expressions.JS
                 }
                 else
                 {
-                    throw new InvalidOperationException("Unknown postfix alternative");
+                    throw new ParseException("Unknown postfix alternative", context.Start.StartIndex);
                 }
             }
 
@@ -356,10 +337,8 @@ namespace Lucene.Net.Expressions.JS
                 }
                 else if (context.AT_ADD() is not null)
                 {
-                    // LUCENENET-specific: it appears that 4.8 had a bug where
-                    // it would push an "add" opcode here, but that is not correct
-                    // for the unary + operator.
-                    throw new NotImplementedException("Unary + is not supported");
+                    EnterUnary(context.unary());
+                    compiler.Emit(OpCodes.Conv_R8);
                 }
                 else if (context.unary_operator() is { } unaryOperator)
                 {
@@ -367,27 +346,28 @@ namespace Lucene.Net.Expressions.JS
 
                     if (unaryOperator.AT_SUBTRACT() is not null)
                     {
-                        _compiler.gen.Emit(OpCodes.Neg);
+                        compiler.Emit(OpCodes.Neg);
                     }
                     else if (unaryOperator.AT_BIT_NOT() is not null)
                     {
-                        _compiler.gen.Emit(OpCodes.Not);
-                        _compiler.gen.Emit(OpCodes.Conv_R8);
+                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                        compiler.Emit(OpCodes.Not);
+                        compiler.Emit(OpCodes.Conv_R8);
                     }
                     else if (unaryOperator.AT_BOOL_NOT() is not null)
                     {
-                        _compiler.gen.Emit(OpCodes.Ldc_I4_0);
-                        _compiler.gen.Emit(OpCodes.Ceq);
-                        _compiler.gen.Emit(OpCodes.Conv_R8);
+                        compiler.Emit(OpCodes.Ldc_I4_0);
+                        compiler.Emit(OpCodes.Ceq);
+                        compiler.Emit(OpCodes.Conv_R8);
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unknown unary_operator alternative");
+                        throw new ParseException("Unknown unary_operator alternative", context.Start.StartIndex);
                     }
                 }
                 else
                 {
-                    throw new InvalidOperationException("Unknown unary alternative");
+                    throw new ParseException("Unknown unary alternative", context.Start.StartIndex);
                 }
             }
 
@@ -397,15 +377,15 @@ namespace Lucene.Net.Expressions.JS
                 {
                     if (terminalNode.Symbol.Type == JavascriptParser.AT_ADD)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Add);
+                        compiler.PushOpWithConvert(OpCodes.Add);
                     }
                     else if (terminalNode.Symbol.Type == JavascriptParser.AT_SUBTRACT)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Sub);
+                        compiler.PushOpWithConvert(OpCodes.Sub);
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unknown additive token");
+                        throw new ParseException("Unknown additive token", context.Start.StartIndex);
                     }
                 });
             }
@@ -416,42 +396,50 @@ namespace Lucene.Net.Expressions.JS
                 {
                     if (terminalNode.Symbol.Type == JavascriptParser.AT_MULTIPLY)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Mul);
+                        compiler.PushOpWithConvert(OpCodes.Mul);
                     }
                     else if (terminalNode.Symbol.Type == JavascriptParser.AT_DIVIDE)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Div);
+                        compiler.PushOpWithConvert(OpCodes.Div);
                     }
                     else if (terminalNode.Symbol.Type == JavascriptParser.AT_MODULO)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Rem);
+                        compiler.PushOpWithConvert(OpCodes.Rem);
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unknown multiplicative token");
+                        throw new ParseException("Unknown multiplicative token", context.Start.StartIndex);
                     }
                 });
             }
 
             public override void EnterShift(JavascriptParser.ShiftContext context)
             {
-                CompileBinary(context, context.additive, EnterAdditive, terminalNode =>
+                CompileBinary(context, context.additive, additiveContext =>
+                {
+                    EnterAdditive(additiveContext);
+
+                    if (context.children.Count > 1) // if we have a shift token
+                    {
+                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                    }
+                }, terminalNode =>
                 {
                     if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHL)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Shl);
+                        compiler.PushOpWithConvert(OpCodes.Shl);
                     }
                     else if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHR)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Shr);
+                        compiler.PushOpWithConvert(OpCodes.Shr);
                     }
                     else if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHU)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Shr_Un);
+                        compiler.PushOpWithConvert(OpCodes.Shr_Un);
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unknown shift token");
+                        throw new ParseException("Unknown shift token", context.Start.StartIndex);
                     }
                 });
             }
@@ -461,23 +449,23 @@ namespace Lucene.Net.Expressions.JS
                 CompileBinary(context, context.shift, EnterShift, terminalNode => {
                     if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_LT)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Clt);
+                        compiler.PushOpWithConvert(OpCodes.Clt);
                     }
                     else if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_GT)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Cgt);
+                        compiler.PushOpWithConvert(OpCodes.Cgt);
                     }
                     else if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_LTE)
                     {
-                        _compiler.PushCondEq(OpCodes.Cgt);
+                        compiler.PushCondEq(OpCodes.Cgt);
                     }
                     else if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_GTE)
                     {
-                        _compiler.PushCondEq(OpCodes.Clt);
+                        compiler.PushCondEq(OpCodes.Clt);
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unknown relational token");
+                        throw new ParseException("Unknown relational token", context.Start.StartIndex);
                     }
                 });
             }
@@ -488,60 +476,84 @@ namespace Lucene.Net.Expressions.JS
                 {
                     if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_EQ)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Ceq);
+                        compiler.PushOpWithConvert(OpCodes.Ceq);
                     }
                     else if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_NEQ)
                     {
-                        _compiler.PushCondEq(OpCodes.Ceq);
+                        compiler.PushCondEq(OpCodes.Ceq);
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unknown equality token");
+                        throw new ParseException("Unknown equality token", context.Start.StartIndex);
                     }
                 });
             }
 
             public override void EnterBitwise_and(JavascriptParser.Bitwise_andContext context)
             {
-                CompileBinary(context, context.equality, EnterEquality, terminalNode =>
+                CompileBinary(context, context.equality, equalityContext =>
+                {
+                    EnterEquality(equalityContext);
+
+                    if (context.children.Count > 1) // if we have a bitwise token
+                    {
+                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                    }
+                }, terminalNode =>
                 {
                     if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_AND)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.And);
+                        compiler.PushOpWithConvert(OpCodes.And);
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unknown bitwise_and token");
+                        throw new ParseException("Unknown bitwise_and token", context.Start.StartIndex);
                     }
                 });
             }
 
             public override void EnterBitwise_xor(JavascriptParser.Bitwise_xorContext context)
             {
-                CompileBinary(context, context.bitwise_and, EnterBitwise_and, terminalNode =>
+                CompileBinary(context, context.bitwise_and, andContext =>
+                {
+                    EnterBitwise_and(andContext);
+
+                    if (context.children.Count > 1) // if we have a bitwise token
+                    {
+                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                    }
+                }, terminalNode =>
                 {
                     if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_XOR)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Xor);
+                        compiler.PushOpWithConvert(OpCodes.Xor);
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unknown bitwise_xor token");
+                        throw new ParseException("Unknown bitwise_xor token", context.Start.StartIndex);
                     }
                 });
             }
 
             public override void EnterBitwise_or(JavascriptParser.Bitwise_orContext context)
             {
-                CompileBinary(context, context.bitwise_xor, EnterBitwise_xor, terminalNode =>
+                CompileBinary(context, context.bitwise_xor, xorContext =>
+                {
+                    EnterBitwise_xor(xorContext);
+
+                    if (context.children.Count > 1) // if we have a bitwise token
+                    {
+                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                    }
+                }, terminalNode =>
                 {
                     if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_OR)
                     {
-                        _compiler.PushOpWithConvert(OpCodes.Or);
+                        compiler.PushOpWithConvert(OpCodes.Or);
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unknown bitwise_or token");
+                        throw new ParseException("Unknown bitwise_or token", context.Start.StartIndex);
                     }
                 });
             }
@@ -556,32 +568,32 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // Evaluate the first operand and check if it is false
                     EnterBitwise_or(context.bitwise_or(0));
-                    _compiler.gen.Emit(OpCodes.Ldc_I4_0);
-                    _compiler.gen.Emit(OpCodes.Ceq);
+                    compiler.Emit(OpCodes.Ldc_I4_0);
+                    compiler.Emit(OpCodes.Ceq);
 
                     // Iterate over the remaining operands
                     for (int i = 2; i < context.children.Count; i += 2)
                     {
                         if (context.children[i] is not JavascriptParser.Bitwise_orContext bitwiseOrContext)
                         {
-                            throw new InvalidOperationException("Unexpected child of logical_and");
+                            throw new ParseException("Unexpected child of logical_and", context.Start.StartIndex);
                         }
 
                         // Evaluate the next operand and check if it is false
                         EnterBitwise_or(bitwiseOrContext);
-                        _compiler.gen.Emit(OpCodes.Ldc_I4_0);
-                        _compiler.gen.Emit(OpCodes.Ceq);
+                        compiler.Emit(OpCodes.Ldc_I4_0);
+                        compiler.Emit(OpCodes.Ceq);
 
                         // Combine the results using OR
-                        _compiler.gen.Emit(OpCodes.Or);
+                        compiler.Emit(OpCodes.Or);
                     }
 
                     // Check if the combined result is false
-                    _compiler.gen.Emit(OpCodes.Ldc_I4_0);
-                    _compiler.gen.Emit(OpCodes.Ceq);
+                    compiler.Emit(OpCodes.Ldc_I4_0);
+                    compiler.Emit(OpCodes.Ceq);
 
                     // Convert the result to a double
-                    _compiler.gen.Emit(OpCodes.Conv_R8);
+                    compiler.Emit(OpCodes.Conv_R8);
                 }
             }
 
@@ -595,36 +607,36 @@ namespace Lucene.Net.Expressions.JS
                 {
                     // Evaluate the first operand and check if it is true
                     EnterLogical_and(context.logical_and(0));
-                    _compiler.gen.Emit(OpCodes.Ldc_I4_0);
-                    _compiler.gen.Emit(OpCodes.Ceq);
-                    _compiler.gen.Emit(OpCodes.Ldc_I4_1);
-                    _compiler.gen.Emit(OpCodes.Xor);
+                    compiler.Emit(OpCodes.Ldc_I4_0);
+                    compiler.Emit(OpCodes.Ceq);
+                    compiler.Emit(OpCodes.Ldc_I4_1);
+                    compiler.Emit(OpCodes.Xor);
 
                     // Iterate over the remaining operands
                     for (int i = 2; i < context.children.Count; i += 2)
                     {
                         if (context.children[i] is not JavascriptParser.Logical_andContext logicalAndContext)
                         {
-                            throw new InvalidOperationException("Unexpected child of logical_or");
+                            throw new ParseException("Unexpected child of logical_or", context.Start.StartIndex);
                         }
 
                         // Evaluate the next operand and check if it is true
                         EnterLogical_and(logicalAndContext);
-                        _compiler.gen.Emit(OpCodes.Ldc_I4_0);
-                        _compiler.gen.Emit(OpCodes.Ceq);
-                        _compiler.gen.Emit(OpCodes.Ldc_I4_1);
-                        _compiler.gen.Emit(OpCodes.Xor);
+                        compiler.Emit(OpCodes.Ldc_I4_0);
+                        compiler.Emit(OpCodes.Ceq);
+                        compiler.Emit(OpCodes.Ldc_I4_1);
+                        compiler.Emit(OpCodes.Xor);
 
                         // Combine the results using OR
-                        _compiler.gen.Emit(OpCodes.Or);
+                        compiler.Emit(OpCodes.Or);
                     }
 
                     // Check if the combined result is true
-                    _compiler.gen.Emit(OpCodes.Ldc_I4_1);
-                    _compiler.gen.Emit(OpCodes.Ceq);
+                    compiler.Emit(OpCodes.Ldc_I4_1);
+                    compiler.Emit(OpCodes.Ceq);
 
                     // Convert the result to a double
-                    _compiler.gen.Emit(OpCodes.Conv_R8);
+                    compiler.Emit(OpCodes.Conv_R8);
                 }
             }
 
@@ -636,24 +648,24 @@ namespace Lucene.Net.Expressions.JS
                 }
                 else
                 {
-                    Label condFalse = _compiler.gen.DefineLabel();
-                    Label condEnd = _compiler.gen.DefineLabel();
+                    Label condFalse = compiler.gen.DefineLabel();
+                    Label condEnd = compiler.gen.DefineLabel();
 
                     // Evaluate the condition
                     EnterLogical_or(context.logical_or());
-                    _compiler.gen.Emit(OpCodes.Ldc_I4_0);
-                    _compiler.gen.Emit(OpCodes.Beq, condFalse);
+                    compiler.Emit(OpCodes.Ldc_I4_0);
+                    compiler.Emit(OpCodes.Beq, condFalse);
 
                     // Evaluate the true branch
                     EnterConditional(context.conditional(0));
-                    _compiler.gen.Emit(OpCodes.Br_S, condEnd);
+                    compiler.Emit(OpCodes.Br_S, condEnd);
 
                     // Evaluate the false branch
-                    _compiler.gen.MarkLabel(condFalse);
+                    compiler.gen.MarkLabel(condFalse);
                     EnterConditional(context.conditional(1));
 
                     // Mark the end of the conditional
-                    _compiler.gen.MarkLabel(condEnd);
+                    compiler.gen.MarkLabel(condEnd);
                 }
             }
 
@@ -677,7 +689,7 @@ namespace Lucene.Net.Expressions.JS
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unexpected child");
+                        throw new ParseException("Unexpected child", context.Start.StartIndex);
                     }
                 }
             }
@@ -685,16 +697,16 @@ namespace Lucene.Net.Expressions.JS
 
         private void PushCondEq(OpCode opCode)
         {
-            gen.Emit(opCode);
-            gen.Emit(OpCodes.Ldc_I4_1);
-            gen.Emit(OpCodes.Xor);
-            gen.Emit(OpCodes.Conv_R8);
+            Emit(opCode);
+            Emit(OpCodes.Ldc_I4_1);
+            Emit(OpCodes.Xor);
+            Emit(OpCodes.Conv_R8);
         }
 
         private void PushOpWithConvert(OpCode opCode)
         {
-            gen.Emit(opCode);
-            gen.Emit(OpCodes.Conv_R8);
+            Emit(opCode);
+            Emit(OpCodes.Conv_R8);
         }
 
         /// <summary>
@@ -702,11 +714,42 @@ namespace Lucene.Net.Expressions.JS
         /// </summary>
         private void PushInt64(long i)
         {
-            gen.Emit(OpCodes.Ldc_I8,i);
+            Emit(OpCodes.Ldc_I8, i);
             if (!sourceText.Contains("<<"))
             {
-                gen.Emit(OpCodes.Conv_R8);
+                Emit(OpCodes.Conv_R8);
             }
+        }
+
+        // LUCENENET-specific - wrapping Emit methods which is helpful for debugging
+        private void Emit(OpCode opcode)
+        {
+            // Console.WriteLine(opcode);
+            gen.Emit(opcode);
+        }
+
+        private void Emit(OpCode opcode, Label label)
+        {
+            // Console.WriteLine(opcode + " " + label);
+            gen.Emit(opcode, label);
+        }
+
+        private void Emit(OpCode opcode, double arg)
+        {
+            // Console.WriteLine(opcode + " " + arg);
+            gen.Emit(opcode, arg);
+        }
+
+        private void Emit(OpCode opcode, long arg)
+        {
+            // Console.WriteLine(opcode + " " + arg);
+            gen.Emit(opcode, arg);
+        }
+
+        private void Emit(OpCode opcode, MethodInfo arg)
+        {
+            // Console.WriteLine(opcode + " " + arg);
+            gen.Emit(opcode, arg);
         }
 
         private void EndCompile()
@@ -721,17 +764,59 @@ namespace Lucene.Net.Expressions.JS
             JavascriptLexer lexer = new JavascriptLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             JavascriptParser parser = new JavascriptParser(tokens);
+
             try
             {
+                parser.ErrorHandler = new ParseExceptionErrorStrategy(); // LUCENENET-specific
                 return parser.expression();
             }
             catch (RecognitionException re)
             {
                 throw new ArgumentException(re.Message, re);
             }
-            // LUCENENET: Antlr 3.5.1 doesn't ever wrap ParseException, so the other catch block
-            // for RuntimeException that wraps ParseException would have
-            // been completely unnecesary in Java and is also unnecessary here.
+        }
+
+        // LUCENENET-specific: Throw a ParseException in the event of parsing errors
+        private class ParseExceptionErrorStrategy : DefaultErrorStrategy
+        {
+            public override void Recover(Parser recognizer, RecognitionException e)
+            {
+                int errorOffset = -1;
+
+                for (ParserRuleContext parserRuleContext = recognizer.Context; parserRuleContext != null; parserRuleContext = (ParserRuleContext)parserRuleContext.Parent)
+                {
+                    if (errorOffset < 0)
+                    {
+                        errorOffset = parserRuleContext.Start.StartIndex;
+                    }
+
+                    parserRuleContext.exception = e;
+                }
+
+                throw new ParseException(e.Message, errorOffset);
+            }
+
+            public override IToken RecoverInline(Parser recognizer)
+            {
+                InputMismatchException cause = new InputMismatchException(recognizer);
+                int errorOffset = -1;
+
+                for (ParserRuleContext parserRuleContext = recognizer.Context; parserRuleContext != null; parserRuleContext = (ParserRuleContext)parserRuleContext.Parent)
+                {
+                    if (errorOffset < 0)
+                    {
+                        errorOffset = parserRuleContext.Start.StartIndex;
+                    }
+
+                    parserRuleContext.exception = cause;
+                }
+
+                throw new ParseException(cause.Message, errorOffset);
+            }
+
+            public override void Sync(Parser recognizer)
+            {
+            }
         }
 
         /// <summary>The default set of functions available to expressions.</summary>
