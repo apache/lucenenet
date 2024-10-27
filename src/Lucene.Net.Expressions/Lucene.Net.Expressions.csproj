@@ -44,10 +44,7 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="$(Antlr4RuntimeStandardPackageVersion)" />
-    <PackageReference Include="Antlr4BuildTasks" Version="$(Antlr4BuildTasksPackageVersion)" />
-    <!-- These are transitive dependencies, but Antlr3.Runtime doesn't provide a secure alternative on netstandard2.0, so we need to include them. -->
-    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttpPackageVersion)" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="$(SystemTextRegularExpressionsPackageVersion)" />
+    <PackageReference Include="Antlr4BuildTasks" Version="$(Antlr4BuildTasksPackageVersion)" PrivateAssets="all" IncludeAssets="build" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
