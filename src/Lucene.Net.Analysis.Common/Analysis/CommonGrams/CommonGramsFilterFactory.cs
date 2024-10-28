@@ -71,7 +71,8 @@ namespace Lucene.Net.Analysis.CommonGrams
             }
             else
             {
-                commonWords = new CharArraySet(m_luceneMatchVersion,StopAnalyzer.ENGLISH_STOP_WORDS_SET, ignoreCase);
+                // LUCENENET-specific: backported ignoreCase fix from Lucene 8.10.0 (lucene#188, LUCENE-10008)
+                commonWords = new CharArraySet(m_luceneMatchVersion, StopAnalyzer.ENGLISH_STOP_WORDS_SET, ignoreCase);
             }
         }
 

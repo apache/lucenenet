@@ -79,6 +79,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             AssertTokenStreamContents(stream, new string[] { "testing", "testing_the", "the", "the_factory", "factory" });
         }
 
+        // LUCENENET-specific: backported ignoreCase fix from Lucene 8.10.0 (lucene#188, LUCENE-10008)
         [Test]
         public void TestIgnoreCase()
         {
@@ -93,8 +94,9 @@ namespace Lucene.Net.Analysis.CommonGrams
             Tokenizer tokenizer = new MockTokenizer(new StringReader("testing The factory"),MockTokenizer.WHITESPACE, false);
             TokenStream stream = factory.Create(tokenizer);
             AssertTokenStreamContents(
-                stream, new String[] {"testing", "testing_The", "The", "The_factory", "factory"});
+                stream, new string[] {"testing", "testing_The", "The", "The_factory", "factory"});
         }
+
         /// <summary>
         /// Test that bogus arguments result in exception </summary>
         [Test]
