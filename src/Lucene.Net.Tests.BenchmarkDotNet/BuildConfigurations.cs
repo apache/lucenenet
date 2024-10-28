@@ -35,7 +35,8 @@ namespace Lucene.Net.Tests.BenchmarkDotNet
             new BuildConfiguration { PackageVersion = "4.8.0-beta00014" },
             new BuildConfiguration { PackageVersion = "4.8.0-beta00015" },
             new BuildConfiguration { PackageVersion = "4.8.0-beta00016" },
-            new BuildConfiguration { CustomConfigurationName = "LocalBuild", Id = "LocalBuild" },
+            new BuildConfiguration { PackageVersion = "4.8.0-beta00017" },
+            //new BuildConfiguration { CustomConfigurationName = "LocalBuild", Id = "LocalBuild" }, // NOTE: This functions, but for some reason is less performant than testing a NuGet package
         };
     }
 
