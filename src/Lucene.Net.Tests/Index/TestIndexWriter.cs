@@ -2594,9 +2594,7 @@ namespace Lucene.Net.Index
         public void TestGetCommitDataFromOldSnapshot()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
-            conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
-            IndexWriter writer = new IndexWriter(dir, conf);
+            IndexWriter writer = new IndexWriter(dir, NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             // LUCENENET TODO: in a post-4.8 port, this should use SetLiveCommitData
             writer.SetCommitData(new Dictionary<string, string>
             {
@@ -2610,9 +2608,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             // Modify the commit data and commit on close so the most recent commit data is different
-            conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
-            conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
-            writer = new IndexWriter(dir, conf);
+            writer = new IndexWriter(dir, NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             // LUCENENET TODO: in a post-4.8 port, this should use SetLiveCommitData
             writer.SetCommitData(new Dictionary<string, string>()
             {
@@ -2624,12 +2620,10 @@ namespace Lucene.Net.Index
 
             // validate that when opening writer from older snapshotted index commit, the old commit data is
             // visible
-            conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
-            conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
             writer =
                 new IndexWriter(
                     dir,
-                    conf
+                    NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                         .SetOpenMode(OpenMode.APPEND)
                         .SetIndexCommit(indexCommit));
             assertEquals("value", GetLiveCommitData(writer)["key"]);
