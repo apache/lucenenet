@@ -11,7 +11,7 @@ version: 4.8.0-beta00017
 
 _Status:_ **`Beta`**
 
-_Released:_ `2024-10-23`
+_Released:_ `2024-10-29`
 
 - Binary release: **[Lucene.Net-4.8.0-beta00017.bin.zip](https://www.apache.org/dyn/closer.lua/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.bin.zip)** [[PGP](https://downloads.apache.org/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.bin.zip.asc)] [[SHA512](https://downloads.apache.org/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.bin.zip.sha512)]
 - Source release: **[Lucene.Net-4.8.0-beta00017.src.zip](https://www.apache.org/dyn/closer.lua/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.src.zip)** [[PGP](https://downloads.apache.org/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.src.zip.asc)] [[SHA512](https://downloads.apache.org/lucenenet/4.8.0-beta00017/Apache-Lucene.Net-4.8.0-beta00017.src.zip.sha512)]
