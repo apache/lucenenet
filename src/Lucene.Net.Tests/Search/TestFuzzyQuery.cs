@@ -195,6 +195,8 @@ namespace Lucene.Net.Search
             reader.Dispose();
             directory.Dispose();
         }
+
+        // LUCENENET-specific: backported fix from Lucene 9.0.0 (lucene@45611d0, LUCENE-9365)
         [Test]
         public void TestPrefixLengthEqualStringLength()
         {
@@ -204,7 +206,7 @@ namespace Lucene.Net.Search
             AddDoc("b*ab", writer);
             AddDoc("b*abc", writer);
             AddDoc("b*abcd", writer);
-            String multibyte = "아프리카코끼리속";
+            const string multibyte = "아프리카코끼리속"; // LUCENENET-specific: made const
             AddDoc(multibyte, writer);
             IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
@@ -226,17 +228,17 @@ namespace Lucene.Net.Search
             hits = searcher.Search(query, 1000).ScoreDocs;
             assertEquals(3, hits.Length);
 
-        maxEdits = 1;
-        prefixLength = multibyte.Length - 1;
-        query = new FuzzyQuery(new Term("field", multibyte.Substring(0, prefixLength)), maxEdits, prefixLength);
-        hits = searcher.Search(query, 1000).ScoreDocs;
-        assertEquals(1, hits.Length);
+            maxEdits = 1;
+            prefixLength = multibyte.Length - 1;
+            query = new FuzzyQuery(new Term("field", multibyte.Substring(0, prefixLength)), maxEdits, prefixLength);
+            hits = searcher.Search(query, 1000).ScoreDocs;
+            assertEquals(1, hits.Length);
 
-        reader.DoClose();
-        directory.Dispose();
-    }
+            reader.Dispose();
+            directory.Dispose();
+        }
 
-    [Test]
+        [Test]
         public virtual void Test2()
         {
             Directory directory = NewDirectory();
