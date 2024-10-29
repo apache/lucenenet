@@ -180,20 +180,20 @@ The <xref:Lucene.Net.TestFramework> library contains specialized classes to mini
 > [!NOTE]
 > .NET Standard is not an executable target. Tests will not run unless you target a framework such as `net6.0` or `net48`.
 
-Here is an example project file for .NET 5 for testing a project named `MyCodecs.csproj`.
+Here is an example project file for .NET 8 for testing a project named `MyCodecs.csproj`.
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
     <PackageReference Include="nunit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-    <PackageReference Include="Lucene.Net.TestFramework" Version="4.8.0-beta00016" />
+    <PackageReference Include="Lucene.Net.TestFramework" Version="4.8.0-beta00017" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.0"/>
     </ItemGroup>
 
