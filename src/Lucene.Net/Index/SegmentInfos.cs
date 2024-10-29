@@ -305,8 +305,8 @@ namespace Lucene.Net.Index
         private JCG.List<SegmentCommitInfo> segments = new JCG.List<SegmentCommitInfo>();
 
         /// <summary>
-        /// If non-null, information about loading segments_N files 
-        /// will be printed here.</summary> 
+        /// If non-null, information about loading segments_N files
+        /// will be printed here.</summary>
         /// <seealso cref="InfoStream"/>
         private static TextWriter infoStream = null;
 
@@ -891,7 +891,7 @@ namespace Lucene.Net.Index
         /// If non-null, information about retries when loading
         /// the segments file will be printed to this.
         /// </summary>
-        public static TextWriter InfoStream 
+        public static TextWriter InfoStream
         {
             set =>
                 // LUCENENET specific - use a SafeTextWriterWrapper to ensure that if the TextWriter
@@ -1452,6 +1452,7 @@ namespace Lucene.Net.Index
         {
             RollbackSegmentInfos(other.AsList());
             lastGeneration = other.lastGeneration;
+            // LUCENENET-specific: backport fix from Lucene 9.9.0 (lucene#12626, lucene#12637)
             userData = other.userData;
         }
 
@@ -1612,7 +1613,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return true if the provided 
+        /// Return true if the provided
         /// <see cref="SegmentCommitInfo"/> is contained.
         ///
         /// <para/><b>WARNING</b>: O(N) cost

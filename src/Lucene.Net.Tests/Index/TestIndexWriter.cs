@@ -818,23 +818,24 @@ namespace Lucene.Net.Index
 
         private Dictionary<String, String> GetCommitData(IndexWriter writer)
         {
-            Dictionary<String, String> data = new Dictionary<String, String>();            
+            Dictionary<String, String> data = new Dictionary<String, String>();
             foreach (var ent in writer.CommitData)
             {
                 data.Put(ent.Key, ent.Value);
-            }            
+            }
             return data;
         }
 
+        // LUCENENET-specific: backport fix and test from Lucene 9.9.0 (lucene#12626, lucene#12637)
         [Test]
-        public void testGetCommitDataFromOldSnapshot() 
+        public void TestGetCommitDataFromOldSnapshot()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
             conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
             IndexWriter writer = new IndexWriter(dir, conf);
             writer.SetCommitData(
-            new Dictionary<String, String>() 
+            new Dictionary<String, String>()
             {
                 { "key", "value" },
             });
@@ -850,11 +851,11 @@ namespace Lucene.Net.Index
             conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
             writer = new IndexWriter(dir, conf);
             writer.SetCommitData(
-            new Dictionary<String, String>() 
+            new Dictionary<String, String>()
               {
                     {"key", "value2" },
               });
-        
+
             assertEquals("value2", GetCommitData(writer).GetValueOrDefault("key"));
             writer.Dispose();
 
