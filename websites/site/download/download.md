@@ -10,7 +10,7 @@ uid: download
 
 _Status:_ **`Beta`**
 
-_Released:_ `2023-03-31`
+_Released:_ `2024-10-29`
 
 ## [Lucene 4.8.0-beta00016](xref:download/4.8.0-beta00016)
 
