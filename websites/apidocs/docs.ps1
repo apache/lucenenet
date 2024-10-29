@@ -107,7 +107,7 @@ $DocFxJsonContent = Get-Content $DocFxGlobalJson | ConvertFrom-Json
 $DocFxJsonContent._appFooter = "Copyright &copy; $((Get-Date).Year) The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>"
 $DocFxJsonContent._appTitle = "Apache Lucene.NET $LuceneNetVersion Documentation"
 $DocFxJsonContent._luceneNetRel = $BaseUrl + "/"
-$DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
+#$DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
 
 # NOTE: The order of these depends on if one of the projects requries the xref map of another, normally all require the core xref map
