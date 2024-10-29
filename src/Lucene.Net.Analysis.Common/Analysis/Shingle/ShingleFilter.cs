@@ -366,7 +366,7 @@ namespace Lucene.Net.Analysis.Shingle
                         noShingleOutput = false;
                     }
                     offsetAtt.SetOffset(offsetAtt.StartOffset, nextToken.offsetAtt.EndOffset);
-                    // posLenAtt.PositionLength = builtGramSize;
+                    // LUCENENET-specific: backported fix from Lucene 6.5.0 (LUCENE-7708)
                     if (outputUnigrams)
                     {
                         posLenAtt.PositionLength = builtGramSize;
