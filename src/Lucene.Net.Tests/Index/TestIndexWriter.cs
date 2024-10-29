@@ -816,66 +816,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        private Dictionary<String, String> GetCommitData(IndexWriter writer)
-        {
-            Dictionary<String, String> data = new Dictionary<String, String>();
-            foreach (var ent in writer.CommitData)
-            {
-                data.Put(ent.Key, ent.Value);
-            }
-            return data;
-        }
-
-        // LUCENENET-specific: backport fix and test from Lucene 9.9.0 (lucene#12626, lucene#12637)
-        [Test]
-        public void TestGetCommitDataFromOldSnapshot()
-        {
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
-            conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
-            IndexWriter writer = new IndexWriter(dir, conf);
-            writer.SetCommitData(
-            new Dictionary<String, String>()
-            {
-                { "key", "value" },
-            });
-            assertEquals("value", GetCommitData(writer).GetValueOrDefault("key"));
-            writer.Commit();
-            // Snapshot this commit to open later
-            IndexCommit indexCommit =
-                ((SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy).Snapshot();
-            writer.Dispose();
-
-            // Modify the commit data and commit on close so the most recent commit data is different
-            conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
-            conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
-            writer = new IndexWriter(dir, conf);
-            writer.SetCommitData(
-            new Dictionary<String, String>()
-              {
-                    {"key", "value2" },
-              });
-
-            assertEquals("value2", GetCommitData(writer).GetValueOrDefault("key"));
-            writer.Dispose();
-
-            // validate that when opening writer from older snapshotted index commit, the old commit data is
-            // visible
-            conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
-            conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
-            writer =
-                new IndexWriter(
-                    dir,
-                    conf
-                        .SetOpenMode(OpenMode.APPEND)
-                        .SetIndexCommit(indexCommit));
-            assertEquals("value", GetCommitData(writer).GetValueOrDefault("key"));
-            writer.Dispose();
-
-            dir.Dispose();
-         }
-
-
         [Test]
         public virtual void TestVariableSchema()
         {
@@ -2616,12 +2556,26 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        // LUCENENET-specific: backport fix and test from Lucene 9.9.0 (lucene#12626, lucene#12637)
+        private Dictionary<string, string> GetLiveCommitData(IndexWriter writer)
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+            // LUCENENET TODO: in a post-4.8 port, this should use LiveCommitData
+            foreach (var ent in writer.CommitData)
+            {
+                data.Put(ent.Key, ent.Value);
+            }
+
+            return data;
+        }
+
         [Test]
         public virtual void TestGetCommitData()
         {
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
-            writer.SetCommitData(new Dictionary<string, string>() {
+            writer.SetCommitData(new Dictionary<string, string>()
+            {
                 {"key", "value"}
             });
             Assert.AreEqual("value", writer.CommitData["key"]);
@@ -2630,6 +2584,55 @@ namespace Lucene.Net.Index
             // validate that it's also visible when opening a new IndexWriter
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null).SetOpenMode(OpenMode.APPEND));
             Assert.AreEqual("value", writer.CommitData["key"]);
+            writer.Dispose();
+
+            dir.Dispose();
+        }
+
+        // LUCENENET-specific: backport fix and test from Lucene 9.9.0 (lucene#12626, lucene#12637)
+        [Test]
+        public void TestGetCommitDataFromOldSnapshot()
+        {
+            Directory dir = NewDirectory();
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
+            conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
+            IndexWriter writer = new IndexWriter(dir, conf);
+            // LUCENENET TODO: in a post-4.8 port, this should use SetLiveCommitData
+            writer.SetCommitData(new Dictionary<string, string>
+            {
+                { "key", "value" },
+            });
+            assertEquals("value", GetLiveCommitData(writer)["key"]);
+            writer.Commit();
+            // Snapshot this commit to open later
+            IndexCommit indexCommit =
+                ((SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy).Snapshot();
+            writer.Dispose();
+
+            // Modify the commit data and commit on close so the most recent commit data is different
+            conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
+            conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
+            writer = new IndexWriter(dir, conf);
+            // LUCENENET TODO: in a post-4.8 port, this should use SetLiveCommitData
+            writer.SetCommitData(new Dictionary<string, string>()
+            {
+                { "key", "value2" },
+            });
+
+            assertEquals("value2", GetLiveCommitData(writer)["key"]);
+            writer.Dispose();
+
+            // validate that when opening writer from older snapshotted index commit, the old commit data is
+            // visible
+            conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
+            conf.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
+            writer =
+                new IndexWriter(
+                    dir,
+                    conf
+                        .SetOpenMode(OpenMode.APPEND)
+                        .SetIndexCommit(indexCommit));
+            assertEquals("value", GetLiveCommitData(writer)["key"]);
             writer.Dispose();
 
             dir.Dispose();
