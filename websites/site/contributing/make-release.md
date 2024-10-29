@@ -248,6 +248,9 @@ https://dev.azure.com/lucene-net/Lucene.NET/_build/results?buildId=<Build ID for
 The release was made using the Lucene.NET release process, documented on the website:
 https://lucenenet.apache.org/contributing/make-release.html
 
+Please review the Apache Release Policy to understand the requirements for evaluating the release:
+https://www.apache.org/legal/release-policy.html
+
 Please vote on releasing these packages as Apache Lucene.NET [version]. The vote is open for at least the next 72 hours, i.e. midnight UTC on [YYYY-MM-DD]
 http://www.timeanddate.com/counters/customcounter.html?year=[YYYY]&month=[MM]&day=[DD]
 
