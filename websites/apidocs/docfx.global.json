@@ -1,6 +1,6 @@
 ﻿{
   "_appTitle": "Apache Lucene.NET 4.8.0-ci Documentation",
-  "_disableContribution": false,
+  "_disableContribution": true,
   "_appFaviconPath": "logo/favicon.ico",
   "_enableSearch": true,
   "_appLogoPath": "logo/lucene-net-color.png",
