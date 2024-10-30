@@ -1,4 +1,4 @@
-﻿# -----------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -32,7 +32,8 @@
 # version, with [R=301] signaling permanent redirects and [L] preventing further
 # rule processing.
 #
-# Note: This file is line ending sensitive. MUST use LF line endings.
+# Note: This file is line ending and BOM sensitive. It MUST use LF line endings and 
+# MUST NOT have a BOM.
 
 
 RewriteEngine On
@@ -40,5 +41,5 @@ RewriteEngine On
 # Redirect /docs/latest/ to /docs/3.0.3/
 RewriteRule ^docs/latest/(.*)$ /docs/3.0.3/$1 [R=301,L]
 
-# Redirect /docs/absolute-latest/ to /docs/4.8.0-beta00016/
-RewriteRule ^docs/absolute-latest/(.*)$ /docs/4.8.0-beta00016/$1 [R=301,L]
+# Redirect /docs/absolute-latest/ to /docs/4.8.0-beta00017/
+RewriteRule ^docs/absolute-latest/(.*)$ /docs/4.8.0-beta00017/$1 [R=301,L]
