@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -37,8 +38,8 @@ namespace Lucene.Net.Util
         internal ApiScanTestBase() { } // LUCENENET: Not for use by end users
 
         /// <summary>
-        /// Private fields must be upper case separated with underscores, 
-        /// must be camelCase (optionally may be prefixed with underscore, 
+        /// Private fields must be upper case separated with underscores,
+        /// must be camelCase (optionally may be prefixed with underscore,
         /// but it is preferred not to use the underscore to match Lucene).
         /// </summary>
         private static readonly Regex PrivateFieldName = new Regex("^_?[a-z][a-zA-Z0-9_]*$|^[A-Z0-9_]+$", RegexOptions.Compiled);
@@ -199,7 +200,7 @@ namespace Lucene.Net.Util
             //}
 
             Assert.IsFalse(names.Any(), names.Count() + " invalid class names detected. " +
-                "Class names must be Pascal case, but may not follow the interface naming " + 
+                "Class names must be Pascal case, but may not follow the interface naming " +
                 "convention of captial 'I' followed by another capital letter.");
         }
 
@@ -235,9 +236,9 @@ namespace Lucene.Net.Util
             //}
 
             Assert.IsFalse(names.Any(), names.Count() + " properties that return Array detected. " +
-                "Properties should generally not return Array. Change to a method (prefixed with Get) " + 
+                "Properties should generally not return Array. Change to a method (prefixed with Get) " +
                 "or if returning an array that can be written to was intended, decorate with the WritableArray attribute. " +
-                "Note that returning an array field from either a property or method means the array can be written to by " + 
+                "Note that returning an array field from either a property or method means the array can be written to by " +
                 "the consumer if the array is not cloned using arr.ToArray().");
         }
 
@@ -293,11 +294,11 @@ namespace Lucene.Net.Util
             //}
 
             Assert.IsFalse(names.Any(), names.Count() + " member names named 'Size'. " +
-                "In .NET, we need to change the name 'Size' to either 'Count' or 'Length', " + 
+                "In .NET, we need to change the name 'Size' to either 'Count' or 'Length', " +
                 "and it should generally be made a property.");
         }
 
-        
+
 
         //[Test, LuceneNetSpecific]
         public virtual void TestForPublicMembersContainingNonNetNumeric(Type typeFromTargetAssembly)
@@ -312,7 +313,7 @@ namespace Lucene.Net.Util
             }
             //}
 
-            Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'Int' not followed " + 
+            Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'Int' not followed " +
                 "by 16, 32, or 64, 'Long', 'Short', or 'Float' detected. " +
                 "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Single'.");
         }
@@ -488,11 +489,11 @@ namespace Lucene.Net.Util
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = assembly.GetTypes().Where(t => t.IsClass && !t.HasAttribute<CompilerGeneratedAttribute>(inherit: false));
 
             foreach (var c in classes)
             {
-                if (c.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore classes produced by anonymous methods 
+                if (c.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore classes produced by anonymous methods
                 {
                     continue;
                 }
@@ -587,7 +588,7 @@ namespace Lucene.Net.Util
 
             foreach (var c in classes)
             {
-                if (c.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore classes produced by anonymous methods 
+                if (c.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore classes produced by anonymous methods
                 {
                     continue;
                 }
@@ -650,7 +651,7 @@ namespace Lucene.Net.Util
                     }
 
                     var getMethod = property.GetGetMethod();
-                    
+
                     if (getMethod != null && getMethod.ReturnParameter != null && getMethod.ReturnParameter.ParameterType.IsArray && property.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", property.Name));
@@ -706,7 +707,7 @@ namespace Lucene.Net.Util
                 {
                     result.Add(t.FullName);
                 }
-                
+
                 var members = t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
                 foreach (var member in members)
@@ -759,7 +760,7 @@ namespace Lucene.Net.Util
                         {
                             result.Add(string.Concat(t.FullName, ".", member.Name));
                         }
-                        
+
                     }
                 }
             }
@@ -841,7 +842,7 @@ namespace Lucene.Net.Util
 
             foreach (var c in classes)
             {
-                if (c.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore classes produced by anonymous methods 
+                if (c.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore classes produced by anonymous methods
                 {
                     continue;
                 }
@@ -865,8 +866,8 @@ namespace Lucene.Net.Util
                         continue;
                     }
 
-                    if (method != null && method.ReturnParameter != null 
-                        && method.ReturnParameter.ParameterType.IsArray 
+                    if (method != null && method.ReturnParameter != null
+                        && method.ReturnParameter.ParameterType.IsArray
                         && method.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
 
@@ -957,16 +958,16 @@ namespace Lucene.Net.Util
                                 }
                             }
                         }
-                        else if (member.MemberType == MemberTypes.Property 
-                            && Nullable.GetUnderlyingType(((PropertyInfo)member).PropertyType) != null 
-                            && ((PropertyInfo)member).PropertyType.GetGenericArguments()[0].IsEnum 
+                        else if (member.MemberType == MemberTypes.Property
+                            && Nullable.GetUnderlyingType(((PropertyInfo)member).PropertyType) != null
+                            && ((PropertyInfo)member).PropertyType.GetGenericArguments()[0].IsEnum
                             && IsNonPrivateProperty((PropertyInfo)member))
                         {
                             result.Add(string.Concat(t.FullName, ".", member.Name));
                         }
-                        else if (member.MemberType == MemberTypes.Field 
-                            && Nullable.GetUnderlyingType(((FieldInfo)member).FieldType) != null 
-                            && ((FieldInfo)member).FieldType.GetGenericArguments()[0].IsEnum 
+                        else if (member.MemberType == MemberTypes.Field
+                            && Nullable.GetUnderlyingType(((FieldInfo)member).FieldType) != null
+                            && ((FieldInfo)member).FieldType.GetGenericArguments()[0].IsEnum
                             && (((FieldInfo)member).IsFamily || ((FieldInfo)member).IsFamilyOrAssembly))
                         {
                             result.Add(string.Concat(t.FullName, ".", member.Name, " (field)"));
