@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.IO;
@@ -28,7 +27,7 @@ namespace Lucene.Net.Util.Packed
     using IndexInput = Lucene.Net.Store.IndexInput;
 
     /// <summary>
-    /// Reader for sequences of <see cref="long"/>s written with <see cref="BlockPackedWriter"/>. 
+    /// Reader for sequences of <see cref="long"/>s written with <see cref="BlockPackedWriter"/>.
     /// <para/>
     /// @lucene.internal
     /// </summary>
@@ -38,7 +37,7 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long ZigZagDecode(long n)
         {
-            return ((n.TripleShift(1)) ^ -(n & 1));
+            return ((n >>> 1) ^ -(n & 1));
         }
 
         // same as DataInput.ReadVInt64 but supports negative values
@@ -164,7 +163,7 @@ namespace Lucene.Net.Util.Packed
             while (count >= blockSize)
             {
                 int token = @in.ReadByte() & 0xFF;
-                int bitsPerValue = token.TripleShift(AbstractBlockPackedWriter.BPV_SHIFT);
+                int bitsPerValue = token >>> AbstractBlockPackedWriter.BPV_SHIFT;
                 if (bitsPerValue > 64)
                 {
                     throw new IOException("Corrupted");
@@ -258,7 +257,7 @@ namespace Lucene.Net.Util.Packed
         {
             int token = @in.ReadByte() & 0xFF;
             bool minEquals0 = (token & AbstractBlockPackedWriter.MIN_VALUE_EQUALS_0) != 0;
-            int bitsPerValue = token.TripleShift(AbstractBlockPackedWriter.BPV_SHIFT);
+            int bitsPerValue = token >>> AbstractBlockPackedWriter.BPV_SHIFT;
             if (bitsPerValue > 64)
             {
                 throw new IOException("Corrupted");

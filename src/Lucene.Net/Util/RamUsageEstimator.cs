@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using J2N.Runtime.CompilerServices;
+﻿using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -459,10 +458,10 @@ namespace Lucene.Net.Util
             for (; clazz != null; clazz = clazz.BaseType)
             {
                 FieldInfo[] fields = clazz.GetFields(
-                    BindingFlags.Instance | 
-                    BindingFlags.NonPublic | 
-                    BindingFlags.Public | 
-                    BindingFlags.DeclaredOnly | 
+                    BindingFlags.Instance |
+                    BindingFlags.NonPublic |
+                    BindingFlags.Public |
+                    BindingFlags.DeclaredOnly |
                     BindingFlags.Static);
                 foreach (FieldInfo f in fields)
                 {
@@ -621,10 +620,10 @@ namespace Lucene.Net.Util
             for (Type c = clazz; c != null; c = c.BaseType)
             {
                 FieldInfo[] fields = c.GetFields(
-                    BindingFlags.Instance | 
-                    BindingFlags.NonPublic | 
-                    BindingFlags.Public | 
-                    BindingFlags.DeclaredOnly | 
+                    BindingFlags.Instance |
+                    BindingFlags.NonPublic |
+                    BindingFlags.Public |
+                    BindingFlags.DeclaredOnly |
                     BindingFlags.Static);
                 foreach (FieldInfo f in fields)
                 {
@@ -657,7 +656,7 @@ namespace Lucene.Net.Util
         {
             Type type = f.FieldType;
             int fsize = 0;
-            
+
             if (!(typeof(IntPtr) == type) && !(typeof(UIntPtr) == type))
                 fsize = type.IsPrimitive ? primitiveSizes[type] : NUM_BYTES_OBJECT_REF;
 
@@ -781,7 +780,7 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Creates a hash set with the default capacity of 16,
-            /// load factor of <see cref="DEFAULT_LOAD_FACTOR"/>. 
+            /// load factor of <see cref="DEFAULT_LOAD_FACTOR"/>.
             /// </summary>
             public IdentityHashSet()
                 : this(16, DEFAULT_LOAD_FACTOR)
@@ -866,7 +865,7 @@ namespace Lucene.Net.Util
             /// <para/>The implementation is based on the
             /// finalization step from Austin Appleby's
             /// <c>MurmurHash3</c>.
-            /// 
+            ///
             /// See <a target="_blank" href="http://sites.google.com/site/murmurhash/">http://sites.google.com/site/murmurhash/</a>.
             /// </summary>
             private static int Rehash(object o)
@@ -874,11 +873,11 @@ namespace Lucene.Net.Util
                 int k = RuntimeHelpers.GetHashCode(o);
                 unchecked
                 {
-                    k ^= k.TripleShift(16);
+                    k ^= k >>> 16;
                     k *= (int)0x85ebca6b;
-                    k ^= k.TripleShift(13);
+                    k ^= k >>> 13;
                     k *= (int)0xc2b2ae35;
-                    k ^= k.TripleShift(16);
+                    k ^= k >>> 16;
                 }
 
                 return k;

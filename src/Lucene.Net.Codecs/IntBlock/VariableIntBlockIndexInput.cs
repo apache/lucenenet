@@ -1,9 +1,7 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Codecs.Sep;
+﻿using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Codecs.IntBlock
@@ -41,7 +39,7 @@ namespace Lucene.Net.Codecs.IntBlock
     /// <remarks>
     /// Naive int block API that writes vInts.  This is
     /// expected to give poor performance; it's really only for
-    /// testing the pluggability.  One should typically use pfor instead. 
+    /// testing the pluggability.  One should typically use pfor instead.
     /// </remarks>
     public abstract class VariableInt32BlockIndexInput : Int32IndexInput
     {
@@ -194,12 +192,12 @@ namespace Lucene.Net.Codecs.IntBlock
                     if ((uptoDelta & 1) == 1)
                     {
                         // same block
-                        upto += uptoDelta.TripleShift(1);
+                        upto += uptoDelta >>> 1;
                     }
                     else
                     {
                         // new block
-                        upto = uptoDelta.TripleShift(1);
+                        upto = uptoDelta >>> 1;
                         fp += indexIn.ReadVInt64();
                     }
                 }

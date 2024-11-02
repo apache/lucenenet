@@ -1,5 +1,4 @@
 ﻿using J2N.IO;
-using J2N.Numerics;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -1025,7 +1024,7 @@ namespace Lucene.Net.Util.Packed
                         {
                             // clear highest bits for packed
                             int toClear = 64 % bpv;
-                            blocks[i] = (blocks[i] << toClear).TripleShift(toClear);
+                            blocks[i] = (blocks[i] << toClear) >>> toClear;
                         }
                     }
 

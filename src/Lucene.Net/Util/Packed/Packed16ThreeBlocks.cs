@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
@@ -90,8 +89,8 @@ namespace Lucene.Net.Util.Packed
         public override void Set(int index, long value)
         {
             int o = index * 3;
-            blocks[o] = (short)(value.TripleShift(32));
-            blocks[o + 1] = (short)(value.TripleShift(16));
+            blocks[o] = (short)(value >>> 32);
+            blocks[o + 1] = (short)(value >>> 16);
             blocks[o + 2] = (short)value;
         }
 
@@ -108,8 +107,8 @@ namespace Lucene.Net.Util.Packed
             for (int i = off, o = index * 3, end = off + sets; i < end; ++i)
             {
                 long value = arr[i];
-                blocks[o++] = (short)(value.TripleShift(32));
-                blocks[o++] = (short)(value.TripleShift(16));
+                blocks[o++] = (short)(value >>> 32);
+                blocks[o++] = (short)(value >>> 16);
                 blocks[o++] = (short)value;
             }
             return sets;
@@ -117,8 +116,8 @@ namespace Lucene.Net.Util.Packed
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
-            short block1 = (short)(val.TripleShift(32));
-            short block2 = (short)(val.TripleShift(16));
+            short block1 = (short)(val >>> 32);
+            short block2 = (short)(val >>> 16);
             short block3 = (short)val;
             for (int i = fromIndex * 3, end = toIndex * 3; i < end; i += 3)
             {
@@ -137,9 +136,9 @@ namespace Lucene.Net.Util.Packed
         public override long RamBytesUsed()
         {
             return RamUsageEstimator.AlignObjectSize(
-                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
                 + 2 * RamUsageEstimator.NUM_BYTES_INT32 // valueCount,bitsPerValue
-                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref 
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref
                 + RamUsageEstimator.SizeOf(blocks);
         }
 

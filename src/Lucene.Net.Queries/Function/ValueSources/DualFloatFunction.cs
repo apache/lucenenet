@@ -1,5 +1,4 @@
 ﻿// Lucene version compatibility level 4.8.1
-using J2N.Numerics;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
@@ -96,9 +95,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override int GetHashCode()
         {
             int h = m_a.GetHashCode();
-            h ^= (h << 13) | (h.TripleShift(20));
+            h ^= (h << 13) | (h >>> 20);
             h += m_b.GetHashCode();
-            h ^= (h << 23) | (h.TripleShift(10));
+            h ^= (h << 23) | (h >>> 10);
             h += Name.GetHashCode();
             return h;
         }

@@ -259,7 +259,7 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
             int i = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
-            return ((int)m_bits[i].TripleShift(bit)) & 0x01;
+            return ((int)(m_bits[i] >>> bit)) & 0x01;
         }
 
         /*
@@ -466,7 +466,7 @@ namespace Lucene.Net.Util
             int endWord = (int)((endIndex - 1) >> 6);
 
             long startmask = -1L << (int)startIndex;
-            long endmask = (-1L).TripleShift((int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long endmask = (-1L) >>> ((int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             // invert masks since we are clearing
             startmask = ~startmask;
@@ -757,13 +757,13 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual long NextSetBit(long index)
         {
-            int i = (int)index.TripleShift(6);
+            int i = (int)(index >>> 6);
             if (i >= m_wlen)
             {
                 return -1;
             }
             int subIndex = (int)index & 0x3f; // index within the word
-            long word = m_bits[i].TripleShift(subIndex); // skip all the bits to the right of index
+            long word = m_bits[i] >>> subIndex; // skip all the bits to the right of index
 
             if (word != 0)
             {
@@ -1110,7 +1110,7 @@ namespace Lucene.Net.Util
             for (int i = m_bits.Length; --i >= 0; )
             {
                 h ^= m_bits[i];
-                h = (h << 1) | (h.TripleShift(63)); // rotate left
+                h = (h << 1) | (h >>> 63); // rotate left
             }
             // fold leftmost bits into right and add a constant to prevent
             // empty sets from returning 0, which is too common.

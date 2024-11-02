@@ -1,5 +1,4 @@
 ﻿using J2N;
-using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -89,7 +88,7 @@ namespace Lucene.Net.Index
         public void testCreateCFS() throws IOException {
           createIndex("index.cfs", true, false);
         }
-    
+
         public void testCreateNoCFS() throws IOException {
           createIndex("index.nocfs", false, false);
         }
@@ -100,15 +99,15 @@ namespace Lucene.Net.Index
           // that also single-segment indexes are correctly upgraded by IndexUpgrader.
           // You don't need them to be build for non-3.1 (the test is happy with just one
           // "old" segment format, version is unimportant:
-      
+
           public void testCreateSingleSegmentCFS() throws IOException {
             createIndex("index.singlesegment.cfs", true, true);
           }
-    
+
           public void testCreateSingleSegmentNoCFS() throws IOException {
             createIndex("index.singlesegment.nocfs", false, true);
           }
-    
+
         */
 
         // LUCENENET specific to load resources for this type
@@ -339,7 +338,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        /// @deprecated 3.x transition mechanism 
+        /// @deprecated 3.x transition mechanism
         [Obsolete("3.x transition mechanism")]
         [Test]
         public virtual void TestDeleteOldIndex()
@@ -476,7 +475,7 @@ namespace Lucene.Net.Index
                     int id = Convert.ToInt32(reader.Document(i).Get("id"));
                     Assert.AreEqual(id, dvByte.Get(i));
 
-                    sbyte[] bytes = new sbyte[] { (sbyte)(id.TripleShift(24)), (sbyte)(id.TripleShift(16)), (sbyte)(id.TripleShift(8)), (sbyte)id };
+                    sbyte[] bytes = new sbyte[] { (sbyte)(id >>> 24), (sbyte)(id >>> 16), (sbyte)(id >>> 8), (sbyte)id };
                     BytesRef expectedRef = new BytesRef((byte[])(Array)bytes);
                     BytesRef scratch = new BytesRef();
 
@@ -674,7 +673,7 @@ namespace Lucene.Net.Index
             doc.Add(new Int64Field("trieLong", (long)id, Field.Store.NO));
             // add docvalues fields
             doc.Add(new NumericDocValuesField("dvByte", (sbyte)id));
-            sbyte[] bytes = new sbyte[] { (sbyte)(id.TripleShift(24)), (sbyte)(id.TripleShift(16)), (sbyte)(id.TripleShift(8)), (sbyte)id };
+            sbyte[] bytes = new sbyte[] { (sbyte)(id >>> 24), (sbyte)(id >>> 16), (sbyte)(id >>> 8), (sbyte)id };
             BytesRef @ref = new BytesRef((byte[])(Array)bytes);
             doc.Add(new BinaryDocValuesField("dvBytesDerefFixed", @ref));
             doc.Add(new BinaryDocValuesField("dvBytesDerefVar", @ref));
@@ -702,7 +701,7 @@ namespace Lucene.Net.Index
             customType4.StoreTermVectorOffsets = true;
             customType4.IndexOptions = IndexOptions.DOCS_AND_FREQS;
             doc.Add(new Field("content6", "here is more content with aaa aaa aaa", customType4));
-            // TODO: 
+            // TODO:
             //   index different norms types via similarity (we use a random one currently?!)
             //   remove any analyzer randomness, explicitly add payloads for certain fields.
             writer.AddDocument(doc);
@@ -972,7 +971,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        /* 
+        /*
          * Index with negative positions (LUCENE-1542)
          * Created with this code, using a 2.4.0 jar, then upgraded with 3.6 upgrader:
          *
@@ -998,15 +997,15 @@ namespace Lucene.Net.Index
          *     iw.Dispose();
          *     d.Dispose();
          *   }
-         * 
+         *
          *   static class CannedTokenStream extends TokenStream {
          *     private final Token[] tokens;
          *     private int upto = 0;
-         *  
+         *
          *     CannedTokenStream(Token... tokens) {
          *       this.tokens = tokens;
          *     }
-         *  
+         *
          *     @Override
          *     public Token next() {
          *       if (upto < tokens.Length) {

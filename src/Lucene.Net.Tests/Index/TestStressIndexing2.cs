@@ -1,5 +1,4 @@
 ﻿using J2N.Collections.Generic.Extensions;
-using J2N.Numerics;
 using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -671,7 +670,7 @@ namespace Lucene.Net.Index
                 // now compare
                 for (int i = 0; i < len1; i++)
                 {
-                    Assert.AreEqual(info1[i], info2[i], "i=" + i + " len=" + len1 + " d1=" + (info1[i].TripleShift(32)) + " f1=" + (info1[i] & int.MaxValue) + " d2=" + (info2[i].TripleShift(32)) + " f2=" + (info2[i] & int.MaxValue) + " field=" + field1 + " term=" + term1.Utf8ToString());
+                    Assert.AreEqual(info1[i], info2[i], "i=" + i + " len=" + len1 + " d1=" + (info1[i] >>> 32) + " f1=" + (info1[i] & int.MaxValue) + " d2=" + (info2[i] >>> 32) + " f2=" + (info2[i] & int.MaxValue) + " field=" + field1 + " term=" + term1.Utf8ToString());
                 }
             }
         }

@@ -1,5 +1,4 @@
 ﻿// Lucene version compatibility level 4.8.1
-using J2N.Numerics;
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -36,16 +35,16 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// collisions in the <see cref="CollisionMap"/> exceeds <see cref="loadFactor"/>
     /// <c>GetMaxOrdinal().</c> Growing also includes reinserting all colliding
     /// labels into the <see cref="HashArray"/>s to possibly reduce the number of collisions.
-    /// 
-    /// For setting the <see cref="loadFactor"/> see 
-    /// <see cref="CompactLabelToOrdinal(int, float, int)"/>. 
+    ///
+    /// For setting the <see cref="loadFactor"/> see
+    /// <see cref="CompactLabelToOrdinal(int, float, int)"/>.
     /// </para>
     /// <para>
     /// This data structure has a much lower memory footprint (~30%) compared to a
     /// Java HashMap&lt;String, Integer&gt;. It also only uses a small fraction of objects
     /// a HashMap would use, thus limiting the GC overhead. Ingestion speed was also
     /// ~50% faster compared to a HashMap for 3M unique labels.
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>
@@ -67,7 +66,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         private float loadFactor;
 
         /// <summary>
-        /// How many labels. 
+        /// How many labels.
         /// </summary>
         public virtual int SizeOfMap => this.collisionMap.Count;
 
@@ -313,8 +312,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             int hash = label.GetHashCode();
 
-            hash = hash ^ hash.TripleShift(20) ^ hash.TripleShift(12);
-            hash = hash ^ hash.TripleShift(7) ^ hash.TripleShift(4);
+            hash = hash ^ ((hash >>> 20) ^ (hash >>> 12));
+            hash = hash ^ (hash >>> 7) ^ (hash >>> 4);
 
             return hash;
 
@@ -323,8 +322,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         internal static int StringHashCode(CharBlockArray labelRepository, int offset)
         {
             int hash = CategoryPathUtils.HashCodeOfSerialized(labelRepository, offset);
-            hash = hash ^ hash.TripleShift(20) ^ hash.TripleShift(12);
-            hash = hash ^ hash.TripleShift(7) ^ hash.TripleShift(4);
+            hash = hash ^ ((hash >>> 20) ^ (hash >>> 12));
+            hash = hash ^ (hash >>> 7) ^ (hash >>> 4);
             return hash;
         }
 
@@ -427,7 +426,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int offset = 1;
                 int lastStartOffset = offset;
                 // This loop really relies on a well-formed input (assumes pretty blindly
-                // that array offsets will work).  Since the initial file is machine 
+                // that array offsets will work).  Since the initial file is machine
                 // generated, I think this should be OK.
                 while (offset < l2o.labelRepository.Length)
                 {
@@ -448,8 +447,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     }
                     // Now that we've hashed the components of the label, do the
                     // final part of the hash algorithm.
-                    hash = hash ^ hash.TripleShift(20) ^ hash.TripleShift(12);
-                    hash = hash ^ hash.TripleShift(7) ^ hash.TripleShift(4);
+                    hash = hash ^ ((hash >>> 20) ^ (hash >>> 12));
+                    hash = hash ^ (hash >>> 7) ^ (hash >>> 4);
                     // Add the label, and let's keep going
                     l2o.AddLabelOffset(hash, cid, lastStartOffset);
                     cid++;

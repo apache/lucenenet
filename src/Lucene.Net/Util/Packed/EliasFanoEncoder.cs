@@ -3,7 +3,6 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -51,7 +50,7 @@ namespace Lucene.Net.Util.Packed
     /// <c>(x[i]/2**L) - (x[i-1]/2**L)</c>
     /// <para/>
     /// The unary code encodes a natural number <c>n</c> by <c>n</c> 0 bits followed by a 1 bit:
-    /// <c>0...01</c>. 
+    /// <c>0...01</c>.
     /// <para/>
     /// In the upper bits the total the number of 1 bits is <c>numValues</c>
     /// and the total number of 0 bits is:
@@ -123,7 +122,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Construct an Elias-Fano encoder.
         /// After construction, call <see cref="EncodeNext(long)"/> <paramref name="numValues"/> times to encode
-        /// a non decreasing sequence of non negative numbers. 
+        /// a non decreasing sequence of non negative numbers.
         /// </summary>
         /// <param name="numValues"> The number of values that is to be encoded. </param>
         /// <param name="upperBound">  At least the highest value that will be encoded.
@@ -169,7 +168,7 @@ namespace Lucene.Net.Util.Packed
                 }
             }
             this.numLowBits = nLowBits;
-            this.lowerBitsMask = long.MaxValue.TripleShift(sizeof(long) * 8 - 1 - this.numLowBits);
+            this.lowerBitsMask = long.MaxValue >>> (sizeof(long) * 8 - 1 - this.numLowBits);
 
             long numLongsForLowBits = NumInt64sForBits(numValues * numLowBits);
             if (numLongsForLowBits > int.MaxValue)
@@ -178,7 +177,7 @@ namespace Lucene.Net.Util.Packed
             }
             this.lowerLongs = new long[(int)numLongsForLowBits];
 
-            long numHighBitsClear = ((this.upperBound > 0) ? this.upperBound : 0).TripleShift(this.numLowBits);
+            long numHighBitsClear = ((this.upperBound > 0) ? this.upperBound : 0) >>> this.numLowBits;
             if (Debugging.AssertsEnabled) Debugging.Assert(numHighBitsClear <= (2 * this.numValues));
             long numHighBitsSet = this.numValues;
 
@@ -193,7 +192,7 @@ namespace Lucene.Net.Util.Packed
                 throw new ArgumentOutOfRangeException(nameof(indexInterval), "indexInterval should at least 2: " + indexInterval); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             // For the index:
-            long maxHighValue = upperBound.TripleShift(this.numLowBits);
+            long maxHighValue = upperBound >>> this.numLowBits;
             long nIndexEntries = maxHighValue / indexInterval; // no zero value index entry
             this.numIndexEntries = (nIndexEntries >= 0) ? nIndexEntries : 0;
             long maxIndexEntry = maxHighValue + numValues - 1; // clear upper bits, set upper bits, start at zero
@@ -223,7 +222,7 @@ namespace Lucene.Net.Util.Packed
         private static long NumInt64sForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(numBits >= 0, "{0}", numBits);
-            return (numBits + (sizeof(long) * 8 - 1)).TripleShift(LOG2_INT64_SIZE);
+            return (numBits + (sizeof(long) * 8 - 1)) >>> LOG2_INT64_SIZE;
         }
 
         /// <summary>
@@ -249,7 +248,7 @@ namespace Lucene.Net.Util.Packed
             {
                 throw new ArgumentOutOfRangeException(nameof(x), x + " larger than upperBound " + upperBound); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
-            long highValue = x.TripleShift(numLowBits);
+            long highValue = x >>> numLowBits;
             EncodeUpperBits(highValue);
             EncodeLowerBits(x & lowerBitsMask);
             lastEncoded = x;
@@ -269,7 +268,7 @@ namespace Lucene.Net.Util.Packed
         private void EncodeUpperBits(long highValue)
         {
             long nextHighBitNum = numEncoded + highValue; // sequence of unary gaps
-            upperLongs[(int)(nextHighBitNum.TripleShift(LOG2_INT64_SIZE))] |= (1L << (int)(nextHighBitNum & ((sizeof(long) * 8) - 1)));
+            upperLongs[(int)(nextHighBitNum >>> LOG2_INT64_SIZE)] |= (1L << (int)(nextHighBitNum & ((sizeof(long) * 8) - 1)));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -284,12 +283,12 @@ namespace Lucene.Net.Util.Packed
             if (numBits != 0)
             {
                 long bitPos = numBits * packIndex;
-                int index = (int)(bitPos.TripleShift(LOG2_INT64_SIZE));
+                int index = (int)(bitPos >>> LOG2_INT64_SIZE);
                 int bitPosAtIndex = (int)(bitPos & ((sizeof(long) * 8) - 1));
                 longArray[index] |= (value << bitPosAtIndex);
                 if ((bitPosAtIndex + numBits) > (sizeof(long) * 8))
                 {
-                    longArray[index + 1] = value.TripleShift((sizeof(long) * 8) - bitPosAtIndex);
+                    longArray[index + 1] = value >>> ((sizeof(long) * 8) - bitPosAtIndex);
                 }
             }
         }
@@ -303,7 +302,7 @@ namespace Lucene.Net.Util.Packed
         /// this is the same as comparing estimates of the number of bits accessed by a pair of <see cref="FixedBitSet"/>s and
         /// by a pair of non indexed <see cref="EliasFanoDocIdSet"/>s when determining the intersections of the pairs.
         /// <para/>A bit set is preferred when <c>upperbound &lt;= 256</c>.
-        /// <para/>It is assumed that <see cref="DEFAULT_INDEX_INTERVAL"/> is used. 
+        /// <para/>It is assumed that <see cref="DEFAULT_INDEX_INTERVAL"/> is used.
         /// </summary>
         /// <param name="numValues"> The number of document identifiers that is to be encoded. Should be non negative. </param>
         /// <param name="upperBound"> The maximum possible value for a document identifier. Should be at least <paramref name="numValues"/>. </param>

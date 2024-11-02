@@ -1,6 +1,4 @@
-﻿using J2N.Numerics;
-
-namespace Lucene.Net.Store
+﻿namespace Lucene.Net.Store
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -51,8 +49,8 @@ namespace Lucene.Net.Store
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result 
-                + (int)(EstimatedMergeBytes ^ (EstimatedMergeBytes.TripleShift(32)));
+            result = prime * result
+                + (int)(EstimatedMergeBytes ^ (EstimatedMergeBytes >>> 32));
             result = prime * result + (IsExternal ? 1231 : 1237);
             result = prime * result + MergeMaxNumSegments;
             result = prime * result + TotalDocCount;
@@ -95,8 +93,8 @@ namespace Lucene.Net.Store
 
         public override string ToString()
         {
-            return "MergeInfo [totalDocCount=" + TotalDocCount 
-                + ", estimatedMergeBytes=" + EstimatedMergeBytes + ", isExternal=" 
+            return "MergeInfo [totalDocCount=" + TotalDocCount
+                + ", estimatedMergeBytes=" + EstimatedMergeBytes + ", isExternal="
                 + IsExternal + ", mergeMaxNumSegments=" + MergeMaxNumSegments + "]";
         }
     }

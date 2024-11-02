@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -127,15 +126,15 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Don't uninvert terms that exceed this count. </summary>
-        protected readonly int m_maxTermDocFreq; 
+        protected readonly int m_maxTermDocFreq;
 
         /// <summary>
         /// Field we are uninverting. </summary>
-        protected readonly string m_field; 
+        protected readonly string m_field;
 
         /// <summary>
         /// Number of terms in the field. </summary>
-        protected int m_numTermsInField; 
+        protected int m_numTermsInField;
 
         /// <summary>
         /// Total number of references to term numbers. </summary>
@@ -145,7 +144,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Total time to uninvert the field. </summary>
-        protected int m_total_time; 
+        protected int m_total_time;
 
         /// <summary>
         /// Time for phase1 of the uninvert process. </summary>
@@ -176,7 +175,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Ordinal of the first term in the field, or 0 if the
-        /// <see cref="PostingsFormat"/> does not implement 
+        /// <see cref="PostingsFormat"/> does not implement
         /// <see cref="TermsEnum.Ord"/>.
         /// </summary>
         protected int m_ordBase;
@@ -471,7 +470,7 @@ namespace Lucene.Net.Index
                         {
                             // index into byte array (actually the end of
                             // the doc-specific byte[] when building)
-                            int pos = val.TripleShift(8);
+                            int pos = val >>> 8;
                             int ilen = VInt32Size(delta);
                             var arr = bytes[doc];
                             int newend = pos + ilen;
@@ -538,7 +537,7 @@ namespace Lucene.Net.Index
                                 for (int j = 0; j < ipos; j++)
                                 {
                                     tempArr[j] = (sbyte)val;
-                                    val = val.TripleShift(8);
+                                    val >>>= 8;
                                 }
                                 // point at the end index in the byte[]
                                 index[doc] = (endPos << 8) | 1;
@@ -602,7 +601,7 @@ namespace Lucene.Net.Index
                             int val = index[doc];
                             if ((val & 0xff) == 1)
                             {
-                                int len = val.TripleShift(8);
+                                int len = val >>> 8;
                                 //System.out.println("    ptr pos=" + pos);
                                 index[doc] = (pos << 8) | 1; // change index to point to start of array
                                 if ((pos & 0xff000000) != 0)
@@ -676,7 +675,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Number of bytes to represent an unsigned int as a vint. 
+        /// Number of bytes to represent an unsigned int as a vint.
         /// <para/>
         /// NOTE: This was vIntSize() in Lucene
         /// </summary>
@@ -708,22 +707,22 @@ namespace Lucene.Net.Index
         /// </summary>
         private static int WriteInt32(int x, sbyte[] arr, int pos)
         {
-            var a = x.TripleShift(7 * 4);
+            var a = x >>> (7 * 4);
             if (a != 0)
             {
                 arr[pos++] = (sbyte)(a | 0x80);
             }
-            a = x.TripleShift(7 * 3);
+            a = x >>> (7 * 3);
             if (a != 0)
             {
                 arr[pos++] = (sbyte)(a | 0x80);
             }
-            a = x.TripleShift(7 * 2);
+            a = x >>> (7 * 2);
             if (a != 0)
             {
                 arr[pos++] = (sbyte)(a | 0x80);
             }
-            a = x.TripleShift(7 * 1);
+            a = x >>> (7 * 1);
             if (a != 0)
             {
                 arr[pos++] = (sbyte)(a | 0x80);
@@ -874,7 +873,7 @@ namespace Lucene.Net.Index
                 //System.out.println("  seek(ord) targetOrd=" + targetOrd + " delta=" + delta + " ord=" + ord + " ii=" + indexInterval);
                 if (delta < 0 || delta > outerInstance.indexInterval)
                 {
-                    int idx = (int)targetOrd.TripleShift(outerInstance.indexIntervalBits);
+                    int idx = (int)(targetOrd >>> outerInstance.indexIntervalBits);
                     BytesRef @base = outerInstance.m_indexedTermsArray[idx];
                     //System.out.println("  do seek term=" + base.utf8ToString());
                     ord = idx << outerInstance.indexIntervalBits;
@@ -1006,7 +1005,7 @@ namespace Lucene.Net.Index
                             //System.out.println("  tnum=" + tnum);
                             delta = 0;
                         }
-                        code = code.TripleShift(8);
+                        code >>>= 8;
                     }
                 }
                 else
@@ -1050,9 +1049,9 @@ namespace Lucene.Net.Index
                 if ((code & 0xff) == 1)
                 {
                     // a pointer
-                    upto = code.TripleShift(8);
+                    upto = code >>> 8;
                     //System.out.println("    pointer!  upto=" + upto);
-                    int whichArray = (docID.TripleShift(16)) & 0xff;
+                    int whichArray = (docID >>> 16) & 0xff;
                     arr = outerInstance.m_tnums[whichArray];
                 }
                 else

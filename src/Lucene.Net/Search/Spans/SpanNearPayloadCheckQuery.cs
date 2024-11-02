@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections;
 using System.Collections.Generic;
@@ -140,7 +139,7 @@ namespace Lucene.Net.Search.Spans
         public override int GetHashCode()
         {
             int h = m_match.GetHashCode();
-            h ^= (h << 8) | (h.TripleShift(25)); // reversible
+            h ^= (h << 8) | (h >>> 25); // reversible
             //TODO: is this right?
             h ^= payloadEqualityComparer.GetHashCode(m_payloadToMatch); // LUCENENET NOTE: Need to use the structural equality comparer to compare equality of all contained values
             h ^= J2N.BitConversion.SingleToRawInt32Bits(Boost);

@@ -1,5 +1,4 @@
 ﻿// Lucene version compatibility level 4.8.1
-using J2N.Numerics;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
@@ -112,9 +111,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override int GetHashCode()
         {
             int h = m_source.GetHashCode();
-            h ^= (h << 10) | (h.TripleShift(23));
+            h ^= (h << 10) | (h >>> 23);
             h += J2N.BitConversion.SingleToInt32Bits(m_min);
-            h ^= (h << 14) | (h.TripleShift(19));
+            h ^= (h << 14) | (h >>> 19);
             h += J2N.BitConversion.SingleToInt32Bits(m_max);
             h += m_target.GetHashCode();
             if (m_defaultVal != null)
@@ -129,10 +128,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             if (!(o is RangeMapSingleFunction other))
                 return false;
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
-            return J2N.BitConversion.SingleToInt32Bits(this.m_min) == J2N.BitConversion.SingleToInt32Bits(other.m_min) 
-                && J2N.BitConversion.SingleToInt32Bits(this.m_max) == J2N.BitConversion.SingleToInt32Bits(other.m_max) 
-                && this.m_target.Equals(other.m_target) 
-                && this.m_source.Equals(other.m_source) 
+            return J2N.BitConversion.SingleToInt32Bits(this.m_min) == J2N.BitConversion.SingleToInt32Bits(other.m_min)
+                && J2N.BitConversion.SingleToInt32Bits(this.m_max) == J2N.BitConversion.SingleToInt32Bits(other.m_max)
+                && this.m_target.Equals(other.m_target)
+                && this.m_source.Equals(other.m_source)
                 && (this.m_defaultVal == other.m_defaultVal || (this.m_defaultVal != null && this.m_defaultVal.Equals(other.m_defaultVal)));
         }
     }

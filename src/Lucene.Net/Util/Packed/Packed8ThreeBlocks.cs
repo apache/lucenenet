@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
@@ -87,8 +86,8 @@ namespace Lucene.Net.Util.Packed
         public override void Set(int index, long value)
         {
             int o = index * 3;
-            blocks[o] = (byte)(value.TripleShift(16));
-            blocks[o + 1] = (byte)(value.TripleShift(8));
+            blocks[o] = (byte)(value >>> 16);
+            blocks[o + 1] = (byte)(value >>> 8);
             blocks[o + 2] = (byte)value;
         }
 
@@ -105,8 +104,8 @@ namespace Lucene.Net.Util.Packed
             for (int i = off, o = index * 3, end = off + sets; i < end; ++i)
             {
                 long value = arr[i];
-                blocks[o++] = (byte)(value.TripleShift(16));
-                blocks[o++] = (byte)(value.TripleShift(8));
+                blocks[o++] = (byte)(value >>> 16);
+                blocks[o++] = (byte)(value >>> 8);
                 blocks[o++] = (byte)value;
             }
             return sets;
@@ -114,8 +113,8 @@ namespace Lucene.Net.Util.Packed
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
-            var block1 = (byte)(val.TripleShift(16));
-            var block2 = (byte)(val.TripleShift(8));
+            var block1 = (byte)(val >>> 16);
+            var block2 = (byte)(val >>> 8);
             var block3 = (byte)val;
             for (int i = fromIndex * 3, end = toIndex * 3; i < end; i += 3)
             {
@@ -134,7 +133,7 @@ namespace Lucene.Net.Util.Packed
         public override long RamBytesUsed()
         {
             return RamUsageEstimator.AlignObjectSize(
-                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
                 + 2 * RamUsageEstimator.NUM_BYTES_INT32 // valueCount,bitsPerValue
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref
                 + RamUsageEstimator.SizeOf(blocks);

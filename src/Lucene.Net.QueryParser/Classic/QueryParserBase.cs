@@ -1,6 +1,5 @@
 ﻿using J2N;
 using J2N.Globalization;
-using J2N.Numerics;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
@@ -41,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Classic
     // but it has been de-nested to make usage syntax shorter.
 
     /// <summary>
-    /// The default operator for parsing queries. 
+    /// The default operator for parsing queries.
     /// Use <see cref="QueryParserBase.DefaultOperator"/> to change it.
     /// </summary>
     public enum Operator
@@ -58,7 +57,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Do not catch this exception in your code, it means you are using methods that you should no longer use.
         /// </summary>
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
@@ -96,11 +95,11 @@ namespace Lucene.Net.QueryParsers.Classic
         // the nested class:
 
         /// <summary>
-        /// Alternative form of <see cref="Operator.AND"/> 
+        /// Alternative form of <see cref="Operator.AND"/>
         /// </summary>
         public const Operator AND_OPERATOR = Operator.AND;
         /// <summary>
-        /// Alternative form of <see cref="Operator.OR"/> 
+        /// Alternative form of <see cref="Operator.OR"/>
         /// </summary>
         public const Operator OR_OPERATOR = Operator.OR;
 
@@ -234,14 +233,14 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual float FuzzyMinSim { get; set; }
 
         /// <summary>
-        /// Get or Set the prefix length for fuzzy queries. 
+        /// Get or Set the prefix length for fuzzy queries.
         /// Default is 0.
         /// </summary>
         public virtual int FuzzyPrefixLength { get; set; }
 
         /// <summary>
-        /// Gets or Sets the default slop for phrases. 
-        /// If zero, then exact phrase matches are required. 
+        /// Gets or Sets the default slop for phrases.
+        /// If zero, then exact phrase matches are required.
         /// Default value is zero.
         /// </summary>
         public virtual int PhraseSlop { get; set; }
@@ -291,7 +290,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// Get or Set locale used by date range parsing, lowercasing, and other
         /// locale-sensitive operations.
         /// <para/>
-        /// By default, the culture is <c>null</c>, which indicates to read the culture on the fly 
+        /// By default, the culture is <c>null</c>, which indicates to read the culture on the fly
         /// from <see cref="CultureInfo.CurrentCulture"/>. This ensures if you change the culture on
         /// the current thread, QueryParser will utilize it. You can also explicitly set a culture.
         /// Setting the culture to <c>null</c> will restore the default behavior if you have explicitly set a culture.
@@ -305,7 +304,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Get or Set the current time zone for date and time parsing operations.
         /// <para/>
-        /// By default, the time zone is <c>null</c>, which indicates to read the time zone on the fly 
+        /// By default, the time zone is <c>null</c>, which indicates to read the time zone on the fly
         /// from <see cref="TimeZoneInfo.Local"/>. This ensures if you change the time zone on
         /// the current system, QueryParser will utilize it. You can also explicitly set a time zone.
         /// Setting the time zone to <c>null</c> will restore the default behavior if you have explicitly set a time zone.
@@ -349,7 +348,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         /// <summary>
         /// Returns the date resolution that is used by RangeQueries for the given field.
-        /// Returns null, if no default or field specific date resolution has been set 
+        /// Returns null, if no default or field specific date resolution has been set
         /// for the given field.
         /// </summary>
         public virtual DateResolution GetDateResolution(string fieldName)
@@ -376,7 +375,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         /// <summary>
         /// Get or Set whether or not to analyze range terms when constructing <see cref="TermRangeQuery"/>s.
-        /// For example, setting this to true can enable analyzing terms into 
+        /// For example, setting this to true can enable analyzing terms into
         /// collation keys for locale-sensitive <see cref="TermRangeQuery"/>.
         /// </summary>
         public virtual bool AnalyzeRangeTerms
@@ -496,7 +495,7 @@ namespace Lucene.Net.QueryParsers.Classic
             // See LUCENENET-423 - DateRange differences with Java and .NET
 
             // Java allows parsing of the string up to the end of the pattern
-            // and then ignores everything else.  .NET will throw an exception, 
+            // and then ignores everything else.  .NET will throw an exception,
             // so this will fail in those cases, though the code below is clear
             // that users can only specify the date, not the time. Unfortunately,
             // the date format is much more strict in .NET.
@@ -694,7 +693,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// Can be overridden by extending classes, to modify query being
         /// returned.
         /// </summary>
-        /// <param name="clauses">List that contains <see cref="BooleanClause"/> instances 
+        /// <param name="clauses">List that contains <see cref="BooleanClause"/> instances
         /// to join.</param>
         /// <exception cref="ParseException">throw in overridden method to disallow</exception>
         /// <returns>Resulting <see cref="Query"/> object.</returns>
@@ -953,7 +952,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// Returns a string where the escape char has been
         /// removed, or kept only once if there was a double escape.
         /// <para/>
-        /// Supports escaped unicode characters, e. g. translates 
+        /// Supports escaped unicode characters, e. g. translates
         /// <c>\\u0041</c> to <c>A</c>.
         /// </summary>
         internal virtual string DiscardEscapeChar(string input)
@@ -983,7 +982,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 if (codePointMultiplier > 0)
                 {
                     codePoint += HexToInt32(curChar) * codePointMultiplier;
-                    codePointMultiplier = codePointMultiplier.TripleShift(4);
+                    codePointMultiplier >>>= 4;
                     if (codePointMultiplier == 0)
                     {
                         output[length++] = (char)codePoint;

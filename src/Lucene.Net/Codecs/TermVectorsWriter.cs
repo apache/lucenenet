@@ -1,9 +1,7 @@
-﻿using J2N.Numerics;
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
@@ -170,7 +168,7 @@ namespace Lucene.Net.Codecs
                 else
                 {
                     int code = positions.ReadVInt32();
-                    position += code.TripleShift(1);
+                    position += code >>> 1;
                     if ((code & 1) != 0)
                     {
                         // this position has a payload

@@ -1,12 +1,10 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Index.Sorter
 {
@@ -30,7 +28,7 @@ namespace Lucene.Net.Index.Sorter
     /// <summary>
     /// An <see cref="AtomicReader"/> which supports sorting documents by a given
     /// <see cref="Sort"/>. You can use this class to sort an index as follows:
-    /// 
+    ///
     /// <code>
     /// IndexWriter writer; // writer to which the sorted index will be added
     /// DirectoryReader reader; // reader on the input index
@@ -40,7 +38,7 @@ namespace Lucene.Net.Index.Sorter
     /// reader.Dispose(); // alternatively, you can use a using block
     /// writer.Dispose(); // alternatively, you can use a using block
     /// </code>
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class SortingAtomicReader : FilterAtomicReader
@@ -76,7 +74,7 @@ namespace Lucene.Net.Index.Sorter
             private readonly Sorter.DocMap docMap;
             private readonly IndexOptions indexOptions;
 
-            public SortingTerms(Terms input, IndexOptions indexOptions, Sorter.DocMap docMap) 
+            public SortingTerms(Terms input, IndexOptions indexOptions, Sorter.DocMap docMap)
                 : base(input)
             {
                 this.docMap = docMap;
@@ -323,7 +321,7 @@ namespace Lucene.Net.Index.Sorter
                 private readonly int[] tmpDocs;
                 private int[] tmpFreqs;
 
-                public DocFreqSorter(int maxDoc) 
+                public DocFreqSorter(int maxDoc)
                     : base(maxDoc / 64)
                 {
                     this.tmpDocs = new int[maxDoc / 64];
@@ -511,7 +509,7 @@ namespace Lucene.Net.Index.Sorter
                 private readonly int[] tmpDocs;
                 private readonly long[] tmpOffsets;
 
-                public DocOffsetSorter(int maxDoc) 
+                public DocOffsetSorter(int maxDoc)
                     : base(maxDoc / 64)
                 {
                     this.tmpDocs = new int[maxDoc / 64];
@@ -655,7 +653,7 @@ namespace Lucene.Net.Index.Sorter
                     int pos = @in.NextPosition();
                     BytesRef payload = @in.GetPayload();
                     // The low-order bit of token is set only if there is a payload, the
-                    // previous bits are the delta-encoded position. 
+                    // previous bits are the delta-encoded position.
                     int token = (pos - previousPosition) << 1 | (payload is null ? 0 : 1);
                     @out.WriteVInt32(token);
                     previousPosition = pos;
@@ -710,7 +708,7 @@ namespace Lucene.Net.Index.Sorter
             public override int NextPosition()
             {
                 int token = postingInput.ReadVInt32();
-                pos += token.TripleShift(1);
+                pos += token >>> 1;
                 if (storeOffsets)
                 {
                     startOffset = endOffset + postingInput.ReadVInt32();
@@ -744,7 +742,7 @@ namespace Lucene.Net.Index.Sorter
         /// <summary>
         /// Return a sorted view of <paramref name="reader"/> according to the order
         /// defined by <paramref name="sort"/>. If the reader is already sorted, this
-        /// method might return the reader as-is. 
+        /// method might return the reader as-is.
         /// </summary>
         public static AtomicReader Wrap(AtomicReader reader, Sort sort)
         {

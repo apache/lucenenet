@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -139,7 +138,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         offsetLength[level] = skipStream.ReadVInt32();
                     }
                 }
-                delta = delta.TripleShift(1);
+                delta >>>= 1;
             }
             else
             {

@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
@@ -32,7 +31,7 @@ namespace Lucene.Net.Spatial.Util
     /// The distance from a provided Point to a Point retrieved from a ValueSource via
     /// <see cref="FunctionValues.ObjectVal(int)"/>. The distance
     /// is calculated via a <see cref="IDistanceCalculator"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class DistanceToShapeValueSource : ValueSource
@@ -133,7 +132,7 @@ namespace Lucene.Net.Spatial.Util
             result = shapeValueSource.GetHashCode();
             result = 31 * result + queryPoint.GetHashCode();
             temp = J2N.BitConversion.DoubleToInt64Bits(multiplier);
-            result = 31 * result + (int)(temp ^ (temp.TripleShift(32)));
+            result = 31 * result + (int)(temp ^ (temp >>> 32));
             return result;
         }
     }

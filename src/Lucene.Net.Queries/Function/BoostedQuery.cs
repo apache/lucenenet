@@ -1,5 +1,4 @@
 ﻿// Lucene version compatibility level 4.8.1
-using J2N.Numerics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -30,7 +29,7 @@ namespace Lucene.Net.Queries.Function
     /// <summary>
     /// Query that is boosted by a <see cref="Function.ValueSource"/>
     /// </summary>
-    // TODO: BoostedQuery and BoostingQuery in the same module? 
+    // TODO: BoostedQuery and BoostingQuery in the same module?
     // something has to give
     public class BoostedQuery : Query
     {
@@ -46,7 +45,7 @@ namespace Lucene.Net.Queries.Function
         public virtual Query Query => q;
 
         public virtual ValueSource ValueSource => boostVal;
-    
+
         public override Query Rewrite(IndexReader reader)
         {
             var newQ = q.Rewrite(reader);
@@ -219,9 +218,9 @@ namespace Lucene.Net.Queries.Function
         public override int GetHashCode()
         {
             int h = q.GetHashCode();
-            h ^= (h << 17) | (h.TripleShift(16));
+            h ^= (h << 17) | (h >>> 16);
             h += boostVal.GetHashCode();
-            h ^= (h << 8) | (h.TripleShift(25));
+            h ^= (h << 8) | (h >>> 25);
             h += J2N.BitConversion.SingleToInt32Bits(Boost);
             return h;
         }

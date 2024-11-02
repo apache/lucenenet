@@ -292,7 +292,7 @@ namespace Lucene.Net.Store
         /// Maps a file into a set of buffers </summary>
         internal virtual ByteBuffer[] Map(MMapIndexInput input, FileStream fc, long offset, long length)
         {
-            if (length.TripleShift(chunkSizePower) >= int.MaxValue)
+            if ((length >>> chunkSizePower) >= int.MaxValue)
                 throw new ArgumentException("RandomAccessFile too big for chunk size: " + fc.ToString());
 
             // LUCENENET specific: Return empty buffer if length is 0, rather than attempting to create a MemoryMappedFile.
@@ -305,21 +305,21 @@ namespace Lucene.Net.Store
             long chunkSize = 1L << chunkSizePower;
 
             // we always allocate one more buffer, the last one may be a 0 byte one
-            int nrBuffers = (int)length.TripleShift(chunkSizePower) + 1;
+            int nrBuffers = (int)(length >>> chunkSizePower) + 1;
 
             ByteBuffer[] buffers = new ByteBuffer[nrBuffers];
 
             if (input.memoryMappedFile is null)
             {
                 input.memoryMappedFile = MemoryMappedFile.CreateFromFile(
-                    fileStream: fc, 
-                    mapName: null, 
-                    capacity: length, 
+                    fileStream: fc,
+                    mapName: null,
+                    capacity: length,
                     access: MemoryMappedFileAccess.Read,
 #if FEATURE_MEMORYMAPPEDFILESECURITY
                     memoryMappedFileSecurity: null,
 #endif
-                    inheritability: HandleInheritability.Inheritable, 
+                    inheritability: HandleInheritability.Inheritable,
                     leaveOpen: true); // LUCENENET: We explicitly dispose the FileStream separately.
             }
 

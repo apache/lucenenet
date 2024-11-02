@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -319,7 +318,7 @@ namespace Lucene.Net.Index
             while ((i & ~0x7F) != 0)
             {
                 WriteByte(stream, (byte)((i & 0x7f) | 0x80));
-                i = i.TripleShift(7);
+                i >>>= 7;
             }
             WriteByte(stream, (byte)i);
         }

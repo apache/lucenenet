@@ -1,7 +1,5 @@
 ﻿// this file has been automatically generated, DO NOT EDIT
 
-using J2N.Numerics;
-
 namespace Lucene.Net.Util.Packed
 {
     /*
@@ -38,7 +36,7 @@ namespace Lucene.Net.Util.Packed
                 long block = blocks[blocksOffset++];
                 for (int shift = 63; shift >= 0; shift -= 1)
                 {
-                    values[valuesOffset++] = (int)((block.TripleShift(shift)) & 1);
+                    values[valuesOffset++] = (int)((block >>> shift) & 1);
                 }
             }
         }
@@ -48,13 +46,13 @@ namespace Lucene.Net.Util.Packed
             for (int j = 0; j < iterations; ++j)
             {
                 var block = blocks[blocksOffset++];
-                values[valuesOffset++] = block.TripleShift(7) & 1;
-                values[valuesOffset++] = block.TripleShift(6) & 1;
-                values[valuesOffset++] = block.TripleShift(5) & 1;
-                values[valuesOffset++] = block.TripleShift(4) & 1;
-                values[valuesOffset++] = block.TripleShift(3) & 1;
-                values[valuesOffset++] = block.TripleShift(2) & 1;
-                values[valuesOffset++] = block.TripleShift(1) & 1;
+                values[valuesOffset++] = (block >>> 7) & 1;
+                values[valuesOffset++] = (block >>> 6) & 1;
+                values[valuesOffset++] = (block >>> 5) & 1;
+                values[valuesOffset++] = (block >>> 4) & 1;
+                values[valuesOffset++] = (block >>> 3) & 1;
+                values[valuesOffset++] = (block >>> 2) & 1;
+                values[valuesOffset++] = (block >>> 1) & 1;
                 values[valuesOffset++] = block & 1;
             }
         }
@@ -66,7 +64,7 @@ namespace Lucene.Net.Util.Packed
                 long block = blocks[blocksOffset++];
                 for (int shift = 63; shift >= 0; shift -= 1)
                 {
-                    values[valuesOffset++] = (block.TripleShift(shift)) & 1;
+                    values[valuesOffset++] = ((block >>> shift)) & 1;
                 }
             }
         }
@@ -76,13 +74,13 @@ namespace Lucene.Net.Util.Packed
             for (int j = 0; j < iterations; ++j)
             {
                 var block = blocks[blocksOffset++];
-                values[valuesOffset++] = block.TripleShift(7) & 1;
-                values[valuesOffset++] = block.TripleShift(6) & 1;
-                values[valuesOffset++] = block.TripleShift(5) & 1;
-                values[valuesOffset++] = block.TripleShift(4) & 1;
-                values[valuesOffset++] = block.TripleShift(3) & 1;
-                values[valuesOffset++] = block.TripleShift(2) & 1;
-                values[valuesOffset++] = block.TripleShift(1) & 1;
+                values[valuesOffset++] = (block >>> 7) & 1;
+                values[valuesOffset++] = (block >>> 6) & 1;
+                values[valuesOffset++] = (block >>> 5) & 1;
+                values[valuesOffset++] = (block >>> 4) & 1;
+                values[valuesOffset++] = (block >>> 3) & 1;
+                values[valuesOffset++] = (block >>> 2) & 1;
+                values[valuesOffset++] = (block >>> 1) & 1;
                 values[valuesOffset++] = block & 1;
             }
         }

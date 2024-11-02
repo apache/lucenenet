@@ -1,10 +1,8 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
 
@@ -904,7 +902,7 @@ namespace Lucene.Net.Codecs.Memory
 
                     while (low <= high)
                     {
-                        int mid = (low + high).TripleShift(1);
+                        int mid = (low + high) >>> 1;
                         int cmp = outerInstance.Compare(mid, term);
                         if (cmp < 0)
                         {
@@ -1480,7 +1478,7 @@ namespace Lucene.Net.Codecs.Memory
                                     skipUpto = 0;
                                     goto nextTermContinue;
                                 }
-                                int mid = (low + high).TripleShift(1);
+                                int mid = (low + high) >>> 1;
                                 int cmp = (outerInstance.termBytes[outerInstance.termOffsets[mid] + stateUpto] & 0xFF) -
                                           targetLabel;
                                 // if (DEBUG) {
@@ -2334,7 +2332,7 @@ namespace Lucene.Net.Codecs.Memory
                         break;
                     }
 
-                    int mid = (low + high).TripleShift(1);
+                    int mid = (low + high) >>> 1;
                     int cmp = docIDs[mid] - target;
                     //System.out.println("    bsearch low=" + low + " high=" + high+ ": docIDs[" + mid + "]=" + docIDs[mid]);
 
@@ -2540,7 +2538,7 @@ namespace Lucene.Net.Codecs.Memory
                         break;
                     }
 
-                    int mid = (low + high).TripleShift(1);
+                    int mid = (low + high) >>> 1;
                     int cmp = docIDs[mid] - target;
                     //System.out.println("    bsearch low=" + low + " high=" + high+ ": docIDs[" + mid + "]=" + docIDs[mid]);
 

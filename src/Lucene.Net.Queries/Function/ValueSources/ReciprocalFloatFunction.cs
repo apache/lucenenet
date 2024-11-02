@@ -1,10 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
-using J2N.Numerics;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
-using Lucene.Net.Util;
-using System;
 using System.Collections;
 using System.Globalization;
 
@@ -105,15 +102,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string GetDescription()
         {
-            return J2N.Numerics.Single.ToString(m_a, CultureInfo.InvariantCulture) + 
-                "/(" + J2N.Numerics.Single.ToString(m_m, CultureInfo.InvariantCulture) + 
+            return J2N.Numerics.Single.ToString(m_a, CultureInfo.InvariantCulture) +
+                "/(" + J2N.Numerics.Single.ToString(m_m, CultureInfo.InvariantCulture) +
                 "*float(" + m_source.GetDescription() + ")" + "+" + J2N.Numerics.Single.ToString(m_b, CultureInfo.InvariantCulture) + ')';
         }
 
         public override int GetHashCode()
         {
             int h = J2N.BitConversion.SingleToInt32Bits(m_a) + J2N.BitConversion.SingleToInt32Bits(m_m);
-            h ^= (h << 13) | (h.TripleShift(20));
+            h ^= (h << 13) | (h >>> 20);
             return h + (J2N.BitConversion.SingleToInt32Bits(m_b)) + m_source.GetHashCode();
         }
 

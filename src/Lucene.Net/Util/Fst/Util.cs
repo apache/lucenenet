@@ -1,9 +1,7 @@
 ﻿using J2N;
-using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -185,7 +183,7 @@ namespace Lucene.Net.Util.Fst
                         bool exact = false;
                         while (low <= high)
                         {
-                            mid = (low + high).TripleShift(1);
+                            mid = (low + high) >>> 1;
                             @in.Position = arc.PosArcsStart;
                             @in.SkipBytes(arc.BytesPerArc * mid);
                             var flags = (sbyte)@in.ReadByte();
@@ -947,11 +945,11 @@ namespace Lucene.Net.Util.Fst
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void EmitDotState(TextWriter @out, string name, string shape, string color, string label)
         {
-            @out.Write("  " + name 
-                + " [" 
-                + (shape != null ? "shape=" + shape : "") + " " 
-                + (color != null ? "color=" + color : "") + " " 
-                + (label != null ? "label=\"" + label + "\"" : "label=\"\"") + " " 
+            @out.Write("  " + name
+                + " ["
+                + (shape != null ? "shape=" + shape : "") + " "
+                + (color != null ? "color=" + color : "") + " "
+                + (label != null ? "label=\"" + label + "\"" : "label=\"\"") + " "
                 + "]\n");
         }
 
@@ -1130,7 +1128,7 @@ namespace Lucene.Net.Util.Fst
                 // " targetLabel=" + targetLabel);
                 while (low <= high)
                 {
-                    mid = (low + high).TripleShift(1);
+                    mid = (low + high) >>> 1;
                     @in.Position = arc.PosArcsStart;
                     @in.SkipBytes(arc.BytesPerArc * mid + 1);
                     int midLabel = fst.ReadLabel(@in);

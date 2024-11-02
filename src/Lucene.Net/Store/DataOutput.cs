@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 
@@ -80,7 +79,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Writes a short as two bytes. 
+        /// Writes a short as two bytes.
         /// <para/>
         /// NOTE: this was writeShort() in Lucene
         /// </summary>
@@ -187,7 +186,7 @@ namespace Lucene.Net.Store
         ///         <term></term>
         ///     </item>
         /// </list>
-        /// 
+        ///
         /// <para>this provides compression while still being efficient to decode.</para>
         /// <para/>
         /// NOTE: this was writeVInt() in Lucene
@@ -201,7 +200,7 @@ namespace Lucene.Net.Store
             while ((i & ~0x7F) != 0)
             {
                 WriteByte((byte)((i & 0x7F) | 0x80));
-                i = i.TripleShift(7);
+                i >>>= 7;
             }
             WriteByte((byte)i);
         }
@@ -225,7 +224,7 @@ namespace Lucene.Net.Store
         /// bytes.  Smaller values take fewer bytes.  Negative numbers are not
         /// supported.
         /// <para/>
-        /// The format is described further in <see cref="DataOutput.WriteVInt32(int)"/>. 
+        /// The format is described further in <see cref="DataOutput.WriteVInt32(int)"/>.
         /// <para/>
         /// NOTE: this was writeVLong() in Lucene
         /// </summary>
@@ -236,7 +235,7 @@ namespace Lucene.Net.Store
             while ((i & ~0x7FL) != 0L)
             {
                 WriteByte((byte)((i & 0x7FL) | 0x80L));
-                i = i.TripleShift(7);
+                i >>>= 7;
             }
             WriteByte((byte)i);
         }

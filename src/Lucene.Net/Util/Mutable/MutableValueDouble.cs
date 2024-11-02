@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Mutable
 {
@@ -84,7 +83,7 @@ namespace Lucene.Net.Util.Mutable
         public override int GetHashCode()
         {
             long x = J2N.BitConversion.DoubleToInt64Bits(Value);
-            return (int)x + (int)x.TripleShift(32);
+            return (int)x + (int)(x >>> 32);
         }
     }
 }

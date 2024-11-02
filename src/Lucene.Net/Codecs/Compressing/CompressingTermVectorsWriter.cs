@@ -2,11 +2,9 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-using J2N.Numerics;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -844,7 +842,7 @@ namespace Lucene.Net.Codecs.Compressing
                         {
                             payloadLengthsBuf[payStart + i] = 0;
                         }
-                        position += code.TripleShift(1);
+                        position += code >>> 1;
                         positionsBuf[posStart + i] = position;
                     }
                 }
@@ -852,7 +850,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     for (int i = 0; i < numProx; ++i)
                     {
-                        position += positions.ReadVInt32().TripleShift(1);
+                        position += positions.ReadVInt32() >>> 1;
                         positionsBuf[posStart + i] = position;
                     }
                 }

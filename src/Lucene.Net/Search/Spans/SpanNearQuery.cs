@@ -1,5 +1,4 @@
 ﻿using J2N.Collections.Generic.Extensions;
-using J2N.Numerics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -221,7 +220,7 @@ namespace Lucene.Net.Search.Spans
             // Mix bits before folding in things like boost, since it could cancel the
             // last element of clauses.  this particular mix also serves to
             // differentiate SpanNearQuery hashcodes from others.
-            result ^= (result << 14) | (result.TripleShift(19)); // reversible
+            result ^= (result << 14) | (result >>> 19); // reversible
             result += J2N.BitConversion.SingleToRawInt32Bits(Boost);
             result += m_slop;
             result ^= (m_inOrder ? unchecked((int)0x99AFD3BD) : 0);

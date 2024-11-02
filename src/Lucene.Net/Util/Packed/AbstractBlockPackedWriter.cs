@@ -1,7 +1,5 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
@@ -49,7 +47,7 @@ namespace Lucene.Net.Util.Packed
             while ((i & ~0x7FL) != 0L && k++ < 8)
             {
                 @out.WriteByte((byte)((i & 0x7FL) | 0x80L));
-                i = i.TripleShift(7);
+                i >>>= 7;
             }
             @out.WriteByte((byte)i);
         }
@@ -74,7 +72,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Reset this writer to wrap <paramref name="out"/>. The block size remains unchanged.
         ///
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls
         /// a private method and not this virtual method. So if you need to override
         /// the behavior during the initialization, call your own private method from the constructor
         /// with whatever custom behavior you need.

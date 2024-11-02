@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             BytesRef scratch = new BytesRef();
             while (hi >= lo)
             {
-                int mid = (lo + hi).TripleShift(1);
+                int mid = (lo + hi) >>> 1;
                 int delta = CompareTo(term, mid, input, scratch);
                 if (delta < 0)
                 {

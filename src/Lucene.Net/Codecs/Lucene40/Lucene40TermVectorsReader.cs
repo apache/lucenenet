@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
@@ -499,7 +498,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     for (int posUpto = 0; posUpto < freq; posUpto++)
                     {
                         int code = tvf.ReadVInt32();
-                        pos += code.TripleShift(1);
+                        pos += code >>> 1;
                         positions[posUpto] = pos;
                         if ((code & 1) != 0)
                         {

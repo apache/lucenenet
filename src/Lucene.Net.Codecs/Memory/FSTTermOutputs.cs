@@ -1,7 +1,5 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -28,7 +26,7 @@ namespace Lucene.Net.Codecs.Memory
     using IndexOptions = Index.IndexOptions;
 
     /// <summary>
-    /// An FST implementation for 
+    /// An FST implementation for
     /// <see cref="FSTTermsWriter"/>.
     /// <para/>
     /// @lucene.experimental
@@ -70,8 +68,8 @@ namespace Lucene.Net.Codecs.Memory
                 this.totalTermFreq = totalTermFreq;
             }
 
-            // NOTE: actually, FST nodes are seldom 
-            // identical when outputs on their arcs 
+            // NOTE: actually, FST nodes are seldom
+            // identical when outputs on their arcs
             // aren't NO_OUTPUTs.
             public override int GetHashCode()
             {
@@ -101,10 +99,10 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (other == this)
                     return true;
-                
+
                 if (!(other is TermData))
                     return false;
-                
+
                 var _other = (TermData) other;
                 return StatsEqual(this, _other) && Int64sEqual(this, _other) && BytesEqual(this, _other);
             }
@@ -117,7 +115,7 @@ namespace Lucene.Net.Codecs.Memory
         }
 
         /// <summary>
-        /// The return value will be the smaller one, when these two are 
+        /// The return value will be the smaller one, when these two are
         /// 'comparable', i.e.
         /// <list type="number">
         ///     <item><description>every value in t1 is not larger than in t2, or</description></item>
@@ -128,7 +126,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             if (Equals(t1, NO_OUTPUT) || Equals(t2, NO_OUTPUT))
                 return NO_OUTPUT;
-            
+
             if (Debugging.AssertsEnabled) Debugging.Assert(t1.longs.Length == t2.longs.Length);
 
             long[] min = t1.longs, max = t2.longs;
@@ -183,7 +181,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             if (Equals(t2, NO_OUTPUT))
                 return t1;
-            
+
             if (Debugging.AssertsEnabled) Debugging.Assert(t1.longs.Length == t2.longs.Length);
 
             int pos = 0;
@@ -211,16 +209,16 @@ namespace Lucene.Net.Codecs.Memory
         }
 
         // TODO: if we refactor a 'addSelf(TermData other)',
-        // we can gain about 5~7% for fuzzy queries, however this also 
+        // we can gain about 5~7% for fuzzy queries, however this also
         // means we are putting too much stress on FST Outputs decoding?
         public override TermData Add(TermData t1, TermData t2)
         {
             if (Equals(t1, NO_OUTPUT))
                 return t2;
-            
+
             if (Equals(t2, NO_OUTPUT))
                 return t1;
-            
+
             if (Debugging.AssertsEnabled) Debugging.Assert(t1.longs.Length == t2.longs.Length);
 
             var pos = 0;
@@ -310,7 +308,7 @@ namespace Lucene.Net.Codecs.Memory
             int bit0 = bits & 1;
             int bit1 = bits & 2;
             int bit2 = bits & 4;
-            var bytesSize = bits.TripleShift(3);
+            var bytesSize = bits >>> 3;
             if (bit1 > 0 && bytesSize == 0) // determine extra length
             {
                 bytesSize = input.ReadVInt32();
@@ -332,7 +330,7 @@ namespace Lucene.Net.Codecs.Memory
                 int code = input.ReadVInt32();
                 if (_hasPos)
                 {
-                    totalTermFreq = docFreq = code.TripleShift(1);
+                    totalTermFreq = docFreq = code >>> 1;
                     if ((code & 1) == 0)
                     {
                         totalTermFreq += input.ReadVInt64();
