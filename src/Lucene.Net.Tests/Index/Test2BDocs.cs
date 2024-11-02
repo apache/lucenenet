@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
             Arrays.Fill(subReaders, ir);
             try
             {
-                new MultiReader(subReaders);
+                _ = new MultiReader(subReaders); // LUCENENET-specific: discard result
                 Assert.Fail();
             }
             catch (Exception expected) when (expected.IsIllegalArgumentException())

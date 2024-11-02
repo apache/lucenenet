@@ -54,14 +54,14 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
-            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
-                            .SetRAMBufferSizeMB(256.0)
-                            .SetMergeScheduler(new ConcurrentMergeScheduler())
-                            .SetMergePolicy(NewLogMergePolicy(false, 10))
-                            .SetOpenMode(OpenMode.CREATE);
+            var iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                .SetRAMBufferSizeMB(256.0)
+                .SetMergeScheduler(new ConcurrentMergeScheduler())
+                .SetMergePolicy(NewLogMergePolicy(false, 10))
+                .SetOpenMode(OpenMode.CREATE);
 
-            IndexWriter w = new IndexWriter(dir, config);
+            IndexWriter w = new IndexWriter(dir, iwc);
 
             MergePolicy mp = w.Config.MergePolicy;
             if (mp is LogByteSizeMergePolicy)
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
             Field field = new Field("field", new MyTokenStream(), ft);
             doc.Add(field);
 
-            int numDocs = (int.MaxValue / 26) + 1;
+            const int numDocs = (int.MaxValue / 26) + 1;
             for (int i = 0; i < numDocs; i++)
             {
                 w.AddDocument(doc);
@@ -93,9 +93,10 @@ namespace Lucene.Net.Index
 
         public sealed class MyTokenStream : TokenStream
         {
-            internal readonly ICharTermAttribute termAtt;
+            private readonly ICharTermAttribute termAtt;
             internal int index;
 
+            // LUCENENET-specific: must call AddAttribute from ctor in .NET
             public MyTokenStream()
             {
                 termAtt = AddAttribute<ICharTermAttribute>();

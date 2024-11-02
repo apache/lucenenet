@@ -37,8 +37,8 @@ namespace Lucene.Net.Index
         {
             internal volatile bool failed;
             internal int count;
-            internal static float RUN_TIME_MSEC = AtLeast(500);
-            internal TimedThread[] allThreads;
+            private static float RUN_TIME_MSEC = AtLeast(500);
+            private TimedThread[] allThreads;
 
             public abstract void DoWork();
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal virtual bool AnyErrors()
+            private bool AnyErrors()
             {
                 for (int i = 0; i < allThreads.Length; i++)
                 {
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
                 // Update all 100 docs...
                 for (int i = 0; i < 100; i++)
                 {
-                    Documents.Document d = new Documents.Document();
+                    Document d = new Document();
                     d.Add(new StringField("id", Convert.ToString(i), Field.Store.YES));
                     d.Add(new TextField("contents", English.Int32ToEnglish(i + 10 * count), Field.Store.NO));
                     writer.UpdateDocument(new Term("id", Convert.ToString(i)), d);
@@ -136,14 +136,15 @@ namespace Lucene.Net.Index
         {
             TimedThread[] threads = new TimedThread[4];
 
-            IndexWriterConfig conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMaxBufferedDocs(7);
+            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(7);
             ((TieredMergePolicy)conf.MergePolicy).MaxMergeAtOnce = 3;
             IndexWriter writer = RandomIndexWriter.MockIndexWriter(directory, conf, Random);
 
             // Establish a base index of 100 docs:
             for (int i = 0; i < 100; i++)
             {
-                Documents.Document d = new Documents.Document();
+                Document d = new Document();
                 d.Add(NewStringField("id", Convert.ToString(i), Field.Store.YES));
                 d.Add(NewTextField("contents", English.Int32ToEnglish(i), Field.Store.NO));
                 if ((i - 1) % 7 == 0)
@@ -213,7 +214,7 @@ namespace Lucene.Net.Index
             {
                 RunTest(directory);
             }
-            System.IO.Directory.Delete(dirPath.FullName, true);
+            TestUtil.Rm(dirPath);
         }
     }
 }

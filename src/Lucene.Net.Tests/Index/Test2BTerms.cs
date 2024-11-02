@@ -59,12 +59,12 @@ namespace Lucene.Net.Index
 
         private sealed class MyTokenStream : TokenStream
         {
-            internal readonly int tokensPerDoc;
-            internal int tokenCount;
+            private readonly int tokensPerDoc;
+            private int tokenCount;
             public readonly IList<BytesRef> savedTerms = new JCG.List<BytesRef>();
-            internal int nextSave;
-            internal long termCounter;
-            internal readonly Random random;
+            private int nextSave;
+            private long termCounter;
+            private readonly Random random;
 
             public MyTokenStream(Random random, int tokensPerDoc)
                 : base(new MyAttributeFactory(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY))
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
 
             private sealed class MyAttributeFactory : AttributeFactory
             {
-                internal readonly AttributeFactory @delegate;
+                private readonly AttributeFactory @delegate;
 
                 public MyAttributeFactory(AttributeFactory @delegate)
                 {
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
                 throw RuntimeException.Create("this test cannot run with PreFlex codec");
             }
             Console.WriteLine("Starting Test2B");
-            long TERM_COUNT = ((long)int.MaxValue) + 100000000;
+            const long TERM_COUNT = ((long)int.MaxValue) + 100000000;
 
             int TERMS_PER_DOC = TestUtil.NextInt32(Random, 100000, 1000000);
 
@@ -188,12 +188,13 @@ namespace Lucene.Net.Index
 
             if (true)
             {
-                IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                                           .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
-                                           .SetRAMBufferSizeMB(256.0)
-                                           .SetMergeScheduler(new ConcurrentMergeScheduler())
-                                           .SetMergePolicy(NewLogMergePolicy(false, 10))
-                                           .SetOpenMode(OpenMode.CREATE));
+                IndexWriter w = new IndexWriter(dir,
+                    new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                   .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                   .SetRAMBufferSizeMB(256.0)
+                   .SetMergeScheduler(new ConcurrentMergeScheduler())
+                   .SetMergePolicy(NewLogMergePolicy(false, 10))
+                   .SetOpenMode(OpenMode.CREATE));
 
                 MergePolicy mp = w.Config.MergePolicy;
                 if (mp is LogByteSizeMergePolicy)
@@ -202,7 +203,7 @@ namespace Lucene.Net.Index
                     ((LogByteSizeMergePolicy)mp).MaxMergeMB = 1024 * 1024 * 1024;
                 }
 
-                Documents.Document doc = new Documents.Document();
+                Document doc = new Document();
                 MyTokenStream ts = new MyTokenStream(Random, TERMS_PER_DOC);
 
                 FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);

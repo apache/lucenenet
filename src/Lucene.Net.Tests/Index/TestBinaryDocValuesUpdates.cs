@@ -97,7 +97,8 @@ namespace Lucene.Net.Index
             return bytes;
         }
 
-        private Document Doc(int id)
+        // LUCENENET-specific: made static
+        private static Document Doc(int id)
         {
             Document doc = new Document();
             doc.Add(new StringField("id", "doc-" + id, Store.NO));
@@ -111,7 +112,8 @@ namespace Lucene.Net.Index
         public virtual void TestUpdatesAreFlushed()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetRAMBufferSizeMB(0.00000001));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetRAMBufferSizeMB(0.00000001));
             writer.AddDocument(Doc(0)); // val=1
             writer.AddDocument(Doc(1)); // val=2
             writer.AddDocument(Doc(3)); // val=2
@@ -152,8 +154,8 @@ namespace Lucene.Net.Index
             {
                 writer.Dispose();
                 reader = DirectoryReader.Open(dir);
-            } // NRT
-            else
+            }
+            else // NRT
             {
                 reader = DirectoryReader.Open(writer, true);
                 writer.Dispose();
@@ -178,7 +180,7 @@ namespace Lucene.Net.Index
             conf.SetMaxBufferedDocs(2); // generate few segments
             conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // prevent merges for this test
             IndexWriter writer = new IndexWriter(dir, conf);
-            int numDocs = 10;
+            const int numDocs = 10;
             long[] expectedValues = new long[numDocs];
             for (int i = 0; i < numDocs; i++)
             {
@@ -203,8 +205,8 @@ namespace Lucene.Net.Index
             {
                 writer.Dispose();
                 reader = DirectoryReader.Open(dir);
-            } // NRT
-            else
+            }
+            else // NRT
             {
                 reader = DirectoryReader.Open(writer, true);
                 writer.Dispose();
@@ -302,8 +304,8 @@ namespace Lucene.Net.Index
             {
                 writer.Dispose();
                 reader = DirectoryReader.Open(dir);
-            } // NRT
-            else
+            }
+            else // NRT
             {
                 reader = DirectoryReader.Open(writer, true);
                 writer.Dispose();
@@ -355,8 +357,8 @@ namespace Lucene.Net.Index
             {
                 writer.Dispose();
                 reader = DirectoryReader.Open(dir);
-            } // NRT
-            else
+            }
+            else // NRT
             {
                 reader = DirectoryReader.Open(writer, true);
                 writer.Dispose();
@@ -395,8 +397,8 @@ namespace Lucene.Net.Index
             {
                 writer.Dispose();
                 reader = DirectoryReader.Open(dir);
-            } // NRT
-            else
+            }
+            else // NRT
             {
                 reader = DirectoryReader.Open(writer, true);
                 writer.Dispose();
@@ -669,7 +671,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            conf.SetCodec(new Lucene46CodecAnonymousClass(this));
+            conf.SetCodec(new Lucene46CodecAnonymousClass());
             IndexWriter writer = new IndexWriter(dir, conf);
 
             Document doc = new Document();
@@ -702,13 +704,6 @@ namespace Lucene.Net.Index
 
         private sealed class Lucene46CodecAnonymousClass : Lucene46Codec
         {
-            private readonly TestBinaryDocValuesUpdates outerInstance;
-
-            public Lucene46CodecAnonymousClass(TestBinaryDocValuesUpdates outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override DocValuesFormat GetDocValuesFormatForField(string field)
             {
                 return new Lucene45DocValuesFormat();
@@ -1132,6 +1127,7 @@ namespace Lucene.Net.Index
             };
             Directory dir = NewDirectory();
 
+            bool oldValue = OldFormatImpersonationIsActive;
             // create a segment with an old Codec
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             conf.SetCodec(oldCodecs[Random.Next(oldCodecs.Length)]);
@@ -1142,46 +1138,17 @@ namespace Lucene.Net.Index
             doc.Add(new BinaryDocValuesField("f", ToBytes(5L)));
             writer.AddDocument(doc);
             writer.Dispose();
-            dir.Dispose();
-        }
 
-        [Test, LuceneNetSpecific]
-        public virtual void TestUpdateOldSegments_OldFormatNotActive()
-        {
-            bool oldValue = OldFormatImpersonationIsActive;
-
-            OldFormatImpersonationIsActive = false;
-
-            Codec[] oldCodecs = new Codec[] {
-                new Lucene40RWCodec(),
-                new Lucene41RWCodec(),
-                new Lucene42RWCodec(),
-                new Lucene45RWCodec()
-            };
-
-            Directory dir = NewDirectory();
-            Document doc = new Document();
-            doc.Add(new StringField("id", "doc", Store.NO));
-            doc.Add(new BinaryDocValuesField("f", ToBytes(5L)));
-
-            var conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            conf.SetCodec(oldCodecs[Random.Next(oldCodecs.Length)]);
-
-            var writer = new IndexWriter(dir, conf);
-            writer.AddDocument(doc);
+            conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            writer = new IndexWriter(dir, conf);
             writer.UpdateBinaryDocValue(new Term("id", "doc"), "f", ToBytes(4L));
-
-            try
-            {
+            OldFormatImpersonationIsActive = false;
+            try {
                 writer.Dispose();
                 Assert.Fail("should not have succeeded to update a segment written with an old Codec");
-            }
-            catch (Exception e) when (e.IsUnsupportedOperationException())
-            {
+            } catch (Exception e) when (e.IsUnsupportedOperationException()) {
                 writer.Rollback();
-            }
-            finally
-            {
+            } finally {
                 OldFormatImpersonationIsActive = oldValue;
             }
 

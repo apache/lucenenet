@@ -49,13 +49,14 @@ namespace Lucene.Net.Index
             {
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
-            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
-                            .SetRAMBufferSizeMB(256.0)
-                            .SetMergeScheduler(new ConcurrentMergeScheduler())
-                            .SetMergePolicy(NewLogMergePolicy(false, 10))
-                            .SetOpenMode(OpenMode.CREATE);
-            IndexWriter w = new IndexWriter(dir, config);
+
+            IndexWriter w = new IndexWriter(dir,
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                .SetRAMBufferSizeMB(256.0)
+                .SetMergeScheduler(new ConcurrentMergeScheduler())
+                .SetMergePolicy(NewLogMergePolicy(false, 10))
+                .SetOpenMode(OpenMode.CREATE));
 
             Document doc = new Document();
             var bytes = new byte[4];
@@ -116,13 +117,13 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
-            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
-                            .SetRAMBufferSizeMB(256.0)
-                            .SetMergeScheduler(new ConcurrentMergeScheduler())
-                            .SetMergePolicy(NewLogMergePolicy(false, 10))
-                            .SetOpenMode(OpenMode.CREATE);
-            IndexWriter w = new IndexWriter(dir, config);
+            IndexWriter w = new IndexWriter(dir,
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                .SetRAMBufferSizeMB(256.0)
+                .SetMergeScheduler(new ConcurrentMergeScheduler())
+                .SetMergePolicy(NewLogMergePolicy(false, 10))
+                .SetOpenMode(OpenMode.CREATE));
 
             Document doc = new Document();
             var bytes = new byte[4];

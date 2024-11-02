@@ -55,13 +55,13 @@ namespace Lucene.Net.Index
             MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new MMapDirectory(CreateTempDir("4GBStoredFields")));
             dir.Throttling = Throttling.NEVER;
 
-            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
-                            .SetRAMBufferSizeMB(256.0)
-                            .SetMergeScheduler(new ConcurrentMergeScheduler())
-                            .SetMergePolicy(NewLogMergePolicy(false, 10))
-                            .SetOpenMode(OpenMode.CREATE);
-            IndexWriter w = new IndexWriter(dir, config);
+            IndexWriter w = new IndexWriter(dir,
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                .SetRAMBufferSizeMB(256.0)
+                .SetMergeScheduler(new ConcurrentMergeScheduler())
+                .SetMergePolicy(NewLogMergePolicy(false, 10))
+                .SetOpenMode(OpenMode.CREATE));
 
             MergePolicy mp = w.Config.MergePolicy;
             if (mp is LogByteSizeMergePolicy)
