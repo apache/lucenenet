@@ -418,8 +418,8 @@ namespace Lucene.Net.Util
             // word to be changed.
             int endWord = ((endIndex - 1) >> 6);
 
-            long startmask = (-1L) << startIndex;  // -1 << (startIndex mod 64)
-            long endmask = (-1L) << endIndex;      // -1 << (endIndex mod 64)
+            long startmask = -1L << startIndex;  // -1 << (startIndex mod 64)
+            long endmask = -1L << endIndex;      // -1 << (endIndex mod 64)
             if ((endIndex & 0x3f) == 0)
             {
                 endmask = 0;
@@ -466,7 +466,7 @@ namespace Lucene.Net.Util
             int endWord = (int)((endIndex - 1) >> 6);
 
             long startmask = -1L << (int)startIndex;
-            long endmask = (-1L) >>> ((int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long endmask = -1L >>> (int)-endIndex; // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             // invert masks since we are clearing
             startmask = ~startmask;

@@ -602,7 +602,7 @@ namespace Lucene.Net.Util
             */
 
             long startmask = -1L << startIndex;
-            long endmask = (-1L) >>> -endIndex; // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long endmask = -1L >>> -endIndex; // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             if (startWord == endWord)
             {
@@ -641,7 +641,7 @@ namespace Lucene.Net.Util
             int endWord = (endIndex - 1) >> 6;
 
             long startmask = -1L << startIndex;
-            long endmask = (-1L) >>> -endIndex; // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long endmask = -1L >>> -endIndex; // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             if (startWord == endWord)
             {
