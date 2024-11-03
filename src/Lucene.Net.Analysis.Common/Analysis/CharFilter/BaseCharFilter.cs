@@ -1,8 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
-using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Analysis.CharFilters
@@ -62,7 +60,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
             while (hi >= lo)
             {
-                mid = (lo + hi).TripleShift(1);
+                mid = (lo + hi) >>> 1;
                 if (currentOff < offsets[mid])
                 {
                     hi = mid - 1;

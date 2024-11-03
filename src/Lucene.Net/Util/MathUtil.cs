@@ -78,10 +78,10 @@ namespace Lucene.Net.Util
                 return a;
             }
             int commonTrailingZeros = (a | b).TrailingZeroCount();
-            a = a.TripleShift(a.TrailingZeroCount());
+            a >>>= a.TrailingZeroCount();
             while (true)
             {
-                b = b.TripleShift(b.TrailingZeroCount());
+                b >>>= b.TrailingZeroCount();
                 if (a == b)
                 {
                     break;

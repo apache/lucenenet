@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -56,7 +55,7 @@ namespace Lucene.Net.Index
             int hi = size - 1; // for first element less than n, return its index
             while (hi >= lo)
             {
-                int mid = (lo + hi).TripleShift(1);
+                int mid = (lo + hi) >>> 1;
                 int midValue = docStarts[mid];
                 if (n < midValue)
                 {
@@ -90,7 +89,7 @@ namespace Lucene.Net.Index
             int hi = size - 1; // for first element less than n, return its index
             while (hi >= lo)
             {
-                int mid = (lo + hi).TripleShift(1);
+                int mid = (lo + hi) >>> 1;
                 int midValue = leaves[mid].DocBase;
                 if (n < midValue)
                 {

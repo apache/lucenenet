@@ -1,12 +1,10 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -225,7 +223,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int token = vectorsStream.ReadByte() & 0xFF;
                 if (Debugging.AssertsEnabled) Debugging.Assert(token != 0); // means no term vectors, cannot happen since we checked for numFields == 0
                 int bitsPerFieldNum = token & 0x1F;
-                int totalDistinctFields = token.TripleShift(5);
+                int totalDistinctFields = token >>> 5;
                 if (totalDistinctFields == 0x07)
                 {
                     totalDistinctFields += vectorsStream.ReadVInt32();

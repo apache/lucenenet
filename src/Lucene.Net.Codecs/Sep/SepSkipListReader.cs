@@ -1,9 +1,7 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Codecs.Sep
@@ -142,8 +140,8 @@ namespace Lucene.Net.Codecs.Sep
         internal long PayloadPointer => lastPayloadPointer;
 
         /// <summary>
-        /// Returns the payload length of the payload stored just before 
-        /// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)"/> 
+        /// Returns the payload length of the payload stored just before
+        /// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)"/>
         /// has skipped.
         /// </summary>
         internal int PayloadLength => lastPayloadLength;
@@ -209,8 +207,7 @@ namespace Lucene.Net.Codecs.Sep
                 {
                     payloadLength[level] = skipStream.ReadVInt32();
                 }
-                //delta >>>= 1;
-                delta = delta.TripleShift(1);
+                delta >>>= 1;
             }
             else
             {

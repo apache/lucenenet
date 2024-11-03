@@ -1,8 +1,6 @@
-﻿using J2N.Numerics;
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Support;
 using NUnit.Framework;
-using System;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
@@ -37,7 +35,7 @@ namespace Lucene.Net.Codecs.Compressing
             for (; ; )
             {
                 int token = compressed[off++] & 0xFF;
-                int literalLen = token.TripleShift(4);
+                int literalLen = token >>> 4;
                 if (literalLen == 0x0F)
                 {
                     while (compressed[off] == 0xFF)
@@ -81,7 +79,7 @@ namespace Lucene.Net.Codecs.Compressing
                 if (decompressedOff + matchLen < decompressed.Length - LZ4.LAST_LITERALS)
                 {
                     bool moreCommonBytes = decompressed[decompressedOff + matchLen] == decompressed[decompressedOff - matchDec + matchLen];
-                    bool nextSequenceHasLiterals = (compressed[off] & 0xFF).TripleShift(4) != 0;
+                    bool nextSequenceHasLiterals = (compressed[off] & 0xFF) >>> 4 != 0;
                     Assert.IsTrue(!moreCommonBytes || !nextSequenceHasLiterals);
                 }
 

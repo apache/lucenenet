@@ -1,9 +1,7 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -114,7 +112,7 @@ namespace Lucene.Net.Index
                         {
                             field = input.ReadString();
                         }
-                        int prefix = code.TripleShift(1);
+                        int prefix = code >>> 1;
                         int suffix = input.ReadVInt32();
                         bytes.Grow(prefix + suffix);
                         input.ReadBytes(bytes.Bytes, prefix, suffix);

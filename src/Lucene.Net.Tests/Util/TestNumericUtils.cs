@@ -1,5 +1,4 @@
 ﻿#if FEATURE_UTIL_TESTS
-using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -323,9 +322,9 @@ namespace Lucene.Net.Util
                 neededShifts.MoveNext();
                 Assert.AreEqual(neededShifts.Current, shift, "shift");
                 neededBounds.MoveNext();
-                Assert.AreEqual(neededBounds.Current, min.TripleShift(shift), "inner min bound");
+                Assert.AreEqual(neededBounds.Current, min >>> shift, "inner min bound");
                 neededBounds.MoveNext();
-                Assert.AreEqual(neededBounds.Current, max.TripleShift(shift), "inner max bound");
+                Assert.AreEqual(neededBounds.Current, max >>> shift, "inner max bound");
             }
         }
 
@@ -410,11 +409,11 @@ namespace Lucene.Net.Util
                 }
                 if (random.NextBoolean())
                 {
-                    val = val << 1;
+                    val <<= 1;
                 }
                 if (random.NextBoolean())
                 {
-                    val = val.TripleShift(1);
+                    val >>>= 1;
                 }
             }
 
@@ -516,9 +515,9 @@ namespace Lucene.Net.Util
                 neededShifts.MoveNext();
                 Assert.AreEqual(neededShifts.Current, shift, "shift");
                 neededBounds.MoveNext();
-                Assert.AreEqual(neededBounds.Current, min.TripleShift(shift), "inner min bound");
+                Assert.AreEqual(neededBounds.Current, min >>> shift, "inner min bound");
                 neededBounds.MoveNext();
-                Assert.AreEqual(neededBounds.Current, max.TripleShift(shift), "inner max bound");
+                Assert.AreEqual(neededBounds.Current, max >>> shift, "inner max bound");
             }
         }
 

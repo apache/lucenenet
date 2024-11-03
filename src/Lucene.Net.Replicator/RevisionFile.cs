@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using System;
+﻿using System;
 
 namespace Lucene.Net.Replicator
 {
@@ -33,14 +32,14 @@ namespace Lucene.Net.Replicator
         /// Gets the name of the file.
         /// </summary>
         public string FileName { get; private set; }
-        
+
         /// <summary>
         /// Gets or sets the length of the file denoted by <see cref="FileName"/>.
         /// </summary>
         public long Length { get; set; }
 
         /// <summary>
-        /// Constructor with the given file name and optionally length. 
+        /// Constructor with the given file name and optionally length.
         /// </summary>
         /// <param name="fileName">The name of the file</param>
         /// <param name="length">Optional, the length of the file.</param>
@@ -70,7 +69,7 @@ namespace Lucene.Net.Replicator
 
         public override int GetHashCode()
         {
-            return FileName.GetHashCode() ^ (int)(Length ^ Length.TripleShift(32));
+            return FileName.GetHashCode() ^ (int)(Length ^ (Length >>> 32));
         }
 
         public override string ToString()

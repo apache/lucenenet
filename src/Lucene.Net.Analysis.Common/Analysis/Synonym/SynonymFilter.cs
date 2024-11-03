@@ -1,6 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N;
-using J2N.Numerics;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
@@ -34,29 +33,29 @@ namespace Lucene.Net.Analysis.Synonym
     /// This token stream cannot properly handle position
     /// increments != 1, ie, you should place this filter before
     /// filtering out stop words.
-    /// 
+    ///
     /// <para>Note that with the current implementation, parsing is
     /// greedy, so whenever multiple parses would apply, the rule
     /// starting the earliest and parsing the most tokens wins.
     /// For example if you have these rules:
-    ///      
+    ///
     /// <code>
     ///   a -> x
     ///   a b -> y
     ///   b c d -> z
     /// </code>
-    /// 
+    ///
     /// Then input <c>a b c d e</c> parses to <c>y b c
     /// d</c>, ie the 2nd rule "wins" because it started
     /// earliest and matched the most input tokens of other rules
     /// starting at that point.</para>
-    /// 
+    ///
     /// <para>A future improvement to this filter could allow
     /// non-greedy parsing, such that the 3rd rule would win, and
     /// also separately allow multiple parses, such that all 3
     /// rules would match, perhaps even on a rule by rule
     /// basis.</para>
-    /// 
+    ///
     /// <para><b>NOTE</b>: when a match occurs, the output tokens
     /// associated with the matching rule are "stacked" on top of
     /// the input stream (if the rule had
@@ -69,7 +68,7 @@ namespace Lucene.Net.Analysis.Synonym
     /// do so.  This limitation is necessary because Lucene's
     /// <see cref="TokenStream"/> (and index) cannot yet represent an arbitrary
     /// graph.</para>
-    /// 
+    ///
     /// <para><b>NOTE</b>: If multiple incoming tokens arrive on the
     /// same position, only the first token at that position is
     /// used for parsing.  Subsequent tokens simply pass through
@@ -260,7 +259,7 @@ namespace Lucene.Net.Analysis.Synonym
         ///                   in using <see cref="CultureInfo.InvariantCulture"/>.
         ///                   Note, if you set this to <c>true</c>, its your responsibility to lowercase
         ///                   the input entries when you create the <see cref="SynonymMap"/>.</param>
-        public SynonymFilter(TokenStream input, SynonymMap synonyms, bool ignoreCase) 
+        public SynonymFilter(TokenStream input, SynonymMap synonyms, bool ignoreCase)
             : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
@@ -496,7 +495,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             int code = bytesReader.ReadVInt32();
             bool keepOrig = (code & 0x1) == 0;
-            int count = code.TripleShift(1);
+            int count = code >>> 1;
             //System.out.println("  addOutput count=" + count + " keepOrig=" + keepOrig);
             for (int outputIDX = 0; outputIDX < count; outputIDX++)
             {

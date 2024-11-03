@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using System.Collections.Generic;
 
@@ -84,7 +83,7 @@ namespace Lucene.Net.Search.Highlight
             }
 
             bool isNewFrag = offsetAtt.EndOffset >= (fragmentSize * currentNumFrags)
-                && (textSize - offsetAtt.EndOffset) >= fragmentSize.TripleShift(1);
+                && (textSize - offsetAtt.EndOffset) >= fragmentSize >>> 1;
 
 
             if (isNewFrag)

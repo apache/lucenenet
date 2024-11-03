@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -80,7 +79,7 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal int PageIndex(long index)
         {
-            return (int)index.TripleShift(pageShift);
+            return (int)(index >>> pageShift);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -161,7 +160,7 @@ namespace Lucene.Net.Util.Packed
                 T result = (T)this;
                 return result;
             }
-            long extra = minSize.TripleShift(3);
+            long extra = minSize >>> 3;
             if (extra < 3)
             {
                 extra = 3;

@@ -1,7 +1,4 @@
-﻿using J2N.Numerics;
-using System;
-
-namespace Lucene.Net.Util.Packed
+﻿namespace Lucene.Net.Util.Packed
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -57,7 +54,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         private static long ReadInt64(byte[] blocks, int blocksOffset)
         {
-            return (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 56 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 48 | 
+            return (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 56 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 48 |
                 (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 40 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 32 |
                 (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 24 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 16 |
                 (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 8 | ((sbyte)blocks[blocksOffset++]) & 0xFFL;
@@ -68,7 +65,7 @@ namespace Lucene.Net.Util.Packed
             values[valuesOffset++] = block & mask;
             for (int j = 1; j < valueCount; ++j)
             {
-                block = block.TripleShift(bitsPerValue);
+                block >>>= bitsPerValue;
                 values[valuesOffset++] = block & mask;
             }
             return valuesOffset;
@@ -79,7 +76,7 @@ namespace Lucene.Net.Util.Packed
             values[valuesOffset++] = (int)(block & mask);
             for (int j = 1; j < valueCount; ++j)
             {
-                block = block.TripleShift(bitsPerValue);
+                block >>>= bitsPerValue;
                 values[valuesOffset++] = (int)(block & mask);
             }
             return valuesOffset;

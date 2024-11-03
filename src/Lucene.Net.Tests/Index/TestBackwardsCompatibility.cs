@@ -1,6 +1,5 @@
 ﻿using J2N;
 using J2N.Collections.Generic.Extensions;
-using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -8,7 +7,6 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -104,7 +102,7 @@ namespace Lucene.Net.Index
         public void testCreateCFS() throws IOException {
           createIndex("index.cfs", true, false);
         }
-    
+
         public void testCreateNoCFS() throws IOException {
           createIndex("index.nocfs", false, false);
         }
@@ -115,15 +113,15 @@ namespace Lucene.Net.Index
           // that also single-segment indexes are correctly upgraded by IndexUpgrader.
           // You don't need them to be build for non-4.0 (the test is happy with just one
           // "old" segment format, version is unimportant:
-      
+
           public void testCreateSingleSegmentCFS() throws IOException {
             createIndex("index.singlesegment.cfs", true, true);
           }
-    
+
           public void testCreateSingleSegmentNoCFS() throws IOException {
             createIndex("index.singlesegment.nocfs", false, true);
           }
-    
+
         */
 
         /*
@@ -134,14 +132,14 @@ namespace Lucene.Net.Index
           File indexDir = new File("moreterms");
           TestUtil.rmDir(indexDir);
           Directory dir = NewFSDirectory(indexDir);
-    
+
           LogByteSizeMergePolicy mp = new LogByteSizeMergePolicy();
           mp.SetUseCompoundFile(false);
           mp.setNoCFSRatio(1.0);
           mp.setMaxCFSSegmentSizeMB(Double.POSITIVE_INFINITY);
           MockAnalyzer analyzer = new MockAnalyzer(Random());
           analyzer.setMaxTokenLength(TestUtil.nextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH));
-    
+
           // TODO: remove randomness
           IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
             .SetMergePolicy(mp);
@@ -153,7 +151,7 @@ namespace Lucene.Net.Index
           }
           writer.Dispose();
           dir.Dispose();
-    
+
           // Gives you time to copy the index out!: (there is also
           // a test option to not remove temp dir...):
           Thread.sleep(100000);
@@ -507,7 +505,7 @@ namespace Lucene.Net.Index
                     int id = Convert.ToInt32(reader.Document(i).Get("id"));
                     Assert.AreEqual(id, dvByte.Get(i));
 
-                    sbyte[] bytes = new sbyte[] { (sbyte)(id.TripleShift(24)), (sbyte)(id.TripleShift(16)), (sbyte)(id.TripleShift(8)), (sbyte)id };
+                    sbyte[] bytes = new sbyte[] { (sbyte)(id >>> 24), (sbyte)(id >>> 16), (sbyte)(id >>> 8), (sbyte)id };
                     BytesRef expectedRef = new BytesRef((byte[])(Array)bytes);
                     BytesRef scratch = new BytesRef();
 
@@ -713,7 +711,7 @@ namespace Lucene.Net.Index
             doc.Add(new Int64Field("trieLong", (long)id, Field.Store.NO));
             // add docvalues fields
             doc.Add(new NumericDocValuesField("dvByte", (sbyte)id));
-            sbyte[] bytes = new sbyte[] { (sbyte)(id.TripleShift(24)), (sbyte)(id.TripleShift(16)), (sbyte)(id.TripleShift(8)), (sbyte)id };
+            sbyte[] bytes = new sbyte[] { (sbyte)(id >>> 24), (sbyte)(id >>> 16), (sbyte)(id >>> 8), (sbyte)id };
             BytesRef @ref = new BytesRef((byte[])(Array)bytes);
             doc.Add(new BinaryDocValuesField("dvBytesDerefFixed", @ref));
             doc.Add(new BinaryDocValuesField("dvBytesDerefVar", @ref));
@@ -742,7 +740,7 @@ namespace Lucene.Net.Index
             customType4.StoreTermVectorOffsets = true;
             customType4.IndexOptions = IndexOptions.DOCS_AND_FREQS;
             doc.Add(new Field("content6", "here is more content with aaa aaa aaa", customType4));
-            // TODO: 
+            // TODO:
             //   index different norms types via similarity (we use a random one currently?!)
             //   remove any analyzer randomness, explicitly add payloads for certain fields.
             writer.AddDocument(doc);

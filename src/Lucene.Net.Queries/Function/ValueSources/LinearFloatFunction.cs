@@ -1,10 +1,8 @@
 ﻿// Lucene version compatibility level 4.8.1
-using J2N.Numerics;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using System.Collections;
-using System.Globalization;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -95,9 +93,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override int GetHashCode()
         {
             int h = J2N.BitConversion.SingleToInt32Bits(m_slope);
-            h = (h.TripleShift(2)) | (h << 30);
+            h = (h >>> 2) | (h << 30);
             h += J2N.BitConversion.SingleToInt32Bits(m_intercept);
-            h ^= (h << 14) | (h.TripleShift(19));
+            h ^= (h << 14) | (h >>> 19);
             return h + m_source.GetHashCode();
         }
 

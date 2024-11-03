@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System;
 using System.IO;
@@ -81,7 +80,7 @@ namespace Lucene.Net.Util.Packed
         public override long Get(long index)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < valueCount);
-            int block = (int)(index.TripleShift(blockShift));
+            int block = (int)(index >>> blockShift);
             int idx = (int)(index & blockMask);
             // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
             return minValues[block] + (long)(float)(idx * averages[block]) + BlockPackedReaderIterator.ZigZagDecode(subReaders[block].Get(idx));

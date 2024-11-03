@@ -1,5 +1,4 @@
 ﻿// Lucene version compatibility level 4.10.4
-using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
@@ -398,7 +397,7 @@ namespace Lucene.Net.Analysis.Hunspell
                         char stripOrd = (char)(affixReader.ReadInt16() & 0xffff);
                         int condition = (char)(affixReader.ReadInt16() & 0xffff);
                         bool crossProduct = (condition & 1) == 1;
-                        condition = condition.TripleShift(1);
+                        condition >>>= 1;
                         char append = (char)(affixReader.ReadInt16() & 0xffff);
 
                         bool compatible;
@@ -503,7 +502,7 @@ namespace Lucene.Net.Analysis.Hunspell
                         char stripOrd = (char)(affixReader.ReadInt16() & 0xffff);
                         int condition = (char)(affixReader.ReadInt16() & 0xffff);
                         bool crossProduct = (condition & 1) == 1;
-                        condition = condition.TripleShift(1);
+                        condition >>>= 1;
                         char append = (char)(affixReader.ReadInt16() & 0xffff);
 
                         bool compatible;
@@ -618,7 +617,7 @@ namespace Lucene.Net.Analysis.Hunspell
             affixReader.SkipBytes(2); // strip
             int condition = (char)(affixReader.ReadInt16() & 0xffff);
             bool crossProduct = (condition & 1) == 1;
-            condition = condition.TripleShift(1);
+            condition >>>= 1;
             char append = (char)(affixReader.ReadInt16() & 0xffff);
 
             JCG.List<CharsRef> stems = new JCG.List<CharsRef>();
@@ -689,7 +688,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     if (prefix)
                     {
                         // we took away the first prefix.
-                        // COMPLEXPREFIXES = true:  combine with a second prefix and another suffix 
+                        // COMPLEXPREFIXES = true:  combine with a second prefix and another suffix
                         // COMPLEXPREFIXES = false: combine with a suffix
                         stems.AddRange(Stem(strippedWord, length, affix, flag, flag, ++recursionDepth, dictionary.complexPrefixes && dictionary.twoStageAffix, true, true, circumfix, caseVariant));
                     }

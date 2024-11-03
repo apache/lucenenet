@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Packed;
@@ -143,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene41
             for (int bpv = 1; bpv <= 32; ++bpv)
             {
                 var code = @in.ReadVInt32();
-                var formatId = code.TripleShift(5);
+                var formatId = code >>> 5;
                 var bitsPerValue = (code & 31) + 1;
 
                 PackedInt32s.Format format = PackedInt32s.Format.ById(formatId);

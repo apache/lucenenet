@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
@@ -65,7 +64,7 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// The default precision step used by <see cref="Documents.Int32Field"/>,
-        /// <see cref="Documents.SingleField"/>, <see cref="Documents.Int64Field"/>, 
+        /// <see cref="Documents.SingleField"/>, <see cref="Documents.Int64Field"/>,
         /// <see cref="Documents.DoubleField"/>, <see cref="Analysis.NumericTokenStream"/>,
         /// <see cref="Search.NumericRangeQuery"/>, and <see cref="Search.NumericRangeFilter"/>.
         /// </summary>
@@ -108,7 +107,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns prefix coded bits after reducing the precision by <paramref name="shift"/> bits.
         /// This is method is used by <see cref="Analysis.NumericTokenStream"/>.
-        /// After encoding, <c>bytes.Offset</c> will always be 0. 
+        /// After encoding, <c>bytes.Offset</c> will always be 0.
         /// <para/>
         /// NOTE: This was longToPrefixCoded() in Lucene
         /// </summary>
@@ -124,7 +123,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns prefix coded bits after reducing the precision by <paramref name="shift"/> bits.
         /// This is method is used by <see cref="Analysis.NumericTokenStream"/>.
-        /// After encoding, <c>bytes.Offset</c> will always be 0. 
+        /// After encoding, <c>bytes.Offset</c> will always be 0.
         /// <para/>
         /// NOTE: This was intToPrefixCoded() in Lucene
         /// </summary>
@@ -140,7 +139,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns prefix coded bits after reducing the precision by <paramref name="shift"/> bits.
         /// This is method is used by <see cref="Analysis.NumericTokenStream"/>.
-        /// After encoding, <c>bytes.Offset</c> will always be 0. 
+        /// After encoding, <c>bytes.Offset</c> will always be 0.
         /// <para/>
         /// NOTE: This was longToPrefixCodedBytes() in Lucene
         /// </summary>
@@ -175,7 +174,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns prefix coded bits after reducing the precision by <paramref name="shift"/> bits.
         /// This is method is used by <see cref="Analysis.NumericTokenStream"/>.
-        /// After encoding, <c>bytes.Offset</c> will always be 0. 
+        /// After encoding, <c>bytes.Offset</c> will always be 0.
         /// <para/>
         /// NOTE: This was intToPrefixCodedBytes() in Lucene
         /// </summary>
@@ -197,18 +196,18 @@ namespace Lucene.Net.Util
             }
             bytes.Bytes[0] = (byte)(SHIFT_START_INT32 + shift);
             int sortableBits = val ^ unchecked((int)0x80000000);
-            sortableBits = sortableBits.TripleShift(shift);
+            sortableBits >>>= shift;
             while (nChars > 0)
             {
                 // Store 7 bits per byte for compatibility
                 // with UTF-8 encoding of terms
                 bytes.Bytes[nChars--] = (byte)(sortableBits & 0x7f);
-                sortableBits = sortableBits.TripleShift(7);
+                sortableBits >>>= 7;
             }
         }
 
         /// <summary>
-        /// Returns the shift value from a prefix encoded <see cref="long"/>. 
+        /// Returns the shift value from a prefix encoded <see cref="long"/>.
         /// <para/>
         /// NOTE: This was getPrefixCodedLongShift() in Lucene
         /// </summary>
@@ -226,7 +225,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the shift value from a prefix encoded <see cref="int"/>. 
+        /// Returns the shift value from a prefix encoded <see cref="int"/>.
         /// <para/>
         /// NOTE: This was getPrefixCodedIntShift() in Lucene
         /// </summary>
@@ -246,7 +245,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns a <see cref="long"/> from prefixCoded bytes.
         /// Rightmost bits will be zero for lower precision codes.
-        /// This method can be used to decode a term's value. 
+        /// This method can be used to decode a term's value.
         /// <para/>
         /// NOTE: This was prefixCodedToLong() in Lucene
         /// </summary>
@@ -272,7 +271,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns an <see cref="int"/> from prefixCoded bytes.
         /// Rightmost bits will be zero for lower precision codes.
-        /// This method can be used to decode a term's value. 
+        /// This method can be used to decode a term's value.
         /// <para/>
         /// NOTE: This was prefixCodedToInt() in Lucene
         /// </summary>
@@ -301,7 +300,7 @@ namespace Lucene.Net.Util
         /// bit layout and then some bits are swapped, to be able to compare the result as <see cref="long"/>.
         /// By this the precision is not reduced, but the value can easily used as a <see cref="long"/>.
         /// The sort order (including <see cref="double.NaN"/>) is defined by
-        /// <see cref="double.CompareTo(double)"/>; <c>NaN</c> is greater than positive infinity. 
+        /// <see cref="double.CompareTo(double)"/>; <c>NaN</c> is greater than positive infinity.
         /// <para/>
         /// NOTE: This was doubleToSortableLong() in Lucene
         /// </summary>
@@ -318,7 +317,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Converts a sortable <see cref="long"/> back to a <see cref="double"/>. 
+        /// Converts a sortable <see cref="long"/> back to a <see cref="double"/>.
         /// <para/>
         /// NOTE: This was sortableLongToDouble() in Lucene
         /// </summary>
@@ -339,7 +338,7 @@ namespace Lucene.Net.Util
         /// bit layout and then some bits are swapped, to be able to compare the result as <see cref="int"/>.
         /// By this the precision is not reduced, but the value can easily used as an <see cref="int"/>.
         /// The sort order (including <see cref="float.NaN"/>) is defined by
-        /// <seealso cref="float.CompareTo(float)"/>; <c>NaN</c> is greater than positive infinity. 
+        /// <seealso cref="float.CompareTo(float)"/>; <c>NaN</c> is greater than positive infinity.
         /// <para/>
         /// NOTE: This was floatToSortableInt() in Lucene
         /// </summary>
@@ -356,7 +355,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Converts a sortable <see cref="int"/> back to a <see cref="float"/>. 
+        /// Converts a sortable <see cref="int"/> back to a <see cref="float"/>.
         /// <para/>
         /// NOTE: This was sortableIntToFloat() in Lucene
         /// </summary>
@@ -512,7 +511,7 @@ namespace Lucene.Net.Util
         /// You need to override only one of the methods.
         /// <para/>
         /// NOTE: This was IntRangeBuilder in Lucene
-        /// 
+        ///
         /// @lucene.internal
         /// @since 2.9, API changed non backwards-compliant in 4.0
         /// </summary>

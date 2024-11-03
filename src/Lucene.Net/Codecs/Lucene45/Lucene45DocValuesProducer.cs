@@ -1,12 +1,9 @@
-﻿using J2N.Numerics;
-using J2N.Threading.Atomic;
-using Lucene.Net.Diagnostics;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Index;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene45
@@ -914,7 +911,7 @@ namespace Lucene.Net.Codecs.Lucene45
             internal int format;
 
             /// <summary>
-            /// Packed <see cref="int"/>s version used to encode these numerics. 
+            /// Packed <see cref="int"/>s version used to encode these numerics.
             /// <para/>
             /// NOTE: This was packedIntsVersion (field) in Lucene
             /// </summary>
@@ -1146,7 +1143,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
                     while (low <= high)
                     {
-                        long mid = (low + high).TripleShift(1);
+                        long mid = (low + high) >>> 1;
                         DoSeek(mid * outerInstance.interval);
                         int cmp = termBuffer.CompareTo(text);
 

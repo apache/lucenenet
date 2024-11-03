@@ -1,7 +1,5 @@
 ﻿// this file has been automatically generated, DO NOT EDIT
 
-using J2N.Numerics;
-
 namespace Lucene.Net.Util.Packed
 {
     /*
@@ -38,7 +36,7 @@ namespace Lucene.Net.Util.Packed
                 long block = blocks[blocksOffset++];
                 for (int shift = 62; shift >= 0; shift -= 2)
                 {
-                    values[valuesOffset++] = (int)((block.TripleShift(shift)) & 3);
+                    values[valuesOffset++] = (int)((block >>> shift) & 3);
                 }
             }
         }
@@ -48,9 +46,9 @@ namespace Lucene.Net.Util.Packed
             for (int j = 0; j < iterations; ++j)
             {
                 var block = blocks[blocksOffset++];
-                values[valuesOffset++] = (block.TripleShift(6)) & 3;
-                values[valuesOffset++] = (block.TripleShift(4)) & 3;
-                values[valuesOffset++] = (block.TripleShift(2)) & 3;
+                values[valuesOffset++] = (block >>> 6) & 3;
+                values[valuesOffset++] = (block >>> 4) & 3;
+                values[valuesOffset++] = (block >>> 2) & 3;
                 values[valuesOffset++] = block & 3;
             }
         }
@@ -62,7 +60,7 @@ namespace Lucene.Net.Util.Packed
                 long block = blocks[blocksOffset++];
                 for (int shift = 62; shift >= 0; shift -= 2)
                 {
-                    values[valuesOffset++] = (block.TripleShift(shift)) & 3;
+                    values[valuesOffset++] = (block >>> shift) & 3;
                 }
             }
         }
@@ -72,9 +70,9 @@ namespace Lucene.Net.Util.Packed
             for (int j = 0; j < iterations; ++j)
             {
                 var block = blocks[blocksOffset++];
-                values[valuesOffset++] = (block.TripleShift(6)) & 3;
-                values[valuesOffset++] = (block.TripleShift(4)) & 3;
-                values[valuesOffset++] = (block.TripleShift(2)) & 3;
+                values[valuesOffset++] = (block >>> 6) & 3;
+                values[valuesOffset++] = (block >>> 4) & 3;
+                values[valuesOffset++] = (block >>> 2) & 3;
                 values[valuesOffset++] = block & 3;
             }
         }

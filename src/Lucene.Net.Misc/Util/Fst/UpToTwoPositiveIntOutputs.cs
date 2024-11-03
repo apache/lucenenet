@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System;
 using System.Runtime.CompilerServices;
@@ -27,13 +26,13 @@ namespace Lucene.Net.Util.Fst
     /// <summary>
     /// An FST <see cref="Outputs{T}"/> implementation where each output
     /// is one or two non-negative long values.  If it's a
-    /// <see cref="float"/> output, <see cref="Nullable{Int64}"/> is 
+    /// <see cref="float"/> output, <see cref="Nullable{Int64}"/> is
     /// returned; else, <see cref="TwoInt64s"/>.  Order
     /// is preserved in the <see cref="TwoInt64s"/> case, ie .first is the first
     /// input/output added to <see cref="Builder{T}"/>, and .second is the
     /// second.  You cannot store 0 output with this (that's
     /// reserved to mean "no output")!
-    /// 
+    ///
     /// <para>NOTE: the only way to create a TwoLongs output is to
     /// add the same input to the FST twice in a row.  This is
     /// how the FST maps a single input to two outputs (e.g. you
@@ -42,7 +41,7 @@ namespace Lucene.Net.Util.Fst
     /// you only have at most 2 then this implementation will
     /// require fewer bytes as it steals one bit from each long
     /// value.
-    /// 
+    ///
     /// </para>
     /// <para>NOTE: the resulting FST is not guaranteed to be minimal!
     /// See <see cref="Builder{T}"/>.
@@ -97,7 +96,7 @@ namespace Lucene.Net.Util.Fst
 
             public override int GetHashCode()
             {
-                return (int)((first ^ (first.TripleShift(32))) ^ (second ^ (second >> 32)));
+                return (int)((first ^ (first >>> 32)) ^ (second ^ (second >> 32)));
             }
         }
 
@@ -239,7 +238,7 @@ namespace Lucene.Net.Util.Fst
             if ((code & 1) == 0)
             {
                 // single long
-                long v = code.TripleShift(1);
+                long v = code >>> 1;
                 if (v == 0)
                 {
                     return NO_OUTPUT;
@@ -252,7 +251,7 @@ namespace Lucene.Net.Util.Fst
             else
             {
                 // two longs
-                long first = code.TripleShift(1);
+                long first = code >>> 1;
                 long second = @in.ReadVInt64();
                 return new TwoInt64s(first, second);
             }

@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Codecs;
+﻿using Lucene.Net.Codecs;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System;
@@ -53,7 +52,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                     for (int i = 0; i < a.Length; i++)
                     {
                         int raw = @in.ReadVInt32();
-                        accum += raw.TripleShift(1) ^ -(raw & 1);
+                        accum += (raw >>> 1) ^ -(raw & 1);
                         a[i] = (short)accum;
                     }
                 }

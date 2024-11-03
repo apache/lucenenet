@@ -1,5 +1,4 @@
 ﻿using J2N.Collections.Generic.Extensions;
-using J2N.Numerics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -172,7 +171,7 @@ namespace Lucene.Net.Search.Spans
         {
             //If this doesn't work, hash all elemnts together instead. This version was used to reduce time complexity
             int h = clauses.GetHashCode();
-            h ^= (h << 10) | (h.TripleShift(23));
+            h ^= (h << 10) | (h >>> 23);
             h ^= J2N.BitConversion.SingleToRawInt32Bits(Boost);
             return h;
         }

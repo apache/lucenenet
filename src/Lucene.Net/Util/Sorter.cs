@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -87,14 +86,14 @@ namespace Lucene.Net.Util
             int len11, len22;
             if (mid - from > to - mid)
             {
-                len11 = (mid - from).TripleShift(1);
+                len11 = (mid - from) >>> 1;
                 first_cut = from + len11;
                 second_cut = Lower(mid, to, first_cut);
                 len22 = second_cut - mid;
             }
             else
             {
-                len22 = (to - mid).TripleShift(1);
+                len22 = (to - mid) >>> 1;
                 second_cut = mid + len22;
                 first_cut = Upper(from, mid, second_cut);
                 //len11 = first_cut - from; // LUCENENET: Unnecessary assignment
@@ -111,7 +110,7 @@ namespace Lucene.Net.Util
             int len = to - from;
             while (len > 0)
             {
-                int half = len.TripleShift(1);
+                int half = len >>> 1;
                 int mid = from + half;
                 if (Compare(mid, val) < 0)
                 {
@@ -132,7 +131,7 @@ namespace Lucene.Net.Util
             int len = to - from;
             while (len > 0)
             {
-                int half = len.TripleShift(1);
+                int half = len >>> 1;
                 int mid = from + half;
                 if (Compare(val, mid) < 0)
                 {
@@ -256,7 +255,7 @@ namespace Lucene.Net.Util
                 int h = i - 1;
                 while (l <= h)
                 {
-                    int mid = (l + h).TripleShift(1);
+                    int mid = (l + h) >>> 1;
                     int cmp = Compare(i, mid);
                     if (cmp < 0)
                     {
@@ -349,7 +348,7 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int HeapParent(int from, int i)
         {
-            return ((i - 1 - from).TripleShift(1)) + from;
+            return ((i - 1 - from) >>> 1) + from;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -20,13 +20,13 @@
 -->
 <Project>
   <PropertyGroup>
-    <!-- According to the docs (https://docs.microsoft.com/en-us/cpp/build/reference/common-macros-for-build-commands-and-properties?view=vs-2019), the 
+    <!-- According to the docs (https://docs.microsoft.com/en-us/cpp/build/reference/common-macros-for-build-commands-and-properties?view=vs-2019), the
       SolutionDir is only available when running in the IDE, so we patch to ensure it also works when using dotnet.exe -->
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)</SolutionDir>
   </PropertyGroup>
-  
+
   <PropertyGroup>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <GitHubOrganization>apache</GitHubOrganization>
     <GitHubProject>lucenenet</GitHubProject>
   </PropertyGroup>
@@ -35,8 +35,8 @@
   <PropertyGroup Label="Version of Builds">
     <!-- IMPORTANT: VersionPrefix must always be the same as the Lucene version this is based on.
       Never increment it for an individual build - only increment this when an entire version's changes
-      are ported over from Lucene. This is what determines the version of all of the NuGet packages and binaries. 
-      For patching a production build, we will add a 4th segment (4.8.0.1) since it would be confusing to increment to 
+      are ported over from Lucene. This is what determines the version of all of the NuGet packages and binaries.
+      For patching a production build, we will add a 4th segment (4.8.0.1) since it would be confusing to increment to
       4.8.1 if we haven't actually ported over the changes from Lucene 4.8.1. -->
     <VersionPrefix>4.8.0</VersionPrefix>
 
@@ -85,10 +85,10 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
-  <!-- Settings to override the above Version of Builds. These can be used to 
-      "freeze" the build number for a release, so whether building within 
-      an IDE or from the commmand line, the version is always what is 
-      in Version.props, if it exists and the PrepareForBuild argument 
+  <!-- Settings to override the above Version of Builds. These can be used to
+      "freeze" the build number for a release, so whether building within
+      an IDE or from the commmand line, the version is always what is
+      in Version.props, if it exists and the PrepareForBuild argument
       passed into build.ps1 is 'false'. -->
   <Import Project="version.props" Condition="Exists('version.props')" />
 </Project>

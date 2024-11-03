@@ -1,8 +1,6 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using BitUtil = Lucene.Net.Util.BitUtil;
 
@@ -74,7 +72,7 @@ namespace Lucene.Net.Codecs.Lucene40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetNumBytes(int size) // LUCENENET: CA1822: Mark members as static
         {
-            int bytesLength = size.TripleShift(3);
+            int bytesLength = size >>> 3;
             if ((size & 7) != 0)
             {
                 bytesLength++;
@@ -259,7 +257,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Writes this vector to the file <paramref name="name"/> in Directory
-        /// <paramref name="d"/>, in a format that can be read by the constructor 
+        /// <paramref name="d"/>, in a format that can be read by the constructor
         /// <see cref="BitVector(Directory, string, IOContext)"/>.
         /// </summary>
         public void Write(Directory d, string name, IOContext context)

@@ -1031,7 +1031,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Retrieve <see cref="PackedInt32s"/> as a <see cref="IReaderIterator"/>. 
+        /// Retrieve <see cref="PackedInt32s"/> as a <see cref="IReaderIterator"/>.
         /// <para/>
         /// @lucene.internal
         /// </summary>
@@ -1345,7 +1345,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Returns how many bits are required to hold values up
-        /// to and including <paramref name="maxValue"/>. 
+        /// to and including <paramref name="maxValue"/>.
         /// <para/>
         /// @lucene.internal
         /// </summary>
@@ -1362,7 +1362,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Calculates the maximum unsigned long that can be expressed with the given
-        /// number of bits. 
+        /// number of bits.
         /// <para/>
         /// @lucene.internal
         /// </summary>
@@ -1386,7 +1386,7 @@ namespace Lucene.Net.Util.Packed
                 Debugging.Assert(srcPos + len <= src.Count);
                 Debugging.Assert(destPos + len <= dest.Count);
             }
-            int capacity = mem.TripleShift(3);
+            int capacity = mem >>> 3;
             if (capacity == 0)
             {
                 for (int i = 0; i < len; ++i)

@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 
 // this file has been automatically generated, DO NOT EDIT
@@ -186,7 +185,7 @@ namespace Lucene.Net.Util.Packed
         {
             for (int j = 1; j <= 8; ++j)
             {
-                blocks[blocksOffset++] = (byte)block.TripleShift(64 - (j << 3));
+                blocks[blocksOffset++] = (byte)(block >>> (64 - (j << 3)));
             }
             return blocksOffset;
         }

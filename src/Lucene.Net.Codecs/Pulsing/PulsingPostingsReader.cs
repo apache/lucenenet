@@ -1,13 +1,10 @@
-﻿using J2N.Numerics;
-using J2N.Runtime.CompilerServices;
+﻿using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
 
@@ -182,7 +179,7 @@ namespace Lucene.Net.Codecs.Pulsing
             long count = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0
                 ? termState2.TotalTermFreq
                 : termState2.DocFreq;
-           
+
             if (count <= _maxPositions)
             {
                 // Inlined into terms dict -- just read the byte[] blob in,
@@ -249,10 +246,10 @@ namespace Lucene.Net.Codecs.Pulsing
                         postings = new PulsingDocsEnum(field);
                     }
                 }
-                
+
                 if (reuse != postings)
                     SetOther(postings, reuse); // postings.other = reuse
-                
+
                 return postings.Reset(liveDocs, termState2);
             }
 
@@ -297,7 +294,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
                 if (reuse != postings)
                 {
-                    SetOther(postings, reuse); // postings.other = reuse 
+                    SetOther(postings, reuse); // postings.other = reuse
                 }
                 return postings.Reset(liveDocs, termState2);
             }
@@ -381,7 +378,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     }
                     else
                     {
-                        _accum += code.TripleShift(1); // shift off low bit
+                        _accum += code >>> 1; // shift off low bit
                         _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt32();
 
                         // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
@@ -520,7 +517,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     }
 
                     var code = _postings.ReadVInt32();
-                    _accum += code.TripleShift(1); // shift off low bit 
+                    _accum += code >>> 1; // shift off low bit
                     _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt32();
                     _posPending = _freq;
                     _startOffset = _storeOffsets ? 0 : -1; // always return -1 if no offsets are stored
@@ -558,7 +555,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     {
                         _payloadLength = _postings.ReadVInt32();
                     }
-                    _position += code.TripleShift(1);
+                    _position += code >>> 1;
                     _payloadRetrieved = false;
                 }
                 else
@@ -574,7 +571,7 @@ namespace Lucene.Net.Codecs.Pulsing
                         // new offset length
                         _offsetLength = _postings.ReadVInt32();
                     }
-                    _startOffset += offsetCode.TripleShift(1);
+                    _startOffset += offsetCode >>> 1;
                 }
 
                 return _position;
@@ -669,7 +666,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// so that pulsing enums can keep a reference to their wrapped enums,
         /// and vice versa. this way we can always reuse.
         /// <para/>
-        /// @lucene.internal 
+        /// @lucene.internal
         /// </summary>
         public interface IPulsingEnumAttribute : IAttribute
         {
@@ -688,7 +685,7 @@ namespace Lucene.Net.Codecs.Pulsing
             // this could cause problems?
             // TODO: we should consider nuking this map and just making it so if you do this,
             // you don't reuse? and maybe pulsingPostingsReader should throw an exc if it wraps
-            // another pulsing, because this is just stupid and wasteful. 
+            // another pulsing, because this is just stupid and wasteful.
             // we still have to be careful in case someone does Pulsing(Stomping(Pulsing(...
             private readonly IDictionary<PulsingPostingsReader, DocsEnum> _enums = new JCG.Dictionary<PulsingPostingsReader, DocsEnum>(IdentityEqualityComparer<PulsingPostingsReader>.Default);
 
@@ -716,6 +713,6 @@ namespace Lucene.Net.Codecs.Pulsing
         public override void CheckIntegrity()
         {
             _wrappedPostingsReader.CheckIntegrity();
-        }  
+        }
     }
 }

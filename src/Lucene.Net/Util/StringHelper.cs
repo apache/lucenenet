@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the MurmurHash3_x86_32 hash.
-        /// Original source/tests at <a href="https://github.com/yonik/java_util/">https://github.com/yonik/java_util/</a>. 
+        /// Original source/tests at <a href="https://github.com/yonik/java_util/">https://github.com/yonik/java_util/</a>.
         /// </summary>
         public static int Murmurhash3_x86_32(byte[] data, int offset, int len, int seed)
         {
@@ -235,18 +235,18 @@ namespace Lucene.Net.Util
             h1 ^= len;
 
             // fmix(h1);
-            h1 ^= h1.TripleShift(16);
+            h1 ^= h1 >>> 16;
             h1 *= unchecked((int)0x85ebca6b);
-            h1 ^= h1.TripleShift(13);
+            h1 ^= h1 >>> 13;
             h1 *= unchecked((int)0xc2b2ae35);
-            h1 ^= h1.TripleShift(16);
+            h1 ^= h1 >>> 16;
 
             return h1;
         }
 
         /// <summary>
         /// Returns the MurmurHash3_x86_32 hash.
-        /// Original source/tests at <a href="https://github.com/yonik/java_util/">https://github.com/yonik/java_util/</a>. 
+        /// Original source/tests at <a href="https://github.com/yonik/java_util/">https://github.com/yonik/java_util/</a>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Murmurhash3_x86_32(BytesRef bytes, int seed)

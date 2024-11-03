@@ -1,9 +1,7 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
-using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Sep
 {
@@ -30,7 +28,7 @@ namespace Lucene.Net.Codecs.Sep
 
     /// <summary>
     /// Concrete class that reads the current doc/freq/skip
-    /// postings format.    
+    /// postings format.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
@@ -692,7 +690,7 @@ namespace Lucene.Net.Codecs.Sep
                         payloadLength = posReader.Next();
                         if (Debugging.AssertsEnabled) Debugging.Assert(payloadLength >= 0);
                     }
-                    position += code.TripleShift(1);
+                    position += code >>> 1;
                     pendingPayloadBytes += payloadLength;
                     payloadPending = payloadLength > 0;
                 }

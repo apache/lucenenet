@@ -1,11 +1,9 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
@@ -63,13 +61,13 @@ namespace Lucene.Net.Codecs.Memory
     /// <summary>
     /// Stores terms &amp; postings (docs, positions, payloads) in
     /// RAM, using an FST.
-    /// 
+    ///
     /// <para>Note that this codec implements advance as a linear
     /// scan!  This means if you store large fields in here,
     /// queries that rely on advance will (AND BooleanQuery,
     /// PhraseQuery) will be relatively slow!
     /// </para>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
 
     // TODO: Maybe name this 'Cached' or something to reflect
@@ -81,7 +79,7 @@ namespace Lucene.Net.Codecs.Memory
         private readonly bool doPackFST;
         private readonly float acceptableOverheadRatio;
 
-        public MemoryPostingsFormat() 
+        public MemoryPostingsFormat()
             : this(false, PackedInt32s.DEFAULT)
         {
         }
@@ -92,7 +90,7 @@ namespace Lucene.Net.Codecs.Memory
         ///        NOTE: packed FSTs are limited to ~2.1 GB of postings. </param>
         /// <param name="acceptableOverheadRatio"> Allowable overhead for packed <see cref="int"/>s
         ///        during FST construction. </param>
-        public MemoryPostingsFormat(bool doPackFST, float acceptableOverheadRatio) 
+        public MemoryPostingsFormat(bool doPackFST, float acceptableOverheadRatio)
             : base()
         {
             this.doPackFST = doPackFST;
@@ -440,7 +438,7 @@ namespace Lucene.Net.Codecs.Memory
                     else
                     {
                         int code = @in.ReadVInt32();
-                        accum += code.TripleShift(1);
+                        accum += code >>> 1;
                         //System.out.println("  docID=" + accum + " code=" + code);
                         if ((code & 1) != 0)
                         {
@@ -601,7 +599,7 @@ namespace Lucene.Net.Codecs.Memory
                     docUpto++;
 
                     int code = @in.ReadVInt32();
-                    accum += code.TripleShift(1);
+                    accum += code >>> 1;
                     if ((code & 1) != 0)
                     {
                         freq = 1;
@@ -667,7 +665,7 @@ namespace Lucene.Net.Codecs.Memory
                 else
                 {
                     int code = @in.ReadVInt32();
-                    pos += code.TripleShift(1);
+                    pos += code >>> 1;
                     if ((code & 1) != 0)
                     {
                         payloadLength = @in.ReadVInt32();
@@ -685,7 +683,7 @@ namespace Lucene.Net.Codecs.Memory
                         // new offset length
                         offsetLength = @in.ReadVInt32();
                     }
-                    startOffset += offsetCode.TripleShift(1);
+                    startOffset += offsetCode >>> 1;
                 }
 
                 if (storePayloads)

@@ -1,10 +1,7 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
-using System.Diagnostics;
 using System.Text;
 
 namespace Lucene.Net.Sandbox.Queries
@@ -46,7 +43,7 @@ namespace Lucene.Net.Sandbox.Queries
     ///     are unsupported.
     ///     </description></item>
     ///     <item><description>
-    ///     Selectors other than the default <see cref="Selector.MIN"/> require 
+    ///     Selectors other than the default <see cref="Selector.MIN"/> require
     ///     optional codec support. However several codecs provided by Lucene,
     ///     including the current default codec, support this.
     ///     </description></item>
@@ -60,7 +57,7 @@ namespace Lucene.Net.Sandbox.Queries
         private readonly Selector selector;
 
         /// <summary>
-        /// Creates a sort, possibly in reverse, by the minimum value in the set 
+        /// Creates a sort, possibly in reverse, by the minimum value in the set
         /// for the document.
         /// </summary>
         /// <param name="field">Name of field to sort by.  Must not be null.</param>
@@ -71,7 +68,7 @@ namespace Lucene.Net.Sandbox.Queries
         }
 
         /// <summary>
-        /// Creates a sort, possibly in reverse, specifying how the sort value from 
+        /// Creates a sort, possibly in reverse, specifying how the sort value from
         /// the document's set is selected.
         /// </summary>
         /// <param name="field">Name of field to sort by.  Must not be null.</param>
@@ -129,7 +126,7 @@ namespace Lucene.Net.Sandbox.Queries
         /// <summary>
         /// Set how missing values (the empty set) are sorted.
         /// <para/>
-        /// Note that this must be <see cref="SortField.STRING_FIRST"/> or 
+        /// Note that this must be <see cref="SortField.STRING_FIRST"/> or
         /// <see cref="SortField.STRING_LAST"/>.
         /// </summary>
         public override void SetMissingValue(object value)
@@ -283,7 +280,7 @@ namespace Lucene.Net.Sandbox.Queries
                 }
                 else
                 {
-                    return (int)@in.OrdAt((count - 1).TripleShift(1));
+                    return (int)@in.OrdAt((count - 1) >>> 1);
                 }
             }
 
@@ -320,7 +317,7 @@ namespace Lucene.Net.Sandbox.Queries
                 }
                 else
                 {
-                    return (int)@in.OrdAt(count.TripleShift(1));
+                    return (int)@in.OrdAt(count >>> 1);
                 }
             }
 
@@ -342,11 +339,11 @@ namespace Lucene.Net.Sandbox.Queries
     public enum Selector
     {
         /// <summary>
-        /// Selects the minimum value in the set 
+        /// Selects the minimum value in the set
         /// </summary>
         MIN,
         /// <summary>
-        /// Selects the maximum value in the set 
+        /// Selects the maximum value in the set
         /// </summary>
         MAX,
         /// <summary>

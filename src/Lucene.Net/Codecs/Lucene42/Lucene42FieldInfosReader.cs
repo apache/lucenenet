@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -97,7 +96,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     // DV Types are packed in one byte
                     sbyte val = (sbyte)input.ReadByte();
                     DocValuesType docValuesType = GetDocValuesType(input, (byte)(val & 0x0F));
-                    DocValuesType normsType = GetDocValuesType(input, (byte)((val.TripleShift(4)) & 0x0F));
+                    DocValuesType normsType = GetDocValuesType(input, (byte)((val >>> 4) & 0x0F));
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector,
                         omitNorms, storePayloads, indexOptions, docValuesType, normsType, Collections.AsReadOnly(attributes));

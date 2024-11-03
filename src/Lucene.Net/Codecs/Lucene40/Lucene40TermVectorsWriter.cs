@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -209,11 +208,11 @@ namespace Lucene.Net.Codecs.Lucene40
                         scratch.Grow(length);
                         scratch.Length = length;
                         positions.ReadBytes(scratch.Bytes, scratch.Offset, scratch.Length);
-                        WritePosition(code.TripleShift(1), scratch);
+                        WritePosition(code >>> 1, scratch);
                     }
                     else
                     {
-                        WritePosition(code.TripleShift(1), null);
+                        WritePosition(code >>> 1, null);
                     }
                 }
                 tvf.WriteBytes(payloadData.Bytes, payloadData.Offset, payloadData.Length);
@@ -223,7 +222,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // pure positions, no payloads
                 for (int i = 0; i < numProx; i++)
                 {
-                    tvf.WriteVInt32(positions.ReadVInt32().TripleShift(1));
+                    tvf.WriteVInt32(positions.ReadVInt32() >>> 1);
                 }
             }
 
@@ -338,9 +337,9 @@ namespace Lucene.Net.Codecs.Lucene40
             catch (Exception ignored) when (ignored.IsThrowable())
             {
             }
-            IOUtils.DeleteFilesIgnoringExceptions(directory, 
-                IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), 
-                IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), 
+            IOUtils.DeleteFilesIgnoringExceptions(directory,
+                IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION),
+                IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION),
                 IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION));
         }
 

@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -39,7 +38,7 @@ namespace Lucene.Net.Util
     /// problem, a char is appended, indicating the number of encoded bytes in the
     /// final content char.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [Obsolete("Implement Analysis.TokenAttributes.ITermToBytesRefAttribute and store bytes directly instead. this class will be removed in Lucene 5.0")]
     public static class IndexableBinaryStringTools // LUCENENET specific - made static
@@ -160,13 +159,13 @@ namespace Lucene.Net.Util
                     if (2 == codingCase.numBytes)
                     {
                         outputArray[outputCharNum] = (char)(((inputArray[inputByteNum] & 0xFF) << codingCase.initialShift)
-                            + (((inputArray[inputByteNum + 1] & 0xFF).TripleShift(codingCase.finalShift)) & codingCase.finalMask) & /*(short)*/0x7FFF); // LUCENENET: Removed unnecessary cast
+                            + (((inputArray[inputByteNum + 1] & 0xFF) >>> codingCase.finalShift) & codingCase.finalMask) & /*(short)*/0x7FFF); // LUCENENET: Removed unnecessary cast
                     } // numBytes is 3
                     else
                     {
                         outputArray[outputCharNum] = (char)(((inputArray[inputByteNum] & 0xFF) << codingCase.initialShift)
                             + ((inputArray[inputByteNum + 1] & 0xFF) << codingCase.middleShift)
-                            + (((inputArray[inputByteNum + 2] & 0xFF).TripleShift(codingCase.finalShift)) & codingCase.finalMask) & /*(short)*/0x7FFF); // LUCENENET: Removed unnecessary cast
+                            + (((inputArray[inputByteNum + 2] & 0xFF) >>> codingCase.finalShift) & codingCase.finalMask) & /*(short)*/0x7FFF); // LUCENENET: Removed unnecessary cast
                     }
                     inputByteNum += codingCase.advanceBytes;
                     if (++caseNum == CODING_CASES.Length)
@@ -251,18 +250,18 @@ namespace Lucene.Net.Util
                     {
                         if (0 == caseNum)
                         {
-                            outputArray[outputByteNum] = (sbyte)(inputChar.TripleShift(codingCase.initialShift));
+                            outputArray[outputByteNum] = (sbyte)(inputChar >>> codingCase.initialShift);
                         }
                         else
                         {
-                            outputArray[outputByteNum] += (sbyte)(inputChar.TripleShift(codingCase.initialShift));
+                            outputArray[outputByteNum] += (sbyte)(inputChar >>> codingCase.initialShift);
                         }
                         outputArray[outputByteNum + 1] = (sbyte)((inputChar & codingCase.finalMask) << codingCase.finalShift);
                     } // numBytes is 3
                     else
                     {
-                        outputArray[outputByteNum] += (sbyte)(inputChar.TripleShift(codingCase.initialShift));
-                        outputArray[outputByteNum + 1] = (sbyte)((inputChar & codingCase.middleMask).TripleShift(codingCase.middleShift));
+                        outputArray[outputByteNum] += (sbyte)(inputChar >>> codingCase.initialShift);
+                        outputArray[outputByteNum + 1] = (sbyte)((inputChar & codingCase.middleMask) >>> codingCase.middleShift);
                         outputArray[outputByteNum + 2] = (sbyte)((inputChar & codingCase.finalMask) << codingCase.finalShift);
                     }
                     outputByteNum += codingCase.advanceBytes;
@@ -278,17 +277,17 @@ namespace Lucene.Net.Util
                 {
                     outputArray[outputByteNum] = 0;
                 }
-                outputArray[outputByteNum] += (sbyte)(inputChar.TripleShift(codingCase.initialShift));
+                outputArray[outputByteNum] += (sbyte)(inputChar >>> codingCase.initialShift);
                 int bytesLeft = numOutputBytes - outputByteNum;
                 if (bytesLeft > 1)
                 {
                     if (2 == codingCase.numBytes)
                     {
-                        outputArray[outputByteNum + 1] = (sbyte)((inputChar & codingCase.finalMask).TripleShift(codingCase.finalShift));
+                        outputArray[outputByteNum + 1] = (sbyte)((inputChar & codingCase.finalMask) >>> codingCase.finalShift);
                     } // numBytes is 3
                     else
                     {
-                        outputArray[outputByteNum + 1] = (sbyte)((inputChar & codingCase.middleMask).TripleShift(codingCase.middleShift));
+                        outputArray[outputByteNum + 1] = (sbyte)((inputChar & codingCase.middleMask) >>> codingCase.middleShift);
                         if (bytesLeft > 2)
                         {
                             outputArray[outputByteNum + 2] = (sbyte)((inputChar & codingCase.finalMask) << codingCase.finalShift);
@@ -309,7 +308,7 @@ namespace Lucene.Net.Util
                 this.initialShift = initialShift;
                 this.middleShift = middleShift;
                 this.finalShift = finalShift;
-                this.finalMask = /*(short)*/((short)0xFF.TripleShift(finalShift)); // LUCENENET: Removed unnecessary cast
+                this.finalMask = (short)(/*(short)*/0xFF >>> finalShift); // LUCENENET: Removed unnecessary cast
                 this.middleMask = (short)(/*(short)*/0xFF << middleShift); // LUCENENET: Removed unnecessary cast
             }
 
@@ -318,7 +317,7 @@ namespace Lucene.Net.Util
                 this.numBytes = 2;
                 this.initialShift = initialShift;
                 this.finalShift = finalShift;
-                this.finalMask = /*(short)*/((short)0xFF.TripleShift(finalShift)); // LUCENENET: Removed unnecessary cast
+                this.finalMask = (short)(/*(short)*/0xFF >>> finalShift); // LUCENENET: Removed unnecessary cast
                 if (finalShift != 0)
                 {
                     advanceBytes = 1;

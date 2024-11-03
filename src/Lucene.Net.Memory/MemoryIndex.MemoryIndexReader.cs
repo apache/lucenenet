@@ -1,5 +1,4 @@
 ﻿using J2N.Collections.Generic.Extensions;
-using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
@@ -236,7 +235,7 @@ namespace Lucene.Net.Index.Memory
                     int mid; // LUCENENET: IDE0059: Remove unnecessary value assignment
                     while (low <= high)
                     {
-                        mid = (low + high).TripleShift(1);
+                        mid = (low + high) >>> 1;
                         hash.Get(ords[mid], bytesRef);
                         int cmp = comparer.Compare(bytesRef, b);
                         if (cmp < 0)

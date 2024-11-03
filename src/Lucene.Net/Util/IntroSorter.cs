@@ -69,7 +69,7 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            int mid = (from + to).TripleShift(1);
+            int mid = (from + to) >>> 1;
 
             if (Compare(from, mid) > 0)
             {

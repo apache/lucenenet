@@ -1,10 +1,8 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene41
@@ -110,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 for (int i = 0; i < num; i++)
                 {
                     int code = docIn.ReadVInt32();
-                    docBuffer[i] = code.TripleShift(1);
+                    docBuffer[i] = code >>> 1;
                     if ((code & 1) != 0)
                     {
                         freqBuffer[i] = 1;
@@ -337,9 +335,9 @@ namespace Lucene.Net.Codecs.Lucene41
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
                 // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
-                return docIn == startDocIn && 
-                    indexHasFreq == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0) && 
-                    indexHasPos == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0) && 
+                return docIn == startDocIn &&
+                    indexHasFreq == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0) &&
+                    indexHasPos == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0) &&
                     indexHasPayloads == fieldInfo.HasPayloads;
             }
 
@@ -659,8 +657,8 @@ namespace Lucene.Net.Codecs.Lucene41
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
-                return docIn == startDocIn && 
-                    indexHasOffsets == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) 
+                return docIn == startDocIn &&
+                    indexHasOffsets == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                     && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
@@ -767,7 +765,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             {
                                 payloadLength = posIn.ReadVInt32();
                             }
-                            posDeltaBuffer[i] = code.TripleShift(1);
+                            posDeltaBuffer[i] = code >>> 1;
                             if (payloadLength != 0)
                             {
                                 posIn.Seek(posIn.Position + payloadLength); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
@@ -1165,8 +1163,8 @@ namespace Lucene.Net.Codecs.Lucene41
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
                 // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
-                return docIn == startDocIn && 
-                    indexHasOffsets == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) && 
+                return docIn == startDocIn &&
+                    indexHasOffsets == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) &&
                     indexHasPayloads == fieldInfo.HasPayloads;
             }
 
@@ -1282,7 +1280,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             //   System.out.println("        i=" + i + " payloadLen=" + payloadLength);
                             // }
                             payloadLengthBuffer[i] = payloadLength;
-                            posDeltaBuffer[i] = code.TripleShift(1);
+                            posDeltaBuffer[i] = code >>> 1;
                             if (payloadLength != 0)
                             {
                                 if (payloadByteUpto + payloadLength > payloadBytes.Length)
@@ -1309,7 +1307,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             {
                                 offsetLength = posIn.ReadVInt32();
                             }
-                            offsetStartDeltaBuffer[i] = deltaCode.TripleShift(1);
+                            offsetStartDeltaBuffer[i] = deltaCode >>> 1;
                             offsetLengthBuffer[i] = offsetLength;
                             // if (DEBUG) {
                             //   System.out.println("          startOffDelta=" + offsetStartDeltaBuffer[i] + " offsetLen=" + offsetLengthBuffer[i]);

@@ -1,5 +1,4 @@
-﻿using J2N.Numerics;
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
 using System.Runtime.CompilerServices;
@@ -29,7 +28,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using Term = Lucene.Net.Index.Term;
 
     /// <summary>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [Obsolete("(4.0)")]
     internal sealed class SegmentTermPositions : SegmentTermDocs
@@ -116,7 +115,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     payloadLength = proxStream.ReadVInt32();
                 }
-                delta = delta.TripleShift(1);
+                delta >>>= 1;
                 needToLoadPayload = true;
             }
             else if (delta == -1)

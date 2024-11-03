@@ -1,6 +1,4 @@
-﻿using J2N.Numerics;
-using System;
-using System.IO;
+﻿using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
@@ -50,7 +48,7 @@ namespace Lucene.Net.Util.Packed
 
                 long block = @in.ReadInt64();
                 int offsetInBlock = index % valuesPerBlock;
-                return (block.TripleShift(offsetInBlock * m_bitsPerValue)) & mask;
+                return (block >>> (offsetInBlock * m_bitsPerValue)) & mask;
             }
             catch (Exception e) when (e.IsIOException())
             {

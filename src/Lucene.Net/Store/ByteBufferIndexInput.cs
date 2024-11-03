@@ -1,8 +1,6 @@
 ﻿using J2N.IO;
-using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System;
-using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
@@ -89,7 +87,7 @@ namespace Lucene.Net.Store
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(chunkSizePower >= 0 && chunkSizePower <= 30);
-                Debugging.Assert(length.TripleShift(chunkSizePower) < int.MaxValue);
+                Debugging.Assert((length >>> chunkSizePower) < int.MaxValue);
             }
 
             // LUCENENET specific: MMapIndexInput calls SetBuffers() to populate
@@ -236,7 +234,7 @@ namespace Lucene.Net.Store
             // when reading from buffers.
             if (bi < 0 || bi >= buffers.Length)
                 throw EOFException.Create("seek past EOF: " + this);
-            
+
             ByteBuffer b = buffers[bi];
             int newPosition = (int)(pos & chunkSizeMask);
 
@@ -341,8 +339,8 @@ namespace Lucene.Net.Store
         {
             long sliceEnd = offset + length;
 
-            int startIndex = (int)(offset.TripleShift(chunkSizePower));
-            int endIndex = (int)(sliceEnd.TripleShift(chunkSizePower));
+            int startIndex = (int)(offset >>> chunkSizePower);
+            int endIndex = (int)(sliceEnd >>> chunkSizePower);
 
             // we always allocate one more slice, the last one may be a 0 byte one
             ByteBuffer[] slices = new ByteBuffer[endIndex - startIndex + 1];
@@ -365,7 +363,7 @@ namespace Lucene.Net.Store
             curBufIndex = 0;
         }
 
-        // LUCENENET specific - rather than using all of this exception catching nonsense 
+        // LUCENENET specific - rather than using all of this exception catching nonsense
         // for control flow, we check whether we are disposed first.
         private void EnsureOpen()
         {

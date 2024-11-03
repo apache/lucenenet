@@ -1,5 +1,4 @@
 ﻿using J2N.Collections.Generic.Extensions;
-using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
@@ -132,9 +131,9 @@ namespace Lucene.Net.Store
         }
 
         // LUCENENET NOTE: These MUST be sbyte because they can be negative
-        private static readonly sbyte CODEC_MAGIC_BYTE1 = (sbyte)CodecUtil.CODEC_MAGIC.TripleShift(24);
-        private static readonly sbyte CODEC_MAGIC_BYTE2 = (sbyte)CodecUtil.CODEC_MAGIC.TripleShift(16);
-        private static readonly sbyte CODEC_MAGIC_BYTE3 = (sbyte)CodecUtil.CODEC_MAGIC.TripleShift(8);
+        private static readonly sbyte CODEC_MAGIC_BYTE1 = (sbyte)(CodecUtil.CODEC_MAGIC >>> 24);
+        private static readonly sbyte CODEC_MAGIC_BYTE2 = (sbyte)(CodecUtil.CODEC_MAGIC >>> 16);
+        private static readonly sbyte CODEC_MAGIC_BYTE3 = (sbyte)(CodecUtil.CODEC_MAGIC >>> 8);
         private static readonly sbyte CODEC_MAGIC_BYTE4 = (sbyte)CodecUtil.CODEC_MAGIC;
 
         /// <summary>
@@ -166,7 +165,7 @@ namespace Lucene.Net.Store
                     }
                     int version = CodecUtil.CheckHeaderNoMagic(stream, CompoundFileWriter.DATA_CODEC, CompoundFileWriter.VERSION_START, CompoundFileWriter.VERSION_CURRENT);
                     string entriesFileName = IndexFileNames.SegmentFileName(
-                                                    IndexFileNames.StripExtension(name), "", 
+                                                    IndexFileNames.StripExtension(name), "",
                                                     IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
                     entriesStream = dir.OpenChecksumInput(entriesFileName, IOContext.READ_ONCE);
                     CodecUtil.CheckHeader(entriesStream, CompoundFileWriter.ENTRY_CODEC, CompoundFileWriter.VERSION_START, CompoundFileWriter.VERSION_CURRENT);
@@ -223,7 +222,7 @@ namespace Lucene.Net.Store
             {
                 if (firstInt < CompoundFileWriter.FORMAT_NO_SEGMENT_PREFIX)
                 {
-                    throw new CorruptIndexException("Incompatible format version: " 
+                    throw new CorruptIndexException("Incompatible format version: "
                         + firstInt + " expected >= " + CompoundFileWriter.FORMAT_NO_SEGMENT_PREFIX + " (resource: " + stream + ")");
                 }
                 // It's a post-3.1 index, read the count.
@@ -432,8 +431,8 @@ namespace Lucene.Net.Store
             string id = IndexFileNames.StripSegmentName(name);
             if (!entries.TryGetValue(id, out FileEntry entry) || entry is null)
             {
-                throw new FileNotFoundException("No sub-file with id " + id + 
-                    " found (fileName=" + name + " files: " + 
+                throw new FileNotFoundException("No sub-file with id " + id +
+                    " found (fileName=" + name + " files: " +
                     string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", entries.Keys) + ")");
             }
             return new IndexInputSlicerAnonymousClass(this, entry);
