@@ -2560,7 +2560,7 @@ namespace Lucene.Net.Index
         private Dictionary<string, string> GetLiveCommitData(IndexWriter writer)
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
-            // LUCENENET TODO: in a post-4.8 port, this should use LiveCommitData
+            // LUCENENET UPGRADE TODO: in a post-4.8 port, this should use LiveCommitData
             foreach (var ent in writer.CommitData)
             {
                 data.Put(ent.Key, ent.Value);
@@ -2594,8 +2594,8 @@ namespace Lucene.Net.Index
         public void TestGetCommitDataFromOldSnapshot()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-            // LUCENENET TODO: in a post-4.8 port, this should use SetLiveCommitData
+            IndexWriter writer = new IndexWriter(dir, NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, null));
+            // LUCENENET UPGRADE TODO: in a post-4.8 port, this should use SetLiveCommitData
             writer.SetCommitData(new Dictionary<string, string>
             {
                 { "key", "value" },
@@ -2608,8 +2608,8 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             // Modify the commit data and commit on close so the most recent commit data is different
-            writer = new IndexWriter(dir, NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-            // LUCENENET TODO: in a post-4.8 port, this should use SetLiveCommitData
+            writer = new IndexWriter(dir, NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, null));
+            // LUCENENET UPGRADE TODO: in a post-4.8 port, this should use SetLiveCommitData
             writer.SetCommitData(new Dictionary<string, string>()
             {
                 { "key", "value2" },
@@ -2623,7 +2623,7 @@ namespace Lucene.Net.Index
             writer =
                 new IndexWriter(
                     dir,
-                    NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    NewSnapshotIndexWriterConfig(TEST_VERSION_CURRENT, null)
                         .SetOpenMode(OpenMode.APPEND)
                         .SetIndexCommit(indexCommit));
             assertEquals("value", GetLiveCommitData(writer)["key"]);
