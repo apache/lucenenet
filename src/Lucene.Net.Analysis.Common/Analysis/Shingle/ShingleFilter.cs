@@ -366,7 +366,16 @@ namespace Lucene.Net.Analysis.Shingle
                         noShingleOutput = false;
                     }
                     offsetAtt.SetOffset(offsetAtt.StartOffset, nextToken.offsetAtt.EndOffset);
-                    posLenAtt.PositionLength = builtGramSize;
+                    // LUCENENET-specific: backported fix from Lucene 6.5.0 (LUCENE-7708)
+                    if (outputUnigrams)
+                    {
+                        posLenAtt.PositionLength = builtGramSize;
+                    }
+                    else
+                    {
+                        // position length for this token is the number of position created by shingles of smaller size.
+                        posLenAtt.PositionLength = Math.Max(1, (builtGramSize - minShingleSize) + 1);
+                    }
                     isOutputHere = true;
                     gramSize.Advance();
                     tokenAvailable = true;
