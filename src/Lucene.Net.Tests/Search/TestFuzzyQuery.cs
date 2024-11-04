@@ -196,6 +196,48 @@ namespace Lucene.Net.Search
             directory.Dispose();
         }
 
+        // LUCENENET-specific: backported fix from Lucene 9.0.0 (lucene@45611d0, LUCENE-9365)
+        [Test]
+        public void TestPrefixLengthEqualStringLength()
+        {
+            Directory directory = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory);
+            AddDoc("b*a", writer);
+            AddDoc("b*ab", writer);
+            AddDoc("b*abc", writer);
+            AddDoc("b*abcd", writer);
+            const string multibyte = "아프리카코끼리속"; // LUCENENET-specific: made const
+            AddDoc(multibyte, writer);
+            IndexReader reader = writer.GetReader();
+            IndexSearcher searcher = NewSearcher(reader);
+            writer.Dispose();
+
+            int maxEdits = 0;
+            int prefixLength = 3;
+            FuzzyQuery query = new FuzzyQuery(new Term("field", "b*a"), maxEdits, prefixLength);
+            ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
+            assertEquals(1, hits.Length);
+
+            maxEdits = 1;
+            query = new FuzzyQuery(new Term("field", "b*a"), maxEdits, prefixLength);
+            hits = searcher.Search(query, 1000).ScoreDocs;
+            assertEquals(2, hits.Length);
+
+            maxEdits = 2;
+            query = new FuzzyQuery(new Term("field", "b*a"), maxEdits, prefixLength);
+            hits = searcher.Search(query, 1000).ScoreDocs;
+            assertEquals(3, hits.Length);
+
+            maxEdits = 1;
+            prefixLength = multibyte.Length - 1;
+            query = new FuzzyQuery(new Term("field", multibyte.Substring(0, prefixLength)), maxEdits, prefixLength);
+            hits = searcher.Search(query, 1000).ScoreDocs;
+            assertEquals(1, hits.Length);
+
+            reader.Dispose();
+            directory.Dispose();
+        }
+
         [Test]
         public virtual void Test2()
         {
