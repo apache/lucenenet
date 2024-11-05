@@ -138,7 +138,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///     ngrams (increasing index size but making lookups
         ///     faster). </param>
         // LUCENENET specific - LUCENE-5889, a 4.11.0 feature. calls new constructor with extra param.
-        // LUCENENET TODO: Remove method at version 4.11.0. Was retained for perfect 4.8 compatibility
+        // LUCENENET UPGRADE TODO: Remove method at version 4.11.0. Was retained for perfect 4.8 compatibility
         public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer,
             Analyzer queryAnalyzer, int minPrefixChars)
             : this(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars, commitOnBuild: false)
