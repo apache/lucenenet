@@ -362,7 +362,7 @@ namespace Lucene.Net.Util
 
                         /* aChar != bChar, fix up each one if they're both in or above the surrogate range, then compare them */
                         if (aChar >= 0xd800 && bChar >= 0xd800)
-                        {//LUCENE TO-DO possible truncation or is char 16bit?
+                        {
                             if (aChar >= 0xe000)
                             {
                                 aChar -= (char)0x800;
