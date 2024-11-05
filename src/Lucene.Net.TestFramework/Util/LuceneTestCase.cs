@@ -105,9 +105,9 @@ namespace Lucene.Net.Util
     /// It is recommended to configure the culture also, since they are randomly picked from a list
     /// of cultures installed on a given machine, so the culture will vary from one machine to the next.
     /// </para>
-    /// 
+    ///
     /// <h4><i>.runsettings</i> File Configuration Example</h4>
-    /// 
+    ///
     /// <code>
     /// &lt;RunSettings&gt;
     ///   &lt;TestRunParameters&gt;
@@ -120,9 +120,9 @@ namespace Lucene.Net.Util
     /// See the <i>.runsettings</i> documentation at: <a href="https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file">
     /// https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file</a>.
     /// </para>
-    /// 
+    ///
     /// <h4>Attribute Configuration Example</h4>
-    /// 
+    ///
     /// <code>
     /// [assembly: Lucene.Net.Util.RandomSeed("0x1ffa1d067056b0e6")]
     /// [assembly: NUnit.Framework.SetCulture("sw-TZ")]
@@ -134,7 +134,7 @@ namespace Lucene.Net.Util
     /// Add a file named <i>lucene.testSettings.config</i> to the executable directory or
     /// any directory between the executable and the root of the drive with the following contents.
     /// </para>
-    /// 
+    ///
     /// <code>
     /// {
     ///	  "tests": {
@@ -160,7 +160,7 @@ namespace Lucene.Net.Util
     ///         <term>sw-TZ</term>
     ///     </item>
     /// </list>
-    /// 
+    ///
     /// </summary>
     [TestFixture]
     public abstract partial class LuceneTestCase //: Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
@@ -510,7 +510,7 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// TODO: javadoc? </summary>
-            public bool UseInfoStream { get; } 
+            public bool UseInfoStream { get; }
 
             /// <summary>
             /// A random multiplier which you should use when writing random tests:
@@ -1272,6 +1272,24 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        /// Creates a new <see cref="IndexWriterConfig"/> with a <see cref="SnapshotDeletionPolicy"/>.
+        /// </summary>
+        /// <param name="v">The Lucene compatibility Version</param>
+        /// <param name="analyzer">The analyzer to use</param>
+        /// <returns>Returns a new <see cref="IndexWriterConfig"/>.</returns>
+        /// <remarks>
+        /// This was backported as a result of fixing lucene#12626 from Lucene 9.9.0 in Lucene.NET.
+        /// The later versions of this code do not have the version parameter, but keeping it here
+        /// for consistency with <see cref="NewIndexWriterConfig(Lucene.Net.Util.LuceneVersion,Lucene.Net.Analysis.Analyzer)"/> below.
+        /// </remarks>
+        public static IndexWriterConfig NewSnapshotIndexWriterConfig(LuceneVersion v, Analyzer analyzer)
+        {
+            IndexWriterConfig c = NewIndexWriterConfig(v, analyzer);
+            c.SetIndexDeletionPolicy(new SnapshotDeletionPolicy(NoDeletionPolicy.INSTANCE));
+            return c;
+        }
+
+        /// <summary>
         /// Create a new <see cref="IndexWriterConfig"/> with random defaults.
         /// </summary>
         public static IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
@@ -1731,7 +1749,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Return a random <see cref="CultureInfo"/> from the available cultures on the system. 
+        /// Return a random <see cref="CultureInfo"/> from the available cultures on the system.
         /// <para/>
         /// See <a href="https://issues.apache.org/jira/browse/LUCENE-4020">https://issues.apache.org/jira/browse/LUCENE-4020</a>.
         /// </summary>
@@ -1741,7 +1759,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Return a random <see cref="TimeZoneInfo"/> from the available timezones on the system 
+        /// Return a random <see cref="TimeZoneInfo"/> from the available timezones on the system
         /// <para/>
         /// See <a href="https://issues.apache.org/jira/browse/LUCENE-4020">https://issues.apache.org/jira/browse/LUCENE-4020</a>.
         /// </summary>
@@ -2037,7 +2055,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets a resource from the classpath as <see cref="Stream"/>. This method should only
         /// be used, if a real file is needed. To get a stream, code should prefer
-        /// <see cref="J2N.AssemblyExtensions.FindAndGetManifestResourceStream(Assembly, Type, string)"/> using 
+        /// <see cref="J2N.AssemblyExtensions.FindAndGetManifestResourceStream(Assembly, Type, string)"/> using
         /// <c>this.GetType().Assembly</c> and <c>this.GetType()</c>.
         /// </summary>
         protected virtual Stream GetDataFile(string name)
@@ -2879,7 +2897,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns true if the file exists (can be opened), false
-        /// if it cannot be opened, and (unlike .NET's 
+        /// if it cannot be opened, and (unlike .NET's
         /// <see cref="System.IO.File.Exists(string)"/>) if there's some
         /// unexpected error, returns <c>false</c>.
         /// </summary>
@@ -2921,7 +2939,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Creates an empty, temporary folder with the given name <paramref name="prefix"/> under the
         /// system's <see cref="Path.GetTempPath()"/> or if supplied, the <c>tempDir</c> system property.
-        /// 
+        ///
         /// <para/>The folder will be automatically removed after the
         /// test class completes successfully. The test should close any file handles that would prevent
         /// the folder from being removed.
@@ -2940,7 +2958,7 @@ namespace Lucene.Net.Util
                 {
                     throw RuntimeException.Create("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
                 }
-                // LUCENENET specific - need to use a random file name instead of a sequential one or two threads may attempt to do 
+                // LUCENENET specific - need to use a random file name instead of a sequential one or two threads may attempt to do
                 // two operations on a file at the same time.
                 //f = new DirectoryInfo(Path.Combine(System.IO.Path.GetTempPath(), "LuceneTemp", prefix + "-" + attempt));
                 f = new DirectoryInfo(Path.Combine(@base, "LuceneTemp", prefix + "-" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName())));
@@ -3157,7 +3175,7 @@ namespace Lucene.Net.Util
         /// <see cref="double"/> value, chosen from (approximately) the usual
         /// normal distribution with mean <c>0.0</c> and standard deviation
         /// <c>1.0</c>, is pseudorandomly generated and returned.
-        /// 
+        ///
         /// <para/>This uses the <i>polar method</i> of G. E. P. Box, M. E. Muller, and
         /// G. Marsaglia, as described by Donald E. Knuth in <i>The Art of
         /// Computer Programming</i>, Volume 3: <i>Seminumerical Algorithms</i>,
