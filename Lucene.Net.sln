@@ -43,7 +43,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NOTICE.txt = NOTICE.txt
 		NuGet.config = NuGet.config
 		README.md = README.md
-		TestTargetFramework.props = TestTargetFramework.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net", "src\Lucene.Net\Lucene.Net.csproj", "{3A0AA37E-2B7B-4416-B528-DA4E0E6A6706}"
@@ -197,13 +196,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{42599646-2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuceneDocsPlugins", "src\docs\LuceneDocsPlugins\LuceneDocsPlugins.csproj", "{FED4A824-1F32-4948-8D37-2B7610804DB5}"
 EndProject
-Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "websites", "websites\websites.msbuildproj", "{C0448DD3-68D2-485F-B31A-D2806E589FA7}"
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "websites", "proj\websites.msbuildproj", "{C0448DD3-68D2-485F-B31A-D2806E589FA7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{9D88BB9B-A226-4C6F-BC99-7AB2D923EDCA}"
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "build", "proj\build.msbuildproj", "{5C5253E9-BAF2-493C-B4D4-EE01D2E1769F}"
 EndProject
-Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "build", ".build\build.msbuildproj", "{5C5253E9-BAF2-493C-B4D4-EE01D2E1769F}"
-EndProject
-Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "github", ".github\github.msbuildproj", "{E71152A0-48CC-4334-981F-F5FBFFA50891}"
+Project("{13B669BE-BB05-4DDF-9536-439F39A36129}") = "github", "proj\github.msbuildproj", "{E71152A0-48CC-4334-981F-F5FBFFA50891}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -509,8 +506,6 @@ Global
 		{4D0ED7D9-ABEE-4890-B06C-477E3A32B9A0} = {E5E8C5DC-7048-4818-B884-FB2D037D2EF2}
 		{FED4A824-1F32-4948-8D37-2B7610804DB5} = {42599646-275F-4970-BC60-A3349F6498CC}
 		{C0448DD3-68D2-485F-B31A-D2806E589FA7} = {42599646-275F-4970-BC60-A3349F6498CC}
-		{5C5253E9-BAF2-493C-B4D4-EE01D2E1769F} = {9D88BB9B-A226-4C6F-BC99-7AB2D923EDCA}
-		{E71152A0-48CC-4334-981F-F5FBFFA50891} = {9D88BB9B-A226-4C6F-BC99-7AB2D923EDCA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9F2179CC-CFD2-4419-AB74-D72856931F36}
