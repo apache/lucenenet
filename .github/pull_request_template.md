@@ -14,7 +14,7 @@ below to ensure a smooth review and merge process for your PR. -->
 
 Summary of the changes (Less than 80 chars)
 
-Fixes #{bug number} (in this specific format)
+Fixes #{issue number} (in this specific format)
 
 ## Description
 
