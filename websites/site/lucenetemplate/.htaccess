@@ -42,4 +42,4 @@ RewriteEngine On
 RewriteRule ^docs/latest/(.*)$ /docs/3.0.3/$1 [R=301,L]
 
 # Redirect /docs/absolute-latest/ to /docs/4.8.0-beta00017/
-RewriteRule ^docs/absolute(-latest|Latest)/(.*)$ /docs/4.8.0-beta00017/$1 [R=301,L]
+RewriteRule ^docs/absolute(?:-latest|Latest)/(.*)$ /docs/4.8.0-beta00017/$1 [R=301,L]
