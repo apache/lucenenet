@@ -27,7 +27,9 @@
       },
       {
         "files": [
-          "doap_Lucene_Net.rdf"
+          "doap_Lucene_Net.rdf",
+          ".gitattributes",
+          ".htaccess"
         ],
         "src": "lucenetemplate"
       }
