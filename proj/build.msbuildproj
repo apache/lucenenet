@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="../.build/**/*.*" Exclude="../.build/obj/**/*;../.build/bin/**/*;../.build/psake/**/*" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\azure-pipelines.yml" Link="azure-pipelines.yml" />
+    <None Include="..\TestTargetFramework.props" Link="TestTargetFramework.props" />
+  </ItemGroup>
+</Project>
