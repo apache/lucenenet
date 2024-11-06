@@ -345,11 +345,17 @@ Remove the old releases from SVN under https://dist.apache.org/repos/dist/releas
     > [!IMPORTANT]
     > Only update the version if it's a new stable version.
 
+  - Update the `/websites/site/lucenetemplate/.htaccess` file to reflect the `latest` and `absoluteLatest` versions.
+    - `latest` should reflect the current release only if it is not a pre-release
+    - `absoluteLatest` should reflect the current release (whether pre-release or not)
+<br/>
+<br/>
   - Create a new release page in the `/websites/site/download`, in most cases it's easiest to just copy the previous release page.
     - Ensure the `uid` in the header is correct
     - Update all headers, status, release date to be correct
     - Ensure supported frameworks and packages section is accurate for the new release
-
+<br/>
+<br/>
   - Add the new release page to the `/websites/site/download/toc.yml` file
 
   - Add the new release version and release date to the `/websites/site/download/download.md` file
@@ -361,7 +367,8 @@ Remove the old releases from SVN under https://dist.apache.org/repos/dist/releas
 - Update the API Documentation with new release
 
   - Follow the instructions on how to [build](https://lucenenet.apache.org/contributing/documentation.html#api-docs), test and [publish](https://lucenenet.apache.org/contributing/documentation.html#publishing-the-docs) the docs.
-
+<br/>
+<br/>
 - Send announcement email 24 hours after the release (to ensure the mirrors have propagated the download locations)
 
   > [!IMPORTANT]
