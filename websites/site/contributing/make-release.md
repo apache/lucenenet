@@ -177,7 +177,7 @@ We have partially automated the release notes through GitHub Releases. They are 
 
 - Go to the [GitHub New Release](https://github.com/apache/lucenenet/releases/new) link.
 
-- Select the tag you previously created in [Sign the Release](sign-the-release) from the "Choose a tag" dropdown.
+- Select the tag you previously created in [Sign the Release](#sign-the-release) from the "Choose a tag" dropdown.
 
 - For the "Previous tag", select the tag for the prior release.
 
