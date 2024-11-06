@@ -57,61 +57,11 @@ The following steps need only to be performed once.
     - `git checkout master` and make sure it succeeds to be on the master branch
     - `git pull https://gitbox.apache.org/repos/asf/lucenenet.git master` to update your local copy
 
-- Prepare a GitHub Release. Review the [master branch commit history](https://github.com/apache/lucenenet/commits/master), and [create a new **DRAFT** GitHub release](https://github.com/apache/lucenenet/releases/new) using the following template:
-
-  ```txt
-  > This release contains <any important changes that users should be aware of>
-
-  ## Change Log
-
-  ### Breaking Changes
-  * #<GitHub Issue ID (optional)> - <A descriptive title (may need to add context or summarize)>
-
-  ### Bugs
-  * #<GitHub Issue ID (optional)> - <A descriptive title (may need to add context or summarize)>
-
-  ### Improvements
-  * #<GitHub Issue ID (optional)> - <A descriptive title (may need to add context or summarize)>
-
-  ### New Features
-  * #<GitHub Issue ID (optional)> - <A descriptive title (may need to add context or summarize)>
-  ```
-
-  > [!TIP]
-  > Click the "Save draft" button frequently during the above updates to ensure you don't lose them if your browser crashes.
-
-  > [!NOTE]
-  > Be sure to check the "This is a pre-release" box as appropriate.
-  
-- Click the "Save draft" button when finished.
-  
-
-- Update Website with the release notes
-  
-  Only people with permissions on GitHub will be able to see the draft release notes. [PMC members](https://people.apache.org/phonebook.html?ctte=lucenenet) and [committers](https://people.apache.org/phonebook.html?unix=lucenenet) can have permissions, but only if they set them up themselves. So, we duplicate the above information on a release notes page that all subscribers of the dev@lucenenet.apache.org mailing list can view during the release vote.
-
-  > [!NOTE]
-  > If the release notes require updating, don't forget the primary place to update them are on the GitHub Releases draft page above. It is best to update that page and then copy the changes from GitHub Releases to the release notes page on the website, then commit the changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) as usual.
-
-  - Create a new release notes page in the `/websites/site/release-notes` directory, in most cases it's easiest to just copy the previous release notes page.
-    - Ensure the `uid` in the header is correct
-    - Update all headers to the release version number (i.e. `4.8.0-beta00008`)
-  - Copy the release notes from the GitHub Releases draft to the new website release notes page
-    - Delete the prior information in the current version release notes except for the header (whether from a prior version or an update)
-    - Copy and paste the GitHub Releases draft just below the header
-    - Add the URLs to issues on GitHub. These are the instructions for Notepad++. Modify as needed if you are using another text editor.
-      - Find: `#(\d+)`
-      - Replace with: `[#$1]\(https://github.com/apache/lucenenet/pull/$1\)`
-      - Search mode: "regular expression"
-      - Click "Replace All" and verify the URLs work correctly
-
-  - Follow the instructions on how to [build, test & publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) and run/test the website locally.
-
-  - Commit changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website).
+- Review the [master branch commit history on GitHub](https://github.com/apache/lucenenet/commits/master) to ensure everything looks right.
 
 - Add Missing License Headers
 
-  - Run [Apache Release Audit Tool](https://creadur.apache.org/rat/):
+  - Run the [Apache Release Audit Tool](https://creadur.apache.org/rat/):
 
     ```powershell
     dotnet msbuild -t:AuditRelease
@@ -132,7 +82,7 @@ The following steps need only to be performed once.
     git push <remote> master
     ```
 
-- Execute a complete test locally (it can take around 20 minutes, but you may do the next step in parallel):
+- Execute a complete test locally (it can take around 40 minutes, but you may do the next step in parallel):
 
   ```powershell
   build -pv <packageVersion> -t -mp 10
@@ -201,6 +151,80 @@ Perform basic checks against the release binary:
   > You may be prompted for your password
 
 - Check signature of generated artifacts (the `SignReleaseCandidate` target above runs the commands)
+
+### Create the Release Notes
+
+#### Primer
+
+We have partially automated the release notes through GitHub Releases. They are driven off of the GitHub Pull Requests and are categorized using labels. Labeling should be done during the PR review process, but there may need to be some cleanup by changing the title and/or labels of the PRs in the release.
+
+##### Labels that Apply to the Release Notes
+
+| GitHub Label                   | Action                                                   |
+|--------------------------------|----------------------------------------------------------|
+| notes:ignore                   | Removes the PR from the release notes                    |
+| notes:breaking-change          | Categorizes the PR under "Breaking Changes"              |
+| notes:new-feature              | Categorizes the PR under "New Features"                  |
+| notes:bug-fix                  | Categorizes the PR under "Bug Fixes"                     |
+| notes:performance-improvement  | Categorizes the PR under "Performance Improvements"      |
+| notes:website-or-documentation | Categorizes the PR under "Website and API Documentation" |
+| \<none of the above\>          | Categorizes the PR under "Other Changes"                 |
+
+  > [!NOTE]
+  > Using multiple labels from the above list is not supported and the first category in the above list will be used if more than one is applied to a GitHub pull request.
+
+#### Create a Draft GitHub Release
+
+- Go to the [GitHub New Release](https://github.com/apache/lucenenet/releases/new) link.
+
+- Select the tag you previously created in [Sign the Release](sign-the-release) from the "Choose a tag" dropdown.
+
+- For the "Previous tag", select the tag for the prior release.
+
+- Click "Generate Release Notes".
+
+The PRs will be listed and categorized in release notes. Review to ensure:
+
+1. The title is clear and understandable to the user what the PR is for.
+2. The PR is categorized appropriately. Typically "Other Changes" will be rare.
+
+If there are PRs that need to be edited, do so now. Then regenerate the release notes using the above instructions. Repeat until all of the PRs are categorized appropriately.
+
+- Add important release information at the top of the release notes using the following template. This should include any reason why a user would want to choose this release over another one, such as important bug and vulnerability fixes. It should also contain any significant breaking changes that affect usability.
+
+  ```txt
+  > This release contains <any important changes that users should be aware of>
+  ```
+
+  > [!TIP]
+  > Click the "Save draft" button frequently during the above updates to ensure you don't lose them if your browser crashes.
+
+  > [!NOTE]
+  > Be sure to check the "This is a pre-release" box as appropriate.
+  
+- Click the "Save draft" button when finished.
+
+### Add the Release Notes to the Website
+
+  Only people with permissions on GitHub will be able to see the draft release notes. [PMC members](https://people.apache.org/phonebook.html?ctte=lucenenet) and [committers](https://people.apache.org/phonebook.html?unix=lucenenet) can have permissions, but only if they set them up themselves. So, we duplicate the above information on a release notes page that all subscribers of the dev@lucenenet.apache.org mailing list can view during the release vote.
+
+  > [!NOTE]
+  > If the release notes require updating, don't forget the primary place to update them are on the GitHub Releases draft page above. It is best to update that page and then copy the changes from GitHub Releases to the release notes page on the website, then commit the changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) as usual.
+
+  - Create a new release notes page in the `/websites/site/release-notes` directory, in most cases it's easiest to just copy the previous release notes page.
+    - Ensure the `uid` in the header is correct
+    - Update all headers to the release version number (i.e. `4.8.0-beta00008`)
+<br/>
+<br/>
+  - Copy the release notes from the GitHub Releases draft to the new website release notes page
+    - Delete the prior information in the current version release notes except for the header (whether from a prior version or an update)
+    - Copy and paste the GitHub Releases draft just below the header
+    - Ensure any URLs are absolute since relative links will be broken if they apply to GitHub
+<br/>
+<br/>
+  - Follow the instructions on how to [build, test & publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) and run/test the website locally.
+
+  - Commit changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website).
 
 ### Add Release Artifacts to the SVN `dev` Distribution Repository
 
@@ -337,7 +361,7 @@ Remove the old releases from SVN under https://dist.apache.org/repos/dist/releas
 
 - Log the new version at https://reporter.apache.org/addrelease.html?lucenenet
 
-- Publish the Draft [GitHub Release](https://github.com/apache/lucenenet/releases) that was [created earlier](#release-steps), updating the tag if necessary
+- Publish the Draft [GitHub Release](https://github.com/apache/lucenenet/releases) that was [created earlier](#create-a-draft-github-release), updating the tag if necessary
 
 - Update Website with new release
 
@@ -407,9 +431,9 @@ A new release candidate can now be prepared. When complete, a new VOTE thread ca
 > Due to the fact that an Azure Pipeline cannot be re-run with the same version number and users who reference `.nupkg` files will have them in their local `.nuget` cache, there are 2 choices:
 >
 > 1. To use the same version number that failed:
->   - Create a new Azure DevOps pipeline by copying the settings from the pipeline named Lucene.NET-Release.
->   - Test the Lucene.NET-Release pipeline thoroughly, using different version numbers than the one you are releasing.
->   - Create a release pipeline and copy the settings from the release pipeline named Lucene.NET-Release.   
->   - Delete the tag for this release and recreate it with the same version number at the appropriate commit.
->   - If the vote has already started, the new release vote email should provide instructions for removing the previous version from the `.nuget` cache to ensure the new release with the same version is the one being scrutinized.
+>    - Create a new Azure DevOps pipeline by copying the settings from the pipeline named Lucene.NET-Release.
+>    - Test the Lucene.NET-Release pipeline thoroughly, using different version numbers than the one you are releasing.
+>    - Create a release pipeline and copy the settings from the release pipeline named Lucene.NET-Release.   
+>    - Delete the tag for this release and recreate it with the same version number at the appropriate commit.
+>    - If the vote has already started, the new release vote email should provide instructions for removing the previous version from the `.nuget` cache to ensure the new release with the same version is the one being scrutinized.
 > 2. To use a new version number, simply re-start the process from the beginning, copy the release notes from the previous version (both on GitHub and the website) and follow all of the remaining steps above. Discard the draft release notes on GitHub when complete.
