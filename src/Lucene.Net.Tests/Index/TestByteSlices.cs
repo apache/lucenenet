@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using RandomizedTesting.Generators;
-using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -36,7 +35,7 @@ namespace Lucene.Net.Index
             // LUCENENET specific: NUnit will crash with an OOM if we do the full test
             // with verbosity enabled. So, making this a manual setting that can be
             // turned on if, and only if, needed for debugging. If the setting is turned
-            // on, we are decresing the number of iterations by 1/3, which seems to
+            // on, we are decreasing the number of iterations by 1/3, which seems to
             // keep it from crashing.
             bool isVerbose = false;
             if (!isVerbose)

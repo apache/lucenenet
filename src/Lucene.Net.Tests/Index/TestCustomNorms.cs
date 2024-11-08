@@ -42,8 +42,8 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestCustomNorms : LuceneTestCase
     {
-        internal readonly string floatTestField = "normsTestFloat";
-        internal readonly string exceptionTestField = "normsTestExcp";
+        internal const string floatTestField = "normsTestFloat";
+        internal const string exceptionTestField = "normsTestExcp";
 
         [Test]
         public virtual void TestFloatNorms()
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
 
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            Similarity provider = new MySimProvider(this);
+            Similarity provider = new MySimProvider();
             config.SetSimilarity(provider);
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, config);
             LineFileDocs docs = new LineFileDocs(Random);
@@ -92,13 +92,6 @@ namespace Lucene.Net.Index
 
         public class MySimProvider : PerFieldSimilarityWrapper
         {
-            private readonly TestCustomNorms outerInstance;
-
-            public MySimProvider(TestCustomNorms outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             internal Similarity @delegate = new DefaultSimilarity();
 
             public override float QueryNorm(float sumOfSquaredWeights)
@@ -108,7 +101,7 @@ namespace Lucene.Net.Index
 
             public override Similarity Get(string field)
             {
-                if (outerInstance.floatTestField.Equals(field, StringComparison.Ordinal))
+                if (floatTestField.Equals(field, StringComparison.Ordinal))
                 {
                     return new FloatEncodingBoostSimilarity();
                 }

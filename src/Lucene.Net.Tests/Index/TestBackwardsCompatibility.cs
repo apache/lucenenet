@@ -566,8 +566,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
 
-        // LUCENENET-specific: made static
-        private static int Compare(string name, string v)
+        private int Compare(string name, string v)
         {
             int v0 = Convert.ToInt32(name.Substring(0, 2));
             int v1 = Convert.ToInt32(v);
@@ -695,8 +694,7 @@ namespace Lucene.Net.Index
             return indexDir;
         }
 
-        // LUCENENET-specific: made static
-        private static void AddDoc(IndexWriter writer, int id)
+        private void AddDoc(IndexWriter writer, int id)
         {
             Document doc = new Document();
             doc.Add(new TextField("content", "aaa", Field.Store.NO));
@@ -749,8 +747,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        // LUCENENET-specific: made static
-        private static void AddNoProxDoc(IndexWriter writer)
+        private void AddNoProxDoc(IndexWriter writer)
         {
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -765,8 +762,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        // LUCENENET-specific: made static
-        private static int CountDocs(DocsEnum docs)
+        private int CountDocs(DocsEnum docs)
         {
             int count = 0;
             while ((docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
@@ -904,8 +900,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // LUCENENET-specific: made static
-        private static int CheckAllSegmentsUpgraded(Directory dir)
+        private int CheckAllSegmentsUpgraded(Directory dir)
         {
             SegmentInfos infos = new SegmentInfos();
             infos.Read(dir);
@@ -920,8 +915,7 @@ namespace Lucene.Net.Index
             return infos.Count;
         }
 
-        // LUCENENET-specific: made static
-        private static int GetNumberOfSegments(Directory dir)
+        private int GetNumberOfSegments(Directory dir)
         {
             SegmentInfos infos = new SegmentInfos();
             infos.Read(dir);

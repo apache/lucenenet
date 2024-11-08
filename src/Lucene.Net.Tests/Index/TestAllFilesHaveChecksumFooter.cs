@@ -75,8 +75,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        // LUCENENET-specific: made static
-        private static void CheckHeaders(Directory dir)
+        private void CheckHeaders(Directory dir)
         {
             foreach (string file in dir.ListAll())
             {

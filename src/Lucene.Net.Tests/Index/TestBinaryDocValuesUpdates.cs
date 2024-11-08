@@ -97,8 +97,7 @@ namespace Lucene.Net.Index
             return bytes;
         }
 
-        // LUCENENET-specific: made static
-        private static Document Doc(int id)
+        private Document Doc(int id)
         {
             Document doc = new Document();
             doc.Add(new StringField("id", "doc-" + id, Store.NO));

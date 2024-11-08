@@ -542,16 +542,14 @@ namespace Lucene.Net.Index
             aux2.Dispose();
         }
 
-        // LUCENENET-specific: made static
-        private static IndexWriter NewWriter(Directory dir, IndexWriterConfig conf)
+        private IndexWriter NewWriter(Directory dir, IndexWriterConfig conf)
         {
             conf.SetMergePolicy(new LogDocMergePolicy());
             IndexWriter writer = new IndexWriter(dir, conf);
             return writer;
         }
 
-        // LUCENENET-specific: made static
-        private static void AddDocs(IndexWriter writer, int numDocs)
+        private void AddDocs(IndexWriter writer, int numDocs)
         {
             for (int i = 0; i < numDocs; i++)
             {
@@ -561,8 +559,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // LUCENENET-specific: made static
-        private static void AddDocs2(IndexWriter writer, int numDocs)
+        private void AddDocs2(IndexWriter writer, int numDocs)
         {
             for (int i = 0; i < numDocs; i++)
             {
@@ -572,8 +569,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // LUCENENET-specific: made static
-        private static void VerifyNumDocs(Directory dir, int numDocs)
+        private void VerifyNumDocs(Directory dir, int numDocs)
         {
             IndexReader reader = DirectoryReader.Open(dir);
             Assert.AreEqual(numDocs, reader.MaxDoc);
@@ -581,8 +577,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
 
-        // LUCENENET-specific: made static
-        private static void VerifyTermDocs(Directory dir, Term term, int numDocs)
+        private void VerifyTermDocs(Directory dir, Term term, int numDocs)
         {
             IndexReader reader = DirectoryReader.Open(dir);
             DocsEnum docsEnum = TestUtil.Docs(Random, reader, term.Field, term.Bytes, null, null, DocsFlags.NONE);
@@ -1162,8 +1157,7 @@ namespace Lucene.Net.Index
         }
 
         // just like addDocs but with ID, starting from docStart
-        // LUCENENET-specific: made static
-        private static void AddDocsWithID(IndexWriter writer, int numDocs, int docStart)
+        private void AddDocsWithID(IndexWriter writer, int numDocs, int docStart)
         {
             for (int i = 0; i < numDocs; i++)
             {

@@ -165,7 +165,9 @@ namespace Lucene.Net.Index
             {
                 Directory dir = NewDirectory();
                 {
-                    IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
+                    IndexWriter writer = new IndexWriter(dir,
+                        NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                            .SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
                     Document d = new Document();
                     d.Add(new TextField("f1", "d1 first field", Field.Store.YES));
                     d.Add(new TextField("f2", "d1 second field", Field.Store.YES));
@@ -180,7 +182,9 @@ namespace Lucene.Net.Index
                 }
 
                 {
-                    IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
+                    IndexWriter writer = new IndexWriter(dir,
+                        NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                            .SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
                     Document d = new Document();
                     d.Add(new TextField("f1", "d2 first field", Field.Store.YES));
                     d.Add(new StoredField("f3", new byte[] { 1, 2, 3 }));
@@ -199,7 +203,9 @@ namespace Lucene.Net.Index
                 }
 
                 {
-                    IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
+                    IndexWriter writer = new IndexWriter(dir,
+                        NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                            .SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
                     Document d = new Document();
                     d.Add(new TextField("f1", "d3 first field", Field.Store.YES));
                     d.Add(new TextField("f2", "d3 second field", Field.Store.YES));
@@ -223,7 +229,9 @@ namespace Lucene.Net.Index
                 }
 
                 {
-                    IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
+                    IndexWriter writer = new IndexWriter(dir,
+                        NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                            .SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
                     writer.DeleteDocuments(new Term("f1", "d1"));
                     // nuke the first segment entirely so that the segment with gaps is
                     // loaded first!
@@ -231,7 +239,10 @@ namespace Lucene.Net.Index
                     writer.Dispose();
                 }
 
-                IndexWriter writer_ = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(new LogByteSizeMergePolicy()).SetInfoStream(new FailOnNonBulkMergesInfoStream()));
+                IndexWriter writer_ = new IndexWriter(dir,
+                    NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                        .SetMergePolicy(new LogByteSizeMergePolicy())
+                        .SetInfoStream(new FailOnNonBulkMergesInfoStream()));
                 writer_.ForceMerge(1);
                 writer_.Dispose();
 
