@@ -167,6 +167,7 @@ We have partially automated the release notes through GitHub Releases. They are 
 | notes:new-feature              | Categorizes the PR under "New Features"                  |
 | notes:bug-fix                  | Categorizes the PR under "Bug Fixes"                     |
 | notes:performance-improvement  | Categorizes the PR under "Performance Improvements"      |
+| notes:improvement              | Categorizes the PR under "Improvements"                  |
 | notes:website-or-documentation | Categorizes the PR under "Website and API Documentation" |
 | \<none of the above\>          | Categorizes the PR under "Other Changes"                 |
 
