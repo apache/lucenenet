@@ -36,12 +36,12 @@ namespace Lucene.Net.Index
     /// Tests that a useful exception is thrown when attempting to index a term that is
     /// too large
     /// </summary>
-    /// <seealso cref= IndexWriter#MAX_TERM_LENGTH </seealso>
+    /// <seealso cref="IndexWriter.MAX_TERM_LENGTH" />
     [TestFixture]
     public class TestExceedMaxTermLength : LuceneTestCase
     {
-        private static readonly int minTestTermLength = IndexWriter.MAX_TERM_LENGTH + 1;
-        private static readonly int maxTestTermLegnth = IndexWriter.MAX_TERM_LENGTH * 2;
+        private const int minTestTermLength = IndexWriter.MAX_TERM_LENGTH + 1;
+        private const int maxTestTermLegnth = IndexWriter.MAX_TERM_LENGTH * 2;
 
         internal Directory dir = null;
 

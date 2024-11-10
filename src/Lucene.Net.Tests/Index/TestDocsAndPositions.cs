@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Simple testcase for <seealso cref="DocsAndPositionsEnum"/>
+        /// Simple testcase for <see cref="DocsAndPositionsEnum"/>
         /// </summary>
         [Test]
         public virtual void TestPositionsSimple()
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             int numDocs = AtLeast(49);
-            int max = 15678;
+            const int max = 15678;
             int term = Random.Next(max);
             int[] freqInDoc = new int[numDocs];
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-            int howMany = 1000;
+            const int howMany = 1000;
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.OmitNorms = true;
             for (int i = 0; i < 39; i++)

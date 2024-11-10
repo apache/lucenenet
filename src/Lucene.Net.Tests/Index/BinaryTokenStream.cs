@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
     /// A binary tokenstream that lets you index a single
     /// binary token (BytesRef value).
     /// </summary>
-    /// <seealso> cref= CannedBinaryTokenStream </seealso>
+    /// <seealso cref="Lucene.Net.Analysis.CannedBinaryTokenStream" />
     public sealed class BinaryTokenStream : TokenStream
     {
         private readonly IByteTermAttribute bytesAtt;// = addAttribute(typeof(ByteTermAttribute));

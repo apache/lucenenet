@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     using TermQuery = Lucene.Net.Search.TermQuery;
 
     /// <summary>
-    /// Unit test for <seealso cref="DocumentsWriterDeleteQueue"/>
+    /// Unit test for <see cref="DocumentsWriterDeleteQueue"/>
     /// </summary>
     [TestFixture]
     public class TestDocumentsWriterDeleteQueue : LuceneTestCase
@@ -213,11 +213,11 @@ namespace Lucene.Net.Index
         public virtual void TestPartiallyAppliedGlobalSlice()
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-            System.Reflection.FieldInfo field = typeof(DocumentsWriterDeleteQueue).GetField("globalBufferLock", 
+            System.Reflection.FieldInfo field = typeof(DocumentsWriterDeleteQueue).GetField("globalBufferLock",
                 BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance);
             ReentrantLock @lock = (ReentrantLock)field.GetValue(queue);
             @lock.Lock();
-            var t = new ThreadAnonymousClass(this, queue);
+            var t = new ThreadAnonymousClass(queue);
             t.Start();
             t.Join();
             @lock.Unlock();
@@ -232,13 +232,10 @@ namespace Lucene.Net.Index
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestDocumentsWriterDeleteQueue outerInstance;
-
             private DocumentsWriterDeleteQueue queue;
 
-            public ThreadAnonymousClass(TestDocumentsWriterDeleteQueue outerInstance, DocumentsWriterDeleteQueue queue)
+            public ThreadAnonymousClass(DocumentsWriterDeleteQueue queue)
             {
-                this.outerInstance = outerInstance;
                 this.queue = queue;
             }
 

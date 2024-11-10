@@ -3,7 +3,6 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
-using RandomizedTesting.Generators;
 using System;
 using System.Text.RegularExpressions;
 
@@ -189,7 +188,7 @@ namespace Lucene.Net.Index
             Directory leftDir = new Store.RAMDirectory();
             Directory rightDir = new Store.RAMDirectory();
 
-            int maxTermLength = 21678;
+            const int maxTermLength = 21678;
 
             Analysis.Analyzer leftAnalyzer = new Analysis.Standard.StandardAnalyzer(TEST_VERSION_CURRENT) { MaxTokenLength = maxTermLength };
             Analysis.Analyzer rightAnalyzer = new Analysis.Standard.StandardAnalyzer(TEST_VERSION_CURRENT) { MaxTokenLength = maxTermLength };
@@ -251,8 +250,8 @@ namespace Lucene.Net.Index
                 // From AssertTermsEquals
 
                 //string re = "??(*)+*.\U000e06d7*"; // Before escaping
-                string re = "??(\ue808*)+*.\udb41\uded7*"; // Faulty Regex
-                Util.Automaton.CompiledAutomaton automaton = new Util.Automaton.CompiledAutomaton((new Util.Automaton.RegExp(re, Util.Automaton.RegExpSyntax.NONE)).ToAutomaton());
+                const string re = "??(\ue808*)+*.\udb41\uded7*"; // Faulty Regex
+                Util.Automaton.CompiledAutomaton automaton = new Util.Automaton.CompiledAutomaton(new Util.Automaton.RegExp(re, Util.Automaton.RegExpSyntax.NONE).ToAutomaton());
                 if (automaton.Type == Util.Automaton.CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
                 {
                     // From AssertTermsEnumEquals

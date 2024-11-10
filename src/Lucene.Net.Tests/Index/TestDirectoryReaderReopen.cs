@@ -6,7 +6,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -52,25 +51,22 @@ namespace Lucene.Net.Index
             Directory dir1 = NewDirectory();
 
             CreateIndex(Random, dir1, false);
-            PerformDefaultTests(new TestReopenAnonymousClass(this, dir1));
+            PerformDefaultTests(new TestReopenAnonymousClass(dir1));
             dir1.Dispose();
 
             Directory dir2 = NewDirectory();
 
             CreateIndex(Random, dir2, true);
-            PerformDefaultTests(new TestReopenAnonymousClass2(this, dir2));
+            PerformDefaultTests(new TestReopenAnonymousClass2(dir2));
             dir2.Dispose();
         }
 
         private sealed class TestReopenAnonymousClass : TestReopen
         {
-            private readonly TestDirectoryReaderReopen outerInstance;
-
             private Directory dir1;
 
-            public TestReopenAnonymousClass(TestDirectoryReaderReopen outerInstance, Directory dir1)
+            public TestReopenAnonymousClass(Directory dir1)
             {
-                this.outerInstance = outerInstance;
                 this.dir1 = dir1;
             }
 
@@ -87,13 +83,10 @@ namespace Lucene.Net.Index
 
         private sealed class TestReopenAnonymousClass2 : TestReopen
         {
-            private readonly TestDirectoryReaderReopen outerInstance;
-
             private readonly Directory dir2;
 
-            public TestReopenAnonymousClass2(TestDirectoryReaderReopen outerInstance, Directory dir2)
+            public TestReopenAnonymousClass2(Directory dir2)
             {
-                this.outerInstance = outerInstance;
                 this.dir2 = dir2;
             }
 
@@ -131,12 +124,15 @@ namespace Lucene.Net.Index
 
         private void DoTestReopenWithCommit(Random random, Directory dir, bool withReopen)
         {
-            IndexWriter iwriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.CREATE).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter iwriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random))
+                .SetOpenMode(OpenMode.CREATE)
+                .SetMergeScheduler(new SerialMergeScheduler())
+                .SetMergePolicy(NewLogMergePolicy()));
             iwriter.Commit();
             DirectoryReader reader = DirectoryReader.Open(dir);
             try
             {
-                int M = 3;
+                const int M = 3;
                 FieldType customType = new FieldType(TextField.TYPE_STORED);
                 customType.IsTokenized = false;
                 FieldType customType2 = new FieldType(TextField.TYPE_STORED);
@@ -249,7 +245,7 @@ namespace Lucene.Net.Index
             writer.ForceMerge(1);
             writer.Dispose();
 
-            TestReopen test = new TestReopenAnonymousClass3(this, dir, n);
+            TestReopen test = new TestReopenAnonymousClass3(dir, n);
 
             IList<ReaderCouple> readers = new SynchronizedList<ReaderCouple>();
             DirectoryReader firstReader = DirectoryReader.Open(dir);
@@ -281,7 +277,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    task = new ReaderThreadTaskAnonymousClass2(this, readers);
+                    task = new ReaderThreadTaskAnonymousClass2(readers);
                 }
 
                 threads[i] = new ReaderThread(task);
@@ -340,14 +336,11 @@ namespace Lucene.Net.Index
 
         private sealed class TestReopenAnonymousClass3 : TestReopen
         {
-            private readonly TestDirectoryReaderReopen outerInstance;
-
             private readonly Directory dir;
             private readonly int n;
 
-            public TestReopenAnonymousClass3(TestDirectoryReaderReopen outerInstance, Directory dir, int n)
+            public TestReopenAnonymousClass3(Directory dir, int n)
             {
-                this.outerInstance = outerInstance;
                 this.dir = dir;
                 this.n = n;
             }
@@ -375,7 +368,7 @@ namespace Lucene.Net.Index
             private readonly DirectoryReader r;
             private readonly int index;
 
-            public ReaderThreadTaskAnonymousClass(TestDirectoryReaderReopen outerInstance, Lucene.Net.Index.TestDirectoryReaderReopen.TestReopen test, IList<ReaderCouple> readers, ISet<DirectoryReader> readersToClose, DirectoryReader r, int index)
+            public ReaderThreadTaskAnonymousClass(TestDirectoryReaderReopen outerInstance, TestReopen test, IList<ReaderCouple> readers, ISet<DirectoryReader> readersToClose, DirectoryReader r, int index)
             {
                 this.outerInstance = outerInstance;
                 this.test = test;
@@ -393,7 +386,7 @@ namespace Lucene.Net.Index
                     if (index % 2 == 0)
                     {
                         // refresh reader synchronized
-                        ReaderCouple c = (outerInstance.RefreshReader(r, test, index, true));
+                        ReaderCouple c = outerInstance.RefreshReader(r, test, index, true);
                         readersToClose.Add(c.newReader);
                         readersToClose.Add(c.refreshedReader);
                         readers.Add(c);
@@ -435,13 +428,10 @@ namespace Lucene.Net.Index
 
         private sealed class ReaderThreadTaskAnonymousClass2 : ReaderThreadTask
         {
-            private readonly TestDirectoryReaderReopen outerInstance;
-
             private readonly IList<ReaderCouple> readers;
 
-            public ReaderThreadTaskAnonymousClass2(TestDirectoryReaderReopen outerInstance, IList<ReaderCouple> readers)
+            public ReaderThreadTaskAnonymousClass2(IList<ReaderCouple> readers)
             {
-                this.outerInstance = outerInstance;
                 this.readers = readers;
             }
 
@@ -583,14 +573,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
-        public void CreateIndex(Random random, Directory dir, bool multiSegment)
+        public static void CreateIndex(Random random, Directory dir, bool multiSegment)
         {
             IndexWriter.Unlock(dir);
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(new LogDocMergePolicy()));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random))
+                .SetMergePolicy(new LogDocMergePolicy()));
 
             for (int i = 0; i < 100; i++)
             {
@@ -724,7 +711,10 @@ namespace Lucene.Net.Index
         public virtual void TestReopenOnCommit()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(new KeepAllCommits()).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetIndexDeletionPolicy(new KeepAllCommits())
+                .SetMaxBufferedDocs(-1)
+                .SetMergePolicy(NewLogMergePolicy(10)));
             for (int i = 0; i < 4; i++)
             {
                 Document doc = new Document();

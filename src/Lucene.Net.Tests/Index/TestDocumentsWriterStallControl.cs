@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /// <summary>
-    /// Tests for <seealso cref="DocumentsWriterStallControl"/>
+    /// Tests for <see cref="DocumentsWriterStallControl"/>
     /// </summary>
     [TestFixture]
     [Timeout(900_000)] // 15 minutes
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
             Start(threads);
             int iters = AtLeast(10000);
             //float checkPointProbability = TestNightly ? 0.5f : 0.1f;
-            // LUCENENET specific - reduced probabliltiy on x86 to prevent it from timing out.
+            // LUCENENET specific - reduced probability on x86 to prevent it from timing out.
             float checkPointProbability = TestNightly ? (Lucene.Net.Util.Constants.RUNTIME_IS_64BIT ? 0.5f : 0.25f) : 0.1f;
             for (int i = 0; i < iters; i++)
             {

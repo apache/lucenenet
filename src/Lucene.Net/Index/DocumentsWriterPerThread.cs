@@ -94,12 +94,12 @@ namespace Lucene.Net.Index
                 TermsHashConsumer termVectorsWriter = new TermVectorsConsumer(documentsWriterPerThread);
                 TermsHashConsumer freqProxWriter = new FreqProxTermsWriter();
 
-                InvertedDocConsumer termsHash = new TermsHash(documentsWriterPerThread, freqProxWriter, true, 
+                InvertedDocConsumer termsHash = new TermsHash(documentsWriterPerThread, freqProxWriter, true,
                     new TermsHash(documentsWriterPerThread, termVectorsWriter, false, null));
                 NormsConsumer normsWriter = new NormsConsumer();
                 DocInverter docInverter = new DocInverter(documentsWriterPerThread.docState, termsHash, normsWriter);
                 StoredFieldsConsumer storedFields = new TwoStoredFieldsConsumers(
-                                                            new StoredFieldsProcessor(documentsWriterPerThread), 
+                                                            new StoredFieldsProcessor(documentsWriterPerThread),
                                                             new DocValuesProcessor(documentsWriterPerThread.bytesUsed));
                 return new DocFieldProcessor(documentsWriterPerThread, docInverter, storedFields);
             }
@@ -686,13 +686,13 @@ namespace Lucene.Net.Index
         /// Initial chunks size of the shared byte[] blocks used to
         /// store postings data
         /// </summary>
-        internal static readonly int BYTE_BLOCK_NOT_MASK = ~ByteBlockPool.BYTE_BLOCK_MASK;
+        internal const int BYTE_BLOCK_NOT_MASK = ~ByteBlockPool.BYTE_BLOCK_MASK;
 
         /// <summary>
         /// if you increase this, you must fix field cache impl for
         /// getTerms/getTermsIndex requires &lt;= 32768
         /// </summary>
-        internal static readonly int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
+        internal const int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
 
         /// <summary>
         /// NOTE: This was IntBlockAllocator in Lucene
