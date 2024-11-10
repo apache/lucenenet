@@ -17,6 +17,9 @@
     - title: 🚀 Performance Improvements
       labels:
         - notes:performance-improvement
+    - title: 🏆 Improvements
+      labels:
+        - notes:improvement
     - title: 📄 Website and API Documentation
       labels:
         - notes:website-or-documentation
