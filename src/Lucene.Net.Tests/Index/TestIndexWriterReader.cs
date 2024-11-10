@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Search;
 using Lucene.Net.Util;
 #if FEATURE_INDEXWRITER_TESTS
 using J2N.Threading;
@@ -307,6 +308,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void ExposeCompTermVR()
         {
             bool doFullMerge = false;
@@ -369,7 +371,7 @@ namespace Lucene.Net.Index
             bool doFullMerge = true;
 
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
-            IndexWriter writer = new IndexWriter(dir1, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetReaderTermsIndexDivisor(2));
+            IndexWriter writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetReaderTermsIndexDivisor(2));
             // create the index
             CreateIndexNoClose(!doFullMerge, "index1", writer);
             writer.Flush(false, true);
@@ -505,7 +507,6 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-
 
             internal virtual void Close(bool doWait)
             {
@@ -696,9 +697,10 @@ namespace Lucene.Net.Index
         * //} //writer.DeleteDocuments(term); td.Dispose(); return doc; }
         */
 
-        public void CreateIndex(Random random, Directory dir1, string indexName, bool multiSegment)
+        public static void CreateIndex(Random random, Directory dir1, string indexName, bool multiSegment)
         {
-            IndexWriter w = new IndexWriter(dir1, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(new LogDocMergePolicy()));
+            IndexWriter w = new IndexWriter(dir1, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random))
+                .SetMergePolicy(new LogDocMergePolicy()));
             for (int i = 0; i < 100; i++)
             {
                 w.AddDocument(DocHelper.CreateDocument(i, indexName, 4));
@@ -757,8 +759,7 @@ namespace Lucene.Net.Index
 
             ((LogMergePolicy)writer.Config.MergePolicy).MergeFactor = 2;
 
-            //int num = AtLeast(100);
-            int num = 101;
+            int num = AtLeast(100);
             for (int i = 0; i < num; i++)
             {
                 writer.AddDocument(DocHelper.CreateDocument(i, "test", 4));
@@ -769,8 +770,7 @@ namespace Lucene.Net.Index
             Console.WriteLine("Count {0}", warmer.warmCount);
             int count = warmer.warmCount;
 
-            var newDocument = DocHelper.CreateDocument(17, "test", 4);
-            writer.AddDocument(newDocument);
+            writer.AddDocument(DocHelper.CreateDocument(17, "test", 4));
             writer.ForceMerge(1);
             Assert.IsTrue(warmer.warmCount > count);
 
@@ -886,7 +886,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousClass(writer, dirs, endTime, excs);
-                threads[i].IsBackground = (true);
+                threads[i].IsBackground = true;
                 threads[i].Start();
             }
 
@@ -983,7 +983,8 @@ namespace Lucene.Net.Index
         public virtual void TestDuringAddDelete()
         {
             Directory dir1 = NewDirectory();
-            var writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy(2)));
+            var writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMergePolicy(NewLogMergePolicy(2)));
 
             // create the index
             CreateIndexNoClose(false, "test", writer);
@@ -1000,7 +1001,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numThreads; i++)
             {
                 threads[i] = new ThreadAnonymousClass2(writer, endTime, excs);
-                threads[i].IsBackground = (true);
+                threads[i].IsBackground = true;
                 threads[i].Start();
             }
 
@@ -1189,7 +1190,7 @@ namespace Lucene.Net.Index
                 IndexSearcher s = NewSearcher(r);
                 TopDocs hits = s.Search(new TermQuery(new Term("foo", "bar")), 10);
                 Assert.AreEqual(20, hits.TotalHits);
-                didWarm.Value = (true);
+                didWarm.Value = true;
             }
         }
 
@@ -1230,7 +1231,7 @@ namespace Lucene.Net.Index
             {
                 if ("SMSW".Equals(component, StringComparison.Ordinal))
                 {
-                    didWarm.Value = (true);
+                    didWarm.Value = true;
                 }
             }
 
@@ -1247,7 +1248,8 @@ namespace Lucene.Net.Index
             // they're picked.
             AssumeFalse("PreFlex codec does not support ReaderTermsIndexDivisor!", "Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal));
 
-            IndexWriterConfig conf = (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetReaderTermsIndexDivisor(-1);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetReaderTermsIndexDivisor(-1);
 
             // Don't proceed if picked Codec is in the list of illegal ones.
             string format = TestUtil.GetPostingsFormat("f");
@@ -1345,14 +1347,12 @@ namespace Lucene.Net.Index
             // other NRT reader, since it is already marked closed!
             for (int i = 0; i < 2; i++)
             {
-                shouldFail.Value = (true);
+                shouldFail.Value = true;
                 try
                 {
                     writer.GetReader().Dispose();
                 }
-#pragma warning disable 168
-                catch (FakeIOException e)
-#pragma warning restore 168
+                catch (FakeIOException /*e*/)
                 {
                     // expected
                     if (Verbose)
@@ -1384,9 +1384,9 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: now fail; exc:");
-                        Console.WriteLine((new Exception()).StackTrace);
+                        Console.WriteLine(new Exception().StackTrace);
                     }
-                    shouldFail.Value = (false);
+                    shouldFail.Value = false;
                     throw new FakeIOException();
                 }
             }

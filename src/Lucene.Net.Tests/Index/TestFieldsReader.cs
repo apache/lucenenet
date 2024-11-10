@@ -44,10 +44,6 @@ namespace Lucene.Net.Index
         private static Document testDoc;
         private static FieldInfos.Builder fieldInfos = null;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
         [OneTimeSetUp]
         public override void BeforeClass()
         {

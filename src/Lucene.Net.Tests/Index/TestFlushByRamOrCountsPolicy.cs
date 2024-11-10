@@ -43,9 +43,8 @@ namespace Lucene.Net.Index
     // LUCENENET specific - Specify to unzip the line file docs
     [UseTempLineDocsFile]
     [Timeout(900_000)] // 15 minutes
-    public class TestFlushByRamOrCountsPolicy : LuceneTestCase 
+    public class TestFlushByRamOrCountsPolicy : LuceneTestCase
     {
-
         private static LineFileDocs lineDocFile;
 
         [OneTimeSetUp]
@@ -95,7 +94,8 @@ namespace Lucene.Net.Index
             MockAnalyzer analyzer = new MockAnalyzer(Random);
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetFlushPolicy(flushPolicy);
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                .SetFlushPolicy(flushPolicy);
             int numDWPT = 1 + AtLeast(2);
             DocumentsWriterPerThreadPool threadPool = new DocumentsWriterPerThreadPool(numDWPT);
             iwc.SetIndexerThreadPool(threadPool);
@@ -156,7 +156,8 @@ namespace Lucene.Net.Index
                 AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
                 Directory dir = NewDirectory();
                 MockDefaultFlushPolicy flushPolicy = new MockDefaultFlushPolicy();
-                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetFlushPolicy(flushPolicy);
+                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetFlushPolicy(flushPolicy);
 
                 int numDWPT = 1 + AtLeast(2);
                 DocumentsWriterPerThreadPool threadPool = new DocumentsWriterPerThreadPool(numDWPT);

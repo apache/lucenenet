@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void Test()
         {
-            string name = "testFile";
+            const string name = "testFile";
             Directory dir = NewDirectory();
             FieldInfos fieldInfos = CreateAndWriteFieldInfos(dir, name);
 
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestReadOnly()
         {
-            string name = "testFile";
+            const string name = "testFile";
             Directory dir = NewDirectory();
             FieldInfos fieldInfos = CreateAndWriteFieldInfos(dir, name);
             FieldInfos readOnly = ReadFieldInfos(dir, name);

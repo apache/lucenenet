@@ -5,6 +5,9 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Text.RegularExpressions;
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
+using RandomizedTesting.Generators;
+#endif
 
 namespace Lucene.Net.Index
 {

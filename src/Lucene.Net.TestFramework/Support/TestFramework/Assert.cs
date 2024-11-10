@@ -930,7 +930,7 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void NotNull(object anObject)
         {
-            if (!(anObject is null))
+            if (anObject is not null)
                 _NUnit.Assert.NotNull(anObject);
         }
         //
@@ -973,7 +973,7 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Null(object anObject, string message, params object[] args)
         {
-            if (!(anObject is null))
+            if (anObject is not null)
                 _NUnit.Assert.Null(anObject, message, args);
         }
         //
@@ -988,7 +988,7 @@ namespace Lucene.Net.TestFramework
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Null(object anObject)
         {
-            if (!(anObject is null))
+            if (anObject is not null)
                 _NUnit.Assert.Null(anObject);
         }
 
