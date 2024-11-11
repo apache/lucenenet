@@ -686,13 +686,13 @@ namespace Lucene.Net.Index
         /// Initial chunks size of the shared byte[] blocks used to
         /// store postings data
         /// </summary>
-        internal const int BYTE_BLOCK_NOT_MASK = ~ByteBlockPool.BYTE_BLOCK_MASK;
+        internal static readonly int BYTE_BLOCK_NOT_MASK = ~ByteBlockPool.BYTE_BLOCK_MASK;
 
         /// <summary>
         /// if you increase this, you must fix field cache impl for
         /// getTerms/getTermsIndex requires &lt;= 32768
         /// </summary>
-        internal const int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
+        internal static readonly int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
 
         /// <summary>
         /// NOTE: This was IntBlockAllocator in Lucene

@@ -350,20 +350,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        // LUCENENET specific - commented out unused method
-        // internal virtual void AssertTermDocsCount(string msg, IndexReader reader, Term term, int expected)
-        // {
-        //     DocsEnum tdocs = TestUtil.Docs(Random, reader, term.Field, new BytesRef(term.Text), MultiFields.GetLiveDocs(reader), null, 0);
-        //     int count = 0;
-        //     if (tdocs != null)
-        //     {
-        //         while (tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
-        //         {
-        //             count++;
-        //         }
-        //     }
-        //     Assert.AreEqual(expected, count, msg + ", count mismatch");
-        // }
+        // LUCENENET specific - Removed AssertTermDocsCount() because it was not in use
 
         [Test]
         public virtual void TestBinaryFields()

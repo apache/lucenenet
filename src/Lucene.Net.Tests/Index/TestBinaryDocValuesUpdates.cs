@@ -1142,7 +1142,8 @@ namespace Lucene.Net.Index
             writer = new IndexWriter(dir, conf);
             writer.UpdateBinaryDocValue(new Term("id", "doc"), "f", ToBytes(4L));
             OldFormatImpersonationIsActive = false;
-            try {
+            try
+            {
                 writer.Dispose();
                 Assert.Fail("should not have succeeded to update a segment written with an old Codec");
             } catch (Exception e) when (e.IsUnsupportedOperationException()) {

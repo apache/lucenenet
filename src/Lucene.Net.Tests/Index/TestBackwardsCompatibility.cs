@@ -159,18 +159,38 @@ namespace Lucene.Net.Index
         */
 
         internal static readonly string[] oldNames = {
-            "40.cfs", "40.nocfs", "41.cfs", "41.nocfs", "42.cfs",
-            "42.nocfs", "45.cfs", "45.nocfs", "461.cfs", "461.nocfs"
+            "40.cfs",
+            "40.nocfs",
+            "41.cfs",
+            "41.nocfs",
+            "42.cfs",
+            "42.nocfs",
+            "45.cfs",
+            "45.nocfs",
+            "461.cfs",
+            "461.nocfs"
         };
 
         internal readonly string[] unsupportedNames = {
-            "19.cfs", "19.nocfs", "20.cfs", "20.nocfs", "21.cfs",
-            "21.nocfs", "22.cfs", "22.nocfs", "23.cfs", "23.nocfs",
-            "24.cfs", "24.nocfs", "29.cfs", "29.nocfs"
+            "19.cfs",
+            "19.nocfs",
+            "20.cfs",
+            "20.nocfs",
+            "21.cfs",
+            "21.nocfs",
+            "22.cfs",
+            "22.nocfs",
+            "23.cfs",
+            "23.nocfs",
+            "24.cfs",
+            "24.nocfs",
+            "29.cfs",
+            "29.nocfs"
         };
 
         internal static readonly string[] oldSingleSegmentNames = {
-            "40.optimized.cfs", "40.optimized.nocfs"
+            "40.optimized.cfs",
+            "40.optimized.nocfs"
         };
 
         internal static IDictionary<string, Directory> oldIndexDirs;
@@ -299,16 +319,16 @@ namespace Lucene.Net.Index
                     writer = null;
                 }
 
-                StringBuilder sb = new StringBuilder(1024);
+                StringBuilder bos = new StringBuilder(512); // LUCENENET specific: allocating 512 chars instead of 1024 bytes
                 CheckIndex checker = new CheckIndex(dir);
                 CheckIndex.Status indexStatus;
-                using (var infoStream = new StringWriter(sb))
+                using (var infoStream = new StringWriter(bos))
                 {
                     checker.InfoStream = infoStream;
                     indexStatus = checker.DoCheckIndex();
                 }
                 Assert.IsFalse(indexStatus.Clean);
-                Assert.IsTrue(sb.ToString().Contains(nameof(IndexFormatTooOldException)));
+                Assert.IsTrue(bos.ToString().Contains(nameof(IndexFormatTooOldException)));
 
                 dir.Dispose();
                 TestUtil.Rm(oldIndxeDir);

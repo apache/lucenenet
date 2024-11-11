@@ -45,9 +45,9 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class ByteBlockPool
     {
-        public const int BYTE_BLOCK_SHIFT = 15;
-        public const int BYTE_BLOCK_SIZE = 1 << BYTE_BLOCK_SHIFT;
-        public const int BYTE_BLOCK_MASK = BYTE_BLOCK_SIZE - 1;
+        public static readonly int BYTE_BLOCK_SHIFT = 15;
+        public static readonly int BYTE_BLOCK_SIZE = 1 << BYTE_BLOCK_SHIFT;
+        public static readonly int BYTE_BLOCK_MASK = BYTE_BLOCK_SIZE - 1;
 
         /// <summary>
         /// Abstract class for allocating and freeing byte

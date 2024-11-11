@@ -113,18 +113,36 @@ namespace Lucene.Net.Index
         internal const string CURRENT_RESOURCE_DIRECTORY = "Lucene.Net.Tests.Index.";
 
         internal static readonly string[] oldNames = {
-            "30.cfs", "30.nocfs", "31.cfs", "31.nocfs", "32.cfs",
-            "32.nocfs", "34.cfs", "34.nocfs"
+            "30.cfs",
+            "30.nocfs",
+            "31.cfs",
+            "31.nocfs",
+            "32.cfs",
+            "32.nocfs",
+            "34.cfs",
+            "34.nocfs"
         };
 
         internal readonly string[] unsupportedNames = {
-            "19.cfs", "19.nocfs", "20.cfs", "20.nocfs", "21.cfs",
-            "21.nocfs", "22.cfs", "22.nocfs", "23.cfs", "23.nocfs",
-            "24.cfs", "24.nocfs", "29.cfs", "29.nocfs"
+            "19.cfs",
+            "19.nocfs",
+            "20.cfs",
+            "20.nocfs",
+            "21.cfs",
+            "21.nocfs",
+            "22.cfs",
+            "22.nocfs",
+            "23.cfs",
+            "23.nocfs",
+            "24.cfs",
+            "24.nocfs",
+            "29.cfs",
+            "29.nocfs"
         };
 
         internal static readonly string[] oldSingleSegmentNames = {
-            "31.optimized.cfs", "31.optimized.nocfs"
+            "31.optimized.cfs",
+            "31.optimized.nocfs"
         };
 
         internal static IDictionary<string, Directory> oldIndexDirs;
@@ -232,7 +250,7 @@ namespace Lucene.Net.Index
                     writer = null;
                 }
 
-                StringBuilder bos = new StringBuilder();
+                StringBuilder bos = new StringBuilder(512); // LUCENENET specific: allocating 512 chars instead of 1024 bytes
                 CheckIndex checker = new CheckIndex(dir);
                 checker.InfoStream = new StringWriter(bos);
                 CheckIndex.Status indexStatus = checker.DoCheckIndex();

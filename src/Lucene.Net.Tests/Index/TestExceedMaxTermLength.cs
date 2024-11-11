@@ -40,8 +40,8 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestExceedMaxTermLength : LuceneTestCase
     {
-        private const int minTestTermLength = IndexWriter.MAX_TERM_LENGTH + 1;
-        private const int maxTestTermLegnth = IndexWriter.MAX_TERM_LENGTH * 2;
+        private static readonly int minTestTermLength = IndexWriter.MAX_TERM_LENGTH + 1;
+        private static readonly int maxTestTermLegnth = IndexWriter.MAX_TERM_LENGTH * 2;
 
         internal Directory dir = null;
 

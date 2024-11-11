@@ -122,7 +122,8 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private void DoTestReopenWithCommit(Random random, Directory dir, bool withReopen)
+        // LUCENENET specific - made static
+        private static void DoTestReopenWithCommit(Random random, Directory dir, bool withReopen)
         {
             IndexWriter iwriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random))
                 .SetOpenMode(OpenMode.CREATE)
@@ -185,7 +186,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void PerformDefaultTests(TestReopen test)
+        // LUCENENET specific - made static
+        private static void PerformDefaultTests(TestReopen test)
         {
             DirectoryReader index1 = test.OpenReader();
             DirectoryReader index2 = test.OpenReader();
@@ -273,7 +275,7 @@ namespace Lucene.Net.Index
 
                 if (i < 4 || (i >= 10 && i < 14) || i > 18)
                 {
-                    task = new ReaderThreadTaskAnonymousClass(this, test, readers, readersToClose, r, index);
+                    task = new ReaderThreadTaskAnonymousClass(test, readers, readersToClose, r, index);
                 }
                 else
                 {
@@ -360,17 +362,14 @@ namespace Lucene.Net.Index
 
         private sealed class ReaderThreadTaskAnonymousClass : ReaderThreadTask
         {
-            private readonly TestDirectoryReaderReopen outerInstance;
-
             private readonly TestReopen test;
             private readonly IList<ReaderCouple> readers;
             private readonly ISet<DirectoryReader> readersToClose;
             private readonly DirectoryReader r;
             private readonly int index;
 
-            public ReaderThreadTaskAnonymousClass(TestDirectoryReaderReopen outerInstance, TestReopen test, IList<ReaderCouple> readers, ISet<DirectoryReader> readersToClose, DirectoryReader r, int index)
+            public ReaderThreadTaskAnonymousClass(TestReopen test, IList<ReaderCouple> readers, ISet<DirectoryReader> readersToClose, DirectoryReader r, int index)
             {
-                this.outerInstance = outerInstance;
                 this.test = test;
                 this.readers = readers;
                 this.readersToClose = readersToClose;
@@ -386,7 +385,7 @@ namespace Lucene.Net.Index
                     if (index % 2 == 0)
                     {
                         // refresh reader synchronized
-                        ReaderCouple c = outerInstance.RefreshReader(r, test, index, true);
+                        ReaderCouple c = RefreshReader(r, test, index, true);
                         readersToClose.Add(c.newReader);
                         readersToClose.Add(c.refreshedReader);
                         readers.Add(c);
@@ -513,14 +512,17 @@ namespace Lucene.Net.Index
             }
         }
 
-        private object createReaderMutex = new object();
+        // LUCENENET specific - made static readonly
+        private static readonly object createReaderMutex = new object();
 
-        private ReaderCouple RefreshReader(DirectoryReader reader, bool hasChanges)
+        // LUCENENET specific - made static
+        private static ReaderCouple RefreshReader(DirectoryReader reader, bool hasChanges)
         {
             return RefreshReader(reader, null, -1, hasChanges);
         }
 
-        internal virtual ReaderCouple RefreshReader(DirectoryReader reader, TestReopen test, int modify, bool hasChanges)
+        // LUCENENET specific - made static
+        internal static ReaderCouple RefreshReader(DirectoryReader reader, TestReopen test, int modify, bool hasChanges)
         {
             UninterruptableMonitor.Enter(createReaderMutex);
             try

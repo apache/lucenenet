@@ -741,7 +741,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal void LaunchThreads(int numIter)
+            internal virtual void LaunchThreads(int numIter)
             {
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
@@ -794,7 +794,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal void JoinThreads()
+            internal virtual void JoinThreads()
             {
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
@@ -802,13 +802,13 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal void Close(bool doWait)
+            internal virtual void Close(bool doWait)
             {
                 didClose = true;
                 writer2.Dispose(doWait);
             }
 
-            internal void CloseDir()
+            internal virtual void CloseDir()
             {
                 for (int i = 0; i < NUM_COPY; i++)
                 {
