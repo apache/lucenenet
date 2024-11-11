@@ -230,7 +230,7 @@ namespace Lucene.Net.Analysis
             Assert.AreNotSame(pl, copy.Payload);
         }
 
-        public interface ISenselessAttribute : Lucene.Net.Util.IAttribute
+        public interface ISenselessAttribute : IAttribute
         {
         }
 
@@ -276,14 +276,14 @@ namespace Lucene.Net.Analysis
             Token t = new Token("foobar", 6, 22, 8);
             TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>()
             {
-                { typeof(ICharTermAttribute).Name + "#term", "foobar" },
-                { typeof(ITermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar") },
-                { typeof(IOffsetAttribute).Name + "#startOffset", 6 },
-                { typeof(IOffsetAttribute).Name + "#endOffset", 22 },
-                { typeof(IPositionIncrementAttribute).Name + "#positionIncrement", 1 },
-                { typeof(IPayloadAttribute).Name + "#payload", null },
-                { typeof(ITypeAttribute).Name + "#type", TypeAttribute.DEFAULT_TYPE },
-                { typeof(IFlagsAttribute).Name + "#flags", 8 }
+                { nameof(ICharTermAttribute) + "#term", "foobar" },
+                { nameof(ITermToBytesRefAttribute) + "#bytes", new BytesRef("foobar") },
+                { nameof(IOffsetAttribute) + "#startOffset", 6 },
+                { nameof(IOffsetAttribute) + "#endOffset", 22 },
+                { nameof(IPositionIncrementAttribute) + "#positionIncrement", 1 },
+                { nameof(IPayloadAttribute) + "#payload", null },
+                { nameof(ITypeAttribute) + "#type", TypeAttribute.DEFAULT_TYPE },
+                { nameof(IFlagsAttribute) + "#flags", 8 }
             });
         }
 
