@@ -85,22 +85,17 @@ namespace Lucene.Net.Analysis
 
         private sealed class TokenStreamAnonymousClass : TokenStream
         {
-            private TestCachingTokenFilter outerInstance;
+            private readonly TestCachingTokenFilter outerInstance;
 
             public TokenStreamAnonymousClass(TestCachingTokenFilter outerInstance)
             {
-                InitMembers(outerInstance);
-            }
-
-            public void InitMembers(TestCachingTokenFilter outerInstance)
-            {
                 this.outerInstance = outerInstance;
-                index = 0;
+                // LUCENENET specific - AddAttribute must be called from the constructor
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
-            private int index;
+            private int index /* = 0 */;
             private ICharTermAttribute termAtt;
             private IOffsetAttribute offsetAtt;
 

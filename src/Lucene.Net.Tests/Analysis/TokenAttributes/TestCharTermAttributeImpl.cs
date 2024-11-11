@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         [Test]
         public virtual void TestToString()
         {
-            char[] b = new char[] { 'a', 'l', 'o', 'h', 'a' };
+            char[] b = { 'a', 'l', 'o', 'h', 'a' };
             CharTermAttribute t = new CharTermAttribute();
             t.CopyBuffer(b, 0, 5);
             Assert.AreEqual("aloha", t.ToString());
@@ -151,8 +151,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
             t.Append("foobar");
             TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>()
             {
-                    { typeof(ICharTermAttribute).Name + "#term", "foobar" },
-                    { typeof(ITermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar") }
+                    { nameof(ICharTermAttribute) + "#term", "foobar" },
+                    { nameof(ITermToBytesRefAttribute) + "#bytes", new BytesRef("foobar") }
             });
         }
 
@@ -230,9 +230,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((ICharSequence)t2, 1, 5 - 1); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException iobe)
-#pragma warning restore 168
+            catch (ArgumentOutOfRangeException /*iobe*/)
             {
             }
 
@@ -241,16 +239,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((ICharSequence)t2, 1, 0 - 1); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException iobe)
-#pragma warning restore 168
+            catch (ArgumentOutOfRangeException /*iobe*/)
             {
             }
 
-            string expected = t.ToString();
-            t.Append((ICharSequence)null); // No-op
-            Assert.AreEqual(expected, t.ToString());
-
+            t.Append((ICharSequence)null); // LUCENENET specific: No-op for appending null
+            Assert.AreEqual("4teste", t.ToString()); // LUCENENET specific: different assertion
 
             // LUCENENET specific - test string overloads
             try
@@ -258,9 +252,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((string)t2.ToString(), 1, 5 - 1); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException iobe)
-#pragma warning restore 168
+            catch (ArgumentOutOfRangeException /*iobe*/)
             {
             }
 
@@ -269,15 +261,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((string)t2.ToString(), 1, 0 - 1); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException iobe)
-#pragma warning restore 168
+            catch (ArgumentOutOfRangeException /*iobe*/)
             {
             }
 
-            expected = t.ToString();
             t.Append((string)null); // No-op
-            Assert.AreEqual(expected, t.ToString());
+            Assert.AreEqual("4teste", t.ToString());
 
             // LUCENENET specific - test char[] overloads
             try
@@ -285,9 +274,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((char[])t2.ToString().ToCharArray(), 1, 5 - 1); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException iobe)
-#pragma warning restore 168
+            catch (ArgumentOutOfRangeException /*iobe*/)
             {
             }
 
@@ -296,15 +283,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Append((char[])t2.ToString().ToCharArray(), 1, 0 - 1); // LUCENENET: Corrected 3rd parameter
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
-#pragma warning disable 168
-            catch (ArgumentOutOfRangeException iobe)
-#pragma warning restore 168
+            catch (ArgumentOutOfRangeException /*iobe*/)
             {
             }
 
-            expected = t.ToString();
             t.Append((char[])null); // No-op
-            Assert.AreEqual(expected, t.ToString());
+            Assert.AreEqual("4teste", t.ToString());
         }
 
         [Test]
@@ -339,19 +323,16 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             // finally use a completely custom ICharSequence that is not catched by instanceof checks
             const string longTestString = "012345678901234567890123456789";
-            t.Append(new CharSequenceAnonymousClass(this, longTestString));
+            t.Append(new CharSequenceAnonymousClass(longTestString));
             Assert.AreEqual("4567890123456" + longTestString, t.ToString());
         }
 
         private sealed class CharSequenceAnonymousClass : ICharSequence
         {
-            private readonly TestCharTermAttributeImpl outerInstance;
+            private readonly string longTestString;
 
-            private string longTestString;
-
-            public CharSequenceAnonymousClass(TestCharTermAttributeImpl outerInstance, string longTestString)
+            public CharSequenceAnonymousClass(string longTestString)
             {
-                this.outerInstance = outerInstance;
                 this.longTestString = longTestString;
             }
 
@@ -406,7 +387,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                var _ = t[-1];
+                _ = t[-1];
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException)
@@ -415,7 +396,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                var _ = t[4];
+                _ = t[4];
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException)
@@ -424,7 +405,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                t.Subsequence(0, 5 - 0); // LUCENENET: Corrected 2nd parameter of Subsequence
+                _ = t.Subsequence(0, 5 - 0); // LUCENENET: Corrected 2nd parameter of Subsequence
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException)
@@ -433,7 +414,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             try
             {
-                t.Subsequence(5, 0 - 5); // LUCENENET: Corrected 2nd parameter of Subsequence
+                _ = t.Subsequence(5, 0 - 5); // LUCENENET: Corrected 2nd parameter of Subsequence
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
             catch (ArgumentOutOfRangeException)

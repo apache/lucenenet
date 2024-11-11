@@ -63,6 +63,7 @@ namespace Lucene.Net.Analysis
 
             public override int Read(char[] cbuf, int off, int len)
             {
+                // LUCENENET specific: We need to return -1 when there are no more characters to read to match Java
                 int numRead = m_input.Read(cbuf, off, len);
                 return numRead == 0 ? -1 : numRead;
             }
@@ -82,6 +83,7 @@ namespace Lucene.Net.Analysis
 
             public override int Read(char[] cbuf, int off, int len)
             {
+                // LUCENENET specific: We need to return -1 when there are no more characters to read to match Java
                 int numRead = m_input.Read(cbuf, off, len);
                 return numRead == 0 ? -1 : numRead;
             }
