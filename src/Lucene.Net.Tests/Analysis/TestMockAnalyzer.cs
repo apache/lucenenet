@@ -48,36 +48,48 @@ namespace Lucene.Net.Analysis
     public class TestMockAnalyzer : BaseTokenStreamTestCase
     {
         /// <summary>
-        /// Test a configuration that behaves a lot like WhitespaceAnalyzer </summary>
+        /// Test a configuration that behaves a lot like WhitespaceAnalyzer
+        /// </summary>
         [Test]
         public virtual void TestWhitespace()
         {
             Analyzer a = new MockAnalyzer(Random);
-            AssertAnalyzesTo(a, "A bc defg hiJklmn opqrstuv wxy z ", new string[] { "a", "bc", "defg", "hijklmn", "opqrstuv", "wxy", "z" });
-            AssertAnalyzesTo(a, "aba cadaba shazam", new string[] { "aba", "cadaba", "shazam" });
-            AssertAnalyzesTo(a, "break on whitespace", new string[] { "break", "on", "whitespace" });
+            AssertAnalyzesTo(a, "A bc defg hiJklmn opqrstuv wxy z ",
+                new string[] { "a", "bc", "defg", "hijklmn", "opqrstuv", "wxy", "z" });
+            AssertAnalyzesTo(a, "aba cadaba shazam",
+                new string[] { "aba", "cadaba", "shazam" });
+            AssertAnalyzesTo(a, "break on whitespace",
+                new string[] { "break", "on", "whitespace" });
         }
 
         /// <summary>
-        /// Test a configuration that behaves a lot like SimpleAnalyzer </summary>
+        /// Test a configuration that behaves a lot like SimpleAnalyzer
+        /// </summary>
         [Test]
         public virtual void TestSimple()
         {
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
-            AssertAnalyzesTo(a, "a-bc123 defg+hijklmn567opqrstuv78wxy_z ", new string[] { "a", "bc", "defg", "hijklmn", "opqrstuv", "wxy", "z" });
-            AssertAnalyzesTo(a, "aba4cadaba-Shazam", new string[] { "aba", "cadaba", "shazam" });
-            AssertAnalyzesTo(a, "break+on/Letters", new string[] { "break", "on", "letters" });
+            AssertAnalyzesTo(a, "a-bc123 defg+hijklmn567opqrstuv78wxy_z ",
+                new string[] { "a", "bc", "defg", "hijklmn", "opqrstuv", "wxy", "z" });
+            AssertAnalyzesTo(a, "aba4cadaba-Shazam",
+                new string[] { "aba", "cadaba", "shazam" });
+            AssertAnalyzesTo(a, "break+on/Letters",
+                new string[] { "break", "on", "letters" });
         }
 
         /// <summary>
-        /// Test a configuration that behaves a lot like KeywordAnalyzer </summary>
+        /// Test a configuration that behaves a lot like KeywordAnalyzer
+        /// </summary>
         [Test]
         public virtual void TestKeyword()
         {
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
-            AssertAnalyzesTo(a, "a-bc123 defg+hijklmn567opqrstuv78wxy_z ", new string[] { "a-bc123 defg+hijklmn567opqrstuv78wxy_z " });
-            AssertAnalyzesTo(a, "aba4cadaba-Shazam", new string[] { "aba4cadaba-Shazam" });
-            AssertAnalyzesTo(a, "break+on/Nothing", new string[] { "break+on/Nothing" });
+            AssertAnalyzesTo(a, "a-bc123 defg+hijklmn567opqrstuv78wxy_z ",
+                new string[] { "a-bc123 defg+hijklmn567opqrstuv78wxy_z " });
+            AssertAnalyzesTo(a, "aba4cadaba-Shazam",
+                new string[] { "aba4cadaba-Shazam" });
+            AssertAnalyzesTo(a, "break+on/Nothing",
+                new string[] { "break+on/Nothing" });
             // currently though emits no tokens for empty string: maybe we can do it,
             // but we don't want to emit tokens infinitely...
             AssertAnalyzesTo(a, "", new string[0]);
@@ -85,85 +97,127 @@ namespace Lucene.Net.Analysis
 
         // Test some regular expressions as tokenization patterns
         /// <summary>
-        /// Test a configuration where each character is a term </summary>
+        /// Test a configuration where each character is a term
+        /// </summary>
         [Test]
         public virtual void TestSingleChar()
         {
-            var single = new CharacterRunAutomaton((new RegExp(".")).ToAutomaton());
+            var single = new CharacterRunAutomaton(new RegExp(".").ToAutomaton());
             Analyzer a = new MockAnalyzer(Random, single, false);
-            AssertAnalyzesTo(a, "foobar", new[] { "f", "o", "o", "b", "a", "r" }, new[] { 0, 1, 2, 3, 4, 5 }, new[] { 1, 2, 3, 4, 5, 6 });
+            AssertAnalyzesTo(a, "foobar",
+                new string[] { "f", "o", "o", "b", "a", "r" },
+                new int[] { 0, 1, 2, 3, 4, 5 },
+                new int[] { 1, 2, 3, 4, 5, 6 });
             CheckRandomData(Random, a, 100);
         }
 
         /// <summary>
-        /// Test a configuration where two characters makes a term </summary>
+        /// Test a configuration where two characters makes a term
+        /// </summary>
         [Test]
         public virtual void TestTwoChars()
         {
-            CharacterRunAutomaton single = new CharacterRunAutomaton((new RegExp("..")).ToAutomaton());
+            CharacterRunAutomaton single = new CharacterRunAutomaton(new RegExp("..").ToAutomaton());
             Analyzer a = new MockAnalyzer(Random, single, false);
-            AssertAnalyzesTo(a, "foobar", new string[] { "fo", "ob", "ar" }, new int[] { 0, 2, 4 }, new int[] { 2, 4, 6 });
+            AssertAnalyzesTo(a, "foobar",
+                new string[] { "fo", "ob", "ar" },
+                new int[] { 0, 2, 4 },
+                new int[] { 2, 4, 6 });
             // make sure when last term is a "partial" match that End() is correct
-            AssertTokenStreamContents(a.GetTokenStream("bogus", new StringReader("fooba")), new string[] { "fo", "ob" }, new int[] { 0, 2 }, new int[] { 2, 4 }, new int[] { 1, 1 }, new int?(5));
+            AssertTokenStreamContents(a.GetTokenStream("bogus", new StringReader("fooba")),
+                new string[] { "fo", "ob" },
+                new int[] { 0, 2 },
+                new int[] { 2, 4 },
+                new int[] { 1, 1 },
+                new int?(5));
             CheckRandomData(Random, a, 100);
         }
 
         /// <summary>
-        /// Test a configuration where three characters makes a term </summary>
+        /// Test a configuration where three characters makes a term
+        /// </summary>
         [Test]
         public virtual void TestThreeChars()
         {
-            CharacterRunAutomaton single = new CharacterRunAutomaton((new RegExp("...")).ToAutomaton());
+            CharacterRunAutomaton single = new CharacterRunAutomaton(new RegExp("...").ToAutomaton());
             Analyzer a = new MockAnalyzer(Random, single, false);
-            AssertAnalyzesTo(a, "foobar", new string[] { "foo", "bar" }, new int[] { 0, 3 }, new int[] { 3, 6 });
+            AssertAnalyzesTo(a, "foobar",
+                new string[] { "foo", "bar" },
+                new int[] { 0, 3 },
+                new int[] { 3, 6 });
             // make sure when last term is a "partial" match that End() is correct
-            AssertTokenStreamContents(a.GetTokenStream("bogus", new StringReader("fooba")), new string[] { "foo" }, new int[] { 0 }, new int[] { 3 }, new int[] { 1 }, new int?(5));
+            AssertTokenStreamContents(a.GetTokenStream("bogus", new StringReader("fooba")),
+                new string[] { "foo" },
+                new int[] { 0 },
+                new int[] { 3 },
+                new int[] { 1 },
+                new int?(5));
             CheckRandomData(Random, a, 100);
         }
 
         /// <summary>
-        /// Test a configuration where word starts with one uppercase </summary>
+        /// Test a configuration where word starts with one uppercase
+        /// </summary>
         [Test]
         public virtual void TestUppercase()
         {
-            CharacterRunAutomaton single = new CharacterRunAutomaton((new RegExp("[A-Z][a-z]*")).ToAutomaton());
+            CharacterRunAutomaton single = new CharacterRunAutomaton(new RegExp("[A-Z][a-z]*").ToAutomaton());
             Analyzer a = new MockAnalyzer(Random, single, false);
-            AssertAnalyzesTo(a, "FooBarBAZ", new string[] { "Foo", "Bar", "B", "A", "Z" }, new int[] { 0, 3, 6, 7, 8 }, new int[] { 3, 6, 7, 8, 9 });
-            AssertAnalyzesTo(a, "aFooBar", new string[] { "Foo", "Bar" }, new int[] { 1, 4 }, new int[] { 4, 7 });
+            AssertAnalyzesTo(a, "FooBarBAZ",
+                new string[] { "Foo", "Bar", "B", "A", "Z" },
+                new int[] { 0, 3, 6, 7, 8 },
+                new int[] { 3, 6, 7, 8, 9 });
+            AssertAnalyzesTo(a, "aFooBar",
+                new string[] { "Foo", "Bar" },
+                new int[] { 1, 4 },
+                new int[] { 4, 7 });
             CheckRandomData(Random, a, 100);
         }
 
         /// <summary>
-        /// Test a configuration that behaves a lot like StopAnalyzer </summary>
+        /// Test a configuration that behaves a lot like StopAnalyzer
+        /// </summary>
         [Test]
         public virtual void TestStop()
         {
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
-            AssertAnalyzesTo(a, "the quick brown a fox", new string[] { "quick", "brown", "fox" }, new int[] { 2, 1, 2 });
+            AssertAnalyzesTo(a, "the quick brown a fox",
+                new string[] { "quick", "brown", "fox" },
+                new int[] { 2, 1, 2 });
         }
 
         /// <summary>
-        /// Test a configuration that behaves a lot like KeepWordFilter </summary>
+        /// Test a configuration that behaves a lot like KeepWordFilter
+        /// </summary>
         [Test]
         public virtual void TestKeep()
         {
-            CharacterRunAutomaton keepWords = new CharacterRunAutomaton(BasicOperations.Complement(Automaton.Union(new Automaton[] { BasicAutomata.MakeString("foo"), BasicAutomata.MakeString("bar") })));
+            CharacterRunAutomaton keepWords = new CharacterRunAutomaton(
+                BasicOperations.Complement(
+                    Automaton.Union(
+                        new Automaton[] { BasicAutomata.MakeString("foo"), BasicAutomata.MakeString("bar") })));
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, keepWords);
-            AssertAnalyzesTo(a, "quick foo brown bar bar fox foo", new string[] { "foo", "bar", "bar", "foo" }, new int[] { 2, 2, 1, 2 });
+            AssertAnalyzesTo(a, "quick foo brown bar bar fox foo",
+                new string[] { "foo", "bar", "bar", "foo" },
+                new int[] { 2, 2, 1, 2 });
         }
 
         /// <summary>
-        /// Test a configuration that behaves a lot like LengthFilter </summary>
+        /// Test a configuration that behaves a lot like LengthFilter
+        /// </summary>
         [Test]
         public virtual void TestLength()
         {
-            CharacterRunAutomaton length5 = new CharacterRunAutomaton((new RegExp(".{5,}")).ToAutomaton());
+            CharacterRunAutomaton length5 = new CharacterRunAutomaton(new RegExp(".{5,}").ToAutomaton());
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true, length5);
-            AssertAnalyzesTo(a, "ok toolong fine notfine", new string[] { "ok", "fine" }, new int[] { 1, 2 });
+            AssertAnalyzesTo(a, "ok toolong fine notfine",
+                new string[] { "ok", "fine" },
+                new int[] { 1, 2 });
         }
 
         /// <summary>
-        /// Test MockTokenizer encountering a too long token </summary>
+        /// Test MockTokenizer encountering a too long token
+        /// </summary>
         [Test]
         public virtual void TestTooLongToken()
         {
@@ -172,14 +226,24 @@ namespace Lucene.Net.Analysis
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false, 5);
                 return new TokenStreamComponents(t, t);
             });
-            AssertTokenStreamContents(whitespace.GetTokenStream("bogus", new StringReader("test 123 toolong ok ")), new string[] { "test", "123", "toolo", "ng", "ok" }, new int[] { 0, 5, 9, 14, 17 }, new int[] { 4, 8, 14, 16, 19 }, new int?(20));
-            AssertTokenStreamContents(whitespace.GetTokenStream("bogus", new StringReader("test 123 toolo")), new string[] { "test", "123", "toolo" }, new int[] { 0, 5, 9 }, new int[] { 4, 8, 14 }, new int?(14));
+
+            AssertTokenStreamContents(whitespace.GetTokenStream("bogus", new StringReader("test 123 toolong ok ")),
+                new string[] { "test", "123", "toolo", "ng", "ok" },
+                new int[] { 0, 5, 9, 14, 17 },
+                new int[] { 4, 8, 14, 16, 19 },
+                new int?(20));
+
+            AssertTokenStreamContents(whitespace.GetTokenStream("bogus", new StringReader("test 123 toolo")),
+                new string[] { "test", "123", "toolo" },
+                new int[] { 0, 5, 9 },
+                new int[] { 4, 8, 14 },
+                new int?(14));
         }
 
         [Test]
         public virtual void TestLUCENE_3042()
         {
-            string testString = "t";
+            const string testString = "t";
 
             Analyzer analyzer = new MockAnalyzer(Random);
             Exception priorException = null;
@@ -214,7 +278,8 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// blast some random strings through differently configured tokenizers </summary>
+        /// blast some random strings through differently configured tokenizers
+        /// </summary>
         [Test]
         [Slow]
         public virtual void TestRandomRegexps()
@@ -252,7 +317,7 @@ namespace Lucene.Net.Analysis
                     ts.Reset();
                     while (ts.IncrementToken())
                     {
-                        ;
+                        /*;*/
                     }
                     ts.End();
                 }
@@ -274,21 +339,18 @@ namespace Lucene.Net.Analysis
             Random random = Random;
 
             Analyzer @delegate = new MockAnalyzer(random);
-            Analyzer a = new AnalyzerWrapperAnonymousClass(this, @delegate.Strategy, @delegate);
+            Analyzer a = new AnalyzerWrapperAnonymousClass(@delegate.Strategy, @delegate);
 
             CheckOneTerm(a, "abc", "aabc");
         }
 
         private sealed class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
-            private readonly TestMockAnalyzer outerInstance;
+            private readonly Analyzer @delegate;
 
-            private Analyzer @delegate;
-
-            public AnalyzerWrapperAnonymousClass(TestMockAnalyzer outerInstance, ReuseStrategy getReuseStrategy, Analyzer @delegate)
+            public AnalyzerWrapperAnonymousClass(ReuseStrategy getReuseStrategy, Analyzer @delegate)
                 : base(getReuseStrategy)
             {
-                this.outerInstance = outerInstance;
                 this.@delegate = @delegate;
             }
 
@@ -315,7 +377,7 @@ namespace Lucene.Net.Analysis
             int positionGap = Random.Next(1000);
             int offsetGap = Random.Next(1000);
             Analyzer @delegate = new MockAnalyzer(Random);
-            Analyzer a = new AnalyzerWrapperAnonymousClass2(this, @delegate.Strategy, positionGap, offsetGap, @delegate);
+            Analyzer a = new AnalyzerWrapperAnonymousClass2(@delegate.Strategy, positionGap, offsetGap, @delegate);
 
             RandomIndexWriter writer = new RandomIndexWriter(Random, NewDirectory());
             Document doc = new Document();
@@ -351,16 +413,13 @@ namespace Lucene.Net.Analysis
 
         private sealed class AnalyzerWrapperAnonymousClass2 : AnalyzerWrapper
         {
-            private readonly TestMockAnalyzer outerInstance;
+            private readonly int positionGap;
+            private readonly int offsetGap;
+            private readonly Analyzer @delegate;
 
-            private int positionGap;
-            private int offsetGap;
-            private Analyzer @delegate;
-
-            public AnalyzerWrapperAnonymousClass2(TestMockAnalyzer outerInstance, ReuseStrategy getReuseStrategy, int positionGap, int offsetGap, Analyzer @delegate)
+            public AnalyzerWrapperAnonymousClass2(ReuseStrategy getReuseStrategy, int positionGap, int offsetGap, Analyzer @delegate)
                 : base(getReuseStrategy)
             {
-                this.outerInstance = outerInstance;
                 this.positionGap = positionGap;
                 this.offsetGap = offsetGap;
                 this.@delegate = @delegate;

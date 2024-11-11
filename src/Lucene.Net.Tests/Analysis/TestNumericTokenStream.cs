@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
-using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -33,10 +32,12 @@ namespace Lucene.Net.Analysis
         internal const long lvalue = 4573245871874382L;
         internal const int ivalue = 123456;
 
+        // LUCENENET note - Have to explicitly use NUnit.Framework.TestAttribute in this class
+        // due to conflict with TestAttribute below
         [NUnit.Framework.Test]
         public virtual void TestLongStream()
         {
-            using NumericTokenStream stream = (new NumericTokenStream()).SetInt64Value(lvalue);
+            using NumericTokenStream stream = new NumericTokenStream().SetInt64Value(lvalue);
             // use getAttribute to test if attributes really exist, if not an IAE will be throwed
             ITermToBytesRefAttribute bytesAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
             ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
@@ -55,12 +56,14 @@ namespace Lucene.Net.Analysis
             }
             Assert.IsFalse(stream.IncrementToken(), "More tokens available");
             stream.End();
+            // LUCENENET specific - stream disposed above via using statement
+            // stream.Dispose();
         }
 
         [NUnit.Framework.Test]
         public virtual void TestIntStream()
         {
-            NumericTokenStream stream = (new NumericTokenStream()).SetInt32Value(ivalue);
+            using NumericTokenStream stream = new NumericTokenStream().SetInt32Value(ivalue);
             // use getAttribute to test if attributes really exist, if not an IAE will be throwed
             ITermToBytesRefAttribute bytesAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
             ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
@@ -79,7 +82,8 @@ namespace Lucene.Net.Analysis
             }
             Assert.IsFalse(stream.IncrementToken(), "More tokens available");
             stream.End();
-            stream.Dispose();
+            // LUCENENET specific - stream disposed above via using statement
+            // stream.Dispose();
         }
 
         [NUnit.Framework.Test]
@@ -112,6 +116,7 @@ namespace Lucene.Net.Analysis
         {
         }
 
+        // ReSharper disable once UnusedType.Global - presumably used to test ability to add derived attributes
         public class TestAttribute : CharTermAttribute, ITestAttribute
         {
         }

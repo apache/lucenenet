@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis
 {
@@ -31,7 +30,7 @@ namespace Lucene.Net.Analysis
                 {
                     Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                     return new TokenStreamComponents(tokenizer, tokenizer);
-                }, 
+                },
                 initReader: (fieldName, reader) =>
                 {
                     return new MockCharFilter(reader, 7);
