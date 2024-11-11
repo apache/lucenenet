@@ -201,7 +201,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-
+========
 
 Some code in src/Lucene.Net/Util/UnicodeUtil.cs was derived from unicode 
 conversion examples available at http://www.unicode.org/Public/PROGRAMS/CVTUTF.
@@ -230,6 +230,7 @@ Here is the copyright from those sources:
  * remains attached.
  */
 
+========
 
 Some code in src/Lucene.Net/Util/ArrayUtil.cs was derived from Python 2.4.2 
 sources available at http://www.python.org. 
@@ -238,6 +239,7 @@ Full license is here:
 
   http://www.python.org/download/releases/2.4.2/license/
 
+========
 
 Some code in src/Lucene.Net/Util/UnicodeUtil.cs was
 derived from Python 3.1.2 sources available at
@@ -245,6 +247,7 @@ http://www.python.org. Full license is here:
 
   http://www.python.org/download/releases/3.1.2/license/
 
+========
 
 Some code in src/Lucene.Net/Util/Automaton was
 derived from Brics automaton sources available at
@@ -277,6 +280,7 @@ www.brics.dk/automaton/. Here is the copyright from those sources:
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+========
 
 The levenshtein automata tables in src/Lucene.Net/Util/Automaton 
 were automatically generated with the moman/finenight FSA package.
@@ -305,6 +309,7 @@ Here is the copyright for those sources:
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
+========
 
 Some code in src/Lucene.Net/Util/UnicodeUtil.cs was
 derived from ICU (http://www.icu-project.org)
@@ -338,7 +343,8 @@ The full license is available here:
  * dealings in this Software without prior written authorization of the 
  * copyright holder.
  */
-  
+
+========
 
 The following license applies to the Snowball stemmers:
 
@@ -369,6 +375,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF this SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+========
 
 The following license applies to src/Lucene.Net.Analysis.Common/Analysis/En/KStemmer.cs:
 
@@ -540,7 +547,7 @@ Office or Microsoft Dynamics).
 
 Some code in src/Lucene.Net.Analysis.Stempel/Egothor.Stemmer and 
 src/Lucene.Net.Tests.Analysis.Stempel/Egothor.Stemmer falls
-under the following license
+under the following license:
 
                     Egothor Software License version 1.00
                     Copyright (C) 1997-2004 Leo Galambos.
@@ -643,7 +650,7 @@ falls under the following license:
 // Written by David Megginson
 // NO WARRANTY!  This class is in the public domain.
 
----
+========
 
 The code in .build/psake/ falls under the following license:
 
@@ -668,7 +675,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
----
+========
 
 src/Lucene.Net/Support/Compatibility/NullableAttributes.cs
 src/Lucene.Net/Support/DateTimeOffsetUtil.cs
@@ -696,7 +703,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
----
+========
 
 Some code in src/Lucene.Net/Support/ConcurrentHashSet.cs falls under the following license:
 
@@ -722,7 +729,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
----
+========
 
 Some code in
 src/Lucene.Net.TestFramework/Support/Util/DefaultNamespaceTypeWrapper.cs
@@ -749,3 +756,46 @@ falls under the following license:
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+========
+
+The code in src/Lucene.Net.Expressions/JS/Javascript.g4 falls under the following license:
+
+Copyrights 2008-2009 Xebic Reasearch BV. All rights reserved..
+Original work by Patrick Hulsmeijer.
+
+This ANTLR 3 LL(*) grammar is based on Ecma-262 3rd edition (JavaScript 1.5, JScript 5.5).
+The annotations refer to the "A Grammar Summary" section (e.g. A.1 Lexical Grammar)
+and the numbers in parenthesis to the paragraph numbers (e.g. (7.8) ).
+This document is best viewed with ANTLRWorks (www.antlr.org).
+
+Software License Agreement (BSD License)
+
+Copyright (c) 2008-2010, Xebic Research B.V.
+All rights reserved.
+
+Redistribution and use of this software in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above
+      copyright notice, this list of conditions and the
+      following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the
+      following disclaimer in the documentation and/or other
+      materials provided with the distribution.
+
+    * Neither the name of Xebic Research B.V. nor the names of its
+      contributors may be used to endorse or promote products
+      derived from this software without specific prior
+      written permission of Xebic Research B.V.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
