@@ -1146,9 +1146,13 @@ namespace Lucene.Net.Index
             {
                 writer.Dispose();
                 Assert.Fail("should not have succeeded to update a segment written with an old Codec");
-            } catch (Exception e) when (e.IsUnsupportedOperationException()) {
+            }
+            catch (Exception e) when (e.IsUnsupportedOperationException())
+            {
                 writer.Rollback();
-            } finally {
+            }
+            finally
+            {
                 OldFormatImpersonationIsActive = oldValue;
             }
 
