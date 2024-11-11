@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         [Test]
         public void TestIgnoreCase()
         {
-            IResourceLoader loader = new ClasspathResourceLoader(typeof(TestAnalyzers));
+            IResourceLoader loader = new ClasspathResourceLoader(GetType());
             CommonGramsFilterFactory factory =
                 (CommonGramsFilterFactory)
                 TokenFilterFactory("CommonGrams", TEST_VERSION_CURRENT, loader, "ignoreCase", "true");
