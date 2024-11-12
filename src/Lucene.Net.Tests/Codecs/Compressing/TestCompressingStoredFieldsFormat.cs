@@ -35,6 +35,7 @@ namespace Lucene.Net.Codecs.Compressing
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 
+    // LUCENENET: Moved @Repeat(iterations=5) to the method level
     [TestFixture]
     public class TestCompressingStoredFieldsFormat : BaseStoredFieldsFormatTestCase
     {
@@ -44,6 +45,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         [Test]
+        [Repeat(5)] // LUCENENET: moved from class annotation
         public virtual void TestDeletePartiallyWrittenFilesIfAbort()
         {
             Directory dir = NewDirectory();
@@ -64,7 +66,7 @@ namespace Lucene.Net.Codecs.Compressing
             Document invalidDoc = new Document();
             FieldType fieldType = new FieldType();
             fieldType.IsStored = true;
-            invalidDoc.Add(new FieldAnonymousClass(this, fieldType));
+            invalidDoc.Add(new FieldAnonymousClass(fieldType));
 
             try
             {
@@ -92,13 +94,12 @@ namespace Lucene.Net.Codecs.Compressing
 
         private sealed class FieldAnonymousClass : Field
         {
-            private readonly TestCompressingStoredFieldsFormat outerInstance;
-
-            public FieldAnonymousClass(TestCompressingStoredFieldsFormat outerInstance, FieldType fieldType)
+            public FieldAnonymousClass(FieldType fieldType)
                 : base("invalid", fieldType)
             {
-                this.outerInstance = outerInstance;
             }
+
+            public override string GetStringValue() => null;
         }
     }
 }
