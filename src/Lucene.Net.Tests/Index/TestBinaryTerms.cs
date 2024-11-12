@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestToString()
         {
-            Term term = new Term("foo", new BytesRef(new[] { unchecked((byte)0xff), unchecked((byte)0xfe) }));
+            Term term = new Term("foo", new BytesRef(new[] { (byte)0xff, (byte)0xfe }));
             Assert.AreEqual("foo:[ff fe]", term.ToString());
         }
     }

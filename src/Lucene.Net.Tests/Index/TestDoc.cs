@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// this test executes a number of merges and compares the contents of
+        /// This test executes a number of merges and compares the contents of
         ///  the segments created when using compound file or not using one.
         ///
         ///  TODO: the original test used to print the segment contents to System.out
@@ -130,7 +130,10 @@ namespace Lucene.Net.Index
                 wrapper.AssertNoUnreferencedFilesOnDispose = false;
             }
 
-            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
+            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetOpenMode(OpenMode.CREATE)
+                .SetMaxBufferedDocs(-1)
+                .SetMergePolicy(NewLogMergePolicy(10)));
 
             SegmentCommitInfo si1 = IndexDoc(writer, "test.txt");
             PrintSegment(@out, si1);
@@ -168,7 +171,10 @@ namespace Lucene.Net.Index
                 wrapper.AssertNoUnreferencedFilesOnDispose = false;
             }
 
-            writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
+            writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetOpenMode(OpenMode.CREATE)
+                .SetMaxBufferedDocs(-1)
+                .SetMergePolicy(NewLogMergePolicy(10)));
 
             si1 = IndexDoc(writer, "test.txt");
             PrintSegment(@out, si1);
@@ -216,19 +222,23 @@ namespace Lucene.Net.Index
             TrackingDirectoryWrapper trackingDir = new TrackingDirectoryWrapper(si1.Info.Dir);
             SegmentInfo si = new SegmentInfo(si1.Info.Dir, Constants.LUCENE_MAIN_VERSION, merged, -1, false, codec, null);
 
-            SegmentMerger merger = new SegmentMerger(new JCG.List<AtomicReader> { r1, r2 }, si, (InfoStream)InfoStream.Default, trackingDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, CheckAbort.NONE, new FieldInfos.FieldNumbers(), context, true);
+            SegmentMerger merger = new SegmentMerger(new JCG.List<AtomicReader> { r1, r2 },
+                si, InfoStream.Default, trackingDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL,
+                CheckAbort.NONE, new FieldInfos.FieldNumbers(), context, true);
 
             MergeState mergeState = merger.Merge();
             r1.Dispose();
             r2.Dispose();
-            SegmentInfo info = new SegmentInfo(si1.Info.Dir, Constants.LUCENE_MAIN_VERSION, merged, si1.Info.DocCount + si2.Info.DocCount, false, codec, null);
+            SegmentInfo info = new SegmentInfo(si1.Info.Dir, Constants.LUCENE_MAIN_VERSION, merged,
+                si1.Info.DocCount + si2.Info.DocCount,
+                false, codec, null);
             info.SetFiles(new JCG.HashSet<string>(trackingDir.CreatedFiles));
 
             if (useCompoundFile)
             {
-                ICollection<string> filesToDelete = IndexWriter.CreateCompoundFile((InfoStream)InfoStream.Default, dir, CheckAbort.NONE, info, NewIOContext(Random));
+                ICollection<string> filesToDelete = IndexWriter.CreateCompoundFile(InfoStream.Default, dir, CheckAbort.NONE, info, NewIOContext(Random));
                 info.UseCompoundFile = true;
-                foreach (String fileToDelete in filesToDelete)
+                foreach (string fileToDelete in filesToDelete)
                 {
                     si1.Info.Dir.DeleteFile(fileToDelete);
                 }

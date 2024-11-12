@@ -2,7 +2,6 @@
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
-using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -76,7 +75,7 @@ namespace Lucene.Net.Index
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, d);
             //int numDocs = AtLeast(100);
-            int numDocs = 5;
+            const int numDocs = 5;
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();

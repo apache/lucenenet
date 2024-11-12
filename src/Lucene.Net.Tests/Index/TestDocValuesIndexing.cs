@@ -534,7 +534,7 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 doc.Add(field);
 
-                threads[i] = new ThreadAnonymousClass(this, w, startingGun, hitExc, doc);
+                threads[i] = new ThreadAnonymousClass(w, startingGun, hitExc, doc);
                 threads[i].Start();
             }
 
@@ -551,16 +551,13 @@ namespace Lucene.Net.Index
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestDocValuesIndexing outerInstance;
-
             private readonly IndexWriter w;
             private readonly CountdownEvent startingGun;
             private readonly AtomicBoolean hitExc;
             private readonly Document doc;
 
-            public ThreadAnonymousClass(TestDocValuesIndexing outerInstance, IndexWriter w, CountdownEvent startingGun, AtomicBoolean hitExc, Document doc)
+            public ThreadAnonymousClass(IndexWriter w, CountdownEvent startingGun, AtomicBoolean hitExc, Document doc)
             {
-                this.outerInstance = outerInstance;
                 this.w = w;
                 this.startingGun = startingGun;
                 this.hitExc = hitExc;
@@ -577,7 +574,7 @@ namespace Lucene.Net.Index
                 catch (Exception iae) when (iae.IsIllegalArgumentException())
                 {
                     // expected
-                    hitExc.Value = (true);
+                    hitExc.Value = true;
                 }
                 catch (Exception e) when (e.IsException())
                 {

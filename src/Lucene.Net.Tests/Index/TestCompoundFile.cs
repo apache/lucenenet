@@ -58,7 +58,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates a file of the specified size with random data. </summary>
+        /// Creates a file of the specified size with random data.
+        /// </summary>
         private void CreateRandomFile(Directory dir, string name, int size)
         {
             IndexOutput os = dir.CreateOutput(name, NewIOContext(Random));
@@ -72,8 +73,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Creates a file of the specified size with sequential data. The first
-        ///  byte is written as the start byte provided. All subsequent bytes are
-        ///  computed as start + offset where offset is the number of the byte.
+        /// byte is written as the start byte provided. All subsequent bytes are
+        /// computed as start + offset where offset is the number of the byte.
         /// </summary>
         private void CreateSequenceFile(Directory dir, string name, sbyte start, int size)
         {
@@ -160,8 +161,8 @@ namespace Lucene.Net.Index
         // ===========================================================
 
         /// <summary>
-        /// this test creates compound file based on a single file.
-        ///  Files of different sizes are tested: 0, 1, 10, 100 bytes.
+        /// This test creates compound file based on a single file.
+        /// Files of different sizes are tested: 0, 1, 10, 100 bytes.
         /// </summary>
         [Test]
         public virtual void TestSingleFile()
@@ -187,8 +188,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// this test creates compound file based on two files.
-        ///
+        /// This test creates compound file based on two files.
         /// </summary>
         [Test]
         public virtual void TestTwoFiles()
@@ -219,18 +219,18 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// this test creates a compound file based on a large number of files of
-        ///  various length. The file content is generated randomly. The sizes range
-        ///  from 0 to 1Mb. Some of the sizes are selected to test the buffering
-        ///  logic in the file reading code. For this the chunk variable is set to
-        ///  the length of the buffer used internally by the compound file logic.
+        /// This test creates a compound file based on a large number of files of
+        /// various length. The file content is generated randomly. The sizes range
+        /// from 0 to 1Mb. Some of the sizes are selected to test the buffering
+        /// logic in the file reading code. For this the chunk variable is set to
+        /// the length of the buffer used internally by the compound file logic.
         /// </summary>
         [Test]
         public virtual void TestRandomFiles()
         {
             // Setup the test segment
-            string segment = "test";
-            int chunk = 1024; // internal buffer size used by the stream
+            const string segment = "test";
+            const int chunk = 1024; // internal buffer size used by the stream
             CreateRandomFile(dir, segment + ".zero", 0);
             CreateRandomFile(dir, segment + ".one", 1);
             CreateRandomFile(dir, segment + ".ten", 10);
@@ -250,7 +250,11 @@ namespace Lucene.Net.Index
 
             // Now test
             CompoundFileDirectory csw = new CompoundFileDirectory(dir, "test.cfs", NewIOContext(Random), true);
-            string[] data = new string[] { ".zero", ".one", ".ten", ".hundred", ".big1", ".big2", ".big3", ".big4", ".big5", ".big6", ".big7" };
+            string[] data = new string[]
+            {
+                ".zero", ".one", ".ten", ".hundred", ".big1", ".big2", ".big3",
+                ".big4", ".big5", ".big6", ".big7"
+            };
             for (int i = 0; i < data.Length; i++)
             {
                 string fileName = segment + data[i];
@@ -273,9 +277,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Setup a larger compound file with a number of components, each of
-        ///  which is a sequential file (so that we can easily tell that we are
-        ///  reading in the right byte). The methods sets up 20 files - f0 to f19,
-        ///  the size of each file is 1000 bytes.
+        /// which is a sequential file (so that we can easily tell that we are
+        /// reading in the right byte). The methods sets up 20 files - f0 to f19,
+        /// the size of each file is 1000 bytes.
         /// </summary>
         private void SetUp_2()
         {
@@ -382,8 +386,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// this test opens two files from a compound stream and verifies that
-        ///  their file positions are independent of each other.
+        /// This test opens two files from a compound stream and verifies that
+        /// their file positions are independent of each other.
         /// </summary>
         [Test]
         public virtual void TestRandomAccess()
@@ -464,8 +468,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// this test opens two files from a compound stream and verifies that
-        ///  their file positions are independent of each other.
+        /// This test opens two files from a compound stream and verifies that
+        /// their file positions are independent of each other.
         /// </summary>
         [Test]
         public virtual void TestRandomAccessClones()
@@ -611,7 +615,7 @@ namespace Lucene.Net.Index
         public virtual void TestLargeWrites()
         {
             IndexOutput os = dir.CreateOutput("testBufferStart.txt", NewIOContext(Random));
-            
+
             var largeBuf = new byte[2048];
             for (int i = 0; i < largeBuf.Length; i++)
             {

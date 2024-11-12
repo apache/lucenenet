@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTokenReuse()
         {
-            Analyzer analyzer = new AnalyzerAnonymousClass2(this);
+            Analyzer analyzer = new AnalyzerAnonymousClass2();
 
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 
@@ -184,34 +184,24 @@ namespace Lucene.Net.Index
 
         private sealed class AnalyzerAnonymousClass2 : Analyzer
         {
-            private readonly TestDocumentWriter outerInstance;
-
-            public AnalyzerAnonymousClass2(TestDocumentWriter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new TokenFilterAnonymousClass(this, tokenizer));
+                return new TokenStreamComponents(tokenizer, new TokenFilterAnonymousClass(tokenizer));
             }
 
             private sealed class TokenFilterAnonymousClass : TokenFilter
             {
-                private readonly AnalyzerAnonymousClass2 outerInstance;
-
-                public TokenFilterAnonymousClass(AnalyzerAnonymousClass2 outerInstance, Tokenizer tokenizer)
+                public TokenFilterAnonymousClass(Tokenizer tokenizer)
                     : base(tokenizer)
                 {
-                    this.outerInstance = outerInstance;
-                    first = true;
+                    // LUCENENET specific: AddAttribute must be called from the ctor
                     termAtt = AddAttribute<ICharTermAttribute>();
                     payloadAtt = AddAttribute<IPayloadAttribute>();
                     posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
                 }
 
-                internal bool first;
+                internal bool first = true;
                 internal AttributeSource.State state;
 
                 public sealed override bool IncrementToken()
@@ -266,7 +256,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
 
-            doc.Add(new TextField("preanalyzed", new TokenStreamAnonymousClass(this)));
+            doc.Add(new TextField("preanalyzed", new TokenStreamAnonymousClass()));
 
             writer.AddDocument(doc);
             writer.Commit();
@@ -294,18 +284,14 @@ namespace Lucene.Net.Index
 
         private sealed class TokenStreamAnonymousClass : TokenStream
         {
-            private readonly TestDocumentWriter outerInstance;
-
-            public TokenStreamAnonymousClass(TestDocumentWriter outerInstance) 
+            public TokenStreamAnonymousClass()
             {
-                this.outerInstance = outerInstance;
-                tokens = new string[] { "term1", "term2", "term3", "term2" };
-                index = 0;
+                // LUCENENET specific: AddAttribute must be called from the ctor
                 termAtt = AddAttribute<ICharTermAttribute>();
             }
 
-            private string[] tokens;
-            private int index;
+            private string[] tokens = new string[] { "term1", "term2", "term3", "term2" };
+            private int index /*= 0*/;
 
             private ICharTermAttribute termAtt;
 

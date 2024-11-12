@@ -100,20 +100,17 @@ namespace Lucene.Net.Index
 
         internal class FieldData : IComparable<FieldData>
         {
-            private readonly TestCodecs outerInstance;
-
             internal readonly FieldInfo fieldInfo;
             internal readonly TermData[] terms;
             internal readonly bool omitTF;
             internal readonly bool storePayloads;
 
-            public FieldData(TestCodecs outerInstance, string name, FieldInfos.Builder fieldInfos, TermData[] terms, bool omitTF, bool storePayloads)
+            public FieldData(string name, FieldInfos.Builder fieldInfos, TermData[] terms, bool omitTF, bool storePayloads)
             {
-                this.outerInstance = outerInstance;
                 this.omitTF = omitTF;
                 this.storePayloads = storePayloads;
                 // TODO: change this test to use all three
-                fieldInfo = fieldInfos.AddOrUpdate(name, new IndexableFieldTypeAnonymousClass(this, omitTF));
+                fieldInfo = fieldInfos.AddOrUpdate(name, new IndexableFieldTypeAnonymousClass(omitTF));
                 if (storePayloads)
                 {
                     fieldInfo.SetStorePayloads();
@@ -129,12 +126,10 @@ namespace Lucene.Net.Index
 
             private sealed class IndexableFieldTypeAnonymousClass : IIndexableFieldType
             {
-                private readonly FieldData outerInstance;
                 private readonly bool omitTF;
 
-                public IndexableFieldTypeAnonymousClass(FieldData outerInstance, bool omitTF)
+                public IndexableFieldTypeAnonymousClass(bool omitTF)
                 {
-                    this.outerInstance = outerInstance;
                     this.omitTF = omitTF;
                 }
 
@@ -154,7 +149,7 @@ namespace Lucene.Net.Index
 
                 public bool OmitNorms => false;
 
-                public IndexOptions IndexOptions => omitTF ? Index.IndexOptions.DOCS_ONLY : Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                public IndexOptions IndexOptions => omitTF ? IndexOptions.DOCS_ONLY : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 
                 public DocValuesType DocValueType => DocValuesType.NONE;
             }
@@ -186,14 +181,11 @@ namespace Lucene.Net.Index
 
         internal class PositionData
         {
-            private readonly TestCodecs outerInstance;
-
             internal int pos;
             internal BytesRef payload;
 
-            internal PositionData(TestCodecs outerInstance, int pos, BytesRef payload)
+            internal PositionData(int pos, BytesRef payload)
             {
-                this.outerInstance = outerInstance;
                 this.pos = pos;
                 this.payload = payload;
             }
@@ -201,17 +193,14 @@ namespace Lucene.Net.Index
 
         internal class TermData : IComparable<TermData>
         {
-            private readonly TestCodecs outerInstance;
-
             internal string text2;
             internal readonly BytesRef text;
             internal int[] docs;
             internal PositionData[][] positions;
             internal FieldData field;
 
-            public TermData(TestCodecs outerInstance, string text, int[] docs, PositionData[][] positions)
+            public TermData(string text, int[] docs, PositionData[][] positions)
             {
-                this.outerInstance = outerInstance;
                 this.text = new BytesRef(text);
                 this.text2 = text;
                 this.docs = docs;
@@ -322,12 +311,12 @@ namespace Lucene.Net.Index
                                 payload = null;
                             }
 
-                            positions[j][k] = new PositionData(this, position, payload);
+                            positions[j][k] = new PositionData(position, payload);
                         }
                     }
                 }
 
-                terms[i] = new TermData(this, text2, docs, positions);
+                terms[i] = new TermData(text2, docs, positions);
             }
 
             return terms;
@@ -342,12 +331,12 @@ namespace Lucene.Net.Index
             {
                 int[] docs = new int[] { i };
                 string text = i.ToString(Character.MaxRadix);
-                terms[i] = new TermData(this, text, docs, null);
+                terms[i] = new TermData(text, docs, null);
             }
 
             FieldInfos.Builder builder = new FieldInfos.Builder();
 
-            FieldData field = new FieldData(this, "field", builder, terms, true, false);
+            FieldData field = new FieldData("field", builder, terms, true, false);
             FieldData[] fields = new FieldData[] { field };
             FieldInfos fieldInfos = builder.Finish();
             // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
@@ -384,7 +373,7 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.NextDoc());
                 }
             }
-            Assert.IsFalse(termsEnum.MoveNext());
+            Assert.IsFalse(termsEnum.MoveNext()); // LUCENENET NOTE: using IsFalse instead of original assertNull due to enumerator pattern
 
             for (int i = 0; i < NUM_TERMS; i++)
             {
@@ -392,6 +381,10 @@ namespace Lucene.Net.Index
             }
 
             Assert.IsFalse(fieldsEnum.MoveNext());
+
+            // LUCENENET specific: the following original Java lines handled by the `using` statements above
+            // reader.close();
+            // dir.close();
         }
 
         [Test]
@@ -404,7 +397,7 @@ namespace Lucene.Net.Index
             {
                 bool omitTF = 0 == (i % 3);
                 bool storePayloads = 1 == (i % 3);
-                fields[i] = new FieldData(this, fieldNames[i], builder, this.MakeRandomTerms(omitTF, storePayloads), omitTF, storePayloads);
+                fields[i] = new FieldData(fieldNames[i], builder, this.MakeRandomTerms(omitTF, storePayloads), omitTF, storePayloads);
             }
 
             // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
@@ -430,18 +423,22 @@ namespace Lucene.Net.Index
             Verify[] threads = new Verify[NUM_TEST_THREADS - 1];
             for (int i = 0; i < NUM_TEST_THREADS - 1; i++)
             {
-                threads[i] = new Verify(this, si, fields, terms);
-                threads[i].IsBackground = (true);
+                threads[i] = new Verify(si, fields, terms);
+                threads[i].IsBackground = true;
                 threads[i].Start();
             }
 
-                    (new Verify(this, si, fields, terms)).Run();
+            new Verify(si, fields, terms).Run();
 
             for (int i = 0; i < NUM_TEST_THREADS - 1; i++)
             {
                 threads[i].Join();
                 if (Debugging.AssertsEnabled) Debugging.Assert(!threads[i].failed);
             }
+
+            // LUCENENET specific: The following original Java lines are handled by the `using` statements above
+            // terms.close();
+            // dir.close();
         }
 
         [Test]
@@ -511,16 +508,13 @@ namespace Lucene.Net.Index
 
         private class Verify : ThreadJob
         {
-            private readonly TestCodecs outerInstance;
-
             internal readonly Fields termsDict;
             internal readonly FieldData[] fields;
             internal readonly SegmentInfo si;
             internal volatile bool failed;
 
-            internal Verify(TestCodecs outerInstance, SegmentInfo si, FieldData[] fields, Fields termsDict)
+            internal Verify(SegmentInfo si, FieldData[] fields, Fields termsDict)
             {
-                this.outerInstance = outerInstance;
                 this.fields = fields;
                 this.termsDict = termsDict;
                 this.si = si;
@@ -792,7 +786,7 @@ namespace Lucene.Net.Index
             int termIndexInterval = TestUtil.NextInt32(Random, 13, 27);
             Codec codec = Codec.Default;
             SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
-            SegmentWriteState state = new SegmentWriteState((InfoStream)InfoStream.Default, dir, si, fieldInfos, termIndexInterval, null, NewIOContext(Random));
+            SegmentWriteState state = new SegmentWriteState(InfoStream.Default, dir, si, fieldInfos, termIndexInterval, null, NewIOContext(Random));
 
             // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
             using FieldsConsumer consumer = codec.PostingsFormat.FieldsConsumer(state);
@@ -839,6 +833,11 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(1, de.Freq, "wrong freq for doc " + de.DocID);
                 }
             }
+
+            // LUCENENET specific: The following original Java lines are handled by the `using` statements above
+            // reader.close();
+            //
+            // dir.close();
         }
 
         [Test]
@@ -869,6 +868,9 @@ namespace Lucene.Net.Index
             {
                 OldFormatImpersonationIsActive = true;
             }
+
+            // LUCENENET specific: The following original Java line is handled by the `using` statement above
+            // dir.close();
         }
     }
 }

@@ -41,13 +41,13 @@ namespace Lucene.Net.Index
     /// so you get > Integer.MAX_VALUE postings data for the term
     /// @lucene.experimental
     /// </summary>
+    // disable Lucene3x: older lucene formats always had this issue.
     [SuppressCodecs("SimpleText", "Memory", "Direct", "Lucene3x")]
     [TestFixture]
     public class Test2BPostingsBytes : LuceneTestCase
-    // disable Lucene3x: older lucene formats always had this issue.
-    // @Absurd @Ignore takes ~20GB-30GB of space and 10 minutes.
-    // with some codecs needs more heap space as well.
     {
+        // @Absurd @Ignore takes ~20GB-30GB of space and 10 minutes.
+        // with some codecs needs more heap space as well.
         [Ignore("Very slow. Enable manually by removing Ignore.")]
         [Test]
         public virtual void Test()
@@ -58,13 +58,13 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
-            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
-                            .SetRAMBufferSizeMB(256.0)
-                            .SetMergeScheduler(new ConcurrentMergeScheduler())
-                            .SetMergePolicy(NewLogMergePolicy(false, 10))
-                            .SetOpenMode(OpenMode.CREATE);
-            IndexWriter w = new IndexWriter(dir, config);
+            IndexWriter w = new IndexWriter(dir,
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                .SetRAMBufferSizeMB(256.0)
+                .SetMergeScheduler(new ConcurrentMergeScheduler())
+                .SetMergePolicy(NewLogMergePolicy(false, 10))
+                .SetOpenMode(OpenMode.CREATE));
 
             MergePolicy mp = w.Config.MergePolicy;
             if (mp is LogByteSizeMergePolicy)
@@ -106,7 +106,8 @@ namespace Lucene.Net.Index
             {
                 ((MockDirectoryWrapper)dir2).Throttling = Throttling.NEVER;
             }
-            IndexWriter w2 = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
+            IndexWriter w2 = new IndexWriter(dir2,
+                new IndexWriterConfig(TEST_VERSION_CURRENT, null));
             w2.AddIndexes(mr);
             w2.ForceMerge(1);
             w2.Dispose();
@@ -121,7 +122,8 @@ namespace Lucene.Net.Index
             {
                 ((MockDirectoryWrapper)dir3).Throttling = Throttling.NEVER;
             }
-            IndexWriter w3 = new IndexWriter(dir3, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
+            IndexWriter w3 = new IndexWriter(dir3,
+                new IndexWriterConfig(TEST_VERSION_CURRENT, null));
             w3.AddIndexes(mr);
             w3.ForceMerge(1);
             w3.Dispose();
@@ -134,10 +136,11 @@ namespace Lucene.Net.Index
 
         public sealed class MyTokenStream : TokenStream
         {
-            internal readonly ICharTermAttribute termAtt;
+            private readonly ICharTermAttribute termAtt;
             internal int index;
             internal int n;
 
+            // LUCENENET-specific: must call AddAttribute from ctor in .NET
             public MyTokenStream()
             {
                 termAtt = AddAttribute<ICharTermAttribute>();

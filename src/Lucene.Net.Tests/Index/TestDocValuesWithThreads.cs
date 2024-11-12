@@ -5,7 +5,6 @@ using Lucene.Net.Search;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -83,7 +82,7 @@ namespace Lucene.Net.Index
             for (int t = 0; t < numThreads; t++)
             {
                 Random threadRandom = new J2N.Randomizer(Random.NextInt64());
-                ThreadJob thread = new ThreadAnonymousClass(this, numbers, binary, sorted, numDocs, ar, startingGun, threadRandom);
+                ThreadJob thread = new ThreadAnonymousClass(numbers, binary, sorted, numDocs, ar, startingGun, threadRandom);
                 thread.Start();
                 threads.Add(thread);
             }
@@ -101,8 +100,6 @@ namespace Lucene.Net.Index
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestDocValuesWithThreads outerInstance;
-
             private readonly IList<long> numbers;
             private readonly IList<BytesRef> binary;
             private readonly IList<BytesRef> sorted;
@@ -111,9 +108,8 @@ namespace Lucene.Net.Index
             private readonly CountdownEvent startingGun;
             private readonly Random threadRandom;
 
-            public ThreadAnonymousClass(TestDocValuesWithThreads outerInstance, IList<long> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountdownEvent startingGun, Random threadRandom)
+            public ThreadAnonymousClass(IList<long> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountdownEvent startingGun, Random threadRandom)
             {
-                this.outerInstance = outerInstance;
                 this.numbers = numbers;
                 this.binary = binary;
                 this.sorted = sorted;
@@ -248,7 +244,7 @@ namespace Lucene.Net.Index
 
             long END_TIME = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + (TestNightly ? 30 : 1); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
 
-            int NUM_THREADS = TestUtil.NextInt32(LuceneTestCase.Random, 1, 10);
+            int NUM_THREADS = TestUtil.NextInt32(Random, 1, 10);
             ThreadJob[] threads = new ThreadJob[NUM_THREADS];
             for (int thread = 0; thread < NUM_THREADS; thread++)
             {

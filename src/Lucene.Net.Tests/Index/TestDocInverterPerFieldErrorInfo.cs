@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
                 Tokenizer tokenizer = new MockTokenizer(input);
                 if (fieldName.Equals("distinctiveFieldName", StringComparison.Ordinal))
                 {
-                    TokenFilter tosser = new TokenFilterAnonymousClass(this, tokenizer);
+                    TokenFilter tosser = new TokenFilterAnonymousClass(tokenizer);
                     return new TokenStreamComponents(tokenizer, tosser);
                 }
                 else
@@ -71,12 +71,9 @@ namespace Lucene.Net.Index
 
             private sealed class TokenFilterAnonymousClass : TokenFilter
             {
-                private readonly ThrowingAnalyzer outerInstance;
-
-                public TokenFilterAnonymousClass(ThrowingAnalyzer outerInstance, Tokenizer tokenizer)
+                public TokenFilterAnonymousClass(Tokenizer tokenizer)
                     : base(tokenizer)
                 {
-                    this.outerInstance = outerInstance;
                 }
 
                 public sealed override bool IncrementToken()
@@ -132,9 +129,7 @@ namespace Lucene.Net.Index
             {
                 writer.AddDocument(doc);
             }
-#pragma warning disable 168
-            catch (BadNews badNews)
-#pragma warning restore 168
+            catch (BadNews /*badNews*/)
             {
                 Assert.Fail("Unwanted exception");
             }

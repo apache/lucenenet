@@ -10,7 +10,6 @@ using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
-using Lucene.Net.Support.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -165,7 +164,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Tests the IndexReader.getFieldNames implementation </summary>
+        /// Tests the IndexReader.getFieldNames implementation
+        /// </summary>
         /// <exception cref="Exception"> on error </exception>
         [Test]
         public virtual void TestGetFieldNames()
@@ -318,7 +318,8 @@ namespace Lucene.Net.Index
         {
             Directory d = NewDirectory();
             // set up writer
-            IndexWriter writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMergePolicy(NewLogMergePolicy()));
             // want to get some more segments here
             // new termvector fields
             int mergeFactor = ((LogMergePolicy)writer.Config.MergePolicy).MergeFactor;
@@ -349,19 +350,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        internal virtual void AssertTermDocsCount(string msg, IndexReader reader, Term term, int expected)
-        {
-            DocsEnum tdocs = TestUtil.Docs(Random, reader, term.Field, new BytesRef(term.Text), MultiFields.GetLiveDocs(reader), null, 0);
-            int count = 0;
-            if (tdocs != null)
-            {
-                while (tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
-                {
-                    count++;
-                }
-            }
-            Assert.AreEqual(expected, count, msg + ", count mismatch");
-        }
+        // LUCENENET specific - Removed AssertTermDocsCount() because it was not in use
 
         [Test]
         public virtual void TestBinaryFields()
@@ -448,7 +437,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
 
             // Try to erase the data - this ensures that the writer closed all files
-            System.IO.Directory.Delete(dirFile.FullName, true);
+            TestUtil.Rm(dirFile);
             dir = NewFSDirectory(dirFile);
 
             // Now create the data set again, just as before
@@ -465,7 +454,7 @@ namespace Lucene.Net.Index
 
             // The following will fail if reader did not close
             // all files
-            System.IO.Directory.Delete(dirFile.FullName, true);
+            TestUtil.Rm(dirFile);
         }
 
         [Test]
@@ -499,12 +488,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewStringField, NewTextField, NewField methods
-        /// are no longer static.
-        /// </summary>
-        internal void AddDocumentWithFields(IndexWriter writer)
+        internal static void AddDocumentWithFields(IndexWriter writer)
         {
             Document doc = new Document();
 
@@ -517,12 +501,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewStringField, NewTextField, NewField methods
-        /// are no longer static.
-        /// </summary>
-        internal void AddDocumentWithDifferentFields(IndexWriter writer)
+        internal static void AddDocumentWithDifferentFields(IndexWriter writer)
         {
             Document doc = new Document();
 
@@ -535,12 +514,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewTextField, NewField methods are no longer
-        /// static.
-        /// </summary>
-        internal void AddDocumentWithTermVectorFields(IndexWriter writer)
+        internal static void AddDocumentWithTermVectorFields(IndexWriter writer)
         {
             Document doc = new Document();
             FieldType customType5 = new FieldType(TextField.TYPE_STORED);
@@ -564,11 +538,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewTextField is no longer static.
-        /// </summary>
-        internal void AddDoc(IndexWriter writer, string value)
+        internal static void AddDoc(IndexWriter writer, string value)
         {
             Document doc = new Document();
             doc.Add(NewTextField("content", value, Field.Store.NO));
@@ -696,7 +666,9 @@ namespace Lucene.Net.Index
             Directory d = NewDirectory();
 
             // set up writer
-            IndexWriter writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(10)));
+            IndexWriter writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(2)
+                .SetMergePolicy(NewLogMergePolicy(10)));
             for (int i = 0; i < 27; i++)
             {
                 AddDocumentWithFields(writer);
@@ -713,7 +685,10 @@ namespace Lucene.Net.Index
             Assert.IsTrue(c.Equals(r.IndexCommit));
 
             // Change the index
-            writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(10)));
+            writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetOpenMode(OpenMode.APPEND)
+                .SetMaxBufferedDocs(2)
+                .SetMergePolicy(NewLogMergePolicy(10)));
             for (int i = 0; i < 7; i++)
             {
                 AddDocumentWithFields(writer);
@@ -726,7 +701,8 @@ namespace Lucene.Net.Index
             Assert.IsFalse(r2.IndexCommit.SegmentCount == 1);
             r2.Dispose();
 
-            writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
+            writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
             writer.Dispose();
 
@@ -740,7 +716,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        internal Document CreateDocument(string id)
+        internal static Document CreateDocument(string id)
         {
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -758,7 +734,7 @@ namespace Lucene.Net.Index
         public virtual void TestNoDir()
         {
             DirectoryInfo tempDir = CreateTempDir("doesnotexist");
-            System.IO.Directory.Delete(tempDir.FullName, true);
+            TestUtil.Rm(tempDir);
             Directory dir = NewFSDirectory(tempDir);
             try
             {
@@ -778,7 +754,8 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
 
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMaxBufferedDocs(2));
             writer.AddDocument(CreateDocument("a"));
             writer.AddDocument(CreateDocument("a"));
             writer.AddDocument(CreateDocument("a"));
@@ -806,7 +783,8 @@ namespace Lucene.Net.Index
         public virtual void TestFieldCacheReuseAfterReopen()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy(10)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetMergePolicy(NewLogMergePolicy(10)));
             Document doc = new Document();
             doc.Add(NewStringField("number", "17", Field.Store.NO));
             writer.AddDocument(doc);
@@ -895,7 +873,9 @@ namespace Lucene.Net.Index
             }
 
             Assert.AreEqual(-1, ((SegmentReader)r.Leaves[0].Reader).TermInfosIndexDivisor);
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())).SetMergePolicy(NewLogMergePolicy(10)));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                .SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()))
+                .SetMergePolicy(NewLogMergePolicy(10)));
             writer.AddDocument(doc);
             writer.Dispose();
 
@@ -950,7 +930,8 @@ namespace Lucene.Net.Index
         public virtual void TestListCommits()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null).SetIndexDeletionPolicy(new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null)
+                .SetIndexDeletionPolicy(new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())));
             SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             writer.AddDocument(new Document());
             writer.Commit();
@@ -1089,7 +1070,7 @@ namespace Lucene.Net.Index
             writer.Commit();
             DirectoryReader reader = writer.GetReader();
             int[] closeCount = new int[1];
-            IReaderDisposedListener listener = new ReaderClosedListenerAnonymousClass(this, reader, closeCount);
+            IReaderDisposedListener listener = new ReaderClosedListenerAnonymousClass(closeCount);
 
             reader.AddReaderDisposedListener(listener);
 
@@ -1110,15 +1091,10 @@ namespace Lucene.Net.Index
 
         private sealed class ReaderClosedListenerAnonymousClass : IReaderDisposedListener
         {
-            private readonly TestDirectoryReader outerInstance;
-
-            private readonly DirectoryReader reader;
             private readonly int[] closeCount;
 
-            public ReaderClosedListenerAnonymousClass(TestDirectoryReader outerInstance, DirectoryReader reader, int[] closeCount)
+            public ReaderClosedListenerAnonymousClass(int[] closeCount)
             {
-                this.outerInstance = outerInstance;
-                this.reader = reader;
                 this.closeCount = closeCount;
             }
 
@@ -1249,7 +1225,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        /// @deprecated just to ensure IndexReader static methods work
         [Obsolete("just to ensure IndexReader static methods work")]
         [Test]
         public virtual void TestBackwards()

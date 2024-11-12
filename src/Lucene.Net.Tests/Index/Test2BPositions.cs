@@ -42,8 +42,8 @@ namespace Lucene.Net.Index
     [SuppressCodecs("SimpleText", "Memory", "Direct")]
     [TestFixture]
     public class Test2BPositions : LuceneTestCase
-    // uses lots of space and takes a few minutes
     {
+        // uses lots of space and takes a few minutes
         [Ignore("Very slow. Enable manually by removing Ignore.")]
         [Test]
         public virtual void Test()
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
             Field field = new Field("field", new MyTokenStream(), ft);
             doc.Add(field);
 
-            int numDocs = (int.MaxValue / 26) + 1;
+            const int numDocs = (int.MaxValue / 26) + 1;
             for (int i = 0; i < numDocs; i++)
             {
                 w.AddDocument(doc);
@@ -91,10 +91,11 @@ namespace Lucene.Net.Index
 
         public sealed class MyTokenStream : TokenStream
         {
-            internal readonly ICharTermAttribute termAtt;
-            internal readonly IPositionIncrementAttribute posIncAtt;
+            private readonly ICharTermAttribute termAtt;
+            private readonly IPositionIncrementAttribute posIncAtt;
             internal int index;
 
+            // LUCENENET-specific: must call AddAttribute from ctor in .NET
             public MyTokenStream()
             {
                 termAtt = AddAttribute<ICharTermAttribute>();

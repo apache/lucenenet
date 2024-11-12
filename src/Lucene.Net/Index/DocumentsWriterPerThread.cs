@@ -94,12 +94,12 @@ namespace Lucene.Net.Index
                 TermsHashConsumer termVectorsWriter = new TermVectorsConsumer(documentsWriterPerThread);
                 TermsHashConsumer freqProxWriter = new FreqProxTermsWriter();
 
-                InvertedDocConsumer termsHash = new TermsHash(documentsWriterPerThread, freqProxWriter, true, 
+                InvertedDocConsumer termsHash = new TermsHash(documentsWriterPerThread, freqProxWriter, true,
                     new TermsHash(documentsWriterPerThread, termVectorsWriter, false, null));
                 NormsConsumer normsWriter = new NormsConsumer();
                 DocInverter docInverter = new DocInverter(documentsWriterPerThread.docState, termsHash, normsWriter);
                 StoredFieldsConsumer storedFields = new TwoStoredFieldsConsumers(
-                                                            new StoredFieldsProcessor(documentsWriterPerThread), 
+                                                            new StoredFieldsProcessor(documentsWriterPerThread),
                                                             new DocValuesProcessor(documentsWriterPerThread.bytesUsed));
                 return new DocFieldProcessor(documentsWriterPerThread, docInverter, storedFields);
             }

@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
         private class MyIndexWriter : IndexWriter
         {
             internal AtomicInt32 mergeCount = new AtomicInt32();
-            internal bool first;
+            private bool first;
 
             public MyIndexWriter(Directory dir, IndexWriterConfig conf)
                 : base(dir, conf)
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
 
             AtomicBoolean doStop = new AtomicBoolean();
             w.Config.SetMaxBufferedDocs(2);
-            ThreadJob t = new ThreadAnonymousClass(this, w, numStartDocs, docs, doStop);
+            ThreadJob t = new ThreadAnonymousClass(w, numStartDocs, docs, doStop);
             t.Start();
             w.ForceMerge(1);
             doStop.Value = true;
@@ -110,16 +110,13 @@ namespace Lucene.Net.Index
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestForceMergeForever outerInstance;
-
             private readonly MyIndexWriter w;
             private readonly int numStartDocs;
             private readonly LineFileDocs docs;
             private readonly AtomicBoolean doStop;
 
-            public ThreadAnonymousClass(TestForceMergeForever outerInstance, Lucene.Net.Index.TestForceMergeForever.MyIndexWriter w, int numStartDocs, LineFileDocs docs, AtomicBoolean doStop)
+            public ThreadAnonymousClass(MyIndexWriter w, int numStartDocs, LineFileDocs docs, AtomicBoolean doStop)
             {
-                this.outerInstance = outerInstance;
                 this.w = w;
                 this.numStartDocs = numStartDocs;
                 this.docs = docs;
