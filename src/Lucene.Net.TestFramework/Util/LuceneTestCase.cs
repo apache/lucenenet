@@ -929,23 +929,35 @@ namespace Lucene.Net.Util
                 */
 
             TestResult result = TestExecutionContext.CurrentContext.CurrentResult;
-            string message;
+
             if (result.ResultState == ResultState.Failure || result.ResultState == ResultState.Error)
             {
-                message = result.Message + $"\n\nTo reproduce this test result:\n\n" +
-                    $"Option 1:\n\n" +
-                    $" Apply the following assembly-level attributes:\n\n" +
-                    $"[assembly: Lucene.Net.Util.RandomSeed(\"{RandomizedContext.CurrentContext.RandomSeedAsHex}\")]\n" +
-                    $"[assembly: NUnit.Framework.SetCulture(\"{Thread.CurrentThread.CurrentCulture.Name}\")]\n\n" +
-                    $"Option 2:\n\n" +
-                    $" Use the following .runsettings file:\n\n" +
-                    $"<RunSettings>\n" +
-                    $"  <TestRunParameters>\n" +
-                    $"    <Parameter name=\"tests:seed\" value=\"{RandomizedContext.CurrentContext.RandomSeedAsHex}\" />\n" +
-                    $"    <Parameter name=\"tests:culture\" value=\"{Thread.CurrentThread.CurrentCulture.Name}\" />\n" +
-                    $"  </TestRunParameters>\n" +
-                    $"</RunSettings>\n\n" +
-                    $"See the .runsettings documentation at: https://docs.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file.";
+                string message =
+                    $$"""
+                      {{result.Message}}
+
+                      To reproduce this test result:
+
+                      Option 1:
+
+                       Apply the following assembly-level attributes:
+
+                      [assembly: Lucene.Net.Util.RandomSeed("{{RandomizedContext.CurrentContext.RandomSeedAsHex}}")]
+                      [assembly: NUnit.Framework.SetCulture("{{Thread.CurrentThread.CurrentCulture.Name}}")]
+
+                      Option 2:
+
+                       Create the following lucene.testsettings.json file somewhere between the test assembly and the root of your drive:
+
+                      {
+                        "tests": {
+                           "seed": "{{RandomizedContext.CurrentContext.RandomSeedAsHex}}",
+                           "culture": "{{Thread.CurrentThread.CurrentCulture.Name}}"
+                        }
+                      }
+
+                      """;
+
                 result.SetResult(result.ResultState, message, result.StackTrace);
             }
         }
