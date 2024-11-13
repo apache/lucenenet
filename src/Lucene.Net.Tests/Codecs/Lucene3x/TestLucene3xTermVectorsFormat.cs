@@ -22,6 +22,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
 
+    [TestFixture]
     public class TestLucene3xTermVectorsFormat : BaseTermVectorsFormatTestCase
     {
         [SetUp]

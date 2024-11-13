@@ -48,35 +48,35 @@ namespace Lucene.Net.Documents
             {
                 d = DateTools.StringToDate("97"); // no date
                 Assert.Fail();
-            } // expected exception
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
-            {
             }
+            catch (Exception e) when (e.IsParseException())
+            {
+                // expected exception
+            }
+
             try
             {
                 d = DateTools.StringToDate("200401011235009999"); // no date
                 Assert.Fail();
-            } // expected exception
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
-            {
             }
+            catch (Exception e) when (e.IsParseException())
+            {
+                // expected exception
+            }
+
             try
             {
                 d = DateTools.StringToDate("aaaa"); // no date
                 Assert.Fail();
-            } // expected exception
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
+            }
+            catch (Exception e) when (e.IsParseException())
             {
+                // expected exception
             }
         }
 
         [Test]
+        [LuceneNetSpecific] // maps to testStringtoTime()
         public virtual void TestStringtoTime_UnixEpoch()
         {
             long time = DateTools.StringToTime("197001010000", NumericRepresentation.UNIX_TIME_MILLISECONDS);
@@ -96,6 +96,7 @@ namespace Lucene.Net.Documents
         }
 
         [Test]
+        [LuceneNetSpecific] // maps to testStringtoTime()
         public virtual void TestStringtoTime_Ticks()
         {
             long time = DateTools.StringToTime("197001010000", NumericRepresentation.TICKS);
@@ -115,6 +116,7 @@ namespace Lucene.Net.Documents
         }
 
         [Test]
+        [LuceneNetSpecific] // maps to testStringtoTime()
         public virtual void TestStringtoTime_TicksAsMilliseconds()
         {
             long time = DateTools.StringToTime("197001010000", NumericRepresentation.TICKS_AS_MILLISECONDS);
@@ -140,7 +142,7 @@ namespace Lucene.Net.Documents
             //Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"), Locale.Default);
             //DateTime cal = new GregorianCalendar(GregorianCalendarTypes.Localized).ToDateTime(2004, 2, 3, 22, 8, 56, 333);
             DateTime cal = new DateTime(2004, 2, 3, 22, 8, 56, 333, DateTimeKind.Utc);
-            
+
 
             /*cal.clear();
             cal = new DateTime(2004, 1, 3, 22, 8, 56); // hour, minute, second -  year=2004, month=february(!), day=3
@@ -283,7 +285,8 @@ namespace Lucene.Net.Documents
             Assert.AreEqual("2004-02-03 22:08:56:333", IsoFormat(new DateTime(dateMillisecondLong)));
         }
 
-        private string IsoFormat(DateTime date)
+        // LUCENENET specific - made static
+        private static string IsoFormat(DateTime date)
         {
             /*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.ROOT);
             sdf.TimeZone = TimeZone.getTimeZone("GMT");
@@ -292,6 +295,7 @@ namespace Lucene.Net.Documents
         }
 
         [Test]
+        [LuceneNetSpecific] // maps to testDateToolsUTC()
         public virtual void TestDateToolsUTC_UnixEpoch()
         {
             // Sun, 30 Oct 2005 00:00:00 +0000 -- the last second of 2005's DST in Europe/London
@@ -340,6 +344,7 @@ namespace Lucene.Net.Documents
         }
 
         [Test]
+        [LuceneNetSpecific] // maps to testDateToolsUTC()
         public virtual void TestDateToolsUTC_Ticks()
         {
             // Sun, 30 Oct 2005 00:00:00 +0000 -- the last second of 2005's DST in Europe/London
@@ -388,6 +393,7 @@ namespace Lucene.Net.Documents
         }
 
         [Test]
+        [LuceneNetSpecific] // maps to testDateToolsUTC()
         public virtual void TestDateToolsUTC_TicksAsMilliseconds()
         {
             // Sun, 30 Oct 2005 00:00:00 +0000 -- the last second of 2005's DST in Europe/London
@@ -559,12 +565,12 @@ namespace Lucene.Net.Documents
         [LuceneNetSpecific]
         public void TestDocumentationComments()
         {
-            long unixEpochDate = 1095774611000; // javadoc appears to be wrong - this is actually what changes the GMT time as below
-            long ticks = 632313714110000000; // 2004-09-21 13:50:11
+            const long unixEpochDate = 1095774611000; // javadoc appears to be wrong - this is actually what changes the GMT time as below
+            const long ticks = 632313714110000000; // 2004-09-21 13:50:11
             Assert.AreEqual(ticks, DateTools.UnixTimeMillisecondsToTicks(unixEpochDate));
 
             long ticksOut = DateTools.Round(ticks, DateResolution.MONTH, NumericRepresentation.TICKS, NumericRepresentation.TICKS);
-            long expected = 1093996800000; // javadoc appears to be wrong - this is actually what the above is converted to
+            const long expected = 1093996800000; // javadoc appears to be wrong - this is actually what the above is converted to
             long actual = DateTools.TicksToUnixTimeMilliseconds(ticksOut);
             Assert.AreEqual(expected, actual);
 
@@ -576,10 +582,10 @@ namespace Lucene.Net.Documents
         [LuceneNetSpecific]
         public void TestLuceneCompatibility()
         {
-            long unixDate = 1075846136333L;
+            const long unixDate = 1075846136333L;
 
             string convertedDate = DateTools.TimeToString(unixDate, DateResolution.MILLISECOND, NumericRepresentation.UNIX_TIME_MILLISECONDS);
-            string expectedDate = "20040203220856333";
+            const string expectedDate = "20040203220856333";
             Assert.AreEqual(expectedDate, convertedDate);
             Assert.AreEqual("2004-02-03 22:08:56:333", IsoFormat(DateTools.StringToDate(convertedDate)));
             Assert.AreEqual(unixDate, DateTools.StringToTime(convertedDate));

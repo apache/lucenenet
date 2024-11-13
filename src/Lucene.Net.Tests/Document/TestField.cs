@@ -48,7 +48,11 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestDoubleField()
         {
-            Field[] fields = new Field[] { new DoubleField("foo", 5d, Field.Store.NO), new DoubleField("foo", 5d, Field.Store.YES) };
+            Field[] fields = new Field[]
+            {
+                new DoubleField("foo", 5d, Field.Store.NO),
+                new DoubleField("foo", 5d, Field.Store.YES)
+            };
 
             foreach (Field field in fields)
             {
@@ -114,7 +118,11 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestFloatField()
         {
-            Field[] fields = new Field[] { new SingleField("foo", 5f, Field.Store.NO), new SingleField("foo", 5f, Field.Store.YES) };
+            Field[] fields = new Field[]
+            {
+                new SingleField("foo", 5f, Field.Store.NO),
+                new SingleField("foo", 5f, Field.Store.YES)
+            };
 
             foreach (Field field in fields)
             {
@@ -138,7 +146,11 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestIntField()
         {
-            Field[] fields = new Field[] { new Int32Field("foo", 5, Field.Store.NO), new Int32Field("foo", 5, Field.Store.YES) };
+            Field[] fields = new Field[]
+            {
+                new Int32Field("foo", 5, Field.Store.NO),
+                new Int32Field("foo", 5, Field.Store.YES)
+            };
 
             foreach (Field field in fields)
             {
@@ -183,7 +195,11 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestLongField()
         {
-            Field[] fields = new Field[] { new Int64Field("foo", 5L, Field.Store.NO), new Int64Field("foo", 5L, Field.Store.YES) };
+            Field[] fields = new Field[]
+            {
+                new Int64Field("foo", 5L, Field.Store.NO),
+                new Int64Field("foo", 5L, Field.Store.YES)
+            };
 
             foreach (Field field in fields)
             {
@@ -249,7 +265,11 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestStringField()
         {
-            Field[] fields = new Field[] { new StringField("foo", "bar", Field.Store.NO), new StringField("foo", "bar", Field.Store.YES) };
+            Field[] fields = new Field[]
+            {
+                new StringField("foo", "bar", Field.Store.NO),
+                new StringField("foo", "bar", Field.Store.YES)
+            };
 
             foreach (Field field in fields)
             {
@@ -273,7 +293,11 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestTextFieldString()
         {
-            Field[] fields = new Field[] { new TextField("foo", "bar", Field.Store.NO), new TextField("foo", "bar", Field.Store.YES) };
+            Field[] fields = new Field[]
+            {
+                new TextField("foo", "bar", Field.Store.NO),
+                new TextField("foo", "bar", Field.Store.YES)
+            };
 
             foreach (Field field in fields)
             {
@@ -326,7 +350,12 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestStoredFieldBytes()
         {
-            Field[] fields = new Field[] { new StoredField("foo", "bar".GetBytes(Encoding.UTF8)), new StoredField("foo", "bar".GetBytes(Encoding.UTF8), 0, 3), new StoredField("foo", new BytesRef("bar")) };
+            Field[] fields = new Field[]
+            {
+                new StoredField("foo", "bar".GetBytes(Encoding.UTF8)),
+                new StoredField("foo", "bar".GetBytes(Encoding.UTF8), 0, 3),
+                new StoredField("foo", new BytesRef("bar"))
+            };
 
             foreach (Field field in fields)
             {
@@ -447,7 +476,8 @@ namespace Lucene.Net.Documents
             Assert.AreEqual(5L, field.GetInt64Value().Value);
         }
 
-        private void TrySetByteValue(Field f)
+        // LUCENENET specific - made these methods static
+        private static void TrySetByteValue(Field f)
         {
             try
             {
@@ -460,7 +490,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetBytesValue(Field f)
+        private static void TrySetBytesValue(Field f)
         {
             try
             {
@@ -473,7 +503,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetBytesRefValue(Field f)
+        private static void TrySetBytesRefValue(Field f)
         {
             try
             {
@@ -486,7 +516,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetDoubleValue(Field f)
+        private static void TrySetDoubleValue(Field f)
         {
             try
             {
@@ -499,7 +529,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetIntValue(Field f)
+        private static void TrySetIntValue(Field f)
         {
             try
             {
@@ -512,7 +542,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetLongValue(Field f)
+        private static void TrySetLongValue(Field f)
         {
             try
             {
@@ -525,7 +555,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetFloatValue(Field f)
+        private static void TrySetFloatValue(Field f)
         {
             try
             {
@@ -538,7 +568,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetReaderValue(Field f)
+        private static void TrySetReaderValue(Field f)
         {
             try
             {
@@ -551,7 +581,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetShortValue(Field f)
+        private static void TrySetShortValue(Field f)
         {
             try
             {
@@ -564,7 +594,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetStringValue(Field f)
+        private static void TrySetStringValue(Field f)
         {
             try
             {
@@ -577,7 +607,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetTokenStreamValue(Field f)
+        private static void TrySetTokenStreamValue(Field f)
         {
             try
             {
@@ -590,7 +620,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        private void TrySetBoost(Field f)
+        private static void TrySetBoost(Field f)
         {
             try
             {
@@ -613,15 +643,14 @@ namespace Lucene.Net.Documents
             Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
             IndexWriterConfig iwc = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer);
 
-            double value = double.MaxValue;
-            string fieldName = "DoubleField";
+            const double value = double.MaxValue;
+            const string fieldName = "DoubleField";
 
             FieldType type = new FieldType();
             type.IsIndexed = true;
             type.IsStored = true;
             type.IsTokenized = false;
             type.NumericType = NumericType.DOUBLE;
-
 
             using (IndexWriter writer = new IndexWriter(dir, iwc))
             {
@@ -770,26 +799,22 @@ namespace Lucene.Net.Documents
 
         [Test]
         [LuceneNetSpecific]
-        [TestCaseSource("ToStringData", new object[] { ToStringCulture.Invariant })]
+        [TestCaseSource(nameof(ToStringData), new object[] { ToStringCulture.Invariant })]
         public void TestToStringInvariant(Field field, string expected)
         {
-            using (var cultureContext = new CultureContext(CultureInfo.InvariantCulture))
-            {
-                string actual = field.ToString();
-                Assert.AreEqual(expected, actual);
-            }
+            using var cultureContext = new CultureContext(CultureInfo.InvariantCulture);
+            string actual = field.ToString();
+            Assert.AreEqual(expected, actual);
         }
 
         [Test]
         [LuceneNetSpecific]
-        [TestCaseSource("ToStringData", new object[] { ToStringCulture.France })]
+        [TestCaseSource(nameof(ToStringData), new object[] { ToStringCulture.France })]
         public void TestToStringFrance(Field field, string expected)
         {
-            using (var cultureContext = new CultureContext(new CultureInfo("fr-FR")))
-            {
-                string actual = field.ToString();
-                Assert.AreEqual(expected, actual);
-            }
+            using var cultureContext = new CultureContext(new CultureInfo("fr-FR"));
+            string actual = field.ToString();
+            Assert.AreEqual(expected, actual);
         }
     }
 }

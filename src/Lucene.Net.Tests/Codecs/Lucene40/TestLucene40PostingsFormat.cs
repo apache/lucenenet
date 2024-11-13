@@ -24,6 +24,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// <summary>
     /// Tests Lucene40PostingsFormat
     /// </summary>
+    [TestFixture]
     public class TestLucene40PostingsFormat : BasePostingsFormatTestCase
     {
         private readonly Codec codec = new Lucene40RWCodec();

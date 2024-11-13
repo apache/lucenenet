@@ -2,15 +2,16 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using Occur = Lucene.Net.Search.Occur;
+using StringWriter = System.IO.StringWriter;
 
 namespace Lucene.Net
 {
@@ -42,7 +43,7 @@ namespace Lucene.Net
             q.Boost = -42f;
             Assert.AreEqual(-42f, q.Boost, 0.0f);
 
-            Store.Directory directory = NewDirectory();
+            Directory directory = NewDirectory();
             try
             {
                 Analyzer analyzer = new MockAnalyzer(Random);
@@ -51,7 +52,7 @@ namespace Lucene.Net
                 IndexWriter writer = new IndexWriter(directory, conf);
                 try
                 {
-                    Documents.Document d = new Documents.Document();
+                    Document d = new Document();
                     d.Add(NewTextField("foo", "bar", Field.Store.YES));
                     writer.AddDocument(d);
                 }
@@ -72,7 +73,6 @@ namespace Lucene.Net
                     Explanation explain = searcher.Explain(q, hits[0].Doc);
                     Assert.AreEqual(hits[0].Score, explain.Value, 0.001f, "score doesn't match explanation");
                     Assert.IsTrue(explain.IsMatch, "explain doesn't think doc is a match");
-
                 }
                 finally
                 {
@@ -83,14 +83,13 @@ namespace Lucene.Net
             {
                 directory.Dispose();
             }
-
         }
 
         /// <summary>
         /// this test performs a number of searches. It also compares output
         ///  of searches using multi-file index segments with single-file
         ///  index segments.
-        /// 
+        ///
         ///  TODO: someone should check that the results of the searches are
         ///        still correct by adding assert statements. Right now, the test
         ///        passes if the results are the same between multi-file and
@@ -119,20 +118,29 @@ namespace Lucene.Net
             Assert.AreEqual(multiFileOutput, singleFileOutput);
         }
 
-
-        private void DoTestSearch(Random random, StringWriter @out, bool useCompoundFile)
+        // LUCENENET specific - made static
+        private static void DoTestSearch(Random random, StringWriter @out, bool useCompoundFile)
         {
-            Store.Directory directory = NewDirectory();
+            Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(random);
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             MergePolicy mp = conf.MergePolicy;
             mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
             IndexWriter writer = new IndexWriter(directory, conf);
 
-            string[] docs = new string[] { "a b c d e", "a b c d e a b c d e", "a b c d e f g h i j", "a c e", "e c a", "a c e a c e", "a c e a b c" };
+            string[] docs = new string[]
+            {
+                "a b c d e",
+                "a b c d e a b c d e",
+                "a b c d e f g h i j",
+                "a c e",
+                "e c a",
+                "a c e a c e",
+                "a c e a b c"
+            };
             for (int j = 0; j < docs.Length; j++)
             {
-                Documents.Document d = new Documents.Document();
+                Document d = new Document();
                 d.Add(NewTextField("contents", docs[j], Field.Store.YES));
                 d.Add(NewStringField("id", "" + j, Field.Store.NO));
                 writer.AddDocument(d);
@@ -144,7 +152,8 @@ namespace Lucene.Net
 
             ScoreDoc[] hits = null;
 
-            Sort sort = new Sort(SortField.FIELD_SCORE, new SortField("id", SortFieldType.INT32));
+            Sort sort = new Sort(SortField.FIELD_SCORE,
+                new SortField("id", SortFieldType.INT32));
 
             foreach (Query query in BuildQueries())
             {
@@ -159,7 +168,7 @@ namespace Lucene.Net
                 @out.WriteLine(hits.Length + " total results");
                 for (int i = 0; i < hits.Length && i < 10; i++)
                 {
-                    Documents.Document d = searcher.Doc(hits[i].Doc);
+                    Document d = searcher.Doc(hits[i].Doc);
                     @out.WriteLine(i + " " + hits[i].Score + " " + d.Get("contents"));
                 }
             }
@@ -167,7 +176,8 @@ namespace Lucene.Net
             directory.Dispose();
         }
 
-        private IList<Query> BuildQueries()
+        // LUCENENET specific - made static
+        private static IList<Query> BuildQueries()
         {
             IList<Query> queries = new JCG.List<Query>();
 

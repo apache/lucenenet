@@ -23,6 +23,7 @@ namespace Lucene.Net.Codecs.Lucene41
     /// <summary>
     /// Tests BlockPostingsFormat
     /// </summary>
+    [TestFixture]
     public class TestBlockPostingsFormat : BasePostingsFormatTestCase
     {
         private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat());

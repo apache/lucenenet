@@ -44,16 +44,14 @@ namespace Lucene.Net.Codecs.Lucene40
     [TestFixture]
     public class TestLucene40PostingsReader : LuceneTestCase
     {
-        internal static readonly string[] terms = LoadTerms();
+        internal static readonly string[] terms = new string[100];
 
-        static string[] LoadTerms()
+        static TestLucene40PostingsReader()
         {
-            string[] terms = new string[100];
             for (int i = 0; i < terms.Length; i++)
             {
                 terms[i] = Convert.ToString(i + 1);
             }
-            return terms;
         }
 
         [OneTimeSetUp]
@@ -65,7 +63,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// tests terms with different probabilities of being in the document.
-        ///  depends heavily on term vectors cross-check at checkIndex
+        /// depends heavily on term vectors cross-check at checkIndex
         /// </summary>
         [Test]
         public virtual void TestPostings()
@@ -122,25 +120,20 @@ namespace Lucene.Net.Codecs.Lucene40
             dir.Dispose(); // checkindex
         }
 
-        internal virtual IndexOptions IndexOptions()
+        // LUCENENET specific - made static
+        internal static IndexOptions IndexOptions()
         {
             switch (Random.Next(4))
             {
-                case 0:
-                    return Index.IndexOptions.DOCS_ONLY;
-
-                case 1:
-                    return Index.IndexOptions.DOCS_AND_FREQS;
-
-                case 2:
-                    return Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-
-                default:
-                    return Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                case 0: return Index.IndexOptions.DOCS_ONLY;
+                case 1: return Index.IndexOptions.DOCS_AND_FREQS;
+                case 2: return Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                default: return Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }
         }
 
-        internal virtual string FieldValue(int maxTF)
+        // LUCENENET specific - made static
+        internal static string FieldValue(int maxTF)
         {
             IList<string> shuffled = new JCG.List<string>();
             StringBuilder sb = new StringBuilder();

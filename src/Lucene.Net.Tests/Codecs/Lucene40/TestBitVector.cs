@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// <code>TestBitVector</code> tests the <code>BitVector</code>, obviously.
+    /// <see cref="TestBitVector" /> tests the <see cref="BitVector" />, obviously.
     /// </summary>
     [TestFixture]
     public class TestBitVector : LuceneTestCase
@@ -44,14 +44,15 @@ namespace Lucene.Net.Codecs.Lucene40
             DoTestConstructOfSize(1000);
         }
 
-        private void DoTestConstructOfSize(int n)
+        // LUCENENET specific - made static
+        private static void DoTestConstructOfSize(int n)
         {
             BitVector bv = new BitVector(n);
             Assert.AreEqual(n, bv.Length); // LUCENENET NOTE: Length is the equivalent of size()
         }
 
         /// <summary>
-        /// Test the get() and set() methods on BitVectors of various sizes.
+        /// Test the <see cref="BitVector.Get(int)"/> and <see cref="BitVector.Set(int)"/> methods on BitVectors of various sizes.
         /// </summary>
         [Test]
         public virtual void TestGetSet()
@@ -62,7 +63,8 @@ namespace Lucene.Net.Codecs.Lucene40
             DoTestGetSetVectorOfSize(1000);
         }
 
-        private void DoTestGetSetVectorOfSize(int n)
+        // LUCENENET specific - made static
+        private static void DoTestGetSetVectorOfSize(int n)
         {
             BitVector bv = new BitVector(n);
             for (int i = 0; i < bv.Length; i++) // LUCENENET NOTE: Length is the equivalent of size()
@@ -75,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Test the clear() method on BitVectors of various sizes.
+        /// Test the <see cref="BitVector.Clear(int)" /> method on BitVectors of various sizes.
         /// </summary>
         [Test]
         public virtual void TestClear()
@@ -86,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene40
             DoTestClearVectorOfSize(1000);
         }
 
-        private void DoTestClearVectorOfSize(int n)
+        private static void DoTestClearVectorOfSize(int n)
         {
             BitVector bv = new BitVector(n);
             for (int i = 0; i < bv.Length; i++) // LUCENENET NOTE: Length is the equivalent of size()
@@ -101,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Test the count() method on BitVectors of various sizes.
+        /// Test the <see cref="BitVector.Count()"/> method on BitVectors of various sizes.
         /// </summary>
         [Test]
         public virtual void TestCount()
@@ -112,7 +114,8 @@ namespace Lucene.Net.Codecs.Lucene40
             DoTestCountVectorOfSize(1000);
         }
 
-        private void DoTestCountVectorOfSize(int n)
+        // LUCENENET specific - made static
+        private static void DoTestCountVectorOfSize(int n)
         {
             BitVector bv = new BitVector(n);
             // test count when incrementally setting bits
@@ -152,7 +155,8 @@ namespace Lucene.Net.Codecs.Lucene40
             DoTestWriteRead(1000);
         }
 
-        private void DoTestWriteRead(int n)
+        // LUCENENET specific - made static
+        private static void DoTestWriteRead(int n)
         {
             MockDirectoryWrapper d = new MockDirectoryWrapper(Random, new RAMDirectory());
             d.PreventDoubleWrite = false;
@@ -211,7 +215,8 @@ namespace Lucene.Net.Codecs.Lucene40
             Assert.IsTrue(DoCompare(bv, compare));
         }
 
-        private void DoTestDgaps(int size, int count1, int count2)
+        // LUCENENET specific - made static
+        private static void DoTestDgaps(int size, int count1, int count2)
         {
             MockDirectoryWrapper d = new MockDirectoryWrapper(Random, new RAMDirectory());
             d.PreventDoubleWrite = false;
@@ -307,7 +312,10 @@ namespace Lucene.Net.Codecs.Lucene40
         /// this should really be an equals method on the BitVector itself. </summary>
         /// <param name="bv"> One bit vector </param>
         /// <param name="compare"> The second to compare </param>
-        private bool DoCompare(BitVector bv, BitVector compare)
+        /// <remarks>
+        /// LUCENENET specific - made static
+        /// </remarks>
+        private static bool DoCompare(BitVector bv, BitVector compare)
         {
             bool equal = true;
             for (int i = 0; i < bv.Length; i++) // LUCENENET NOTE: Length is the equivalent of size()

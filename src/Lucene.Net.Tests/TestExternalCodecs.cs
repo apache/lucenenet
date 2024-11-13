@@ -37,18 +37,16 @@ namespace Lucene.Net
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
-
     /* Intentionally outside of oal.index to verify fully
        external codecs work fine */
-
+    [TestFixture]
     public class TestExternalCodecs : LuceneTestCase
     {
         private sealed class CustomPerFieldCodec : Lucene46Codec
         {
-
-            internal readonly PostingsFormat ramFormat = Codecs.PostingsFormat.ForName("RAMOnly");
-            internal readonly PostingsFormat defaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
-            internal readonly PostingsFormat pulsingFormat = Codecs.PostingsFormat.ForName("Pulsing41");
+            private readonly PostingsFormat ramFormat = PostingsFormat.ForName("RAMOnly");
+            private readonly PostingsFormat defaultFormat = PostingsFormat.ForName("Lucene41");
+            private readonly PostingsFormat pulsingFormat = PostingsFormat.ForName("Pulsing41");
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
@@ -73,7 +71,6 @@ namespace Lucene.Net
         [Test]
         public virtual void TestPerFieldCodec()
         {
-
             int NUM_DOCS = AtLeast(173);
             if (Verbose)
             {
@@ -82,8 +79,12 @@ namespace Lucene.Net
 
             using BaseDirectoryWrapper dir = NewDirectory();
             dir.CheckIndexOnDispose = false; // we use a custom codec provider
-            using IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(new CustomPerFieldCodec()).SetMergePolicy(NewLogMergePolicy(3)));
-            Documents.Document doc = new Documents.Document();
+            using IndexWriter w = new IndexWriter(
+                dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetCodec(new CustomPerFieldCodec())
+                    .SetMergePolicy(NewLogMergePolicy(3)));
+            Document doc = new Document();
             // uses default codec:
             doc.Add(NewTextField("field1", "this field uses the standard codec as the test", Field.Store.NO));
             // uses pulsing codec:
@@ -147,6 +148,10 @@ namespace Lucene.Net
                     Console.WriteLine("\nTEST: now close NRT reader");
                 }
             }
+
+            // LUCENENET specific - variables disposed above via `using` statements
+            // w.Dispose();
+            // dir.Dispose();
         }
     }
 }

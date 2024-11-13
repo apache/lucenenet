@@ -2,12 +2,14 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using StringWriter = System.IO.StringWriter;
+using TextWriter = System.IO.TextWriter;
 
 namespace Lucene.Net
 {
@@ -30,18 +32,16 @@ namespace Lucene.Net
 
     public class TestSearchForDuplicates : LuceneTestCase
     {
-
         internal const string PRIORITY_FIELD = "priority";
         internal const string ID_FIELD = "id";
         internal const string HIGH_PRIORITY = "high";
         internal const string MED_PRIORITY = "medium";
         internal const string LOW_PRIORITY = "low";
 
-
         /// <summary>
         /// this test compares search results when using and not using compound
         ///  files.
-        /// 
+        ///
         ///  TODO: There is rudimentary search result validation as well, but it is
         ///        simply based on asserting the output observed in the old test case,
         ///        without really knowing if the output is correct. Someone needs to
@@ -72,10 +72,10 @@ namespace Lucene.Net
             Assert.AreEqual(multiFileOutput, singleFileOutput);
         }
 
-
-        private void DoTest(Random random, TextWriter @out, bool useCompoundFiles, int MAX_DOCS)
+        // LUCENENET specific - made static
+        private static void DoTest(Random random, TextWriter @out, bool useCompoundFiles, int MAX_DOCS)
         {
-            Store.Directory directory = NewDirectory();
+            Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(random);
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             MergePolicy mp = conf.MergePolicy;
@@ -88,7 +88,7 @@ namespace Lucene.Net
 
             for (int j = 0; j < MAX_DOCS; j++)
             {
-                Documents.Document d = new Documents.Document();
+                Document d = new Document();
                 d.Add(NewTextField(PRIORITY_FIELD, HIGH_PRIORITY, Field.Store.YES));
                 d.Add(NewTextField(ID_FIELD, Convert.ToString(j), Field.Store.YES));
                 writer.AddDocument(d);
@@ -129,28 +129,29 @@ namespace Lucene.Net
             directory.Dispose();
         }
 
-
-        private void PrintHits(TextWriter @out, ScoreDoc[] hits, IndexSearcher searcher)
+        // LUCENENET specific - made static
+        private static void PrintHits(TextWriter @out, ScoreDoc[] hits, IndexSearcher searcher)
         {
             @out.WriteLine(hits.Length + " total results\n");
             for (int i = 0; i < hits.Length; i++)
             {
                 if (i < 10 || (i > 94 && i < 105))
                 {
-                    Documents.Document d = searcher.Doc(hits[i].Doc);
+                    Document d = searcher.Doc(hits[i].Doc);
                     @out.WriteLine(i + " " + d.Get(ID_FIELD));
                 }
             }
         }
 
-        private void CheckHits(ScoreDoc[] hits, int expectedCount, IndexSearcher searcher)
+        // LUCENENET specific - made static
+        private static void CheckHits(ScoreDoc[] hits, int expectedCount, IndexSearcher searcher)
         {
             Assert.AreEqual(expectedCount, hits.Length, "total results");
             for (int i = 0; i < hits.Length; i++)
             {
                 if (i < 10 || (i > 94 && i < 105))
                 {
-                    Documents.Document d = searcher.Doc(hits[i].Doc);
+                    Document d = searcher.Doc(hits[i].Doc);
                     Assert.AreEqual(Convert.ToString(i), d.Get(ID_FIELD), "check " + i);
                 }
             }
