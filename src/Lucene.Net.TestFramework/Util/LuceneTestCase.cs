@@ -947,6 +947,17 @@ namespace Lucene.Net.Util
 
                       Option 2:
 
+                       Use the following .runsettings file:
+
+                      <RunSettings>
+                        <TestRunParameters>
+                          <Parameter name="tests:seed" value="{{RandomizedContext.CurrentContext.RandomSeedAsHex}}" />
+                          <Parameter name="tests:culture" value="{{Thread.CurrentThread.CurrentCulture.Name}}" />
+                        </TestRunParameters>
+                      </RunSettings>
+
+                      Option 3:
+
                        Create the following lucene.testsettings.json file somewhere between the test assembly and the root of your drive:
 
                       {
