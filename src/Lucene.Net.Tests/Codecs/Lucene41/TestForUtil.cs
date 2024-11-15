@@ -3,9 +3,6 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using Assert = Lucene.Net.TestFramework.Assert;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
-#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
-using RandomizedTesting.Generators;
-#endif
 using static Lucene.Net.Codecs.Lucene41.ForUtil;
 
 namespace Lucene.Net.Codecs.Lucene41
