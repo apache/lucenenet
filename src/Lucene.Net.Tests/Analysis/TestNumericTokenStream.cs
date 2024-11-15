@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -32,9 +33,7 @@ namespace Lucene.Net.Analysis
         internal const long lvalue = 4573245871874382L;
         internal const int ivalue = 123456;
 
-        // LUCENENET note - Have to explicitly use NUnit.Framework.TestAttribute in this class
-        // due to conflict with TestAttribute below
-        [NUnit.Framework.Test]
+        [Test]
         public virtual void TestLongStream()
         {
             using NumericTokenStream stream = new NumericTokenStream().SetInt64Value(lvalue);
@@ -60,7 +59,7 @@ namespace Lucene.Net.Analysis
             // stream.Dispose();
         }
 
-        [NUnit.Framework.Test]
+        [Test]
         public virtual void TestIntStream()
         {
             using NumericTokenStream stream = new NumericTokenStream().SetInt32Value(ivalue);
@@ -86,7 +85,7 @@ namespace Lucene.Net.Analysis
             // stream.Dispose();
         }
 
-        [NUnit.Framework.Test]
+        [Test]
         public virtual void TestNotInitialized()
         {
             NumericTokenStream stream = new NumericTokenStream();
@@ -112,16 +111,17 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public interface ITestAttribute : ICharTermAttribute
+        // LUCENENET specific - renamed interface and class below to (I)TestFakeAttribute to avoid conflict with NUnit
+        public interface ITestFakeAttribute : ICharTermAttribute
         {
         }
 
         // ReSharper disable once UnusedType.Global - presumably used to test ability to add derived attributes
-        public class TestAttribute : CharTermAttribute, ITestAttribute
+        public class TestFakeAttribute : CharTermAttribute, ITestFakeAttribute
         {
         }
 
-        [NUnit.Framework.Test]
+        [Test]
         public virtual void TestCTA()
         {
             NumericTokenStream stream = new NumericTokenStream();
@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis
             }
             try
             {
-                stream.AddAttribute<ITestAttribute>();
+                stream.AddAttribute<ITestFakeAttribute>();
                 Assert.Fail("Succeeded to add TestAttribute.");
             }
             catch (Exception iae) when (iae.IsIllegalArgumentException())
