@@ -244,7 +244,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
             }
 
             t.Append((ICharSequence)null); // LUCENENET specific: No-op for appending null
-            Assert.AreEqual("4teste", t.ToString()); // LUCENENET specific: different assertion
+            // LUCENENET specific: Excluding "null" from the result string
+            // because in .NET `StringBuilder.Append((string)null)` is a no-op
+            // rather than appending the string "null", so we do the same to match.
+            // Original assertion expected value was "4testenull".
+            Assert.AreEqual("4teste", t.ToString());
 
             // LUCENENET specific - test string overloads
             try
