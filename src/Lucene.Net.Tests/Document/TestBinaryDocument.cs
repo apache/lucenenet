@@ -89,10 +89,11 @@ namespace Lucene.Net.Documents
             IIndexableField binaryFldCompressed = new StoredField("binaryCompressed", CompressionTools.Compress(binaryValCompressed.GetBytes(Encoding.UTF8)));
             IIndexableField stringFldCompressed = new StoredField("stringCompressed", CompressionTools.CompressString(binaryValCompressed));
 
-            var doc = new Document();
-
-            doc.Add(binaryFldCompressed);
-            doc.Add(stringFldCompressed);
+            var doc = new Document
+            {
+                binaryFldCompressed,
+                stringFldCompressed,
+            };
 
             // add the doc to a ram index
             using Directory dir = NewDirectory();
