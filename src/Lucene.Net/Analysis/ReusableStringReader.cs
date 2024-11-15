@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis
     /// <summary>
     /// Internal class to enable reuse of the string reader by <see cref="Analyzer.GetTokenStream(string, string)"/>
     /// </summary>
-    public sealed class ReusableStringReader : System.IO.TextReader
+    internal sealed class ReusableStringReader : System.IO.TextReader
     {
         private int pos = 0, size = 0;
         private string s = null;
