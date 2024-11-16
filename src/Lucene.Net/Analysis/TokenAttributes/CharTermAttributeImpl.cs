@@ -34,7 +34,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="ICharTermAttribute"/>. </summary>
-    public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute, IAppendable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute, IAppendable, // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+        ISpanAppendable /* LUCENENET specific */
     {
         private const int MIN_BUFFER_SIZE = 10;
 
@@ -85,7 +86,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             {
                 // Not big enough; create a new array with slight
                 // over allocation and preserve content
-                
+
                 // LUCENENET: Resize rather than copy
                 Array.Resize(ref termBuffer, ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR));
             }
@@ -196,7 +197,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         // *** Appendable interface ***
 
-
         public CharTermAttribute Append(string value, int startIndex, int charCount)
         {
             // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
@@ -216,10 +216,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (startIndex > value.Length - charCount)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
-            value.CopyTo(startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
-            Length += charCount;
-
-            return this;
+            // LUCENENET specific - use ReadOnlySpan<char> version for better performance
+            return Append(value.AsSpan(startIndex, charCount));
         }
 
         public CharTermAttribute Append(char value)
@@ -234,11 +232,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 //return AppendNull();
                 return this; // No-op
 
-            int len = value.Length;
-            value.CopyTo(InternalResizeBuffer(termLength + len), termLength);
-            Length += len;
-
-            return this;
+            // LUCENENET specific - use ReadOnlySpan<char> version for better performance
+            return Append(value.AsSpan());
         }
 
         public CharTermAttribute Append(char[] value, int startIndex, int charCount)
@@ -260,10 +255,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (startIndex > value.Length - charCount)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
-            Arrays.Copy(value, startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
-            Length += charCount;
-
-            return this;
+            // LUCENENET specific - use ReadOnlySpan<char> version for better performance
+            return Append(value.AsSpan(startIndex, charCount));
         }
 
         public CharTermAttribute Append(string value)
@@ -354,6 +347,17 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             for (int i = 0; i < charCount; i++)
                 termBuffer[termLength++] = value[startIndex + i];
+
+            return this;
+        }
+
+        public CharTermAttribute Append(ReadOnlySpan<char> value)
+        {
+            if (value.Length == 0)
+                return this;
+
+            value.CopyTo(InternalResizeBuffer(termLength + value.Length).AsSpan(termLength));
+            Length += value.Length;
 
             return this;
         }
@@ -524,6 +528,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         IAppendable IAppendable.Append(ICharSequence value, int startIndex, int count) => Append(value, startIndex, count);
 
+        #endregion
+
+        #region ISpanAppendable Members
+
+        ISpanAppendable ISpanAppendable.Append(ReadOnlySpan<char> value) => Append(value);
 
         #endregion
     }
