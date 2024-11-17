@@ -1,4 +1,5 @@
 ﻿using J2N.Text;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -108,7 +109,7 @@ namespace Lucene.Net.Documents
             // fetch the binary compressed field and compare it's content with the original one
             // LUCENENET: was `= new String(CompressionTools.decompress(docFromReader.getBinaryValue("binaryCompressed")), StandardCharsets.UTF_8);`
             string binaryFldCompressedTest =
-                Encoding.UTF8.GetString(
+                StandardCharsets.UTF_8.GetString(
                     CompressionTools.Decompress(docFromReader.GetBinaryValue("binaryCompressed")));
             Assert.IsTrue(binaryFldCompressedTest.Equals(binaryValCompressed, StringComparison.Ordinal));
             Assert.IsTrue(
