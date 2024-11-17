@@ -44,14 +44,19 @@ namespace Lucene.Net.Codecs.Lucene40
     [TestFixture]
     public class TestLucene40PostingsReader : LuceneTestCase
     {
-        internal static readonly string[] terms = new string[100];
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        internal static readonly string[] terms = LoadTerms();
 
-        static TestLucene40PostingsReader()
+        static string[] LoadTerms()
         {
+            string[] terms = new string[100];
+
             for (int i = 0; i < terms.Length; i++)
             {
                 terms[i] = Convert.ToString(i + 1);
             }
+
+            return terms;
         }
 
         [OneTimeSetUp]
