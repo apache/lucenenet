@@ -292,6 +292,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             t.Append((char[])null); // No-op
             Assert.AreEqual("4teste", t.ToString());
+
+            // LUCENENET specific - test ReadOnlySpan<char> overload
+            t.SetEmpty().Append("12345678".AsSpan());
+            Assert.AreEqual("12345678", t.ToString());
         }
 
         [Test]
@@ -326,6 +330,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
             const string longTestString = "012345678901234567890123456789";
             t.Append(new CharSequenceAnonymousClass(longTestString));
             Assert.AreEqual("4567890123456" + longTestString, t.ToString());
+
+            // LUCENENET specific - test ReadOnlySpan<char> overload
+            t.SetEmpty().Append("01234567890123456789012345678901234567890123456789".AsSpan());
+            Assert.AreEqual("01234567890123456789012345678901234567890123456789", t.ToString());
         }
 
         private sealed class CharSequenceAnonymousClass : ICharSequence
