@@ -33,10 +33,10 @@ namespace Lucene.Net.Analysis
         internal const long lvalue = 4573245871874382L;
         internal const int ivalue = 123456;
 
-        [NUnit.Framework.Test]
+        [Test]
         public virtual void TestLongStream()
         {
-            using NumericTokenStream stream = (new NumericTokenStream()).SetInt64Value(lvalue);
+            using NumericTokenStream stream = new NumericTokenStream().SetInt64Value(lvalue);
             // use getAttribute to test if attributes really exist, if not an IAE will be throwed
             ITermToBytesRefAttribute bytesAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
             ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
@@ -55,12 +55,14 @@ namespace Lucene.Net.Analysis
             }
             Assert.IsFalse(stream.IncrementToken(), "More tokens available");
             stream.End();
+            // LUCENENET specific - stream disposed above via using statement
+            // stream.Dispose();
         }
 
-        [NUnit.Framework.Test]
+        [Test]
         public virtual void TestIntStream()
         {
-            NumericTokenStream stream = (new NumericTokenStream()).SetInt32Value(ivalue);
+            using NumericTokenStream stream = new NumericTokenStream().SetInt32Value(ivalue);
             // use getAttribute to test if attributes really exist, if not an IAE will be throwed
             ITermToBytesRefAttribute bytesAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
             ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
@@ -79,10 +81,11 @@ namespace Lucene.Net.Analysis
             }
             Assert.IsFalse(stream.IncrementToken(), "More tokens available");
             stream.End();
-            stream.Dispose();
+            // LUCENENET specific - stream disposed above via using statement
+            // stream.Dispose();
         }
 
-        [NUnit.Framework.Test]
+        [Test]
         public virtual void TestNotInitialized()
         {
             NumericTokenStream stream = new NumericTokenStream();
@@ -108,15 +111,17 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public interface ITestAttribute : ICharTermAttribute
+        // LUCENENET specific - renamed interface and class below to (I)TestFakeAttribute to avoid conflict with NUnit
+        public interface ITestFakeAttribute : ICharTermAttribute
         {
         }
 
-        public class TestAttribute : CharTermAttribute, ITestAttribute
+        // ReSharper disable once UnusedType.Global - presumably used to test ability to add derived attributes
+        public class TestFakeAttribute : CharTermAttribute, ITestFakeAttribute
         {
         }
 
-        [NUnit.Framework.Test]
+        [Test]
         public virtual void TestCTA()
         {
             NumericTokenStream stream = new NumericTokenStream();
@@ -131,7 +136,7 @@ namespace Lucene.Net.Analysis
             }
             try
             {
-                stream.AddAttribute<ITestAttribute>();
+                stream.AddAttribute<ITestFakeAttribute>();
                 Assert.Fail("Succeeded to add TestAttribute.");
             }
             catch (Exception iae) when (iae.IsIllegalArgumentException())

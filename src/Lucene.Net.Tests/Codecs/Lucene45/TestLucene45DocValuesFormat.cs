@@ -23,6 +23,7 @@ namespace Lucene.Net.Codecs.Lucene45
     /// <summary>
     /// Tests Lucene45DocValuesFormat
     /// </summary>
+    [TestFixture]
     public class TestLucene45DocValuesFormat : BaseCompressingDocValuesFormatTestCase
     {
         private readonly Codec codec = TestUtil.AlwaysDocValuesFormat(new Lucene45DocValuesFormat());

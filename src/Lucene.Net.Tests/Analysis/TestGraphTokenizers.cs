@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Diagnostics;
 using NUnit.Framework;
 using System;
@@ -52,18 +53,19 @@ namespace Lucene.Net.Analysis
 
         private class GraphTokenizer : Tokenizer
         {
-            internal IList<Token> tokens;
-            internal int upto;
-            internal int inputLength;
+            private IList<Token> tokens;
+            private int upto;
+            private int inputLength;
 
-            internal readonly ICharTermAttribute termAtt;
-            internal readonly IOffsetAttribute offsetAtt;
-            internal readonly IPositionIncrementAttribute posIncrAtt;
-            internal readonly IPositionLengthAttribute posLengthAtt;
+            private readonly ICharTermAttribute termAtt;
+            private readonly IOffsetAttribute offsetAtt;
+            private readonly IPositionIncrementAttribute posIncrAtt;
+            private readonly IPositionLengthAttribute posLengthAtt;
 
             public GraphTokenizer(TextReader input)
                 : base(input)
             {
+                // LUCENENET specific - AddAttribute must be called in the constructor
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
                 posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
@@ -124,7 +126,7 @@ namespace Lucene.Net.Analysis
                 {
                     int count = m_input.Read(buffer, 0, buffer.Length);
 
-                    //.NET TextReader.Read(buff, int, int) returns 0, not -1 on no chars
+                    // LUCENENET specific - .NET TextReader.Read(buff, int, int) returns 0, not -1 on no chars
                     // but in some cases, such as MockCharFilter, it overloads read and returns -1
                     // so we should handle both 0 and -1 values
                     if (count <= 0)
@@ -229,14 +231,15 @@ namespace Lucene.Net.Analysis
         // Just deletes (leaving hole) token 'a':
         private sealed class RemoveATokens : TokenFilter
         {
-            internal int pendingPosInc;
+            private int pendingPosInc;
 
-            internal readonly ICharTermAttribute termAtt;
-            internal readonly IPositionIncrementAttribute posIncAtt;
+            private readonly ICharTermAttribute termAtt;
+            private readonly IPositionIncrementAttribute posIncAtt;
 
             public RemoveATokens(TokenStream @in)
                 : base(@in)
             {
+                // LUCENENET specific - AddAttribute must be called in the constructor
                 termAtt = AddAttribute<ICharTermAttribute>();
                 posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
@@ -383,12 +386,12 @@ namespace Lucene.Net.Analysis
         }
 
         [Test]
+        [LuceneNetSpecific]
         public void TestMockTokenizerCtor()
         {
             var sr = new StringReader("Hello");
-            var mt = new MockTokenizer(sr);
+            _ = new MockTokenizer(sr);
         }
-
 
         [Test]
         public virtual void TestMockGraphTokenFilterBeforeHolesRandom()
@@ -459,7 +462,11 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestSingleToken()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("abc", 1, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton expected = BasicAutomata.MakeString("abc");
             Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
@@ -468,7 +475,12 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestMultipleHoles()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("a", 1, 1), Token("b", 3, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("a", 1, 1),
+                    Token("b", 3, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton expected = Join(S2a("a"), SEP_A, HOLE_A, SEP_A, HOLE_A, SEP_A, S2a("b"));
             Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
@@ -477,7 +489,13 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestSynOverMultipleHoles()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("a", 1, 1), Token("x", 0, 3), Token("b", 3, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("a", 1, 1),
+                    Token("x", 0, 3),
+                    Token("b", 3, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton a1 = Join(S2a("a"), SEP_A, HOLE_A, SEP_A, HOLE_A, SEP_A, S2a("b"));
             Automaton a2 = Join(S2a("x"), SEP_A, S2a("b"));
@@ -499,7 +517,8 @@ namespace Lucene.Net.Analysis
         private static readonly Automaton SEP_A = BasicAutomata.MakeChar(TokenStreamToAutomaton.POS_SEP);
         private static readonly Automaton HOLE_A = BasicAutomata.MakeChar(TokenStreamToAutomaton.HOLE);
 
-        private Automaton Join(params string[] strings)
+        // LUCENENET specific - made static
+        private static Automaton Join(params string[] strings)
         {
             IList<Automaton> @as = new JCG.List<Automaton>();
             foreach (string s in strings)
@@ -511,12 +530,14 @@ namespace Lucene.Net.Analysis
             return BasicOperations.Concatenate(@as);
         }
 
-        private Automaton Join(params Automaton[] @as)
+        // LUCENENET specific - made static
+        private static Automaton Join(params Automaton[] @as)
         {
             return BasicOperations.Concatenate(@as);
         }
 
-        private Automaton S2a(string s)
+        // LUCENENET specific - made static
+        private static Automaton S2a(string s)
         {
             return BasicAutomata.MakeString(s);
         }
@@ -524,7 +545,12 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestTwoTokens()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1), Token("def", 1, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("abc", 1, 1),
+                    Token("def", 1, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton expected = Join("abc", "def");
 
@@ -535,7 +561,12 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestHole()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1), Token("def", 2, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("abc", 1, 1),
+                    Token("def", 2, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
 
             Automaton expected = Join(S2a("abc"), SEP_A, HOLE_A, SEP_A, S2a("def"));
@@ -548,7 +579,12 @@ namespace Lucene.Net.Analysis
         public virtual void TestOverlappedTokensSausage()
         {
             // Two tokens on top of each other (sausage):
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1), Token("xyz", 0, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("abc", 1, 1),
+                    Token("xyz", 0, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton a1 = BasicAutomata.MakeString("abc");
             Automaton a2 = BasicAutomata.MakeString("xyz");
@@ -559,7 +595,13 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestOverlappedTokensLattice()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1), Token("xyz", 0, 2), Token("def", 1, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("abc", 1, 1),
+                    Token("xyz", 0, 2),
+                    Token("def", 1, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton a1 = BasicAutomata.MakeString("xyz");
             Automaton a2 = Join("abc", "def");
@@ -572,10 +614,19 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestSynOverHole()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("a", 1, 1), Token("X", 0, 2), Token("b", 2, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("a", 1, 1),
+                    Token("X", 0, 2),
+                    Token("b", 2, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
-            Automaton a1 = BasicOperations.Union(Join(S2a("a"), SEP_A, HOLE_A), BasicAutomata.MakeString("X"));
-            Automaton expected = BasicOperations.Concatenate(a1, Join(SEP_A, S2a("b")));
+            Automaton a1 = BasicOperations.Union(
+                Join(S2a("a"), SEP_A, HOLE_A),
+                BasicAutomata.MakeString("X"));
+            Automaton expected = BasicOperations.Concatenate(a1,
+                Join(SEP_A, S2a("b")));
             //toDot(actual);
             Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
         }
@@ -583,16 +634,31 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestSynOverHole2()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("xyz", 1, 1), Token("abc", 0, 3), Token("def", 2, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("xyz", 1, 1),
+                    Token("abc", 0, 3),
+                    Token("def", 2, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
-            Automaton expected = BasicOperations.Union(Join(S2a("xyz"), SEP_A, HOLE_A, SEP_A, S2a("def")), BasicAutomata.MakeString("abc"));
+            Automaton expected = BasicOperations.Union(
+                Join(S2a("xyz"), SEP_A, HOLE_A, SEP_A, S2a("def")),
+                BasicAutomata.MakeString("abc"));
             Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
         }
 
         [Test]
         public virtual void TestOverlappedTokensLattice2()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1), Token("xyz", 0, 3), Token("def", 1, 1), Token("ghi", 1, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("abc", 1, 1),
+                    Token("xyz", 0, 3),
+                    Token("def", 1, 1),
+                    Token("ghi", 1, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton a1 = BasicAutomata.MakeString("xyz");
             Automaton a2 = Join("abc", "def", "ghi");
@@ -606,14 +672,18 @@ namespace Lucene.Net.Analysis
         {
             TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1, 0, 4) });
             StringWriter w = new StringWriter();
-            (new TokenStreamToDot("abcd", ts, (TextWriter)(w))).ToDot();
+            new TokenStreamToDot("abcd", ts, (TextWriter)(w)).ToDot();
             Assert.IsTrue(w.ToString().IndexOf("abc / abcd", StringComparison.Ordinal) != -1);
         }
 
         [Test]
         public virtual void TestStartsWithHole()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 2, 1) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("abc", 2, 1)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton expected = Join(HOLE_A, SEP_A, S2a("abc"));
             //toDot(actual);
@@ -625,7 +695,12 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestSynHangingOverEnd()
         {
-            TokenStream ts = new CannedTokenStream(new Token[] { Token("a", 1, 1), Token("X", 0, 10) });
+            TokenStream ts = new CannedTokenStream(
+                new Token[]
+                {
+                    Token("a", 1, 1),
+                    Token("X", 0, 10)
+                });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton expected = BasicOperations.Union(BasicAutomata.MakeString("a"), BasicAutomata.MakeString("X"));
             Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));

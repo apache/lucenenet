@@ -23,6 +23,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// <summary>
     /// Tests Lucene3x postings format
     /// </summary>
+    [TestFixture]
     public class TestLucene3xPostingsFormat : BasePostingsFormatTestCase
     {
         private readonly Codec codec = new PreFlexRWCodec();
@@ -35,7 +36,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             base.SetUp();
             LuceneTestCase.OldFormatImpersonationIsActive = true;
         }
-
 
         protected override Codec GetCodec()
         {

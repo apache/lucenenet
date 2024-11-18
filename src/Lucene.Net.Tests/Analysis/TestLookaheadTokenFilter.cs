@@ -76,7 +76,25 @@ namespace Lucene.Net.Analysis
                 return new TokenStreamComponents(source, filter);
             });
 
-            AssertAnalyzesTo(analyzer, "Only he who is running knows .", new string[] { "Only", "Only-huh?", "he", "he-huh?", "who", "who-huh?", "is", "is-huh?", "running", "running-huh?", "knows", "knows-huh?", ".", ".-huh?" });
+            AssertAnalyzesTo(analyzer,
+                "Only he who is running knows .",
+                new string[]
+                {
+                    "Only",
+                    "Only-huh?",
+                    "he",
+                    "he-huh?",
+                    "who",
+                    "who-huh?",
+                    "is",
+                    "is-huh?",
+                    "running",
+                    "running-huh?",
+                    "knows",
+                    "knows-huh?",
+                    ".",
+                    ".-huh?"
+                });
         }
     }
 }

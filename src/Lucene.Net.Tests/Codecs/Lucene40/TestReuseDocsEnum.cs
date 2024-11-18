@@ -63,7 +63,8 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             Directory dir = NewDirectory();
             Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(cp));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(cp));
             int numdocs = AtLeast(20);
             CreateRandomIndex(numdocs, writer, Random);
             writer.Commit();
@@ -93,7 +94,8 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             Directory dir = NewDirectory();
             Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(cp));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(cp));
             int numdocs = AtLeast(20);
             CreateRandomIndex(numdocs, writer, Random);
             writer.Commit();
@@ -186,7 +188,8 @@ namespace Lucene.Net.Codecs.Lucene40
             IOUtils.Dispose(writer, firstReader, secondReader, dir);
         }
 
-        public virtual DocsEnum RandomDocsEnum(string field, BytesRef term, IList<AtomicReaderContext> readers, IBits bits)
+        // LUCENENET specific - made static
+        public static DocsEnum RandomDocsEnum(string field, BytesRef term, IList<AtomicReaderContext> readers, IBits bits)
         {
             if (Random.Next(10) == 0)
             {

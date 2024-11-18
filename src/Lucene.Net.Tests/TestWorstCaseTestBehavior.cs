@@ -1,5 +1,4 @@
 ﻿using J2N.Threading;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -31,7 +30,7 @@ namespace Lucene.Net
         [Test]
         public virtual void TestThreadLeak()
         {
-            ThreadJob t = new ThreadAnonymousClass(this);
+            ThreadJob t = new ThreadAnonymousClass();
             t.Start();
 
             while (!t.IsAlive)
@@ -44,13 +43,6 @@ namespace Lucene.Net
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestWorstCaseTestBehavior outerInstance;
-
-            public ThreadAnonymousClass(TestWorstCaseTestBehavior outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override void Run()
             {
                 try
@@ -68,7 +60,7 @@ namespace Lucene.Net
         [Test]
         public virtual void TestLaaaaaargeOutput()
         {
-            string message = "I will not OOM on large output";
+            const string message = "I will not OOM on large output";
             int howMuch = 250 * 1024 * 1024;
             for (int i = 0; i < howMuch; i++)
             {
@@ -81,7 +73,6 @@ namespace Lucene.Net
             }
             Console.WriteLine(".");
         }
-
 
         [Ignore("Ignored in Lucene")]
         [Test]
@@ -101,20 +92,13 @@ namespace Lucene.Net
         [Test]
         public virtual void TestUncaughtException()
         {
-            ThreadJob t = new ThreadAnonymousClass2(this);
+            ThreadJob t = new ThreadAnonymousClass2();
             t.Start();
             t.Join();
         }
 
         private sealed class ThreadAnonymousClass2 : ThreadJob
         {
-            private readonly TestWorstCaseTestBehavior outerInstance;
-
-            public ThreadAnonymousClass2(TestWorstCaseTestBehavior outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override void Run()
             {
                 throw RuntimeException.Create("foobar");
@@ -127,7 +111,6 @@ namespace Lucene.Net
         {
             Thread.Sleep(5000);
         }
-
 
         [Ignore("Ignored in Lucene")]
         [Test]

@@ -36,7 +36,6 @@ namespace Lucene.Net
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
     using MergePolicy = Lucene.Net.Index.MergePolicy;
-    using OneMerge = Lucene.Net.Index.MergePolicy.OneMerge;
     using MergeScheduler = Lucene.Net.Index.MergeScheduler;
     using MergeTrigger = Lucene.Net.Index.MergeTrigger;
     using Directory = Lucene.Net.Store.Directory;
@@ -63,15 +62,11 @@ namespace Lucene.Net
                 this.outerInstance = outerInstance;
             }
 
-
             private class MyMergeThread : ConcurrentMergeScheduler.MergeThread
             {
-                private readonly TestMergeSchedulerExternal.MyMergeScheduler outerInstance;
-
                 public MyMergeThread(TestMergeSchedulerExternal.MyMergeScheduler outerInstance, IndexWriter writer, MergePolicy.OneMerge merge)
                     : base(outerInstance, writer, merge)
                 {
-                    this.outerInstance = outerInstance;
                     outerInstance.outerInstance.mergeThreadCreated = true;
                 }
             }
@@ -80,7 +75,7 @@ namespace Lucene.Net
             {
                 MergeThread thread = new MyMergeThread(this, writer, merge);
                 thread.SetThreadPriority((ThreadPriority)MergeThreadPriority);
-                thread.IsBackground = (true);
+                thread.IsBackground = true;
                 thread.Name = "MyMergeThread";
                 return thread;
             }
@@ -120,7 +115,12 @@ namespace Lucene.Net
             Field idField = NewStringField("id", "", Field.Store.YES);
             doc.Add(idField);
 
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new MyMergeScheduler(this)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter writer = new IndexWriter(dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMergeScheduler(new MyMergeScheduler(this))
+                    .SetMaxBufferedDocs(2)
+                    .SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                    .SetMergePolicy(NewLogMergePolicy()));
             LogMergePolicy logMP = (LogMergePolicy)writer.Config.MergePolicy;
             logMP.MergeFactor = 10;
             for (int i = 0; i < 20; i++)
@@ -139,7 +139,6 @@ namespace Lucene.Net
 
         private class ReportingMergeScheduler : MergeScheduler
         {
-
             public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
             {
                 MergePolicy.OneMerge merge = null;
@@ -156,7 +155,6 @@ namespace Lucene.Net
             protected override void Dispose(bool disposing)
             {
             }
-
         }
 
         [Test]

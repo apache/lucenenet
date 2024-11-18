@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -76,12 +77,14 @@ namespace Lucene.Net.Codecs.Lucene3x
             return new string(buffer, 0, end);
         }
 
+        // LUCENENET specific - made static
         private static string ToHexString(Term t)
         {
             return t.Field + ":" + UnicodeUtil.ToHexString(t.Text);
         }
 
-        private string GetRandomString(Random r)
+        // LUCENENET specific - made static
+        private static string GetRandomString(Random r)
         {
             string s;
             if (r.Next(5) == 1)
@@ -116,21 +119,23 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else
                 {
-                    return System.String.Compare(term1.Field, term2.Field, System.StringComparison.Ordinal);
+                    return string.Compare(term1.Field, term2.Field, StringComparison.Ordinal);
                 }
             }
         }
 
         private static readonly SortTermAsUTF16Comparer termAsUTF16Comparer = new SortTermAsUTF16Comparer();
 
+        // LUCENENET specific - made static
         // single straight enum
-        private void DoTestStraightEnum(IList<Term> fieldTerms, IndexReader reader, int uniqueTermCount)
+        private static void DoTestStraightEnum(IList<Term> fieldTerms, IndexReader reader, int uniqueTermCount)
         {
             if (Verbose)
             {
                 Console.WriteLine("\nTEST: top now enum reader=" + reader);
             }
             Fields fields = MultiFields.GetFields(reader);
+
             {
                 // Test straight enum:
                 int termCount = 0;
@@ -173,9 +178,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        // LUCENENET specific - made static
         // randomly seeks to term that we know exists, then next's
         // from there
-        private void DoTestSeekExists(Random r, IList<Term> fieldTerms, IndexReader reader)
+        private static void DoTestSeekExists(Random r, IList<Term> fieldTerms, IndexReader reader)
         {
             IDictionary<string, TermsEnum> tes = new Dictionary<string, TermsEnum>();
 
@@ -248,7 +254,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        private void DoTestSeekDoesNotExist(Random r, int numField, IList<Term> fieldTerms, Term[] fieldTermsArray, IndexReader reader)
+        // LUCENENET specific - made static
+        private static void DoTestSeekDoesNotExist(Random r, int numField, IList<Term> fieldTerms, Term[] fieldTermsArray, IndexReader reader)
         {
             IDictionary<string, TermsEnum> tes = new Dictionary<string, TermsEnum>();
 
@@ -346,9 +353,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual void TestSurrogatesOrder()
         {
             Directory dir = NewDirectory();
-            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            config.Codec = new PreFlexRWCodec();
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, config);
+            RandomIndexWriter w = new RandomIndexWriter(Random,
+                dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetCodec(new PreFlexRWCodec()));
 
             int numField = TestUtil.NextInt32(Random, 2, 5);
 
@@ -370,7 +378,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     string term = GetRandomString(Random) + "_ " + (tc++);
                     uniqueTerms.Add(term);
                     fieldTerms.Add(new Term(field, term));
-                    Documents.Document doc = new Documents.Document();
+                    Document doc = new Document();
                     doc.Add(NewStringField(field, term, Field.Store.NO));
                     w.AddDocument(doc);
                 }

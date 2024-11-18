@@ -1,4 +1,5 @@
 ﻿using J2N.Text;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -31,13 +32,13 @@ namespace Lucene.Net.Documents
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 
     /// <summary>
-    /// Tests <seealso cref="Document"/> class.
+    /// Tests <see cref="Document"/> class.
     /// </summary>
     [TestFixture]
     public class TestBinaryDocument : LuceneTestCase
     {
-        internal string binaryValStored = "this text will be stored as a byte array in the index";
-        internal string binaryValCompressed = "this text will be also stored and compressed as a byte array in the index";
+        internal const string binaryValStored = "this text will be stored as a byte array in the index";
+        internal const string binaryValCompressed = "this text will be also stored and compressed as a byte array in the index";
 
         [Test]
         public virtual void TestBinaryFieldInIndex()
@@ -47,40 +48,34 @@ namespace Lucene.Net.Documents
             IIndexableField binaryFldStored = new StoredField("binaryStored", Encoding.UTF8.GetBytes(binaryValStored));
             IIndexableField stringFldStored = new Field("stringStored", binaryValStored, ft);
 
-            Documents.Document doc = new Documents.Document();
+            Document doc = new Document();
 
             doc.Add(binaryFldStored);
 
             doc.Add(stringFldStored);
 
-            /// <summary>
-            /// test for field count </summary>
+            // test for field count
             Assert.AreEqual(2, doc.Fields.Count);
 
-            /// <summary>
-            /// add the doc to a ram index </summary>
+            // add the doc to a ram index
             Directory dir = NewDirectory();
             Random r = Random;
             RandomIndexWriter writer = new RandomIndexWriter(r, dir);
             writer.AddDocument(doc);
 
-            /// <summary>
-            /// open a reader and fetch the document </summary>
+            // open a reader and fetch the document
             IndexReader reader = writer.GetReader();
-            Documents.Document docFromReader = reader.Document(0);
+            Document docFromReader = reader.Document(0);
             Assert.IsTrue(docFromReader != null);
 
-            /// <summary>
-            /// fetch the binary stored field and compare it's content with the original one </summary>
+            // fetch the binary stored field and compare it's content with the original one
             BytesRef bytes = docFromReader.GetBinaryValue("binaryStored");
             Assert.IsNotNull(bytes);
-
+            // LUCENENET: was `= new string(bytes.Bytes, bytes.Offset, bytes.Length, IOUtils.CHARSET_UTF_8);`
             string binaryFldStoredTest = Encoding.UTF8.GetString(bytes.Bytes).Substring(bytes.Offset, bytes.Length);
-            //new string(bytes.Bytes, bytes.Offset, bytes.Length, IOUtils.CHARSET_UTF_8);
             Assert.IsTrue(binaryFldStoredTest.Equals(binaryValStored, StringComparison.Ordinal));
 
-            /// <summary>
-            /// fetch the string field and compare it's content with the original one </summary>
+            // fetch the string field and compare it's content with the original one
             string stringFldStoredTest = docFromReader.Get("stringStored");
             Assert.IsTrue(stringFldStoredTest.Equals(binaryValStored, StringComparison.Ordinal));
 
@@ -95,24 +90,36 @@ namespace Lucene.Net.Documents
             IIndexableField binaryFldCompressed = new StoredField("binaryCompressed", CompressionTools.Compress(binaryValCompressed.GetBytes(Encoding.UTF8)));
             IIndexableField stringFldCompressed = new StoredField("stringCompressed", CompressionTools.CompressString(binaryValCompressed));
 
-            var doc = new Documents.Document {binaryFldCompressed, stringFldCompressed};
+            var doc = new Document
+            {
+                binaryFldCompressed,
+                stringFldCompressed,
+            };
 
+            // add the doc to a ram index
             using Directory dir = NewDirectory();
             using RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
             writer.AddDocument(doc);
 
+            // open a reader and fetch the document
             using IndexReader reader = writer.GetReader();
             Document docFromReader = reader.Document(0);
             Assert.IsTrue(docFromReader != null);
 
+            // fetch the binary compressed field and compare it's content with the original one
+            // LUCENENET: was `= new String(CompressionTools.decompress(docFromReader.getBinaryValue("binaryCompressed")), StandardCharsets.UTF_8);`
             string binaryFldCompressedTest =
-                Encoding.UTF8.GetString(
+                StandardCharsets.UTF_8.GetString(
                     CompressionTools.Decompress(docFromReader.GetBinaryValue("binaryCompressed")));
-            //new string(CompressionTools.Decompress(docFromReader.GetBinaryValue("binaryCompressed")), IOUtils.CHARSET_UTF_8);
             Assert.IsTrue(binaryFldCompressedTest.Equals(binaryValCompressed, StringComparison.Ordinal));
             Assert.IsTrue(
                 CompressionTools.DecompressString(docFromReader.GetBinaryValue("stringCompressed"))
                     .Equals(binaryValCompressed, StringComparison.Ordinal));
+
+            // LUCENENET specific - variables disposed via `using` statements above
+            // writer.Dispose();
+            // reader.Dispose();
+            // dir.Dispose();
         }
     }
 }

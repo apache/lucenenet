@@ -21,6 +21,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
     using BaseStoredFieldsFormatTestCase = Lucene.Net.Index.BaseStoredFieldsFormatTestCase;
 
+    [TestFixture]
     public class TestLucene40StoredFieldsFormat : BaseStoredFieldsFormatTestCase
     {
         [OneTimeSetUp]

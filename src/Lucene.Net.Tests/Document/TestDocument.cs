@@ -44,18 +44,18 @@ namespace Lucene.Net.Documents
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
     /// <summary>
-    /// Tests <seealso cref="Document"/> class.
+    /// Tests <see cref="Document"/> class.
     /// </summary>
     [TestFixture]
     public class TestDocument : LuceneTestCase
     {
-        internal string binaryVal = "this text will be stored as a byte array in the index";
-        internal string binaryVal2 = "this text will be also stored as a byte array in the index";
+        internal const string binaryVal = "this text will be stored as a byte array in the index";
+        internal const string binaryVal2 = "this text will be also stored as a byte array in the index";
 
         [Test]
         public virtual void TestBinaryField()
         {
-            Documents.Document doc = new Documents.Document();
+            Document doc = new Document();
 
             FieldType ft = new FieldType();
             ft.IsStored = true;
@@ -102,20 +102,18 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Tests <seealso cref="Document#removeField(String)"/> method for a brand new Document
+        /// Tests <see cref="Document.RemoveField(String)"/> method for a brand new Document
         /// that has not been indexed yet.
         /// </summary>
         /// <exception cref="Exception"> on error </exception>
-
         [Test]
         public virtual void TestRemoveForNewDocument()
         {
-            Documents.Document doc = MakeDocumentWithFields();
+            Document doc = MakeDocumentWithFields();
             Assert.AreEqual(10, doc.Fields.Count);
             doc.RemoveFields("keyword");
             Assert.AreEqual(8, doc.Fields.Count);
-            doc.RemoveFields("doesnotexists"); // removing non-existing fields is
-            // siltenlty ignored
+            doc.RemoveFields("doesnotexists"); // removing non-existing fields is silently ignored
             doc.RemoveFields("keyword"); // removing a field more than once
             Assert.AreEqual(8, doc.Fields.Count);
             doc.RemoveFields("text");
@@ -124,15 +122,13 @@ namespace Lucene.Net.Documents
             Assert.AreEqual(6, doc.Fields.Count);
             doc.RemoveFields("text");
             Assert.AreEqual(6, doc.Fields.Count);
-            doc.RemoveFields("doesnotexists"); // removing non-existing fields is
-            // siltenlty ignored
+            doc.RemoveFields("doesnotexists"); // removing non-existing fields is silently ignored
             Assert.AreEqual(6, doc.Fields.Count);
             doc.RemoveFields("unindexed");
             Assert.AreEqual(4, doc.Fields.Count);
             doc.RemoveFields("unstored");
             Assert.AreEqual(2, doc.Fields.Count);
-            doc.RemoveFields("doesnotexists"); // removing non-existing fields is
-            // siltenlty ignored
+            doc.RemoveFields("doesnotexists"); // removing non-existing fields is silently ignored
             Assert.AreEqual(2, doc.Fields.Count);
 
             doc.RemoveFields("indexed_not_tokenized");
@@ -144,24 +140,24 @@ namespace Lucene.Net.Documents
         {
             FieldType ft = new FieldType();
             ft.IsStored = true;
-            new Field("name", "value", ft); // okay
-            new StringField("name", "value", Field.Store.NO); // okay
+            _ = new Field("name", "value", ft); // okay
+            _ = new StringField("name", "value", Field.Store.NO); // okay
             try
             {
-                new Field("name", "value", new FieldType());
+                _ = new Field("name", "value", new FieldType());
                 Assert.Fail();
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 // expected exception
             }
-            new Field("name", "value", ft); // okay
+            _ = new Field("name", "value", ft); // okay
             try
             {
                 FieldType ft2 = new FieldType();
                 ft2.IsStored = true;
                 ft2.StoreTermVectors = true;
-                new Field("name", "value", ft2);
+                _ = new Field("name", "value", ft2);
                 Assert.Fail();
             }
             catch (Exception e) when (e.IsIllegalArgumentException())
@@ -171,7 +167,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Tests <seealso cref="Document#getValues(String)"/> method for a brand new Document
+        /// Tests <see cref="Document.GetValues(String)"/> method for a brand new Document
         /// that has not been indexed yet.
         /// </summary>
         /// <exception cref="Exception"> on error </exception>
@@ -182,7 +178,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Tests <seealso cref="Document#getValues(String)"/> method for a Document retrieved
+        /// Tests <see cref="Document.GetValues(String)"/> method for a Document retrieved
         /// from an index.
         /// </summary>
         /// <exception cref="Exception"> on error </exception>
@@ -212,11 +208,15 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestGetValues()
         {
-            Documents.Document doc = MakeDocumentWithFields();
-            Assert.AreEqual(new string[] { "test1", "test2" }, doc.GetValues("keyword"));
-            Assert.AreEqual(new string[] { "test1", "test2" }, doc.GetValues("text"));
-            Assert.AreEqual(new string[] { "test1", "test2" }, doc.GetValues("unindexed"));
-            Assert.AreEqual(new string[0], doc.GetValues("nope"));
+            Document doc = MakeDocumentWithFields();
+            Assert.AreEqual(new string[] { "test1", "test2" },
+                doc.GetValues("keyword"));
+            Assert.AreEqual(new string[] { "test1", "test2" },
+                doc.GetValues("text"));
+            Assert.AreEqual(new string[] { "test1", "test2" },
+                doc.GetValues("unindexed"));
+            Assert.AreEqual(Array.Empty<string>() /* new string[0] */,
+                doc.GetValues("nope"));
         }
 
         [Test]
@@ -241,9 +241,10 @@ namespace Lucene.Net.Documents
             dir.Dispose();
         }
 
-        private Documents.Document MakeDocumentWithFields()
+        // LUCENENET specific - made static
+        private static Document MakeDocumentWithFields()
         {
-            Documents.Document doc = new Documents.Document();
+            Document doc = new Document();
             FieldType stored = new FieldType();
             stored.IsStored = true;
             FieldType indexedNotTokenized = new FieldType();
@@ -262,7 +263,8 @@ namespace Lucene.Net.Documents
             return doc;
         }
 
-        private void DoAssert(Documents.Document doc, bool fromIndex)
+        // LUCENENET specific - made static
+        private static void DoAssert(Document doc, bool fromIndex)
         {
             IIndexableField[] keywordFieldValues = doc.GetFields("keyword");
             IIndexableField[] textFieldValues = doc.GetFields("text");
@@ -298,7 +300,7 @@ namespace Lucene.Net.Documents
         public virtual void TestFieldSetValue()
         {
             Field field = new StringField("id", "id1", Field.Store.YES);
-            Documents.Document doc = new Documents.Document();
+            Document doc = new Document();
             doc.Add(field);
             doc.Add(new StringField("keyword", "test", Field.Store.YES));
 
@@ -321,7 +323,7 @@ namespace Lucene.Net.Documents
             int result = 0;
             for (int i = 0; i < 3; i++)
             {
-                Documents.Document doc2 = searcher.Doc(hits[i].Doc);
+                Document doc2 = searcher.Doc(hits[i].Doc);
                 Field f = (Field)doc2.GetField("id");
                 if (f.GetStringValue().Equals("id1", StringComparison.Ordinal))
                 {
@@ -352,7 +354,7 @@ namespace Lucene.Net.Documents
         {
             try
             {
-                new Field("foo", new MockTokenizer(new StreamReader(File.Open("", FileMode.Open))), StringField.TYPE_STORED);
+                _ = new Field("foo", new MockTokenizer(new StreamReader(File.Open("", FileMode.Open))), StringField.TYPE_STORED);
                 fail("did not hit expected exc");
             }
             catch (Exception iae) when (iae.IsIllegalArgumentException())
@@ -368,7 +370,7 @@ namespace Lucene.Net.Documents
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, dir);
 
-            Documents.Document doc = new Documents.Document();
+            Document doc = new Document();
 #pragma warning disable 612, 618
             doc.Add(new Field("stored", "abc", Field.Store.YES, Field.Index.NO));
             doc.Add(new Field("stored_indexed", "abc xyz", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -439,7 +441,7 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestNumericFieldAsString()
         {
-            Documents.Document doc = new Documents.Document();
+            Document doc = new Document();
             doc.Add(new Int32Field("int", 5, Field.Store.YES));
             Assert.AreEqual("5", doc.Get("int"));
             Assert.IsNull(doc.Get("somethingElse"));
@@ -450,7 +452,7 @@ namespace Lucene.Net.Documents
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
             iw.AddDocument(doc);
             DirectoryReader ir = iw.GetReader();
-            Documents.Document sdoc = ir.Document(0);
+            Document sdoc = ir.Document(0);
             Assert.AreEqual("5", sdoc.Get("int"));
             Assert.IsNull(sdoc.Get("somethingElse"));
             Assert.AreEqual(new string[] { "5", "4" }, sdoc.GetValues("int"));

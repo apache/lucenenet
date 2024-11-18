@@ -4,7 +4,9 @@ using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
 using RandomizedTesting.Generators;
+#endif
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -89,11 +91,11 @@ namespace Lucene.Net.Codecs.PerField
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             DocValuesFormat fast = DocValuesFormat.ForName("Lucene45");
             DocValuesFormat slow = DocValuesFormat.ForName("SimpleText");
-            iwc.SetCodec(new Lucene46CodecAnonymousClass(this, fast, slow));
+            iwc.SetCodec(new Lucene46CodecAnonymousClass(fast, slow));
             IndexWriter iwriter = new IndexWriter(directory, iwc);
             Document doc = new Document();
-            string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
-            string text = "this is the text to be indexed. " + longTerm;
+            const string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
+            const string text = "this is the text to be indexed. " + longTerm;
             doc.Add(NewTextField("fieldname", text, Field.Store.YES));
             doc.Add(new NumericDocValuesField("dv1", 5));
             doc.Add(new BinaryDocValuesField("dv2", new BytesRef("hello world")));
@@ -128,14 +130,11 @@ namespace Lucene.Net.Codecs.PerField
 
         private sealed class Lucene46CodecAnonymousClass : Lucene46Codec
         {
-            private readonly TestPerFieldDocValuesFormat outerInstance;
-
             private readonly DocValuesFormat fast;
             private readonly DocValuesFormat slow;
 
-            public Lucene46CodecAnonymousClass(TestPerFieldDocValuesFormat outerInstance, DocValuesFormat fast, DocValuesFormat slow)
+            public Lucene46CodecAnonymousClass(DocValuesFormat fast, DocValuesFormat slow)
             {
-                this.outerInstance = outerInstance;
                 this.fast = fast;
                 this.slow = slow;
             }

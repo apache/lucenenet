@@ -35,15 +35,20 @@ namespace Lucene.Net.Codecs.Compressing
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 
+    // LUCENENET: Moved @Repeat(iterations=5) to the method level
     [TestFixture]
     public class TestCompressingStoredFieldsFormat : BaseStoredFieldsFormatTestCase
     {
+        // LUCENENET specific - repeat count is a constant for reuse below
+        private const int RepeatCount = 5;
+
         protected override Codec GetCodec()
         {
             return CompressingCodec.RandomInstance(Random);
         }
 
         [Test]
+        [Repeat(RepeatCount)] // LUCENENET: moved from class annotation due to NUnit's RepeatAttribute not allowed at class level
         public virtual void TestDeletePartiallyWrittenFilesIfAbort()
         {
             Directory dir = NewDirectory();
@@ -64,7 +69,7 @@ namespace Lucene.Net.Codecs.Compressing
             Document invalidDoc = new Document();
             FieldType fieldType = new FieldType();
             fieldType.IsStored = true;
-            invalidDoc.Add(new FieldAnonymousClass(this, fieldType));
+            invalidDoc.Add(new FieldAnonymousClass(fieldType));
 
             try
             {
@@ -92,13 +97,55 @@ namespace Lucene.Net.Codecs.Compressing
 
         private sealed class FieldAnonymousClass : Field
         {
-            private readonly TestCompressingStoredFieldsFormat outerInstance;
-
-            public FieldAnonymousClass(TestCompressingStoredFieldsFormat outerInstance, FieldType fieldType)
+            public FieldAnonymousClass(FieldType fieldType)
                 : base("invalid", fieldType)
             {
-                this.outerInstance = outerInstance;
             }
+
+            public override string GetStringValue() => null;
         }
+
+        #region LUCENENET specific repeating overrides
+        // LUCENENET specific: these overrides are needed to be able to add the RepeatAttribute to the tests,
+        // to match Lucene's behavior with the Repeat annotation at the class level.
+        // This region can be removed if we create a custom NUnit attribute that allows this behavior.
+
+        [Repeat(RepeatCount)]
+        public override void TestBigDocuments() => base.TestBigDocuments();
+
+        [Repeat(RepeatCount)]
+        public override void TestConcurrentReads() => base.TestConcurrentReads();
+
+        [Repeat(RepeatCount)]
+        public override void TestEmptyDocs() => base.TestEmptyDocs();
+
+        [Repeat(RepeatCount)]
+        public override void TestIndexedBit() => base.TestIndexedBit();
+
+        [Repeat(RepeatCount)]
+        public override void TestMergeStability() => base.TestMergeStability();
+
+        [Repeat(RepeatCount)]
+        public override void TestNumericField() => base.TestNumericField();
+
+        [Repeat(RepeatCount)]
+        public override void TestReadSkip() => base.TestReadSkip();
+
+        [Repeat(RepeatCount)]
+        public override void TestRandomStoredFields() => base.TestRandomStoredFields();
+
+        [Repeat(RepeatCount)]
+        public override void TestStoredFieldsOrder() => base.TestStoredFieldsOrder();
+
+        [Repeat(RepeatCount)]
+        public override void TestWriteReadMerge() => base.TestWriteReadMerge();
+
+        [Repeat(RepeatCount)]
+        public override void TestBinaryFieldOffsetLength() => base.TestBinaryFieldOffsetLength();
+
+        [Repeat(RepeatCount)]
+        public override void TestBulkMergeWithDeletes() => base.TestBulkMergeWithDeletes();
+
+        #endregion
     }
 }

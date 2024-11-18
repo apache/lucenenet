@@ -3,6 +3,7 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using Assert = Lucene.Net.TestFramework.Assert;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
+using static Lucene.Net.Codecs.Lucene41.ForUtil;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Codecs.Lucene41
         public virtual void TestEncodeDecode()
         {
             int iterations = RandomInts.RandomInt32Between(Random, 1, 1000);
-            float AcceptableOverheadRatio = (float)Random.NextDouble();
+            float AcceptableOverheadRatio = Random.NextSingle();
             int[] values = new int[(iterations - 1) * Lucene41PostingsFormat.BLOCK_SIZE + ForUtil.MAX_DATA_SIZE];
             for (int i = 0; i < iterations; ++i)
             {
@@ -55,7 +56,8 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     for (int j = 0; j < Lucene41PostingsFormat.BLOCK_SIZE; ++j)
                     {
-                        values[i * Lucene41PostingsFormat.BLOCK_SIZE + j] = RandomInts.RandomInt32Between(Random, 0, (int)PackedInt32s.MaxValue(bpv));
+                        values[i * Lucene41PostingsFormat.BLOCK_SIZE + j] = RandomInts.RandomInt32Between(Random,
+                            0, (int)PackedInt32s.MaxValue(bpv));
                     }
                 }
             }
@@ -70,7 +72,9 @@ namespace Lucene.Net.Codecs.Lucene41
 
                 for (int i = 0; i < iterations; ++i)
                 {
-                    forUtil.WriteBlock(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, values.Length), new byte[Lucene41.ForUtil.MAX_ENCODED_SIZE], @out);
+                    forUtil.WriteBlock(
+                        Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, values.Length),
+                        new byte[MAX_ENCODED_SIZE], @out);
                 }
                 endPointer = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @out.Dispose();
@@ -87,9 +91,10 @@ namespace Lucene.Net.Codecs.Lucene41
                         forUtil.SkipBlock(@in);
                         continue;
                     }
-                    int[] restored = new int[Lucene41.ForUtil.MAX_DATA_SIZE];
-                    forUtil.ReadBlock(@in, new byte[Lucene41.ForUtil.MAX_ENCODED_SIZE], restored);
-                    Assert.AreEqual(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, (i + 1) * Lucene41PostingsFormat.BLOCK_SIZE), Arrays.CopyOf(restored, Lucene41PostingsFormat.BLOCK_SIZE));
+                    int[] restored = new int[MAX_DATA_SIZE];
+                    forUtil.ReadBlock(@in, new byte[MAX_ENCODED_SIZE], restored);
+                    Assert.AreEqual(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, (i + 1) * Lucene41PostingsFormat.BLOCK_SIZE),
+                        Arrays.CopyOf(restored, Lucene41PostingsFormat.BLOCK_SIZE));
                 }
                 assertEquals(endPointer, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 @in.Dispose();

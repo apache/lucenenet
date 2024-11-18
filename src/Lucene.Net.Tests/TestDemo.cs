@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -33,13 +34,13 @@ namespace Lucene.Net
 
     /// <summary>
     /// A very simple demo used in the API documentation (src/java/overview.html).
-    /// 
+    ///
     /// Please try to keep src/java/overview.html up-to-date when making changes
     /// to this class.
     /// </summary>
+    [TestFixture]
     public class TestDemo_ : LuceneTestCase
     {
-
         [Test]
         public virtual void TestDemo()
         {
@@ -47,14 +48,14 @@ namespace Lucene.Net
 
             // Store the index in memory:
             using Directory directory = NewDirectory();
-            string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
-            string text = "this is the text to be indexed. " + longTerm;
+            const string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
+            const string text = "this is the text to be indexed. " + longTerm;
 
             // To store an index on disk, use this instead:
             // Directory directory = FSDirectory.open(new File("/tmp/testindex"));
             using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, analyzer)))
             {
-                Documents.Document doc = new Documents.Document();
+                Document doc = new Document();
                 doc.Add(NewTextField("fieldname", text, Field.Store.YES));
                 iwriter.AddDocument(doc);
             }
@@ -70,7 +71,7 @@ namespace Lucene.Net
             // Iterate through the results:
             for (int i = 0; i < hits.ScoreDocs.Length; i++)
             {
-                Documents.Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                 Assert.AreEqual(text, hitDoc.Get("fieldname"));
             }
 
@@ -79,6 +80,10 @@ namespace Lucene.Net
             phraseQuery.Add(new Term("fieldname", "to"));
             phraseQuery.Add(new Term("fieldname", "be"));
             Assert.AreEqual(1, isearcher.Search(phraseQuery, null, 1).TotalHits);
+
+            // LUCENENET specific - variables disposed above via `using` statements
+            // ireader.Dispose();
+            // directory.Dispose();
         }
     }
 }

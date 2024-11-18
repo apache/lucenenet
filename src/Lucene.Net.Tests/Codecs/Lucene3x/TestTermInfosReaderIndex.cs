@@ -4,11 +4,12 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using J2N;
+#if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
 using RandomizedTesting.Generators;
+#endif
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -79,7 +80,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             // NOTE: turn off compound file, this test will open some index files directly.
             OldFormatImpersonationIsActive = true;
-            IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetUseCompoundFile(false);
+            IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT,
+                    new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetUseCompoundFile(false);
 
             termIndexInterval = config.TermIndexInterval;
             indexDivisor = TestUtil.NextInt32(Random, 1, 10);
@@ -101,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             string segment = r.SegmentName;
             r.Dispose();
 
-            FieldInfosReader infosReader = (new PreFlexRWCodec()).FieldInfosFormat.FieldInfosReader;
+            FieldInfosReader infosReader = new PreFlexRWCodec().FieldInfosFormat.FieldInfosReader;
             FieldInfos fieldInfos = infosReader.Read(directory, segment, "", IOContext.READ_ONCE);
             string segmentFileName = IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
             long tiiFileLength = directory.FileLength(segmentFileName);
@@ -135,7 +137,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         [Test]
         public virtual void TestSeekEnum()
         {
-            int indexPosition = 3;
+            const int indexPosition = 3;
             SegmentTermEnum clone = (SegmentTermEnum)termEnum.Clone();
             Term term = FindTermThatWouldBeAtIndex(clone, indexPosition);
             SegmentTermEnum enumerator = clone;
@@ -194,7 +196,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             return sample;
         }
 
-        private Term FindTermThatWouldBeAtIndex(SegmentTermEnum termEnum, int index)
+        // LUCENENET specific - made static
+        private static Term FindTermThatWouldBeAtIndex(SegmentTermEnum termEnum, int index)
         {
             int termPosition = index * termIndexInterval * indexDivisor;
             for (int i = 0; i < termPosition; i++)
@@ -212,7 +215,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             return term;
         }
 
-        private void Populate(Directory directory, IndexWriterConfig config)
+        private static void Populate(Directory directory, IndexWriterConfig config)
         {
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory, config);
             for (int i = 0; i < NUMBER_OF_DOCUMENTS; i++)

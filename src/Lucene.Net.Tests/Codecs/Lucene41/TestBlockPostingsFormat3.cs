@@ -162,7 +162,8 @@ namespace Lucene.Net.Codecs.Lucene41
             dir.Dispose();
         }
 
-        private void Verify(Directory dir)
+        // LUCENENET specific - made static
+        private static void Verify(Directory dir)
         {
             DirectoryReader ir = DirectoryReader.Open(dir);
             foreach (AtomicReaderContext leaf in ir.Leaves)
@@ -179,8 +180,8 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         // following code is almost an exact dup of code from TestDuelingCodecs: sorry!
-
-        public virtual void AssertTerms(Terms leftTerms, Terms rightTerms, bool deep)
+        // LUCENENET specific - made static
+        public static void AssertTerms(Terms leftTerms, Terms rightTerms, bool deep)
         {
             if (leftTerms is null || rightTerms is null)
             {
@@ -204,7 +205,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 for (int i = 0; i < numIntersections; i++)
                 {
                     string re = AutomatonTestUtil.RandomRegexp(Random);
-                    CompiledAutomaton automaton = new CompiledAutomaton((new RegExp(re, RegExpSyntax.NONE)).ToAutomaton());
+                    CompiledAutomaton automaton = new CompiledAutomaton(new RegExp(re, RegExpSyntax.NONE).ToAutomaton());
                     if (automaton.Type == CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
                     {
                         // TODO: test start term too
@@ -216,7 +217,8 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        private void AssertTermsSeeking(Terms leftTerms, Terms rightTerms)
+        // LUCENENET specific - made static
+        private static void AssertTermsSeeking(Terms leftTerms, Terms rightTerms)
         {
             TermsEnum leftEnum = null;
             TermsEnum rightEnum = null;
@@ -297,7 +299,10 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// checks collection-level statistics on Terms
         /// </summary>
-        public virtual void AssertTermsStatistics(Terms leftTerms, Terms rightTerms)
+        /// <remarks>
+        /// LUCENENET specific - made static
+        /// </remarks>
+        public static void AssertTermsStatistics(Terms leftTerms, Terms rightTerms)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(leftTerms.Comparer == rightTerms.Comparer);
             if (leftTerms.DocCount != -1 && rightTerms.DocCount != -1)
@@ -322,7 +327,10 @@ namespace Lucene.Net.Codecs.Lucene41
         /// checks the terms enum sequentially
         /// if deep is false, it does a 'shallow' test that doesnt go down to the docsenums
         /// </summary>
-        public virtual void AssertTermsEnum(TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
+        /// <remarks>
+        /// LUCENENET specific - made static
+        /// </remarks>
+        public static void AssertTermsEnum(TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
         {
             IBits randomBits = new RandomBits(MAXDOC, Random.NextDouble(), Random);
             DocsAndPositionsEnum leftPositions = null;
@@ -387,7 +395,10 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// checks term-level statistics
         /// </summary>
-        public virtual void AssertTermStats(TermsEnum leftTermsEnum, TermsEnum rightTermsEnum)
+        /// <remarks>
+        /// LUCENENET specific - made static
+        /// </remarks>
+        public static void AssertTermStats(TermsEnum leftTermsEnum, TermsEnum rightTermsEnum)
         {
             Assert.AreEqual(leftTermsEnum.DocFreq, rightTermsEnum.DocFreq);
             if (leftTermsEnum.TotalTermFreq != -1 && rightTermsEnum.TotalTermFreq != -1)
@@ -399,7 +410,10 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// checks docs + freqs + positions + payloads, sequentially
         /// </summary>
-        public virtual void AssertDocsAndPositionsEnum(DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
+        /// <remarks>
+        /// LUCENENET specific - made static
+        /// </remarks>
+        public static void AssertDocsAndPositionsEnum(DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
         {
             if (leftDocs is null || rightDocs is null)
             {
@@ -427,7 +441,10 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// checks docs + freqs, sequentially
         /// </summary>
-        public virtual void AssertDocsEnum(DocsEnum leftDocs, DocsEnum rightDocs)
+        /// <remarks>
+        /// LUCENENET specific - made static
+        /// </remarks>
+        public static void AssertDocsEnum(DocsEnum leftDocs, DocsEnum rightDocs)
         {
             if (leftDocs is null)
             {
@@ -448,7 +465,10 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// checks advancing docs
         /// </summary>
-        public virtual void AssertDocsSkipping(int docFreq, DocsEnum leftDocs, DocsEnum rightDocs)
+        /// <remarks>
+        /// LUCENENET specific - made static
+        /// </remarks>
+        public static void AssertDocsSkipping(int docFreq, DocsEnum leftDocs, DocsEnum rightDocs)
         {
             if (leftDocs is null)
             {
@@ -457,7 +477,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
             int docid = -1;
             int averageGap = MAXDOC / (1 + docFreq);
-            int skipInterval = 16;
+            const int skipInterval = 16;
 
             while (true)
             {
@@ -486,7 +506,10 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// checks advancing docs + positions
         /// </summary>
-        public virtual void AssertPositionsSkipping(int docFreq, DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
+        /// <remarks>
+        /// LUCENENET specific - made static
+        /// </remarks>
+        public static void AssertPositionsSkipping(int docFreq, DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
         {
             if (leftDocs is null || rightDocs is null)
             {
@@ -497,7 +520,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             int docid = -1;
             int averageGap = MAXDOC / (1 + docFreq);
-            int skipInterval = 16;
+            const int skipInterval = 16;
 
             while (true)
             {

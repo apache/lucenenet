@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.Compressing
             Assert.AreEqual(TermsEnum.SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("this")));
             try
             {
-                var _ = termsEnum.Ord;
+                _ = termsEnum.Ord;
                 Assert.Fail();
             }
             catch (Exception expected) when (expected.IsUnsupportedOperationException())

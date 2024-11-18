@@ -43,7 +43,8 @@ namespace Lucene.Net.Codecs.PerField
     [TestFixture]
     public class TestPerFieldPostingsFormat2 : LuceneTestCase
     {
-        private IndexWriter NewWriter(Directory dir, IndexWriterConfig conf)
+        // LUCENENET specific - made static
+        private static IndexWriter NewWriter(Directory dir, IndexWriterConfig conf)
         {
             LogDocMergePolicy logByteSizeMergePolicy = new LogDocMergePolicy();
             logByteSizeMergePolicy.NoCFSRatio = 0.0; // make sure we use plain
@@ -54,7 +55,8 @@ namespace Lucene.Net.Codecs.PerField
             return writer;
         }
 
-        private void AddDocs(IndexWriter writer, int numDocs)
+        // LUCENENET specific - made static
+        private static void AddDocs(IndexWriter writer, int numDocs)
         {
             for (int i = 0; i < numDocs; i++)
             {
@@ -64,7 +66,8 @@ namespace Lucene.Net.Codecs.PerField
             }
         }
 
-        private void AddDocs2(IndexWriter writer, int numDocs)
+        // LUCENENET specific - made static
+        private static void AddDocs2(IndexWriter writer, int numDocs)
         {
             for (int i = 0; i < numDocs; i++)
             {
@@ -74,7 +77,8 @@ namespace Lucene.Net.Codecs.PerField
             }
         }
 
-        private void AddDocs3(IndexWriter writer, int numDocs)
+        // LUCENENET specific - made static
+        private static void AddDocs3(IndexWriter writer, int numDocs)
         {
             for (int i = 0; i < numDocs; i++)
             {
@@ -92,7 +96,7 @@ namespace Lucene.Net.Codecs.PerField
         public virtual void TestMergeUnusedPerFieldCodec()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, 
+            IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT,
                 new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetCodec(new MockCodec());
             IndexWriter writer = NewWriter(dir, iwconf);
             AddDocs(writer, 10);
@@ -121,7 +125,7 @@ namespace Lucene.Net.Codecs.PerField
             {
                 Console.WriteLine("TEST: make new index");
             }
-            IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, 
+            IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT,
                 new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetCodec(new MockCodec());
             iwconf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
             // ((LogMergePolicy)iwconf.getMergePolicy()).setMergeFactor(10);
@@ -188,7 +192,8 @@ namespace Lucene.Net.Codecs.PerField
             dir.Dispose();
         }
 
-        public virtual void AssertQuery(Term t, Directory dir, int num)
+        // LUCENENET specific - made static
+        public static void AssertQuery(Term t, Directory dir, int num)
         {
             if (Verbose)
             {
@@ -201,7 +206,7 @@ namespace Lucene.Net.Codecs.PerField
             reader.Dispose();
         }
 
-        private class MockCodec : Lucene46Codec
+        public class MockCodec : Lucene46Codec
         {
             internal readonly PostingsFormat lucene40 = new Lucene41PostingsFormat();
             internal readonly PostingsFormat simpleText = new SimpleTextPostingsFormat();
@@ -224,7 +229,7 @@ namespace Lucene.Net.Codecs.PerField
             }
         }
 
-        private class MockCodec2 : Lucene46Codec
+        public class MockCodec2 : Lucene46Codec
         {
             internal readonly PostingsFormat lucene40 = new Lucene41PostingsFormat();
             internal readonly PostingsFormat simpleText = new SimpleTextPostingsFormat();
@@ -284,19 +289,12 @@ namespace Lucene.Net.Codecs.PerField
         [Test]
         public virtual void TestSameCodecDifferentInstance()
         {
-            Codec codec = new Lucene46CodecAnonymousClass(this);
+            Codec codec = new Lucene46CodecAnonymousClass();
             DoTestMixedPostings(codec);
         }
 
         private sealed class Lucene46CodecAnonymousClass : Lucene46Codec
         {
-            private readonly TestPerFieldPostingsFormat2 outerInstance;
-
-            public Lucene46CodecAnonymousClass(TestPerFieldPostingsFormat2 outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
                 if ("id".Equals(field, StringComparison.Ordinal))
@@ -317,19 +315,12 @@ namespace Lucene.Net.Codecs.PerField
         [Test]
         public virtual void TestSameCodecDifferentParams()
         {
-          Codec codec = new Lucene46CodecAnonymousClass2(this);
+          Codec codec = new Lucene46CodecAnonymousClass2();
           DoTestMixedPostings(codec);
         }
 
         private sealed class Lucene46CodecAnonymousClass2 : Lucene46Codec
         {
-            private readonly TestPerFieldPostingsFormat2 outerInstance;
-
-            public Lucene46CodecAnonymousClass2(TestPerFieldPostingsFormat2 outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
                 if ("id".Equals(field, StringComparison.Ordinal))
@@ -347,7 +338,8 @@ namespace Lucene.Net.Codecs.PerField
             }
         }
 
-        private void DoTestMixedPostings(Codec codec)
+        // LUCENENET specific - made static
+        private static void DoTestMixedPostings(Codec codec)
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));

@@ -72,7 +72,8 @@ namespace Lucene.Net.Codecs.Lucene41
             base.TearDown();
         }
 
-        private Document NewDocument()
+        // LUCENENET specific - made static
+        private static Document NewDocument()
         {
             Document doc = new Document();
             foreach (IndexOptions option in Enum.GetValues(typeof(IndexOptions)))
@@ -98,7 +99,8 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// tests terms with df = blocksize </summary>
+        /// tests terms with df = blocksize
+        /// </summary>
         [Test]
         public virtual void TestDFBlockSize()
         {
@@ -114,7 +116,8 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// tests terms with df % blocksize = 0 </summary>
+        /// tests terms with df % blocksize = 0
+        /// </summary>
         [Test]
         public virtual void TestDFBlockSizeMultiple()
         {
@@ -130,7 +133,8 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// tests terms with ttf = blocksize </summary>
+        /// tests terms with ttf = blocksize
+        /// </summary>
         [Test]
         public virtual void TestTTFBlockSize()
         {
@@ -146,7 +150,8 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// tests terms with ttf % blocksize = 0 </summary>
+        /// tests terms with ttf % blocksize = 0
+        /// </summary>
         [Test]
         public virtual void TestTTFBlockSizeMultiple()
         {
@@ -155,7 +160,8 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 foreach (IIndexableField f in doc.Fields)
                 {
-                    string proto = (f.Name + " " + f.Name + " " + f.Name + " " + f.Name + " " + f.Name + "_2 " + f.Name + "_2 " + f.Name + "_2 " + f.Name + "_2");
+                    string proto = (f.Name + " " + f.Name + " " + f.Name + " " + f.Name + " "
+                                    + f.Name + "_2 " + f.Name + "_2 " + f.Name + "_2 " + f.Name + "_2");
                     StringBuilder val = new StringBuilder();
                     for (int j = 0; j < 16; j++)
                     {

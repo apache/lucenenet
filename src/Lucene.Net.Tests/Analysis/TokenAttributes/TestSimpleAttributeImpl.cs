@@ -22,7 +22,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
      * limitations under the License.
      */
 
-    using Attribute = Lucene.Net.Util.Attribute;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
@@ -33,34 +32,17 @@ namespace Lucene.Net.Analysis.TokenAttributes
         [Test]
         public virtual void TestAttributes()
         {
-            TestUtil.AssertAttributeReflection(new PositionIncrementAttribute(), Collections.SingletonMap(typeof(IPositionIncrementAttribute).Name + "#positionIncrement", (object)1));
-            TestUtil.AssertAttributeReflection(new PositionLengthAttribute(), Collections.SingletonMap(typeof(IPositionLengthAttribute).Name + "#positionLength", (object)1));
-            TestUtil.AssertAttributeReflection(new FlagsAttribute(), Collections.SingletonMap(typeof(IFlagsAttribute).Name + "#flags", (object)0));
-            TestUtil.AssertAttributeReflection(new TypeAttribute(), Collections.SingletonMap(typeof(ITypeAttribute).Name + "#type", (object)TypeAttribute.DEFAULT_TYPE));
-            TestUtil.AssertAttributeReflection(new PayloadAttribute(), Collections.SingletonMap(typeof(IPayloadAttribute).Name + "#payload", (object)null));
-            TestUtil.AssertAttributeReflection(new KeywordAttribute(), Collections.SingletonMap(typeof(IKeywordAttribute).Name + "#keyword", (object)false));
+            TestUtil.AssertAttributeReflection(new PositionIncrementAttribute(), Collections.SingletonMap(nameof(IPositionIncrementAttribute) + "#positionIncrement", (object)1));
+            TestUtil.AssertAttributeReflection(new PositionLengthAttribute(), Collections.SingletonMap(nameof(IPositionLengthAttribute) + "#positionLength", (object)1));
+            TestUtil.AssertAttributeReflection(new FlagsAttribute(), Collections.SingletonMap(nameof(IFlagsAttribute) + "#flags", (object)0));
+            TestUtil.AssertAttributeReflection(new TypeAttribute(), Collections.SingletonMap(nameof(ITypeAttribute) + "#type", (object)TypeAttribute.DEFAULT_TYPE));
+            TestUtil.AssertAttributeReflection(new PayloadAttribute(), Collections.SingletonMap(nameof(IPayloadAttribute) + "#payload", (object)null));
+            TestUtil.AssertAttributeReflection(new KeywordAttribute(), Collections.SingletonMap(nameof(IKeywordAttribute) + "#keyword", (object)false));
             TestUtil.AssertAttributeReflection(new OffsetAttribute(), new Dictionary<string, object>()
             {
-                {typeof(IOffsetAttribute).Name + "#startOffset", 0 },
-                {typeof(IOffsetAttribute).Name + "#endOffset", 0}
+                {nameof(IOffsetAttribute) + "#startOffset", 0 },
+                {nameof(IOffsetAttribute) + "#endOffset", 0}
             });
-        }
-
-        public static Attribute AssertCloneIsEqual(Attribute att)
-        {
-            Attribute clone = (Attribute)att.Clone();
-            Assert.AreEqual(att, clone, "Clone must be equal");
-            Assert.AreEqual(att.GetHashCode(), clone.GetHashCode(), "Clone's hashcode must be equal");
-            return clone;
-        }
-
-        public static Attribute AssertCopyIsEqual(Attribute att)
-        {
-            Attribute copy = (Attribute)System.Activator.CreateInstance(att.GetType());
-            att.CopyTo(copy);
-            Assert.AreEqual(att, copy, "Copied instance must be equal");
-            Assert.AreEqual(att.GetHashCode(), copy.GetHashCode(), "Copied instance's hashcode must be equal");
-            return copy;
         }
     }
 }
