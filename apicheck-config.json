@@ -1,0 +1,9 @@
+{
+    "luceneVersion": "4.8.1",
+    "libraries": [
+        {
+            "luceneName": "core",
+            "luceneNetName": "Lucene.Net"
+        }
+    ]
+}
