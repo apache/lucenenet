@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
     /// test message.
     /// </para>
     /// <para>
-    /// The seed can be configured with a RunSettings file, a <c>lucene.testSettings.config</c> JSON file,
+    /// The seed can be configured with a RunSettings file, a <c>lucene.testsettings.json</c> JSON file,
     /// an environment variable, or using <see cref="RandomSeedAttribute"/> at the assembly level.
     /// It is recommended to configure the culture also, since they are randomly picked from a list
     /// of cultures installed on a given machine, so the culture will vary from one machine to the next.
@@ -128,10 +128,10 @@ namespace Lucene.Net.Util
     /// [assembly: NUnit.Framework.SetCulture("sw-TZ")]
     /// </code>
     ///
-    /// <h4><i>lucene.testSettings.config</i> File Configuration Example</h4>
+    /// <h4><i>lucene.testsettings.json</i> File Configuration Example</h4>
     ///
     /// <para>
-    /// Add a file named <i>lucene.testSettings.config</i> to the executable directory or
+    /// Add a file named <i>lucene.testsettings.json</i> to the executable directory or
     /// any directory between the executable and the root of the drive with the following contents.
     /// </para>
     /// 

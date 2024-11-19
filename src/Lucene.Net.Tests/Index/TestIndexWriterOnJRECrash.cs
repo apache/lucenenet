@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
                     "--logger:\"console;verbosity=normal\"",
                     "--",
                     $"RunConfiguration.TargetPlatform={GetTargetPlatform()}",
-                    // LUCENENET NOTE: Since in our CI environment we create a lucene.testSettings.config file
+                    // LUCENENET NOTE: Since in our CI environment we create a lucene.testsettings.json file
                     // for all tests, we need to pass some of these settings as test run parameters to override
                     // for this process. These are read as system properties on the inside of the application.
                     TestRunParameter("assert", "true"),
