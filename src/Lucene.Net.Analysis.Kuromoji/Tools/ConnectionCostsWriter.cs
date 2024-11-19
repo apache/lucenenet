@@ -2,6 +2,7 @@
 using Lucene.Net.Codecs;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using System.Diagnostics;
 using System.IO;
 
@@ -37,7 +38,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             this.forwardSize = forwardSize;
             this.backwardSize = backwardSize;
             //this.costs = new short[backwardSize][forwardSize];
-            this.costs = Support.RectangularArrays.ReturnRectangularArray<short>(backwardSize, forwardSize);
+            this.costs = RectangularArrays.ReturnRectangularArray<short>(backwardSize, forwardSize);
         }
 
         public void Add(int forwardId, int backwardId, int cost)

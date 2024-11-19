@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Ja.Util
@@ -35,11 +36,8 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         static DictionaryBuilder()
         {
-#if FEATURE_ENCODINGPROVIDERS
-            // Support for EUC-JP encoding. See: https://docs.microsoft.com/en-us/dotnet/api/system.text.codepagesencodingprovider?view=netcore-2.0
-            var encodingProvider = System.Text.CodePagesEncodingProvider.Instance;
-            System.Text.Encoding.RegisterProvider(encodingProvider);
-#endif
+            // LUCENENET: Support for EUC-JP encoding. See: https://docs.microsoft.com/en-us/dotnet/api/system.text.codepagesencodingprovider?view=netcore-2.0
+            EncodingProviderInitializer.EnsureInitialized();
         }
 
         public static void Build(DictionaryFormat format,
