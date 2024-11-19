@@ -34,39 +34,39 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public void TestCachability()
         {
-            TermFilter a = TermFilter(@"field1", @"a");
+            TermFilter a = TermFilter("field1", "a");
             var cachedFilters = new JCG.HashSet<Filter>();
             cachedFilters.Add(a);
-            assertTrue(@"Must be cached", cachedFilters.Contains(TermFilter(@"field1", @"a")));
-            assertFalse(@"Must not be cached", cachedFilters.Contains(TermFilter(@"field1", @"b")));
-            assertFalse(@"Must not be cached", cachedFilters.Contains(TermFilter(@"field2", @"a")));
+            assertTrue("Must be cached", cachedFilters.Contains(TermFilter("field1", "a")));
+            assertFalse("Must not be cached", cachedFilters.Contains(TermFilter("field1", "b")));
+            assertFalse("Must not be cached", cachedFilters.Contains(TermFilter("field2", "a")));
         }
 
         [Test]
         public void TestMissingTermAndField()
         {
-            string fieldName = @"field1";
+            const string fieldName = "field1";
             Directory rd = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, rd);
             Document doc = new Document();
-            doc.Add(NewStringField(fieldName, @"value1", Field.Store.NO));
+            doc.Add(NewStringField(fieldName, "value1", Field.Store.NO));
             w.AddDocument(doc);
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(w.GetReader());
             assertTrue(reader.Context is AtomicReaderContext);
             var context = (AtomicReaderContext)reader.Context;
             w.Dispose();
 
-            DocIdSet idSet = TermFilter(fieldName, @"value1").GetDocIdSet(context, context.AtomicReader.LiveDocs);
-            assertNotNull(@"must not be null", idSet);
+            DocIdSet idSet = TermFilter(fieldName, "value1").GetDocIdSet(context, context.AtomicReader.LiveDocs);
+            assertNotNull("must not be null", idSet);
             DocIdSetIterator iter = idSet.GetIterator();
             assertEquals(iter.NextDoc(), 0);
             assertEquals(iter.NextDoc(), DocIdSetIterator.NO_MORE_DOCS);
 
-            idSet = TermFilter(fieldName, @"value2").GetDocIdSet(context, context.AtomicReader.LiveDocs);
-            assertNull(@"must be null", idSet);
+            idSet = TermFilter(fieldName, "value2").GetDocIdSet(context, context.AtomicReader.LiveDocs);
+            assertNull("must be null", idSet);
 
-            idSet = TermFilter(@"field2", @"value1").GetDocIdSet(context, context.AtomicReader.LiveDocs);
-            assertNull(@"must be null", idSet);
+            idSet = TermFilter("field2", "value1").GetDocIdSet(context, context.AtomicReader.LiveDocs);
+            assertNull("must be null", idSet);
 
             reader.Dispose();
             rd.Dispose();
@@ -81,7 +81,7 @@ namespace Lucene.Net.Tests.Queries
             var terms = new JCG.List<Term>();
             for (int i = 0; i < num; i++)
             {
-                string field = @"field" + i;
+                string field = "field" + i;
                 string str = TestUtil.RandomRealisticUnicodeString(Random);
                 terms.Add(new Term(field, str));
                 Document doc = new Document();
@@ -121,10 +121,10 @@ namespace Lucene.Net.Tests.Queries
             int num = AtLeast(100);
             for (int i = 0; i < num; i++)
             {
-                string field1 = @"field" + i;
-                string field2 = @"field" + i + num;
+                string field1 = "field" + i;
+                string field2 = "field" + i + num;
                 string value1 = TestUtil.RandomRealisticUnicodeString(Random);
-                string value2 = value1 + @"x"; // this must be not equal to value1
+                string value2 = value1 + "x"; // this must be not equal to value1
 
                 TermFilter filter1 = TermFilter(field1, value1);
                 TermFilter filter2 = TermFilter(field1, value2);
@@ -164,8 +164,8 @@ namespace Lucene.Net.Tests.Queries
         {
             try
             {
-                new TermFilter(null);
-                Assert.Fail(@"must fail - no term!");
+                _ = new TermFilter(null);
+                Assert.Fail("must fail - no term!");
             }
             catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             {
@@ -173,10 +173,10 @@ namespace Lucene.Net.Tests.Queries
 
             try
             {
-                new TermFilter(new Term(null));
-                Assert.Fail(@"must fail - no field!");
+                _ = new TermFilter(new Term(null));
+                Assert.Fail("must fail - no field!");
             }
-            catch (ArgumentNullException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            catch (ArgumentException)
             {
             }
         }
@@ -185,15 +185,17 @@ namespace Lucene.Net.Tests.Queries
         public void TestToString()
         {
             var termsFilter = new TermFilter(new Term("field1", "a"));
-            assertEquals(@"field1:a", termsFilter.ToString());
+            assertEquals("field1:a", termsFilter.ToString());
         }
 
-        private TermFilter TermFilter(string field, string value)
+        // LUCENENET specific - made static
+        private static TermFilter TermFilter(string field, string value)
         {
             return TermFilter(new Term(field, value));
         }
 
-        private TermFilter TermFilter(Term term)
+        // LUCENENET specific - made static
+        private static TermFilter TermFilter(Term term)
         {
             return new TermFilter(term);
         }
