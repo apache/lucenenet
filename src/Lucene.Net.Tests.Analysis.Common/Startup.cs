@@ -27,6 +27,11 @@ public class Startup : LuceneTestFrameworkInitializer
         // require it to be added as well when using Hunspell, but there is no reason to load
         // the code pages by default in Lucene.Net.Analysis.Common. It should be added by consumers
         // or Hunspell that require it.
+        //
+        // Note this is in the test project, which never uses netstandard2.0. If we were using
+        // netstandard2.0, we would need an extra check to deteremine if we are on .NET Framework,
+        // which doesn't support encoding providers. See EncodingProviderInitializer in the
+        // Lucene.Net.Analysis.Kuromoji project.
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 #endif
     }
