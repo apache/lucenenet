@@ -118,7 +118,7 @@
 
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
     <ProjectReference Include="..\Lucene.Net.Analysis.OpenNLP\Lucene.Net.Analysis.OpenNLP.csproj" />
   </ItemGroup>
 
