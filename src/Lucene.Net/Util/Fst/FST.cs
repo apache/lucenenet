@@ -952,9 +952,11 @@ namespace Lucene.Net.Util.Fst
                         }
                         if (arc.Flag(FST.BIT_STOP_NODE))
                         {
+                            // LUCENENET: intentionally empty to match Lucene
                         }
                         else if (arc.Flag(FST.BIT_TARGET_NEXT))
                         {
+                            // LUCENENET: intentionally empty to match Lucene
                         }
                         else if (packed)
                         {

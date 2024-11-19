@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // LUCENENET specific - To avoid boxing/unboxing, we don't
             // call GetNumericValue(). Instead, we check the field.NumericType and then
-            // call the appropriate conversion method. 
+            // call the appropriate conversion method.
             if (field.NumericType != NumericFieldType.NONE)
             {
                 switch (field.NumericType)
@@ -192,6 +192,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
             catch (Exception ignored) when (ignored.IsThrowable())
             {
+                // ignored
             }
             IOUtils.DeleteFilesIgnoringExceptions(_directory,
                     IndexFileNames.SegmentFileName(_segment, "", FIELDS_EXTENSION));

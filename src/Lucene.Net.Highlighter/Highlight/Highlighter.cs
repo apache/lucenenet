@@ -256,7 +256,7 @@ namespace Lucene.Net.Search.Highlight
                     lastEndOffset = Math.Max(lastEndOffset, endOffset);
                 }
 
-                //Test what remains of the original text beyond the point where we stopped analyzing 
+                //Test what remains of the original text beyond the point where we stopped analyzing
                 if (
                     //                    if there is text beyond the last token considered..
                     (lastEndOffset < text.Length)
@@ -332,6 +332,7 @@ namespace Lucene.Net.Search.Highlight
                     }
                     catch (Exception e) when (e.IsException())
                     {
+                        // ignored
                     }
                 }
             }
@@ -340,7 +341,7 @@ namespace Lucene.Net.Search.Highlight
         /// <summary>
         /// Improves readability of a score-sorted list of TextFragments by merging any fragments
         /// that were contiguous in the original text into one larger fragment with the correct order.
-        /// This will leave a "null" in the array entry for the lesser scored fragment. 
+        /// This will leave a "null" in the array entry for the lesser scored fragment.
         /// </summary>
         /// <param name="frag">An array of document fragments in descending score</param>
         private static void MergeContiguousFragments(TextFragment[] frag) // LUCENENET: CA1822: Mark members as static
@@ -357,7 +358,7 @@ namespace Lucene.Net.Search.Highlight
                         {
                             continue;
                         }
-                        //merge any contiguous blocks 
+                        //merge any contiguous blocks
                         for (int x = 0; x < frag.Length; x++)
                         {
                             if (frag[x] is null)

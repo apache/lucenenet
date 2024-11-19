@@ -144,7 +144,8 @@ namespace Egothor.Stemmer
                     }
                 }
             }
-            catch (Exception x) when (x.IsIndexOutOfBoundsException()) { }
+            catch (Exception x) when (x.IsIndexOutOfBoundsException()) { /* ignored */ }
+
             return result.ToString();
         }
 
@@ -202,7 +203,8 @@ namespace Egothor.Stemmer
                     }
                 }
             }
-            catch (Exception x) when (x.IsIndexOutOfBoundsException()) { }
+            catch (Exception x) when (x.IsIndexOutOfBoundsException()) { /* ignored */ }
+
             return result.ToString();
         }
 

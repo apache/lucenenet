@@ -1905,7 +1905,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     } while (false);
                     lab3:
                     goto replab2;
-                    end_of_outer_loop: { }
+                    end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
                 }
                 replab2:
                 // atleast, line 209
@@ -1953,7 +1953,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         lab5:
                         m_cursor = v_5;
                         goto replab4;
-                        end_of_outer_loop_2: { }
+                        end_of_outer_loop_2: { /* LUCENENET: intentionally empty */ }
                     }
                     replab4:
                     if (v_4 > 0)
@@ -1988,7 +1988,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     } while (false);
                     lab9:
                     goto replab8;
-                    end_of_outer_loop: { }
+                    end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
                 }
                 replab8:
                 // atleast, line 210
@@ -2036,7 +2036,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         lab11:
                         m_cursor = v_9;
                         goto replab10;
-                        end_of_outer_loop_2: { }
+                        end_of_outer_loop_2: { /* LUCENENET: intentionally empty */ }
                     }
                     replab10:
                     if (v_8 > 0)
@@ -2164,7 +2164,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     lab3:
                     m_cursor = v_3;
                     goto replab2;
-                    end_of_outer_loop: { }
+                    end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
                 }
                 replab2: {/* LUCENENET: intentionally blank */}
             } while (false);
@@ -2437,7 +2437,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     lab20:
                     m_cursor = v_19;
                     goto replab19;
-                    end_of_outer_loop_2: { }
+                    end_of_outer_loop_2: { /* LUCENENET: intentionally empty */ }
                 }
                 replab19: {/* LUCENENET: intentionally blank */}
             } while (false);

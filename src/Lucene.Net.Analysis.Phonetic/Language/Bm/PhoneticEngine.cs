@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                         }
                     }
                 }
-            EXPR_break: { }
+            EXPR_break: { /* LUCENENET: intentionally empty */}
 
                 this.phonemes.Clear();
                 this.phonemes.UnionWith(newPhonemes);

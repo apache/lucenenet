@@ -55,13 +55,16 @@ namespace Lucene.Net.Index
             }
             catch (Exception t) when (t.IsThrowable())
             {
+                // ignored
             }
+
             try
             {
                 second.Abort();
             }
             catch (Exception t) when (t.IsThrowable())
             {
+                // ignored
             }
         }
 

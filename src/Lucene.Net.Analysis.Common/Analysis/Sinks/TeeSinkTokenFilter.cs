@@ -35,16 +35,16 @@ namespace Lucene.Net.Analysis.Sinks
     /// TeeSinkTokenFilter source1 = new TeeSinkTokenFilter(new WhitespaceTokenizer(version, reader1));
     /// TeeSinkTokenFilter.SinkTokenStream sink1 = source1.NewSinkTokenStream();
     /// TeeSinkTokenFilter.SinkTokenStream sink2 = source1.NewSinkTokenStream();
-    /// 
+    ///
     /// TeeSinkTokenFilter source2 = new TeeSinkTokenFilter(new WhitespaceTokenizer(version, reader2));
     /// source2.AddSinkTokenStream(sink1);
     /// source2.AddSinkTokenStream(sink2);
-    /// 
+    ///
     /// TokenStream final1 = new LowerCaseFilter(version, source1);
     /// TokenStream final2 = source2;
     /// TokenStream final3 = new EntityDetect(sink1);
     /// TokenStream final4 = new URLDetect(sink2);
-    /// 
+    ///
     /// d.Add(new TextField("f1", final1, Field.Store.NO));
     /// d.Add(new TextField("f2", final2, Field.Store.NO));
     /// d.Add(new TextField("f3", final3, Field.Store.NO));
@@ -131,6 +131,7 @@ namespace Lucene.Net.Analysis.Sinks
         {
             while (IncrementToken())
             {
+                // LUCENENET: intentionally empty
             }
         }
 
@@ -182,7 +183,7 @@ namespace Lucene.Net.Analysis.Sinks
         {
             /// <summary>
             /// Returns true, iff the current state of the passed-in <see cref="AttributeSource"/> shall be stored
-            /// in the sink. 
+            /// in the sink.
             /// </summary>
             public abstract bool Accept(AttributeSource source);
 

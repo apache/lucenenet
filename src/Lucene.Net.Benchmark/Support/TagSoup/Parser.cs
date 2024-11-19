@@ -962,6 +962,7 @@ namespace TagSoup
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
+                    // ignored
                 } // Can't be thrown for root I believe.
             }
             if (Foreign(prefix, ns))
@@ -1094,6 +1095,7 @@ namespace TagSoup
                     }
                     catch (Exception)
                     {
+                        // ignored
                     }
                 }
             }

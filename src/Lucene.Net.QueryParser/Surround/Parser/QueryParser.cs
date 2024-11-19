@@ -897,7 +897,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                         p = p.next;
                     } while (p != null);
                 }
-                catch (LookaheadSuccess /*ls*/) { }
+                catch (LookaheadSuccess /*ls*/) { /* ignored */ }
             }
             jj_rescan = false;
         }

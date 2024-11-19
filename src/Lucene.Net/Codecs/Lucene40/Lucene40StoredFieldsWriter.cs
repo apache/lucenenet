@@ -156,7 +156,9 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             catch (Exception ignored) when (ignored.IsThrowable())
             {
+                // ignored
             }
+
             IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, "", FIELDS_EXTENSION), IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION));
         }
 
@@ -173,7 +175,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             // LUCENENET specific - To avoid boxing/unboxing, we don't
             // call GetNumericValue(). Instead, we check the field.NumericType and then
-            // call the appropriate conversion method. 
+            // call the appropriate conversion method.
             if (field.NumericType != NumericFieldType.NONE)
             {
                 switch (field.NumericType)

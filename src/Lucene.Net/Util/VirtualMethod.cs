@@ -188,6 +188,7 @@ namespace Lucene.Net.Util
                     // just to mimic the fact they were swallowing in Java when the method isn't found.
                     catch (AmbiguousMatchException)
                     {
+                        // ignored
                     }
                 }
 
@@ -202,7 +203,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Utility method that compares the implementation/override distance of two methods. </summary>
-        /// <returns> 
+        /// <returns>
         /// <list type="bullet">
         ///     <item><description>&gt; 1, iff <paramref name="m1"/> is overridden/implemented in a subclass of the class overriding/declaring <paramref name="m2"/></description></item>
         ///     <item><description>&lt; 1, iff <paramref name="m2"/> is overridden in a subclass of the class overriding/declaring <paramref name="m1"/></description></item>

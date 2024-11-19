@@ -371,7 +371,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <summary>
         /// Instantiates the given analysis factory class after pulling params from
         /// the given stream tokenizer, then stores the result in the appropriate
-        /// pipeline component list.        
+        /// pipeline component list.
         /// </summary>
         /// <param name="stok">Stream tokenizer from which to draw analysis factory params.</param>
         /// <param name="clazz">Analysis factory class to instantiate.</param>
@@ -468,7 +468,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             }
                     }
                 }
-            WHILE_LOOP_BREAK: { }
+                WHILE_LOOP_BREAK: { /* LUCENENET: intentionally empty */ }
 
                 if (!argMap.ContainsKey("luceneMatchVersion"))
                 {

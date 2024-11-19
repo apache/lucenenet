@@ -321,7 +321,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     lab4:
                     m_cursor = v_4;
                     goto replab3;
-                    end_of_outer_loop: { }
+                    end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
                 }
                 replab3: {/* LUCENENET: intentionally blank */}
             } while (false);
@@ -1318,7 +1318,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 lab1:
                 m_cursor = v_1;
                 goto replab0;
-                end_of_outer_loop: { }
+                end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
             }
             replab0:
             return true;

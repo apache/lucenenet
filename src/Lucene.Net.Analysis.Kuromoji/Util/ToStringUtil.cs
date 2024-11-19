@@ -1391,7 +1391,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                         builder.Append(ch);
                         break;
                 }
-                break_main: { }
+                break_main: { /* LUCENENET: intentionally empty */ }
             }
         }
     }

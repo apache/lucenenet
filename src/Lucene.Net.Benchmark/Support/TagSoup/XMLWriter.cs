@@ -1225,6 +1225,7 @@ namespace TagSoup
             }
             for (; prefix is null || nsSupport.GetUri(prefix) != null; prefix = "__NS" + ++prefixCounter)
             {
+                // LUCENENET: intentionally empty
             }
             nsSupport.DeclarePrefix(prefix, uri);
             doneDeclTable[uri] = prefix;

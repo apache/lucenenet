@@ -24,9 +24,9 @@ namespace Lucene.Net.Search.Suggest.Fst
 
     /// <summary>
     /// Finite state automata based implementation of "autocomplete" functionality.
-    /// 
+    ///
     /// <h2>Implementation details</h2>
-    /// 
+    ///
     /// <para>
     /// The construction step in the object finalizer works as follows:
     /// <list type="bullet">
@@ -41,10 +41,10 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// root node has arcs labeled with all possible weights. We cache all these
     /// arcs, highest-weight first.</description></item>
     /// </list>
-    /// 
+    ///
     /// </para>
     /// <para>
-    /// At runtime, in <see cref="FSTCompletion.DoLookup(string, int)"/>, 
+    /// At runtime, in <see cref="FSTCompletion.DoLookup(string, int)"/>,
     /// the automaton is utilized as follows:
     /// <list type="bullet">
     /// <item><description>For each possible term weight encoded in the automaton (cached arcs from
@@ -63,43 +63,43 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// insufficient, we proceed to the next (smaller) weight leaving the root node
     /// and repeat the same algorithm again.</description></item>
     /// </list>
-    /// 
+    ///
     /// <h2>Runtime behavior and performance characteristic</h2>
-    /// 
+    ///
     /// The algorithm described above is optimized for finding suggestions to short
     /// prefixes in a top-weights-first order. This is probably the most common use
     /// case: it allows presenting suggestions early and sorts them by the global
     /// frequency (and then alphabetically).
-    /// 
+    ///
     /// </para>
     /// <para>
     /// If there is an exact match in the automaton, it is returned first on the
     /// results list (even with by-weight sorting).
-    /// 
+    ///
     /// </para>
     /// <para>
     /// Note that the maximum lookup time for <b>any prefix</b> is the time of
     /// descending to the subtree, plus traversal of the subtree up to the number of
     /// requested suggestions (because they are already presorted by weight on the
     /// root level and alphabetically at any node level).
-    /// 
+    ///
     /// </para>
     /// <para>
     /// To order alphabetically only (no ordering by priorities), use identical term
     /// weights for all terms. Alphabetical suggestions are returned even if
     /// non-constant weights are used, but the algorithm for doing this is
     /// suboptimal.
-    /// 
+    ///
     /// </para>
     /// <para>
     /// "alphabetically" in any of the documentation above indicates UTF-8
     /// representation order, nothing else.
-    /// 
+    ///
     /// </para>
     /// <para>
     /// <b>NOTE</b>: the FST file format is experimental and subject to suddenly
     /// change, requiring you to rebuild the FST suggest index.
-    /// 
+    ///
     /// </para>
     /// </summary>
     /// <seealso cref="FSTCompletion"/>
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// highly-weighted completions (because these are filled-in first), but will
         /// decrease significantly for low-weighted terms (but these should be
         /// infrequent, so it is all right).
-        /// 
+        ///
         /// <para>
         /// The number of buckets must be within [1, 255] range.
         /// </para>
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// </param>
         /// <param name="shareMaxTailLength">
         ///          Max shared suffix sharing length.
-        ///          
+        ///
         ///          See the description of this parameter in <see cref="Builder"/>'s constructor.
         ///          In general, for very large inputs you'll want to construct a non-minimal
         ///          automaton which will be larger, but the construction will take far less ram.
@@ -232,9 +232,9 @@ namespace Lucene.Net.Search.Suggest.Fst
             this.automaton = BuildAutomaton(sorter);
 
             // Dispose of it if it is a disposable
-            using (sorter as IDisposable)
+            if (sorter is IDisposable disposable)
             {
-
+                disposable.Dispose();
             }
 
             return new FSTCompletion(automaton);

@@ -120,9 +120,10 @@ namespace Lucene.Net.Codecs.Lucene40
                     try
                     {
                         Dispose();
-                    } // ensure we throw our original exception
+                    }
                     catch (Exception t) when (t.IsThrowable())
                     {
+                        // ensure we throw our original exception
                     }
                 }
             }

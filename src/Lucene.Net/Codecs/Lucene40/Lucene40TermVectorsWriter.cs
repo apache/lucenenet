@@ -336,7 +336,9 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             catch (Exception ignored) when (ignored.IsThrowable())
             {
+                // ignored
             }
+
             IOUtils.DeleteFilesIgnoringExceptions(directory,
                 IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION),
                 IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION),

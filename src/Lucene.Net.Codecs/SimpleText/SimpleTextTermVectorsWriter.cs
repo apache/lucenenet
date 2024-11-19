@@ -185,6 +185,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
             catch (Exception t) when (t.IsThrowable())
             {
+                // ignored
             }
             IOUtils.DeleteFilesIgnoringExceptions(_directory,
                     IndexFileNames.SegmentFileName(_segment, "", VECTORS_EXTENSION));
