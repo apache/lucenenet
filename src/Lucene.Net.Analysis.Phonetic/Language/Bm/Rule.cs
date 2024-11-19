@@ -338,6 +338,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 nameTypes.TryGetValue(rt, out var ruleTypes) && ruleTypes != null &&
                 ruleTypes.TryGetValue(lang, out var rules) && rules != null)
             {
+                // LUCENENET: intentionally empty
             }
             else
             {

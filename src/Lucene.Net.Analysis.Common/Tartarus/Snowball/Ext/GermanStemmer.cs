@@ -112,20 +112,20 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // test, line 30
             v_1 = m_cursor;
             // repeat, line 30
-            
+
             while (true)
             {
                 v_2 = m_cursor;
-                
+
                 do
                 {
                     // (, line 30
                     // or, line 33
-                    
+
                     do
                     {
                         v_3 = m_cursor;
-                        
+
                         do
                         {
                             // (, line 31
@@ -160,29 +160,29 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     //continue replab0;
 
                     goto end_of_outer_loop;
-                    
+
                 } while (false);
                 lab1:
                 m_cursor = v_2;
                 goto replab0;
-                end_of_outer_loop: { }
+                end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
             }
             replab0:
             m_cursor = v_1;
             // repeat, line 36
-           
+
             while (true)
             {
                 v_4 = m_cursor;
-                
+
                 do
                 {
                     // goto, line 36
-                    
+
                     while (true)
                     {
                         v_5 = m_cursor;
-                        
+
                         do
                         {
                             // (, line 36
@@ -193,11 +193,11 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                             // [, line 37
                             m_bra = m_cursor;
                             // or, line 37
-                            
+
                             do
                             {
                                 v_6 = m_cursor;
-                                
+
                                 do
                                 {
                                     // (, line 37
@@ -254,12 +254,12 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     //continue replab4;
 
                     goto end_of_outer_loop_2;
-                    
+
                 } while (false);
                 lab5:
                 m_cursor = v_4;
                 goto replab4;
-                end_of_outer_loop_2: { }
+                end_of_outer_loop_2: { /* LUCENENET: intentionally empty */ }
             }
             replab4:
             return true;
@@ -287,10 +287,10 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             I_x = m_cursor;
             m_cursor = v_1;
             // gopast, line 49
-            
+
             while (true)
             {
-                
+
                 do
                 {
                     if (!(InGrouping(g_v, 97, 252)))
@@ -308,10 +308,10 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             }
             golab0:
             // gopast, line 49
-            
+
             while (true)
             {
-                
+
                 do
                 {
                     if (!(OutGrouping(g_v, 97, 252)))
@@ -331,7 +331,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             // setmark p1, line 49
             I_p1 = m_cursor;
             // try, line 50
-            
+
             do
             {
                 // (, line 50
@@ -343,7 +343,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             } while (false);
             lab4:
             // gopast, line 51
-            
+
             while (true)
             {
                 do
@@ -363,10 +363,10 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             }
             golab5:
             // gopast, line 51
-            
+
             while (true)
             {
-                
+
                 do
                 {
                     if (!(OutGrouping(g_v, 97, 252)))
@@ -393,11 +393,11 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             int among_var;
             int v_1;
             // repeat, line 55
-            
+
             while (true)
             {
                 v_1 = m_cursor;
-                
+
                 do
                 {
                     // (, line 55
@@ -458,12 +458,12 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     //continue replab0;
 
                     goto end_of_outer_loop;
-                    
+
                 } while (false);
                 lab1:
                 m_cursor = v_1;
                 goto replab0;
-                end_of_outer_loop: { }
+                end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
             }
             replab0:
             return true;
@@ -777,7 +777,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
             return true;
         }
 
-        
+
                 public override bool Stem()
         {
             int v_1;

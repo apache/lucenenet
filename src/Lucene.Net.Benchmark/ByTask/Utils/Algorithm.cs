@@ -40,8 +40,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
         /// <summary>
         /// Read algorithm from file.
-        /// Property examined: alt.tasks.packages == comma separated list of 
-        /// alternate Assembly names where tasks would be searched for, when not found 
+        /// Property examined: alt.tasks.packages == comma separated list of
+        /// alternate Assembly names where tasks would be searched for, when not found
         /// in the default Assembly (that of <see cref="PerfTask"/>).
         /// If the same task class appears in more than one Assembly, the Assembly
         /// indicated first in this list will be used.
@@ -163,7 +163,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                     }
                                     stok.NextToken();
                                 }
-                                BALANCED_PARENS_BREAK: { }
+                                BALANCED_PARENS_BREAK: { /* LUCENENET: intentionally empty */ }
                             }
                             stok.EndOfLineIsSignificant = false;
                             string prm = @params.ToString().Trim();

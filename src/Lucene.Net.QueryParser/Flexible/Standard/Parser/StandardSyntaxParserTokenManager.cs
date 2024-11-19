@@ -943,7 +943,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 throw new TokenMgrError(EOFSeen, curLexState, error_line, error_column, error_after, m_curChar, TokenMgrError.LEXICAL_ERROR);
 
-                EOFLoop_continue: { }
+                EOFLoop_continue: { /* LUCENENET: intentionally empty */ }
             }
         }
 

@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="version">       the Lucene match version </param>
         /// <param name="in">            the stream to consume </param>
         /// <param name="updateOffsets"> whether to update offsets </param>
-        /// @deprecated Offset updates are not supported anymore as of Lucene 4.4. 
+        /// @deprecated Offset updates are not supported anymore as of Lucene 4.4.
         [Obsolete("Offset updates are not supported anymore as of Lucene 4.4.")]
         public TrimFilter(LuceneVersion version, TokenStream @in, bool updateOffsets)
             : base(@in)
@@ -84,6 +84,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             // eat the first characters
             for (start = 0; start < len && char.IsWhiteSpace(termBuffer[start]); start++)
             {
+                // LUCENENET: intentionally empty
             }
             // eat the end characters
             for (end = len; end >= start && char.IsWhiteSpace(termBuffer[end - 1]); end--)

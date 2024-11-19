@@ -405,6 +405,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             while (CompareAsUTF16(term, enumerator.Term()) > 0 && enumerator.Next())
             {
+                // LUCENENET: intentionally empty
             }
 
             if (CompareAsUTF16(term, enumerator.Term()) == 0)

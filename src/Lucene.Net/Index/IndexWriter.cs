@@ -2873,6 +2873,7 @@ namespace Lucene.Net.Index
                             }
                             catch (Exception t) when (t.IsThrowable())
                             {
+                                // ignored
                             }
                         }
 
@@ -3411,6 +3412,7 @@ namespace Lucene.Net.Index
                                 }
                                 catch (Exception t) when (t.IsThrowable())
                                 {
+                                    // ignored
                                 }
                             }
                         }
@@ -3440,6 +3442,7 @@ namespace Lucene.Net.Index
                                     }
                                     catch (Exception t) when (t.IsThrowable())
                                     {
+                                        // ignored
                                     }
                                 }
                             }
@@ -3816,6 +3819,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception t) when (t.IsThrowable())
                         {
+                            // ignored
                         }
                     }
                 }
@@ -6299,19 +6303,23 @@ namespace Lucene.Net.Index
                 else
                 {
                     IOUtils.DisposeWhileHandlingException(cfsDir);
+
                     try
                     {
                         directory.DeleteFile(fileName);
                     }
                     catch (Exception t) when (t.IsThrowable())
                     {
+                        // ignored
                     }
+
                     try
                     {
                         directory.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
                     }
                     catch (Exception t) when (t.IsThrowable())
                     {
+                        // ignored
                     }
                 }
             }
@@ -6471,7 +6479,10 @@ namespace Lucene.Net.Index
         {
             try
             {
-                using (var input = dir.OpenInput(fileName, IOContext.DEFAULT)) { }
+                using (var input = dir.OpenInput(fileName, IOContext.DEFAULT))
+                {
+                    // LUCENENET: intentionally empty, replaces .close()
+                }
                 return true;
             }
             catch (Exception e) when (e.IsNoSuchFileExceptionOrFileNotFoundException())

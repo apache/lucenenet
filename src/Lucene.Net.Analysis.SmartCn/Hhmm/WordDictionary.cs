@@ -45,9 +45,9 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         public const int PRIME_INDEX_LENGTH = 12071;
 
         /// <summary>
-        /// wordIndexTable guarantees to hash all Chinese characters in Unicode into 
-        /// PRIME_INDEX_LENGTH array. There will be conflict, but in reality this 
-        /// program only handles the 6768 characters found in GB2312 plus some 
+        /// wordIndexTable guarantees to hash all Chinese characters in Unicode into
+        /// PRIME_INDEX_LENGTH array. There will be conflict, but in reality this
+        /// program only handles the 6768 characters found in GB2312 plus some
         /// ASCII characters. Therefore in order to guarantee better precision, it is
         /// necessary to retain the original symbol in the charIndexTable.
         /// </summary>
@@ -56,13 +56,13 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         private char[] charIndexTable;
 
         /// <summary>
-        /// To avoid taking too much space, the data structure needed to store the 
+        /// To avoid taking too much space, the data structure needed to store the
         /// lexicon requires two multidimensional arrays to store word and frequency.
-        /// Each word is placed in a char[]. Each char represents a Chinese char or 
-        /// other symbol.  Each frequency is put into an int. These two arrays 
-        /// correspond to each other one-to-one. Therefore, one can use 
-        /// wordItem_charArrayTable[i][j] to look up word from lexicon, and 
-        /// wordItem_frequencyTable[i][j] to look up the corresponding frequency. 
+        /// Each word is placed in a char[]. Each char represents a Chinese char or
+        /// other symbol.  Each frequency is put into an int. These two arrays
+        /// correspond to each other one-to-one. Therefore, one can use
+        /// wordItem_charArrayTable[i][j] to look up word from lexicon, and
+        /// wordItem_frequencyTable[i][j] to look up the corresponding frequency.
         /// </summary>
         private char[][][] wordItem_charArrayTable;
 
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
             if (serialObj.Exists && LoadFromObj(serialObj))
             {
-
+                // LUCENENET: intentionally empty
             }
             else
             {
@@ -179,11 +179,11 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         // The data in Lucene is stored in a proprietary binary format (similar to
         // .NET's BinarySerializer) that cannot be read back in .NET. Therefore, the
         // data was extracted using Java's DataOutputStream using the following Java code.
-        // It can then be read in using the LoadFromInputStream method below 
+        // It can then be read in using the LoadFromInputStream method below
         // (using a DataInputStream instead of a BinaryReader), and saved
         // in the correct (BinaryWriter) format by calling the SaveToObj method.
         // Alternatively, the data can be loaded from disk using the files
-        // here(https://issues.apache.org/jira/browse/LUCENE-1629) in the analysis.data.zip file, 
+        // here(https://issues.apache.org/jira/browse/LUCENE-1629) in the analysis.data.zip file,
         // which will automatically produce the .mem files.
 
         //public void saveToOutputStream(java.io.DataOutputStream stream) throws IOException
@@ -415,7 +415,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         }
 
         /// <summary>
-        /// The original lexicon puts all information with punctuation into a 
+        /// The original lexicon puts all information with punctuation into a
         /// chart (from 1 to 3755). Here it then gets expanded, separately being
         /// placed into the chart that has the corresponding symbol.
         /// </summary>
@@ -423,8 +423,8 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
             int i;
             int cnt;
-            // Punctuation then treating index 3755 as 1, 
-            // distribute the original punctuation corresponding dictionary into 
+            // Punctuation then treating index 3755 as 1,
+            // distribute the original punctuation corresponding dictionary into
             int delimiterIndex = 3755 + GB2312_FIRST_CHAR;
             i = 0;
             while (i < wordItem_charArrayTable[delimiterIndex].Length)
@@ -546,7 +546,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         }
 
         /// <summary>
-        /// Calculate character <paramref name="c"/>'s position in hash table, 
+        /// Calculate character <paramref name="c"/>'s position in hash table,
         /// then initialize the value of that position in the address table.
         /// </summary>
         private bool SetTableIndex(char c, int j)

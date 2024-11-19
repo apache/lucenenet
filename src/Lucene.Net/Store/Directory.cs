@@ -31,7 +31,7 @@ namespace Lucene.Net.Store
     /// deleted.  Random access is permitted both when reading and writing.
     /// <para/>
     /// .NET's i/o APIs not used directly, but rather all i/o is
-    /// through this API.  This permits things such as: 
+    /// through this API.  This permits things such as:
     /// <list type="bullet">
     ///     <item><description> implementation of RAM-based indices;</description></item>
     ///     <item><description> implementation indices stored in a database;</description></item>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Store
         /// specified read buffer size.  The particular <see cref="Directory"/>
         /// implementation may ignore the buffer size.  Currently
         /// the only <see cref="Directory"/> implementations that respect this
-        /// parameter are <see cref="FSDirectory"/> and 
+        /// parameter are <see cref="FSDirectory"/> and
         /// <see cref="CompoundFileDirectory"/>.
         /// <para/>Throws <see cref="FileNotFoundException"/>
         /// if the file does not exist.
@@ -225,6 +225,7 @@ namespace Lucene.Net.Store
                         }
                         catch (Exception t) when (t.IsThrowable())
                         {
+                            // ignored
                         }
                     }
                 }
@@ -370,7 +371,7 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// Expert: implements seek.  Sets current position in this file, where
-            /// the next <see cref="ReadInternal(byte[], int, int)"/> will occur. 
+            /// the next <see cref="ReadInternal(byte[], int, int)"/> will occur.
             /// </summary>
             /// <seealso cref="ReadInternal(byte[], int, int)"/>
             protected override void SeekInternal(long pos)

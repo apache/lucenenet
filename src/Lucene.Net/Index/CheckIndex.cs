@@ -669,6 +669,7 @@ namespace Lucene.Net.Index
             {
                 SegmentCommitInfo info = sis[i];
                 int segmentName = 0;
+
                 try
                 {
                     // LUCENENET: Optimized to not allocate a substring during the parse
@@ -676,15 +677,19 @@ namespace Lucene.Net.Index
                 }
                 catch
                 {
+                    // ignored
                 }
+
                 if (segmentName > result.MaxSegmentName)
                 {
                     result.MaxSegmentName = segmentName;
                 }
+
                 if (onlySegments != null && !onlySegments.Contains(info.Info.Name))
                 {
                     continue;
                 }
+
                 Status.SegmentInfoStatus segInfoStat = new Status.SegmentInfoStatus();
                 result.SegmentInfos.Add(segInfoStat);
                 Msg(infoStream, "  " + (1 + i) + " of " + numSegments + ": name=" + info.Info.Name + " docCount=" + info.Info.DocCount);

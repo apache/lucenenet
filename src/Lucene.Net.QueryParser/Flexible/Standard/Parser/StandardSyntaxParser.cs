@@ -1201,7 +1201,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                             jj_expentries.Add(jj_expentry);
                             goto jj_entries_loop_break;
                         }
-                        jj_entries_loop_continue: { }
+                        jj_entries_loop_continue: { /* LUCENENET: intentionally empty */ }
                     }
                     jj_entries_loop_break:
                         if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
@@ -1291,9 +1291,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         p = p.next;
                     } while (p != null);
                 }
-#pragma warning disable 168
-                catch (LookaheadSuccess ls) { }
-#pragma warning restore 168
+                catch (LookaheadSuccess) { /* ignored */ }
             }
             jj_rescan = false;
         }

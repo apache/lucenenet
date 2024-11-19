@@ -256,7 +256,7 @@ namespace Lucene.Net.Store
     // Note that using NativeFSLock would be ideal for all platforms. However, there is a
     // small chance that provoking lock/share exceptions will fail. In that rare case, we
     // fallback to this substandard implementation.
-    // 
+    //
     // Reference: https://stackoverflow.com/q/46380483
     internal class FallbackNativeFSLock : Lock
     {
@@ -599,6 +599,7 @@ namespace Lucene.Net.Store
                 {
                     using (var stream = GetLockFileStream(FileMode.Open))
                     {
+                        // LUCENENET: intentionally empty, replaces .close()
                     }
                     return false;
                 }
@@ -768,6 +769,7 @@ namespace Lucene.Net.Store
                             }
                             catch
                             {
+                                // ignored
                             }
                         }
                     }

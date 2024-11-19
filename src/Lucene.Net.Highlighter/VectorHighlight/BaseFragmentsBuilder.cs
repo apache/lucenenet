@@ -339,7 +339,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     WeightedFragInfo weightedFragInfo = new WeightedFragInfo(fragStart, fragEnd, subInfos, boost);
                     fieldNameToFragInfos[field.Name].Add(weightedFragInfo);
                 }
-            fragInfos_continue: { }
+                fragInfos_continue: { /* LUCENENET: intentionally empty */ }
             }
 
             JCG.List<WeightedFragInfo> result = new JCG.List<WeightedFragInfo>();
@@ -351,7 +351,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             return result;
         }
-        
+
         public virtual char MultiValuedSeparator
         {
             get => multiValuedSeparator;

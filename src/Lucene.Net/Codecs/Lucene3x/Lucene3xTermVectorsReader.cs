@@ -183,9 +183,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     try
                     {
                         Dispose();
-                    } // keep our original exception
+                    }
                     catch (Exception t) when (t.IsThrowable())
                     {
+                        // keep our original exception
                     }
                 }
             }
@@ -223,7 +224,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// The number of documents in the reader. 
+        /// The number of documents in the reader.
         /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
@@ -477,7 +478,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     Array.Sort(termAndPostings, Comparer<TermAndPostings>.Create((left, right) => left.Term.CompareTo(right.Term)));
                 }
             }
-            
+
             private void ReadVectors()
             {
                 termAndPostings = new TermAndPostings[numTerms];
