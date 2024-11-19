@@ -250,15 +250,6 @@ stages:
     - template: '.build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishDirectory)
-        framework: 'net5.0'
-        binaryArtifactName: '$(BinaryArtifactName)'
-        testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
-        configration: '$(BuildConfiguration)'
-        platform: '$(BuildPlatform)'
-
-    - template: '.build/azure-templates/publish-test-binaries.yml'
-      parameters:
-        publishDirectory: $(PublishDirectory)
         framework: 'net472'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
@@ -447,66 +438,6 @@ stages:
       parameters:
         osName: $(osName)
         framework: 'net6.0'
-        vsTestPlatform: 'x86'
-        testBinariesArtifactName: '$(TestBinariesArtifactName)'
-        nugetArtifactName: '$(NuGetArtifactName)'
-        testResultsArtifactName: '$(TestResultsArtifactName)'
-        maximumParallelJobs: $(maximumParallelJobs)
-        maximumAllowedFailures: $(maximumAllowedFailures)
-        dotNetSdkVersion: '$(DotNetSDKVersion)'
-
-  - job: Test_net5_0_x64
-    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
-    strategy:
-      matrix:
-        Windows:
-          osName: 'Windows'
-          imageName: 'windows-2019'
-          maximumParallelJobs: 8
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-        Linux:
-          osName: 'Linux'
-          imageName: 'ubuntu-22.04' # NOTE: ubuntu-24.04 currently breaks the .NET 5 build
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-        macOS:
-          osName: 'macOS'
-          imageName: 'macOS-latest'
-          maximumParallelJobs: 7
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-    displayName: 'Test net5.0,x64 on'
-    pool:
-      vmImage: $(imageName)
-    steps:
-    - template: '.build/azure-templates/run-tests-on-os.yml'
-      parameters:
-        osName: $(osName)
-        framework: 'net5.0'
-        vsTestPlatform: 'x64'
-        testBinariesArtifactName: '$(TestBinariesArtifactName)'
-        nugetArtifactName: '$(NuGetArtifactName)'
-        testResultsArtifactName: '$(TestResultsArtifactName)'
-        maximumParallelJobs: $(maximumParallelJobs)
-        maximumAllowedFailures: $(maximumAllowedFailures)
-        dotNetSdkVersion: '$(DotNetSDKVersion)'
-
-  - job: Test_net5_0_x86 # Only run Nightly or if explicitly enabled with RunX86Tests
-    condition: and(succeeded(), ne(variables['RunTests'], 'false'), or(eq(variables['IsNightly'], 'true'), eq(variables['RunX86Tests'], 'true')))
-    strategy:
-      matrix:
-        Windows:
-          osName: 'Windows'
-          imageName: 'windows-2019'
-          maximumParallelJobs: 8
-          maximumAllowedFailures: 0 # Maximum allowed failures for a successful build
-    displayName: 'Test net5.0,x86 on'
-    pool:
-      vmImage: $(imageName)
-    steps:
-    - template: '.build/azure-templates/run-tests-on-os.yml'
-      parameters:
-        osName: $(osName)
-        framework: 'net5.0'
         vsTestPlatform: 'x86'
         testBinariesArtifactName: '$(TestBinariesArtifactName)'
         nugetArtifactName: '$(NuGetArtifactName)'

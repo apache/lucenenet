@@ -39,13 +39,12 @@
     <!-- Test Client to DLL target works as follows:
       Test Client       | Target Under Test
       net8.0            | net8.0
-      net6.0            | net6.0
-      net5.0            | netstandard2.1
+      net6.0            | netstandard2.1
       net48             | net462
       net472            | netstandard2.0
     -->
 
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net8.0;net6.0;net5.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">net8.0;net6.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48;net472</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
   </PropertyGroup>
