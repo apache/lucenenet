@@ -58,7 +58,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
             if (args.Length < 4 || args.Length > 5)
             {
                 // LUCENENET specific - our wrapper console shows correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("QueryDriver requires 4 or 5 arguments", nameof(args));
                 //Console.Error.WriteLine("Usage: QueryDriver <topicsFile> <qrelsFile> <submissionFile> <indexDir> [querySpec]");
                 //Console.Error.WriteLine("topicsFile: input file containing queries");
                 //Console.Error.WriteLine("qrelsFile: input file containing relevance judgements");

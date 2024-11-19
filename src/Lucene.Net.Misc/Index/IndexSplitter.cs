@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
             if (args.Length < 2)
             {
                 // LUCENENET specific - our wrapper console shows the correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("IndexSplitter requires at least 2 arguments", nameof(args));
                 //Console.Error.WriteLine("Usage: IndexSplitter <srcDir> -l (list the segments and their sizes)");
                 //Console.Error.WriteLine("IndexSplitter <srcDir> <destDir> <segments>+");
                 //Console.Error.WriteLine("IndexSplitter <srcDir> -d (delete the following segments)");

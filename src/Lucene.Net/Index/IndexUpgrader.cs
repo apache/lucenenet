@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
         private static void PrintUsage()
         {
             // LUCENENET specific - our wrapper console shows the correct usage
-            throw new ArgumentException();
+            throw new ArgumentException("One or more arguments was invalid");
             //Console.Error.WriteLine("Upgrades an index so all segments created with a previous Lucene version are rewritten.");
             //Console.Error.WriteLine("Usage:");
             //Console.Error.WriteLine("  java " + typeof(IndexUpgrader).Name + " [-delete-prior-commits] [-verbose] [-dir-impl X] indexDir");

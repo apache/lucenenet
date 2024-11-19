@@ -727,15 +727,15 @@ namespace Lucene.Net.Util
                     if (v < /* 111x xxxx */ 0xe0) { pos += 2; continue; }
                     if (v < /* 1111 xxxx */ 0xf0) { pos += 3; continue; }
                     if (v < /* 1111 1xxx */ 0xf8) { pos += 4; continue; }
-                    // fallthrough, consider 5 and 6 byte sequences invalid. 
+                    // fallthrough, consider 5 and 6 byte sequences invalid.
                 }
 
                 // Anything not covered above is invalid UTF8.
-                throw new ArgumentException("Invalid UTF-8");
+                throw new ArgumentException("Invalid UTF-8", nameof(utf8));
             }
 
             // Check if we didn't go over the limit on the last character.
-            if (pos > limit) throw new ArgumentException();
+            if (pos > limit) throw new ArgumentException("Invalid UTF-8", nameof(utf8));
 
             return codePointCount;
         }
@@ -787,7 +787,7 @@ namespace Lucene.Net.Util
                         break;
 
                     default:
-                        throw new ArgumentException("invalid utf8");
+                        throw new ArgumentException("invalid utf8", nameof(utf8));
                 }
 
                 // TODO: this may read past utf8's limit.
@@ -862,11 +862,11 @@ namespace Lucene.Net.Util
             {
                 throw new ArgumentOutOfRangeException(nameof(count), "count must be >= 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
-            int countThreashold = 1024; // If the number of chars exceeds this, we count them instead of allocating count * 2
-            // LUCENENET: as a first approximation, assume each codepoint 
+            const int countThreashold = 1024; // If the number of chars exceeds this, we count them instead of allocating count * 2
+            // LUCENENET: as a first approximation, assume each codepoint
             // is 2 characters (since it cannot be longer than this)
             int arrayLength = count * 2;
-            // LUCENENET: if we go over the threashold, count the number of 
+            // LUCENENET: if we go over the threashold, count the number of
             // chars we will need so we can allocate the precise amount of memory
             if (count > countThreashold)
             {
@@ -889,7 +889,7 @@ namespace Lucene.Net.Util
                 int cp = codePoints[r];
                 if (cp < 0 || cp > 0x10ffff)
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException($"Invalid code point: {cp}", nameof(codePoints));
                 }
                 if (cp < 0x010000)
                 {

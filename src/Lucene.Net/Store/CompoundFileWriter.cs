@@ -94,7 +94,7 @@ namespace Lucene.Net.Store
         {
             // LUCENENET specific - changed order to take advantage of throw expression and
             // changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-            directory = dir ?? throw new ArgumentNullException(nameof(directory), $"{nameof(directory)} cannot be null");
+            directory = dir ?? throw new ArgumentNullException(nameof(dir), $"{nameof(directory)} cannot be null");
             dataFileName = name ?? throw new ArgumentNullException(nameof(name), $"{nameof(name)} cannot be null");
             entryTableName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
         }

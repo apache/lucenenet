@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Util
     /// <see cref="CharacterUtils"/> provides a unified interface to Character-related
     /// operations to implement backwards compatible character operations based on a
     /// <see cref="LuceneVersion"/> instance.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public abstract class CharacterUtils
@@ -57,8 +57,8 @@ namespace Lucene.Net.Analysis.Util
         public static CharacterUtils GetInstance(LuceneVersion matchVersion)
         {
 #pragma warning disable 612, 618
-            return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) 
-                ? JAVA_5 
+            return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31)
+                ? JAVA_5
                 : JAVA_4_BW_COMPAT;
 #pragma warning restore 612, 618
         }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="offset">
         ///          the offset to the char values in the chars array to be converted </param>
         /// <param name="limit"> the index afer the last element that should be used to calculate
-        ///        codepoint.  
+        ///        codepoint.
         /// </param>
         /// <returns> the Unicode code point at the given index </returns>
         /// <exception cref="ArgumentNullException">
@@ -170,7 +170,7 @@ namespace Lucene.Net.Analysis.Util
 
 
         /// <summary>
-        /// Converts each unicode codepoint to lowerCase via <see cref="TextInfo.ToLower(string)"/> in the invariant culture starting 
+        /// Converts each unicode codepoint to lowerCase via <see cref="TextInfo.ToLower(string)"/> in the invariant culture starting
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to lowercase </param>
         /// <param name="offset"> the offset to start at </param>
@@ -195,7 +195,7 @@ namespace Lucene.Net.Analysis.Util
             //    .ToLower(new string(buffer, offset, length))
             //    .CopyTo(0, buffer, offset, length);
 
-            //// Optimization provided by Vincent Van Den Berghe: 
+            //// Optimization provided by Vincent Van Den Berghe:
             //// http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
             //new string(buffer, offset, length)
             //    .ToLowerInvariant()
@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Converts each unicode codepoint to UpperCase via <see cref="TextInfo.ToUpper(string)"/> in the invariant culture starting 
+        /// Converts each unicode codepoint to UpperCase via <see cref="TextInfo.ToUpper(string)"/> in the invariant culture starting
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to UPPERCASE </param>
         /// <param name="offset"> the offset to start at </param>
@@ -237,7 +237,7 @@ namespace Lucene.Net.Analysis.Util
             //    .ToUpper(new string(buffer, offset, length))
             //    .CopyTo(0, buffer, offset, length);
 
-            //// Optimization provided by Vincent Van Den Berghe: 
+            //// Optimization provided by Vincent Van Den Berghe:
             //// http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
             //new string(buffer, offset, length)
             //    .ToUpperInvariant()
@@ -338,7 +338,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Return the index within <c>buf[start:start+count]</c> which is by <paramref name="offset"/>
-        /// code points from <paramref name="index"/>. 
+        /// code points from <paramref name="index"/>.
         /// </summary>
         public abstract int OffsetByCodePoints(char[] buf, int start, int count, int index, int offset);
 
@@ -548,7 +548,8 @@ namespace Lucene.Net.Analysis.Util
                 uint result = (uint)index + (uint)offset;
                 if (result < 0 || result > count)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(index) + " + " + nameof(offset), "index + offset must be >= 0 and <= count");
+                    // LUCENENET note - it is common in .NET to use the "index" (or "start") parameter for the paramName, even though offset might be what is invalid
+                    throw new ArgumentOutOfRangeException(nameof(index), "index + offset must be >= 0 and <= count");
                 }
                 return (int)result;
             }

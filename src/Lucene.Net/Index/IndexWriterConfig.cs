@@ -47,19 +47,19 @@ namespace Lucene.Net.Index
     ///         OpenMode = OpenMode.CREATE
     ///     };
     /// </code>
-    /// 
-    /// However, if you prefer to match the syntax of Lucene using chained setter methods, 
+    ///
+    /// However, if you prefer to match the syntax of Lucene using chained setter methods,
     /// there are extension methods in the Lucene.Net.Index.Extensions namespace. Example usage:
     /// <code>
     ///     using Lucene.Net.Index.Extensions;
-    ///     
+    ///
     ///     ..
-    ///     
+    ///
     ///     IndexWriterConfig conf = new IndexWriterConfig(analyzer)
     ///         .SetCodec(new Lucene46Codec())
     ///         .SetOpenMode(OpenMode.CREATE);
     /// </code>
-    /// 
+    ///
     /// @since 3.1
     /// </summary>
     /// <seealso cref="IndexWriter.Config"/>
@@ -156,8 +156,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Creates a new config that with defaults that match the specified
-        /// <see cref="LuceneVersion"/> as well as the default 
-        /// <see cref="Analyzer"/>. If <paramref name="matchVersion"/> is &gt;= 
+        /// <see cref="LuceneVersion"/> as well as the default
+        /// <see cref="Analyzer"/>. If <paramref name="matchVersion"/> is &gt;=
         /// <see cref="LuceneVersion.LUCENE_32"/>, <see cref="TieredMergePolicy"/> is used
         /// for merging; else <see cref="LogByteSizeMergePolicy"/>.
         /// Note that <see cref="TieredMergePolicy"/> is free to select
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public OpenMode OpenMode
         {
@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when IndexWriter is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public IndexDeletionPolicy IndexDeletionPolicy
         {
@@ -243,7 +243,7 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public IndexCommit IndexCommit
         {
@@ -258,7 +258,7 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public Similarity Similarity
         {
@@ -274,7 +274,7 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public IMergeScheduler MergeScheduler
         {
@@ -289,7 +289,7 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public long WriteLockTimeout
         {
@@ -302,7 +302,7 @@ namespace Lucene.Net.Index
         /// <para/>
         /// Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public Codec Codec
         {
@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public MergePolicy MergePolicy
         {
@@ -341,7 +341,7 @@ namespace Lucene.Net.Index
         /// <para>
         /// NOTE: this only takes effect when <see cref="IndexWriter"/> is first created.</para>
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new internal DocumentsWriterPerThreadPool IndexerThreadPool
         {
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public int MaxThreadStates
         {
@@ -378,9 +378,9 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
-        new public bool UseReaderPooling 
+        new public bool UseReaderPooling
         {
             get => readerPooling;
             set => this.readerPooling = value;
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new internal IndexingChain IndexingChain
         {
@@ -409,7 +409,7 @@ namespace Lucene.Net.Index
         /// The given value must be less that 2GB (2048MB).
         /// </summary>
         /// <seealso cref="DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB"/>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public int RAMPerThreadHardLimitMB
         {
@@ -432,7 +432,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="LiveIndexWriterConfig.MaxBufferedDeleteTerms"/>
         /// <seealso cref="LiveIndexWriterConfig.MaxBufferedDocs"/>
         /// <seealso cref="LiveIndexWriterConfig.RAMBufferSizeMB"/>
-        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // LUCENENET NOTE: We cannot override a getter and add a setter,
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new internal FlushPolicy FlushPolicy
         {
@@ -515,20 +515,20 @@ namespace Lucene.Net.Index
         public IndexWriterConfig SetInfoStream(InfoStream infoStream)
         {
             this.infoStream = infoStream ?? throw new ArgumentNullException(nameof(infoStream),
-                    "Cannot set InfoStream implementation to null. " + 
+                    "Cannot set InfoStream implementation to null. " +
                     "To disable logging use InfoStream.NO_OUTPUT");
             return this;
         }
 
         /// <summary>
-        /// Convenience method that uses <see cref="TextWriterInfoStream"/> to write to the passed in <see cref="TextWriter"/>. 
+        /// Convenience method that uses <see cref="TextWriterInfoStream"/> to write to the passed in <see cref="TextWriter"/>.
         /// Must not be <c>null</c>.
         /// </summary>
         public IndexWriterConfig SetInfoStream(TextWriter printStream)
         {
             if (printStream is null)
             {
-                throw new ArgumentNullException("printStream must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(printStream), "printStream must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             return SetInfoStream(new TextWriterInfoStream(printStream));
         }

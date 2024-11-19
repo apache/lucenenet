@@ -65,7 +65,7 @@ namespace Lucene.Net.Store
             if (args.Length != 2)
             {
                 // LUCENENET specific - our wrapper console shows the correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("LockVerifyServer requires 2 arguments", nameof(args));
                 //Console.WriteLine("Usage: java Lucene.Net.Store.LockVerifyServer bindToIp clients\n");
                 //Environment.FailFast("1");
             }

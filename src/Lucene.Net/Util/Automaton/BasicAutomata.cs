@@ -248,7 +248,7 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="digits"> If &gt; 0, use fixed number of digits (strings must be prefixed
         ///          by 0's to obtain the right length) - otherwise, the number of
         ///          digits is not fixed. </param>
-        /// <exception cref="ArgumentException"> If min &gt; max or if numbers in the
+        /// <exception cref="ArgumentOutOfRangeException"> If min &gt; max or if numbers in the
         ///              interval cannot be expressed with the given fixed number of
         ///              digits. </exception>
         public static Automaton MakeInterval(int min, int max, int digits)
@@ -256,10 +256,19 @@ namespace Lucene.Net.Util.Automaton
             Automaton a = new Automaton();
             string x = Convert.ToString(min, CultureInfo.InvariantCulture);
             string y = Convert.ToString(max, CultureInfo.InvariantCulture);
-            if (min > max || (digits > 0 && y.Length > digits))
+
+            // LUCENENET specific - split into two `if` checks for different ArgumentOutOfRangeExceptions.
+            // Also changed to use ArgumentOutOfRangeException instead of IllegalArgumentException (.NET Convention).
+            if (min > max)
             {
-                throw new ArgumentException();
+                throw new ArgumentOutOfRangeException(nameof(min), "min must be less than or equal to max");
             }
+
+            if (digits > 0 && y.Length > digits)
+            {
+                throw new ArgumentOutOfRangeException(nameof(digits), $"Cannot represent numbers between {min} and {max} with {digits} digits");
+            }
+
             int d;
             if (digits > 0)
             {

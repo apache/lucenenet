@@ -68,7 +68,7 @@ namespace Lucene.Net.Misc
             if (args.Length == 0 || args.Length > 4)
             {
                 // LUCENENET specific - our wrapper console shows the correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("HighFreqTerms requires 1 to 4 arguments", nameof(args));
                 //Usage();
                 //Environment.Exit(1);
             }

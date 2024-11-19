@@ -171,13 +171,13 @@ namespace Lucene.Net.Analysis.Synonym
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
             });
 
-            AssertAnalyzesTo(analyzer, "a b c", 
-                            new string[] { "foo", "c" }, 
-                            new int[] { 0, 4 }, 
-                            new int[] { 3, 5 }, 
-                            null, 
-                            new int[] { 1, 1 }, 
-                            new int[] { 1, 1 }, 
+            AssertAnalyzesTo(analyzer, "a b c",
+                            new string[] { "foo", "c" },
+                            new int[] { 0, 4 },
+                            new int[] { 3, 5 },
+                            null,
+                            new int[] { 1, 1 },
+                            new int[] { 1, 1 },
                             true);
             CheckAnalysisConsistency(Random, analyzer, false, "a b c");
         }
@@ -196,13 +196,13 @@ namespace Lucene.Net.Analysis.Synonym
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
             });
 
-            AssertAnalyzesTo(analyzer, "a b c", 
-                            new string[] { "a", "foo", "b", "c" }, 
-                            new int[] { 0, 0, 2, 4 }, 
-                            new int[] { 1, 3, 3, 5 }, 
-                            null, 
-                            new int[] { 1, 0, 1, 1 }, 
-                            new int[] { 1, 2, 1, 1 }, 
+            AssertAnalyzesTo(analyzer, "a b c",
+                            new string[] { "a", "foo", "b", "c" },
+                            new int[] { 0, 0, 2, 4 },
+                            new int[] { 1, 3, 3, 5 },
+                            null,
+                            new int[] { 1, 0, 1, 1 },
+                            new int[] { 1, 2, 1, 1 },
                             true);
             CheckAnalysisConsistency(Random, analyzer, false, "a b c");
         }
@@ -958,13 +958,13 @@ namespace Lucene.Net.Analysis.Synonym
             Tokenizer tokenizer = new MockTokenizer(new StringReader("aa bb"));
             try
             {
-                new SynonymFilter(tokenizer, (new SynonymMap.Builder(true)).Build(), true);
+                _ = new SynonymFilter(tokenizer, new SynonymMap.Builder(true).Build(), true);
                 fail("did not hit expected exception");
             }
-            catch (ArgumentNullException iae) // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            catch (ArgumentException iae)
             {
                 // expected
-                assertTrue(iae.Message.Contains("fst must be non-null")); // LUCENENET: .NET Adds the parameter name to the message
+                assertTrue(iae.Message.Contains("Fst must be non-null")); // LUCENENET: .NET Adds the parameter name to the message
             }
         }
     }

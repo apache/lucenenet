@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
             }
             if (numScorers <= 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(numScorers), "There must be at least 2 subScorers"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentOutOfRangeException(nameof(subScorers), "There must be at least 2 subScorers"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             this.mm = minimumNrMatchers;

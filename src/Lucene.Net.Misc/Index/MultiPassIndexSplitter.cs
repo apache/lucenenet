@@ -63,11 +63,11 @@ namespace Lucene.Net.Index
         {
             if (outputs is null || outputs.Length < 2)
             {
-                throw new IOException("Invalid number of outputs.");
+                throw new ArgumentException("Invalid number of outputs.", nameof(outputs));
             }
             if (@in is null || @in.NumDocs < 2)
             {
-                throw new IOException("Not enough documents for splitting");
+                throw new ArgumentException("Not enough documents for splitting", nameof(@in));
             }
             int numParts = outputs.Length;
             // wrap a potentially read-only input
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
             if (args.Length < 5)
             {
                 // LUCENENET specific - our wrapper console shows the correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("MultiPassIndexSplitter requires at least 5 arguments", nameof(args));
                 //Console.Error.WriteLine("Usage: MultiPassIndexSplitter -out <outputDir> -num <numParts> [-seq] <inputIndex1> [<inputIndex2 ...]");
                 //Console.Error.WriteLine("\tinputIndex\tpath to input index, multiple values are ok");
                 //Console.Error.WriteLine("\t-out ouputDir\tpath to output directory to contain partial indexes");

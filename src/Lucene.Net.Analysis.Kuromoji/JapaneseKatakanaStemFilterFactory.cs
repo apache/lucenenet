@@ -38,18 +38,21 @@ namespace Lucene.Net.Analysis.Ja
         private const string MINIMUM_LENGTH_PARAM = "minimumLength";
         private readonly int minimumLength;
 
-        /// <summary>Creates a new <see cref="JapaneseKatakanaStemFilterFactory"/></summary>
+        /// <summary>
+        /// Creates a new <see cref="JapaneseKatakanaStemFilterFactory"/>
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if any of the <paramref name="args"/> key/value pairs are invalid.</exception>
         public JapaneseKatakanaStemFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             minimumLength = GetInt32(args, MINIMUM_LENGTH_PARAM, JapaneseKatakanaStemFilter.DEFAULT_MINIMUM_LENGTH);
             if (minimumLength < 2)
             {
-                throw new ArgumentOutOfRangeException(nameof(minimumLength), "Illegal " + MINIMUM_LENGTH_PARAM + " " + minimumLength + " (must be 2 or greater)"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentException("Illegal " + MINIMUM_LENGTH_PARAM + " " + minimumLength + " (must be 2 or greater)", nameof(args));
             }
             if (args.Count > 0)
             {
-                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args), nameof(args));
             }
         }
 
