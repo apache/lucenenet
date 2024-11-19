@@ -35,10 +35,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// @lucene.experimental
     /// </summary>
     // LUCENENET NOTE: The serialization features here are strictly for testing purposes,
-    // therefore it doesn't make any difference what type of serialization is used. 
-    // To make things simpler, we are using BinaryReader and BinaryWriter since 
+    // therefore it doesn't make any difference what type of serialization is used.
+    // To make things simpler, we are using BinaryReader and BinaryWriter since
     // BinaryFormatter is not implemented in .NET Standard 1.x.
-    internal class CharBlockArray : IAppendable, ICharSequence
+    internal class CharBlockArray : IAppendable, ICharSequence,
+        ISpanAppendable /* LUCENENET specific */
     {
         private const long serialVersionUID = 1L;
 
@@ -64,8 +65,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Arrays.Copy(chars, clone.chars, chars.Length);
                 return clone;
             }
-
-            
 
             // LUCENENET specific
             public void Serialize(Stream writer)
@@ -235,7 +234,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             if (startIndex > value.Length - length)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
 
-
             int offset = startIndex;
             int remain = length;
             while (remain > 0)
@@ -309,7 +307,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 return this;
             if (startIndex > value.Length - length)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
-
 
             int offset = startIndex;
             int remain = length;
@@ -409,6 +406,32 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return this;
         }
 
+        public virtual CharBlockArray Append(ReadOnlySpan<char> value)
+        {
+            int offset = 0;
+            int remain = value.Length;
+            while (remain > 0)
+            {
+                if (this.current.length == this.blockSize)
+                {
+                    AddBlock();
+                }
+                int toCopy = remain;
+                int remainingInBlock = this.blockSize - this.current.length;
+                if (remainingInBlock < toCopy)
+                {
+                    toCopy = remainingInBlock;
+                }
+                value.Slice(offset, toCopy).CopyTo(this.current.chars.AsSpan(this.current.length));
+                offset += toCopy;
+                remain -= toCopy;
+                this.current.length += toCopy;
+            }
+
+            this.length += value.Length;
+            return this;
+        }
+
 #nullable restore
 
         #region IAppendable Members
@@ -431,6 +454,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         IAppendable IAppendable.Append(ICharSequence value, int startIndex, int count) => Append(value, startIndex, count);
 
+        #endregion
+
+        #region ISpanAppendable Members
+
+        ISpanAppendable ISpanAppendable.Append(ReadOnlySpan<char> value) => Append(value);
 
         #endregion
 

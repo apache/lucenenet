@@ -44,9 +44,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             // CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder()
             //     .onUnmappableCharacter(CodingErrorAction.REPLACE)
             //     .onMalformedInput(CodingErrorAction.REPLACE);
-            // 
-            // Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage, 
-            //     new EncoderReplacementFallback("?"), 
+            //
+            // Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
+            //     new EncoderReplacementFallback("?"),
             //     new DecoderReplacementFallback("?"));
 
             for (int i = 0; i < n; i++)
@@ -285,6 +285,30 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             const string longTestString = "012345678901234567890123456789";
             t.Append(new CharSequenceAnonymousClass(longTestString));
             Assert.AreEqual("4567890123456" + longTestString, t.ToString());
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestSpanAppendableInterface()
+        {
+            CharBlockArray t = new CharBlockArray();
+
+            // Test with a span
+            t.Append("12345678".AsSpan());
+            Assert.AreEqual("12345678", t.ToString());
+
+            // test with a span slice
+            t.Append("0123456789".AsSpan(3, 5 - 3));
+            Assert.AreEqual("1234567834", t.ToString());
+
+            // test with a long span
+            t = new CharBlockArray();
+            t.Append("01234567890123456789012345678901234567890123456789".AsSpan());
+            Assert.AreEqual("01234567890123456789012345678901234567890123456789", t.ToString());
+
+            // test with a long span slice
+            t.Append("01234567890123456789012345678901234567890123456789".AsSpan(3, 50 - 3));
+            Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
         }
 
         private sealed class CharSequenceAnonymousClass : ICharSequence

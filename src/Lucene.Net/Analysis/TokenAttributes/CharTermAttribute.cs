@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// you can then directly alter.  If the array is too
         /// small for your token, use <see cref="ResizeBuffer(int)"/>
         /// to increase it.  After
-        /// altering the buffer be sure to call <see cref="SetLength(int)"/> 
+        /// altering the buffer be sure to call <see cref="SetLength(int)"/>
         /// to record the number of valid
         /// characters that were placed into the termBuffer.
         /// <para>
@@ -76,15 +76,15 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// the termBuffer array. Use this to truncate the termBuffer
         /// or to synchronize with external manipulation of the termBuffer.
         /// Note: to grow the size of the array,
-        /// use <see cref="ResizeBuffer(int)"/> first. 
-        /// NOTE: This is exactly the same operation as calling the <see cref="Length"/> setter, the primary 
+        /// use <see cref="ResizeBuffer(int)"/> first.
+        /// NOTE: This is exactly the same operation as calling the <see cref="Length"/> setter, the primary
         /// difference is that this method returns a reference to the current object so it can be chained.
         /// <code>
         /// obj.SetLength(30).Append("hey you");
         /// </code>
         /// </summary>
         /// <param name="length"> the truncated length </param>
-        ICharTermAttribute SetLength(int length); 
+        ICharTermAttribute SetLength(int length);
 
         /// <summary>
         /// Sets the length of the termBuffer to zero.
@@ -197,8 +197,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </summary>
         /// <param name="value">The sequence of characters to append.</param>
         /// <remarks>
-        /// LUCENENET specific method, added because the .NET <see cref="string"/> data type 
-        /// doesn't implement <see cref="ICharSequence"/>. 
+        /// LUCENENET specific method, added because the .NET <see cref="string"/> data type
+        /// doesn't implement <see cref="ICharSequence"/>.
         /// </remarks>
         new ICharTermAttribute Append(string value);
 
@@ -228,8 +228,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
         /// </exception>
         /// <remarks>
-        /// LUCENENET specific method, added because the .NET <see cref="string"/> data type 
-        /// doesn't implement <see cref="ICharSequence"/>. 
+        /// LUCENENET specific method, added because the .NET <see cref="string"/> data type
+        /// doesn't implement <see cref="ICharSequence"/>.
         /// </remarks>
         new ICharTermAttribute Append(string value, int startIndex, int count); // LUCENENET TODO: API - change to startIndex/length to match .NET
 
@@ -270,7 +270,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
         /// </exception>
         /// <remarks>
-        /// LUCENENET specific method, added because the .NET <see cref="StringBuilder"/> data type 
+        /// LUCENENET specific method, added because the .NET <see cref="StringBuilder"/> data type
         /// doesn't implement <see cref="ICharSequence"/>.
         /// </remarks>
         new ICharTermAttribute Append(StringBuilder value, int startIndex, int count);

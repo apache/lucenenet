@@ -1,5 +1,6 @@
 ﻿using J2N.IO;
 using J2N.Text;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -326,6 +327,29 @@ namespace Lucene.Net.Analysis.TokenAttributes
             const string longTestString = "012345678901234567890123456789";
             t.Append(new CharSequenceAnonymousClass(longTestString));
             Assert.AreEqual("4567890123456" + longTestString, t.ToString());
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestSpanAppendableInterface()
+        {
+            CharTermAttribute t = new CharTermAttribute();
+
+            // Test with a span
+            t.Append("12345678".AsSpan());
+            Assert.AreEqual("12345678", t.ToString());
+
+            // test with a span slice
+            t.Append("0123456789".AsSpan(3, 5 - 3));
+            Assert.AreEqual("1234567834", t.ToString());
+
+            // test with a long span
+            t.SetEmpty().Append("01234567890123456789012345678901234567890123456789".AsSpan());
+            Assert.AreEqual("01234567890123456789012345678901234567890123456789", t.ToString());
+
+            // test with a long span slice
+            t.Append("01234567890123456789012345678901234567890123456789".AsSpan(3, 50 - 3));
+            Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
         }
 
         private sealed class CharSequenceAnonymousClass : ICharSequence
