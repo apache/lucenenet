@@ -66,7 +66,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             if (args.Length < 1)
             {
                 // LUCENENET specific - our wrapper console shows correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("QualityQueriesFinder requires 1 argument", nameof(args));
                 //Console.Error.WriteLine("Usage: java QualityQueriesFinder <index-dir>");
                 //Environment.Exit(1);
             }

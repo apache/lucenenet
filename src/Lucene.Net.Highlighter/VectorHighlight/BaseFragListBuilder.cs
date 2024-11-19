@@ -137,7 +137,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             // LUCENENET specific - added guard clause to check for null
             if (info is null)
-                throw new ArgumentNullException(nameof(WeightedPhraseInfo));
+                throw new ArgumentNullException(nameof(info));
 
             return info.TermsOffsets.Count <= 1 || matchLength <= fragCharSize;
         }

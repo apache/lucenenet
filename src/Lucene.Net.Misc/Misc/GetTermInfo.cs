@@ -64,7 +64,7 @@ namespace Lucene.Net.Misc
             else
             {
                 // LUCENENET specific - our wrapper console shows the correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("GetTermInfo requires 3 arguments", nameof(args));
                 //Usage();
                 //Environment.Exit(1);
             }

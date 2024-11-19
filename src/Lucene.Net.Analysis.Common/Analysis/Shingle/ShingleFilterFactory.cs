@@ -43,23 +43,25 @@ namespace Lucene.Net.Analysis.Shingle
         private readonly string fillerToken;
 
         /// <summary>
-        /// Creates a new <see cref="ShingleFilterFactory"/> </summary>
-        public ShingleFilterFactory(IDictionary<string, string> args) 
+        /// Creates a new <see cref="ShingleFilterFactory"/>
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown if any of the <paramref name="args"/> key/value pairs are invalid.</exception>
+        public ShingleFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             maxShingleSize = GetInt32(args, "maxShingleSize", ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE);
             if (maxShingleSize < 2)
             {
-                throw new ArgumentOutOfRangeException(nameof(maxShingleSize), "Invalid maxShingleSize (" + maxShingleSize + ") - must be at least 2"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentException("Invalid maxShingleSize (" + maxShingleSize + ") - must be at least 2", nameof(args));
             }
             minShingleSize = GetInt32(args, "minShingleSize", ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE);
             if (minShingleSize < 2)
             {
-                throw new ArgumentOutOfRangeException(nameof(minShingleSize), "Invalid minShingleSize (" + minShingleSize + ") - must be at least 2"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentException("Invalid minShingleSize (" + minShingleSize + ") - must be at least 2", nameof(args));
             }
             if (minShingleSize > maxShingleSize)
             {
-                throw new ArgumentException("Invalid minShingleSize (" + minShingleSize + ") - must be no greater than maxShingleSize (" + maxShingleSize + ")");
+                throw new ArgumentException("Invalid minShingleSize (" + minShingleSize + ") - must be no greater than maxShingleSize (" + maxShingleSize + ")", nameof(args));
             }
             outputUnigrams = GetBoolean(args, "outputUnigrams", true);
             outputUnigramsIfNoShingles = GetBoolean(args, "outputUnigramsIfNoShingles", false);
@@ -67,7 +69,7 @@ namespace Lucene.Net.Analysis.Shingle
             fillerToken = Get(args, "fillerToken", ShingleFilter.DEFAULT_FILLER_TOKEN);
             if (args.Count > 0)
             {
-                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args), nameof(args));
             }
         }
 

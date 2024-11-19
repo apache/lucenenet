@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             /// <summary>
             /// If dedup is true then identical rules (same input,
-            ///  same output) will be added only once. 
+            ///  same output) will be added only once.
             /// </summary>
             public Builder(bool dedup)
             {
@@ -95,9 +95,9 @@ namespace Lucene.Net.Analysis.Synonym
             }
 
             /// <summary>
-            /// Sugar: just joins the provided terms with 
+            /// Sugar: just joins the provided terms with
             /// <see cref="SynonymMap.WORD_SEPARATOR"/>. reuse and its chars
-            /// must not be null. 
+            /// must not be null.
             /// </summary>
             public static CharsRef Join(string[] words, CharsRef reuse)
             {
@@ -163,7 +163,7 @@ namespace Lucene.Net.Analysis.Synonym
                 }
                 if (input.Length <= 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(input.Length), "input.Length must be > 0 (got " + input.Length + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                    throw new ArgumentException("input.Length must be > 0 (got " + input.Length + ")", nameof(input));
                 }
                 if (numOutputWords <= 0)
                 {
@@ -171,7 +171,7 @@ namespace Lucene.Net.Analysis.Synonym
                 }
                 if (output.Length <= 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(output.Length), "output.Length must be > 0 (got " + output.Length + ")"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                    throw new ArgumentException("output.Length must be > 0 (got " + output.Length + ")", nameof(output));
                 }
 
                 if (Debugging.AssertsEnabled)
@@ -332,7 +332,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         /// <summary>
         /// Abstraction for parsing synonym files.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public abstract class Parser : Builder
@@ -353,7 +353,7 @@ namespace Lucene.Net.Analysis.Synonym
             /// <summary>
             /// Sugar: analyzes the text with the analyzer and
             /// separates by <see cref="SynonymMap.WORD_SEPARATOR"/>.
-            /// reuse and its chars must not be null. 
+            /// reuse and its chars must not be null.
             /// </summary>
             public virtual CharsRef Analyze(string text, CharsRef reuse)
             {

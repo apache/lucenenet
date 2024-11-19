@@ -177,7 +177,7 @@ namespace Lucene.Net.Benchmarks.Utils
             else
             {
                 // LUCENENET specific - our wrapper console shows correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("Wikipedia file not found", nameof(args));
                 //PrintUsage();
             }
         }

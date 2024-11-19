@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
             if (args.Length != 7)
             {
                 // LUCENENET specific - our lucene-cli wrapper console shows the correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("LockStressTest requires 7 arguments", nameof(args));
                 //Console.WriteLine("Usage: java Lucene.Net.Store.LockStressTest myID verifierHost verifierPort lockFactoryClassName lockDirName sleepTimeMS count\n" +
                 //    "\n" +
                 //    "  myID = int from 0 .. 255 (should be unique for test process)\n" +

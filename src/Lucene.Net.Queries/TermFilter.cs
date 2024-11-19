@@ -22,7 +22,7 @@ namespace Lucene.Net.Queries
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// A filter that includes documents that match with a specific term.
     /// </summary>
@@ -39,7 +39,7 @@ namespace Lucene.Net.Queries
             }
             else if (term.Field is null)
             {
-                throw new ArgumentNullException(nameof(term.Field), "term.Field must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentException("term.Field must not be null", nameof(term));
             }
             this.term = term;
         }

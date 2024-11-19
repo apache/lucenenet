@@ -357,7 +357,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         {
             if (finalRules is null)
             {
-                throw new ArgumentNullException("finalRules can not be null");// LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+                throw new ArgumentNullException(nameof(finalRules), "finalRules can not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             if (finalRules.Count == 0)
             {

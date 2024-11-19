@@ -27,7 +27,7 @@ namespace Lucene.Net.Facet.Taxonomy
     using FSDirectory = Lucene.Net.Store.FSDirectory;
 
     /// <summary>
-    /// Prints how many ords are under each dimension. 
+    /// Prints how many ords are under each dimension.
     /// </summary>
 
     // java -cp ../build/core/classes/java:../build/facet/classes/java org.apache.lucene.facet.util.PrintTaxonomyStats -printTree /s2/scratch/indices/wikibig.trunk.noparents.facets.Lucene41.nd1M/facets
@@ -54,14 +54,14 @@ namespace Lucene.Net.Facet.Taxonomy
             if (args.Length != (printTree ? 2 : 1))
             {
                 // LUCENENET specific - our wrapper console shows the correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("PrintTaxonomyStats requires 1 or 2 arguments", nameof(args));
                 //Console.WriteLine("\nUsage: java -classpath ... org.apache.lucene.facet.util.PrintTaxonomyStats [-printTree] /path/to/taxononmy/index\n");
                 //return 1;
             }
             using Store.Directory dir = FSDirectory.Open(new DirectoryInfo(path));
             using var r = new DirectoryTaxonomyReader(dir);
             PrintStats(r, System.Console.Out, printTree);
-  
+
             return 0;
         }
 

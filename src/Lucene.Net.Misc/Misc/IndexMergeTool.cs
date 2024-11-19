@@ -54,7 +54,7 @@ namespace Lucene.Net.Misc
             if (args.Length < 3)
             {
                 // LUCENENET specific - our wrapper console shows the correct usage
-                throw new ArgumentException();
+                throw new ArgumentException("IndexMergeTool requires at least 3 arguments", nameof(args));
                 //Console.Error.WriteLine("Usage: IndexMergeTool <mergedIndex> <index1> <index2> [index3] ...");
                 //Environment.Exit(1);
             }

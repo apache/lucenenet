@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             if (bucket < 0 || bucket >= buckets)
             {
-                throw new ArgumentOutOfRangeException(nameof(buckets), "Bucket outside of the allowed range [0, " + buckets + "): " + bucket); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentOutOfRangeException(nameof(bucket), "Bucket outside of the allowed range [0, " + buckets + "): " + bucket); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
 
             if (scratch.Bytes.Length < utf8.Length + 1)
