@@ -216,8 +216,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (startIndex > value.Length - charCount)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
-            // LUCENENET specific - use ReadOnlySpan<char> version for better performance
-            return Append(value.AsSpan(startIndex, charCount));
+            value.CopyTo(startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
+            Length += charCount;
+
+            return this;
         }
 
         public CharTermAttribute Append(char value)
@@ -232,8 +234,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 //return AppendNull();
                 return this; // No-op
 
-            // LUCENENET specific - use ReadOnlySpan<char> version for better performance
-            return Append(value.AsSpan());
+            int len = value.Length;
+            value.CopyTo(InternalResizeBuffer(termLength + len), termLength);
+            Length += len;
+
+            return this;
         }
 
         public CharTermAttribute Append(char[] value, int startIndex, int charCount)
@@ -255,8 +260,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (startIndex > value.Length - charCount)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(charCount)} <= {nameof(Length)}.");
 
-            // LUCENENET specific - use ReadOnlySpan<char> version for better performance
-            return Append(value.AsSpan(startIndex, charCount));
+            Arrays.Copy(value, startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
+            Length += charCount;
+
+            return this;
         }
 
         public CharTermAttribute Append(string value)

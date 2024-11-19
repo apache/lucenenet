@@ -191,8 +191,28 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 return this; // No-op
             }
 
-            // LUCENENET specific - use ReadOnlySpan<char> version
-            return Append(value.AsSpan());
+            int remain = value.Length;
+            int offset = 0;
+            while (remain > 0)
+            {
+                if (this.current.length == this.blockSize)
+                {
+                    AddBlock();
+                }
+                int toCopy = remain;
+                int remainingInBlock = this.blockSize - this.current.length;
+                if (remainingInBlock < toCopy)
+                {
+                    toCopy = remainingInBlock;
+                }
+                Arrays.Copy(value, offset, this.current.chars, this.current.length, toCopy);
+                offset += toCopy;
+                remain -= toCopy;
+                this.current.length += toCopy;
+            }
+
+            this.length += value.Length;
+            return this;
         }
 
         public virtual CharBlockArray Append(char[]? value, int startIndex, int length)
@@ -214,8 +234,28 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             if (startIndex > value.Length - length)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
 
-            // LUCENENET specific - use ReadOnlySpan<char> version
-            return Append(value.AsSpan(startIndex, length));
+            int offset = startIndex;
+            int remain = length;
+            while (remain > 0)
+            {
+                if (this.current.length == this.blockSize)
+                {
+                    AddBlock();
+                }
+                int toCopy = remain;
+                int remainingInBlock = this.blockSize - this.current.length;
+                if (remainingInBlock < toCopy)
+                {
+                    toCopy = remainingInBlock;
+                }
+                Arrays.Copy(value, offset, this.current.chars, this.current.length, toCopy);
+                offset += toCopy;
+                remain -= toCopy;
+                this.current.length += toCopy;
+            }
+
+            this.length += length;
+            return this;
         }
 
         public virtual CharBlockArray Append(string? value)
@@ -225,8 +265,28 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 return this; // No-op
             }
 
-            // LUCENENET specific - use ReadOnlySpan<char> version
-            return Append(value.AsSpan());
+            int remain = value.Length;
+            int offset = 0;
+            while (remain > 0)
+            {
+                if (this.current.length == this.blockSize)
+                {
+                    AddBlock();
+                }
+                int toCopy = remain;
+                int remainingInBlock = this.blockSize - this.current.length;
+                if (remainingInBlock < toCopy)
+                {
+                    toCopy = remainingInBlock;
+                }
+                value.CopyTo(offset, this.current.chars, this.current.length, toCopy);
+                offset += toCopy;
+                remain -= toCopy;
+                this.current.length += toCopy;
+            }
+
+            this.length += value.Length;
+            return this;
         }
 
         public virtual CharBlockArray Append(string? value, int startIndex, int length)
@@ -248,8 +308,28 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             if (startIndex > value.Length - length)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), $"Index and length must refer to a location within the string. For example {nameof(startIndex)} + {nameof(length)} <= {nameof(Length)}.");
 
-            // LUCENENET specific - use ReadOnlySpan<char> version
-            return Append(value.AsSpan(startIndex, length));
+            int offset = startIndex;
+            int remain = length;
+            while (remain > 0)
+            {
+                if (this.current.length == this.blockSize)
+                {
+                    AddBlock();
+                }
+                int toCopy = remain;
+                int remainingInBlock = this.blockSize - this.current.length;
+                if (remainingInBlock < toCopy)
+                {
+                    toCopy = remainingInBlock;
+                }
+                value.CopyTo(offset, this.current.chars, this.current.length, toCopy);
+                offset += toCopy;
+                remain -= toCopy;
+                this.current.length += toCopy;
+            }
+
+            this.length += length;
+            return this;
         }
 
         public virtual CharBlockArray Append(StringBuilder? value)

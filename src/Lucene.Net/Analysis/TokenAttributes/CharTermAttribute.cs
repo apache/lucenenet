@@ -26,8 +26,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     /// <summary>
     /// The term text of a <see cref="Token"/>.
     /// </summary>
-    public interface ICharTermAttribute : IAttribute, ICharSequence, IAppendable,
-        ISpanAppendable /* LUCENENET specific */
+    public interface ICharTermAttribute : IAttribute, ICharSequence, IAppendable
     {
         /// <summary>
         /// Copies the contents of buffer, starting at offset for
