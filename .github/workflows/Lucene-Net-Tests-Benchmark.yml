@@ -62,14 +62,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-22.04]
+        os: [windows-latest, ubuntu-latest]
         framework: [net8.0, net6.0, net48, net472]
         platform: [x64]
         configuration: [Release]
         exclude:
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             framework: net48
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             framework: net472
           - os: macos-latest
             framework: net48

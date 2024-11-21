@@ -42,7 +42,7 @@
 
  .PARAMETER OperatingSystems
     A string array of Github Actions operating system monikers to run the tests on.
-    The default is @('windows-latest', 'ubuntu-22.04').
+    The default is @('windows-latest', 'ubuntu-latest').
 
  .PARAMETER TestPlatforms
     A string array of platforms to run the tests on. Valid values are x64 and x86.
@@ -66,7 +66,7 @@ param(
 
     [string[]]$TestFrameworks = @('net8.0','net6.0','net472','net48'), # targets under test: net8.0, netstandard2.1, netstandard2.0, net462
 
-    [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-22.04'),
+    [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
     [string[]]$TestPlatforms = @('x64'),
 
@@ -153,7 +153,7 @@ function Write-TestWorkflow(
     [string[]]$Configurations = @('Release'),
     [string[]]$TestFrameworks = @('net6.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
-    [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-22.04', 'macos-latest'),
+    [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
     [string]$DotNet8SDKVersion = $DotNet8SDKVersion,
     [string]$DotNet6SDKVersion = $DotNet6SDKVersion) {
 
@@ -241,9 +241,9 @@ jobs:
         platform: $platforms
         configuration: $configurations
         exclude:
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             framework: net48
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             framework: net472
           - os: macos-latest
             framework: net48
