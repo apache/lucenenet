@@ -94,7 +94,7 @@ Here is that file's contents:
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>lucene_example1</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -215,7 +215,7 @@ using LuceneDirectory indexDir = FSDirectory.Open(indexPath);
 
 Then in the next block we create an `IndexWriter` that will use our `LuceneDirectory`. The `IndexWriter` is a important class in Lucene.NET and is used to write documents to the Index (among other things).
 
-The `IndexWriter` will create our subdirectory for us since it doesn't yet exist and it will create the index since it also doesn't yet exist.  By using  `OpenMode.CREATE` we are telling Lucene.NET that we want to recreate the index if it already exists.  This works great for a demo like this since every time  the console app is ran we will be recreating our LuceneIndex which means we will get the same output each time.  
+The `IndexWriter` will create our subdirectory for us since it doesn't yet exist and it will create the index since it also doesn't yet exist.  By using  `OpenMode.CREATE` we are telling Lucene.NET that we want to recreate the index if it already exists.  This works great for a demo like this since every time  the console app is ran we will be recreating our LuceneIndex which means we will get the same output each time.
 
 ```c#
 //Create an index writer
@@ -347,7 +347,7 @@ Here is that file's contents:
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>lucene_example2</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -466,7 +466,7 @@ Query query = parser.Parse("open source");
 
 These lines allow us to create a query that will perform a full text search. This type of search is similar to what you are use to when doing a google or bing search.
 
-What we are saying in these two lines is that we want to create a query that will search the `title` field of our documents and we want back document that contain "open source" or just "open" or just "source" and we want them sorted by how well they match our "open source" query.  
+What we are saying in these two lines is that we want to create a query that will search the `title` field of our documents and we want back document that contain "open source" or just "open" or just "source" and we want them sorted by how well they match our "open source" query.
 
 So when the line of code below runs, Lucene.NET will score each of our docs that match the query and return the top 3 matching documents sorted by score.
 
