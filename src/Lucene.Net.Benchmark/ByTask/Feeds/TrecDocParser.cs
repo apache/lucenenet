@@ -26,7 +26,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
     /// <summary>
     /// Parser for trec doc content, invoked on doc text excluding &lt;DOC&gt; and &lt;DOCNO&gt;
-    /// which are handled in TrecContentSource. Required to be stateless and hence thread safe. 
+    /// which are handled in TrecContentSource. Required to be stateless and hence thread safe.
     /// </summary>
     public abstract class TrecDocParser
     {
@@ -48,12 +48,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         internal static readonly IDictionary<string, ParsePathType?> pathName2Type = LoadPathName2Type();
         private static IDictionary<string, ParsePathType?> LoadPathName2Type() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            var pathName2Type = new Dictionary<string, ParsePathType?>();
+            var result = new Dictionary<string, ParsePathType?>();
             foreach (ParsePathType ppt in Enum.GetValues(typeof(ParsePathType)))
             {
-                pathName2Type[ppt.ToString().ToUpperInvariant()] = ppt;
+                result[ppt.ToString().ToUpperInvariant()] = ppt;
             }
-            return pathName2Type;
+            return result;
         }
 
 
@@ -84,14 +84,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         }
 
         /// <summary>
-        /// Parse the text prepared in docBuf into a result DocData, 
+        /// Parse the text prepared in docBuf into a result DocData,
         /// no synchronization is required.
         /// </summary>
         /// <param name="docData">Reusable result.</param>
         /// <param name="name">Name that should be set to the result.</param>
         /// <param name="trecSrc">Calling trec content source.</param>
         /// <param name="docBuf">Text to parse.</param>
-        /// <param name="pathType">Type of parsed file, or <see cref="ParsePathType.UNKNOWN"/> if unknown - may be used by 
+        /// <param name="pathType">Type of parsed file, or <see cref="ParsePathType.UNKNOWN"/> if unknown - may be used by
         /// parsers to alter their behavior according to the file path type. </param>
         /// <returns></returns>
         public abstract DocData Parse(DocData docData, string name, TrecContentSource trecSrc,

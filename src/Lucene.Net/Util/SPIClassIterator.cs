@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
 
         private static JCG.HashSet<Type> LoadTypes() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            var types = new JCG.HashSet<Type>();
+            var result = new JCG.HashSet<Type>();
 
             var assembliesToExamine = Support.AssemblyUtils.GetReferencedAssemblies();
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
 
                             if (matchingCtors.Any())
                             {
-                                types.Add(type);
+                                result.Add(type);
                             }
                         }
                         catch
@@ -108,7 +108,7 @@ namespace Lucene.Net.Util
                     // swallow
                 }
             }
-            return types;
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

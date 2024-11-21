@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -175,13 +176,15 @@ namespace Lucene.Net.Index
                 ordMap[sortedValues[ord]] = ord;
             }
 
-            dvConsumer.AddSortedSetField(fieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
+            dvConsumer.AddSortedSetField(fieldInfo,
+                // ord -> value
+                GetValuesEnumerable(valueCount, sortedValues),
 
-                                      // doc -> ordCount
-                                      GetOrdsEnumberable(maxDoc),
+                // doc -> ordCount
+                GetOrdCountEnumerable(maxDoc),
 
-                                      // ords
-                                      GetOrdCountEnumberable(maxCountPerDoc, ordMap));
+                // ords
+                GetOrdsEnumerable(ordMap, maxCountPerDoc));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -189,7 +192,7 @@ namespace Lucene.Net.Index
         {
         }
 
-        private IEnumerable<BytesRef> GetBytesRefEnumberable(int valueCount, int[] sortedValues)
+        private IEnumerable<BytesRef> GetValuesEnumerable(int valueCount, int[] sortedValues)
         {
             var scratch = new BytesRef();
 
@@ -199,26 +202,28 @@ namespace Lucene.Net.Index
             }
         }
 
-        private IEnumerable<long?> GetOrdsEnumberable(int maxDoc)
+        [SuppressMessage("ReSharper", "AccessToStaticMemberViaDerivedType", Justification = "Matches Lucene")]
+        private IEnumerable<long?> GetOrdCountEnumerable(int maxDoc)
         {
             AppendingDeltaPackedInt64Buffer.Iterator iter = pendingCounts.GetIterator();
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(pendingCounts.Count == maxDoc,"MaxDoc: {0}, pending.Count: {1}", maxDoc, pending.Count);
+            if (Debugging.AssertsEnabled) Debugging.Assert(pendingCounts.Count == maxDoc, "MaxDoc: {0}, pending.Count: {1}", maxDoc, pending.Count);
 
-            for (int i = 0; i < maxDoc; ++i)
+            for (int docUpto = 0; docUpto < maxDoc; ++docUpto)
             {
                 yield return iter.Next();
             }
         }
 
-        private IEnumerable<long?> GetOrdCountEnumberable(int maxCountPerDoc, int[] ordMap)
+        [SuppressMessage("ReSharper", "AccessToStaticMemberViaDerivedType", Justification = "Matches Lucene")]
+        private IEnumerable<long?> GetOrdsEnumerable(int[] ordMap, int maxCountPerDoc)
         {
             int currentUpTo = 0, currentLength = 0;
             AppendingPackedInt64Buffer.Iterator iter = pending.GetIterator();
             AppendingDeltaPackedInt64Buffer.Iterator counts = pendingCounts.GetIterator();
-            int[] currentDoc = new int[maxCountPerDoc];
+            int[] cd = new int[maxCountPerDoc]; // LUCENENET specific - renamed from currentDoc to cd to prevent conflict
 
-            for (long i = 0; i < pending.Count; ++i)
+            for (long ordUpto = 0; ordUpto < pending.Count; ++ordUpto)
             {
                 while (currentUpTo == currentLength)
                 {
@@ -227,11 +232,11 @@ namespace Lucene.Net.Index
                     currentLength = (int)counts.Next();
                     for (int j = 0; j < currentLength; j++)
                     {
-                        currentDoc[j] = ordMap[(int)iter.Next()];
+                        cd[j] = ordMap[(int)iter.Next()];
                     }
-                    Array.Sort(currentDoc, 0, currentLength);
+                    Array.Sort(cd, 0, currentLength);
                 }
-                int ord = currentDoc[currentUpTo];
+                int ord = cd[currentUpTo];
                 currentUpTo++;
                 yield return ord;
             }

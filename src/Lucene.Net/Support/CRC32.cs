@@ -19,17 +19,16 @@
  *
 */
 
-using System;
-
 namespace Lucene.Net.Support
 {
     internal class CRC32 : IChecksum
     {
-        private static readonly uint[] crcTable = InitializeCRCTable();
+        private static readonly uint[] crcTable = LoadCRCTable();
 
-        private static uint[] InitializeCRCTable()
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static uint[] LoadCRCTable()
         {
-            uint[] crcTable = new uint[256];
+            uint[] result = new uint[256];
             for (uint n = 0; n < 256; n++)
             {
                 uint c = n;
@@ -40,9 +39,9 @@ namespace Lucene.Net.Support
                     else
                         c = c >> 1;
                 }
-                crcTable[n] = c;
+                result[n] = c;
             }
-            return crcTable;
+            return result;
         }
 
         private uint crc = 0;

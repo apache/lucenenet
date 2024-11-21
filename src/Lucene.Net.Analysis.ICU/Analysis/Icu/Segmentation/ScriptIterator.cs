@@ -24,10 +24,10 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
      */
 
     /// <summary>
-    /// An iterator that locates ISO 15924 script boundaries in text. 
+    /// An iterator that locates ISO 15924 script boundaries in text.
     /// </summary>
     /// <remarks>
-    /// This is not the same as simply looking at the Unicode block, or even the 
+    /// This is not the same as simply looking at the Unicode block, or even the
     /// Script property. Some characters are 'common' across multiple scripts, and
     /// some 'inherit' the script value of text surrounding them.
     /// <para/>
@@ -36,10 +36,10 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
     /// <list type="bullet">
     ///     <item><description>
     ///         Doesn't attempt to match paired punctuation. For tokenization purposes, this
-    ///         is not necessary. Its also quite expensive. 
+    ///         is not necessary. Its also quite expensive.
     ///     </description></item>
     ///     <item><description>
-    ///         Non-spacing marks inherit the script of their base character, following 
+    ///         Non-spacing marks inherit the script of their base character, following
     ///         recommendations from UTR #24.
     ///     </description></item>
     /// </list>
@@ -157,10 +157,10 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         private static int[] LoadBasicLatin() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            var basicLatin = new int[128];
-            for (int i = 0; i < basicLatin.Length; i++)
-                basicLatin[i] = UScript.GetScript(i);
-            return basicLatin;
+            var result = new int[128];
+            for (int i = 0; i < result.Length; i++)
+                result[i] = UScript.GetScript(i);
+            return result;
         }
 
         /// <summary>Fast version of <see cref="UScript.GetScript(int)"/>. Basic Latin is an array lookup.</summary>

@@ -263,13 +263,14 @@ namespace Lucene.Net.Index
                 UninterruptableMonitor.Enter(this);
                 try
                 {
-                    numberToName.TryGetValue(number, out string numberToNameStr);
-                    nameToNumber.TryGetValue(name, out int nameToNumberVal);
-                    this.docValuesType.TryGetValue(name, out DocValuesType docValuesType);
+                    // LUCENENET specific - using TryGetValue to avoid throwing an exception
+                    numberToName.TryGetValue(number, out string numberToNameValue);
+                    nameToNumber.TryGetValue(name, out int nameToNumberValue);
+                    docValuesType.TryGetValue(name, out DocValuesType docValuesTypeValue);
 
-                    return name.Equals(numberToNameStr, StringComparison.Ordinal) 
-                        && number.Equals(nameToNumber[name]) && 
-                        (dvType == DocValuesType.NONE || docValuesType == DocValuesType.NONE || dvType == docValuesType);
+                    return name.Equals(numberToNameValue, StringComparison.Ordinal)
+                        && number.Equals(nameToNumberValue) &&
+                        (dvType == DocValuesType.NONE || docValuesTypeValue == DocValuesType.NONE || dvType == docValuesTypeValue);
                 }
                 finally
                 {
