@@ -38,11 +38,11 @@
 
  .PARAMETER TestFrameworks
     A string array of Dotnet target framework monikers to run the tests on. The default is
-    @('net6.0', 'net5.0','net472','net48').
+    @('net8.0','net6.0','net472','net48').
 
  .PARAMETER OperatingSystems
     A string array of Github Actions operating system monikers to run the tests on.
-    The default is @('windows-latest', 'ubuntu-22.04').
+    The default is @('windows-latest', 'ubuntu-latest').
 
  .PARAMETER TestPlatforms
     A string array of platforms to run the tests on. Valid values are x64 and x86.
@@ -58,19 +58,15 @@
  .PARAMETER DotNet6SDKVersion
     The SDK version of .NET 6.x to install on the build agent to be used for building and
     testing. This SDK is always installed on the build agent. The default is 6.0.x.
-
- .PARAMETER DotNet5SDKVersion
-    The SDK version of .NET 5.x to install on the build agent to be used for building and
-    testing. This SDK is always installed on the build agent. The default is 5.0.x.
 #>
 param(
     [string]$OutputDirectory =  $PSScriptRoot,
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net8.0', 'net5.0','net472','net48'), # targets under test: net6.0, netstandard2.1, netstanard2.0, net462
+    [string[]]$TestFrameworks = @('net8.0','net6.0','net472','net48'), # targets under test: net8.0, netstandard2.1, netstandard2.0, net462
 
-    [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-22.04'), # NOTE: ubuntu-24.04 breaks the .NET 5 build currently
+    [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
     [string[]]$TestPlatforms = @('x64'),
 
@@ -78,9 +74,7 @@ param(
 
     [string]$DotNet8SDKVersion = '8.0.x',
 
-    [string]$DotNet6SDKVersion = '6.0.x',
-
-    [string]$DotNet5SDKVersion = '5.0.x'
+    [string]$DotNet6SDKVersion = '6.0.x'
 )
 
 
@@ -157,12 +151,11 @@ function Write-TestWorkflow(
     [string]$RelativeRoot,
     [string]$ProjectPath,
     [string[]]$Configurations = @('Release'),
-    [string[]]$TestFrameworks = @('net5.0', 'net48'),
+    [string[]]$TestFrameworks = @('net6.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
-    [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-22.04', 'macos-latest'),
+    [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
     [string]$DotNet8SDKVersion = $DotNet8SDKVersion,
-    [string]$DotNet6SDKVersion = $DotNet6SDKVersion,
-    [string]$DotNet5SDKVersion = $DotNet5SDKVersion) {
+    [string]$DotNet6SDKVersion = $DotNet6SDKVersion) {
 
     $dependencies = New-Object System.Collections.Generic.HashSet[string]
     Get-ProjectDependencies $ProjectPath $RelativeRoot $dependencies
@@ -248,9 +241,9 @@ jobs:
         platform: $platforms
         configuration: $configurations
         exclude:
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             framework: net48
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             framework: net472
           - os: macos-latest
             framework: net48
@@ -281,12 +274,6 @@ jobs:
           echo `"DOTNET_NOLOGO=1`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
           echo `"DOTNET_CLI_TELEMETRY_OPTOUT=1`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
-
-      - name: Setup .NET 5 SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '$DotNet5SDKVersion'
-        if: `${{ startswith(matrix.framework, 'net5.') }}
 
       - name: Setup .NET 6 SDK
         uses: actions/setup-dotnet@v3
@@ -356,7 +343,7 @@ try {
     Pop-Location
 }
 
-#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net5.0') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion
+#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net6.0') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion -DotNet6SDKVersion $DotNet6SDKVersion
 
 #Write-Host $TestProjects
 
@@ -383,5 +370,5 @@ foreach ($testProject in $TestProjects) {
     Write-Host "Frameworks To Test for ${projectName}: $($frameworks -join ';')" -ForegroundColor Cyan
 
     #Write-Host "Project: $projectName"
-    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion -DotNet6SDKVersion $DotNet6SDKVersion -DotNet5SDKVersion $DotNet5SDKVersion
+    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion -DotNet6SDKVersion $DotNet6SDKVersion
 }

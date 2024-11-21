@@ -65,14 +65,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-22.04]
-        framework: [net8.0, net5.0, net48, net472]
+        os: [windows-latest, ubuntu-latest]
+        framework: [net8.0, net6.0, net48, net472]
         platform: [x64]
         configuration: [Release]
         exclude:
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             framework: net48
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             framework: net472
           - os: macos-latest
             framework: net48
@@ -93,12 +93,6 @@ jobs:
           echo "DOTNET_NOLOGO=1" | Out-File -FilePath  $env:GITHUB_ENV -Encoding utf8 -Append
           echo "DOTNET_CLI_TELEMETRY_OPTOUT=1" | Out-File -FilePath  $env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
-
-      - name: Setup .NET 5 SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '5.0.x'
-        if: ${{ startswith(matrix.framework, 'net5.') }}
 
       - name: Setup .NET 6 SDK
         uses: actions/setup-dotnet@v3
