@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Ja
         public static ISet<string> DefaultStopTags => DefaultSetHolder.DEFAULT_STOP_TAGS;
 
         /// <summary>
-        /// Atomically loads DEFAULT_STOP_SET, DEFAULT_STOP_TAGS in a lazy fashion once the 
+        /// Atomically loads DEFAULT_STOP_SET, DEFAULT_STOP_TAGS in a lazy fashion once the
         /// outer class accesses the static final set the first time.
         /// </summary>
         private static class DefaultSetHolder
@@ -88,12 +88,12 @@ namespace Lucene.Net.Analysis.Ja
                 try
                 {
                     CharArraySet tagset = LoadStopwordSet(false, typeof(JapaneseAnalyzer), "stoptags.txt", "#");
-                    var DEFAULT_STOP_TAGS = new JCG.HashSet<string>();
+                    var result = new JCG.HashSet<string>();
                     foreach (string element in tagset)
                     {
-                        DEFAULT_STOP_TAGS.Add(element);
+                        result.Add(element);
                     }
-                    return DEFAULT_STOP_TAGS.AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
+                    return result.AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866
                 }
                 catch (Exception ex) when (ex.IsIOException())
                 {

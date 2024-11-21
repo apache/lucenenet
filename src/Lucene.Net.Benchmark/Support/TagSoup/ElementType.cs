@@ -39,7 +39,7 @@ namespace TagSoup
         /// The content model, member-of, and flags vectors are specified as ints.
         /// </summary>
         /// <param name="name">The element type name</param>
-        /// <param name="model">ORed-together bits representing the content 
+        /// <param name="model">ORed-together bits representing the content
         /// models allowed in the content of this element type</param>
         /// <param name="memberOf">ORed-together bits representing the content models
         /// to which this element type belongs</param>
@@ -198,7 +198,7 @@ namespace TagSoup
             }
 
             string ns = GetNamespace(name, true);
-            string localName = GetLocalName(name);
+            string ln = GetLocalName(name); // LUCENENET specific - renamed from localName to not shadow field
             int i = atts.GetIndex(name);
             if (i == -1)
             {
@@ -211,7 +211,7 @@ namespace TagSoup
                 {
                     value = Normalize(value);
                 }
-                atts.AddAttribute(ns, localName, name, type, value);
+                atts.AddAttribute(ns, ln, name, type, value);
             }
             else
             {
@@ -223,7 +223,7 @@ namespace TagSoup
                 {
                     value = Normalize(value);
                 }
-                atts.SetAttribute(i, ns, localName, name, type, value);
+                atts.SetAttribute(i, ns, ln, name, type, value);
             }
         }
 

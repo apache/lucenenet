@@ -116,12 +116,12 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static IDictionary<NameType, Lang> LoadLangs() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            IDictionary<NameType, Lang> langs = new Dictionary<NameType, Lang>();
+            IDictionary<NameType, Lang> result = new Dictionary<NameType, Lang>();
             foreach (NameType s in Enum.GetValues(typeof(NameType)))
             {
-                langs[s] = LoadFromResource(LANGUAGE_RULES_RN, Languages.GetInstance(s));
+                result[s] = LoadFromResource(LANGUAGE_RULES_RN, Languages.GetInstance(s));
             }
-            return langs;
+            return result;
         }
 
         /// <summary>

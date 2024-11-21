@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Nl
      */
 
     /// <summary>
-    /// <see cref="Analyzer"/> for Dutch language. 
+    /// <see cref="Analyzer"/> for Dutch language.
     /// <para>
     /// Supports an external list of stopwords (words that
     /// will not be indexed at all), an external list of exclusions (word that will
@@ -38,20 +38,20 @@ namespace Lucene.Net.Analysis.Nl
     /// A default set of stopwords is used unless an alternative list is specified, but the
     /// exclusion list is empty by default.
     /// </para>
-    /// 
+    ///
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="DutchAnalyzer"/>:
     /// <list type="bullet">
     ///   <item><description> As of 3.6, <see cref="DutchAnalyzer(LuceneVersion, CharArraySet)"/> and
     ///        <see cref="DutchAnalyzer(LuceneVersion, CharArraySet, CharArraySet)"/> also populate
     ///        the default entries for the stem override dictionary</description></item>
-    ///   <item><description> As of 3.1, Snowball stemming is done with SnowballFilter, 
-    ///        LowerCaseFilter is used prior to StopFilter, and Snowball 
+    ///   <item><description> As of 3.1, Snowball stemming is done with SnowballFilter,
+    ///        LowerCaseFilter is used prior to StopFilter, and Snowball
     ///        stopwords are used by default.</description></item>
     ///   <item><description> As of 2.9, StopFilter preserves position
     ///        increments</description></item>
     /// </list>
-    /// 
+    ///
     /// </para>
     /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
     /// dependent settings as <see cref="StandardAnalyzer"/>.</para>
@@ -93,13 +93,13 @@ namespace Lucene.Net.Analysis.Nl
             private static CharArrayDictionary<string> LoadDefaultStemDict() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
 #pragma warning disable 612, 618
-                var DEFAULT_STEM_DICT = new CharArrayDictionary<string>(LuceneVersion.LUCENE_CURRENT, 4, false);
+                var result = new CharArrayDictionary<string>(LuceneVersion.LUCENE_CURRENT, 4, false);
 #pragma warning restore 612, 618
-                DEFAULT_STEM_DICT["fiets"] = "fiets"; //otherwise fiet
-                DEFAULT_STEM_DICT["bromfiets"] = "bromfiets"; //otherwise bromfiet
-                DEFAULT_STEM_DICT["ei"] = "eier";
-                DEFAULT_STEM_DICT["kind"] = "kinder";
-                return DEFAULT_STEM_DICT;
+                result["fiets"] = "fiets"; //otherwise fiet
+                result["bromfiets"] = "bromfiets"; //otherwise bromfiet
+                result["ei"] = "eier";
+                result["kind"] = "kinder";
+                return result;
             }
         }
 
@@ -121,7 +121,7 @@ namespace Lucene.Net.Analysis.Nl
         private readonly LuceneVersion matchVersion;
 
         /// <summary>
-        /// Builds an analyzer with the default stop words (<see cref="DefaultStopSet"/>) 
+        /// Builds an analyzer with the default stop words (<see cref="DefaultStopSet"/>)
         /// and a few default entries for the stem exclusion table.
         /// </summary>
         public DutchAnalyzer(LuceneVersion matchVersion)
@@ -191,11 +191,11 @@ namespace Lucene.Net.Analysis.Nl
         }
 
         /// <summary>
-        /// Returns a (possibly reused) <see cref="TokenStream"/> which tokenizes all the 
+        /// Returns a (possibly reused) <see cref="TokenStream"/> which tokenizes all the
         /// text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A <see cref="TokenStream"/> built from a <see cref="StandardTokenizer"/>
-        ///   filtered with <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, 
+        ///   filtered with <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>,
         ///   <see cref="StopFilter"/>, <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is provided,
         ///   <see cref="StemmerOverrideFilter"/>, and <see cref="SnowballFilter"/> </returns>
         protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)

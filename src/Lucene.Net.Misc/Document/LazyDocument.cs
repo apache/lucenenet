@@ -51,17 +51,17 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Creates an IndexableField whose value will be lazy loaded if and 
-        /// when it is used. 
+        /// Creates an IndexableField whose value will be lazy loaded if and
+        /// when it is used.
         /// <para>
-        /// <b>NOTE:</b> This method must be called once for each value of the field 
-        /// name specified in sequence that the values exist.  This method may not be 
-        /// used to generate multiple, lazy, IndexableField instances refering to 
+        /// <b>NOTE:</b> This method must be called once for each value of the field
+        /// name specified in sequence that the values exist.  This method may not be
+        /// used to generate multiple, lazy, IndexableField instances refering to
         /// the same underlying IndexableField instance.
         /// </para>
         /// <para>
-        /// The lazy loading of field values from all instances of IndexableField 
-        /// objects returned by this method are all backed by a single Document 
+        /// The lazy loading of field values from all instances of IndexableField
+        /// objects returned by this method are all backed by a single Document
         /// per LazyDocument instance.
         /// </para>
         /// </summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// non-private for test only access
-        /// @lucene.internal 
+        /// @lucene.internal
         /// </summary>
         internal virtual Document GetDocument()
         {
@@ -144,7 +144,7 @@ namespace Lucene.Net.Documents
 
 
         /// <summary>
-        /// @lucene.internal 
+        /// @lucene.internal
         /// </summary>
         public class LazyField : IIndexableField, IFormattable
         {
@@ -163,7 +163,7 @@ namespace Lucene.Net.Documents
 
             /// <summary>
             /// non-private for test only access
-            /// @lucene.internal 
+            /// @lucene.internal
             /// </summary>
             public virtual bool HasBeenLoaded => null != realValue;
 
@@ -218,7 +218,7 @@ namespace Lucene.Net.Documents
             /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
             /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
             // LUCENENET specific - created overload so we can format an underlying numeric type using specified provider
-            public virtual string GetStringValue(IFormatProvider provider) 
+            public virtual string GetStringValue(IFormatProvider provider)
             {
                 return GetRealValue().GetStringValue(provider);
             }
@@ -231,7 +231,7 @@ namespace Lucene.Net.Documents
             /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
             /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
             // LUCENENET specific - created overload so we can format an underlying numeric type using specified format
-            public virtual string GetStringValue(string format) 
+            public virtual string GetStringValue(string format)
             {
                 return GetRealValue().GetStringValue(format);
             }
@@ -245,7 +245,7 @@ namespace Lucene.Net.Documents
             /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
             /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
             // LUCENENET specific - created overload so we can format an underlying numeric type using specified format and provider
-            public virtual string GetStringValue(string format, IFormatProvider provider) 
+            public virtual string GetStringValue(string format, IFormatProvider provider)
             {
                 return GetRealValue().GetStringValue(format, provider);
             }
@@ -269,15 +269,15 @@ namespace Lucene.Net.Documents
             /// <summary>
             /// Gets the <see cref="NumericFieldType"/> of the underlying value, or <see cref="NumericFieldType.NONE"/> if the value is not set or non-numeric.
             /// <para/>
-            /// Expert: The difference between this property and <see cref="FieldType.NumericType"/> is 
+            /// Expert: The difference between this property and <see cref="FieldType.NumericType"/> is
             /// this is represents the current state of the field (whether being written or read) and the
             /// <see cref="FieldType"/> property represents instructions on how the field will be written,
             /// but does not re-populate when reading back from an index (it is write-only).
             /// <para/>
-            /// In Java, the numeric type was determined by checking the type of  
+            /// In Java, the numeric type was determined by checking the type of
             /// <see cref="GetNumericValue()"/>. However, since there are no reference number
             /// types in .NET, using <see cref="GetNumericValue()"/> so will cause boxing/unboxing. It is
-            /// therefore recommended to use this property to check the underlying type and the corresponding 
+            /// therefore recommended to use this property to check the underlying type and the corresponding
             /// <c>Get*Value()</c> method to retrieve the value.
             /// <para/>
             /// NOTE: Since Lucene codecs do not support <see cref="NumericFieldType.BYTE"/> or <see cref="NumericFieldType.INT16"/>,
@@ -387,14 +387,14 @@ namespace Lucene.Net.Documents
             // LUCENENET specific - method added for better .NET compatibility
             public virtual string ToString(string format,IFormatProvider provider)
             {
-                IIndexableField realValue = GetRealValue();
-                if(realValue is IFormattable formattable)
+                IIndexableField rv = GetRealValue();
+                if (rv is IFormattable formattable)
                 {
                     return formattable.ToString(format, provider);
                 }
                 else
                 {
-                    return realValue.ToString();
+                    return rv.ToString();
                 }
             }
         }

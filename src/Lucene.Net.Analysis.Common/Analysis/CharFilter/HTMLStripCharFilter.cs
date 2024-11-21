@@ -224,12 +224,12 @@ namespace Lucene.Net.Analysis.CharFilters
             "\x000A\x00BC\x0007\x0000\x001A\x0001\x0004\x0000\x0001\x0002\x0001\x0000\x001A\x0001\x000B\x0000\x0059\x0001\x0003\x0000" +
             "\x0006\x0001\x0002\x0000\x0006\x0001\x0002\x0000\x0006\x0001\x0002\x0000\x0003\x0001\x0023\x0000";
 
-        /** 
+        /**
          * Translates characters to character classes
          */
         private static readonly char[] ZZ_CMAP = ZzUnpackCMap(ZZ_CMAP_PACKED);
 
-        /** 
+        /**
          * Translates DFA states to action switch labels.
          */
         private static readonly int[] ZZ_ACTION = ZzUnpackAction();
@@ -348,7 +348,7 @@ namespace Lucene.Net.Analysis.CharFilters
         }
 
 
-        /** 
+        /**
          * Translates a state to a row index in the transition table
          */
         private static readonly int[] ZZ_ROWMAP = ZzUnpackRowMap();
@@ -30693,7 +30693,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
         private static CharArrayDictionary<char> LoadEntityValues() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            CharArrayDictionary<char> entityValues
+            CharArrayDictionary<char> result
 #pragma warning disable 612, 618
             = new CharArrayDictionary<char>(LuceneVersion.LUCENE_CURRENT, 253, false);
 #pragma warning restore 612, 618
@@ -30775,13 +30775,13 @@ namespace Lucene.Net.Analysis.CharFilters
             for (int i = 0; i < entities.Length; i += 2)
             {
                 var value = entities[i + 1][0];
-                entityValues[entities[i]] = value;
+                result[entities[i]] = value;
                 if (upperCaseVariantsAccepted.TryGetValue(entities[i], out string upperCaseVariant) && upperCaseVariant != null)
                 {
-                    entityValues[upperCaseVariant] = value;
+                    result[upperCaseVariant] = value;
                 }
             }
-            return entityValues;
+            return result;
         }
         private static readonly int INITIAL_INPUT_SEGMENT_SIZE = 1024;
         private static readonly char BLOCK_LEVEL_START_TAG_REPLACEMENT = '\n';
@@ -31024,7 +31024,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 zzEndRead += numRead;
                 return false;
             }
-            // unlikely but not impossible: read 0 characters, but not at end of stream    
+            // unlikely but not impossible: read 0 characters, but not at end of stream
             if (numRead == 0)
             {
                 int c = zzReader.Read();
@@ -31104,7 +31104,7 @@ namespace Lucene.Net.Analysis.CharFilters
         //private string YyText => new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
 
         /// <summary>
-        /// Returns the character at position <tt>pos</tt> from the 
+        /// Returns the character at position <tt>pos</tt> from the
         /// matched text. It is equivalent to YyText[pos], but faster
         /// </summary>
         /// <param name="pos">the position of the character to fetch. A value from 0 to YyLength()-1.</param>
@@ -31124,7 +31124,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// Reports an error that occured while scanning.
         /// <para/>
         /// In a wellformed scanner (no or only correct usage of
-        /// YyPushBack(int) and a match-all fallback rule) this method 
+        /// YyPushBack(int) and a match-all fallback rule) this method
         /// will only be called with things that "Can't Possibly Happen".
         /// If this method is called, something is seriously wrong
         /// (e.g. a JFlex bug producing a faulty scanner etc.).
@@ -31151,7 +31151,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
         /// <summary>
         /// Pushes the specified amount of characters back into the input stream.
-        /// 
+        ///
         /// They will be read again by then next call of the scanning method
         /// </summary>
         /// <param name="number">the number of characters to be read again.

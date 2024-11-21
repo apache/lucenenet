@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Lucene45
             bool missing = false;
             // TODO: more efficient?
             JCG.HashSet<long> uniqueValues = null;
-            
+
             if (optimizeStorage)
             {
                 uniqueValues = new JCG.HashSet<long>();
@@ -486,8 +486,6 @@ namespace Lucene.Net.Codecs.Lucene45
         {
             IEnumerator<long?> docToOrdCountIter = docToOrdCount.GetEnumerator();
             IEnumerator<long?> ordsIter = ords.GetEnumerator();
-
-            const long MISSING_ORD = -1;
 
             while (docToOrdCountIter.MoveNext())
             {

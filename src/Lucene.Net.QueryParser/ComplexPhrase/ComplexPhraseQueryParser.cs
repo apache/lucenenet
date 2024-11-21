@@ -120,9 +120,9 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
             isPass2ResolvingPhrases = true;
             try
             {
-                foreach (var currentPhraseQuery in complexPhrases)
+                foreach (var enumeratorValue in complexPhrases)
                 {
-                    this.currentPhraseQuery = currentPhraseQuery;
+                    currentPhraseQuery = enumeratorValue;
                     // in each phrase, now parse the contents between quotes as a
                     // separate parse operation
                     currentPhraseQuery.ParsePhraseElements(this);
