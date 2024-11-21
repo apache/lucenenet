@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -201,9 +202,10 @@ namespace Lucene.Net.Index
             }
         }
 
+        [SuppressMessage("ReSharper", "AccessToStaticMemberViaDerivedType", Justification = "Matches Lucene")]
         private IEnumerable<long?> GetOrdCountEnumerable(int maxDoc)
         {
-            var iter = pendingCounts.GetIterator();
+            AppendingDeltaPackedInt64Buffer.Iterator iter = pendingCounts.GetIterator();
 
             if (Debugging.AssertsEnabled) Debugging.Assert(pendingCounts.Count == maxDoc, "MaxDoc: {0}, pending.Count: {1}", maxDoc, pending.Count);
 
@@ -213,11 +215,12 @@ namespace Lucene.Net.Index
             }
         }
 
+        [SuppressMessage("ReSharper", "AccessToStaticMemberViaDerivedType", Justification = "Matches Lucene")]
         private IEnumerable<long?> GetOrdsEnumerable(int[] ordMap, int maxCountPerDoc)
         {
             int currentUpTo = 0, currentLength = 0;
-            var iter = pending.GetIterator();
-            var counts = pendingCounts.GetIterator();
+            AppendingPackedInt64Buffer.Iterator iter = pending.GetIterator();
+            AppendingDeltaPackedInt64Buffer.Iterator counts = pendingCounts.GetIterator();
             int[] cd = new int[maxCountPerDoc]; // LUCENENET specific - renamed from currentDoc to cd to prevent conflict
 
             for (long ordUpto = 0; ordUpto < pending.Count; ++ordUpto)
