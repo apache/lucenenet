@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Icu
     {
         /** basic tests to ensure the folding is working */
         [Test]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test fails only on Linux on GitHub Actions
+        //[AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test fails only on Linux on GitHub Actions
         public void Test()
         {
             TextReader reader = new StringReader("Résumé");
