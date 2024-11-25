@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// -or-
         /// <para/>
         /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
-        /// </exception>
+        /// </exception> 
         new ICharTermAttribute Append(ICharSequence value, int startIndex, int count); // LUCENENET: changed to startIndex/length to match .NET
 
         /// <summary>
