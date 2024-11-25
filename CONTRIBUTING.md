@@ -1,7 +1,6 @@
 ﻿# Lucene.NET Contributor's Guide
 
-Have you found a bug or do you have an idea for a cool new enhancement?
-Contributing code is a great way to give something back to the open-source community. Before you dig right into the code there are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
+Have you found a bug or do you have an idea for a cool new enhancement? Contributing code is a great way to give something back to the open-source community. Before you dig right into the code there are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
 
 ## Getting Started
 
