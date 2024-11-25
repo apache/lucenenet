@@ -110,7 +110,7 @@ jobs:
         shell: bash
       # upload reports as build artifacts
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{always()}}
         with:
           name: '${{env.test_results_artifact_name}}'
