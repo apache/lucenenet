@@ -2,6 +2,7 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
@@ -360,8 +361,7 @@ namespace Lucene.Net.Index
             {
                 if (i < terms.Length)
                 {
-                    termAtt.Length = 0;
-                    termAtt.Append(terms[i]);
+                    termAtt.SetLength(0).Append(terms[i]);
                     piAtt.PositionIncrement = positionsIncrements[i];
                     oAtt.SetOffset(startOffsets[i], endOffsets[i]);
                     pAtt.Payload = payloads[i];

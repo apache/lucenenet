@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace Lucene.Net.Analysis.Nl
      */
 
     /// <summary>
-    /// A <see cref="TokenFilter"/> that stems Dutch words. 
+    /// A <see cref="TokenFilter"/> that stems Dutch words.
     /// <para>
     /// It supports a table of words that should
     /// not be stemmed at all. The stemmer used can be changed at runtime after the
@@ -34,12 +35,12 @@ namespace Lucene.Net.Analysis.Nl
     /// To prevent terms from being stemmed use an instance of
     /// <see cref="Miscellaneous.KeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="IKeywordAttribute"/> before this <see cref="TokenStream"/>.
-    /// </para> 
+    /// </para>
     /// </summary>
     /// <seealso cref="Miscellaneous.KeywordMarkerFilter"/>
-    /// @deprecated (3.1) Use <see cref="Snowball.SnowballFilter"/> with 
+    /// @deprecated (3.1) Use <see cref="Snowball.SnowballFilter"/> with
     /// <see cref="Tartarus.Snowball.Ext.DutchStemmer"/> instead, which has the
-    /// same functionality. This filter will be removed in Lucene 5.0 
+    /// same functionality. This filter will be removed in Lucene 5.0
     [Obsolete("(3.1) Use Snowball.SnowballFilter with Tartarus.Snowball.Ext.DutchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public sealed class DutchStemFilter : TokenFilter
     {
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analysis.Nl
 
         /// <param name="in"> Input <see cref="TokenStream"/> </param>
         /// <param name="stemdictionary"> Dictionary of word stem pairs, that overrule the algorithm </param>
-        public DutchStemFilter(TokenStream @in, IDictionary<string, string> stemdictionary) 
+        public DutchStemFilter(TokenStream @in, IDictionary<string, string> stemdictionary)
             : this(@in)
         {
             stemmer.StemDictionary = stemdictionary;

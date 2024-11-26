@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using System;
 
 namespace Lucene.Net.Analysis.De
@@ -22,7 +23,7 @@ namespace Lucene.Net.Analysis.De
      */
 
     /// <summary>
-    /// A <see cref="TokenFilter"/> that stems German words. 
+    /// A <see cref="TokenFilter"/> that stems German words.
     /// <para>
     /// It supports a table of words that should
     /// not be stemmed at all. The stemmer used can be changed at runtime after the

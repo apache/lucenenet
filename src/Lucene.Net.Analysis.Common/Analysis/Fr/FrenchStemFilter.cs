@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using System;
 
 namespace Lucene.Net.Analysis.Fr
@@ -22,7 +23,7 @@ namespace Lucene.Net.Analysis.Fr
      */
 
     /// <summary>
-    /// A <see cref="TokenFilter"/> that stems french words. 
+    /// A <see cref="TokenFilter"/> that stems french words.
     /// <para>
     /// The used stemmer can be changed at runtime after the
     /// filter object is created (as long as it is a <see cref="FrenchStemmer"/>).
@@ -33,9 +34,9 @@ namespace Lucene.Net.Analysis.Fr
     /// the <see cref="IKeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para> </summary>
     /// <seealso cref="Miscellaneous.KeywordMarkerFilter"/>
-    /// @deprecated (3.1) Use <see cref="Snowball.SnowballFilter"/> with 
+    /// @deprecated (3.1) Use <see cref="Snowball.SnowballFilter"/> with
     /// <see cref="Tartarus.Snowball.Ext.FrenchStemmer"/> instead, which has the
-    /// same functionality. This filter will be removed in Lucene 5.0 
+    /// same functionality. This filter will be removed in Lucene 5.0
     [Obsolete("(3.1) Use SnowballFilter with FrenchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public sealed class FrenchStemFilter : TokenFilter
     {

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

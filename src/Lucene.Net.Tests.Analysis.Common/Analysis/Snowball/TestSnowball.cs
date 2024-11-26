@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Attributes;
 using Lucene.Net.Tartarus.Snowball.Ext;
 using Lucene.Net.Util;
@@ -74,7 +75,7 @@ namespace Lucene.Net.Analysis.Snowball
 
         /// <summary>
         /// Test turkish lowercasing (old buggy behavior) </summary>
-        /// @deprecated (3.1) Remove this when support for 3.0 indexes is no longer required (5.0) 
+        /// @deprecated (3.1) Remove this when support for 3.0 indexes is no longer required (5.0)
         [Test]
         [Obsolete("(3.1) Remove this when support for 3.0 indexes is no longer required (5.0)")]
         public virtual void TestTurkishBWComp()

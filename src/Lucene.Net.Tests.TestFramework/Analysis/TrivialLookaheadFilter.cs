@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis
                 InsertToken();
                 // replace term with 'improved' term.
                 ClearAttributes();
-                termAtt.SetEmpty();
+                termAtt.Clear();
                 posIncAtt.PositionIncrement = (0);
                 termAtt.Append(m_positions.Get(m_outputPos).Fact);
                 offsetAtt.SetOffset(m_positions.Get(m_outputPos).StartOffset,

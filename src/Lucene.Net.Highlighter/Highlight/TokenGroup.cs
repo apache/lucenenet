@@ -1,6 +1,7 @@
 ﻿using System;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 
 namespace Lucene.Net.Search.Highlight
 {

@@ -21,6 +21,7 @@
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Classic;
@@ -39,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Util
 {
     /// <summary>
     /// In .NET the abstact members were moved to AbstractQueryParserTestBase
-    /// because the Visual Studio test runner does not find or run tests in 
+    /// because the Visual Studio test runner does not find or run tests in
     /// abstract classes.
     /// </summary>
     [TestFixture]
@@ -675,7 +676,7 @@ namespace Lucene.Net.QueryParsers.Util
         {
             // we use the default Locale since LuceneTestCase randomizes it
             DateTime d = DateTime.ParseExact(s, CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture);
-            return GetDate(d, resolution);   
+            return GetDate(d, resolution);
         }
 
         /// <summary>for testing DateTools support</summary>
@@ -729,7 +730,7 @@ namespace Lucene.Net.QueryParsers.Util
             // set default date resolution to MILLISECOND
             qp.SetDateResolution(DateResolution.MILLISECOND);
 
-            // set second field specific date resolution    
+            // set second field specific date resolution
             SetDateResolution(qp, hourField, DateResolution.HOUR);
 
             // for this field no field specific date resolution has been set,
@@ -834,7 +835,7 @@ namespace Lucene.Net.QueryParsers.Util
 
             // Tests bug LUCENE-800
             AssertQueryEquals("(item:\\\\ item:ABCD\\\\)", a, "item:\\ item:ABCD\\");
-            AssertParseException("(item:\\\\ item:ABCD\\\\))"); // unmatched closing paranthesis 
+            AssertParseException("(item:\\\\ item:ABCD\\\\))"); // unmatched closing paranthesis
             AssertQueryEquals("\\*", a, "*");
             AssertQueryEquals("\\\\", a, "\\");  // escaped backslash
 

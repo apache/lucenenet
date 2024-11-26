@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Ja.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 
 namespace Lucene.Net.Analysis.Ja
 {

@@ -3,6 +3,7 @@ using J2N.Text;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Synonym;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;

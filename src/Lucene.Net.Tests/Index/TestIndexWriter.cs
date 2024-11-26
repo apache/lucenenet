@@ -2002,7 +2002,7 @@ namespace Lucene.Net.Index
                 ClearAttributes();
                 if (upto < tokens.Length)
                 {
-                    termAtt.SetEmpty();
+                    termAtt.Clear();
                     termAtt.Append(tokens[upto]);
                     upto++;
                     return true;

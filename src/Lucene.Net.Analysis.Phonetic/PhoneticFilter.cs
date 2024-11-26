@@ -1,6 +1,7 @@
 ﻿// lucene version compatibility level: 4.8.1
 using Lucene.Net.Analysis.Phonetic.Language;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using System;
 
 namespace Lucene.Net.Analysis.Phonetic

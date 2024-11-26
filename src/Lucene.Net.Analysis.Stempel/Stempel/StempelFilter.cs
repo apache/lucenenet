@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Stempel
@@ -56,7 +57,7 @@ namespace Lucene.Net.Analysis.Stempel
         /// </summary>
         /// <param name="in">input token stream</param>
         /// <param name="stemmer">stemmer</param>
-        /// <param name="minLength">For performance reasons words shorter than minLength 
+        /// <param name="minLength">For performance reasons words shorter than minLength
         /// characters are not processed, but simply returned.</param>
         public StempelFilter(TokenStream @in, StempelStemmer stemmer, int minLength)
             : base(@in)

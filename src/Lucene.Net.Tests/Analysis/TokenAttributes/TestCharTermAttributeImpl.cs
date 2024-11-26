@@ -1,5 +1,6 @@
 ﻿using J2N.IO;
 using J2N.Text;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;

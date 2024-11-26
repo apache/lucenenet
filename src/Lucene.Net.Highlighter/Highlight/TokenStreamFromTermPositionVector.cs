@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System.Collections.Generic;

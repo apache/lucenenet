@@ -72,6 +72,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// LUCENENET: To mimic StringBuilder, we allow this to be settable.
         /// This replaces the chainable SetLength method in the Java version.
         /// </remarks>
+        /// <seealso cref="Lucene.Net.Analysis.TokenAttributes.Extensions.CharTermAttributeExtensions.SetLength(ICharTermAttribute, int)"/>
         new int Length { get; set; }
 
         // LUCENENET specific: Redefining this[] to make it settable
@@ -81,7 +82,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// Sets the length of the termBuffer to zero.
         /// Use this method before appending contents.
         /// </summary>
-        ICharTermAttribute SetEmpty();
+        /// <seealso cref="Lucene.Net.Analysis.TokenAttributes.Extensions.CharTermAttributeExtensions.SetEmpty(ICharTermAttribute)"/>
+        void Clear();
 
         // the following methods are redefined to get rid of IOException declaration:
 

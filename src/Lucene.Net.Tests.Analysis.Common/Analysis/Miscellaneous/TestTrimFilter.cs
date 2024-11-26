@@ -2,6 +2,7 @@
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -54,7 +55,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             AssertTokenStreamContents(ts, new string[] { "a", "b", "c", "" }, new int[] { 1, 0, 1, 3 }, new int[] { 2, 1, 2, 3 }, null, new int[] { 1, 1, 1, 1 }, null, null, false);
         }
 
-        /// @deprecated (3.0) does not support custom attributes 
+        /// @deprecated (3.0) does not support custom attributes
         [Obsolete("(3.0) does not support custom attributes")]
         private sealed class IterTokenStream : TokenStream
         {

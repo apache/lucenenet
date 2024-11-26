@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 8.2.0
 using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;

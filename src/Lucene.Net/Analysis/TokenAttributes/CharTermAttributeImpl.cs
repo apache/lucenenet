@@ -107,32 +107,27 @@ namespace Lucene.Net.Analysis.TokenAttributes
             }
         }
 
-        int ICharTermAttribute.Length { get => Length; set => SetLength(value); }
+        int ICharTermAttribute.Length
+        {
+            get => Length;
+            set => Length = value;
+        }
 
         int ICharSequence.Length => Length;
 
         public int Length
         {
             get => termLength;
-            set => SetLength(value);
-        }
+            set
+            {
+                // LUCENENET: added guard clause
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, $"{nameof(value)} must not be negative.");
+                if (value > termBuffer.Length)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "length " + value + " exceeds the size of the termBuffer (" + termBuffer.Length + ")");
 
-        public CharTermAttribute SetLength(int length)
-        {
-            // LUCENENET: added guard clause
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length), length, $"{nameof(length)} must not be negative.");
-            if (length > termBuffer.Length)
-                throw new ArgumentOutOfRangeException(nameof(length), length, "length " + length + " exceeds the size of the termBuffer (" + termBuffer.Length + ")");
-
-            termLength = length;
-            return this;
-        }
-
-        public CharTermAttribute SetEmpty()
-        {
-            termLength = 0;
-            return this;
+                termLength = value;
+            }
         }
 
         // *** TermToBytesRefAttribute interface ***
@@ -489,7 +484,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         char[] ICharTermAttribute.ResizeBuffer(int newSize) => ResizeBuffer(newSize);
 
-        ICharTermAttribute ICharTermAttribute.SetEmpty() => SetEmpty();
+        void ICharTermAttribute.Clear() => Clear();
 
         ICharTermAttribute ICharTermAttribute.Append(ICharSequence value) => Append(value);
 

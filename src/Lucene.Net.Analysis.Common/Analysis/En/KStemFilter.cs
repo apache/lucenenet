@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using System.IO;
 
 namespace Lucene.Net.Analysis.En
@@ -30,13 +31,13 @@ namespace Lucene.Net.Analysis.En
     /// Conference on Research and Development in Information Retrieval, 191-203, 1993).
     /// <para/>
     /// All terms must already be lowercased for this filter to work correctly.
-    /// 
+    ///
     /// <para>
     /// Note: This filter is aware of the <see cref="IKeywordAttribute"/>. To prevent
     /// certain terms from being passed to the stemmer
     /// <see cref="IKeywordAttribute.IsKeyword"/> should be set to <code>true</code>
     /// in a previous <see cref="TokenStream"/>.
-    /// 
+    ///
     /// Note: For including the original term as well as the stemmed version, see
     /// <see cref="Miscellaneous.KeywordRepeatFilterFactory"/>
     /// </para>
@@ -47,7 +48,7 @@ namespace Lucene.Net.Analysis.En
         private readonly ICharTermAttribute termAttribute;
         private readonly IKeywordAttribute keywordAtt;
 
-        public KStemFilter(TokenStream @in) 
+        public KStemFilter(TokenStream @in)
             : base(@in)
         {
             termAttribute = AddAttribute<ICharTermAttribute>();

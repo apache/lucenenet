@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;

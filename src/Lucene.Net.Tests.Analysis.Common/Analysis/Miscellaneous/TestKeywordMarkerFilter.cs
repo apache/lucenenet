@@ -1,5 +1,6 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System.Globalization;

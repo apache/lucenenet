@@ -1,7 +1,8 @@
 ﻿using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
+using Lucene.Net.Index;
 using System;
-using System.Reflection;
 using Attribute = Lucene.Net.Util.Attribute;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 using BytesRef = Lucene.Net.Util.BytesRef;
@@ -45,7 +46,7 @@ namespace Lucene.Net.Analysis
     /// with type "eos".  The default token type is "word".
     /// <para/>
     /// A Token can optionally have metadata (a.k.a. payload) in the form of a variable
-    /// length byte array. Use <see cref="Index.DocsAndPositionsEnum.GetPayload()"/> to retrieve the
+    /// length byte array. Use <see cref="DocsAndPositionsEnum.GetPayload()"/> to retrieve the
     /// payloads from the index.
     ///
     /// <para/><para/>
@@ -567,7 +568,7 @@ namespace Lucene.Net.Analysis
         /// <param name="newTerm"> new term text </param>
         public virtual void Reinit(Token prototype, string newTerm)
         {
-            SetEmpty().Append(newTerm);
+            this.SetEmpty().Append(newTerm);
             positionIncrement = prototype.positionIncrement;
             flags = prototype.flags;
             startOffset = prototype.startOffset;
