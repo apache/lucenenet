@@ -415,33 +415,50 @@ namespace Lucene.Net.Expressions.JS
 
             public override void EnterShift(JavascriptParser.ShiftContext context)
             {
-                CompileBinary(context, context.additive, additiveContext =>
-                {
-                    EnterAdditive(additiveContext);
+                EnterAdditive(context.additive(0));
 
-                    if (context.children.Count > 1) // if we have a shift token
-                    {
-                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
-                    }
-                }, terminalNode =>
+                if (context.children.Count == 1) // if we don't have a shift token
                 {
-                    if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHL)
+                    return;
+                }
+
+                compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                int argIndex = 1;
+
+                for (int i = 1; i < context.children.Count; i += 2)
+                {
+                    if (context.children[i] is ITerminalNode terminalNode)
                     {
-                        compiler.PushOpWithConvert(OpCodes.Shl);
-                    }
-                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHR)
-                    {
-                        compiler.PushOpWithConvert(OpCodes.Shr);
-                    }
-                    else if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHU)
-                    {
-                        compiler.PushOpWithConvert(OpCodes.Shr_Un);
+                        EnterAdditive(context.additive(argIndex++));
+                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+
+                        // mask off 63 to prevent overflow (fixes issue on x86 .NET Framework, #1034)
+                        compiler.Emit(OpCodes.Ldc_I4, 0x3F);
+                        compiler.Emit(OpCodes.Conv_I8); // cast to long (truncate)
+                        compiler.Emit(OpCodes.And);
+
+                        if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHL)
+                        {
+                            compiler.PushOpWithConvert(OpCodes.Shl);
+                        }
+                        else if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHR)
+                        {
+                            compiler.PushOpWithConvert(OpCodes.Shr);
+                        }
+                        else if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHU)
+                        {
+                            compiler.PushOpWithConvert(OpCodes.Shr_Un);
+                        }
+                        else
+                        {
+                            throw new ParseException("Unknown shift token", context.Start.StartIndex);
+                        }
                     }
                     else
                     {
-                        throw new ParseException("Unknown shift token", context.Start.StartIndex);
+                        throw new ParseException("Unexpected child", context.Start.StartIndex);
                     }
-                });
+                }
             }
 
             public override void EnterRelational(JavascriptParser.RelationalContext context)
