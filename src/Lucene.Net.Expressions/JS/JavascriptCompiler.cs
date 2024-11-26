@@ -430,11 +430,7 @@ namespace Lucene.Net.Expressions.JS
                     if (context.children[i] is ITerminalNode terminalNode)
                     {
                         EnterAdditive(context.additive(argIndex++));
-                        compiler.Emit(OpCodes.Conv_I4); // cast to int (truncate)
-
-                        // mask off 63 to prevent overflow (fixes issue on x86 .NET Framework, #1034)
-                        compiler.Emit(OpCodes.Ldc_I4, 0x3F);
-                        compiler.Emit(OpCodes.And);
+                        compiler.Emit(OpCodes.Conv_I4); // cast shift operand to int (truncate)
 
                         if (terminalNode.Symbol.Type == JavascriptParser.AT_BIT_SHL)
                         {
