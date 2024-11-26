@@ -489,8 +489,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         char[] ICharTermAttribute.ResizeBuffer(int newSize) => ResizeBuffer(newSize);
 
-        ICharTermAttribute ICharTermAttribute.SetLength(int length) => SetLength(length);
-
         ICharTermAttribute ICharTermAttribute.SetEmpty() => SetEmpty();
 
         ICharTermAttribute ICharTermAttribute.Append(ICharSequence value) => Append(value);

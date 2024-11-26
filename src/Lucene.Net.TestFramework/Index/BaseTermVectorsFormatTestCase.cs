@@ -360,7 +360,8 @@ namespace Lucene.Net.Index
             {
                 if (i < terms.Length)
                 {
-                    termAtt.SetLength(0).Append(terms[i]);
+                    termAtt.Length = 0;
+                    termAtt.Append(terms[i]);
                     piAtt.PositionIncrement = positionsIncrements[i];
                     oAtt.SetOffset(startOffsets[i], endOffsets[i]);
                     pAtt.Payload = payloads[i];

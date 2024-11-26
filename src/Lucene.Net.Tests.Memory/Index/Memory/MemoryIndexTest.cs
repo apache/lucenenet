@@ -306,7 +306,7 @@ namespace Lucene.Net.Index.Memory
                 {
                     if (termAtt.Length > 0 && termAtt.Buffer[0] == 't')
                     {
-                        termAtt.SetLength(0);
+                        termAtt.Length = 0;
                     }
                     return true;
                 }
@@ -318,8 +318,8 @@ namespace Lucene.Net.Index.Memory
         };
 
         /**
-         * Some terms to be indexed, in addition to random words. 
-         * These terms are commonly used in the queries. 
+         * Some terms to be indexed, in addition to random words.
+         * These terms are commonly used in the queries.
          */
         private static readonly string[] TEST_TERMS = {"term", "Term", "tErm", "TERM",
             "telm", "stop", "drop", "roll", "phrase", "a", "c", "bar", "blar",
