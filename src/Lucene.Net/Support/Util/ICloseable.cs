@@ -1,4 +1,4 @@
-namespace Lucene.Net.Support.IO
+namespace Lucene.Net.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
