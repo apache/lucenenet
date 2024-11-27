@@ -107,9 +107,9 @@ namespace Lucene.Net.Search
 
         // LUCENENET: Changed to non-static because NewIndexWriterConfig is non-static
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             NUM_DOCS = AtLeast(500);
             NUM_ORDS = AtLeast(2);

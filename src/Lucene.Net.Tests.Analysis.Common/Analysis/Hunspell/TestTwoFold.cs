@@ -22,13 +22,13 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestTwoFold : StemmerTestBase
     {
-
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("twofold.aff", "morph.dic");
         }
+
         [Test]
         public virtual void TestExamples()
         {

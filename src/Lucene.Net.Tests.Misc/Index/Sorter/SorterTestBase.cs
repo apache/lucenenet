@@ -207,9 +207,9 @@ namespace Lucene.Net.Index.Sorter
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassSorterTestBase() to ensure calling order vs base class
+        public override void OneTimeSetUp() // LUCENENET specific - renamed from BeforeClassSorterTestBase() to ensure calling order vs base class
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             dir = NewDirectory();
             int numDocs = AtLeast(20);

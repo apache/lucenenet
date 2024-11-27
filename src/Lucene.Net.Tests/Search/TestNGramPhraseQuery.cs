@@ -38,9 +38,9 @@ namespace Lucene.Net.Search
         /// Is non-static because Similarity and TimeZone are not static.
         /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory);

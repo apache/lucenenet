@@ -59,9 +59,9 @@ namespace Lucene.Net.Search
         private static Directory directory;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             directory = NewDirectory();
             Analyzer analyzer = new AnalyzerAnonymousClass();

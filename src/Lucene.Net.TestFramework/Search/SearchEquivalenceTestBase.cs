@@ -46,9 +46,9 @@ namespace Lucene.Net.Search
         protected static string m_stopword; // we always pick a character as a stopword
 
         [NUnit.Framework.OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
 
             Random random = Random;

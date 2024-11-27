@@ -60,9 +60,9 @@ namespace Lucene.Net.Documents
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific - changed from CreateIndex() to ensure calling order vs base class
+        public override void OneTimeSetUp() // LUCENENET specific - changed from CreateIndex() to ensure calling order vs base class
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter writer = new IndexWriter

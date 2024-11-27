@@ -36,7 +36,7 @@ namespace Lucene.Net.Configuration
         private readonly static string currentJsonFilePath = Path.Combine(testDirectory, TestJsonFileName);
         private readonly static string parentJsonFilePath = Path.Combine(parentDirectory, TestJsonFileName);
 
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
             // Create directories if they do not exist
             Directory.CreateDirectory(testDirectory);
@@ -55,7 +55,7 @@ namespace Lucene.Net.Configuration
                 input.CopyTo(output);
             }
 
-            base.BeforeClass();
+            base.OneTimeSetUp();
         }
 
         public override void AfterClass()

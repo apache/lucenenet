@@ -40,9 +40,9 @@ namespace Lucene.Net.Tests.Cli
         private static DirectoryInfo tempWork;
         private static string packageVersion;
 
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             tempWork = CreateTempDir();
 
             FileInfo packageFile;

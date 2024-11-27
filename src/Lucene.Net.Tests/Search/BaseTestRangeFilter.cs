@@ -98,9 +98,9 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific: renamed from BeforeClassBaseTestRangeFilter() so we can override to control the order of execution
+        public override void OneTimeSetUp() // LUCENENET specific: renamed from BeforeClassBaseTestRangeFilter() so we can override to control the order of execution
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             maxId = AtLeast(500);
             signedIndexDir = new TestIndex(Random, int.MaxValue, int.MinValue, true);

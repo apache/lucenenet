@@ -74,9 +74,9 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassTestExplanations() to ensure calling order
+        public override void OneTimeSetUp() // LUCENENET specific - renamed from BeforeClassTestExplanations() to ensure calling order
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));

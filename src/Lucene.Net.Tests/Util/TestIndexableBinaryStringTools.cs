@@ -32,9 +32,9 @@ namespace Lucene.Net.Util
         private static int MAX_RANDOM_BINARY_LENGTH;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             NUM_RANDOM_TESTS = AtLeast(200);
             MAX_RANDOM_BINARY_LENGTH = AtLeast(300);

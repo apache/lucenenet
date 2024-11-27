@@ -48,9 +48,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         public static Analyzer qpAnalyzer;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             qpAnalyzer = new QPTestAnalyzer();
         }
 

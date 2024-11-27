@@ -31,9 +31,9 @@ namespace Lucene.Net.Benchmarks
     {
         private static DirectoryInfo WORKDIR;
 
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             WORKDIR = CreateTempDir("benchmark");
             // LUCENENET: Our directory numbers are sequential. Doing a delete
             // here will make threads collide.
@@ -88,7 +88,7 @@ namespace Lucene.Net.Benchmarks
             return getWorkDir().FullName.Replace("\\", "/");
         }
 
-        // create the benchmark and execute it. 
+        // create the benchmark and execute it.
         public Benchmark execBenchmark(String[] algLines)
         {
             String algText = algLinesToText(algLines);

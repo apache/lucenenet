@@ -218,9 +218,9 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             Assert.IsFalse(OldFormatImpersonationIsActive, "test infra is broken!");
             JCG.List<string> names = new JCG.List<string>(oldNames.Length + oldSingleSegmentNames.Length);

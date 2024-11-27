@@ -42,7 +42,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     /// <summary>
     /// This test case is a copy of the core Lucene query parser test, it was adapted
     /// to use new QueryParserHelper instead of the old query parser.
-    /// 
+    ///
     /// Tests QueryParser.
     /// </summary>
     // TODO: really this should extend QueryParserTestBase too!
@@ -51,9 +51,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public static Analyzer qpAnalyzer;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             qpAnalyzer = new QPTestAnalyzer();
         }
 
@@ -801,7 +801,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             IDictionary<string, DateResolution> dateRes = new Dictionary<string, DateResolution>();
 
-            // set a field specific date resolution    
+            // set a field specific date resolution
             dateRes[monthField] = DateResolution.MONTH;
 #pragma warning disable 612, 618
             qp.SetDateResolution(dateRes);
@@ -851,7 +851,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
              * assertQueryEquals("\\[brackets", null, "brackets");
              * assertQueryEquals("\\\\", a, "\\\\"); assertQueryEquals("\\+blah", a,
              * "\\+blah"); assertQueryEquals("\\(blah", a, "\\(blah");
-             * 
+             *
              * assertQueryEquals("\\-blah", a, "\\-blah"); assertQueryEquals("\\!blah",
              * a, "\\!blah"); assertQueryEquals("\\{blah", a, "\\{blah");
              * assertQueryEquals("\\}blah", a, "\\}blah"); assertQueryEquals("\\:blah",

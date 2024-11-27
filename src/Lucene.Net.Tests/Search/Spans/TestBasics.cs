@@ -102,9 +102,9 @@ namespace Lucene.Net.Search.Spans
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             simplePayloadAnalyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader2) =>
             {

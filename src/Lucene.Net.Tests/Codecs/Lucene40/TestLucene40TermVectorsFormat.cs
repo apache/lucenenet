@@ -25,9 +25,9 @@ namespace Lucene.Net.Codecs.Lucene40
     public class TestLucene40TermVectorsFormat : BaseTermVectorsFormatTestCase
     {
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             OldFormatImpersonationIsActive = true; // explicitly instantiates ancient codec
         }
 

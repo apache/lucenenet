@@ -92,9 +92,9 @@ namespace Lucene.Net.Index
         private const int TERM_DOC_FREQ_RAND = 20;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             NUM_TEST_ITER = AtLeast(20);
         }
 

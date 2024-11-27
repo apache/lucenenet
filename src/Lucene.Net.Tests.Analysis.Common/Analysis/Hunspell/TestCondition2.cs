@@ -22,9 +22,9 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestCondition2 : StemmerTestBase
     {
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("condition2.aff", "condition2.dic");
         }
 

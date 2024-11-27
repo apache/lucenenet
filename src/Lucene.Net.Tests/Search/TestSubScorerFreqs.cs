@@ -37,9 +37,9 @@ namespace Lucene.Net.Search
         private static IndexSearcher s;
 
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific - renamed from MakeIndex() to ensure calling order
+        public override void OneTimeSetUp() // LUCENENET specific - renamed from MakeIndex() to ensure calling order
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             dir = new RAMDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));

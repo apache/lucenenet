@@ -36,7 +36,7 @@ namespace Lucene.Net.Facet.Taxonomy
     using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
-    /// Test for associations 
+    /// Test for associations
     /// </summary>
     [TestFixture]
     public class TestTaxonomyFacetAssociations : FacetTestCase
@@ -53,9 +53,9 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Is non-static because Similarity and TimeZone are not static.
         /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             dir = NewDirectory();
             taxoDir = NewDirectory();
@@ -144,7 +144,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Make sure we can test both int and float assocs in one
-        ///  index, as long as we send each to a different field. 
+        ///  index, as long as we send each to a different field.
         /// </summary>
         [Test]
         public virtual void TestIntAndFloatAssocation()
@@ -163,7 +163,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(150, (int)facets.GetSpecificValue("int", "b"), "Wrong count for category 'b'!");
         }
 
-        
+
         [Test]
         public virtual void TestWrongIndexFieldName()
         {

@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
     ///
     /// <para>
     /// The preferred way to specify class (suite-level) setup/cleanup is to use
-    /// static methods annotated with <see cref="OneTimeSetUp"/> and <see cref="OneTimeTearDown"/>. Any
+    /// static methods annotated with <see cref="NUnit.Framework.OneTimeSetUpAttribute"/> and <see cref="OneTimeTearDown"/>. Any
     /// code in these methods is executed within the test framework's control and
     /// ensure proper setup has been made. <b>Try not to use static initializers
     /// (including complex readonly field initializers).</b> Static initializers are
@@ -977,12 +977,12 @@ namespace Lucene.Net.Util
         /// Sets up dependency injection of codec factories for running the test class,
         /// and also picks random defaults for culture, time zone, similarity, and default codec.
         /// <para/>
-        /// If you override this method, be sure to call <c>base.BeforeClass()</c> BEFORE setting
+        /// If you override this method, be sure to call <c>base.OneTimeSetUp()</c> BEFORE setting
         /// up your test fixture.
         /// </summary>
         // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeSetUp]
-        public virtual void BeforeClass()
+        public virtual void OneTimeSetUp()
         {
             try
             {
@@ -995,7 +995,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during BeforeClass:\n{ex}", ex);
+                throw new Exception($"An exception occurred during OneTimeSetUp:\n{ex}", ex);
             }
         }
 
@@ -1029,7 +1029,7 @@ namespace Lucene.Net.Util
         /// Access to the current <see cref="System.Random"/> instance. It is safe to use
         /// this method from multiple threads, etc., but it should be called while within a runner's
         /// scope (so no static initializers). The returned <see cref="System.Random"/> instance will be
-        /// <b>different</b> when this method is called inside a <see cref="BeforeClass()"/> hook (static
+        /// <b>different</b> when this method is called inside a <see cref="OneTimeSetUp"/> hook (static
         /// suite scope) and within <see cref="Before"/>/ <see cref="After"/> hooks or test methods.
         ///
         /// <para/>The returned instance must not be shared with other threads or cross a single scope's

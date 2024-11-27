@@ -48,9 +48,9 @@ namespace Lucene.Net.Index
         private static LineFileDocs lineDocFile;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             lineDocFile = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
         }
 

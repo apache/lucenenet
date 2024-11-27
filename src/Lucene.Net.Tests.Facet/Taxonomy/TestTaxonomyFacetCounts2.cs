@@ -246,9 +246,9 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassCountingFacetsAggregatorTest() to ensure calling order
+        public override void OneTimeSetUp() // LUCENENET specific - renamed from BeforeClassCountingFacetsAggregatorTest() to ensure calling order
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             indexDir = NewDirectory();
             taxoDir = NewDirectory();

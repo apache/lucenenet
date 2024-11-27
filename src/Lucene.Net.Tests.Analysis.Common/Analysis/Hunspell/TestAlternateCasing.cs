@@ -22,9 +22,9 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestAlternateCasing : StemmerTestBase
     {
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("alternate-casing.aff", "alternate-casing.dic");
         }
 

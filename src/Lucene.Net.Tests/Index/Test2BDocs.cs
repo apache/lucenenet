@@ -32,9 +32,9 @@ namespace Lucene.Net.Index
         internal static Directory dir;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             dir = NewFSDirectory(CreateTempDir("2Bdocs"));
             IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));

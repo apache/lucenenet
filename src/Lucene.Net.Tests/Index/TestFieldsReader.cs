@@ -45,9 +45,9 @@ namespace Lucene.Net.Index
         private static FieldInfos.Builder fieldInfos = null;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             testDoc = new Document();
             fieldInfos = new FieldInfos.Builder();

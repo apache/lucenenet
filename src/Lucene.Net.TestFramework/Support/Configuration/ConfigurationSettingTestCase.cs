@@ -34,9 +34,9 @@ namespace Lucene.Net.Configuration
 
         protected abstract IConfiguration LoadConfiguration();
 
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             var configuration = LoadConfiguration();
             // Set up mocks for ConfigurationSettings and SystemProperties
             ConfigurationSettings = new ConfigurationSettingsImpl(configuration);

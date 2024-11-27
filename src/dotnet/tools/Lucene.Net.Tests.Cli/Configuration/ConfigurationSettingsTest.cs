@@ -39,14 +39,14 @@ namespace Lucene.Net.Cli.Configuration
         protected override IConfiguration LoadConfiguration()
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
-                .AddEnvironmentVariables(prefix: EnvironmentVariablePrefix) // Use a custom prefix to only load Lucene.NET settings 
+                .AddEnvironmentVariables(prefix: EnvironmentVariablePrefix) // Use a custom prefix to only load Lucene.NET settings
                 .AddJsonFile(TestJsonFilePath)
                 .Build();
 
             return configuration;
         }
 
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
             // Create directories if they do not exist
             Directory.CreateDirectory(TempFileDirectory);
@@ -62,7 +62,7 @@ namespace Lucene.Net.Cli.Configuration
             string testKey = EnvironmentVariablePrefix + "tests:setup";
             string testValue = "setup";
             Environment.SetEnvironmentVariable(testKey, testValue);
-            base.BeforeClass();
+            base.OneTimeSetUp();
         }
 
         public override void AfterClass()

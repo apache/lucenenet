@@ -39,9 +39,9 @@ namespace Lucene.Net.Analysis.OpenNlp
         private const String PADDING = " Word. Word. ";
         private const String sentenceModelFile = "en-test-sent.bin";
 
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             PopulateCache();
         }
 

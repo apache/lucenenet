@@ -122,9 +122,9 @@ namespace Lucene.Net.Search.Payloads
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory,

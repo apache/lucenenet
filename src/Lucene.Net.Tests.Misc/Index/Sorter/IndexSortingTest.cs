@@ -36,9 +36,9 @@ namespace Lucene.Net.Index.Sorter
         };
 
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassSorterUtilTest() to ensure calling order vs base class
+        public override void OneTimeSetUp() // LUCENENET specific - renamed from BeforeClassSorterUtilTest() to ensure calling order vs base class
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             // only read the values of the undeleted documents, since after addIndexes,
             // the deleted ones will be dropped from the index.
