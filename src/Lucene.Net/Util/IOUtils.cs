@@ -83,65 +83,60 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="priorException">  <c>null</c> or an exception that will be rethrown after method completion. </param>
         /// <param name="objects">         Objects to call <see cref="IDisposable.Dispose()"/> on. </param>
-        [Obsolete("Use DisposeWhileHandlingException(Exception, params IDisposable[]) instead.")]
-        public static void CloseWhileHandlingException(Exception priorException, params IDisposable[] objects)
+        public static void CloseWhileHandlingException(Exception priorException, params ICloseable[] objects)
         {
-            DisposeWhileHandlingException(priorException, objects);
+            CloseWhileHandlingException(priorException, objects);
         }
 
         /// <summary>
-        /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
-        /// <seealso cref="DisposeWhileHandlingException(Exception, IDisposable[])"/>
-        [Obsolete("Use DisposeWhileHandlingException(Exception, IEnumerable<IDisposable>) instead.")]
-        public static void CloseWhileHandlingException(Exception priorException, IEnumerable<IDisposable> objects)
+        /// Closes all given <see cref="ICloseable"/>s, suppressing all thrown exceptions.
+        /// </summary>
+        /// <seealso cref="CloseWhileHandlingException(Exception, ICloseable[])"/>
+        public static void CloseWhileHandlingException(Exception priorException, IEnumerable<ICloseable> objects)
         {
-            DisposeWhileHandlingException(priorException, objects);
+            CloseWhileHandlingException(priorException, objects);
         }
 
         /// <summary>
-        /// Disposes all given <see cref="IDisposable"/>s.  Some of the
-        /// <see cref="IDisposable"/>s may be <c>null</c>; they are
+        /// Closes all given <see cref="ICloseable"/>s.  Some of the
+        /// <see cref="ICloseable"/>s may be <c>null</c>; they are
         /// ignored.  After everything is closed, the method either
         /// throws the first exception it hit while closing, or
         /// completes normally if there were no exceptions.
         /// </summary>
-        /// <param name="objects">
-        ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
-        [Obsolete("Use Dispose(params IDisposable[]) instead.")]
-        public static void Close(params IDisposable[] objects)
+        /// <param name="objects">Objects to call <see cref="ICloseable.Close()"/> on</param>
+        public static void Close(params ICloseable[] objects)
         {
-            Dispose(objects);
+            Close(objects);
         }
 
         /// <summary>
-        /// Disposes all given <see cref="IDisposable"/>s. </summary>
-        /// <seealso cref="Dispose(IDisposable[])"/>
-        [Obsolete("Use Dispose(IEnumerable<IDisposable>) instead.")]
-        public static void Close(IEnumerable<IDisposable> objects)
-        {
-            Dispose(objects);
-        }
-
-        /// <summary>
-        /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions.
-        /// Some of the <see cref="IDisposable"/>s may be <c>null</c>, they are ignored.
+        /// Closes all given <see cref="ICloseable"/>s.
         /// </summary>
-        /// <param name="objects">
-        ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
-        [Obsolete("Use DisposeWhileHandlingException(params IDisposable[]) instead.")]
-        public static void CloseWhileHandlingException(params IDisposable[] objects)
+        /// <seealso cref="Close(ICloseable[])"/>
+        public static void Close(IEnumerable<ICloseable> objects)
         {
-            DisposeWhileHandlingException(objects);
+            Close(objects);
         }
 
         /// <summary>
-        /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
-        /// <seealso cref="DisposeWhileHandlingException(IEnumerable{IDisposable})"/>
-        /// <seealso cref="DisposeWhileHandlingException(IDisposable[])"/>
-        [Obsolete("Use DisposeWhileHandlingException(IEnumerable<IDisposable>) instead.")]
-        public static void CloseWhileHandlingException(IEnumerable<IDisposable> objects)
+        /// Closes all given <see cref="ICloseable"/>s, suppressing all thrown exceptions.
+        /// Some of the <see cref="ICloseable"/>s may be <c>null</c>, they are ignored.
+        /// </summary>
+        /// <param name="objects">Objects to call <see cref="ICloseable.Close()"/> on</param>
+        public static void CloseWhileHandlingException(params ICloseable[] objects)
         {
-            DisposeWhileHandlingException(objects);
+            CloseWhileHandlingException(objects);
+        }
+
+        /// <summary>
+        /// Closes all given <see cref="ICloseable"/>s, suppressing all thrown exceptions.
+        /// </summary>
+        /// <seealso cref="CloseWhileHandlingException(IEnumerable{ICloseable})"/>
+        /// <seealso cref="CloseWhileHandlingException(ICloseable[])"/>
+        public static void CloseWhileHandlingException(IEnumerable<ICloseable> objects)
+        {
+            CloseWhileHandlingException(objects);
         }
 
 
