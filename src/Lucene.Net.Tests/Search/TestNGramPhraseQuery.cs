@@ -33,10 +33,6 @@ namespace Lucene.Net.Search
         private static IndexReader reader;
         private static Directory directory;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because Similarity and TimeZone are not static.
-        /// </summary>
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {

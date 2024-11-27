@@ -45,10 +45,6 @@ namespace Lucene.Net.Search
         private static IndexReader r;
         private static IndexSearcher s;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewStringField is no longer static.
-        /// </summary>
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {

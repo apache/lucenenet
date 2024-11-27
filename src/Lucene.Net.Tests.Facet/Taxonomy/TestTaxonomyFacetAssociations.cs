@@ -48,10 +48,6 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private static FacetsConfig config;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because Similarity and TimeZone are not static.
-        /// </summary>
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {

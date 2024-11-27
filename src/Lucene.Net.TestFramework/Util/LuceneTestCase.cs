@@ -66,8 +66,14 @@ namespace Lucene.Net.Util
     /// <h3>Class and instance setup.</h3>
     ///
     /// <para>
-    /// The preferred way to specify class (suite-level) setup/cleanup is to use
-    /// static methods annotated with <see cref="NUnit.Framework.OneTimeSetUpAttribute"/> and <see cref="NUnit.Framework.OneTimeTearDownAttribute"/>. Any
+    /// The preferred way to specify class (suite-level) setup/cleanup is to override
+    /// <see cref="OneTimeSetUp"/> and <see cref="OneTimeTearDown"/>. Be sure
+    /// to call <c>base.OneTimeSetUp()</c> BEFORE you initialize your class and
+    /// call <c>base.OneTimeTearDown()</c> AFTER you clean up your class. NUnit
+    /// will find the <see cref="NUnit.Framework.OneTimeSetUpAttribute"/> and
+    /// <see cref="NUnit.Framework.OneTimeTearDownAttribute"/> of the base class,
+    /// so using them on the <see cref="OneTimeSetUp"/> and
+    /// <see cref="OneTimeTearDown"/> method overrides is not strictly required. Any
     /// code in these methods is executed within the test framework's control and
     /// ensure proper setup has been made. <b>Try not to use static initializers
     /// (including complex readonly field initializers).</b> Static initializers are

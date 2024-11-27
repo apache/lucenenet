@@ -47,10 +47,6 @@ namespace Lucene.Net.Search
         private static IndexReader reader, multiReader, multiReaderDupls;
         private static IndexSearcher searcher, multiSearcher, multiSearcherDupls;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because Similarity and TimeZone are not static.
-        /// </summary>
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {

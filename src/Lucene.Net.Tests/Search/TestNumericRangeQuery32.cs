@@ -62,10 +62,6 @@ namespace Lucene.Net.Search
         private static IndexReader reader = null;
         private static IndexSearcher searcher = null;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {

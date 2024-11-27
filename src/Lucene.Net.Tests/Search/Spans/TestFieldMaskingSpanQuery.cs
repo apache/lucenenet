@@ -57,10 +57,6 @@ namespace Lucene.Net.Search.Spans
         protected internal static Directory directory;
         protected internal static IndexReader reader;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {

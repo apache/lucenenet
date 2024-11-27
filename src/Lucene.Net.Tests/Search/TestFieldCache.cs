@@ -104,8 +104,6 @@ namespace Lucene.Net.Search
             base.TearDown();
         }
 
-
-        // LUCENENET: Changed to non-static because NewIndexWriterConfig is non-static
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {

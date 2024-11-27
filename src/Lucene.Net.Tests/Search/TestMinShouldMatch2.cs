@@ -62,10 +62,6 @@ namespace Lucene.Net.Search
         internal static readonly string[] mediumTerms = new string[] { "e", "f", "g" };
         internal static readonly string[] rareTerms = new string[] { "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because Similarity and TimeZone are not static.
-        /// </summary>
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {

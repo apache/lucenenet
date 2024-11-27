@@ -97,10 +97,6 @@ namespace Lucene.Net.Search.Spans
 
         internal static Analyzer simplePayloadAnalyzer;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
         [OneTimeSetUp]
         public override void OneTimeSetUp()
         {
