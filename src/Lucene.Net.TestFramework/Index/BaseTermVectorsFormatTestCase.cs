@@ -492,12 +492,12 @@ namespace Lucene.Net.Index
         private readonly DisposableThreadLocal<DocsAndPositionsEnum> docsAndPositionsEnum = new DisposableThreadLocal<DocsAndPositionsEnum>();
 
         // LUCENENET specific - cleanup DisposableThreadLocal instances after running tests
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             termsEnum.Dispose();
             docsEnum.Dispose();
             docsAndPositionsEnum.Dispose();
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         protected virtual void AssertEquals(RandomTokenStream tk, FieldType ft, Terms terms)

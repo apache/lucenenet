@@ -38,9 +38,9 @@ namespace Lucene.Net.QueryParsers.Xml
         private static IndexSearcher searcher;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             // TODO: rewrite test (this needs to set QueryParser.enablePositionIncrements, too, for work with CURRENT):
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
@@ -71,7 +71,7 @@ namespace Lucene.Net.QueryParsers.Xml
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             dir.Dispose();
@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Xml
             searcher = null;
             dir = null;
             builder = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

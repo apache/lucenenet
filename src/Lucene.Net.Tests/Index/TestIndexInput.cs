@@ -45,13 +45,13 @@ namespace Lucene.Net.Index
             (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x7F,
             0x06, (byte) 'L', (byte) 'u', (byte) 'c', (byte) 'e', (byte) 'n', (byte) 'e',
 
-            // 2-byte UTF-8 (U+00BF "INVERTED QUESTION MARK") 
+            // 2-byte UTF-8 (U+00BF "INVERTED QUESTION MARK")
             0x02, (byte) 0xC2, (byte) 0xBF,
             0x0A, (byte) 'L', (byte) 'u', (byte) 0xC2, (byte) 0xBF,
                   (byte) 'c', (byte) 'e', (byte) 0xC2, (byte) 0xBF,
                   (byte) 'n', (byte) 'e',
 
-            // 3-byte UTF-8 (U+2620 "SKULL AND CROSSBONES") 
+            // 3-byte UTF-8 (U+2620 "SKULL AND CROSSBONES")
             0x03, (byte) 0xE2, (byte) 0x98, (byte) 0xA0,
             0x0C, (byte) 'L', (byte) 'u', (byte) 0xE2, (byte) 0x98, (byte) 0xA0,
                   (byte) 'c', (byte) 'e', (byte) 0xE2, (byte) 0x98, (byte) 0xA0,
@@ -67,12 +67,12 @@ namespace Lucene.Net.Index
                   (byte) 0xF0, (byte) 0x9D, (byte) 0x84, (byte) 0x9E,
                   (byte) 'c', (byte) 'e',
                   (byte) 0xF0, (byte) 0x9D, (byte) 0x85, (byte) 0xA0,
-                  (byte) 'n', (byte) 'e',  
+                  (byte) 'n', (byte) 'e',
 
             // null bytes
             0x01, 0x00,
             0x08, (byte) 'L', (byte) 'u', 0x00, (byte) 'c', (byte) 'e', 0x00, (byte) 'n', (byte) 'e',
-    
+
             // tests for Exceptions on invalid values
             (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x17,
             (byte) 0x01, // guard value
@@ -86,9 +86,9 @@ namespace Lucene.Net.Index
         internal static byte[] RANDOM_TEST_BYTES;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             Random random = Random;
             INTS = new int[COUNT];
@@ -117,12 +117,12 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             INTS = null;
             LONGS = null;
             RANDOM_TEST_BYTES = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         private void CheckReads(DataInput @is, Type expectedEx)

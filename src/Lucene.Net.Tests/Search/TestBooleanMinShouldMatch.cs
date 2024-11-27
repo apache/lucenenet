@@ -45,14 +45,10 @@ namespace Lucene.Net.Search
         private static IndexReader r;
         private static IndexSearcher s;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewStringField is no longer static.
-        /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             string[] data =
             {
@@ -88,14 +84,14 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             s = null;
             r.Dispose();
             r = null;
             index.Dispose();
             index = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         public virtual void VerifyNrHits(Query q, int expected)

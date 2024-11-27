@@ -22,24 +22,26 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestStemmer : StemmerTestBase
     {
-
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("simple.aff", "simple.dic");
         }
+
         [Test]
         public virtual void TestSimpleSuffix()
         {
             AssertStemsTo("lucene", "lucene", "lucen");
             AssertStemsTo("mahoute", "mahout");
         }
+
         [Test]
         public virtual void TestSimplePrefix()
         {
             AssertStemsTo("solr", "olr");
         }
+
         [Test]
         public virtual void TestRecursiveSuffix()
         {

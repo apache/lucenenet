@@ -61,7 +61,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private static Analyzer? ANALYZER;
 
         private static NumberFormat? NUMBER_FORMAT;
-        
+
 
         private static StandardQueryParser? qp;
 
@@ -131,9 +131,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             ANALYZER = new MockAnalyzer(Random);
 
@@ -260,7 +260,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     continue;
                 }
 
-                numericConfigMap[type.ToString()] = new NumericConfig(PRECISION_STEP, NUMBER_FORMAT, type); 
+                numericConfigMap[type.ToString()] = new NumericConfig(PRECISION_STEP, NUMBER_FORMAT, type);
 
                 FieldType ft2 = new FieldType(Int32Field.TYPE_NOT_STORED);
                 ft2.NumericType = (type);
@@ -663,7 +663,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             searcher = null;
             reader?.Dispose();
@@ -672,7 +672,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             directory = null;
             qp = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
     }
 }

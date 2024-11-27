@@ -23,9 +23,9 @@ namespace Lucene.Net.Analysis.Hunspell
     public class TestComplexPrefix : StemmerTestBase
     {
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("complexprefix.aff", "complexprefix.dic");
         }
 

@@ -218,9 +218,9 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             Assert.IsFalse(OldFormatImpersonationIsActive, "test infra is broken!");
             JCG.List<string> names = new JCG.List<string>(oldNames.Length + oldSingleSegmentNames.Length);
@@ -239,14 +239,14 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             foreach (Directory d in oldIndexDirs.Values)
             {
                 d.Dispose();
             }
             oldIndexDirs = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         /// <summary>

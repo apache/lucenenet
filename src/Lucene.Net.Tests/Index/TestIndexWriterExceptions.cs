@@ -280,10 +280,10 @@ namespace Lucene.Net.Index
         internal DisposableThreadLocal<Thread> doFail = new DisposableThreadLocal<Thread>();
 
         // LUCENENET specific - cleanup DisposableThreadLocal instances after running tests
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             doFail.Dispose();
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         private class TestPoint1 : ITestPoint

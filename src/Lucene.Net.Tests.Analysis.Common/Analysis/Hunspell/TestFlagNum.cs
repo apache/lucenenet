@@ -23,11 +23,12 @@ namespace Lucene.Net.Analysis.Hunspell
     public class TestFlagNum : StemmerTestBase
     {
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("flagnum.aff", "flagnum.dic");
         }
+
         [Test]
         public virtual void TestNumFlags()
         {

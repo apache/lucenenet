@@ -38,9 +38,9 @@ namespace Lucene.Net.Misc
         private static IndexReader reader = null;
 
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific - renamed from SetUpClass() to ensure calling order vs base class
+        public override void OneTimeSetUp() // LUCENENET specific - renamed from SetUpClass() to ensure calling order vs base class
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             dir = NewDirectory();
             writer = new IndexWriter(dir, NewIndexWriterConfig(Random,
@@ -52,7 +52,7 @@ namespace Lucene.Net.Misc
         }
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific - renamed from TearDownClass() to ensure calling order vs base class
+        public override void OneTimeTearDown() // LUCENENET specific - renamed from TearDownClass() to ensure calling order vs base class
         {
             reader.Dispose();
             dir.Dispose();
@@ -60,7 +60,7 @@ namespace Lucene.Net.Misc
             reader = null;
             writer = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
         /******************** Tests for getHighFreqTerms **********************************/
 
@@ -231,7 +231,7 @@ namespace Lucene.Net.Misc
             Random rnd = Random;
 
             /**
-             * Generate 10 documents where term n  has a docFreq of n and a totalTermFreq of n*2 (squared). 
+             * Generate 10 documents where term n  has a docFreq of n and a totalTermFreq of n*2 (squared).
              */
             for (int i = 1; i <= 10; i++)
             {
@@ -294,7 +294,7 @@ namespace Lucene.Net.Misc
         /**
          *  getContent
          *  return string containing numbers 1 to i with each number n occurring n times.
-         *  i.e. for input of 3 return string "3 3 3 2 2 1" 
+         *  i.e. for input of 3 return string "3 3 3 2 2 1"
          */
 
         private static string GetContent(int i)

@@ -22,13 +22,13 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestTwoSuffixes : StemmerTestBase
     {
-
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("twosuffixes.aff", "twosuffixes.dic");
         }
+
         [Test]
         public virtual void TestExamples()
         {

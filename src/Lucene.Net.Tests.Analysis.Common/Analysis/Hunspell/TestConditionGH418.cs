@@ -24,9 +24,9 @@ namespace Lucene.Net.Analysis.Hunspell
     public class TestConditionGH418 : StemmerTestBase
     {
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("condition-issue-418.aff", "condition-issue-418.dic");
         }
 

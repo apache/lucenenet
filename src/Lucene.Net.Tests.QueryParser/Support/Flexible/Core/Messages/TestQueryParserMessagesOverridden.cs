@@ -25,21 +25,21 @@ namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages
 
     public class TestQueryParserMessagesOverridden : LuceneTestCase
     {
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             var provider = new QueryParserResourceProvider(MessagesTest.ResourceManager);
             QueryParserMessages.SetResourceProvider(provider);
         }
 
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             // Return to the default
             var provider = new QueryParserResourceProvider();
             QueryParserMessages.SetResourceProvider(provider);
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

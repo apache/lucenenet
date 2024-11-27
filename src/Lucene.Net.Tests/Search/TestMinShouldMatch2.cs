@@ -62,14 +62,10 @@ namespace Lucene.Net.Search
         internal static readonly string[] mediumTerms = new string[] { "e", "f", "g" };
         internal static readonly string[] rareTerms = new string[] { "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because Similarity and TimeZone are not static.
-        /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir);
@@ -118,7 +114,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             atomicReader.Dispose();
             dir.Dispose();
@@ -126,7 +122,7 @@ namespace Lucene.Net.Search
             atomicReader = null;
             r = null;
             dir = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         private static void AddSome(Document doc, string[] values)

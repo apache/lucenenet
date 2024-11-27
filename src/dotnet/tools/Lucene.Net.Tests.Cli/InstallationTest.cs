@@ -40,9 +40,9 @@ namespace Lucene.Net.Tests.Cli
         private static DirectoryInfo tempWork;
         private static string packageVersion;
 
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             tempWork = CreateTempDir();
 
             FileInfo packageFile;
@@ -79,11 +79,11 @@ namespace Lucene.Net.Tests.Cli
             AssertCommandExitCode(ExitCode.Success, "dotnet", $"tool install {LuceneCliToolName} --version {packageVersion} --framework {targetFramework} --add-source \"{packageFile.DirectoryName}\" --tool-path  \"{tempWork.FullName}\"");
         }
 
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             // Uninstall our tool - we are done with it.
             AssertCommandExitCode(ExitCode.Success, "dotnet", $"tool uninstall  {LuceneCliToolName} --tool-path  \"{tempWork.FullName}\"");
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

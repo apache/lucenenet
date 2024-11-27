@@ -38,9 +38,9 @@ namespace Lucene.Net.Search
     public class TestDateFilter : LuceneTestCase
     {
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific - renamed from TestBefore() to ensure calling order vs base class
+        public override void OneTimeSetUp() // LUCENENET specific - renamed from TestBefore() to ensure calling order vs base class
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             // create an index
             Directory indexStore = NewDirectory();
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific - renamed from TestAfter() to ensure calling order vs base class
+        public override void OneTimeTearDown() // LUCENENET specific - renamed from TestAfter() to ensure calling order vs base class
         {
             // create an index
             Directory indexStore = NewDirectory();
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
             reader.Dispose();
             indexStore.Dispose();
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
     }
 }

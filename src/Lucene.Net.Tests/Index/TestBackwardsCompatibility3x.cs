@@ -148,9 +148,9 @@ namespace Lucene.Net.Index
         internal static IDictionary<string, Directory> oldIndexDirs;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             assertFalse("test infra is broken!", OldFormatImpersonationIsActive);
             JCG.List<string> names = new JCG.List<string>(oldNames.Length + oldSingleSegmentNames.Length);
@@ -169,14 +169,14 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             foreach (Directory d in oldIndexDirs.Values)
             {
                 d.Dispose();
             }
             oldIndexDirs = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         /// <summary>

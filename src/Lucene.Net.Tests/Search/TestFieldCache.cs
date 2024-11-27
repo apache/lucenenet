@@ -104,12 +104,10 @@ namespace Lucene.Net.Search
             base.TearDown();
         }
 
-
-        // LUCENENET: Changed to non-static because NewIndexWriterConfig is non-static
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             NUM_DOCS = AtLeast(500);
             NUM_ORDS = AtLeast(2);
@@ -173,7 +171,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             reader = null;
@@ -181,7 +179,7 @@ namespace Lucene.Net.Search
             directory = null;
             unicodeStrings = null;
             multiValued = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

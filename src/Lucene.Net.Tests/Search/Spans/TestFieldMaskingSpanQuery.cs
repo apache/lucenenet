@@ -57,14 +57,10 @@ namespace Lucene.Net.Search.Spans
         protected internal static Directory directory;
         protected internal static IndexReader reader;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
@@ -132,14 +128,14 @@ namespace Lucene.Net.Search.Spans
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             searcher = null;
             reader.Dispose();
             reader = null;
             directory.Dispose();
             directory = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         protected internal virtual void Check(SpanQuery q, int[] docs)

@@ -47,14 +47,10 @@ namespace Lucene.Net.Search
         private static IndexReader reader, multiReader, multiReaderDupls;
         private static IndexSearcher searcher, multiSearcher, multiSearcherDupls;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because Similarity and TimeZone are not static.
-        /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             dir = NewDirectory();
             sdir1 = NewDirectory();
@@ -88,7 +84,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             multiReader.Dispose();
@@ -99,7 +95,7 @@ namespace Lucene.Net.Search
             reader = multiReader = multiReaderDupls = null;
             searcher = multiSearcher = multiSearcherDupls = null;
             dir = sdir1 = sdir2 = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         private Query ExtractInnerQuery(Query q)

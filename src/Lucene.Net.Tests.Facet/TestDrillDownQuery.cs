@@ -55,7 +55,7 @@ namespace Lucene.Net.Facet
         private static FacetsConfig config;
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific - renamed from AfterClassDrillDownQueryTest() to ensure calling order
+        public override void OneTimeTearDown() // LUCENENET specific - renamed from AfterClassDrillDownQueryTest() to ensure calling order
         {
             IOUtils.Dispose(reader, taxo, dir, taxoDir);
             reader = null;
@@ -64,13 +64,13 @@ namespace Lucene.Net.Facet
             taxoDir = null;
             config = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassDrillDownQueryTest() to ensure calling order
+        public override void OneTimeSetUp() // LUCENENET specific - renamed from BeforeClassDrillDownQueryTest() to ensure calling order
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             dir = NewDirectory();
             Random r = Random;
@@ -174,7 +174,7 @@ namespace Lucene.Net.Facet
 
             Assert.AreEqual(5, docs.TotalHits);
             // Check that content:foo (which yields 50% results) and facet/b (which yields 20%)
-            // would gather together 10 results (10%..) 
+            // would gather together 10 results (10%..)
             Query fooQuery = new TermQuery(new Term("content", "foo"));
             DrillDownQuery q4 = new DrillDownQuery(config, fooQuery);
             q4.Add("b");
@@ -199,7 +199,7 @@ namespace Lucene.Net.Facet
             Assert.AreEqual(5, docs.TotalHits);
 
             // Check that content:foo (which yields 50% results) and facet/b (which yields 20%)
-            // would gather together 10 results (10%..) 
+            // would gather together 10 results (10%..)
             Query fooQuery = new TermQuery(new Term("content", "foo"));
             DrillDownQuery q4 = new DrillDownQuery(config, fooQuery);
             q4.Add("b");

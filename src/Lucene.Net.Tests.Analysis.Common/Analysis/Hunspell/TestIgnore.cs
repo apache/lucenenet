@@ -22,13 +22,13 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestIgnore : StemmerTestBase
     {
-
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("ignore.aff", "ignore.dic");
         }
+
         [Test]
         public virtual void TestExamples()
         {

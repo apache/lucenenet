@@ -74,9 +74,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// we will manually instantiate preflex-rw here
         /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             // NOTE: turn off compound file, this test will open some index files directly.
             OldFormatImpersonationIsActive = true;
@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             termEnum.Dispose();
             reader.Dispose();
@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             directory = null;
             index = null;
             sampleTerms = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

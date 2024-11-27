@@ -60,9 +60,9 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             OldFormatImpersonationIsActive = true; // explicitly instantiates ancient codec
         }
 

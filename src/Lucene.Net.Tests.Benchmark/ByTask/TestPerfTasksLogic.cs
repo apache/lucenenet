@@ -49,9 +49,9 @@ namespace Lucene.Net.Benchmarks.ByTask
         //    copyToWorkDir("test-mapping-ISOLatin1Accent-partial.txt");
         //}
 
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             copyToWorkDir("reuters.first20.lines.txt");
             copyToWorkDir("test-mapping-ISOLatin1Accent-partial.txt");
         }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             // 4. test specific checks after the benchmark run completed.
             assertEquals("TestSearchTask was supposed to be called!", 279, CountingSearchTestTask.numSearches);
             assertTrue("Index does not exist?...!", DirectoryReader.IndexExists(benchmark.RunData.Directory));
-            // now we should be able to open the index for write. 
+            // now we should be able to open the index for write.
             IndexWriter iw = new IndexWriter(benchmark.RunData.Directory,
                 new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                 .SetOpenMode(OpenMode.APPEND));
@@ -306,7 +306,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             // 4. test specific checks after the benchmark run completed.
             assertEquals("TestSearchTask was supposed to be called!", 139, CountingSearchTestTask.numSearches);
             assertTrue("Index does not exist?...!", DirectoryReader.IndexExists(benchmark.RunData.Directory));
-            // now we should be able to open the index for write. 
+            // now we should be able to open the index for write.
             IndexWriter iw = new IndexWriter(benchmark.RunData.Directory, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             iw.Dispose();
             IndexReader ir = DirectoryReader.Open(benchmark.RunData.Directory);
@@ -419,7 +419,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             {
                 if (numLines == 0 && line.StartsWith(WriteLineDocTask.FIELDS_HEADER_INDICATOR, StringComparison.Ordinal))
                 {
-                    continue; // do not count the header line as a doc 
+                    continue; // do not count the header line as a doc
                 }
                 numLines++;
             }
@@ -445,7 +445,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             // Run algo
             benchmark = execBenchmark(algLines2);
 
-            // now we should be able to open the index for write. 
+            // now we should be able to open the index for write.
             IndexWriter iw = new IndexWriter(benchmark.RunData.Directory,
                 new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                     .SetOpenMode(OpenMode.APPEND));
@@ -964,7 +964,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             benchmark = execBenchmark(getLocaleConfig("ROOT"));
             assertEquals(CultureInfo.InvariantCulture, benchmark.RunData.Locale);
 
-            // specify just a language 
+            // specify just a language
             benchmark = execBenchmark(getLocaleConfig("de"));
             assertEquals(new CultureInfo("de"), benchmark.RunData.Locale);
 
@@ -976,7 +976,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             //benchmark = execBenchmark(getLocaleConfig("no,NO,NY"));
             //assertEquals(new CultureInfo("no-NO"/*, "NY"*/), benchmark.RunData.Locale);
 
-            // LUCENENET specific - in .NET Norwegian is specified as either nb-NO (Bokmål) or 
+            // LUCENENET specific - in .NET Norwegian is specified as either nb-NO (Bokmål) or
             // nn-NO (Nynorsk) + a few other dialects. no-NO works sometimes, but is not
             // supported across all OS's, so doesn't make a reliable test case.
             benchmark = execBenchmark(getLocaleConfig("nb,NO,NY"));
@@ -1035,7 +1035,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             //expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.Create(new CultureInfo("no-NO"/*, "NY"*/), Collator.Fallback.FallbackAllowed));
             //assertEqualCollation(expected, benchmark.RunData.Analyzer, "foobar");
 
-            // LUCENENET specific - in .NET Norwegian is specified as either nb-NO (Bokmål) or 
+            // LUCENENET specific - in .NET Norwegian is specified as either nb-NO (Bokmål) or
             // nn-NO (Nynorsk) + a few other dialects. no-NO works sometimes, but is not
             // supported across all OS's, so doesn't make a reliable test case.
 

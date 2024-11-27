@@ -38,10 +38,8 @@ namespace Lucene.Net.Configuration
         private readonly static string currentJsonFilePath = Path.Combine(testDirectory, TestJsonFileName);
         private readonly static string parentJsonFilePath = Path.Combine(parentDirectory, TestJsonFileName);
 
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            
-
             // Create directories if they do not exist
             Directory.CreateDirectory(testDirectory);
 
@@ -65,10 +63,10 @@ namespace Lucene.Net.Configuration
             string testValue = "setup";
             Environment.SetEnvironmentVariable(testKey, testValue);
 
-            base.BeforeClass();
+            base.OneTimeSetUp();
         }
 
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             DirectoryInfo dir = null;
 
@@ -110,7 +108,7 @@ namespace Lucene.Net.Configuration
             }
             catch { }
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         private static readonly IConfigurationFactory ConfigurationFactory = new TestConfigurationFactory

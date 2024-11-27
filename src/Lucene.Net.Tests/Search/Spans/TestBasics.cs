@@ -97,14 +97,10 @@ namespace Lucene.Net.Search.Spans
 
         internal static Analyzer simplePayloadAnalyzer;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             simplePayloadAnalyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader2) =>
             {
@@ -129,7 +125,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             directory.Dispose();
@@ -137,7 +133,7 @@ namespace Lucene.Net.Search.Spans
             reader = null;
             directory = null;
             simplePayloadAnalyzer = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

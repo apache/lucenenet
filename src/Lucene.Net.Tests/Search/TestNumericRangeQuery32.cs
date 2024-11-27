@@ -62,14 +62,10 @@ namespace Lucene.Net.Search
         private static IndexReader reader = null;
         private static IndexSearcher searcher = null;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because NewIndexWriterConfig is no longer static.
-        /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             noDocs = AtLeast(4096);
             distance = (1 << 30) / noDocs;
@@ -148,14 +144,14 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             searcher = null;
             reader.Dispose();
             reader = null;
             directory.Dispose();
             directory = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [SetUp]

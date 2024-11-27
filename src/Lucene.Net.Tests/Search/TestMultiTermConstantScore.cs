@@ -45,15 +45,15 @@ namespace Lucene.Net.Search
         public const float SCORE_COMP_THRESH = 1e-6f;
 
         // LUCENENET specific - made these instance variables
-        // since our BeforeClass() and AfterClass() are instance
+        // since our OneTimeSetUp() and OneTimeTearDown() are instance
         // methods and not doing so makes them cross runner threads.
         internal /*static*/ Directory small;
         internal /*static*/ IndexReader reader;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 
@@ -77,13 +77,13 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader?.Dispose();
             small?.Dispose();
             reader = null;
             small = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         /// <summary>

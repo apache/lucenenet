@@ -22,9 +22,9 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestMorphAlias : StemmerTestBase
     {
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("morphalias.aff", "morphalias.dic");
         }
 

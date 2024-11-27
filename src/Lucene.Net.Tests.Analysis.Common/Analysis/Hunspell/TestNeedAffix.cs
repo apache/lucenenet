@@ -22,9 +22,9 @@ namespace Lucene.Net.Analysis.Hunspell
 
     public class TestNeedAffix : StemmerTestBase
     {
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             Init("needaffix.aff", "needaffix.dic");
         }
 

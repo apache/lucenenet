@@ -44,7 +44,7 @@ namespace Lucene.Net.Documents
         public Directory dir = NewDirectory();
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific - changed from RemoveIndex() to ensure calling order vs base class
+        public override void OneTimeTearDown() // LUCENENET specific - changed from RemoveIndex() to ensure calling order vs base class
         {
             if (null != dir)
             {
@@ -56,13 +56,13 @@ namespace Lucene.Net.Documents
                 catch (Exception e) when (e.IsException()) { /* NOOP */ }
             }
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass() // LUCENENET specific - changed from CreateIndex() to ensure calling order vs base class
+        public override void OneTimeSetUp() // LUCENENET specific - changed from CreateIndex() to ensure calling order vs base class
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter writer = new IndexWriter

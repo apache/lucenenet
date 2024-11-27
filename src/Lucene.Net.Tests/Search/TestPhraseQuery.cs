@@ -59,9 +59,9 @@ namespace Lucene.Net.Search
         private static Directory directory;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             directory = NewDirectory();
             Analyzer analyzer = new AnalyzerAnonymousClass();
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             searcher = null;
             reader.Dispose();
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
             directory.Dispose();
             directory = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

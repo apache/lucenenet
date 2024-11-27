@@ -46,14 +46,10 @@ namespace Lucene.Net.Search
         private static IndexReader reader;
         private static IndexSearcher searcher;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because Similarity and TimeZone are not static.
-        /// </summary>
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory);
@@ -85,7 +81,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             searcher = null;
             reader.Dispose();
@@ -93,7 +89,7 @@ namespace Lucene.Net.Search
             directory.Dispose();
             directory = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

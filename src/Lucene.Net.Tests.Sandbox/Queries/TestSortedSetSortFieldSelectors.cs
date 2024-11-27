@@ -37,9 +37,9 @@ namespace Lucene.Net.Sandbox.Queries
         static Codec savedCodec;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             savedCodec = Codec.Default;
             // currently only these codecs that support random access ordinals
@@ -53,11 +53,11 @@ namespace Lucene.Net.Sandbox.Queries
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
-            Codec.Default = (savedCodec);
+            Codec.Default = savedCodec;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         public override void SetUp()

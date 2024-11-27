@@ -32,9 +32,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     {
         private static DirectoryInfo testDir, inputDir;
 
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
             testDir = CreateTempDir("addIndexesTask");
 
             // create a dummy index under inputDir

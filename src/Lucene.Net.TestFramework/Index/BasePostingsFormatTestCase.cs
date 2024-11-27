@@ -348,9 +348,9 @@ namespace Lucene.Net.Index
         }
 
         [NUnit.Framework.OneTimeSetUp]
-        public override void BeforeClass() // Renamed from CreatePostings to ensure the base class setup is called before this one
+        public override void OneTimeSetUp() // Renamed from CreatePostings to ensure the base class setup is called before this one
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             totalPostings = 0;
             totalPayloadBytes = 0;
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
                     continue;
                 }
 
-                fieldInfoArray[fieldUpto] = new FieldInfo(field, true, fieldUpto, false, false, true, 
+                fieldInfoArray[fieldUpto] = new FieldInfo(field, true, fieldUpto, false, false, true,
                                                         IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
                                                         DocValuesType.NONE, DocValuesType.NUMERIC, null);
                 fieldUpto++;
@@ -472,13 +472,13 @@ namespace Lucene.Net.Index
         }
 
         [NUnit.Framework.OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             allTerms = null;
             fieldInfos = null;
             fields = null;
             globalLiveDocs = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         // TODO maybe instead of @BeforeClass just make a single test run: build postings & index & test it?
@@ -653,18 +653,18 @@ namespace Lucene.Net.Index
             public DocsAndPositionsEnum ReuseDocsAndPositionsEnum { get; set; }
         }
 
-        private void VerifyEnum(ThreadState threadState, 
-                                string field, 
-                                BytesRef term, 
+        private void VerifyEnum(ThreadState threadState,
+                                string field,
+                                BytesRef term,
                                 TermsEnum termsEnum,
 
                                 // Maximum options (docs/freqs/positions/offsets) to test:
-                                IndexOptions maxTestOptions, 
-                                
-                                IndexOptions maxIndexOptions, 
-                                ISet<Option> options, 
+                                IndexOptions maxTestOptions,
+
+                                IndexOptions maxIndexOptions,
+                                ISet<Option> options,
                                 bool alwaysTestMax)
-        
+
         {
             if (Verbose)
             {
@@ -698,9 +698,9 @@ namespace Lucene.Net.Index
             FieldInfo fieldInfo = currentFieldInfos.FieldInfo(field);
 
             // NOTE: can be empty list if we are using liveDocs:
-            SeedPostings expected = GetSeedPostings(term.Utf8ToString(), 
-                                                    fields[field][term], 
-                                                    useLiveDocs, 
+            SeedPostings expected = GetSeedPostings(term.Utf8ToString(),
+                                                    fields[field][term],
+                                                    useLiveDocs,
                                                     maxIndexOptions);
             Assert.AreEqual(expected.DocFreq, termsEnum.DocFreq);
 
@@ -710,12 +710,12 @@ namespace Lucene.Net.Index
             bool doCheckFreqs = allowFreqs && (alwaysTestMax || Random.Next(3) <= 2);
 
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
-            bool allowPositions = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && 
+            bool allowPositions = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 &&
                 IndexOptionsComparer.Default.Compare(maxTestOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
             bool doCheckPositions = allowPositions && (alwaysTestMax || Random.Next(3) <= 2);
 
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
-            bool allowOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >=0 && 
+            bool allowOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >=0 &&
                 IndexOptionsComparer.Default.Compare(maxTestOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool doCheckOffsets = allowOffsets && (alwaysTestMax || Random.Next(3) <= 2);
 
@@ -1099,9 +1099,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void TestTerms(Fields fieldsSource, ISet<Option> options, 
-                                IndexOptions maxTestOptions, 
-                                IndexOptions maxIndexOptions, 
+        private void TestTerms(Fields fieldsSource, ISet<Option> options,
+                                IndexOptions maxTestOptions,
+                                IndexOptions maxIndexOptions,
                                 bool alwaysTestMax)
         {
             if (options.Contains(Option.THREADS))
@@ -1124,9 +1124,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void TestTermsOneThread(Fields fieldsSource, ISet<Option> options, 
-                                        IndexOptions maxTestOptions, 
-                                        IndexOptions maxIndexOptions, 
+        private void TestTermsOneThread(Fields fieldsSource, ISet<Option> options,
+                                        IndexOptions maxTestOptions,
+                                        IndexOptions maxIndexOptions,
                                         bool alwaysTestMax)
         {
             ThreadState threadState = new ThreadState();
@@ -1189,13 +1189,13 @@ namespace Lucene.Net.Index
                     savedTermState = true;
                 }
 
-                VerifyEnum(threadState, 
-                            fieldAndTerm.Field, 
-                            fieldAndTerm.Term, 
-                            termsEnum, 
-                            maxTestOptions, 
-                            maxIndexOptions, 
-                            options, 
+                VerifyEnum(threadState,
+                            fieldAndTerm.Field,
+                            fieldAndTerm.Term,
+                            termsEnum,
+                            maxTestOptions,
+                            maxIndexOptions,
+                            options,
                             alwaysTestMax);
 
                 // Sometimes save term state after pulling the enum:
@@ -1217,13 +1217,13 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: try enum again on same term");
                     }
 
-                    VerifyEnum(threadState, 
-                                fieldAndTerm.Field, 
-                                fieldAndTerm.Term, 
-                                termsEnum, 
-                                maxTestOptions, 
-                                maxIndexOptions, 
-                                options, 
+                    VerifyEnum(threadState,
+                                fieldAndTerm.Field,
+                                fieldAndTerm.Term,
+                                termsEnum,
+                                maxTestOptions,
+                                maxIndexOptions,
+                                options,
                                 alwaysTestMax);
                 }
             }
@@ -1348,7 +1348,7 @@ namespace Lucene.Net.Index
 
         protected override void AddRandomFields(Document doc)
         {
-            
+
             foreach (IndexOptions opts in Enum.GetValues(typeof(IndexOptions)))
             {
                 // LUCENENET: Skip our NONE option

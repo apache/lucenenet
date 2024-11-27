@@ -61,9 +61,9 @@ namespace Lucene.Net.Search
         private static int mulFactor;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             littleReader.Dispose();
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
             dir2 = null;
             directory = null;
             bigSearcher = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         private static readonly string[] docFields =

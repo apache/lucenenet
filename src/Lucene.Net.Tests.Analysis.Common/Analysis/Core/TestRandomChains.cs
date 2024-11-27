@@ -196,15 +196,15 @@ namespace Lucene.Net.Analysis.Core
         }
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             IEnumerable<Type> analysisClasses = typeof(StandardAnalyzer).Assembly.GetTypes()
                 .Where(c => {
                     var typeInfo = c;
 
-                    return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface 
+                    return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface
                         && typeInfo.IsClass && (typeInfo.GetCustomAttribute<ObsoleteAttribute>() is null)
                         && (typeInfo.IsSubclassOf(typeof(Tokenizer)) || typeInfo.IsSubclassOf(typeof(TokenFilter)) || typeInfo.IsSubclassOf(typeof(CharFilter)));
                 })
@@ -225,19 +225,19 @@ namespace Lucene.Net.Analysis.Core
 
                     if (typeInfo.IsSubclassOf(typeof(Tokenizer)))
                     {
-                        assertTrue(ctor.ToString() + " has unsupported parameter types", 
+                        assertTrue(ctor.ToString() + " has unsupported parameter types",
                             allowedTokenizerArgs.containsAll(ctor.GetParameters().Select(p => p.ParameterType).ToArray()));
                         tokenizers.Add(ctor);
                     }
                     else if (typeInfo.IsSubclassOf(typeof(TokenFilter)))
                     {
-                        assertTrue(ctor.ToString() + " has unsupported parameter types", 
+                        assertTrue(ctor.ToString() + " has unsupported parameter types",
                             allowedTokenFilterArgs.containsAll(ctor.GetParameters().Select(p => p.ParameterType).ToArray()));
                         tokenfilters.Add(ctor);
                     }
                     else if (typeInfo.IsSubclassOf(typeof(CharFilter)))
                     {
-                        assertTrue(ctor.ToString() + " has unsupported parameter types", 
+                        assertTrue(ctor.ToString() + " has unsupported parameter types",
                             allowedCharFilterArgs.containsAll(ctor.GetParameters().Select(p => p.ParameterType).ToArray()));
                         charfilters.Add(ctor);
                     }
@@ -259,15 +259,15 @@ namespace Lucene.Net.Analysis.Core
                 Console.WriteLine("charfilters = " + charfilters);
             }
         }
-        
+
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             tokenizers = null;
             tokenfilters = null;
             charfilters = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
 
@@ -1113,7 +1113,7 @@ namespace Lucene.Net.Analysis.Core
                 return m_input.Read();
             }
 
-            // LUCENENET: TextReader dosn't support this overload 
+            // LUCENENET: TextReader dosn't support this overload
             //public int read(char[] cbuf)
             //{
             //    readSomething = true;

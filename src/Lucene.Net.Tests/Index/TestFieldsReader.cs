@@ -45,9 +45,9 @@ namespace Lucene.Net.Index
         private static FieldInfos.Builder fieldInfos = null;
 
         [OneTimeSetUp]
-        public override void BeforeClass()
+        public override void OneTimeSetUp()
         {
-            base.BeforeClass();
+            base.OneTimeSetUp();
 
             testDoc = new Document();
             fieldInfos = new FieldInfos.Builder();
@@ -66,13 +66,13 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             dir.Dispose();
             dir = null;
             fieldInfos = null;
             testDoc = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]
