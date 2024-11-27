@@ -58,7 +58,7 @@ namespace Lucene.Net.Configuration
             base.OneTimeSetUp();
         }
 
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             DirectoryInfo dir = null;
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Configuration
             }
             catch { }
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
 

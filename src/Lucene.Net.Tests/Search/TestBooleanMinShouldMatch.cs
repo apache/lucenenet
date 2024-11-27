@@ -88,14 +88,14 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             s = null;
             r.Dispose();
             r = null;
             index.Dispose();
             index = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         public virtual void VerifyNrHits(Query q, int expected)

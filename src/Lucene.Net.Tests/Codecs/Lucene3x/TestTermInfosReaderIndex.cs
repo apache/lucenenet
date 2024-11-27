@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             termEnum.Dispose();
             reader.Dispose();
@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             directory = null;
             index = null;
             sampleTerms = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

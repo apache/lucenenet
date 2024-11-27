@@ -48,11 +48,11 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             dir.Dispose();
             dir = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

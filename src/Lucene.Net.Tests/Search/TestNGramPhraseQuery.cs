@@ -49,13 +49,13 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             reader = null;
             directory.Dispose();
             directory = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

@@ -63,14 +63,14 @@ namespace Lucene.Net.Search
         public const string ALTFIELD = "alt";
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific - renamed from AfterClassTestExplanations() to ensure calling order
+        public override void OneTimeTearDown() // LUCENENET specific - renamed from AfterClassTestExplanations() to ensure calling order
         {
             searcher = null;
             reader.Dispose();
             reader = null;
             directory.Dispose();
             directory = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [OneTimeSetUp]

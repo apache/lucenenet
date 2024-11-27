@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific: renamed from AfterClassBaseTestRangeFilter() so we can override to control the order of execution
+        public override void OneTimeTearDown() // LUCENENET specific: renamed from AfterClassBaseTestRangeFilter() so we can override to control the order of execution
         {
             signedIndexReader?.Dispose();
             unsignedIndexReader?.Dispose();
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
             unsignedIndexReader = null;
             signedIndexDir = null;
             unsignedIndexDir = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         private static IndexReader Build(Random random, TestIndex index)

@@ -149,14 +149,14 @@ namespace Lucene.Net.Search.Payloads
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             searcher = null;
             reader.Dispose();
             reader = null;
             directory.Dispose();
             directory = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

@@ -47,10 +47,10 @@ namespace Lucene.Net.Benchmarks
             };
         }
 
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             WORKDIR = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
 

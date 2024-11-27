@@ -65,7 +65,7 @@ namespace Lucene.Net.Cli.Configuration
             base.OneTimeSetUp();
         }
 
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             try
             {
@@ -79,7 +79,7 @@ namespace Lucene.Net.Cli.Configuration
             }
             catch { }
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

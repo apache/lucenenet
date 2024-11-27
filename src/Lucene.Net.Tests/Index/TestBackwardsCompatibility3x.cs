@@ -169,14 +169,14 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             foreach (Directory d in oldIndexDirs.Values)
             {
                 d.Dispose();
             }
             oldIndexDirs = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         /// <summary>

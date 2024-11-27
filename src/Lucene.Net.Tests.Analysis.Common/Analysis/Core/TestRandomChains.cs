@@ -261,13 +261,13 @@ namespace Lucene.Net.Analysis.Core
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             tokenizers = null;
             tokenfilters = null;
             charfilters = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
 

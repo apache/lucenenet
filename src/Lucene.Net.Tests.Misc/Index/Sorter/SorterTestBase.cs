@@ -219,12 +219,12 @@ namespace Lucene.Net.Index.Sorter
         }
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific - renamed from AfterClassSorterTestBase() to ensure calling order vs base class
+        public override void OneTimeTearDown() // LUCENENET specific - renamed from AfterClassSorterTestBase() to ensure calling order vs base class
         {
             reader.Dispose();
             dir.Dispose();
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

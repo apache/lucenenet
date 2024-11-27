@@ -663,7 +663,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             searcher = null;
             reader?.Dispose();
@@ -672,7 +672,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             directory = null;
             qp = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
     }
 }

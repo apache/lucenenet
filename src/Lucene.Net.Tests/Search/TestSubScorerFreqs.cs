@@ -61,14 +61,14 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific - renamed from Finish() to ensure calling order
+        public override void OneTimeTearDown() // LUCENENET specific - renamed from Finish() to ensure calling order
         {
             s.IndexReader.Dispose();
             s = null;
             dir.Dispose();
             dir = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         private class CountingCollector : ICollector

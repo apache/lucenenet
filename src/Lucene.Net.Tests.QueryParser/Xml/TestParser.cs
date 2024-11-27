@@ -71,7 +71,7 @@ namespace Lucene.Net.QueryParsers.Xml
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             dir.Dispose();
@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Xml
             searcher = null;
             dir = null;
             builder = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

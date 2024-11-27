@@ -55,7 +55,7 @@ namespace Lucene.Net.Facet
         private static FacetsConfig config;
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific - renamed from AfterClassDrillDownQueryTest() to ensure calling order
+        public override void OneTimeTearDown() // LUCENENET specific - renamed from AfterClassDrillDownQueryTest() to ensure calling order
         {
             IOUtils.Dispose(reader, taxo, dir, taxoDir);
             reader = null;
@@ -64,7 +64,7 @@ namespace Lucene.Net.Facet
             taxoDir = null;
             config = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [OneTimeSetUp]

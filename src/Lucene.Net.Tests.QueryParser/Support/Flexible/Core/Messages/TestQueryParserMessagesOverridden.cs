@@ -33,13 +33,13 @@ namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages
             QueryParserMessages.SetResourceProvider(provider);
         }
 
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             // Return to the default
             var provider = new QueryParserResourceProvider();
             QueryParserMessages.SetResourceProvider(provider);
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

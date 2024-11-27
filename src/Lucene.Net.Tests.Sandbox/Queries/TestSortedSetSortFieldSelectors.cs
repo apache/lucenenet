@@ -53,11 +53,11 @@ namespace Lucene.Net.Sandbox.Queries
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
-            Codec.Default = (savedCodec);
+            Codec.Default = savedCodec;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         public override void SetUp()

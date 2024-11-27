@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             multiReader.Dispose();
@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
             reader = multiReader = multiReaderDupls = null;
             searcher = multiSearcher = multiSearcherDupls = null;
             dir = sdir1 = sdir2 = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         private Query ExtractInnerQuery(Query q)

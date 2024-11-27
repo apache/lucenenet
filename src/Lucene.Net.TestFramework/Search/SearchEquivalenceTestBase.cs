@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
         }
 
         [NUnit.Framework.OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             m_reader.Dispose();
             m_directory.Dispose();
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
             m_directory = null;
             m_analyzer = null;
             m_s1 = m_s2 = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         /// <summary>

@@ -98,7 +98,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             reader = null;
@@ -109,7 +109,7 @@ namespace Lucene.Net.Facet.Taxonomy
             taxoDir.Dispose();
             taxoDir = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

@@ -52,7 +52,7 @@ namespace Lucene.Net.Misc
         }
 
         [OneTimeTearDown]
-        public override void AfterClass() // LUCENENET specific - renamed from TearDownClass() to ensure calling order vs base class
+        public override void OneTimeTearDown() // LUCENENET specific - renamed from TearDownClass() to ensure calling order vs base class
         {
             reader.Dispose();
             dir.Dispose();
@@ -60,7 +60,7 @@ namespace Lucene.Net.Misc
             reader = null;
             writer = null;
 
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
         /******************** Tests for getHighFreqTerms **********************************/
 

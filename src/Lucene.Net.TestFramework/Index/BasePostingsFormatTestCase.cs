@@ -472,13 +472,13 @@ namespace Lucene.Net.Index
         }
 
         [NUnit.Framework.OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             allTerms = null;
             fieldInfos = null;
             fields = null;
             globalLiveDocs = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         // TODO maybe instead of @BeforeClass just make a single test run: build postings & index & test it?

@@ -84,10 +84,10 @@ namespace Lucene.Net.Search
         private bool warmCalled;
 
         // LUCENENET specific - cleanup DisposableThreadLocal instances
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             lastGens.Dispose();
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

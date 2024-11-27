@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             littleReader.Dispose();
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
             dir2 = null;
             directory = null;
             bigSearcher = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         private static readonly string[] docFields =

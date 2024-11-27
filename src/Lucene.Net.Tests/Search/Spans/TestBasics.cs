@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         [OneTimeTearDown]
-        public override void AfterClass()
+        public override void OneTimeTearDown()
         {
             reader.Dispose();
             directory.Dispose();
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search.Spans
             reader = null;
             directory = null;
             simplePayloadAnalyzer = null;
-            base.AfterClass();
+            base.OneTimeTearDown();
         }
 
         [Test]

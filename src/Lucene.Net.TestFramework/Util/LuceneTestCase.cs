@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
     ///
     /// <para>
     /// The preferred way to specify class (suite-level) setup/cleanup is to use
-    /// static methods annotated with <see cref="NUnit.Framework.OneTimeSetUpAttribute"/> and <see cref="OneTimeTearDown"/>. Any
+    /// static methods annotated with <see cref="NUnit.Framework.OneTimeSetUpAttribute"/> and <see cref="NUnit.Framework.OneTimeTearDownAttribute"/>. Any
     /// code in these methods is executed within the test framework's control and
     /// ensure proper setup has been made. <b>Try not to use static initializers
     /// (including complex readonly field initializers).</b> Static initializers are
@@ -1002,12 +1002,12 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Tears down random defaults and cleans up temporary files.
         /// <para/>
-        /// If you override this method, be sure to call <c>base.AfterClass()</c> AFTER
+        /// If you override this method, be sure to call <c>base.OneTimeTearDown()</c> AFTER
         /// tearing down your test fixture.
         /// </summary>
         // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeTearDown]
-        public virtual void AfterClass()
+        public virtual void OneTimeTearDown()
         {
             try
             {
@@ -1017,7 +1017,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during AfterClass:\n{ex}", ex);
+                throw new Exception($"An exception occurred during OneTimeTearDown:\n{ex}", ex);
             }
         }
 
