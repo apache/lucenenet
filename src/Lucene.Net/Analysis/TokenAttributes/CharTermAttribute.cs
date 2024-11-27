@@ -78,13 +78,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
         // LUCENENET specific: Redefining this[] to make it settable
         new char this[int index] { get; set; }
 
-        /// <summary>
-        /// Sets the length of the termBuffer to zero.
-        /// Use this method before appending contents.
-        /// </summary>
-        /// <seealso cref="Lucene.Net.Analysis.TokenAttributes.Extensions.CharTermAttributeExtensions.SetEmpty(ICharTermAttribute)"/>
-        void Clear();
-
         // the following methods are redefined to get rid of IOException declaration:
 
         /// <summary>

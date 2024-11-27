@@ -21,5 +21,11 @@
     public interface IAttribute
     {
         void CopyTo(IAttribute target); // LUCENENET specific - .NET doesn't recognize this method without a cast, so we define it here to ensure it is visible on all IAttribute interfaces
+
+        /// <summary>
+        /// Clears the values in this attribute and resets it to its
+        /// default value.
+        /// </summary>
+        void Clear();
     }
 }
