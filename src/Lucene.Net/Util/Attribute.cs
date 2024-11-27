@@ -26,6 +26,12 @@
         /// Clears the values in this attribute and resets it to its
         /// default value.
         /// </summary>
+        /// <remarks>
+        /// LUCENENET specific - This method is not part of the Java Lucene API.
+        /// This was added to be a more consistent way to clear attributes than SetEmpty(),
+        /// and the <see cref="Lucene.Net.Util.Attribute"/> abstract class already
+        /// required this method to be implemented by subclasses anyway.
+        /// </remarks>
         void Clear();
     }
 }
