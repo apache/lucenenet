@@ -1029,7 +1029,7 @@ namespace Lucene.Net.Util
         /// Access to the current <see cref="System.Random"/> instance. It is safe to use
         /// this method from multiple threads, etc., but it should be called while within a runner's
         /// scope (so no static initializers). The returned <see cref="System.Random"/> instance will be
-        /// <b>different</b> when this method is called inside a <see cref="OneTimeSetUp"/> hook (static
+        /// <b>different</b> when this method is called inside a <see cref="OneTimeSetUp()"/> hook (static
         /// suite scope) and within <see cref="Before"/>/ <see cref="After"/> hooks or test methods.
         ///
         /// <para/>The returned instance must not be shared with other threads or cross a single scope's
