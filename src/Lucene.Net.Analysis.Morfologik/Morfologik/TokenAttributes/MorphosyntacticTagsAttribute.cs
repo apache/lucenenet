@@ -37,8 +37,5 @@ namespace Lucene.Net.Analysis.Morfologik.TokenAttributes
         /// The default value (no-value) is null. Returns a list of POS tags corresponding to current lemma.
         /// </summary>
         IList<StringBuilder> Tags { get; set; }
-
-        /// <summary>Clear to default value.</summary>
-        void Clear();
     }
 }
