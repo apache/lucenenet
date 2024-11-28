@@ -6,6 +6,9 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
+#if !FEATURE_STREAM_READEXACTLY
+using Lucene.Net.Support;
+#endif
 
 namespace Lucene.Net.Tests.Replicator
 {
@@ -30,7 +33,7 @@ namespace Lucene.Net.Tests.Replicator
     [LuceneNetSpecific]
     public class IndexInputStreamTest : LuceneTestCase
     {
-        
+
         [Test]
         [LuceneNetSpecific]
         public void Read_RemainingIndexInputLargerThanReadCount_ReturnsReadCount()
@@ -55,7 +58,10 @@ namespace Lucene.Net.Tests.Replicator
             int readBytes = 1.KiloBytes();
             byte[] readBuffer = new byte[readBytes];
             for (int i = section; i > 0; i--)
-                stream.Read(readBuffer, 0, readBytes);
+            {
+                stream.ReadExactly(readBuffer, 0, readBytes);
+            }
+
             Assert.AreEqual(readBuffer, buffer.Skip((section - 1) * readBytes).Take(readBytes).ToArray());
         }
 

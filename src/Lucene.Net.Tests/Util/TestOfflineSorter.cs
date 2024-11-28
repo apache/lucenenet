@@ -6,6 +6,9 @@ using System.IO;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Lucene.Net.Attributes;
+#if !FEATURE_STREAM_READEXACTLY
+using Lucene.Net.Support;
+#endif
 
 namespace Lucene.Net.Util
 {
@@ -231,7 +234,8 @@ namespace Lucene.Net.Util
             using Stream is2 = sorted.Open(FileMode.Open, FileAccess.Read, FileShare.Delete);
             while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
             {
-                is2.Read(buf2, 0, len);
+                is2.ReadExactly(buf2, 0, len);
+
                 for (int i = 0; i < len; i++)
                 {
                     Assert.AreEqual(buf1[i], buf2[i]);
@@ -254,7 +258,8 @@ namespace Lucene.Net.Util
             Stream is2 = sorted;
             while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
             {
-                is2.Read(buf2, 0, len);
+                is2.ReadExactly(buf2, 0, len);
+
                 for (int i = 0; i < len; i++)
                 {
                     Assert.AreEqual(buf1[i], buf2[i]);

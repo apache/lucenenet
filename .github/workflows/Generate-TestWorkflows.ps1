@@ -38,7 +38,7 @@
 
  .PARAMETER TestFrameworks
     A string array of Dotnet target framework monikers to run the tests on. The default is
-    @('net8.0','net6.0','net472','net48').
+    @('net9.0','net8.0','net6.0','net472','net48').
 
  .PARAMETER OperatingSystems
     A string array of Github Actions operating system monikers to run the tests on.
@@ -50,6 +50,10 @@
 
  .PARAMETER Configurations
     A string array of build configurations to run the tests on. The default is @('Release').
+
+ .PARAMETER DotNet9SDKVersion
+    The SDK version of .NET 9.x to install on the build agent to be used for building and
+    testing. This SDK is always installed on the build agent. The default is 9.0.x.
 
  .PARAMETER DotNet8SDKVersion
     The SDK version of .NET 8.x to install on the build agent to be used for building and
@@ -64,13 +68,15 @@ param(
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net8.0','net6.0','net472','net48'), # targets under test: net8.0, netstandard2.1, netstandard2.0, net462
+    [string[]]$TestFrameworks = @('net9.0','net8.0','net6.0','net472','net48'), # targets under test: net8.0, net8.0, netstandard2.1, netstandard2.0, net462
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
     [string[]]$TestPlatforms = @('x64'),
 
     [string[]]$Configurations = @('Release'),
+
+    [string]$DotNet9SDKVersion = '9.0.x',
 
     [string]$DotNet8SDKVersion = '8.0.x',
 
@@ -154,6 +160,7 @@ function Write-TestWorkflow(
     [string[]]$TestFrameworks = @('net6.0', 'net48'),
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
+    [string]$DotNet9SDKVersion = $DotNet9SDKVersion,
     [string]$DotNet8SDKVersion = $DotNet8SDKVersion,
     [string]$DotNet6SDKVersion = $DotNet6SDKVersion) {
 
@@ -285,6 +292,11 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '$DotNet8SDKVersion'
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '$DotNet9SDKVersion'
 
       - name: Setup Environment Variables
         run: |
