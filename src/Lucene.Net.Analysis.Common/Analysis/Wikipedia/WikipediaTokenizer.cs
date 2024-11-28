@@ -319,9 +319,9 @@ namespace Lucene.Net.Analysis.Wikipedia
             offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + termAtt.Length));
         }
 
-        protected override void DoClose()
+        public override void Close()
         {
-            base.DoClose();
+            base.Close();
             scanner.YyReset(m_input);
         }
 

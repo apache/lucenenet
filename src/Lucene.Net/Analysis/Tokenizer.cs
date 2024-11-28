@@ -59,36 +59,16 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// <inheritdoc cref="TokenStream.DoClose()"/>
+        /// <inheritdoc cref="TokenStream.Close()"/>
         /// </summary>
-        /// <remarks>
-        /// LUCENENET specific - overriding <see cref="TokenStream.DoClose()"/> instead of
-        /// <see cref="TokenStream.Close()"/> so that this is reused with <see cref="TokenStream.Dispose(bool)"/>.
-        /// </remarks>
-        protected override void DoClose()
+        public override void Close()
         {
+            inputPending.Dispose(); // LUCENENET specific: call dispose on input pending
             m_input.Dispose();
             // LUCENE-2387: don't hold onto Reader after close, so
             // GC can reclaim
             inputPending = m_input = ILLEGAL_STATE_READER;
-            base.DoClose();
-        }
-
-        /// <summary>
-        /// <inheritdoc cref="TokenStream.Dispose(bool)"/>
-        /// </summary>
-        /// <remarks>
-        /// <b>NOTE:</b>
-        /// The default implementation closes the input <see cref="TextReader"/>, so
-        /// be sure to call <c>base.Dispose(disposing)</c> when overriding this method.
-        /// </remarks>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                inputPending.Dispose(); // LUCENENET specific: call dispose on input pending
-            }
-            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
+            base.Close();
         }
 
         /// <summary>

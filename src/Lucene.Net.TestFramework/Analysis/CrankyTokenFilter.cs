@@ -69,9 +69,9 @@ namespace Lucene.Net.TestFramework.Analysis
             }
         }
 
-        protected override void DoClose()
+        public override void Close()
         {
-            base.DoClose();
+            base.Close();
             if (thingToDo == 3 && random.nextBoolean())
             {
                 throw new IOException("Fake IOException from TokenStream.DoClose()");

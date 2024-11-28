@@ -175,11 +175,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
             suffix.End();
         }
 
-        protected override void DoClose()
+        public override void Close()
         {
             prefix.Close();
             suffix.Close();
-            base.DoClose(); // LUCENENET specific - added to ensure the base class is marked as closed
         }
 
         public override void Reset()

@@ -2166,12 +2166,12 @@ namespace Lucene.Net.Search.Highlight
         }
 
 
-        protected override void DoClose()
+        public override void Close()
         {
             this.realStream.Close();
             this.st?.Dispose();
             this.st = null;
-            base.DoClose();
+            base.Close();
         }
     }
 

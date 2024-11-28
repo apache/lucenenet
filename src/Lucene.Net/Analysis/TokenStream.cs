@@ -79,9 +79,6 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public abstract class TokenStream : AttributeSource, ICloseable, IDisposable
     {
-        private bool closed;
-        private bool disposed;
-
         /// <summary>
         /// A <see cref="TokenStream"/> using the default attribute factory.
         /// </summary>
@@ -179,7 +176,6 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public virtual void Reset()
         {
-            closed = false; // LUCENENET specific - reset closed state to allow reuse
         }
 
         /// <summary>
@@ -190,28 +186,12 @@ namespace Lucene.Net.Analysis
         /// throw <see cref="InvalidOperationException"/> on reuse).
         /// </summary>
         /// <remarks>
-        /// LUCENENET specific - you probably don't want to override this method. Instead, override
-        /// <see cref="DoClose()"/> which is called by this method as well as <see cref="Dispose(bool)"/>.
+        /// LUCENENET notes - this is intended to release resources in a way that allows the
+        /// object to be reused, so it is not the same as <see cref="Dispose()"/>. If you need
+        /// to release resources that cannot be reused, override <see cref="Dispose(bool)"/> instead.
         /// </remarks>
         public virtual void Close()
         {
-            DoClose(); // LUCENENET specific - consolidated common close/dispose logic
-        }
-
-        /// <summary>
-        /// Releases resources associated with this stream, whether called from <see cref="Close()"/>
-        /// or <see cref="Dispose(bool)"/>.
-        /// <para />
-        /// If you override this method, always call <c>base.DoClose()</c>, otherwise
-        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
-        /// throw <see cref="InvalidOperationException"/> on reuse).
-        /// </summary>
-        /// <remarks>
-        /// LUCENENET specific: This method was added to consolidate common close/dispose logic.
-        /// </remarks>
-        protected virtual void DoClose()
-        {
-            closed = true;
         }
 
         // LUCENENET specific - implementing proper dispose pattern
@@ -230,20 +210,10 @@ namespace Lucene.Net.Analysis
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed)
-            {
-                return;
-            }
-
             if (disposing)
             {
-                if (!closed)
-                {
-                    DoClose();
-                }
+                Close();
             }
-
-            disposed = true;
         }
     }
 }

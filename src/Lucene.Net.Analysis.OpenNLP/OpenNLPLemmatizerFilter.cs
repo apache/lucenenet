@@ -136,11 +136,11 @@ namespace Lucene.Net.Analysis.OpenNlp
         /// <remarks>
         /// LUCENENET specific
         /// </remarks>
-        protected override void DoClose()
+        public override void Close()
         {
             sentenceTokenAttrsIter?.Dispose();
             sentenceTokenAttrsIter = null;
-            base.DoClose();
+            base.Close();
         }
     }
 }

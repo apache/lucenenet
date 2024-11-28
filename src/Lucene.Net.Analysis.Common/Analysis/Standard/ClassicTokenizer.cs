@@ -193,9 +193,9 @@ namespace Lucene.Net.Analysis.Standard
             posIncrAtt.PositionIncrement = posIncrAtt.PositionIncrement + skippedPositions;
         }
 
-        protected override void DoClose()
+        public override void Close()
         {
-            base.DoClose();
+            base.Close();
             scanner.YyReset(m_input);
         }
 

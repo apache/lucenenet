@@ -111,9 +111,9 @@ namespace Lucene.Net.Analysis
             this.random = new J2N.Randomizer(seed);
         }
 
-        protected override void DoClose()
+        public override void Close()
         {
-            base.DoClose();
+            base.Close();
             this.random = null;
         }
 

@@ -261,9 +261,9 @@ namespace Lucene.Net.Analysis.Core
                 Console.WriteLine(m_input.GetType().Name + ".end()");
             }
 
-            protected override void DoClose()
+            public override void Close()
             {
-                base.DoClose();
+                base.Close();
                 Console.WriteLine(m_input.GetType().Name + ".close()");
             }
 
