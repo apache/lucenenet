@@ -59,7 +59,7 @@ namespace Lucene.Net.Tests.Replicator
             byte[] readBuffer = new byte[readBytes];
             for (int i = section; i > 0; i--)
             {
-                stream.ReadExactly(readBuffer, 0, readBytes);
+                stream.ReadExactly(readBuffer, 0, readBytes); // LUCENENET specific - calling ReadExactly to ensure we read the exact number of bytes
             }
 
             Assert.AreEqual(readBuffer, buffer.Skip((section - 1) * readBytes).Take(readBytes).ToArray());

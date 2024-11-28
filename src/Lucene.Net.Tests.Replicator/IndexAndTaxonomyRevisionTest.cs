@@ -181,7 +181,7 @@ namespace Lucene.Net.Replicator
                             offset = skip;
                         }
                         src.ReadBytes(srcBytes, offset, srcBytes.Length - offset);
-                        @in.ReadExactly(inBytes, offset, inBytes.Length - offset);
+                        @in.ReadExactly(inBytes, offset, inBytes.Length - offset); // LUCENENET specific - calling ReadExactly to ensure we read the exact number of bytes
                         assertArrayEquals(srcBytes, inBytes);
                     }
                 }

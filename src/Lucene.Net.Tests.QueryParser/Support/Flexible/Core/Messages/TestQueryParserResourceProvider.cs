@@ -100,7 +100,7 @@ namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages // LUCENENET: T
             // Get the expected bytes
             using var expectedStream = GetType().Assembly.GetManifestResourceStream("Lucene.Net.QueryParsers.Support.Flexible.Core.Messages.lucene-net-icon-32x32.png");
             byte[] expectedBytes = new byte[expectedStream.Length];
-            expectedStream.ReadExactly(expectedBytes, 0, (int)expectedStream.Length);
+            expectedStream.ReadExactly(expectedBytes, 0, (int)expectedStream.Length); // LUCENENET specific - calling ReadExactly to ensure we read the exact number of bytes
 
             // Check the wrapper to ensure we can read the bytes
             Assert.AreEqual(expectedBytes, MessagesTest.LUCENE_NET_ICON_32x32);

@@ -90,7 +90,7 @@ steps:
     sdkVersion: '${{ parameters.dotNetSdkVersion }}'
     performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
 
-    # Hack: .NET 8 no longer installs the x86 bits and they must be installed separately. However, it is not
+    # Hack: .NET 8+ no longer installs the x86 bits and they must be installed separately. However, it is not
     # trivial to get it into the path and to get it to pass the minimum SDK version check in runbuild.ps1.
     # So, we install it afterward and set the environment variable so the above SDK can delegate to it.
     # This code only works on Windows.
@@ -105,7 +105,7 @@ steps:
     & $installScriptPath -Version $sdkVersion -Architecture $architecture -InstallDir $installPath
     Write-Host "##vso[task.setvariable variable=DOTNET_ROOT_X86;]$installPath"
   displayName: 'Use .NET SDK ${{ parameters.dotNetSdkVersion }} (x86)'
-  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net8.'), eq('${{ parameters.vsTestPlatform }}', 'x86'))
+  condition: and(succeeded(), or(contains('${{ parameters.framework }}', 'net8.'), contains('${{ parameters.framework }}', 'net9.')), eq('${{ parameters.vsTestPlatform }}', 'x86'))
 
 - task: UseDotNet@2
   displayName: 'Use .NET SDK 6.0.421'
@@ -115,7 +115,7 @@ steps:
     performMultiLevelLookup: '${{ variables.PerformMultiLevelLookup }}'
   condition: and(succeeded(), contains('${{ parameters.framework }}', 'net6.'))
 
-    # Hack: .NET 8 no longer installs the x86 bits and they must be installed separately. However, it is not
+    # Hack: .NET 8+ no longer installs the x86 bits and they must be installed separately. However, it is not
     # trivial to get it into the path and to get it to pass the minimum SDK version check in runbuild.ps1.
     # So, we install it afterward and set the environment variable so the above SDK can delegate to it.
     # This code only works on Windows.
