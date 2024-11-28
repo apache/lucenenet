@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
                     // a new sentence is available: process it.
                     tokenBuffer = wordSegmenter.SegmentSentence(termAtt.ToString(), offsetAtt.StartOffset);
                     tokenIter = tokenBuffer.GetEnumerator();
-                    /* 
+                    /*
                      * it should not be possible to have a sentence with 0 words, check just in case.
                      * returning EOS isn't the best either, but its the behavior of the original code.
                      */
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
 
             // WordTokenFilter must clear attributes, as it is creating new tokens.
             ClearAttributes();
-            // There are remaining tokens from the current sentence, return the next one. 
+            // There are remaining tokens from the current sentence, return the next one.
             SegToken nextWord = tokenIter.Current;
 
             termAtt.CopyBuffer(nextWord.CharArray, 0, nextWord.CharArray.Length);
@@ -114,27 +114,16 @@ namespace Lucene.Net.Analysis.Cn.Smart
         }
 
         /// <summary>
-        /// Releases resources used by the <see cref="WordTokenFilter"/> and
-        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// Releases resources used by the <see cref="WordTokenFilter"/>.
         /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-        /// <c>false</c> to release only unmanaged resources.</param>
-
-        // LUCENENET specific
-        protected override void Dispose(bool disposing)
+        /// <remarks>
+        /// LUCENENET specific
+        /// </remarks>
+        protected override void DoClose()
         {
-            try
-            {
-                if (disposing)
-                {
-                    tokenIter?.Dispose(); // LUCENENET specific - dispose tokenIter and set to null
-                    tokenIter = null;
-                }
-            }
-            finally
-            {
-                base.Dispose(disposing);
-            }
+            tokenIter?.Dispose(); // LUCENENET specific - dispose tokenIter and set to null
+            tokenIter = null;
+            base.DoClose();
         }
     }
 }

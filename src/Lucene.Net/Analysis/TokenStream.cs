@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 
@@ -36,13 +37,13 @@ namespace Lucene.Net.Analysis
     /// A new <see cref="TokenStream"/> API has been introduced with Lucene 2.9. this API
     /// has moved from being <see cref="Token"/>-based to <see cref="Util.IAttribute"/>-based. While
     /// <see cref="Token"/> still exists in 2.9 as a convenience class, the preferred way
-    /// to store the information of a <see cref="Token"/> is to use <see cref="Attribute"/>s.
+    /// to store the information of a <see cref="Token"/> is to use <see cref="System.Attribute"/>s.
     /// <para/>
     /// <see cref="TokenStream"/> now extends <see cref="AttributeSource"/>, which provides
     /// access to all of the token <see cref="Util.IAttribute"/>s for the <see cref="TokenStream"/>.
-    /// Note that only one instance per <see cref="Attribute"/> is created and reused
+    /// Note that only one instance per <see cref="System.Attribute"/> is created and reused
     /// for every token. This approach reduces object creation and allows local
-    /// caching of references to the <see cref="Attribute"/>s. See
+    /// caching of references to the <see cref="System.Attribute"/>s. See
     /// <see cref="IncrementToken()"/> for further details.
     /// <para/>
     /// <b>The workflow of the new <see cref="TokenStream"/> API is as follows:</b>
@@ -64,7 +65,7 @@ namespace Lucene.Net.Analysis
     /// not required to check for availability of attributes in
     /// <see cref="IncrementToken()"/>.
     /// <para/>
-    /// You can find some example code for the new API in the analysis 
+    /// You can find some example code for the new API in the analysis
     /// documentation.
     /// <para/>
     /// Sometimes it is desirable to capture a current state of a <see cref="TokenStream"/>,
@@ -76,8 +77,11 @@ namespace Lucene.Net.Analysis
     /// Therefore all non-abstract subclasses must be sealed or have at least a sealed
     /// implementation of <see cref="IncrementToken()"/>! This is checked when assertions are enabled.
     /// </summary>
-    public abstract class TokenStream : AttributeSource, IDisposable
+    public abstract class TokenStream : AttributeSource, ICloseable, IDisposable
     {
+        private bool closed;
+        private bool disposed;
+
         /// <summary>
         /// A <see cref="TokenStream"/> using the default attribute factory.
         /// </summary>
@@ -98,7 +102,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// A <see cref="TokenStream"/> using the supplied <see cref="AttributeSource.AttributeFactory"/> 
+        /// A <see cref="TokenStream"/> using the supplied <see cref="AttributeSource.AttributeFactory"/>
         /// for creating new <see cref="Util.IAttribute"/> instances.
         /// </summary>
         protected TokenStream(AttributeFactory factory)
@@ -175,6 +179,39 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public virtual void Reset()
         {
+            closed = false; // LUCENENET specific - reset closed state to allow reuse
+        }
+
+        /// <summary>
+        /// Releases resources associated with this stream.
+        /// <para />
+        /// If you override this method, always call <c>base.Close()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="InvalidOperationException"/> on reuse).
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific - you probably don't want to override this method. Instead, override
+        /// <see cref="DoClose()"/> which is called by this method as well as <see cref="Dispose(bool)"/>.
+        /// </remarks>
+        public virtual void Close()
+        {
+            DoClose(); // LUCENENET specific - consolidated common close/dispose logic
+        }
+
+        /// <summary>
+        /// Releases resources associated with this stream, whether called from <see cref="Close()"/>
+        /// or <see cref="Dispose(bool)"/>.
+        /// <para />
+        /// If you override this method, always call <c>base.DoClose()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="InvalidOperationException"/> on reuse).
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific: This method was added to consolidate common close/dispose logic.
+        /// </remarks>
+        protected virtual void DoClose()
+        {
+            closed = true;
         }
 
         // LUCENENET specific - implementing proper dispose pattern
@@ -193,6 +230,20 @@ namespace Lucene.Net.Analysis
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
+            if (disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                if (!closed)
+                {
+                    DoClose();
+                }
+            }
+
+            disposed = true;
         }
     }
 }

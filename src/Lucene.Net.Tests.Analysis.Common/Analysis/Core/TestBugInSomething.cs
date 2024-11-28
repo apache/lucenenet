@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Core
             {
                 reader = new MockCharFilter(reader, 0);
                 reader = new MappingCharFilter(map, reader);
-                return reader;            
+                return reader;
             });
             CheckAnalysisConsistency(Random, a, false, "wmgddzunizdomqyj");
         }
@@ -261,13 +261,10 @@ namespace Lucene.Net.Analysis.Core
                 Console.WriteLine(m_input.GetType().Name + ".end()");
             }
 
-            protected override void Dispose(bool disposing)
+            protected override void DoClose()
             {
-                base.Dispose(disposing);
-                if (disposing)
-                {
-                    Console.WriteLine(m_input.GetType().Name + ".close()");
-                }
+                base.DoClose();
+                Console.WriteLine(m_input.GetType().Name + ".close()");
             }
 
             public override void Reset()

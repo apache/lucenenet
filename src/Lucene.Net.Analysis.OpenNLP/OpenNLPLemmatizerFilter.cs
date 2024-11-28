@@ -133,24 +133,14 @@ namespace Lucene.Net.Analysis.OpenNlp
         /// Releases resources used by the <see cref="OpenNLPLemmatizerFilter"/> and
         /// if overridden in a derived class, optionally releases unmanaged resources.
         /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-        /// <c>false</c> to release only unmanaged resources.</param>
-
-        // LUCENENET specific
-        protected override void Dispose(bool disposing)
+        /// <remarks>
+        /// LUCENENET specific
+        /// </remarks>
+        protected override void DoClose()
         {
-            try
-            {
-                if (disposing)
-                {
-                    sentenceTokenAttrsIter?.Dispose();
-                    sentenceTokenAttrsIter = null;
-                }
-            }
-            finally
-            {
-                base.Dispose(disposing);
-            }
+            sentenceTokenAttrsIter?.Dispose();
+            sentenceTokenAttrsIter = null;
+            base.DoClose();
         }
     }
 }

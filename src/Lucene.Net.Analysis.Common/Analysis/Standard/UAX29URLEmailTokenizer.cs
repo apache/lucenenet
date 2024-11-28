@@ -28,9 +28,9 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// This class implements Word Break rules from the Unicode Text Segmentation 
+    /// This class implements Word Break rules from the Unicode Text Segmentation
     /// algorithm, as specified in                 `
-    /// <a href="http://unicode.org/reports/tr29/">Unicode Standard Annex #29</a> 
+    /// <a href="http://unicode.org/reports/tr29/">Unicode Standard Annex #29</a>
     /// URLs and email addresses are also tokenized according to the relevant RFCs.
     /// <para/>
     /// Tokens produced are of the following types:
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Set the max allowed token length.  Any token longer
-        ///  than this is skipped. 
+        ///  than this is skipped.
         /// </summary>
         public int MaxTokenLength
         {
@@ -214,13 +214,10 @@ namespace Lucene.Net.Analysis.Standard
             posIncrAtt.PositionIncrement = posIncrAtt.PositionIncrement + skippedPositions;
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void DoClose()
         {
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                scanner.YyReset(m_input);
-            }
+            base.DoClose();
+            scanner.YyReset(m_input);
         }
 
         public override void Reset()

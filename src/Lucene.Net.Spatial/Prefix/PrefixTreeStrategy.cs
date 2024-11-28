@@ -35,7 +35,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// subclasses are <see cref="RecursivePrefixTreeStrategy">RecursivePrefixTreeStrategy</see> and
     /// <see cref="TermQueryPrefixTreeStrategy">TermQueryPrefixTreeStrategy</see>.  This strategy is most effective as a fast
     /// approximate spatial search filter.
-    /// 
+    ///
     /// <h4>Characteristics:</h4>
     /// <list type="bullet">
     /// <item><description>Can index any shape; however only
@@ -60,7 +60,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// it doesn't scale to large numbers of points nor is it real-time-search
     /// friendly.</description></item>
     /// </list>
-    /// 
+    ///
     /// <h4>Implementation:</h4>
     /// The <see cref="SpatialPrefixTree"/>
     /// does most of the work, for example returning
@@ -198,26 +198,15 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <summary>
-            /// Releases resources used by the <see cref="CellTokenStream"/> and
-            /// if overridden in a derived class, optionally releases unmanaged resources.
+            /// Releases resources used by the <see cref="CellTokenStream"/>.
             /// </summary>
-            /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-            /// <c>false</c> to release only unmanaged resources.</param>
-
-            // LUCENENET specific
-            protected override void Dispose(bool disposing)
+            /// <remarks>
+            /// LUCENENET specific
+            /// </remarks>
+            protected override void DoClose()
             {
-                try
-                {
-                    if (disposing)
-                    {
-                        iter.Dispose(); // LUCENENET specific - dispose iter
-                    }
-                }
-                finally
-                {
-                    base.Dispose(disposing);
-                }
+                iter.Dispose(); // LUCENENET specific - dispose iter
+                base.DoClose();
             }
         }
 
