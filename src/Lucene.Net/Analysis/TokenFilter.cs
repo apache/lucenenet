@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace Lucene.Net.Analysis
 {
@@ -29,11 +28,13 @@ namespace Lucene.Net.Analysis
     public abstract class TokenFilter : TokenStream
     {
         /// <summary>
-        /// The source of tokens for this filter. </summary>
+        /// The source of tokens for this filter.
+        /// </summary>
         protected readonly TokenStream m_input;
 
         /// <summary>
-        /// Construct a token stream filtering the given input. </summary>
+        /// Construct a token stream filtering the given input.
+        /// </summary>
         protected TokenFilter(TokenStream input)
             : base(input)
         {
@@ -41,24 +42,13 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// This method is called by the consumer after the last token has been
-        /// consumed, after <see cref="TokenStream.IncrementToken()"/> returned <c>false</c>
-        /// (using the new <see cref="TokenStream"/> API). Streams implementing the old API
-        /// should upgrade to use this feature.
-        /// <para/>
-        /// This method can be used to perform any end-of-stream operations, such as
-        /// setting the final offset of a stream. The final offset of a stream might
-        /// differ from the offset of the last token eg in case one or more whitespaces
-        /// followed after the last token, but a WhitespaceTokenizer was used.
-        /// <para/>
-        /// Additionally any skipped positions (such as those removed by a stopfilter)
-        /// can be applied to the position increment, or any adjustment of other
-        /// attributes where the end-of-stream value may be important.
-        /// <para/>
+        /// <inheritdoc cref="TokenStream.End()"/>
+        /// </summary>
+        /// <remarks>
         /// <b>NOTE:</b>
         /// The default implementation chains the call to the input TokenStream, so
         /// be sure to call <c>base.End()</c> first when overriding this method.
-        /// </summary>
+        /// </remarks>
         /// <exception cref="IOException"> If an I/O error occurs </exception>
         public override void End()
         {
@@ -66,35 +56,19 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Releases resources associated with this stream.
-        /// <para/>
-        /// If you override this method, always call <c>base.Dispose(disposing)</c>, otherwise
-        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
-        /// throw <see cref="InvalidOperationException"/> on reuse).
-        /// <para/>
-        /// <b>NOTE:</b>
-        /// The default implementation chains the call to the input TokenStream, so
-        /// be sure to call <c>base.Dispose(disposing)</c> when overriding this method.
+        /// <inheritdoc cref="TokenStream.DoClose()"/>
         /// </summary>
-        protected override void Dispose(bool disposing)
+        /// <remarks>
+        /// LUCENENET specific - overriding <see cref="TokenStream.DoClose()"/> instead of
+        /// <see cref="TokenStream.Close()"/> so that this is reused with <see cref="TokenStream.Dispose(bool)"/>.
+        /// </remarks>
+        protected override void DoClose()
         {
-            if (disposing)
-            {
-                m_input.Dispose();
-            }
-            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
+            m_input.Dispose();
         }
 
         /// <summary>
-        /// This method is called by a consumer before it begins consumption using
-        /// <see cref="TokenStream.IncrementToken()"/>.
-        /// <para/>
-        /// Resets this stream to a clean state. Stateful implementations must implement
-        /// this method so that they can be reused, just as if they had been created fresh.
-        /// <para/>
-        /// If you override this method, always call <c>base.Reset()</c>, otherwise
-        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
-        /// throw <see cref="InvalidOperationException"/> on further usage).
+        /// <inheritdoc cref="TokenStream.Reset()"/>
         /// </summary>
         /// <remarks>
         /// <b>NOTE:</b>
@@ -104,6 +78,7 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             m_input.Reset();
+            base.Reset(); // LUCENENET specific - added to ensure base class is reset
         }
     }
 }

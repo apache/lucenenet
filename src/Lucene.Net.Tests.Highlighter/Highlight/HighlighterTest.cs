@@ -2159,21 +2159,12 @@ namespace Lucene.Net.Search.Highlight
         }
 
 
-        protected override void Dispose(bool disposing)
+        protected override void DoClose()
         {
-            try
-            {
-                if (disposing)
-                {
-                    this.realStream.Dispose();
-                    this.st?.Dispose();
-                    this.st = null;
-                }
-            }
-            finally
-            {
-                base.Dispose(disposing);
-            }
+            this.realStream.Close();
+            this.st?.Dispose();
+            this.st = null;
+            base.DoClose();
         }
     }
 

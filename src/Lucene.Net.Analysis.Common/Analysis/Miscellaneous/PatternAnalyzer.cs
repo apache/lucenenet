@@ -436,13 +436,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.offsetAtt.SetOffset(finalOffset, finalOffset);
             }
 
-            protected override void Dispose(bool disposing)
+            protected override void DoClose()
             {
-                base.Dispose(disposing);
-                if (disposing)
-                {
-                    this.initialized = false;
-                }
+                base.DoClose();
+                this.initialized = false;
             }
 
             public override void Reset()
@@ -573,13 +570,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return stopWords != null && stopWords.Contains(text);
             }
 
-            protected override void Dispose(bool disposing)
+            protected override void DoClose()
             {
-                base.Dispose(disposing);
-                if (disposing)
-                {
-                    this.str = null;
-                }
+                base.DoClose();
+                this.str = null;
             }
 
             public override void Reset()

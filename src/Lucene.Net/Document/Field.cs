@@ -35,8 +35,8 @@ namespace Lucene.Net.Documents
 
     /// <summary>
     /// Expert: directly create a field for a document.  Most
-    /// users should use one of the sugar subclasses: <see cref="Int32Field"/>, 
-    /// <see cref="Int64Field"/>, <see cref="SingleField"/>, <see cref="DoubleField"/>, 
+    /// users should use one of the sugar subclasses: <see cref="Int32Field"/>,
+    /// <see cref="Int64Field"/>, <see cref="SingleField"/>, <see cref="DoubleField"/>,
     /// <see cref="BinaryDocValuesField"/>, <see cref="NumericDocValuesField"/>,
     /// <see cref="SortedDocValuesField"/>, <see cref="StringField"/>,
     /// <see cref="TextField"/>, <see cref="StoredField"/>.
@@ -44,7 +44,7 @@ namespace Lucene.Net.Documents
     /// <para/> A field is a section of a <see cref="Document"/>. Each field has three
     /// parts: name, type and value. Values may be text
     /// (<see cref="string"/>, <see cref="TextReader"/> or pre-analyzed <see cref="TokenStream"/>), binary
-    /// (<see cref="T:byte[]"/>), or numeric (<see cref="int"/>, <see cref="long"/>, <see cref="float"/>, or <see cref="double"/>). 
+    /// (<see cref="T:byte[]"/>), or numeric (<see cref="int"/>, <see cref="long"/>, <see cref="float"/>, or <see cref="double"/>).
     /// Fields are optionally stored in the
     /// index, so that they may be returned with hits on the document.
     ///
@@ -72,7 +72,7 @@ namespace Lucene.Net.Documents
         private object fieldsData;
 
         /// <summary>
-        /// Field's value 
+        /// Field's value
         /// <para/>
         /// Setting this property will automatically set the backing field for the
         /// <see cref="NumericType"/> property.
@@ -320,7 +320,7 @@ namespace Lucene.Net.Documents
         /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
         /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
         // LUCENENET specific overload.
-        public virtual string GetStringValue(IFormatProvider provider) 
+        public virtual string GetStringValue(IFormatProvider provider)
         {
             return GetStringValue(null, provider);
         }
@@ -333,7 +333,7 @@ namespace Lucene.Net.Documents
         /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
         /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
         // LUCENENET specific overload.
-        public virtual string GetStringValue(string format) 
+        public virtual string GetStringValue(string format)
         {
             return GetStringValue(format, null);
         }
@@ -411,7 +411,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Expert: change the value of this field. See 
+        /// Expert: change the value of this field. See
         /// <see cref="SetStringValue(string)"/>.
         /// </summary>
         public virtual void SetReaderValue(TextReader value)
@@ -532,7 +532,7 @@ namespace Lucene.Net.Documents
 
         // LUCENENET TODO: Add SetValue() overloads for each type?
         // Upside: Simpler API.
-        // Downside: Must be vigilant about what type is passed or the wrong overload will be called and will get a runtime exception. 
+        // Downside: Must be vigilant about what type is passed or the wrong overload will be called and will get a runtime exception.
 
         /// <summary>
         /// Expert: sets the token stream to be used for indexing and causes
@@ -602,15 +602,15 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Gets the <see cref="NumericFieldType"/> of the underlying value, or <see cref="NumericFieldType.NONE"/> if the value is not set or non-numeric.
         /// <para/>
-        /// Expert: The difference between this property and <see cref="FieldType.NumericType"/> is 
+        /// Expert: The difference between this property and <see cref="FieldType.NumericType"/> is
         /// this is represents the current state of the field (whether being written or read) and the
         /// <see cref="FieldType"/> property represents instructions on how the field will be written,
         /// but does not re-populate when reading back from an index (it is write-only).
         /// <para/>
-        /// In Java, the numeric type was determined by checking the type of  
+        /// In Java, the numeric type was determined by checking the type of
         /// <see cref="GetNumericValue()"/>. However, since there are no reference number
         /// types in .NET, using <see cref="GetNumericValue()"/> so will cause boxing/unboxing. It is
-        /// therefore recommended to use this property to check the underlying type and the corresponding 
+        /// therefore recommended to use this property to check the underlying type and the corresponding
         /// <c>Get*Value()</c> method to retrieve the value.
         /// <para/>
         /// NOTE: Since Lucene codecs do not support <see cref="NumericFieldType.BYTE"/> or <see cref="NumericFieldType.INT16"/>,
@@ -770,7 +770,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Prints a <see cref="Field"/> for human consumption. 
+        /// Prints a <see cref="Field"/> for human consumption.
         /// </summary>
         /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
         // LUCENENET specific - method added for better .NET compatibility
@@ -954,12 +954,9 @@ namespace Lucene.Net.Documents
                 used = false;
             }
 
-            protected override void Dispose(bool disposing)
+            protected override void DoClose()
             {
-                if (disposing)
-                {
-                    value = null;
-                }
+                value = null;
             }
         }
 
@@ -985,7 +982,7 @@ namespace Lucene.Net.Documents
         //
 
         /// <summary>
-        /// Specifies whether and how a field should be indexed. 
+        /// Specifies whether and how a field should be indexed.
         /// </summary>
         [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public enum Index
@@ -1035,13 +1032,13 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Specifies whether and how a field should have term vectors. 
+        /// Specifies whether and how a field should have term vectors.
         /// </summary>
         [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public enum TermVector
         {
             /// <summary>
-            /// Do not store term vectors. 
+            /// Do not store term vectors.
             /// </summary>
             NO,
 
@@ -1197,7 +1194,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create a tokenized and indexed field that is not stored, optionally with 
+        /// Create a tokenized and indexed field that is not stored, optionally with
         /// storing term vectors.  The <see cref="TextReader"/> is read only when the <see cref="Document"/> is added to the index,
         /// i.e. you may not close the <see cref="TextReader"/> until <see cref="IndexWriter.AddDocument(System.Collections.Generic.IEnumerable{IIndexableField})"/>
         /// has been called.
@@ -1229,7 +1226,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create a tokenized and indexed field that is not stored, optionally with 
+        /// Create a tokenized and indexed field that is not stored, optionally with
         /// storing term vectors.  This is useful for pre-analyzed fields.
         /// The <see cref="TokenStream"/> is read only when the <see cref="Document"/> is added to the index,
         /// i.e. you may not close the <see cref="TokenStream"/> until <see cref="IndexWriter.AddDocument(System.Collections.Generic.IEnumerable{IIndexableField})"/>
@@ -1412,7 +1409,7 @@ namespace Lucene.Net.Documents
         }
 
         [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
-        public static Field.Index ToIndex(bool indexed, bool analyzed, bool omitNorms) 
+        public static Field.Index ToIndex(bool indexed, bool analyzed, bool omitNorms)
         {
             // If it is not indexed nothing else matters
             if (!indexed)
@@ -1473,8 +1470,8 @@ namespace Lucene.Net.Documents
     // LUCENENET specific
     // Since we have more numeric types on Field than on FieldType,
     // a new enumeration was created for .NET. In Java, this type was
-    // determined by checking the data type of the Field.numericValue() 
-    // method. However, since the corresponding GetNumericValue() method 
+    // determined by checking the data type of the Field.numericValue()
+    // method. However, since the corresponding GetNumericValue() method
     // in .NET returns type object (which would result in boxing/unboxing),
     // this has been refactored to use an enumeration instead, which makes the
     // API easier to use.
@@ -1511,7 +1508,7 @@ namespace Lucene.Net.Documents
         SINGLE,
 
         /// <summary>
-        /// 64-bit double numeric type 
+        /// 64-bit double numeric type
         /// </summary>
         DOUBLE
     }

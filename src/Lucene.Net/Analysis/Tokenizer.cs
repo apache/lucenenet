@@ -33,11 +33,13 @@ namespace Lucene.Net.Analysis
     public abstract class Tokenizer : TokenStream
     {
         /// <summary>
-        /// The text source for this <see cref="Tokenizer"/>. </summary>
+        /// The text source for this <see cref="Tokenizer"/>.
+        /// </summary>
         protected TextReader m_input = ILLEGAL_STATE_READER;
 
         /// <summary>
-        /// Pending reader: not actually assigned to input until <see cref="Reset()"/> </summary>
+        /// Pending reader: not actually assigned to input until <see cref="Reset()"/>
+        /// </summary>
         private TextReader inputPending = ILLEGAL_STATE_READER;
 
         /// <summary>
@@ -57,11 +59,23 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Releases resources associated with this stream.
-        /// <para/>
-        /// If you override this method, always call <c>base.Dispose(disposing)</c>, otherwise
-        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
-        /// throw <see cref="InvalidOperationException"/> on reuse).
+        /// <inheritdoc cref="TokenStream.DoClose()"/>
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific - overriding <see cref="TokenStream.DoClose()"/> instead of
+        /// <see cref="TokenStream.Close()"/> so that this is reused with <see cref="TokenStream.Dispose(bool)"/>.
+        /// </remarks>
+        protected override void DoClose()
+        {
+            m_input.Dispose();
+            // LUCENE-2387: don't hold onto Reader after close, so
+            // GC can reclaim
+            inputPending = m_input = ILLEGAL_STATE_READER;
+            base.DoClose();
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="TokenStream.Dispose(bool)"/>
         /// </summary>
         /// <remarks>
         /// <b>NOTE:</b>
@@ -72,12 +86,7 @@ namespace Lucene.Net.Analysis
         {
             if (disposing)
             {
-                m_input.Dispose();
                 inputPending.Dispose(); // LUCENENET specific: call dispose on input pending
-                // LUCENE-2387: don't hold onto TextReader after close, so
-                // GC can reclaim
-                inputPending = ILLEGAL_STATE_READER;
-                m_input = ILLEGAL_STATE_READER;
             }
             base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
         }
@@ -102,7 +111,7 @@ namespace Lucene.Net.Analysis
         {
             if (input is null)
             {
-                throw new ArgumentNullException(nameof(input), "input must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentNullException(nameof(input), "input must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
             else if (this.m_input != ILLEGAL_STATE_READER)
             {
@@ -131,7 +140,7 @@ namespace Lucene.Net.Analysis
         {
             public override int Read(char[] cbuf, int off, int len)
             {
-                throw IllegalStateException.Create("TokenStream contract violation: Reset()/Dispose() call missing, " 
+                throw IllegalStateException.Create("TokenStream contract violation: Reset()/Dispose() call missing, "
                     + "Reset() called multiple times, or subclass does not call base.Reset(). "
                     + "Please see the documentation of TokenStream class for more information about the correct consuming workflow.");
             }

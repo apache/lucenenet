@@ -597,12 +597,10 @@ namespace Lucene.Net.Index
                 return true;
             }
 
-            protected override void Dispose(bool disposing)
+            protected override void DoClose()
             {
-                if (disposing)
-                {
-                    pool.Release(payload);
-                }
+                pool.Release(payload);
+                base.DoClose();
             }
         }
 
