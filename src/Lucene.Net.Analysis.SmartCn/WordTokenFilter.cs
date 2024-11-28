@@ -119,11 +119,11 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// <remarks>
         /// LUCENENET specific
         /// </remarks>
-        protected override void DoClose()
+        public override void Close()
         {
             tokenIter?.Dispose(); // LUCENENET specific - dispose tokenIter and set to null
             tokenIter = null;
-            base.DoClose();
+            base.Close();
         }
     }
 }

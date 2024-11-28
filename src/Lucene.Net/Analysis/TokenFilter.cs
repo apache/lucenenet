@@ -56,15 +56,12 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// <inheritdoc cref="TokenStream.DoClose()"/>
+        /// <inheritdoc cref="TokenStream.Close()"/>
         /// </summary>
-        /// <remarks>
-        /// LUCENENET specific - overriding <see cref="TokenStream.DoClose()"/> instead of
-        /// <see cref="TokenStream.Close()"/> so that this is reused with <see cref="TokenStream.Dispose(bool)"/>.
-        /// </remarks>
-        protected override void DoClose()
+        public override void Close()
         {
-            m_input.Dispose();
+            m_input.Close();
+            base.Close();
         }
 
         /// <summary>
@@ -78,7 +75,6 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             m_input.Reset();
-            base.Reset(); // LUCENENET specific - added to ensure base class is reset
         }
     }
 }

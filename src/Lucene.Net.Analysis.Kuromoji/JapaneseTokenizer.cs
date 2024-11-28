@@ -233,9 +233,9 @@ namespace Lucene.Net.Analysis.Ja
             set => this.dotOut = value;
         }
 
-        protected override void DoClose()
+        public override void Close()
         {
-            base.DoClose();
+            base.Close();
             buffer.Reset(m_input);
         }
 

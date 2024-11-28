@@ -203,10 +203,14 @@ namespace Lucene.Net.Spatial.Prefix
             /// <remarks>
             /// LUCENENET specific
             /// </remarks>
-            protected override void DoClose()
+            protected override void Dispose(bool disposing)
             {
-                iter.Dispose(); // LUCENENET specific - dispose iter
-                base.DoClose();
+                if (disposing)
+                {
+                    iter.Dispose(); // LUCENENET specific - dispose iter, can't be reused above
+                }
+
+                base.Dispose(disposing);
             }
         }
 

@@ -305,9 +305,9 @@ namespace Lucene.Net.Analysis
             streamState = State.RESET;
         }
 
-        protected override void DoClose()
+        public override void Close()
         {
-            base.DoClose();
+            base.Close();
             // in some exceptional cases (e.g. TestIndexWriterExceptions) a test can prematurely close()
             // these tests should disable this check, by default we check the normal workflow.
             // TODO: investigate the CachingTokenFilter "double-close"... for now we ignore this

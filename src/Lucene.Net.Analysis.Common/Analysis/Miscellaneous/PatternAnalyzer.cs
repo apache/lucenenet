@@ -436,9 +436,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.offsetAtt.SetOffset(finalOffset, finalOffset);
             }
 
-            protected override void DoClose()
+            public override void Close()
             {
-                base.DoClose();
+                base.Close();
                 this.initialized = false;
             }
 
@@ -570,9 +570,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return stopWords != null && stopWords.Contains(text);
             }
 
-            protected override void DoClose()
+            public override void Close()
             {
-                base.DoClose();
+                base.Close();
                 this.str = null;
             }
 

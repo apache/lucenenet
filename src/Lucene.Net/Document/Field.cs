@@ -954,7 +954,7 @@ namespace Lucene.Net.Documents
                 used = false;
             }
 
-            protected override void DoClose()
+            public override void Close()
             {
                 value = null;
             }

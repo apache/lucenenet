@@ -107,11 +107,11 @@ namespace Lucene.Net.Analysis
         /// <remarks>
         /// LUCENENET specific
         /// </remarks>
-        protected override void DoClose()
+        public override void Close()
         {
             iterator?.Dispose();
             iterator = null;
-            base.DoClose();
+            base.Close();
         }
     }
 }

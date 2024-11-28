@@ -317,11 +317,15 @@ namespace Lucene.Net.Index.Memory
             /// <remarks>
             /// LUCENENET specific
             /// </remarks>
-            protected override void DoClose()
+            protected override void Dispose(bool disposing)
             {
-                iter?.Dispose(); // LUCENENET specific - dispose iter and set to null
-                iter = null;
-                base.DoClose();
+                if (disposing)
+                {
+                    iter?.Dispose(); // LUCENENET specific - dispose iter and set to null, can't be reused
+                    iter = null;
+                }
+
+                base.Dispose(disposing);
             }
         }
 
