@@ -197,20 +197,10 @@ namespace Lucene.Net.Spatial.Prefix
                 return false;
             }
 
-            /// <summary>
-            /// Releases resources used by the <see cref="CellTokenStream"/>.
-            /// </summary>
-            /// <remarks>
-            /// LUCENENET specific
-            /// </remarks>
-            protected override void Dispose(bool disposing)
+            public override void Close()
             {
-                if (disposing)
-                {
-                    iter.Dispose(); // LUCENENET specific - dispose iter, can't be reused above
-                }
-
-                base.Dispose(disposing);
+                iter.Dispose();
+                base.Close();
             }
         }
 

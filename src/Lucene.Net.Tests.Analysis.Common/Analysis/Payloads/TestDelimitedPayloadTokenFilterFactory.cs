@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Payloads
                 assertEquals(0.1f, payFloat, 0.0f);
             }
             stream.End();
-            stream.Dispose();
+            stream.Close();
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Payloads
                 assertEquals(0.1f, payFloat, 0.0f);
             }
             stream.End();
-            stream.Dispose();
+            stream.Close();
         }
 
         /// <summary>

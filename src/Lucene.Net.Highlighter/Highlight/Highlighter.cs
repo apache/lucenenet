@@ -328,7 +328,7 @@ namespace Lucene.Net.Search.Highlight
                     try
                     {
                         tokenStream.End();
-                        tokenStream.Dispose();
+                        tokenStream.Close();
                     }
                     catch (Exception e) when (e.IsException())
                     {

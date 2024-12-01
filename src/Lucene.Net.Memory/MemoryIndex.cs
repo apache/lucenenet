@@ -242,17 +242,26 @@ namespace Lucene.Net.Index.Memory
                 throw new ArgumentNullException(nameof(analyzer), "analyzer must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
-            TokenStream stream;
+            // LUCENENET specific: dispose of the TokenStream when done here, instead of in AddField
+            TokenStream stream = null;
             try
             {
-                stream = analyzer.GetTokenStream(fieldName, text);
-            }
-            catch (Exception ex) when (ex.IsIOException())
-            {
-                throw RuntimeException.Create(ex);
-            }
+                try
+                {
+                    stream = analyzer.GetTokenStream(fieldName, text);
+                }
+                catch (Exception ex) when (ex.IsIOException())
+                {
+                    throw RuntimeException.Create(ex);
+                }
 
-            AddField(fieldName, stream, 1.0f, analyzer.GetPositionIncrementGap(fieldName), analyzer.GetOffsetGap(fieldName));
+                AddField(fieldName, stream, 1.0f, analyzer.GetPositionIncrementGap(fieldName),
+                    analyzer.GetOffsetGap(fieldName));
+            }
+            finally
+            {
+                stream?.Close();
+            }
         }
 
         /// <summary>
@@ -311,21 +320,11 @@ namespace Lucene.Net.Index.Memory
                 return true;
             }
 
-            /// <summary>
-            /// Releases resources used by the <see cref="TokenStreamAnonymousClass{T}"/>.
-            /// </summary>
-            /// <remarks>
-            /// LUCENENET specific
-            /// </remarks>
-            protected override void Dispose(bool disposing)
+            public override void Close()
             {
-                if (disposing)
-                {
-                    iter?.Dispose(); // LUCENENET specific - dispose iter and set to null, can't be reused
-                    iter = null;
-                }
-
-                base.Dispose(disposing);
+                iter?.Dispose(); // LUCENENET specific - dispose iter and set to null, can't be reused
+                iter = null;
+                base.Close();
             }
         }
 
@@ -502,7 +501,7 @@ namespace Lucene.Net.Index.Memory
                 {
                     if (stream != null)
                     {
-                        stream.Dispose();
+                        stream.Close();
                     }
                 }
                 catch (Exception e2) when (e2.IsIOException())

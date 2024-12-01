@@ -143,7 +143,32 @@ namespace Lucene.Net.Util
         /// <param name="objects">         Objects to call <see cref="ICloseable.Close()"/> on. </param>
         public static void CloseWhileHandlingException(Exception priorException, params ICloseable[] objects)
         {
-            throw new NotImplementedException("TODO: determine if these are still needed, they don't exist upstream");
+            Exception th = null;
+
+            foreach (ICloseable @object in objects)
+            {
+                try
+                {
+                    @object?.Close();
+                }
+                catch (Exception t) when (t.IsThrowable())
+                {
+                    AddSuppressed(priorException ?? th, t);
+                    if (th is null)
+                    {
+                        th = t;
+                    }
+                }
+            }
+
+            if (priorException != null)
+            {
+                ExceptionDispatchInfo.Capture(priorException).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
+            }
+            else
+            {
+                ReThrow(th);
+            }
         }
 
         /// <summary>
@@ -152,7 +177,32 @@ namespace Lucene.Net.Util
         /// <seealso cref="CloseWhileHandlingException(Exception, ICloseable[])"/>
         public static void CloseWhileHandlingException(Exception priorException, IEnumerable<ICloseable> objects)
         {
-            throw new NotImplementedException("TODO: determine if these are still needed, they don't exist upstream");
+            Exception th = null;
+
+            foreach (ICloseable @object in objects)
+            {
+                try
+                {
+                    @object?.Close();
+                }
+                catch (Exception t) when (t.IsThrowable())
+                {
+                    AddSuppressed(priorException ?? th, t);
+                    if (th is null)
+                    {
+                        th = t;
+                    }
+                }
+            }
+
+            if (priorException != null)
+            {
+                ExceptionDispatchInfo.Capture(priorException).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
+            }
+            else
+            {
+                ReThrow(th);
+            }
         }
 
         /// <summary>
