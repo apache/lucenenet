@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.TokenAttributes.Extensions
         /// Sets the length of the termBuffer to zero.
         /// Use this method before appending contents.
         /// <para />
-        /// NOTE: This is exactly the same operation as calling <see cref="Lucene.Net.Util.IAttribute.Clear()"/>, the primary
+        /// NOTE: This is exactly the same operation as calling <see cref="ICharTermAttribute.Clear()"/>, the primary
         /// difference is that this method returns a reference to the current object so it can be chained.
         /// <code>
         /// obj.SetEmpty().Append("hey you");
