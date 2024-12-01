@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis
     ///         consuming the attributes after each call.</description></item>
     ///     <item><description>The consumer calls <see cref="End()"/> so that any end-of-stream operations
     ///         can be performed.</description></item>
-    ///     <item><description>The consumer calls <see cref="Dispose()"/> to release any resource when finished
+    ///     <item><description>The consumer calls <see cref="Close()"/> to release any resource when finished
     ///         using the <see cref="TokenStream"/>.</description></item>
     /// </list>
     /// To make sure that filters and consumers know which attributes are available,
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis
     /// Therefore all non-abstract subclasses must be sealed or have at least a sealed
     /// implementation of <see cref="IncrementToken()"/>! This is checked when assertions are enabled.
     /// </summary>
-    public abstract class TokenStream : AttributeSource, ICloseable, IDisposable
+    public abstract class TokenStream : AttributeSource, ICloseable
     {
         /// <summary>
         /// A <see cref="TokenStream"/> using the default attribute factory.
@@ -187,33 +187,10 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <remarks>
         /// LUCENENET notes - this is intended to release resources in a way that allows the
-        /// object to be reused, so it is not the same as <see cref="Dispose()"/>. If you need
-        /// to release resources that cannot be reused, override <see cref="Dispose(bool)"/> instead.
+        /// object to be reused, so it is not the same as <see cref="IDisposable"/>.
         /// </remarks>
         public virtual void Close()
         {
-        }
-
-        // LUCENENET specific - implementing proper dispose pattern
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases resources associated with this stream.
-        /// <para/>
-        /// If you override this method, always call <c>base.Dispose(disposing)</c>, otherwise
-        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
-        /// throw <see cref="InvalidOperationException"/> on reuse).
-        /// </summary>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Close();
-            }
         }
     }
 }

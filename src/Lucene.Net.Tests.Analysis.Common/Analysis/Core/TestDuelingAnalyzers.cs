@@ -28,9 +28,9 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// Compares MockTokenizer (which is simple with no optimizations) with equivalent 
+    /// Compares MockTokenizer (which is simple with no optimizations) with equivalent
     /// core tokenizers (that have optimizations like buffering).
-    /// 
+    ///
     /// Any tests here need to probably consider unicode version of the JRE (it could
     /// cause false fails).
     /// </summary>
@@ -195,8 +195,8 @@ namespace Lucene.Net.Analysis.Core
             left.End();
             right.End();
             assertEquals("wrong final offset for input: " + s, leftOffset.EndOffset, rightOffset.EndOffset);
-            left.Dispose();
-            right.Dispose();
+            left.Close();
+            right.Close();
         }
 
         // TODO: maybe push this out to TestUtil or LuceneTestCase and always use it instead?

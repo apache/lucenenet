@@ -33,12 +33,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
             ts.Reset();
             assertFalse(ts.IncrementToken());
             ts.End();
-            ts.Dispose();
+            ts.Close();
             // try again with reuse:
             ts.Reset();
             assertFalse(ts.IncrementToken());
             ts.End();
-            ts.Dispose();
+            ts.Close();
         }
 
         [Test]

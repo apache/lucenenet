@@ -1305,6 +1305,7 @@ namespace Lucene.Net.Search.Highlight
                 for (int i = 0; i < hits.TotalHits; i++)
                 {
                     String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
+                    // TODO: #271 review disposable
                     TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                     Highlighter highlighter = instance.GetHighlighter(query, FIELD_NAME,

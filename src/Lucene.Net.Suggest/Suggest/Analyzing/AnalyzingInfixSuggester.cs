@@ -45,19 +45,19 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// Analyzes the input text and then suggests matches based
     ///  on prefix matches to any tokens in the indexed text.
     ///  This also highlights the tokens that match.
-    /// 
+    ///
     ///  <para>This suggester supports payloads.  Matches are sorted only
     ///  by the suggest weight; it would be nice to support
     ///  blended score + weight sort in the future.  This means
     ///  this suggester best applies when there is a strong
     ///  a-priori ranking of all the suggestions.
-    /// 
+    ///
     /// </para>
     ///  <para>This suggester supports contexts, however the
     ///  contexts must be valid utf8 (arbitrary binary terms will
     ///  not work).
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </para>
     /// </summary>
 
@@ -71,13 +71,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Field name used for the indexed text, as a
-        /// <see cref="StringField"/>, for exact lookup. 
+        /// <see cref="StringField"/>, for exact lookup.
         /// </summary>
         protected const string EXACT_TEXT_FIELD_NAME = "exacttext";
 
         /// <summary>
         /// Field name used for the indexed context, as a
-        /// <see cref="StringField"/> and a <see cref="SortedSetDocValuesField"/>, for filtering. 
+        /// <see cref="StringField"/> and a <see cref="SortedSetDocValuesField"/>, for filtering.
         /// </summary>
         protected const string CONTEXTS_FIELD_NAME = "contexts";
 
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Default minimum number of leading characters before
-        ///  PrefixQuery is used (4). 
+        ///  PrefixQuery is used (4).
         /// </summary>
         public const int DEFAULT_MIN_PREFIX_CHARS = 4;
 
@@ -114,11 +114,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Create a new instance, loading from a previously built
-        /// <see cref="AnalyzingInfixSuggester"/> directory, if it exists. 
+        /// <see cref="AnalyzingInfixSuggester"/> directory, if it exists.
         /// This directory must be
         /// private to the infix suggester (i.e., not an external
         /// Lucene index).  Note that <see cref="Dispose()"/>
-        /// will also dispose the provided directory. 
+        /// will also dispose the provided directory.
         /// </summary>
         public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer analyzer)
             : this(matchVersion, dir, analyzer, analyzer, DEFAULT_MIN_PREFIX_CHARS)
@@ -212,13 +212,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        /// LUCENENET specific - moved IndexWriterConfig GetIndexWriterConfig to 
+        /// LUCENENET specific - moved IndexWriterConfig GetIndexWriterConfig to
         /// <see cref="AnalyzingInfixSuggesterIndexWriterConfigFactory"/> class
         /// to allow for customizing the index writer config.
 
         /// <summary>
-        /// Subclass can override to choose a specific 
-        /// <see cref="Directory"/> implementation. 
+        /// Subclass can override to choose a specific
+        /// <see cref="Directory"/> implementation.
         /// </summary>
         protected internal virtual Directory GetDirectory(DirectoryInfo path)
         {
@@ -365,11 +365,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// instead if you want to replace a previous suggestion.
         /// After adding or updating a batch of new suggestions,
         /// you must call <see cref="Refresh()"/> in the end in order to
-        /// see the suggestions in <see cref="DoLookup(string, IEnumerable{BytesRef}, int, bool, bool)"/> 
+        /// see the suggestions in <see cref="DoLookup(string, IEnumerable{BytesRef}, int, bool, bool)"/>
         /// </summary>
         public virtual void Add(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
-            EnsureOpen();    //LUCENENET specific -Support for LUCENE - 5889.       
+            EnsureOpen();    //LUCENENET specific -Support for LUCENE - 5889.
             writer.AddDocument(BuildDocument(text, contexts, weight, payload));
         }
 
@@ -377,10 +377,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Updates a previous suggestion, matching the exact same
         /// text as before.  Use this to change the weight or
         /// payload of an already added suggstion.  If you know
-        /// this text is not already present you can use <see cref="Add"/> 
+        /// this text is not already present you can use <see cref="Add"/>
         /// instead.  After adding or updating a batch of
         /// new suggestions, you must call <see cref="Refresh()"/> in the
-        /// end in order to see the suggestions in <see cref="DoLookup(string, IEnumerable{BytesRef}, int, bool, bool)"/> 
+        /// end in order to see the suggestions in <see cref="DoLookup(string, IEnumerable{BytesRef}, int, bool, bool)"/>
         /// </summary>
         public virtual void Update(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
@@ -419,7 +419,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Reopens the underlying searcher; it's best to "batch
         /// up" many additions/updates, and then call refresh
-        /// once in the end. 
+        /// once in the end.
         /// </summary>
         public virtual void Refresh()
         {
@@ -459,7 +459,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// This is called if the last token isn't ended
         /// (e.g. user did not type a space after it).  Return an
-        /// appropriate <see cref="Query"/> clause to add to the <see cref="BooleanQuery"/>. 
+        /// appropriate <see cref="Query"/> clause to add to the <see cref="BooleanQuery"/>.
         /// </summary>
         protected internal virtual Query GetLastTokenQuery(string token)
         {
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Retrieve suggestions, specifying whether all terms
         ///  must match (<paramref name="allTermsRequired"/>) and whether the hits
-        ///  should be highlighted (<paramref name="doHighlight"/>). 
+        ///  should be highlighted (<paramref name="doHighlight"/>).
         /// </summary>
         public virtual IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
         {
@@ -577,7 +577,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
 
             // TODO: we could allow blended sort here, combining
@@ -692,7 +692,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Subclass can override this to tweak the Query before
-        /// searching. 
+        /// searching.
         /// </summary>
         protected internal virtual Query FinishQuery(BooleanQuery bq, bool allTermsRequired)
         {
@@ -703,7 +703,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Override this method to customize the Object
         /// representing a single highlighted suggestions; the
         /// result is set on each <see cref="Lookup.LookupResult.HighlightKey"/>
-        /// member. 
+        /// member.
         /// </summary>
         protected internal virtual object Highlight(string text, ICollection<string> matchedTokens, string prefixToken)
         {
@@ -752,7 +752,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 

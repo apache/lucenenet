@@ -76,7 +76,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     continue;
                 }
 
-                using TokenStream stream = field.GetTokenStream(analyzer);
+                TokenStream stream = field.GetTokenStream(analyzer);
                 // reset the TokenStream to the first token
                 stream.Reset();
 
@@ -87,6 +87,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     tokenCount++;
                 }
                 stream.End();
+                stream.Close();
             }
             totalTokenCount += tokenCount;
             return tokenCount;

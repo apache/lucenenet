@@ -123,11 +123,11 @@ namespace Lucene.Net.Analysis.OpenNlp
             //ts.SetReader(new StringReader(SENTENCES));
 
             ts.Reset();
-            ts.Dispose();
+            ts.Close();
             ts.Reset();
             ts.SetReader(new StringReader(SENTENCES));
             AssertTokenStreamContents(ts, SENTENCES_punc);
-            ts.Dispose();
+            ts.Close();
             ts.Reset();
             ts.SetReader(new StringReader(SENTENCES));
             AssertTokenStreamContents(ts, SENTENCES_punc);

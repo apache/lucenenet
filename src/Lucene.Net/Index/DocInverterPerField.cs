@@ -223,11 +223,11 @@ namespace Lucene.Net.Index
                     {
                         if (!succeededInProcessingField)
                         {
-                            IOUtils.DisposeWhileHandlingException(stream);
+                            IOUtils.CloseWhileHandlingException(stream);
                         }
                         else
                         {
-                            stream.Dispose();
+                            stream.Close();
                         }
                         if (!succeededInProcessingField && docState.infoStream.IsEnabled("DW"))
                         {

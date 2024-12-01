@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Pattern
                 termAtt.SetEmpty().Append("bogusTerm");
             }
 
-            @in.Dispose();
+            @in.Close();
             return @out.ToString();
         }
 

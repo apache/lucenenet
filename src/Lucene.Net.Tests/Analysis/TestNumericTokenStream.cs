@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestLongStream()
         {
-            using NumericTokenStream stream = new NumericTokenStream().SetInt64Value(lvalue);
+            NumericTokenStream stream = new NumericTokenStream().SetInt64Value(lvalue);
             // use getAttribute to test if attributes really exist, if not an IAE will be throwed
             ITermToBytesRefAttribute bytesAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
             ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
@@ -55,14 +55,13 @@ namespace Lucene.Net.Analysis
             }
             Assert.IsFalse(stream.IncrementToken(), "More tokens available");
             stream.End();
-            // LUCENENET specific - stream disposed above via using statement
-            // stream.Dispose();
+            stream.Close();
         }
 
         [Test]
         public virtual void TestIntStream()
         {
-            using NumericTokenStream stream = new NumericTokenStream().SetInt32Value(ivalue);
+            NumericTokenStream stream = new NumericTokenStream().SetInt32Value(ivalue);
             // use getAttribute to test if attributes really exist, if not an IAE will be throwed
             ITermToBytesRefAttribute bytesAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
             ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
@@ -81,8 +80,7 @@ namespace Lucene.Net.Analysis
             }
             Assert.IsFalse(stream.IncrementToken(), "More tokens available");
             stream.End();
-            // LUCENENET specific - stream disposed above via using statement
-            // stream.Dispose();
+            stream.Close();
         }
 
         [Test]

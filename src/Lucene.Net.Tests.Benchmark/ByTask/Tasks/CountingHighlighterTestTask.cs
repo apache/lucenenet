@@ -58,8 +58,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             public override int DoHighlight(IndexReader reader, int doc, string field, Document document, Analyzer analyzer, string text)
             {
                 TokenStream ts = TokenSources.GetAnyTokenStream(reader, doc, field, document, analyzer);
-                TextFragment[]
-                frag = highlighter.GetBestTextFragments(ts, text, outerInstance.m_mergeContiguous, outerInstance.m_maxFrags);
+                TextFragment[] frag = highlighter.GetBestTextFragments(ts, text, outerInstance.m_mergeContiguous, outerInstance.m_maxFrags);
                 numHighlightedResults += frag != null ? frag.Length : 0;
                 return frag != null ? frag.Length : 0;
             }
@@ -71,7 +70,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return new BenchmarkHighlighterAnonymousClass(this, m_highlighter);
             //        return new BenchmarkHighlighter() {
             //  @Override
-            //  public int doHighlight(IndexReader reader, int doc, String field, Document document, Analyzer analyzer, String text) 
+            //  public int doHighlight(IndexReader reader, int doc, String field, Document document, Analyzer analyzer, String text)
             //    {
             //        TokenStream ts = TokenSources.GetAnyTokenStream(reader, doc, field, document, analyzer);
             //        TextFragment []

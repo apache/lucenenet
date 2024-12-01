@@ -217,14 +217,26 @@ namespace Lucene.Net.Analysis
             String testString = "t";
 
             Analyzer analyzer = new MockAnalyzer(Random);
-            using (TokenStream stream = analyzer.GetTokenStream("dummy", testString))
+            Exception priorException = null;
+            TokenStream stream = analyzer.GetTokenStream("dummy", testString);
+
+            try
             {
                 stream.Reset();
                 while (stream.IncrementToken())
                 {
                     // consume
                 }
+
                 stream.End();
+            }
+            catch (Exception e)
+            {
+                priorException = e;
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(priorException, stream);
             }
 
             AssertAnalyzesTo(analyzer, testString, new String[] { "t" });
@@ -269,13 +281,26 @@ namespace Lucene.Net.Analysis
                 StringReader reader = new StringReader(s);
                 MockCharFilter charfilter = new MockCharFilter(reader, 2);
                 MockAnalyzer analyzer = new MockAnalyzer(Random);
-                using TokenStream ts = analyzer.GetTokenStream("bogus", charfilter);
-                ts.Reset();
-                while (ts.IncrementToken())
+                Exception priorException = null;
+                TokenStream ts = analyzer.GetTokenStream("bogus", charfilter);
+                try
                 {
-                    ;
+                    ts.Reset();
+                    while (ts.IncrementToken())
+                    {
+                        ;
+                    }
+
+                    ts.End();
                 }
-                ts.End();
+                catch (Exception e)
+                {
+                    priorException = e;
+                }
+                finally
+                {
+                    IOUtils.CloseWhileHandlingException(priorException, ts);
+                }
             }
         }
 

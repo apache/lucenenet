@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -25,7 +26,7 @@ namespace Lucene.Net.Analysis.Pl
     public class TestPolishAnalyzer : BaseTokenStreamTestCase
     {
         /// <summary>
-        /// This test fails with NPE when the 
+        /// This test fails with NPE when the
         /// stopwords file is missing in classpath
         /// </summary>
         [Test]
@@ -71,13 +72,13 @@ namespace Lucene.Net.Analysis.Pl
         }
 
         /// <summary>
-        /// LUCENENET specific. The original Java implementation relied on String.subSequence(int, int) to throw an IndexOutOfBoundsException 
-        /// (in .NET, it would be string.SubString(int, int) and an ArgumentOutOfRangeException). 
-        /// However, the logic was corrected for .NET to test when the argument is negative and not 
+        /// LUCENENET specific. The original Java implementation relied on String.subSequence(int, int) to throw an IndexOutOfBoundsException
+        /// (in .NET, it would be string.SubString(int, int) and an ArgumentOutOfRangeException).
+        /// However, the logic was corrected for .NET to test when the argument is negative and not
         /// throw an exception, since exceptions are expensive and not meant for "normal"
         /// behavior in .NET. This test case was made trying to figure out that issue (since initially an IndexOutOfRangeException,
-        /// rather than ArgumentOutOfRangeException, was in the catch block which made the TestRandomStrings test fail). 
-        /// It will trigger the behavior that cause the second substring argument to be negative 
+        /// rather than ArgumentOutOfRangeException, was in the catch block which made the TestRandomStrings test fail).
+        /// It will trigger the behavior that cause the second substring argument to be negative
         /// (although that behavior no longer throws an exception).
         /// </summary>
         [Test]
@@ -87,14 +88,22 @@ namespace Lucene.Net.Analysis.Pl
             var text = "zyaolz 96619727 p";
             var reader = new StringReader(text);
             int remainder = 2;
-            using var ts = a.GetTokenStream("dummy", (TextReader)new MockCharFilter(reader, remainder));
-            ts.Reset();
+            var ts = a.GetTokenStream("dummy", (TextReader)new MockCharFilter(reader, remainder));
 
-            while (ts.IncrementToken())
+            try
             {
-            }
+                ts.Reset();
 
-            ts.End();
+                while (ts.IncrementToken())
+                {
+                }
+
+                ts.End();
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(ts);
+            }
         }
     }
 }

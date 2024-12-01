@@ -357,7 +357,9 @@ namespace Lucene.Net.Analysis.Synonym
             /// </summary>
             public virtual CharsRef Analyze(string text, CharsRef reuse)
             {
-                using (TokenStream ts = analyzer.GetTokenStream("", text))
+                Exception priorException = null;
+                TokenStream ts = analyzer.GetTokenStream("", text);
+                try
                 {
                     var termAtt = ts.AddAttribute<ICharTermAttribute>();
                     var posIncAtt = ts.AddAttribute<IPositionIncrementAttribute>();
@@ -370,10 +372,12 @@ namespace Lucene.Net.Analysis.Synonym
                         {
                             throw new ArgumentException("term: " + text + " analyzed to a zero-length token");
                         }
+
                         if (posIncAtt.PositionIncrement != 1)
                         {
                             throw new ArgumentException("term: " + text + " analyzed to a token with posinc != 1");
                         }
+
                         reuse.Grow(reuse.Length + length + 1); // current + word + separator
                         int end = reuse.Offset + reuse.Length;
                         if (reuse.Length > 0)
@@ -381,11 +385,21 @@ namespace Lucene.Net.Analysis.Synonym
                             reuse.Chars[end++] = SynonymMap.WORD_SEPARATOR;
                             reuse.Length++;
                         }
+
                         Arrays.Copy(termAtt.Buffer, 0, reuse.Chars, end, length);
                         reuse.Length += length;
                     }
+
                     ts.End();
                 }
+                catch (Exception e) when (e.IsIOException())
+                {
+                    priorException = e;
+                }
+                finally {
+                    IOUtils.CloseWhileHandlingException(priorException, ts);
+                }
+
                 if (reuse.Length == 0)
                 {
                     throw new ArgumentException("term: " + text + " was completely eliminated by analyzer");
