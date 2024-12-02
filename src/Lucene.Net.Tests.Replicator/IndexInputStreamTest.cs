@@ -6,9 +6,6 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
-#if !FEATURE_STREAM_READEXACTLY
-using Lucene.Net.Support;
-#endif
 
 namespace Lucene.Net.Tests.Replicator
 {
@@ -59,7 +56,8 @@ namespace Lucene.Net.Tests.Replicator
             byte[] readBuffer = new byte[readBytes];
             for (int i = section; i > 0; i--)
             {
-                stream.ReadExactly(readBuffer, 0, readBytes); // LUCENENET specific - calling ReadExactly to ensure we read the exact number of bytes
+                var numRead = stream.Read(readBuffer, 0, readBytes); // LUCENENET specific - asserting that we read the entire buffer
+                Assert.AreEqual(readBytes, numRead);
             }
 
             Assert.AreEqual(readBuffer, buffer.Skip((section - 1) * readBytes).Take(readBytes).ToArray());

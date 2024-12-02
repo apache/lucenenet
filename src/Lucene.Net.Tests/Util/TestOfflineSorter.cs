@@ -6,9 +6,6 @@ using System.IO;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Lucene.Net.Attributes;
-#if !FEATURE_STREAM_READEXACTLY
-using Lucene.Net.Support;
-#endif
 
 namespace Lucene.Net.Util
 {
@@ -234,7 +231,8 @@ namespace Lucene.Net.Util
             using Stream is2 = sorted.Open(FileMode.Open, FileAccess.Read, FileShare.Delete);
             while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
             {
-                is2.ReadExactly(buf2, 0, len); // LUCENENET specific - calling ReadExactly to ensure we read the exact number of bytes
+                var numRead = is2.Read(buf2, 0, len); // LUCENENET specific - asserting that we read the entire buffer
+                Assert.AreEqual(len, numRead);
 
                 for (int i = 0; i < len; i++)
                 {
@@ -258,7 +256,8 @@ namespace Lucene.Net.Util
             Stream is2 = sorted;
             while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
             {
-                is2.ReadExactly(buf2, 0, len); // LUCENENET specific - calling ReadExactly to ensure we read the exact number of bytes
+                var numRead = is2.Read(buf2, 0, len); // LUCENENET specific - asserting that we read the entire buffer
+                Assert.AreEqual(len, numRead);
 
                 for (int i = 0; i < len; i++)
                 {

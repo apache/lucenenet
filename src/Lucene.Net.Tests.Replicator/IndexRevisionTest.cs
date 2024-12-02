@@ -7,9 +7,6 @@ using System;
 using System.IO;
 using System.Linq;
 using Directory = Lucene.Net.Store.Directory;
-#if !FEATURE_STREAM_READEXACTLY
-using Lucene.Net.Support;
-#endif
 
 namespace Lucene.Net.Replicator
 {
@@ -163,7 +160,10 @@ namespace Lucene.Net.Replicator
                         offset = skip;
                     }
                     src.ReadBytes(srcBytes, offset, srcBytes.Length - offset);
-                    @in.ReadExactly(inBytes, offset, inBytes.Length - offset); // LUCENENET specific - calling ReadExactly to ensure we read the exact number of bytes
+
+                    var numRead = @in.Read(inBytes, offset, inBytes.Length - offset); // LUCENENET specific - asserting that we read the entire buffer
+                    assertEquals(inBytes.Length - offset, numRead);
+
                     assertArrayEquals(srcBytes, inBytes);
                     IOUtils.Dispose(src, @in);
                 }

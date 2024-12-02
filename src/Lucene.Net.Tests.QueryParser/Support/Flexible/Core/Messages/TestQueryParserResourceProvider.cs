@@ -3,9 +3,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
-#if !FEATURE_STREAM_READEXACTLY
-using Lucene.Net.Support;
-#endif
 
 namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages // LUCENENET: There is no control over the namespace for code generation other than the folder, so we must use this namespace
 {
@@ -100,7 +97,9 @@ namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages // LUCENENET: T
             // Get the expected bytes
             using var expectedStream = GetType().Assembly.GetManifestResourceStream("Lucene.Net.QueryParsers.Support.Flexible.Core.Messages.lucene-net-icon-32x32.png");
             byte[] expectedBytes = new byte[expectedStream.Length];
-            expectedStream.ReadExactly(expectedBytes, 0, (int)expectedStream.Length); // LUCENENET specific - calling ReadExactly to ensure we read the exact number of bytes
+
+            var numRead = expectedStream.Read(expectedBytes, 0, (int)expectedStream.Length); // LUCENENET specific - asserting that we read the entire buffer
+            Assert.AreEqual(expectedStream.Length, numRead);
 
             // Check the wrapper to ensure we can read the bytes
             Assert.AreEqual(expectedBytes, MessagesTest.LUCENE_NET_ICON_32x32);
