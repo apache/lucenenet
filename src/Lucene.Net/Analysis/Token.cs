@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis
     /// Failing that, to create a new <see cref="Token"/> you should first use
     /// one of the constructors that starts with null text.  To load
     /// the token from a char[] use <see cref="ICharTermAttribute.CopyBuffer(char[], int, int)"/>.
-    /// To load from a <see cref="string"/> use <see cref="ICharTermAttribute.Clear()"/> (or <see cref="CharTermAttributeExtensions.SetEmpty(ICharTermAttribute)"/>) followed by
+    /// To load from a <see cref="string"/> use <see cref="ICharTermAttribute.Clear()"/> (or <see cref="CharTermAttributeExtensions.SetEmpty{T}(T)"/>) followed by
     /// <see cref="ICharTermAttribute.Append(string)"/> or <see cref="ICharTermAttribute.Append(string, int, int)"/>.
     /// Alternatively you can get the <see cref="Token"/>'s termBuffer by calling either <see cref="ICharTermAttribute.Buffer"/>,
     /// if you know that your text is shorter than the capacity of the termBuffer

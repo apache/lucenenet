@@ -38,7 +38,8 @@ namespace Lucene.Net.Analysis.TokenAttributes.Extensions
         /// </code>
         /// </summary>
         /// <param name="length">The truncated length</param>
-        public static ICharTermAttribute SetLength(this ICharTermAttribute termAttr, int length)
+        public static T SetLength<T>(this T termAttr, int length)
+            where T : ICharTermAttribute
         {
             if (termAttr is null)
             {
@@ -59,7 +60,8 @@ namespace Lucene.Net.Analysis.TokenAttributes.Extensions
         /// obj.SetEmpty().Append("hey you");
         /// </code>
         /// </summary>
-        public static ICharTermAttribute SetEmpty(this ICharTermAttribute termAttr)
+        public static T SetEmpty<T>(this T termAttr)
+            where T : ICharTermAttribute
         {
             if (termAttr is null)
             {

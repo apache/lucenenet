@@ -73,13 +73,22 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// LUCENENET: To mimic StringBuilder, we allow this to be settable.
         /// This replaces the chainable SetLength method in the Java version.
         /// </remarks>
-        /// <seealso cref="CharTermAttributeExtensions.SetLength(ICharTermAttribute, int)"/>
+        /// <seealso cref="CharTermAttributeExtensions.SetLength{T}(T, int)"/>
         new int Length { get; set; }
 
         // LUCENENET specific: Redefining this[] to make it settable
         new char this[int index] { get; set; }
 
-        // the following methods are redefined to get rid of IOException declaration:
+        /// <summary>
+        /// Clears the values in this attribute and resets it to its
+        /// default value.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific - This method is not part of the Java Lucene API.
+        /// This was added to be a more consistent way to clear attributes than SetEmpty().
+        /// </remarks>
+        /// <seealso cref="CharTermAttributeExtensions.SetEmpty{T}(T)"/>
+        void Clear();
 
         /// <summary>
         /// Appends the contents of the <see cref="ICharSequence"/> to this character sequence.
@@ -272,16 +281,5 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </summary>
         /// <param name="value">The sequence of characters to append.</param>
         ICharTermAttribute Append(ICharTermAttribute value);
-
-        /// <summary>
-        /// Clears the values in this attribute and resets it to its
-        /// default value.
-        /// </summary>
-        /// <remarks>
-        /// LUCENENET specific - This method is not part of the Java Lucene API.
-        /// This was added to be a more consistent way to clear attributes than SetEmpty().
-        /// </remarks>
-        /// <seealso cref="CharTermAttributeExtensions.SetEmpty(ICharTermAttribute)"/>
-        void Clear();
     }
 }
