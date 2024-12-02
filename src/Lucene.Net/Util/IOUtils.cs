@@ -212,8 +212,6 @@ namespace Lucene.Net.Util
         /// <param name="objects">Objects to call <see cref="ICloseable.Close()"/> on</param>
         public static void CloseWhileHandlingException(params ICloseable[] objects)
         {
-            Exception th = null;
-
             foreach (ICloseable @object in objects)
             {
                 try
@@ -222,15 +220,8 @@ namespace Lucene.Net.Util
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
-                    AddSuppressed(th, t);
-                    if (th is null)
-                    {
-                        th = t;
-                    }
                 }
             }
-
-            ReThrow(th);
         }
 
         /// <summary>
@@ -240,8 +231,6 @@ namespace Lucene.Net.Util
         /// <seealso cref="CloseWhileHandlingException(ICloseable[])"/>
         public static void CloseWhileHandlingException(IEnumerable<ICloseable> objects)
         {
-            Exception th = null;
-
             foreach (ICloseable @object in objects)
             {
                 try
@@ -250,15 +239,8 @@ namespace Lucene.Net.Util
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
-                    AddSuppressed(th, t);
-                    if (th is null)
-                    {
-                        th = t;
-                    }
                 }
             }
-
-            ReThrow(th);
         }
 
 
