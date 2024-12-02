@@ -105,7 +105,7 @@ steps:
     & $installScriptPath -Version $sdkVersion -Architecture $architecture -InstallDir $installPath
     Write-Host "##vso[task.setvariable variable=DOTNET_ROOT_X86;]$installPath"
   displayName: 'Use .NET SDK ${{ parameters.dotNetSdkVersion }} (x86)'
-  condition: and(succeeded(), or(contains('${{ parameters.framework }}', 'net8.'), contains('${{ parameters.framework }}', 'net9.')), eq('${{ parameters.vsTestPlatform }}', 'x86'))
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net9.'), eq('${{ parameters.vsTestPlatform }}', 'x86'))
 
 - task: UseDotNet@2
   displayName: 'Use .NET SDK 8.0.404'
