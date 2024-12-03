@@ -71,7 +71,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// </summary>
         /// <remarks>
         /// LUCENENET: To mimic StringBuilder, we allow this to be settable.
-        /// This replaces the chainable SetLength method in the Java version.
+        /// The setter may be used as an alternative to
+        /// <see cref="CharTermAttributeExtensions.SetLength{T}(T, int)"/> if
+        /// chaining is not required.
         /// </remarks>
         /// <seealso cref="CharTermAttributeExtensions.SetLength{T}(T, int)"/>
         new int Length { get; set; }
