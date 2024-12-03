@@ -1,8 +1,6 @@
 ﻿using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -243,22 +241,29 @@ namespace Lucene.Net.Search
             CheckBoosts(new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(1024));
         }
 
-        private void CheckMaxClauseLimitation(MultiTermQuery.RewriteMethod method, [CallerMemberName] string memberName = "")
+        // LUCENENET specific - made static
+        private static void CheckMaxClauseLimitation(MultiTermQuery.RewriteMethod method)
         {
             int savedMaxClauseCount = BooleanQuery.MaxClauseCount;
             BooleanQuery.MaxClauseCount = 3;
 
             MultiTermQuery mtq = TermRangeQuery.NewStringRange("data", "2", "7", true, true);
-            mtq.MultiTermRewriteMethod = (method);
+            mtq.MultiTermRewriteMethod = method;
             try
             {
                 multiSearcherDupls.Rewrite(mtq);
                 Assert.Fail("Should throw BooleanQuery.TooManyClauses");
             }
-            catch (BooleanQuery.TooManyClausesException e)
+            catch (BooleanQuery.TooManyClausesException /*e*/)
             {
+                // LUCENENET: The assertion below fails when Dynamic PGO is enabled (by default in .NET 8+) which can inline
+                // some methods at runtime. This causes the stack trace to be different than expected. Rather than forcing
+                // NoInlining on the method, we will just remove the assertion. It should only matter that the exception is
+                // thrown, not where it is thrown from.
+                // Original comment and assertion below:
+
                 //  Maybe remove this assert in later versions, when internal API changes:
-                Assert.AreEqual("CheckMaxClauseCount", new StackTrace(e, false).GetFrames()[0].GetMethod().Name); //, "Should throw BooleanQuery.TooManyClauses with a stacktrace containing checkMaxClauseCount()");
+                // Assert.AreEqual("CheckMaxClauseCount", new StackTrace(e, false).GetFrames()[0].GetMethod()?.Name, "Should throw BooleanQuery.TooManyClauses with a stacktrace containing checkMaxClauseCount()");
             }
             finally
             {
@@ -266,13 +271,14 @@ namespace Lucene.Net.Search
             }
         }
 
-        private void CheckNoMaxClauseLimitation(MultiTermQuery.RewriteMethod method)
+        // LUCENENET specific - made static
+        private static void CheckNoMaxClauseLimitation(MultiTermQuery.RewriteMethod method)
         {
             int savedMaxClauseCount = BooleanQuery.MaxClauseCount;
             BooleanQuery.MaxClauseCount = 3;
 
             MultiTermQuery mtq = TermRangeQuery.NewStringRange("data", "2", "7", true, true);
-            mtq.MultiTermRewriteMethod = (method);
+            mtq.MultiTermRewriteMethod = method;
             try
             {
                 multiSearcherDupls.Rewrite(mtq);
