@@ -262,7 +262,11 @@ namespace Lucene.Net.Util
             bufferUpto++;
 
             ByteUpto = 0;
-            ByteOffset += BYTE_BLOCK_SIZE;
+
+            checked // LUCENENET specific - added checked to prevent overflow, issue #1003
+            {
+                ByteOffset += BYTE_BLOCK_SIZE;
+            }
         }
 
         /// <summary>

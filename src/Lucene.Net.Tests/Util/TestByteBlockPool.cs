@@ -1,5 +1,7 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Attributes;
+using NUnit.Framework;
 using RandomizedTesting.Generators;
+using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -66,6 +68,55 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(0, bytesUsed);
                     pool.NextBuffer(); // prepare for next iter
                 }
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific] // LUCENENET issue #1003
+        public void TestTooManyAllocs()
+        {
+            // Use a mock allocator that doesn't waste memory
+            ByteBlockPool pool = new ByteBlockPool(new MockAllocator(0));
+            pool.NextBuffer();
+
+            bool throwsException = false;
+            int maxIterations = int.MaxValue / ByteBlockPool.BYTE_BLOCK_SIZE + 1;
+
+            for (int i = 0; i < maxIterations; i++)
+            {
+                try
+                {
+                    pool.NextBuffer();
+                }
+                catch (OverflowException)
+                {
+                    // The offset overflows on the last attempt to call NextBuffer()
+                    throwsException = true;
+                    break;
+                }
+            }
+
+            Assert.IsTrue(throwsException);
+            Assert.IsTrue(pool.ByteOffset + ByteBlockPool.BYTE_BLOCK_SIZE < pool.ByteOffset);
+        }
+
+        private class MockAllocator : ByteBlockPool.Allocator
+        {
+            private readonly byte[] buffer;
+
+            public MockAllocator(int blockSize) : base(blockSize)
+            {
+                buffer = Array.Empty<byte>();
+            }
+
+            public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
+            {
+                // No-op
+            }
+
+            public override byte[] GetByteBlock()
+            {
+                return buffer;
             }
         }
     }
