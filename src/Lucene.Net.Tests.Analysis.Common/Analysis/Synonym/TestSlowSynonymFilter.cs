@@ -2,6 +2,7 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace Lucene.Net.Analysis.Synonym
 
     //using org.apache.lucene.analysis.tokenattributes;
 
-    /// @deprecated Remove this test in Lucene 5.0 
+    /// @deprecated Remove this test in Lucene 5.0
     [Obsolete("Remove this test in Lucene 5.0")]
     public class TestSlowSynonymFilter : BaseTokenStreamTestCase
     {
@@ -274,7 +275,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// a/b   => tokens a and b share the same spot (b.positionIncrement=0)
         /// a,3/b/c => a,b,c all share same position (a.positionIncrement=3, b.positionIncrement=0, c.positionIncrement=0)
         /// a,1,10,11  => "a" with positionIncrement=1, startOffset=10, endOffset=11 </summary>
-        /// @deprecated (3.0) does not support attributes api 
+        /// @deprecated (3.0) does not support attributes api
         [Obsolete("(3.0) does not support attributes api")]
         private IList<Token> Tokens(string str)
         {
@@ -330,7 +331,7 @@ namespace Lucene.Net.Analysis.Synonym
             return result;
         }
 
-        /// @deprecated (3.0) does not support custom attributes 
+        /// @deprecated (3.0) does not support custom attributes
         [Obsolete("(3.0) does not support custom attributes")]
         private sealed class IterTokenStream : TokenStream
         {

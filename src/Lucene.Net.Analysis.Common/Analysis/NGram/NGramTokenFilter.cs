@@ -121,9 +121,6 @@ namespace Lucene.Net.Analysis.NGram
                 get => 0;
                 set => _ = value;
             }
-
-            // LUCENENET specific - The interface requires this to be implemented, since we added it to avoid casts.
-            public void CopyTo(IAttribute target) => _ = target;
         }
 
         private sealed class PositionLengthAttributeAnonymousClass : IPositionLengthAttribute
@@ -133,9 +130,6 @@ namespace Lucene.Net.Analysis.NGram
                 get => 0;
                 set => _ = value;
             }
-
-            // LUCENENET specific - The interface requires this to be implemented, since we added it to avoid casts.
-            public void CopyTo(IAttribute target) => _ = target;
         }
 
         /// <summary>

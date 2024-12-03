@@ -1,7 +1,8 @@
 ﻿using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
+using Lucene.Net.Index;
 using System;
-using System.Reflection;
 using Attribute = Lucene.Net.Util.Attribute;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
 using BytesRef = Lucene.Net.Util.BytesRef;
@@ -45,7 +46,7 @@ namespace Lucene.Net.Analysis
     /// with type "eos".  The default token type is "word".
     /// <para/>
     /// A Token can optionally have metadata (a.k.a. payload) in the form of a variable
-    /// length byte array. Use <see cref="Index.DocsAndPositionsEnum.GetPayload()"/> to retrieve the
+    /// length byte array. Use <see cref="DocsAndPositionsEnum.GetPayload()"/> to retrieve the
     /// payloads from the index.
     ///
     /// <para/><para/>
@@ -64,17 +65,16 @@ namespace Lucene.Net.Analysis
     /// Failing that, to create a new <see cref="Token"/> you should first use
     /// one of the constructors that starts with null text.  To load
     /// the token from a char[] use <see cref="ICharTermAttribute.CopyBuffer(char[], int, int)"/>.
-    /// To load from a <see cref="string"/> use <see cref="ICharTermAttribute.SetEmpty()"/> followed by 
+    /// To load from a <see cref="string"/> use <see cref="ICharTermAttribute.Clear()"/> (or <see cref="CharTermAttributeExtensions.SetEmpty{T}(T)"/>) followed by
     /// <see cref="ICharTermAttribute.Append(string)"/> or <see cref="ICharTermAttribute.Append(string, int, int)"/>.
     /// Alternatively you can get the <see cref="Token"/>'s termBuffer by calling either <see cref="ICharTermAttribute.Buffer"/>,
     /// if you know that your text is shorter than the capacity of the termBuffer
     /// or <see cref="ICharTermAttribute.ResizeBuffer(int)"/>, if there is any possibility
     /// that you may need to grow the buffer. Fill in the characters of your term into this
     /// buffer, with <see cref="string.ToCharArray(int, int)"/> if loading from a string,
-    /// or with <see cref="System.Array.Copy(System.Array, int, System.Array, int, int)"/>, 
-    /// and finally call <see cref="ICharTermAttribute.SetLength(int)"/> to
-    /// set the length of the term text.  See <a target="_top"
-    /// href="https://issues.apache.org/jira/browse/LUCENE-969">LUCENE-969</a>
+    /// or with <see cref="System.Array.Copy(System.Array, int, System.Array, int, int)"/>,
+    /// and finally set the <see cref="ICharTermAttribute.Length"/> of the term text.
+    /// See <a target="_top" href="https://issues.apache.org/jira/browse/LUCENE-969">LUCENE-969</a>
     /// for details.</para>
     /// <para>Typical Token reuse patterns:
     /// <list type="bullet">
@@ -567,7 +567,7 @@ namespace Lucene.Net.Analysis
         /// <param name="newTerm"> new term text </param>
         public virtual void Reinit(Token prototype, string newTerm)
         {
-            SetEmpty().Append(newTerm);
+            this.SetEmpty().Append(newTerm);
             positionIncrement = prototype.positionIncrement;
             flags = prototype.flags;
             startOffset = prototype.startOffset;

@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis
                 // TODO: can we just capture/restoreState so
                 // we get all attrs...?
                 ClearAttributes();
-                termAtt.SetEmpty();
+                termAtt.Clear();
                 termAtt.Append(token.ToString());
                 posIncrAtt.PositionIncrement = token.PositionIncrement;
                 posLengthAtt.PositionLength = token.PositionLength;

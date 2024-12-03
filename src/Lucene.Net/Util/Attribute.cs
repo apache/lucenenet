@@ -20,6 +20,5 @@
     /// <summary> Base interface for attributes.</summary>
     public interface IAttribute
     {
-        void CopyTo(IAttribute target); // LUCENENET specific - .NET doesn't recognize this method without a cast, so we define it here to ensure it is visible on all IAttribute interfaces
     }
 }

@@ -1,6 +1,7 @@
 ﻿// lucene version compatibility level: 4.8.1
 using Lucene.Net.Analysis.Phonetic.Language.Bm;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -123,9 +124,9 @@ namespace Lucene.Net.Analysis.Phonetic
 
             // LUCENENET: Since we need to "reset" the Match
             // object, we also need an "isReset" flag to indicate
-            // whether we are at the head of the match and to 
-            // take the appropriate measures to ensure we don't 
-            // overwrite our matcher variable with 
+            // whether we are at the head of the match and to
+            // take the appropriate measures to ensure we don't
+            // overwrite our matcher variable with
             // matcher = matcher.NextMatch();
             // before it is time. A string could potentially
             // match on index 0, so we need another variable to

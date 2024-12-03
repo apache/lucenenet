@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -29,59 +30,59 @@ namespace Lucene.Net.Index.Memory
      */
 
     /// <summary>
-    /// High-performance single-document main memory Apache Lucene fulltext search index. 
-    /// 
+    /// High-performance single-document main memory Apache Lucene fulltext search index.
+    ///
     /// <h4>Overview</h4>
-    /// 
+    ///
     /// This class is a replacement/substitute for a large subset of
     /// <see cref="Store.RAMDirectory"/> functionality. It is designed to
-    /// enable maximum efficiency for on-the-fly matchmaking combining structured and 
-    /// fuzzy fulltext search in realtime streaming applications such as Nux XQuery based XML 
-    /// message queues, publish-subscribe systems for Blogs/newsfeeds, text chat, data acquisition and 
-    /// distribution systems, application level routers, firewalls, classifiers, etc. 
-    /// Rather than targeting fulltext search of infrequent queries over huge persistent 
-    /// data archives (historic search), this class targets fulltext search of huge 
-    /// numbers of queries over comparatively small transient realtime data (prospective 
-    /// search). 
-    /// For example as in 
+    /// enable maximum efficiency for on-the-fly matchmaking combining structured and
+    /// fuzzy fulltext search in realtime streaming applications such as Nux XQuery based XML
+    /// message queues, publish-subscribe systems for Blogs/newsfeeds, text chat, data acquisition and
+    /// distribution systems, application level routers, firewalls, classifiers, etc.
+    /// Rather than targeting fulltext search of infrequent queries over huge persistent
+    /// data archives (historic search), this class targets fulltext search of huge
+    /// numbers of queries over comparatively small transient realtime data (prospective
+    /// search).
+    /// For example as in
     /// <code>
     /// float score = Search(string text, Query query)
     /// </code>
     /// <para>
     /// Each instance can hold at most one Lucene "document", with a document containing
     /// zero or more "fields", each field having a name and a fulltext value. The
-    /// fulltext value is tokenized (split and transformed) into zero or more index terms 
+    /// fulltext value is tokenized (split and transformed) into zero or more index terms
     /// (aka words) on <code>AddField()</code>, according to the policy implemented by an
     /// Analyzer. For example, Lucene analyzers can split on whitespace, normalize to lower case
     /// for case insensitivity, ignore common terms with little discriminatory value such as "he", "in", "and" (stop
     /// words), reduce the terms to their natural linguistic root form such as "fishing"
-    /// being reduced to "fish" (stemming), resolve synonyms/inflexions/thesauri 
+    /// being reduced to "fish" (stemming), resolve synonyms/inflexions/thesauri
     /// (upon indexing and/or querying), etc. For details, see
     /// <a target="_blank" href="http://today.java.net/pub/a/today/2003/07/30/LuceneIntro.html">Lucene Analyzer Intro</a>.
     /// </para>
     /// <para>
-    /// Arbitrary Lucene queries can be run against this class - see <a target="_blank" 
+    /// Arbitrary Lucene queries can be run against this class - see <a target="_blank"
     /// href="{@docRoot}/../queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description">
     /// Lucene Query Syntax</a>
-    /// as well as <a target="_blank" 
+    /// as well as <a target="_blank"
     /// href="http://today.java.net/pub/a/today/2003/11/07/QueryParserRules.html">Query Parser Rules</a>.
-    /// Note that a Lucene query selects on the field names and associated (indexed) 
-    /// tokenized terms, not on the original fulltext(s) - the latter are not stored 
+    /// Note that a Lucene query selects on the field names and associated (indexed)
+    /// tokenized terms, not on the original fulltext(s) - the latter are not stored
     /// but rather thrown away immediately after tokenization.
     /// </para>
     /// <para>
     /// For some interesting background information on search technology, see Bob Wyman's
-    /// <a target="_blank" 
-    /// href="http://bobwyman.pubsub.com/main/2005/05/mary_hodder_poi.html">Prospective Search</a>, 
+    /// <a target="_blank"
+    /// href="http://bobwyman.pubsub.com/main/2005/05/mary_hodder_poi.html">Prospective Search</a>,
     /// Jim Gray's
     /// <a target="_blank" href="http://www.acmqueue.org/modules.php?name=Content&amp;pa=showpage&amp;pid=293&amp;page=4">
     /// A Call to Arms - Custom subscriptions</a>, and Tim Bray's
-    /// <a target="_blank" 
+    /// <a target="_blank"
     /// href="http://www.tbray.org/ongoing/When/200x/2003/07/30/OnSearchTOC">On Search, the Series</a>.
-    /// 
-    /// 
-    /// <h4>Example Usage</h4> 
-    /// 
+    ///
+    ///
+    /// <h4>Example Usage</h4>
+    ///
     /// <code>
     /// Analyzer analyzer = new SimpleAnalyzer(version);
     /// MemoryIndex index = new MemoryIndex();
@@ -96,52 +97,52 @@ namespace Lucene.Net.Index.Memory
     /// }
     /// Console.WriteLine("indexData=" + index.toString());
     /// </code>
-    /// 
-    /// 
-    /// <h4>Example XQuery Usage</h4> 
-    /// 
+    ///
+    ///
+    /// <h4>Example XQuery Usage</h4>
+    ///
     /// <code>
     /// (: An XQuery that finds all books authored by James that have something to do with "salmon fishing manuals", sorted by relevance :)
     /// declare namespace lucene = "java:nux.xom.pool.FullTextUtil";
     /// declare variable $query := "+salmon~ +fish* manual~"; (: any arbitrary Lucene query can go here :)
-    /// 
+    ///
     /// for $book in /books/book[author="James" and lucene:match(abstract, $query) > 0.0]
     /// let $score := lucene:match($book/abstract, $query)
     /// order by $score descending
     /// return $book
     /// </code>
-    /// 
-    /// 
+    ///
+    ///
     /// <h4>No thread safety guarantees</h4>
-    /// 
+    ///
     /// An instance can be queried multiple times with the same or different queries,
     /// but an instance is not thread-safe. If desired use idioms such as:
     /// <code>
     /// MemoryIndex index = ...
     /// lock (index) {
     ///    // read and/or write index (i.e. add fields and/or query)
-    /// } 
+    /// }
     /// </code>
-    /// 
-    /// 
+    ///
+    ///
     /// <h4>Performance Notes</h4>
-    /// 
-    /// Internally there's a new data structure geared towards efficient indexing 
-    /// and searching, plus the necessary support code to seamlessly plug into the Lucene 
+    ///
+    /// Internally there's a new data structure geared towards efficient indexing
+    /// and searching, plus the necessary support code to seamlessly plug into the Lucene
     /// framework.
     /// </para>
     /// <para>
-    /// This class performs very well for very small texts (e.g. 10 chars) 
-    /// as well as for large texts (e.g. 10 MB) and everything in between. 
+    /// This class performs very well for very small texts (e.g. 10 chars)
+    /// as well as for large texts (e.g. 10 MB) and everything in between.
     /// Typically, it is about 10-100 times faster than <see cref="Store.RAMDirectory"/>.
-    /// Note that <see cref="Store.RAMDirectory"/> has particularly 
+    /// Note that <see cref="Store.RAMDirectory"/> has particularly
     /// large efficiency overheads for small to medium sized texts, both in time and space.
-    /// Indexing a field with N tokens takes O(N) in the best case, and O(N logN) in the worst 
+    /// Indexing a field with N tokens takes O(N) in the best case, and O(N logN) in the worst
     /// case. Memory consumption is probably larger than for <see cref="Store.RAMDirectory"/>.
     /// </para>
     /// <para>
-    /// Example throughput of many simple term queries over a single MemoryIndex: 
-    /// ~500000 queries/sec on a MacBook Pro, jdk 1.5.0_06, server VM. 
+    /// Example throughput of many simple term queries over a single MemoryIndex:
+    /// ~500000 queries/sec on a MacBook Pro, jdk 1.5.0_06, server VM.
     /// As always, your mileage may vary.
     /// </para>
     /// <para>
@@ -152,7 +153,7 @@ namespace Lucene.Net.Index.Memory
     /// target="_blank"
     /// href="http://java.sun.com/developer/technicalArticles/Programming/HPROF.html">
     /// hprof tracing </a>).
-    /// 
+    ///
     /// </para>
     /// </summary>
     public partial class MemoryIndex
@@ -349,7 +350,7 @@ namespace Lucene.Net.Index.Memory
         /// Iterates over the given token stream and adds the resulting terms to the index;
         /// Equivalent to adding a tokenized, indexed, termVectorStored, unstored,
         /// Lucene <see cref="Documents.Field"/>.
-        /// Finally closes the token stream. Note that untokenized keywords can be added with this method via 
+        /// Finally closes the token stream. Note that untokenized keywords can be added with this method via
         /// <see cref="T:KeywordTokenStream{T}(ICollection{T}"/>)"/>, the Lucene <c>KeywordTokenizer</c> or similar utilities.
         /// </summary>
         /// <param name="fieldName"> a name to be associated with the text </param>
@@ -372,7 +373,7 @@ namespace Lucene.Net.Index.Memory
         /// <param name="fieldName"> a name to be associated with the text </param>
         /// <param name="stream"> the token stream to retrieve tokens from. </param>
         /// <param name="boost"> the boost factor for hits for this field </param>
-        /// <param name="positionIncrementGap"> 
+        /// <param name="positionIncrementGap">
         /// the position increment gap if fields with the same name are added more than once
         /// </param>
         /// <seealso cref="Documents.Field.Boost"/>
@@ -385,9 +386,9 @@ namespace Lucene.Net.Index.Memory
         /// Iterates over the given token stream and adds the resulting terms to the index;
         /// Equivalent to adding a tokenized, indexed, termVectorStored, unstored,
         /// Lucene <see cref="Documents.Field"/>.
-        /// Finally closes the token stream. Note that untokenized keywords can be added with this method via 
+        /// Finally closes the token stream. Note that untokenized keywords can be added with this method via
         /// <see cref="T:KeywordTokenStream{T}(ICollection{T}"/>)"/>, the Lucene <c>KeywordTokenizer</c> or similar utilities.
-        /// 
+        ///
         /// </summary>
         /// <param name="fieldName"> a name to be associated with the text </param>
         /// <param name="stream"> the token stream to retrieve tokens from. </param>
@@ -437,15 +438,15 @@ namespace Lucene.Net.Index.Memory
 
                 if (!fieldInfos.ContainsKey(fieldName))
                 {
-                    fieldInfos[fieldName] = new FieldInfo(fieldName, 
-                                                        true, 
-                                                        fieldInfos.Count, 
-                                                        false, 
-                                                        false, 
-                                                        false, 
-                                                        this.storeOffsets ? IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, 
-                                                        DocValuesType.NONE, 
-                                                        DocValuesType.NONE, 
+                    fieldInfos[fieldName] = new FieldInfo(fieldName,
+                                                        true,
+                                                        fieldInfos.Count,
+                                                        false,
+                                                        false,
+                                                        false,
+                                                        this.storeOffsets ? IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS,
+                                                        DocValuesType.NONE,
+                                                        DocValuesType.NONE,
                                                         null);
                 }
                 ITermToBytesRefAttribute termAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
@@ -568,11 +569,11 @@ namespace Lucene.Net.Index.Memory
                  * unnecessary baggage and locking in the Lucene IndexReader
                  * superclass, all of which is completely unnecessary for this main
                  * memory index data structure without thread-safety claims.
-                 * 
+                 *
                  * Wishing IndexReader would be an interface...
-                 * 
+                 *
                  * Actually with the new tight createSearcher() API auto-closing is now
-                 * made impossible, hence searcher.close() would be harmless and also 
+                 * made impossible, hence searcher.close() would be harmless and also
                  * would not degrade performance...
                  */
             }

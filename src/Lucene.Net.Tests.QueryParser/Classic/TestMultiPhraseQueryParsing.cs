@@ -75,7 +75,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 if (upto < tokens.Length)
                 {
                     TokenAndPos token = tokens[upto++];
-                    termAtt.SetEmpty();
+                    termAtt.Clear();
                     termAtt.Append(token.token);
                     posIncrAtt.PositionIncrement = (token.pos - lastPos);
                     lastPos = token.pos;

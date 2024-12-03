@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -38,26 +39,26 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <see cref="StopFilter"/> into a single efficient
     /// multi-purpose class.
     /// <para>
-    /// If you are unsure how exactly a regular expression should look like, consider 
+    /// If you are unsure how exactly a regular expression should look like, consider
     /// prototyping by simply trying various expressions on some test texts via
-    /// <see cref="Regex.Split(string)"/>. Once you are satisfied, give that regex to 
-    /// <see cref="PatternAnalyzer"/>. Also see <a target="_blank" 
+    /// <see cref="Regex.Split(string)"/>. Once you are satisfied, give that regex to
+    /// <see cref="PatternAnalyzer"/>. Also see <a target="_blank"
     /// href="http://www.regular-expressions.info/">Regular Expression Tutorial</a>.
     /// </para>
     /// <para>
-    /// This class can be considerably faster than the "normal" Lucene tokenizers. 
+    /// This class can be considerably faster than the "normal" Lucene tokenizers.
     /// It can also serve as a building block in a compound Lucene
-    /// <see cref="TokenFilter"/> chain. For example as in this 
+    /// <see cref="TokenFilter"/> chain. For example as in this
     /// stemming example:
     /// <code>
     /// PatternAnalyzer pat = ...
     /// TokenStream tokenStream = new SnowballFilter(
-    ///     pat.GetTokenStream("content", "James is running round in the woods"), 
+    ///     pat.GetTokenStream("content", "James is running round in the woods"),
     ///     "English"));
     /// </code>
     /// </para>
     /// </summary>
-    /// @deprecated (4.0) use the pattern-based analysis in the analysis/pattern package instead. 
+    /// @deprecated (4.0) use the pattern-based analysis in the analysis/pattern package instead.
     [Obsolete("(4.0) use the pattern-based analysis in the analysis/pattern package instead.")]
     public sealed class PatternAnalyzer : Analyzer
     {
@@ -196,8 +197,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> a new token stream </returns>
         public TokenStreamComponents CreateComponents(string fieldName, TextReader reader, string text)
         {
-            // Ideally the Analyzer superclass should have a method with the same signature, 
-            // with a default impl that simply delegates to the StringReader flavour. 
+            // Ideally the Analyzer superclass should have a method with the same signature,
+            // with a default impl that simply delegates to the StringReader flavour.
             if (reader is null)
             {
                 reader = new FastStringReader(text);
@@ -448,9 +449,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
                 // LUCENENET: Since we need to "reset" the Match
                 // object, we also need an "isReset" flag to indicate
-                // whether we are at the head of the match and to 
-                // take the appropriate measures to ensure we don't 
-                // overwrite our matcher variable with 
+                // whether we are at the head of the match and to
+                // take the appropriate measures to ensure we don't
+                // overwrite our matcher variable with
                 // matcher = matcher.NextMatch();
                 // before it is time. A string could potentially
                 // match on index 0, so we need another variable to
@@ -528,10 +529,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
                         {
                             text = text.ToLower(); // LUCENENET: Since this class is obsolete, we aren't going to bother with passing culture in the constructor.
                         }
-                        //          if (toLowerCase) {            
+                        //          if (toLowerCase) {
                         ////            use next line once JDK 1.5 String.toLowerCase() performance regression is fixed
                         ////            see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265809
-                        //            text = s.substring(start, i).toLowerCase(); 
+                        //            text = s.substring(start, i).toLowerCase();
                         ////            char[] chars = new char[i-start];
                         ////            for (int j=start; j < i; j++) chars[j-start] = Character.toLowerCase(s.charAt(j));
                         ////            text = new String(chars);

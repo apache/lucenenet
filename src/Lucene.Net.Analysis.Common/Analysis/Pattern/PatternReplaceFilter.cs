@@ -1,5 +1,6 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Pattern
@@ -24,7 +25,7 @@ namespace Lucene.Net.Analysis.Pattern
     /// <summary>
     /// A TokenFilter which applies a <see cref="Regex"/> to each token in the stream,
     /// replacing match occurances with the specified replacement string.
-    /// 
+    ///
     /// <para>
     /// <b>Note:</b> Depending on the input and the pattern used and the input
     /// <see cref="TokenStream"/>, this <see cref="TokenFilter"/> may produce <see cref="Token"/>s whose text is the empty

@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -387,7 +388,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// A hook for extending classes to close additional resources that were used.
-        /// The default implementation closes the <see cref="Index.IndexReader"/> as well as the
+        /// The default implementation closes the <see cref="IndexReader"/> as well as the
         /// <see cref="ITaxonomyWriterCache"/> instances that were used.
         /// <para>
         /// <b>NOTE:</b> if you override this method, you should include a
@@ -419,7 +420,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Closes the <see cref="Index.IndexReader"/> as well as the
+        /// Closes the <see cref="IndexReader"/> as well as the
         /// <see cref="ITaxonomyWriterCache"/> instances that were used.
         /// </summary>
         private void CloseResources() // LUCENENET: Made private, since this has the same purpose as Dispose(bool).

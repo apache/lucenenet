@@ -31,7 +31,8 @@ namespace Lucene.Net.Util
     /// </summary>
     public abstract class Attribute : IAttribute // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
-        /// <summary> Clears the values in this <see cref="Attribute"/> and resets it to its
+        /// <summary>
+        /// Clears the values in this <see cref="Attribute"/> and resets it to its
         /// default value. If this implementation implements more than one <see cref="Attribute"/> interface
         /// it clears all.
         /// </summary>
@@ -97,22 +98,22 @@ namespace Lucene.Net.Util
         /// <summary>
         /// This method is for introspection of attributes, it should simply
         /// add the key/values this attribute holds to the given <see cref="IAttributeReflector"/>.
-        /// 
+        ///
         /// <para/>The default implementation calls <see cref="IAttributeReflector.Reflect(Type, string, object)"/> for all
         /// non-static fields from the implementing class, using the field name as key
         /// and the field value as value. The <see cref="IAttribute"/> class is also determined by Reflection.
         /// Please note that the default implementation can only handle single-Attribute
         /// implementations.
-        /// 
+        ///
         /// <para/>Custom implementations look like this (e.g. for a combined attribute implementation):
         /// <code>
-        ///     public void ReflectWith(IAttributeReflector reflector) 
+        ///     public void ReflectWith(IAttributeReflector reflector)
         ///     {
         ///         reflector.Reflect(typeof(ICharTermAttribute), "term", GetTerm());
         ///         reflector.Reflect(typeof(IPositionIncrementAttribute), "positionIncrement", GetPositionIncrement());
         ///     }
         /// </code>
-        /// 
+        ///
         /// <para/>If you implement this method, make sure that for each invocation, the same set of <see cref="IAttribute"/>
         /// interfaces and keys are passed to <see cref="IAttributeReflector.Reflect(Type, string, object)"/> in the same order, but possibly
         /// different values. So don't automatically exclude e.g. <c>null</c> properties!
@@ -154,7 +155,7 @@ namespace Lucene.Net.Util
         /// fields of this object and prints the values in the following syntax:
         ///
         /// <code>
-        /// public String ToString() 
+        /// public String ToString()
         /// {
         ///     return "start=" + startOffset + ",end=" + endOffset;
         /// }

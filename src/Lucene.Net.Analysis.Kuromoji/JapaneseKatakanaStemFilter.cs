@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Ja
             {
                 if (!keywordAttr.IsKeyword)
                 {
-                    termAttr.SetLength(Stem(termAttr.Buffer, termAttr.Length));
+                    termAttr.Length = Stem(termAttr.Buffer, termAttr.Length);
                 }
                 return true;
             }

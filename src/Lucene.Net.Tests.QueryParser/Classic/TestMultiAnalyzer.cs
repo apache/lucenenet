@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 
@@ -128,7 +129,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         /// <summary>
         /// Expands "multi" to "multi" and "multi2", both at the same position,
-        /// and expands "triplemulti" to "triplemulti", "multi3", and "multi2".  
+        /// and expands "triplemulti" to "triplemulti", "multi3", and "multi2".
         /// </summary>
         private class MultiAnalyzer : Analyzer
         {
@@ -266,7 +267,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
             }
 
-            // expose super's version 
+            // expose super's version
             public Query GetSuperFieldQuery(string f, string t, bool quoted)
             {
                 return base.GetFieldQuery(f, t, quoted);

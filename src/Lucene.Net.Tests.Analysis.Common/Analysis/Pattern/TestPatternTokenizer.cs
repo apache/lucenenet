@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Globalization;
@@ -60,7 +61,7 @@ namespace Lucene.Net.Analysis.Pattern
                   String[] split = test[2].split( test[1] );
                   stream = tokenizer.create( new StringReader( test[2] ) );
                   int i=0;
-                  for( Token t = stream.next(); null != t; t = stream.next() ) 
+                  for( Token t = stream.next(); null != t; t = stream.next() )
                   {
                     assertEquals( "split: "+test[1] + " "+i, split[i++], new String(t.termBuffer(), 0, t.termLength()) );
                   }

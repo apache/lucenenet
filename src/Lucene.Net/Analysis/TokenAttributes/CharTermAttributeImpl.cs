@@ -70,8 +70,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
             termLength = length;
         }
 
-        char[] ICharTermAttribute.Buffer => termBuffer;
-
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public char[] Buffer => termBuffer;
@@ -107,32 +105,19 @@ namespace Lucene.Net.Analysis.TokenAttributes
             }
         }
 
-        int ICharTermAttribute.Length { get => Length; set => SetLength(value); }
-
-        int ICharSequence.Length => Length;
-
         public int Length
         {
             get => termLength;
-            set => SetLength(value);
-        }
+            set
+            {
+                // LUCENENET: added guard clause
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, $"{nameof(value)} must not be negative.");
+                if (value > termBuffer.Length)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, $"length {value} exceeds the size of the termBuffer ({termBuffer.Length})");
 
-        public CharTermAttribute SetLength(int length)
-        {
-            // LUCENENET: added guard clause
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length), length, $"{nameof(length)} must not be negative.");
-            if (length > termBuffer.Length)
-                throw new ArgumentOutOfRangeException(nameof(length), length, "length " + length + " exceeds the size of the termBuffer (" + termBuffer.Length + ")");
-
-            termLength = length;
-            return this;
-        }
-
-        public CharTermAttribute SetEmpty()
-        {
-            termLength = 0;
-            return this;
+                termLength = value;
+            }
         }
 
         // *** TermToBytesRefAttribute interface ***
@@ -146,12 +131,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public virtual BytesRef BytesRef => bytes;
 
         // *** CharSequence interface ***
-
-        // LUCENENET specific: Replaced CharAt(int) with this[int] to .NETify
-
-        char ICharSequence.this[int index] => this[index];
-
-        char ICharTermAttribute.this[int index] { get => this[index]; set => this[index] = value; }
 
         // LUCENENET specific indexer to make CharTermAttribute act more like a .NET type
         public char this[int index]
@@ -484,14 +463,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
         }
 
         #region ICharTermAttribute Members
-
-        void ICharTermAttribute.CopyBuffer(char[] buffer, int offset, int length) => CopyBuffer(buffer, offset, length);
-
-        char[] ICharTermAttribute.ResizeBuffer(int newSize) => ResizeBuffer(newSize);
-
-        ICharTermAttribute ICharTermAttribute.SetLength(int length) => SetLength(length);
-
-        ICharTermAttribute ICharTermAttribute.SetEmpty() => SetEmpty();
 
         ICharTermAttribute ICharTermAttribute.Append(ICharSequence value) => Append(value);
 

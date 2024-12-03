@@ -2,6 +2,7 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;

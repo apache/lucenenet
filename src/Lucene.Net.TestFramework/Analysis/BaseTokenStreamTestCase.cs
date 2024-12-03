@@ -1,6 +1,7 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
@@ -118,7 +119,7 @@ namespace Lucene.Net.Analysis
         //     lastStartOffset)
         public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, int? finalPosInc, bool[] keywordAtts, bool offsetsAreCorrect, byte[][] payloads)
         {
-            // LUCENENET: Bug fix: NUnit throws an exception when something fails. 
+            // LUCENENET: Bug fix: NUnit throws an exception when something fails.
             // This causes Dispose() to be skipped and it pollutes other tests indicating false negatives.
             // Added this try-finally block to fix this.
             try
@@ -631,7 +632,7 @@ namespace Lucene.Net.Analysis
             public bool Failed { get; set; }
             public Exception FirstException { get; set; } = null;
 
-            internal AnalysisThread(long seed, CountdownEvent latch, Analyzer a, int iterations, int maxWordLength, 
+            internal AnalysisThread(long seed, CountdownEvent latch, Analyzer a, int iterations, int maxWordLength,
                 bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
             {
                 this.seed = seed;
@@ -689,7 +690,7 @@ namespace Lucene.Net.Analysis
             RandomIndexWriter iw = null;
             string postingsFormat = TestUtil.GetPostingsFormat("dummy");
             bool codecOk = iterations * maxWordLength < 100000
-                || !(postingsFormat.Equals("Memory", StringComparison.Ordinal) 
+                || !(postingsFormat.Equals("Memory", StringComparison.Ordinal)
                 || postingsFormat.Equals("SimpleText", StringComparison.Ordinal));
             if (Rarely(random) && codecOk)
             {

@@ -1,7 +1,9 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Shingle;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using NUnit.Framework;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Position
 {
@@ -104,12 +106,11 @@ namespace Lucene.Net.Analysis.Position
 
         /// <summary>
         /// Tests ShingleFilter up to six shingles against six terms.
-        ///  Tests PositionFilter setting all but the first positionIncrement to zero. </summary> </exception>
-        /// <exception cref="java.io.IOException"> <seealso cref= Token#next(Token) </seealso>
+        ///  Tests PositionFilter setting all but the first positionIncrement to zero.
+        /// </summary>
         [Test]
         public virtual void Test6GramFilterNoPositions()
         {
-
             ShingleFilter filter = new ShingleFilter(new TestTokenStream(this, TEST_TOKEN), 6);
             AssertTokenStreamContents
 #pragma warning disable 612, 618

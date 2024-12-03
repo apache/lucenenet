@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers.Flexible.Standard;
@@ -460,7 +461,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         /// <summary>
-        /// synonyms with default OR operator 
+        /// synonyms with default OR operator
         /// </summary>
         [Test]
         public virtual void TestCJKSynonymsOR()

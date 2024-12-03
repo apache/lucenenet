@@ -1,6 +1,7 @@
 ﻿using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -522,7 +523,7 @@ namespace Lucene.Net.Search.Highlight
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
 
-                //      String result = 
+                //      String result =
                 highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired, "...");
                 //if (VERBOSE) Console.WriteLine("\t" + result);
             }
@@ -1335,7 +1336,7 @@ namespace Lucene.Net.Search.Highlight
         public void TestMaxSizeHighlight()
         {
             MockAnalyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
-            // we disable MockTokenizer checks because we will forcefully limit the 
+            // we disable MockTokenizer checks because we will forcefully limit the
             // tokenstream and call end() before incrementToken() returns false.
             analyzer.EnableChecks = (false);
 
@@ -1365,7 +1366,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 String goodWord = "goodtoken";
                 CharacterRunAutomaton stopWords = new CharacterRunAutomaton(BasicAutomata.MakeString("stoppedtoken"));
-                // we disable MockTokenizer checks because we will forcefully limit the 
+                // we disable MockTokenizer checks because we will forcefully limit the
                 // tokenstream and call end() before incrementToken() returns false.
                 MockAnalyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, stopWords);
                 analyzer.EnableChecks = (false);
@@ -1887,7 +1888,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /*
-         * 
+         *
          * public void TestBigramAnalyzer() throws IOException, ParseException {
          * //test to ensure analyzers with none-consecutive start/end offsets //dont
          * double-highlight text //setup index 1 RAMDirectory ramDir = new
@@ -1896,15 +1897,15 @@ namespace Lucene.Net.Search.Highlight
          * Document(); Field f = new Field(FIELD_NAME, "java abc def", true, true,
          * true); d.Add(f); writer.addDocument(d); writer.close(); IndexReader reader =
          * DirectoryReader.open(ramDir);
-         * 
+         *
          * IndexSearcher searcher=new IndexSearcher(reader); query =
          * QueryParser.parse("abc", FIELD_NAME, bigramAnalyzer);
          * Console.WriteLine("Searching for: " + query.toString(FIELD_NAME)); hits =
          * searcher.Search(query);
-         * 
+         *
          * Highlighter highlighter = new Highlighter(this,new
          * QueryFragmentScorer(query));
-         * 
+         *
          * for (int i = 0; i < hits.TotalHits; i++) { String text =
          * searcher.doc2(hits.ScoreDocs[i].doc).Get(FIELD_NAME); TokenStream
          * tokenStream=bigramAnalyzer.TokenStream(FIELD_NAME,text);
@@ -2053,7 +2054,7 @@ namespace Lucene.Net.Search.Highlight
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.apache.lucene.analysis.Analyzer#tokenStream(java.lang.String,
          *      java.io.Reader)
          */
@@ -2294,4 +2295,3 @@ namespace Lucene.Net.Search.Highlight
         }
     }
 }
-

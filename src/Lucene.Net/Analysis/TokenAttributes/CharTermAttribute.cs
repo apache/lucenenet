@@ -1,4 +1,5 @@
 ﻿using J2N.Text;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -37,13 +38,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <param name="length"> the number of characters to copy </param>
         void CopyBuffer(char[] buffer, int offset, int length);
 
-
         /// <summary>
         /// Returns the internal termBuffer character array which
         /// you can then directly alter.  If the array is too
         /// small for your token, use <see cref="ResizeBuffer(int)"/>
         /// to increase it.  After
-        /// altering the buffer be sure to call <see cref="SetLength(int)"/>
+        /// altering the buffer be sure to set <see cref="Length"/>
         /// to record the number of valid
         /// characters that were placed into the termBuffer.
         /// <para>
@@ -62,37 +62,35 @@ namespace Lucene.Net.Analysis.TokenAttributes
         char[] ResizeBuffer(int newSize);
 
         /// <summary>
-        /// Gets or Sets the number of valid characters (in
+        /// Gets or sets the number of valid characters (length of the term) in
         /// the termBuffer array.
-        /// <seealso cref="SetLength(int)"/>
+        /// Use this setter to truncate the termBuffer
+        /// or to synchronize with external manipulation of the termBuffer.
+        /// Note: to grow the size of the array,
+        /// use <see cref="ResizeBuffer(int)"/> first.
         /// </summary>
-        new int Length { get; set; } // LUCENENET: To mimic StringBuilder, we allow this to be settable.
+        /// <remarks>
+        /// LUCENENET: To mimic StringBuilder, we allow this to be settable.
+        /// The setter may be used as an alternative to
+        /// <see cref="CharTermAttributeExtensions.SetLength{T}(T, int)"/> if
+        /// chaining is not required.
+        /// </remarks>
+        /// <seealso cref="CharTermAttributeExtensions.SetLength{T}(T, int)"/>
+        new int Length { get; set; }
 
         // LUCENENET specific: Redefining this[] to make it settable
         new char this[int index] { get; set; }
 
         /// <summary>
-        /// Set number of valid characters (length of the term) in
-        /// the termBuffer array. Use this to truncate the termBuffer
-        /// or to synchronize with external manipulation of the termBuffer.
-        /// Note: to grow the size of the array,
-        /// use <see cref="ResizeBuffer(int)"/> first.
-        /// NOTE: This is exactly the same operation as calling the <see cref="Length"/> setter, the primary
-        /// difference is that this method returns a reference to the current object so it can be chained.
-        /// <code>
-        /// obj.SetLength(30).Append("hey you");
-        /// </code>
+        /// Clears the values in this attribute and resets it to its
+        /// default value.
         /// </summary>
-        /// <param name="length"> the truncated length </param>
-        ICharTermAttribute SetLength(int length);
-
-        /// <summary>
-        /// Sets the length of the termBuffer to zero.
-        /// Use this method before appending contents.
-        /// </summary>
-        ICharTermAttribute SetEmpty();
-
-        // the following methods are redefined to get rid of IOException declaration:
+        /// <remarks>
+        /// LUCENENET specific - This method is not part of the Java Lucene API.
+        /// This was added to be a more consistent way to clear attributes than SetEmpty().
+        /// </remarks>
+        /// <seealso cref="CharTermAttributeExtensions.SetEmpty{T}(T)"/>
+        void Clear();
 
         /// <summary>
         /// Appends the contents of the <see cref="ICharSequence"/> to this character sequence.

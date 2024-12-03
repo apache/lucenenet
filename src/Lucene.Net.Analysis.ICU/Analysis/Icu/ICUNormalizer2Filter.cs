@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 7.1.0
 using ICU4N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using System;
@@ -45,7 +46,7 @@ namespace Lucene.Net.Analysis.Icu
     ///         "Μάϊος" and "ΜΆΪΟΣ" will match correctly.
     ///     </description></item>
     ///     <item><description>
-    ///         The normalization will standardizes different forms of the same 
+    ///         The normalization will standardizes different forms of the same
     ///         character in Unicode. For example, CJK full-width numbers will be standardized
     ///         to their ASCII forms.
     ///     </description></item>

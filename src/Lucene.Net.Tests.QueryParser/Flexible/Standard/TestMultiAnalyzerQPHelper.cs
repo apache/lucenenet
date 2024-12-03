@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -28,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     /// <summary>
     /// This test case is a copy of the core Lucene query parser test, it was adapted
     /// to use new QueryParserHelper instead of the old query parser.
-    /// 
+    ///
     /// Test QueryParser's ability to deal with Analyzers that return more than one
     /// token per position or that return tokens with a position increment &gt; 1.
     /// </summary>
@@ -120,11 +121,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         // assertEquals("\"(multi multi2) bar\"~99",
         // qp.getSuperFieldQuery("","multi bar").toString());
         //
-        //    
+        //
         // // ask sublcass to parse phrase with modified default slop
         // assertEquals("\"(multi multi2) foo\"~99 bar",
         // qp.parse("\"multi foo\" bar").toString());
-        //    
+        //
         // }
 
         [Test]

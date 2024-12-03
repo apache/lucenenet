@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private static Token token(string term, string type)
         {
             Token token = new Token();
-            token.SetEmpty();
+            token.Clear();
             token.Append(term);
             token.Type = type;
             return token;

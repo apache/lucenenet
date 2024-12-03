@@ -2,6 +2,7 @@
 using J2N;
 using Lucene.Net.Analysis.Morfologik.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Morfologik.Stemming;
