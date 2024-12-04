@@ -243,6 +243,26 @@ namespace Lucene.Net.Util
             return @ref.ToString();
         }
 
+        #nullable enable
+        /// <summary>
+        /// Tries to interpret the stored bytes as UTF8 bytes, returning the
+        /// resulting <see cref="string"/> as an output parameter <paramref name="result"/>.
+        /// </summary>
+        /// <param name="result">The resulting string output.</param>
+        /// <returns><c>true</c> if successful, <c>false</c> otherwise.</returns>
+        public bool TryUtf8ToString([NotNullWhen(true)] out string? result)
+        {
+            if (UnicodeUtil.TryUTF8toUTF16(bytes, Offset, Length, out CharsRef? @ref))
+            {
+                result = @ref.ToString();
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+        #nullable restore
+
         /// <summary>
         /// Returns hex encoded bytes, eg [0x6c 0x75 0x63 0x65 0x6e 0x65] </summary>
         public override string ToString()
