@@ -67,6 +67,29 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 return this.Utf8.CompareTo(o.Utf8);
             }
+
+            #region Operator overrides
+            // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+            public static bool operator <(Completion left, Completion right)
+                => left is null ? right is not null : left.CompareTo(right) < 0;
+
+            public static bool operator <=(Completion left, Completion right)
+                => left is null || left.CompareTo(right) <= 0;
+
+            public static bool operator >(Completion left, Completion right)
+                => left is not null && left.CompareTo(right) > 0;
+
+            public static bool operator >=(Completion left, Completion right)
+                => left is null ? right is null : left.CompareTo(right) >= 0;
+
+            public static bool operator ==(Completion left, Completion right)
+                => left?.Equals(right) ?? right is null;
+
+            public static bool operator !=(Completion left, Completion right)
+                => !(left == right);
+
+            #endregion
         }
 
         /// <summary>

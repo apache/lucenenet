@@ -442,7 +442,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             public override bool Equals(object obj)
             {
-                if (this == obj)
+                if (ReferenceEquals(this, obj))
                 {
                     return true;
                 }
@@ -469,6 +469,29 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
                 return true;
             }
+
+            #region Operator overrides
+            // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+            public static bool operator <(WeightedPhraseInfo left, WeightedPhraseInfo right)
+                => left is null ? right is not null : left.CompareTo(right) < 0;
+
+            public static bool operator <=(WeightedPhraseInfo left, WeightedPhraseInfo right)
+                => left is null || left.CompareTo(right) <= 0;
+
+            public static bool operator >(WeightedPhraseInfo left, WeightedPhraseInfo right)
+                => left is not null && left.CompareTo(right) > 0;
+
+            public static bool operator >=(WeightedPhraseInfo left, WeightedPhraseInfo right)
+                => left is null ? right is null : left.CompareTo(right) >= 0;
+
+            public static bool operator ==(WeightedPhraseInfo left, WeightedPhraseInfo right)
+                => left?.Equals(right) ?? right is null;
+
+            public static bool operator !=(WeightedPhraseInfo left, WeightedPhraseInfo right)
+                => !(left == right);
+
+            #endregion
 
             /// <summary>
             /// Term offsets (start + end)
@@ -512,7 +535,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
                 public override bool Equals(object obj)
                 {
-                    if (this == obj)
+                    if (ReferenceEquals(this, obj))
                     {
                         return true;
                     }
@@ -535,12 +558,36 @@ namespace Lucene.Net.Search.VectorHighlight
                     }
                     return true;
                 }
+
                 public override string ToString()
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.Append('(').Append(startOffset).Append(',').Append(endOffset).Append(')');
                     return sb.ToString();
                 }
+
+                #region Operator overrides
+                // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+                public static bool operator <(Toffs left, Toffs right)
+                    => left is null ? right is not null : left.CompareTo(right) < 0;
+
+                public static bool operator <=(Toffs left, Toffs right)
+                    => left is null || left.CompareTo(right) <= 0;
+
+                public static bool operator >(Toffs left, Toffs right)
+                    => left is not null && left.CompareTo(right) > 0;
+
+                public static bool operator >=(Toffs left, Toffs right)
+                    => left is null ? right is null : left.CompareTo(right) >= 0;
+
+                public static bool operator ==(Toffs left, Toffs right)
+                    => left?.Equals(right) ?? right is null;
+
+                public static bool operator !=(Toffs left, Toffs right)
+                    => !(left == right);
+
+                #endregion
             }
         }
     }

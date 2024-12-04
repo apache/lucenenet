@@ -28,13 +28,13 @@ namespace Lucene.Net.Benchmarks.Quality
     /// <para/>
     /// The ID allows to map the quality query with its judgements.
     /// <para/>
-    /// The name-value pairs are used by a 
+    /// The name-value pairs are used by a
     /// <see cref="IQualityQueryParser"/>
     /// to create a Lucene <see cref="Search.Query"/>.
     /// <para/>
     /// It is very likely that name-value-pairs would be mapped into fields in a Lucene query,
     /// but it is up to the QualityQueryParser how to map - e.g. all values in a single field,
-    /// or each pair as its own field, etc., - and this of course must match the way the 
+    /// or each pair as its own field, etc., - and this of course must match the way the
     /// searched index was constructed.
     /// </summary>
     public class QualityQuery : IComparable<QualityQuery>
@@ -99,5 +99,28 @@ namespace Lucene.Net.Benchmarks.Quality
                 return queryID.CompareToOrdinal(other.queryID);
             }
         }
+
+        #region Operator overrides
+        // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+        public static bool operator <(QualityQuery left, QualityQuery right)
+            => left is null ? right is not null : left.CompareTo(right) < 0;
+
+        public static bool operator <=(QualityQuery left, QualityQuery right)
+            => left is null || left.CompareTo(right) <= 0;
+
+        public static bool operator >(QualityQuery left, QualityQuery right)
+            => left is not null && left.CompareTo(right) > 0;
+
+        public static bool operator >=(QualityQuery left, QualityQuery right)
+            => left is null ? right is null : left.CompareTo(right) >= 0;
+
+        public static bool operator ==(QualityQuery left, QualityQuery right)
+            => left?.Equals(right) ?? right is null;
+
+        public static bool operator !=(QualityQuery left, QualityQuery right)
+            => !(left == right);
+
+        #endregion
     }
 }

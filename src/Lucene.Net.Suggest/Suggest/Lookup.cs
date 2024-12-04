@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest
 
             /// <summary>
             /// Expert: custom Object to hold the result of a
-            /// highlighted suggestion. 
+            /// highlighted suggestion.
             /// </summary>
             public object HighlightKey { get; private set; }
 
@@ -122,6 +122,29 @@ namespace Lucene.Net.Search.Suggest
             {
                 return CHARSEQUENCE_COMPARER.Compare(Key, o.Key);
             }
+
+            #region Operator overrides
+            // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+            public static bool operator <(LookupResult left, LookupResult right)
+                => left is null ? right is not null : left.CompareTo(right) < 0;
+
+            public static bool operator <=(LookupResult left, LookupResult right)
+                => left is null || left.CompareTo(right) <= 0;
+
+            public static bool operator >(LookupResult left, LookupResult right)
+                => left is not null && left.CompareTo(right) > 0;
+
+            public static bool operator >=(LookupResult left, LookupResult right)
+                => left is null ? right is null : left.CompareTo(right) >= 0;
+
+            public static bool operator ==(LookupResult left, LookupResult right)
+                => left?.Equals(right) ?? right is null;
+
+            public static bool operator !=(LookupResult left, LookupResult right)
+                => !(left == right);
+
+            #endregion
         }
 
         /// <summary>
@@ -129,7 +152,7 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public static readonly IComparer<string> CHARSEQUENCE_COMPARER = new CharSequenceComparer();
 
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -201,7 +224,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Sole constructor. (For invocation by subclass 
+        /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
         protected Lookup() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
