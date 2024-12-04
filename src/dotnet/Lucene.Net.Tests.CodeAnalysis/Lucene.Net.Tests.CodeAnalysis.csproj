@@ -22,14 +22,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Lucene.Net.CodeAnalysis</RootNamespace>
-    
+
     <IsPublishable>false</IsPublishable>
-    <IsPublishable Condition=" '$(TargetFramework)' == 'net8.0' ">true</IsPublishable>
+    <IsPublishable Condition=" '$(TargetFramework)' == 'net9.0' ">true</IsPublishable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  
+
   <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
 
   <ItemGroup>

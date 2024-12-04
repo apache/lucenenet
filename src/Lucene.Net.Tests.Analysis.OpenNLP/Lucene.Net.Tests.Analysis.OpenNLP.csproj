@@ -26,7 +26,7 @@
   <PropertyGroup>
     <!-- Allow specific target framework to flow in from TestTargetFrameworks.props -->
     <!--suppress MsbuildTargetFrameworkTagInspection - even though this only has one target right now, we need to use the plural version for the line below -->
-    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net8.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TargetFramework)' == '' ">net9.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(TargetFramework)' == '' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Tests.Analysis.OpenNLP</AssemblyTitle>

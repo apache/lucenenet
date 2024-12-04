@@ -5,9 +5,9 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,7 +19,7 @@
 # to the binary publish subdirectory for the provided target
 # framework, and then publishes to an pipeline artifact.
 
-# NOTE: Depends on environment varable $(RunTests)
+# NOTE: Depends on environment variable $(RunTests)
 
 parameters:
   publishDirectory: '' # The path of the root publish staging directory where the binaries can be found $(PublishTempDirectory)
@@ -27,20 +27,20 @@ parameters:
   binaryArtifactName: '' # The prefix of the binary artifact to publish $(BinaryArtifactName)
   testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/lucene.testsettings.json' #The name of the lucene test settings file
   solution: '$(Build.SourcesDirectory)/Lucene.Net.sln'
-  configration: '$(BuildConfiguration)' # The build configuration
+  configuration: '$(BuildConfiguration)' # The build configuration
   platform: '$(BuildPlatform)' # The build platform
 
 steps:
 - pwsh: |
     $solution = "${{ parameters.solution }}"
-    $configuration = "${{ parameters.configration }}"
+    $configuration = "${{ parameters.configuration }}"
     $framework = "${{ parameters.framework }}"
     $publishDirectory = "${{ parameters.publishDirectory }}"
     Write-Host "solution: $solution"
     Write-Host "configuration: $configuration"
     Write-Host "framework: $framework"
     Write-Host "publishDirectory: $publishDirectory"
-    &dotnet publish "${{ parameters.solution }}" --configuration "${{ parameters.configration }}" --framework: "${{ parameters.framework }}" --no-build --no-restore --verbosity normal /p:TestFrameworks=true /p:Platform="${{ parameters.platform }}" /p:AlternatePublishRootDirectory="${{ parameters.publishDirectory }}"
+    &dotnet publish "${{ parameters.solution }}" --configuration "${{ parameters.configuration }}" --framework: "${{ parameters.framework }}" --no-build --no-restore --verbosity normal /p:TestFrameworks=true /p:Platform="${{ parameters.platform }}" /p:AlternatePublishRootDirectory="${{ parameters.publishDirectory }}"
   displayName: 'Publish Projects for ${{ parameters.framework }}'
   condition: and(succeeded(), ne(variables['RunTests'], 'false'))
 
