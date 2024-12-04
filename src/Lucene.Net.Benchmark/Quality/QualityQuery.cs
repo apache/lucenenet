@@ -3,6 +3,7 @@ using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+#nullable enable
 
 namespace Lucene.Net.Benchmarks.Quality
 {
@@ -49,8 +50,8 @@ namespace Lucene.Net.Benchmarks.Quality
         /// <param name="nameValPairs">The contents of this quality query.</param>
         public QualityQuery(string queryID, IDictionary<string, string> nameValPairs)
         {
-            this.queryID = queryID;
-            this.nameValPairs = nameValPairs;
+            this.queryID = queryID ?? throw new ArgumentNullException(nameof(queryID));
+            this.nameValPairs = nameValPairs ?? throw new ArgumentNullException(nameof(nameValPairs));
         }
 
         /// <summary>
@@ -66,10 +67,9 @@ namespace Lucene.Net.Benchmarks.Quality
         /// </summary>
         /// <param name="name">The name whose value should be returned.</param>
         /// <returns></returns>
-        public virtual string GetValue(string name)
+        public virtual string? GetValue(string name)
         {
-            nameValPairs.TryGetValue(name, out string result);
-            return result;
+            return nameValPairs.TryGetValue(name, out string? result) ? result : null;
         }
 
         /// <summary>
@@ -82,43 +82,57 @@ namespace Lucene.Net.Benchmarks.Quality
         /// For a nicer sort of input queries before running them.
         /// Try first as ints, fall back to string if not int.
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public virtual int CompareTo(QualityQuery other)
+        /// <param name="other">The other <see cref="QualityQuery"/> to compare to.</param>
+        /// <returns>0 if equal, a negative value if smaller, a positive value if larger.</returns>
+        public virtual int CompareTo(QualityQuery? other)
         {
-            try
+            if (other is null)
             {
-                // compare as ints when ids ints
-                int n = int.Parse(queryID, CultureInfo.InvariantCulture);
-                int nOther = int.Parse(other.queryID, CultureInfo.InvariantCulture);
+                return 1;
+            }
+
+            if (int.TryParse(queryID, NumberStyles.Integer, CultureInfo.InvariantCulture, out int n)
+                && int.TryParse(other.queryID, NumberStyles.Integer, CultureInfo.InvariantCulture, out int nOther))
+            {
                 return n - nOther;
             }
-            catch (Exception e) when (e.IsNumberFormatException())
-            {
-                // fall back to string comparison
-                return queryID.CompareToOrdinal(other.queryID);
-            }
+
+            // fall back to string comparison
+            return queryID.CompareToOrdinal(other.queryID);
         }
+
+        // LUCENENET specific - provide Equals and GetHashCode due to providing operator overrides
+        protected bool Equals(QualityQuery? other) => queryID == other?.queryID;
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((QualityQuery)obj);
+        }
+
+        public override int GetHashCode() => queryID.GetHashCode();
 
         #region Operator overrides
         // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
 
-        public static bool operator <(QualityQuery left, QualityQuery right)
+        public static bool operator <(QualityQuery? left, QualityQuery? right)
             => left is null ? right is not null : left.CompareTo(right) < 0;
 
-        public static bool operator <=(QualityQuery left, QualityQuery right)
+        public static bool operator <=(QualityQuery? left, QualityQuery? right)
             => left is null || left.CompareTo(right) <= 0;
 
-        public static bool operator >(QualityQuery left, QualityQuery right)
+        public static bool operator >(QualityQuery? left, QualityQuery? right)
             => left is not null && left.CompareTo(right) > 0;
 
-        public static bool operator >=(QualityQuery left, QualityQuery right)
+        public static bool operator >=(QualityQuery? left, QualityQuery? right)
             => left is null ? right is null : left.CompareTo(right) >= 0;
 
-        public static bool operator ==(QualityQuery left, QualityQuery right)
+        public static bool operator ==(QualityQuery? left, QualityQuery? right)
             => left?.Equals(right) ?? right is null;
 
-        public static bool operator !=(QualityQuery left, QualityQuery right)
+        public static bool operator !=(QualityQuery? left, QualityQuery? right)
             => !(left == right);
 
         #endregion
