@@ -468,7 +468,20 @@ namespace Lucene.Net.Codecs
 
             public override string ToString()
             {
-                return "BLOCK: " + Prefix.Utf8ToString();
+                return $"BLOCK: {Prefix.Utf8ToString()}";
+            }
+
+            #nullable enable
+            public bool TryToString([NotNullWhen(true)] out string? result)
+            {
+                if (Prefix.TryUtf8ToString(out string? prefixString))
+                {
+                    result = $"BLOCK: {prefixString}";
+                    return true;
+                }
+
+                result = null;
+                return false;
             }
 
             // LUCENENET specific - to keep the Debug.Assert statement from throwing exceptions
@@ -476,12 +489,11 @@ namespace Lucene.Net.Codecs
             // to using PendingBlock.Prefix.ToString() if PendingBlock.ToString() errors.
             // This struct defers formatting the string until it is actually used as a parameter
             // in string.Format().
-            private struct PendingBlocksFormatter // For assert
+            private readonly struct PendingBlocksFormatter // For assert
             {
-#pragma warning disable IDE0044 // Add readonly modifier
-                private IList<PendingBlock> blocks;
-#pragma warning restore IDE0044 // Add readonly modifier
-                public PendingBlocksFormatter(IList<PendingBlock> blocks)
+                private readonly IList<PendingBlock>? blocks;
+
+                public PendingBlocksFormatter(IList<PendingBlock>? blocks)
                 {
                     this.blocks = blocks; // May be null
                 }
@@ -500,17 +512,17 @@ namespace Lucene.Net.Codecs
                     it.MoveNext();
                     while (true)
                     {
-                        var e = it.Current;
+                        var e = it.Current ?? throw new InvalidOperationException("Expected a non-null value in the enumerator due to Count check above.");
                         // There is a chance that the Prefix will contain invalid UTF8,
                         // so we catch that and use the alternative way of displaying it
-                        try
+                        if (e.TryToString(out string? eString))
                         {
-                            sb.Append(e.ToString());
+                            sb.Append(eString);
                         }
-                        catch (IndexOutOfRangeException)
+                        else
                         {
                             sb.Append("BLOCK: ");
-                            sb.Append(e.Prefix.ToString());
+                            sb.Append(e.Prefix);
                         }
                         if (!it.MoveNext())
                         {
@@ -520,6 +532,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
             }
+            #nullable restore
 
             public void CompileIndex(IList<PendingBlock> floorBlocks, RAMOutputStream scratchBytes)
             {
