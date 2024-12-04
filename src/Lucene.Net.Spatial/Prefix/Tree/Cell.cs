@@ -28,13 +28,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// <summary>
     /// Represents a grid cell. These are not necessarily thread-safe, although new
     /// Cell("") (world cell) must be.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class Cell : IComparable<Cell>
     {
         /// <summary>
-        /// LUCENENET specific - we need to set the SpatialPrefixTree before calling overridden 
+        /// LUCENENET specific - we need to set the SpatialPrefixTree before calling overridden
         /// members of this class, just in case those overridden members require it. This is
         /// not possible from the subclass because the constructor of the base class runs first.
         /// So we need to move the reference here and also set it before running the normal constructor
@@ -90,7 +90,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 this.token = token.Substring(0, (token.Length - 1) - 0);
                 // LUCENENET specific - calling private instead of virtual to avoid initialization issues
-                SetLeafInternal(); 
+                SetLeafInternal();
             }
             if (Level == 0)
             {
@@ -178,8 +178,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public virtual bool IsLeaf => m_leaf;
 
         /// <summary>Note: not supported at level 0.
-        /// 
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        ///
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls
         /// a private method and not this virtual method. So if you need to override
         /// the behavior during the initialization, call your own private method from the constructor
         /// with whatever custom behavior you need.
@@ -232,7 +232,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         //public Cell getParent();
         /// <summary>
         /// Like <see cref="GetSubCells()">GetSubCells()</see> but with the results filtered by a shape. If
-        /// that shape is a <see cref="IPoint"/> then it must call 
+        /// that shape is a <see cref="IPoint"/> then it must call
         /// <see cref="GetSubCell(IPoint)"/>. The returned cells
         /// should have <see cref="ShapeRel">ShapeRel</see> set to their relation with
         /// <paramref name="shapeFilter"/>. In addition, <see cref="IsLeaf"/>
@@ -337,5 +337,27 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         #endregion
 
+        #region Operator overrides
+        // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+        public static bool operator <(Cell? left, Cell? right)
+            => left is null ? right is not null : left.CompareTo(right) < 0;
+
+        public static bool operator <=(Cell? left, Cell? right)
+            => left is null || left.CompareTo(right) <= 0;
+
+        public static bool operator >(Cell? left, Cell? right)
+            => left is not null && left.CompareTo(right) > 0;
+
+        public static bool operator >=(Cell? left, Cell? right)
+            => left is null ? right is null : left.CompareTo(right) >= 0;
+
+        public static bool operator ==(Cell? left, Cell? right)
+            => left?.Equals(right) ?? right is null;
+
+        public static bool operator !=(Cell? left, Cell? right)
+            => !(left == right);
+
+        #endregion
     }
 }
