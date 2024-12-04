@@ -82,7 +82,7 @@ namespace Lucene.Net.Util.Mutable
 
         public override bool Equals(object other)
         {
-            return (this.GetType() == other.GetType()) && this.EqualsSameType(other);
+            return this.GetType() == other?.GetType() && this.EqualsSameType(other);
         }
 
         public override abstract int GetHashCode();
