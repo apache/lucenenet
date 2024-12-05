@@ -1305,6 +1305,7 @@ namespace Lucene.Net.Search.Highlight
                 for (int i = 0; i < hits.TotalHits; i++)
                 {
                     String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
+                    // TODO: #271 review disposable
                     TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                     Highlighter highlighter = instance.GetHighlighter(query, FIELD_NAME,
@@ -2166,21 +2167,12 @@ namespace Lucene.Net.Search.Highlight
         }
 
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            try
-            {
-                if (disposing)
-                {
-                    this.realStream.Dispose();
-                    this.st?.Dispose();
-                    this.st = null;
-                }
-            }
-            finally
-            {
-                base.Dispose(disposing);
-            }
+            this.realStream.Close();
+            this.st?.Dispose();
+            this.st = null;
+            base.Close();
         }
     }
 

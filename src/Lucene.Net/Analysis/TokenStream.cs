@@ -1,4 +1,6 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 
@@ -36,13 +38,13 @@ namespace Lucene.Net.Analysis
     /// A new <see cref="TokenStream"/> API has been introduced with Lucene 2.9. this API
     /// has moved from being <see cref="Token"/>-based to <see cref="Util.IAttribute"/>-based. While
     /// <see cref="Token"/> still exists in 2.9 as a convenience class, the preferred way
-    /// to store the information of a <see cref="Token"/> is to use <see cref="Attribute"/>s.
+    /// to store the information of a <see cref="Token"/> is to use <see cref="System.Attribute"/>s.
     /// <para/>
     /// <see cref="TokenStream"/> now extends <see cref="AttributeSource"/>, which provides
     /// access to all of the token <see cref="Util.IAttribute"/>s for the <see cref="TokenStream"/>.
-    /// Note that only one instance per <see cref="Attribute"/> is created and reused
+    /// Note that only one instance per <see cref="System.Attribute"/> is created and reused
     /// for every token. This approach reduces object creation and allows local
-    /// caching of references to the <see cref="Attribute"/>s. See
+    /// caching of references to the <see cref="System.Attribute"/>s. See
     /// <see cref="IncrementToken()"/> for further details.
     /// <para/>
     /// <b>The workflow of the new <see cref="TokenStream"/> API is as follows:</b>
@@ -56,7 +58,7 @@ namespace Lucene.Net.Analysis
     ///         consuming the attributes after each call.</description></item>
     ///     <item><description>The consumer calls <see cref="End()"/> so that any end-of-stream operations
     ///         can be performed.</description></item>
-    ///     <item><description>The consumer calls <see cref="Dispose()"/> to release any resource when finished
+    ///     <item><description>The consumer calls <see cref="Close()"/> to release any resource when finished
     ///         using the <see cref="TokenStream"/>.</description></item>
     /// </list>
     /// To make sure that filters and consumers know which attributes are available,
@@ -64,7 +66,7 @@ namespace Lucene.Net.Analysis
     /// not required to check for availability of attributes in
     /// <see cref="IncrementToken()"/>.
     /// <para/>
-    /// You can find some example code for the new API in the analysis 
+    /// You can find some example code for the new API in the analysis
     /// documentation.
     /// <para/>
     /// Sometimes it is desirable to capture a current state of a <see cref="TokenStream"/>,
@@ -76,7 +78,7 @@ namespace Lucene.Net.Analysis
     /// Therefore all non-abstract subclasses must be sealed or have at least a sealed
     /// implementation of <see cref="IncrementToken()"/>! This is checked when assertions are enabled.
     /// </summary>
-    public abstract class TokenStream : AttributeSource, IDisposable
+    public abstract class TokenStream : AttributeSource, ICloseable, IDisposable
     {
         /// <summary>
         /// A <see cref="TokenStream"/> using the default attribute factory.
@@ -98,7 +100,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// A <see cref="TokenStream"/> using the supplied <see cref="AttributeSource.AttributeFactory"/> 
+        /// A <see cref="TokenStream"/> using the supplied <see cref="AttributeSource.AttributeFactory"/>
         /// for creating new <see cref="Util.IAttribute"/> instances.
         /// </summary>
         protected TokenStream(AttributeFactory factory)
@@ -109,7 +111,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Consumers (i.e., <see cref="Index.IndexWriter"/>) use this method to advance the stream to
+        /// Consumers (i.e., <see cref="IndexWriter"/>) use this method to advance the stream to
         /// the next token. Implementing classes must implement this method and update
         /// the appropriate <see cref="Lucene.Net.Util.IAttribute"/>s with the attributes of the next
         /// token.
@@ -177,6 +179,21 @@ namespace Lucene.Net.Analysis
         {
         }
 
+        /// <summary>
+        /// Releases resources associated with this stream.
+        /// <para />
+        /// If you override this method, always call <c>base.Close()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="InvalidOperationException"/> on reuse).
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET notes - this is intended to release resources in a way that allows the
+        /// object to be reused, so it is not the same as <see cref="Dispose()"/>.
+        /// </remarks>
+        public virtual void Close()
+        {
+        }
+
         // LUCENENET specific - implementing proper dispose pattern
         public void Dispose()
         {
@@ -185,12 +202,12 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Releases resources associated with this stream.
+        /// Releases resources associated with this stream, in a way such that the stream is not reusable.
         /// <para/>
-        /// If you override this method, always call <c>base.Dispose(disposing)</c>, otherwise
-        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
-        /// throw <see cref="InvalidOperationException"/> on reuse).
+        /// If you override this method, always call <c>base.Dispose(disposing)</c>.
+        /// Also, ensure that your implementation is idempotent as it may be called multiple times.
         /// </summary>
+        /// <seealso cref="TokenStreamComponents.Dispose()"/>
         protected virtual void Dispose(bool disposing)
         {
         }

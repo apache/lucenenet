@@ -24,10 +24,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <summary>
     /// Joins two token streams and leaves the last token of the first stream available
     /// to be used when updating the token values in the second stream based on that token.
-    /// 
+    ///
     /// The default implementation adds last prefix token end offset to the suffix token start and end offsets.
     /// <para/>
-    /// <b>NOTE:</b> This filter might not behave correctly if used with custom 
+    /// <b>NOTE:</b> This filter might not behave correctly if used with custom
     /// <see cref="Lucene.Net.Util.IAttribute"/>s, i.e. <see cref="Lucene.Net.Util.IAttribute"/>s other than
     /// the ones located in Lucene.Net.Analysis.TokenAttributes.
     /// </summary>
@@ -175,14 +175,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
             suffix.End();
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
-            {
-                prefix.Dispose();
-                suffix.Dispose();
-            }
-            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
+            prefix.Close();
+            suffix.Close();
         }
 
         public override void Reset()

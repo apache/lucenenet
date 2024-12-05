@@ -250,7 +250,7 @@ namespace Lucene.Net.Util
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(source);
+                IOUtils.CloseWhileHandlingException(source);
             }
 
             // rewind the buffer stream
@@ -439,7 +439,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Builds a new <see cref="BooleanQuery"/> instance.
         /// <para/>
-        /// This is intended for subclasses that wish to customize the generated queries. 
+        /// This is intended for subclasses that wish to customize the generated queries.
         /// </summary>
         /// <param name="disableCoord"> Disable coord. </param>
         /// <returns> New <see cref="BooleanQuery"/> instance. </returns>
@@ -452,7 +452,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Builds a new <see cref="TermQuery"/> instance.
         /// <para/>
-        /// This is intended for subclasses that wish to customize the generated queries. 
+        /// This is intended for subclasses that wish to customize the generated queries.
         /// </summary>
         /// <param name="term"> Term. </param>
         /// <returns> New <see cref="TermQuery"/> instance. </returns>
@@ -465,7 +465,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Builds a new <see cref="PhraseQuery"/> instance.
         /// <para/>
-        /// This is intended for subclasses that wish to customize the generated queries. 
+        /// This is intended for subclasses that wish to customize the generated queries.
         /// </summary>
         /// <returns> New <see cref="PhraseQuery"/> instance. </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -477,7 +477,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Builds a new <see cref="MultiPhraseQuery"/> instance.
         /// <para/>
-        /// This is intended for subclasses that wish to customize the generated queries. 
+        /// This is intended for subclasses that wish to customize the generated queries.
         /// </summary>
         /// <returns> New <see cref="MultiPhraseQuery"/> instance. </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

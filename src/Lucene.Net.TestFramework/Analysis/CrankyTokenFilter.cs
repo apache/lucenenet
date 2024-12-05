@@ -69,15 +69,12 @@ namespace Lucene.Net.TestFramework.Analysis
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            base.Dispose(disposing);
-            if (disposing)
+            base.Close();
+            if (thingToDo == 3 && random.nextBoolean())
             {
-                if (thingToDo == 3 && random.nextBoolean())
-                {
-                    throw new IOException("Fake IOException from TokenStream.Dispose(bool)");
-                }
+                throw new IOException("Fake IOException from TokenStream.DoClose()");
             }
         }
     }

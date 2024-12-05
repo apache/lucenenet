@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Util
     {
 
         /*
-         * test to read surrogate pairs without loosing the pairing 
+         * test to read surrogate pairs without loosing the pairing
          * if the surrogate pair is at the border of the internal IO buffer
          */
         [Test]
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Util
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ts);
+                    IOUtils.CloseWhileHandlingException(ts);
                 }
             }
             // just for fun
@@ -208,7 +208,7 @@ namespace Lucene.Net.Analysis.Util
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ts);
+                    IOUtils.CloseWhileHandlingException(ts);
                 }
             }
             // just for fun

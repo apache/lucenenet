@@ -38,7 +38,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// Note: This task reuses the reader if it is already open.
     /// Otherwise a reader is opened at start and closed at the end.
     /// <para/>
-    /// Takes optional multivalued, comma separated param string as: 
+    /// Takes optional multivalued, comma separated param string as:
     /// <code>
     /// size[&lt;traversal size&gt;],highlight[&lt;int&gt;],maxFrags[&lt;int&gt;],mergeContiguous[&lt;boolean&gt;],fields[name1;name2;...]
     /// </code>
@@ -110,8 +110,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             public override int DoHighlight(IndexReader reader, int doc, string field, Document document, Analyzer analyzer, string text)
             {
                 TokenStream ts = TokenSources.GetAnyTokenStream(reader, doc, field, document, analyzer);
-                TextFragment[]
-                frag = highlighter.GetBestTextFragments(ts, text, outerInstance.m_mergeContiguous, outerInstance.m_maxFrags);
+                TextFragment[] frag = highlighter.GetBestTextFragments(ts, text, outerInstance.m_mergeContiguous, outerInstance.m_maxFrags);
                 return frag != null ? frag.Length : 0;
             }
         }
