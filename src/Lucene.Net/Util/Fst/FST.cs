@@ -567,10 +567,13 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// Writes an automaton to a file.
         /// </summary>
-        public void Save(FileInfo file)
+        /// <remarks>
+        /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public void Save(string fileName)
         {
             bool success = false;
-            var bs = file.OpenWrite();
+            var bs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
             try
             {
                 Save(new OutputStreamDataOutput(bs));
@@ -588,6 +591,13 @@ namespace Lucene.Net.Util.Fst
                 }
             }
         }
+
+        /// <summary>
+        /// Writes an automaton to a file.
+        /// </summary>
+        /// <seealso cref="Save(string)"/>
+        public void Save(FileInfo file)
+            => Save(file.FullName);
 
         // LUCENENET NOTE: static Read<T>() was moved into the FST class
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

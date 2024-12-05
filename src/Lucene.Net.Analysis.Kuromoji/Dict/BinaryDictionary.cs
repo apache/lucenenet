@@ -7,6 +7,7 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Security;
+using Directory = System.IO.Directory;
 
 namespace Lucene.Net.Analysis.Ja.Dict
 {
@@ -68,21 +69,21 @@ namespace Lucene.Net.Analysis.Ja.Dict
             // variable. If it is null or empty after this process, we need to
             // load the embedded files.
             string candidatePath = System.IO.Path.Combine(currentPath, DATA_SUBDIR);
-            if (System.IO.Directory.Exists(candidatePath))
+            if (Directory.Exists(candidatePath))
             {
                 return candidatePath;
             }
 
-            while (new DirectoryInfo(currentPath).Parent != null)
+            while (Directory.GetParent(currentPath) is { } parent) // LUCENENET: Reduce DirectoryInfo allocations by only getting parent once per iteration (#832)
             {
                 try
                 {
-                    candidatePath = System.IO.Path.Combine(new DirectoryInfo(currentPath).Parent.FullName, DATA_SUBDIR);
-                    if (System.IO.Directory.Exists(candidatePath))
+                    candidatePath = System.IO.Path.Combine(parent.FullName, DATA_SUBDIR);
+                    if (Directory.Exists(candidatePath))
                     {
                         return candidatePath;
                     }
-                    currentPath = new DirectoryInfo(currentPath).Parent.FullName;
+                    currentPath = parent.FullName;
                 }
                 catch (SecurityException)
                 {

@@ -34,8 +34,21 @@ namespace Lucene.Net.Search.Spell
     /// </summary>
     public class PlainTextDictionary : IDictionary
     {
-
         private readonly TextReader @in;
+
+        /// <summary>
+        /// Creates a dictionary based on a File.
+        /// <para>
+        /// NOTE: content is treated as UTF-8
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string to avoid having to allocate a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public PlainTextDictionary(string fileName)
+        {
+            @in = IOUtils.GetDecodingReader(fileName, Encoding.UTF8);
+        }
 
         /// <summary>
         /// Creates a dictionary based on a File.

@@ -180,8 +180,9 @@ namespace Lucene.Net.Index
                 ICollection<string> files = infoPerCommit.GetFiles();
                 foreach (string srcName in files)
                 {
-                    FileInfo srcFile = new FileInfo(Path.Combine(dir.FullName, srcName));
-                    FileInfo destFile = new FileInfo(Path.Combine(destDir.FullName, srcName));
+                    // LUCENENET specific: changed to use string file names instead of allocating a FileInfo (#832)
+                    string srcFile = Path.Combine(dir.FullName, srcName);
+                    string destFile = Path.Combine(destDir.FullName, srcName);
                     CopyFile(srcFile, destFile);
                 }
             }
@@ -190,10 +191,11 @@ namespace Lucene.Net.Index
             // Console.WriteLine("destDir:"+destDir.getAbsolutePath());
         }
 
-        private static void CopyFile(FileInfo src, FileInfo dst)
+        // LUCENENET specific: changed to use string file names instead of allocating a FileInfo (#832)
+        private static void CopyFile(string src, string dst)
         {
-            using Stream @in = new FileStream(src.FullName, FileMode.Open, FileAccess.Read);
-            using Stream @out = new FileStream(dst.FullName, FileMode.OpenOrCreate, FileAccess.Write);
+            using Stream @in = new FileStream(src, FileMode.Open, FileAccess.Read);
+            using Stream @out = new FileStream(dst, FileMode.OpenOrCreate, FileAccess.Write);
             @in.CopyTo(@out);
         }
     }

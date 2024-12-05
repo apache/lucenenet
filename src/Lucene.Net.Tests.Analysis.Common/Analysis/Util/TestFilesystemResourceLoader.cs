@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestDelegation()
         {
-            IResourceLoader rl = new FilesystemResourceLoader(null, new StringMockResourceLoader("foobar\n"));
+            IResourceLoader rl = new FilesystemResourceLoader((string)null, new StringMockResourceLoader("foobar\n"));
             assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource("template.txt"), Encoding.UTF8).First());
         }
     }

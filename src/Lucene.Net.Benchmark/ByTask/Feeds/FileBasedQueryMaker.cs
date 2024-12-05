@@ -64,12 +64,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             string fileName = m_config.Get("file.query.maker.file", null);
             if (fileName != null)
             {
-                FileInfo file = new FileInfo(fileName);
+                // LUCENENET: not used, preferring fileName overloads: FileInfo file = new FileInfo(fileName);
                 TextReader reader = null;
                 // note: we use a decoding reader, so if your queries are screwed up you know
-                if (file.Exists)
+                // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+                if (File.Exists(fileName))
                 {
-                    reader = IOUtils.GetDecodingReader(file, Encoding.UTF8);
+                    reader = IOUtils.GetDecodingReader(fileName, Encoding.UTF8);
                 }
                 else
                 {

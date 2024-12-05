@@ -97,15 +97,18 @@ namespace Lucene.Net.Index
 
             try
             {
-                FileInfo file = new FileInfo(filename);
-                string dirname = file.DirectoryName;
-                filename = file.Name;
+                // LUCENENET specific: changed to use string filename instead of allocating a FileInfo (#832)
+                string dirname = Path.GetDirectoryName(filename)
+                                 ?? throw new InvalidOperationException($"Could not determine directory name from filename: {filename}");
+
                 if (dirImpl is null)
                 {
-                    dir = FSDirectory.Open(new DirectoryInfo(dirname));
+                    dir = FSDirectory.Open(dirname);
                 }
                 else
                 {
+                    // LUCENENET NOTE: We need the DirectoryInfo instance here, as there's no benefit to using a string.
+                    // See comments on CommandLineUtil.NewFSDirectory(string, DirectoryInfo) for more information. (#832)
                     dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(dirname));
                 }
 

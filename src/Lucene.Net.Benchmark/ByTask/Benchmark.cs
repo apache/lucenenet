@@ -127,14 +127,14 @@ namespace Lucene.Net.Benchmarks.ByTask
             }
 
             // verify input files
-            FileInfo algFile = new FileInfo(args[0]);
-            if (!algFile.Exists /*|| !algFile.isFile() ||!algFile.canRead()*/ )
+            string algFile = args[0]; // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+            if (!File.Exists(algFile) /*|| !algFile.isFile() ||!algFile.canRead()*/ )
             {
-                Console.WriteLine("cannot find/read algorithm file: " + algFile.FullName);
+                Console.WriteLine("cannot find/read algorithm file: " + algFile);
                 Environment.Exit(1);
             }
 
-            Console.WriteLine("Running algorithm from: " + algFile.FullName);
+            Console.WriteLine("Running algorithm from: " + algFile);
 
             Benchmark benchmark = null;
             try

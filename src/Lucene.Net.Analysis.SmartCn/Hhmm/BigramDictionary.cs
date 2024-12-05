@@ -93,8 +93,8 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
             try
             {
-                using (Stream input = new FileStream(serialObj.FullName, FileMode.Open, FileAccess.Read))
-                    LoadFromInputStream(input);
+                using Stream input = new FileStream(serialObj.FullName, FileMode.Open, FileAccess.Read);
+                LoadFromInputStream(input);
                 return true;
             }
             catch (Exception e) when (e.IsException())
