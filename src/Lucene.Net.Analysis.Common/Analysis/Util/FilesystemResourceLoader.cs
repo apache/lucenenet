@@ -1,6 +1,7 @@
 // Lucene version compatibility level 4.8.1
 using System;
 using System.IO;
+#nullable enable
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public sealed class FilesystemResourceLoader : IResourceLoader
     {
-        private readonly DirectoryInfo baseDirectory;
+        private readonly string? baseDirectory; // LUCENENET specific: changed to use string directory name instead of allocating a DirectoryInfo (#832)
         private readonly IResourceLoader @delegate;
 
         /// <summary>
@@ -47,7 +48,7 @@ namespace Lucene.Net.Analysis.Util
         /// are delegated to context classloader.
         /// </summary>
         public FilesystemResourceLoader()
-            : this((DirectoryInfo)null)
+            : this((string?)null)
         {
         }
 
@@ -57,8 +58,19 @@ namespace Lucene.Net.Analysis.Util
         /// Files not found in file system and class lookups are delegated to context
         /// classloader.
         /// </summary>
-        public FilesystemResourceLoader(DirectoryInfo baseDirectory)
+        public FilesystemResourceLoader(string? baseDirectory)
             : this(baseDirectory, new ClasspathResourceLoader(typeof(FilesystemResourceLoader)))
+        {
+        }
+
+        /// <summary>
+        /// Creates a resource loader that resolves resources against the given
+        /// base directory (may be <c>null</c> to refer to CWD).
+        /// Files not found in file system and class lookups are delegated to context
+        /// classloader.
+        /// </summary>
+        public FilesystemResourceLoader(DirectoryInfo? baseDirectory)
+            : this(baseDirectory?.FullName, new ClasspathResourceLoader(typeof(FilesystemResourceLoader)))
         {
         }
 
@@ -68,11 +80,22 @@ namespace Lucene.Net.Analysis.Util
         /// Files not found in file system and class lookups are delegated
         /// to the given delegate <see cref="IResourceLoader"/>.
         /// </summary>
-        public FilesystemResourceLoader(DirectoryInfo baseDirectory, IResourceLoader @delegate)
+        public FilesystemResourceLoader(DirectoryInfo? baseDirectory, IResourceLoader @delegate)
+            : this(baseDirectory?.FullName, @delegate)
+        {
+        }
+
+        /// <summary>
+        /// Creates a resource loader that resolves resources against the given
+        /// base directory (may be <c>null</c> to refer to CWD).
+        /// Files not found in file system and class lookups are delegated
+        /// to the given delegate <see cref="IResourceLoader"/>.
+        /// </summary>
+        public FilesystemResourceLoader(string? baseDirectory, IResourceLoader @delegate)
         {
             // LUCENENET NOTE: If you call DirectoryInfo.Create() it doesn't set the DirectoryInfo.Exists
             // flag to true, so we use the Directory object to check the path explicitly.
-            if (baseDirectory is not null && !Directory.Exists(baseDirectory.FullName))
+            if (baseDirectory is not null && !Directory.Exists(baseDirectory))
             {
                 throw new ArgumentException("baseDirectory is not a directory or is null");
             }
@@ -89,12 +112,12 @@ namespace Lucene.Net.Analysis.Util
         {
             try
             {
-                FileInfo file = null;
+                string? file = null; // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
 
                 // First try absolute.
                 if (File.Exists(resource))
                 {
-                    file = new FileInfo(resource);
+                    file = resource;
                 }
                 else
                 {
@@ -102,22 +125,22 @@ namespace Lucene.Net.Analysis.Util
                     var fullPath = System.IO.Path.GetFullPath(resource);
                     if (File.Exists(fullPath))
                     {
-                        file = new FileInfo(fullPath);
+                        file = fullPath;
                     }
                     else if (baseDirectory != null)
                     {
                         // Try to combine with the base directory
-                        string based = System.IO.Path.Combine(baseDirectory.FullName, resource);
+                        string based = System.IO.Path.Combine(baseDirectory, resource);
                         if (File.Exists(based))
                         {
-                            file = new FileInfo(based);
+                            file = based;
                         }
                     }
                 }
 
                 if (file != null)
                 {
-                    return file.OpenRead();
+                    return new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read);
                 }
 
                 // Fallback on the inner resource loader (this could fail)

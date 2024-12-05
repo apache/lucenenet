@@ -81,6 +81,19 @@ namespace Lucene.Net.Analysis.Core
         /// Builds an analyzer with the stop words from the given file. </summary>
         /// <seealso cref="WordlistLoader.GetWordSet(TextReader, LuceneVersion)"/>
         /// <param name="matchVersion"> See <see cref="LuceneVersion"/> </param>
+        /// <param name="stopwordsFileName"> File name to load stop words from  </param>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public StopAnalyzer(LuceneVersion matchVersion, string stopwordsFileName)
+            : this(matchVersion, LoadStopwordSet(stopwordsFileName, matchVersion))
+        {
+        }
+
+        /// <summary>
+        /// Builds an analyzer with the stop words from the given file. </summary>
+        /// <seealso cref="WordlistLoader.GetWordSet(TextReader, LuceneVersion)"/>
+        /// <param name="matchVersion"> See <see cref="LuceneVersion"/> </param>
         /// <param name="stopwordsFile"> File to load stop words from  </param>
         public StopAnalyzer(LuceneVersion matchVersion, FileInfo stopwordsFile)
             : this(matchVersion, LoadStopwordSet(stopwordsFile, matchVersion))
