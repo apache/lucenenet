@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -314,7 +315,7 @@ namespace Lucene.Net.Analysis
         /// The default implementation returns <paramref name="reader"/>
         /// unchanged.
         /// </summary>
-        /// <param name="fieldName"> <see cref="Index.IIndexableField"/> name being indexed </param>
+        /// <param name="fieldName"> <see cref="IIndexableField"/> name being indexed </param>
         /// <param name="reader"> original <see cref="TextReader"/> </param>
         /// <returns> reader, optionally decorated with <see cref="CharFilter"/>(s) </returns>
         protected internal virtual TextReader InitReader(string fieldName, TextReader reader)
@@ -323,16 +324,16 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Invoked before indexing a <see cref="Index.IIndexableField"/> instance if
+        /// Invoked before indexing a <see cref="IIndexableField"/> instance if
         /// terms have already been added to that field.  This allows custom
         /// analyzers to place an automatic position increment gap between
-        /// <see cref="Index.IIndexableField"/> instances using the same field name.  The default value
+        /// <see cref="IIndexableField"/> instances using the same field name.  The default value
         /// position increment gap is 0.  With a 0 position increment gap and
         /// the typical default token position increment of 1, all terms in a field,
-        /// including across <see cref="Index.IIndexableField"/> instances, are in successive positions, allowing
-        /// exact <see cref="Search.PhraseQuery"/> matches, for instance, across <see cref="Index.IIndexableField"/> instance boundaries.
+        /// including across <see cref="IIndexableField"/> instances, are in successive positions, allowing
+        /// exact <see cref="Search.PhraseQuery"/> matches, for instance, across <see cref="IIndexableField"/> instance boundaries.
         /// </summary>
-        /// <param name="fieldName"> <see cref="Index.IIndexableField"/> name being indexed. </param>
+        /// <param name="fieldName"> <see cref="IIndexableField"/> name being indexed. </param>
         /// <returns> position increment gap, added to the next token emitted from <see cref="GetTokenStream(string, TextReader)"/>.
         ///         this value must be <c>&gt;= 0</c>.</returns>
         public virtual int GetPositionIncrementGap(string fieldName)
@@ -459,10 +460,27 @@ namespace Lucene.Net.Analysis
                 if (componentsPerField is null)
                 {
                     // LUCENENET-615: This needs to support nullable keys
-                    componentsPerField = new JCG.Dictionary<string, TokenStreamComponents>();
+                    componentsPerField = new TokenStreamComponentsDictionary();
                     SetStoredValue(analyzer, componentsPerField);
                 }
                 componentsPerField[fieldName] = components;
+            }
+
+            /// <summary>
+            /// A dictionary that supports disposing of the values when the dictionary is disposed.
+            /// </summary>
+            /// <seealso cref="TokenStreamComponents"/>
+            private class TokenStreamComponentsDictionary
+                : JCG.Dictionary<string, TokenStreamComponents>, IDisposable
+            {
+                public void Dispose()
+                {
+                    foreach (var kvp in this)
+                    {
+                        kvp.Value?.Dispose();
+                    }
+                    Clear();
+                }
             }
         }
 
@@ -508,7 +526,17 @@ namespace Lucene.Net.Analysis
     /// <see cref="Analysis.TokenStream"/> returned by
     /// <see cref="Analyzer.GetTokenStream(string, TextReader)"/>.
     /// </summary>
-    public class TokenStreamComponents
+    /// <remarks>
+    /// LUCENENET: This class implements IDisposable so that any TokenStream implementations
+    /// that need to be disposed are disposed when the Analyzer that stores this in its
+    /// stored value is disposed.
+    /// <para />
+    /// Because it's impossible to know if the <see cref="TokenStream"/> would dispose of the <see cref="Tokenizer"/>,
+    /// this class calls <see cref="IDisposable.Dispose()"/> on both if they are not reference equal.
+    /// Implementations of <see cref="TokenStream.Dispose(bool)"/> should be careful to make their
+    /// code idempotent so that calling <see cref="TokenStream.Dispose()"/> multiple times has no effect.
+    /// </remarks>
+    public class TokenStreamComponents : IDisposable
     {
         /// <summary>
         /// Original source of the tokens.
@@ -573,6 +601,25 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <returns> Component's <see cref="Analysis.Tokenizer"/> </returns>
         public virtual Tokenizer Tokenizer => m_source;
+
+        /// <summary>
+        /// Disposes of the <see cref="Tokenizer"/> and <see cref="TokenStream"/>.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific: see remarks on the <see cref="TokenStreamComponents"/> class.
+        /// </remarks>
+        public void Dispose()
+        {
+            m_source?.Dispose();
+
+            if (!ReferenceEquals(m_source, m_sink))
+            {
+                m_sink?.Dispose();
+            }
+
+            reusableStringReader?.Dispose();
+            GC.SuppressFinalize(this);
+        }
     }
 
     /// <summary>
