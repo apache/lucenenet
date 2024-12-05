@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
+#nullable enable
 
 namespace Lucene.Net.Util
 {
@@ -108,7 +109,10 @@ namespace Lucene.Net.Util
         /// <para/>
         /// WARNING: this is not a valid UTF8 Term
         /// </summary>
-        public static readonly BytesRef BIG_TERM = new BytesRef(new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }); // TODO this is unrelated here find a better place for it
+        public static readonly BytesRef BIG_TERM = new BytesRef(new byte[]
+        {
+            0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+        }); // TODO this is unrelated here find a better place for it
 
         public const int UNI_SUR_HIGH_START = 0xD800;
         public const int UNI_SUR_HIGH_END = 0xDBFF;
@@ -121,7 +125,8 @@ namespace Lucene.Net.Util
         private const long HALF_SHIFT = 10;
         private const long HALF_MASK = 0x3FFL;
 
-        private const int SURROGATE_OFFSET = Character.MinSupplementaryCodePoint - (UNI_SUR_HIGH_START << (int)HALF_SHIFT) - UNI_SUR_LOW_START;
+        private const int SURROGATE_OFFSET = Character.MinSupplementaryCodePoint -
+                                             (UNI_SUR_HIGH_START << (int)HALF_SHIFT) - UNI_SUR_LOW_START;
 
         /// <summary>
         /// Encode characters from a <see cref="ReadOnlySpan{T}"/> (with generic type argument <see cref="char"/>) <paramref name="source"/>, starting at
@@ -149,6 +154,7 @@ namespace Lucene.Net.Util
             {
                 @out = result.Bytes = new byte[maxLen];
             }
+
             result.Offset = 0;
 
             while (i < end)
@@ -189,6 +195,7 @@ namespace Lucene.Net.Util
                             continue;
                         }
                     }
+
                     // replace unpaired surrogate or out-of-order low surrogate
                     // with substitution character
                     @out[upto++] = 0xEF;
@@ -196,12 +203,13 @@ namespace Lucene.Net.Util
                     @out[upto++] = 0xBD;
                 }
             }
+
             //assert matches(source, offset, length, out, upto);
             result.Length = upto;
         }
 
         /// <summary>
-        /// Encode characters from a <see cref="ReadOnlySpan{T}"/> (with generic type argument <see cref="char"/>) <paramref name="source"/>, starting at
+        /// Encode characters from a <see cref="T:char[]"/> <paramref name="source"/>, starting at
         /// <paramref name="offset"/> for <paramref name="length"/> chars. After encoding, <c>result.Offset</c> will always be 0.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="result"/> is <c>null</c>.</exception>
@@ -213,6 +221,31 @@ namespace Lucene.Net.Util
         /// <paramref name="offset"/> and <paramref name="length"/> refer to a location outside of <paramref name="source"/>.
         /// </exception>
         // TODO: broken if incoming result.offset != 0
+        public static void UTF16toUTF8(char[] source, int offset, int length, BytesRef result)
+        {
+            // LUCENENET: Added guard clauses
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            UTF16toUTF8(source.AsSpan(), offset, length, result);
+        }
+
+        /// <summary>
+        /// Encode characters from a <see cref="ReadOnlySpan{T}"/> (with generic type argument <see cref="char"/>) <paramref name="source"/>, starting at
+        /// <paramref name="offset"/> for <paramref name="length"/> chars. After encoding, <c>result.Offset</c> will always be 0.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="result"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="offset"/> or <paramref name="length"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="offset"/> and <paramref name="length"/> refer to a location outside of <paramref name="source"/>.
+        /// </exception>
+        /// <remarks>
+        /// LUCENENET specific overload.
+        /// </remarks>
+        // TODO: broken if incoming result.offset != 0
         public static void UTF16toUTF8(ReadOnlySpan<char> source, int offset, int length, BytesRef result)
         {
             // LUCENENET: Added guard clauses
@@ -223,7 +256,8 @@ namespace Lucene.Net.Util
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
             if (offset > source.Length - length) // Checks for int overflow
-                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
+                throw new ArgumentOutOfRangeException(nameof(length),
+                    $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
 
             int upto = 0;
             int i = offset;
@@ -235,6 +269,7 @@ namespace Lucene.Net.Util
             {
                 @out = result.Bytes = new byte[maxLen];
             }
+
             result.Offset = 0;
 
             while (i < end)
@@ -275,6 +310,7 @@ namespace Lucene.Net.Util
                             continue;
                         }
                     }
+
                     // replace unpaired surrogate or out-of-order low surrogate
                     // with substitution character
                     @out[upto++] = 0xEF;
@@ -282,6 +318,7 @@ namespace Lucene.Net.Util
                     @out[upto++] = 0xBD;
                 }
             }
+
             //assert matches(source, offset, length, out, upto);
             result.Length = upto;
         }
@@ -311,7 +348,8 @@ namespace Lucene.Net.Util
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
             if (offset > source.Length - length) // Checks for int overflow
-                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
+                throw new ArgumentOutOfRangeException(nameof(length),
+                    $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
 
             int end = offset + length;
 
@@ -362,6 +400,7 @@ namespace Lucene.Net.Util
                             continue;
                         }
                     }
+
                     // replace unpaired surrogate or out-of-order low surrogate
                     // with substitution character
                     @out[upto++] = 0xEF;
@@ -369,6 +408,7 @@ namespace Lucene.Net.Util
                     @out[upto++] = 0xBD;
                 }
             }
+
             //assert matches(s, offset, length, out, upto);
             result.Length = upto;
         }
@@ -400,7 +440,8 @@ namespace Lucene.Net.Util
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
             if (offset > source.Length - length) // Checks for int overflow
-                throw new ArgumentOutOfRangeException(nameof(length), $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
+                throw new ArgumentOutOfRangeException(nameof(length),
+                    $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
 
             int end = offset + length;
 
@@ -451,6 +492,7 @@ namespace Lucene.Net.Util
                             continue;
                         }
                     }
+
                     // replace unpaired surrogate or out-of-order low surrogate
                     // with substitution character
                     @out[upto++] = 0xEF;
@@ -458,6 +500,7 @@ namespace Lucene.Net.Util
                     @out[upto++] = 0xBD;
                 }
             }
+
             //assert matches(s, offset, length, out, upto);
             result.Length = upto;
         }
@@ -535,19 +578,19 @@ namespace Lucene.Net.Util
                             // Valid surrogate pair
                         }
                         else
-                        // Unmatched high surrogate
+                            // Unmatched high surrogate
                         {
                             return false;
                         }
                     }
                     else
-                    // Unmatched high surrogate
+                        // Unmatched high surrogate
                     {
                         return false;
                     }
                 }
                 else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
-                // Unmatched low surrogate
+                    // Unmatched low surrogate
                 {
                     return false;
                 }
@@ -556,7 +599,8 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        public static bool ValidUTF16String(string s) // LUCENENET specific overload because string doesn't implement ICharSequence
+        public static bool
+            ValidUTF16String(string s) // LUCENENET specific overload because string doesn't implement ICharSequence
         {
             int size = s.Length;
             for (int i = 0; i < size; i++)
@@ -573,19 +617,19 @@ namespace Lucene.Net.Util
                             // Valid surrogate pair
                         }
                         else
-                        // Unmatched high surrogate
+                            // Unmatched high surrogate
                         {
                             return false;
                         }
                     }
                     else
-                    // Unmatched high surrogate
+                        // Unmatched high surrogate
                     {
                         return false;
                     }
                 }
                 else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
-                // Unmatched low surrogate
+                    // Unmatched low surrogate
                 {
                     return false;
                 }
@@ -594,7 +638,9 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        public static bool ValidUTF16String(StringBuilder s) // LUCENENET specific overload because StringBuilder doesn't implement ICharSequence
+        public static bool
+            ValidUTF16String(
+                StringBuilder s) // LUCENENET specific overload because StringBuilder doesn't implement ICharSequence
         {
             int size = s.Length;
             for (int i = 0; i < size; i++)
@@ -611,19 +657,19 @@ namespace Lucene.Net.Util
                             // Valid surrogate pair
                         }
                         else
-                        // Unmatched high surrogate
+                            // Unmatched high surrogate
                         {
                             return false;
                         }
                     }
                     else
-                    // Unmatched high surrogate
+                        // Unmatched high surrogate
                     {
                         return false;
                     }
                 }
                 else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
-                // Unmatched low surrogate
+                    // Unmatched low surrogate
                 {
                     return false;
                 }
@@ -631,6 +677,8 @@ namespace Lucene.Net.Util
 
             return true;
         }
+
+        public static bool ValidUTF16String(char[] s, int size) => ValidUTF16String(s.AsSpan(), size);
 
         public static bool ValidUTF16String(ReadOnlySpan<char> s, int size)
         {
@@ -658,7 +706,7 @@ namespace Lucene.Net.Util
                     }
                 }
                 else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
-                // Unmatched low surrogate
+                    // Unmatched low surrogate
                 {
                     return false;
                 }
@@ -676,10 +724,13 @@ namespace Lucene.Net.Util
         /* Map UTF-8 encoded prefix byte to sequence length.  -1 (0xFF)
          * means illegal prefix.  see RFC 2279 for details */
         internal static readonly int[] utf8CodeLength = LoadUTF8CodeLength();
-        private static int[] LoadUTF8CodeLength() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+
+        private static int[]
+            LoadUTF8CodeLength() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            int v = int.MinValue;
-            return new int[] {
+            const int v = int.MinValue;
+            return new int[]
+            {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -720,12 +771,31 @@ namespace Lucene.Net.Util
             for (; pos < limit; codePointCount++)
             {
                 int v = bytes[pos] & 0xFF;
-                if (v <   /* 0xxx xxxx */ 0x80) { pos += 1; continue; }
-                if (v >=  /* 110x xxxx */ 0xc0)
+                if (v < /* 0xxx xxxx */ 0x80)
                 {
-                    if (v < /* 111x xxxx */ 0xe0) { pos += 2; continue; }
-                    if (v < /* 1111 xxxx */ 0xf0) { pos += 3; continue; }
-                    if (v < /* 1111 1xxx */ 0xf8) { pos += 4; continue; }
+                    pos += 1;
+                    continue;
+                }
+
+                if (v >= /* 110x xxxx */ 0xc0)
+                {
+                    if (v < /* 111x xxxx */ 0xe0)
+                    {
+                        pos += 2;
+                        continue;
+                    }
+
+                    if (v < /* 1111 xxxx */ 0xf0)
+                    {
+                        pos += 3;
+                        continue;
+                    }
+
+                    if (v < /* 1111 1xxx */ 0xf8)
+                    {
+                        pos += 4;
+                        continue;
+                    }
                     // fallthrough, consider 5 and 6 byte sequences invalid.
                 }
 
@@ -756,6 +826,7 @@ namespace Lucene.Net.Util
             {
                 utf32.Int32s = new int[utf8.Length];
             }
+
             int utf32Count = 0;
             int utf8Upto = utf8.Offset;
             int[] ints = utf32.Int32s;
@@ -795,6 +866,7 @@ namespace Lucene.Net.Util
                 {
                     v = v << 6 | bytes[utf8Upto++] & 63;
                 }
+
                 ints[utf32Count++] = v;
             }
 
@@ -824,7 +896,25 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Value that all lead surrogate starts with. </summary>
-        private const int LEAD_SURROGATE_OFFSET_ = LEAD_SURROGATE_MIN_VALUE - (SUPPLEMENTARY_MIN_VALUE >> LEAD_SURROGATE_SHIFT_);
+        private const int LEAD_SURROGATE_OFFSET_ =
+            LEAD_SURROGATE_MIN_VALUE - (SUPPLEMENTARY_MIN_VALUE >> LEAD_SURROGATE_SHIFT_);
+
+        /// <summary>
+        /// Cover JDK 1.5 API. Create a String from an array of <paramref name="codePoints"/>.
+        /// </summary>
+        /// <param name="codePoints"> The code point array. </param>
+        /// <param name="offset"> The start of the text in the code point array. </param>
+        /// <param name="count"> The number of code points. </param>
+        /// <returns> a String representing the code points between offset and count. </returns>
+        /// <exception cref="ArgumentException"> If an invalid code point is encountered. </exception>
+        /// <exception cref="IndexOutOfRangeException"> If the offset or count are out of bounds. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string NewString(int[] codePoints, int offset, int count)
+        {
+            // LUCENENET: Character.ToString() was optimized to use the stack for arrays
+            // of codepoints 256 or less, so it performs better than using ToCharArray().
+            return Character.ToString(codePoints, offset, count);
+        }
 
         /// <summary>
         /// Cover JDK 1.5 API. Create a String from a span of <paramref name="codePoints"/>.
@@ -841,6 +931,23 @@ namespace Lucene.Net.Util
             // LUCENENET: Character.ToString() was optimized to use the stack for arrays
             // of codepoints 256 or less, so it performs better than using ToCharArray().
             return Character.ToString(codePoints, offset, count);
+        }
+
+        /// <summary>
+        /// Generates char array that represents the provided input code points.
+        /// <para/>
+        /// LUCENENET specific.
+        /// </summary>
+        /// <param name="codePoints"> The code array. </param>
+        /// <param name="offset"> The start of the text in the code point array. </param>
+        /// <param name="count"> The number of code points. </param>
+        /// <returns> a char array representing the code points between offset and count. </returns>
+        // LUCENENET NOTE: This code was originally in the NewString() method (above).
+        // It has been refactored from the original to remove the exception throw/catch and
+        // instead proactively resizes the array instead of relying on exceptions + copy operations
+        public static char[] ToCharArray(int[] codePoints, int offset, int count)
+        {
+            return ToCharArray(codePoints.AsSpan(), offset, count);
         }
 
         /// <summary>
@@ -950,6 +1057,20 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        /// Interprets the given byte array as UTF-8 and converts to UTF-16. The <see cref="CharsRef"/> will be extended if
+        /// it doesn't provide enough space to hold the worst case of each byte becoming a UTF-16 codepoint.
+        /// <para/>
+        /// NOTE: Full characters are read, even if this reads past the length passed (and
+        /// can result in an <see cref="IndexOutOfRangeException"/> if invalid UTF-8 is passed).
+        /// Explicit checks for valid UTF-8 are not performed.
+        /// </summary>
+        // TODO: broken if chars.offset != 0
+        public static void UTF8toUTF16(byte[] utf8, int offset, int length, CharsRef chars)
+        {
+            UTF8toUTF16(utf8.AsSpan(), offset, length, chars);
+        }
+
+        /// <summary>
         /// Interprets the given byte span as UTF-8 and converts to UTF-16. The <see cref="CharsRef"/> will be extended if
         /// it doesn't provide enough space to hold the worst case of each byte becoming a UTF-16 codepoint.
         /// <para/>
@@ -958,7 +1079,7 @@ namespace Lucene.Net.Util
         /// Explicit checks for valid UTF-8 are not performed.
         /// </summary>
         /// <remarks>
-        /// LUCENENET specific: This method uses <see cref="ReadOnlySpan{T}"/> (with generic type argument <see cref="byte"/>) instead of byte[].
+        /// LUCENENET specific overload.
         /// </remarks>
         // TODO: broken if chars.offset != 0
         public static void UTF8toUTF16(ReadOnlySpan<byte> utf8, int offset, int length, CharsRef chars)
@@ -1003,7 +1124,6 @@ namespace Lucene.Net.Util
             chars.Length = out_offset - chars.Offset;
         }
 
-        #nullable enable
         /// <summary>
         /// Tries to interpret the given byte span as UTF-8 and convert to UTF-16, providing the result in a new <see cref="CharsRef"/>.
         /// <para/>
@@ -1077,7 +1197,6 @@ namespace Lucene.Net.Util
             chars = result;
             return true;
         }
-        #nullable restore
 
         /// <summary>
         /// Utility method for <see cref="UTF8toUTF16(ReadOnlySpan{byte}, int, int, CharsRef)"/> </summary>
@@ -1085,7 +1204,15 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void UTF8toUTF16(BytesRef bytesRef, CharsRef chars)
         {
-            UTF8toUTF16(bytesRef.Bytes, bytesRef.Offset, bytesRef.Length, chars);
+            UTF8toUTF16(bytesRef.Bytes.AsSpan(), bytesRef.Offset, bytesRef.Length, chars);
+        }
+
+        /// <summary>
+        /// Utility method for <see cref="TryUTF8toUTF16(ReadOnlySpan{byte}, int, int, out CharsRef)"/> </summary>
+        /// <seealso cref="TryUTF8toUTF16(ReadOnlySpan{byte}, int, int, out CharsRef)"/>
+        public static bool TryUTF8toUTF16(BytesRef bytesRef, out CharsRef? chars)
+        {
+            return TryUTF8toUTF16(bytesRef.Bytes.AsSpan(), bytesRef.Offset, bytesRef.Length, out chars);
         }
     }
 }
