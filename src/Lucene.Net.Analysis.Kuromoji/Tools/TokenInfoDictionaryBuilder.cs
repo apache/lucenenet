@@ -53,9 +53,10 @@ namespace Lucene.Net.Analysis.Ja.Util
         public virtual TokenInfoDictionaryWriter Build(string dirname)
         {
             JCG.List<string> csvFiles = new JCG.List<string>();
-            foreach (FileInfo file in new DirectoryInfo(dirname).EnumerateFiles("*.csv"))
+            // LUCENENET specific: changed to use string file names instead of allocating a FileInfo (#832)
+            foreach (string file in Directory.EnumerateFiles(dirname, "*.csv"))
             {
-                csvFiles.Add(file.FullName);
+                csvFiles.Add(file);
             }
             csvFiles.Sort(StringComparer.Ordinal);
             return BuildDictionary(csvFiles);
