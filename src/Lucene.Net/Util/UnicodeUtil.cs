@@ -578,20 +578,20 @@ namespace Lucene.Net.Util
                             // Valid surrogate pair
                         }
                         else
-                            // Unmatched high surrogate
                         {
+                            // Unmatched high surrogate
                             return false;
                         }
                     }
                     else
-                        // Unmatched high surrogate
                     {
+                        // Unmatched high surrogate
                         return false;
                     }
                 }
                 else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
-                    // Unmatched low surrogate
                 {
+                    // Unmatched low surrogate
                     return false;
                 }
             }
@@ -617,20 +617,20 @@ namespace Lucene.Net.Util
                             // Valid surrogate pair
                         }
                         else
-                            // Unmatched high surrogate
                         {
+                            // Unmatched high surrogate
                             return false;
                         }
                     }
                     else
-                        // Unmatched high surrogate
                     {
+                        // Unmatched high surrogate
                         return false;
                     }
                 }
                 else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
-                    // Unmatched low surrogate
                 {
+                    // Unmatched low surrogate
                     return false;
                 }
             }
@@ -657,20 +657,20 @@ namespace Lucene.Net.Util
                             // Valid surrogate pair
                         }
                         else
-                            // Unmatched high surrogate
                         {
+                            // Unmatched high surrogate
                             return false;
                         }
                     }
                     else
-                        // Unmatched high surrogate
                     {
+                        // Unmatched high surrogate
                         return false;
                     }
                 }
                 else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
-                    // Unmatched low surrogate
                 {
+                    // Unmatched low surrogate
                     return false;
                 }
             }
@@ -706,8 +706,8 @@ namespace Lucene.Net.Util
                     }
                 }
                 else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
-                    // Unmatched low surrogate
                 {
+                    // Unmatched low surrogate
                     return false;
                 }
             }
