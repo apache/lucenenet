@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -77,7 +78,7 @@ namespace Lucene.Net.Analysis
     /// Therefore all non-abstract subclasses must be sealed or have at least a sealed
     /// implementation of <see cref="IncrementToken()"/>! This is checked when assertions are enabled.
     /// </summary>
-    public abstract class TokenStream : AttributeSource, ICloseable
+    public abstract class TokenStream : AttributeSource, ICloseable, IDisposable
     {
         /// <summary>
         /// A <see cref="TokenStream"/> using the default attribute factory.
@@ -110,7 +111,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Consumers (i.e., <see cref="Index.IndexWriter"/>) use this method to advance the stream to
+        /// Consumers (i.e., <see cref="IndexWriter"/>) use this method to advance the stream to
         /// the next token. Implementing classes must implement this method and update
         /// the appropriate <see cref="Lucene.Net.Util.IAttribute"/>s with the attributes of the next
         /// token.
@@ -187,9 +188,27 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <remarks>
         /// LUCENENET notes - this is intended to release resources in a way that allows the
-        /// object to be reused, so it is not the same as <see cref="IDisposable"/>.
+        /// object to be reused, so it is not the same as <see cref="Dispose()"/>.
         /// </remarks>
         public virtual void Close()
+        {
+        }
+
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources associated with this stream, in a way such that the stream is not reusable.
+        /// <para/>
+        /// If you override this method, always call <c>base.Dispose(disposing)</c>.
+        /// Also, ensure that your implementation is idempotent as it may be called multiple times.
+        /// </summary>
+        /// <seealso cref="TokenStreamComponents.Dispose()"/>
+        protected virtual void Dispose(bool disposing)
         {
         }
     }
