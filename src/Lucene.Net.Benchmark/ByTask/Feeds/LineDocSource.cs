@@ -43,7 +43,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     {
         // LUCENENET specific - de-nested LineParser, SimpleLineParser, HeaderLineParser
 
-        private FileInfo file;
+        private string file; // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
         private TextReader reader;
         private int readCount;
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
             }
 
-            // if this the simple case,   
+            // if this the simple case,
             if (Arrays.Equals(header, WriteLineDocTask.DEFAULT_FIELDS))
             {
                 return new SimpleLineParser(header);
@@ -171,11 +171,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             base.SetConfig(config);
             string fileName = config.Get("docs.file", null);
-            if (fileName is null)
-            {
-                throw new ArgumentException("docs.file must be set");
-            }
-            file = new FileInfo(fileName);
+
+            // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+            file = fileName ?? throw new ArgumentException("docs.file must be set");
+
             if (m_encoding is null)
             {
                 m_encoding = Encoding.UTF8;
@@ -189,7 +188,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         protected readonly string[] m_header;
 
         /// <summary>
-        /// Construct with the header 
+        /// Construct with the header
         /// </summary>
         /// <param name="header">header line found in the input file, or <c>null</c> if none.</param>
         protected LineParser(string[] header) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
@@ -205,8 +204,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
     /// <summary>
     /// <see cref="LineParser"/> which ignores the header passed to its constructor
-    /// and assumes simply that field names and their order are the same 
-    /// as in <see cref="WriteLineDocTask.DEFAULT_FIELDS"/>. 
+    /// and assumes simply that field names and their order are the same
+    /// as in <see cref="WriteLineDocTask.DEFAULT_FIELDS"/>.
     /// </summary>
     public class SimpleLineParser : LineParser
     {
@@ -243,11 +242,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     }
 
     /// <summary>
-    /// <see cref="LineParser"/> which sets field names and order by 
+    /// <see cref="LineParser"/> which sets field names and order by
     /// the header - any header - of the lines file.
     /// It is less efficient than <see cref="SimpleLineParser"/> but more powerful.
     /// </summary>
-    public class HeaderLineParser : LineParser 
+    public class HeaderLineParser : LineParser
     {
         private enum FieldName { NAME, TITLE, DATE, BODY, PROP }
         private readonly FieldName[] posToF;
