@@ -190,9 +190,9 @@ namespace Lucene.Net.Search
                 private readonly int[] INCREMENTS;
                 private int i;
 
-                internal IPositionIncrementAttribute posIncrAtt;
-                internal ICharTermAttribute termAtt;
-                internal IOffsetAttribute offsetAtt;
+                private readonly IPositionIncrementAttribute posIncrAtt;
+                private readonly ICharTermAttribute termAtt;
+                private readonly IOffsetAttribute offsetAtt;
 
                 public override sealed bool IncrementToken()
                 {

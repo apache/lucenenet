@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
             IList<TestHit> docs = new JCG.List<TestHit>();
             // must call next first
 
-            ts.Score(new CollectorAnonymousClass(this, docs));
+            ts.Score(new CollectorAnonymousClass(docs));
             Assert.IsTrue(docs.Count == 2, "docs Size: " + docs.Count + " is not: " + 2);
             TestHit doc0 = docs[0];
             TestHit doc5 = docs[1];
@@ -111,13 +111,10 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            private readonly TestTermScorer outerInstance;
-
             private readonly IList<TestHit> docs;
 
-            public CollectorAnonymousClass(TestTermScorer outerInstance, IList<TestHit> docs)
+            public CollectorAnonymousClass(IList<TestHit> docs)
             {
-                this.outerInstance = outerInstance;
                 this.docs = docs;
                 @base = 0;
             }

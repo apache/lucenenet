@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
         private sealed class AutomatonProviderAnonymousClass : IAutomatonProvider
         {
             // automaton that matches quick or brown
-            private Automaton quickBrownAutomaton = BasicOperations.Union(new Automaton[]
+            private readonly Automaton quickBrownAutomaton = BasicOperations.Union(new Automaton[]
             {
                 BasicAutomata.MakeString("quick"),
                 BasicAutomata.MakeString("brown"),

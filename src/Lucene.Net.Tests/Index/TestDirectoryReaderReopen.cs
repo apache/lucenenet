@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 
         private sealed class TestReopenAnonymousClass : TestReopen
         {
-            private Directory dir1;
+            private readonly Directory dir1;
 
             public TestReopenAnonymousClass(Directory dir1)
             {

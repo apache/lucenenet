@@ -202,8 +202,8 @@ namespace Lucene.Net.Index
                     posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
                 }
 
-                internal bool first = true;
-                internal AttributeSource.State state;
+                private bool first = true;
+                private AttributeSource.State state;
 
                 public sealed override bool IncrementToken()
                 {
@@ -245,9 +245,9 @@ namespace Lucene.Net.Index
                     state = null;
                 }
 
-                internal readonly ICharTermAttribute termAtt;
-                internal readonly IPayloadAttribute payloadAtt;
-                internal readonly IPositionIncrementAttribute posIncrAtt;
+                private readonly ICharTermAttribute termAtt;
+                private readonly IPayloadAttribute payloadAtt;
+                private readonly IPositionIncrementAttribute posIncrAtt;
             }
         }
 
@@ -291,10 +291,10 @@ namespace Lucene.Net.Index
                 termAtt = AddAttribute<ICharTermAttribute>();
             }
 
-            private string[] tokens = new string[] { "term1", "term2", "term3", "term2" };
+            private readonly string[] tokens = new string[] { "term1", "term2", "term3", "term2" };
             private int index /*= 0*/;
 
-            private ICharTermAttribute termAtt;
+            private readonly ICharTermAttribute termAtt;
 
             public sealed override bool IncrementToken()
             {

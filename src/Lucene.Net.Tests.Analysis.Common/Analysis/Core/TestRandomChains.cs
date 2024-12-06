@@ -75,10 +75,6 @@ namespace Lucene.Net.Analysis.Core
 
         private sealed class PredicateAnonymousClass : IPredicate<object[]>
         {
-            public PredicateAnonymousClass()
-            {
-            }
-
             public bool Apply(object[] args)
             {
                 return true;
@@ -171,10 +167,6 @@ namespace Lucene.Net.Analysis.Core
 
         private sealed class PredicateAnonymousClass2 : IPredicate<object[]>
         {
-            public PredicateAnonymousClass2()
-            {
-            }
-
             public bool Apply(object[] args)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(args.Length == 3);
@@ -184,10 +176,6 @@ namespace Lucene.Net.Analysis.Core
 
         private sealed class PredicateAnonymousClass3 : IPredicate<object[]>
         {
-            public PredicateAnonymousClass3()
-            {
-            }
-
             public bool Apply(object[] args)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(args.Length == 3);

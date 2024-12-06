@@ -749,9 +749,9 @@ namespace Lucene.Net.Codecs.Lucene45
                 this.ordIndex = ordIndex;
             }
 
-            internal long startOffset;
-            internal long offset;
-            internal long endOffset;
+            private long startOffset;
+            private long offset;
+            private long endOffset;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long NextOrd()

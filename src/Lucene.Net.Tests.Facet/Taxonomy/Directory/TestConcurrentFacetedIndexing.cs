@@ -45,22 +45,20 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private sealed class TaxonomyWriterCacheAnonymousClass : ITaxonomyWriterCache
         {
-            public TaxonomyWriterCacheAnonymousClass()
-            {
-            }
-
-
             public void Dispose()
             {
             }
+
             public int Get(FacetLabel categoryPath)
             {
                 return -1;
             }
+
             public bool Put(FacetLabel categoryPath, int ordinal)
             {
                 return true;
             }
+
             public bool IsFull => true;
 
             public void Clear()
@@ -119,7 +117,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             for (int i = 0; i < indexThreads.Length; i++)
             {
-                indexThreads[i] = new ThreadAnonymousClass(this, numDocs, values, iw, tw, config);
+                indexThreads[i] = new ThreadAnonymousClass(numDocs, values, iw, tw, config);
             }
 
             foreach (ThreadJob t in indexThreads)
@@ -167,24 +165,20 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestConcurrentFacetedIndexing outerInstance;
-
             private readonly AtomicInt32 numDocs;
             private readonly ConcurrentDictionary<string, string> values;
             private readonly IndexWriter iw;
             private readonly DirectoryTaxonomyWriter tw;
             private readonly FacetsConfig config;
 
-            public ThreadAnonymousClass(TestConcurrentFacetedIndexing outerInstance, AtomicInt32 numDocs, ConcurrentDictionary<string, string> values, IndexWriter iw, DirectoryTaxonomyWriter tw, FacetsConfig config)
+            public ThreadAnonymousClass(AtomicInt32 numDocs, ConcurrentDictionary<string, string> values, IndexWriter iw, DirectoryTaxonomyWriter tw, FacetsConfig config)
             {
-                this.outerInstance = outerInstance;
                 this.numDocs = numDocs;
                 this.values = values;
                 this.iw = iw;
                 this.tw = tw;
                 this.config = config;
             }
-
 
             public override void Run()
             {

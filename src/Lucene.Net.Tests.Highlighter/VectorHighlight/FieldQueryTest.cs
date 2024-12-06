@@ -618,7 +618,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         /*
          * <t>...terminal
-         * 
+         *
          * a-b-c-<t>
          *     +-d-<t>
          * b-c-d-<t>
@@ -683,7 +683,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         /*
          * <t>...terminal
-         * 
+         *
          * a-b-<t>
          *   +-c-<t>
          */
@@ -726,7 +726,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         /*
          * <t>...terminal
-         * 
+         *
          * a-a-a-<t>
          *     +-a-<t>
          *       +-a-<t>
@@ -990,6 +990,7 @@ namespace Lucene.Net.Search.VectorHighlight
             phraseCandidate.Add(new TermInfo("defg", 0, 12, 0, 1));
             assertNotNull(fq.SearchPhrase(F, phraseCandidate));
         }
+
         private sealed class TestStopRewriteQueryAnonymousClass : Query
         {
             public override string ToString(string field)

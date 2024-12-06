@@ -303,7 +303,7 @@ namespace Lucene.Net.Search
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
-            private TaskScheduler es;
+            private readonly TaskScheduler es;
 
             public SearcherFactoryAnonymousClass(TestControlledRealTimeReopenThread outerInstance, TaskScheduler es)
             {
@@ -604,7 +604,7 @@ namespace Lucene.Net.Search
 
         private sealed class RefreshListenerAnonymousClass : ReferenceManager.IRefreshListener
         {
-            private AtomicBoolean afterRefreshCalled;
+            private readonly AtomicBoolean afterRefreshCalled;
 
             public RefreshListenerAnonymousClass(AtomicBoolean afterRefreshCalled)
             {
@@ -614,6 +614,7 @@ namespace Lucene.Net.Search
             public void BeforeRefresh()
             {
             }
+
             public void AfterRefresh(bool didRefresh)
             {
                 if (didRefresh)
@@ -697,9 +698,9 @@ namespace Lucene.Net.Search
 
         private sealed class RunnableAnonymousClass : ThreadJob
         {
-            private SnapshotDeletionPolicy sdp;
-            private Directory dir;
-            private IndexWriter iw;
+            private readonly SnapshotDeletionPolicy sdp;
+            private readonly Directory dir;
+            private readonly IndexWriter iw;
 
             public RunnableAnonymousClass(SnapshotDeletionPolicy sdp, Directory dir, IndexWriter iw)
             {
@@ -727,7 +728,6 @@ namespace Lucene.Net.Search
                 }
             }
         }
-
 
         /// <summary>
         /// This test was purposely written in a way that demonstrates how to use the

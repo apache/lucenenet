@@ -40,10 +40,6 @@ namespace Lucene.Net.Index
 
         private sealed class BinaryDocValuesAnonymousClass : BinaryDocValues
         {
-            public BinaryDocValuesAnonymousClass()
-            {
-            }
-
             public override void Get(int docID, BytesRef result)
             {
                 result.Bytes = BytesRef.EMPTY_BYTES;
@@ -59,10 +55,6 @@ namespace Lucene.Net.Index
 
         private sealed class NumericDocValuesAnonymousClass : NumericDocValues
         {
-            public NumericDocValuesAnonymousClass()
-            {
-            }
-
             public override long Get(int docID)
             {
                 return 0;
@@ -76,10 +68,6 @@ namespace Lucene.Net.Index
 
         private sealed class SortedDocValuesAnonymousClass : SortedDocValues
         {
-            public SortedDocValuesAnonymousClass()
-            {
-            }
-
             public override int GetOrd(int docID)
             {
                 return -1;
@@ -102,10 +90,6 @@ namespace Lucene.Net.Index
 
         private sealed class RandomAccessOrdsAnonymousClass : RandomAccessOrds
         {
-            public RandomAccessOrdsAnonymousClass()
-            {
-            }
-
             public override long NextOrd()
             {
                 return NO_MORE_ORDS;

@@ -49,9 +49,6 @@ namespace Lucene.Net.Codecs.RAMOnly
         private sealed class ComparerAnonymousClass : IComparer<BytesRef>
 #pragma warning restore 659
         {
-            public ComparerAnonymousClass()
-            { }
-
             public int Compare(BytesRef t1, BytesRef t2)
             {
                 var b1 = t1.Bytes;
@@ -288,7 +285,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 return postingsWriter;
             }
 
-            public override IComparer<BytesRef> Comparer 
+            public override IComparer<BytesRef> Comparer
                 => BytesRef.UTF8SortedAsUnicodeComparer;
 
             public override void FinishTerm(BytesRef text, TermStats stats)

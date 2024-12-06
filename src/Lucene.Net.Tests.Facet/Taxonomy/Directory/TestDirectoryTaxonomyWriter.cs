@@ -59,20 +59,22 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             public void Dispose()
             {
             }
+
             public int Get(FacetLabel categoryPath)
             {
                 return -1;
             }
+
             public bool Put(FacetLabel categoryPath, int ordinal)
             {
                 return true;
             }
+
             public bool IsFull => true;
 
             public void Clear()
             {
             }
-
         }
 
         [Test]

@@ -226,7 +226,7 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Tests single request that mixes Range and non-Range
-        ///  faceting, with <see cref="DrillSideways"/> and taxonomy. 
+        ///  faceting, with <see cref="DrillSideways"/> and taxonomy.
         /// </summary>
         [Test]
         public virtual void TestMixedRangeAndNonRangeTaxonomy()
@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Facet.Range
             // Test wants 3 docs in one segment:
             writer.ForceMerge(1);
 
-            var vs = new ValueSourceAnonymousClass(this, doc);
+            var vs = new ValueSourceAnonymousClass();
 
             FacetsConfig config = new FacetsConfig();
 
@@ -1076,7 +1076,7 @@ namespace Lucene.Net.Facet.Range
             if (Random.NextBoolean())
             {
                 // Sort of silly:
-                fastMatchFilter = new CachingWrapperFilterAnonymousClass(this, new QueryWrapperFilter(new MatchAllDocsQuery()), filterWasUsed);
+                fastMatchFilter = new CachingWrapperFilterAnonymousClass(new QueryWrapperFilter(new MatchAllDocsQuery()), filterWasUsed);
             }
             else
             {
@@ -1101,7 +1101,7 @@ namespace Lucene.Net.Facet.Range
             Assert.AreEqual(1, s.Search(ddq, 10).TotalHits);
 
             // Test drill-sideways after drill-down
-            DrillSideways ds = new DrillSidewaysAnonymousClass2(this, s, config, (TaxonomyReader)null, vs, ranges, fastMatchFilter);
+            DrillSideways ds = new DrillSidewaysAnonymousClass2(s, config, (TaxonomyReader)null, vs, ranges, fastMatchFilter);
 
 
             DrillSidewaysResult dsr = ds.Search(ddq, 10);
@@ -1114,29 +1114,16 @@ namespace Lucene.Net.Facet.Range
 
         private sealed class ValueSourceAnonymousClass : ValueSource
         {
-            private readonly TestRangeFacetCounts outerInstance;
-
-            private readonly Document doc;
-
-            public ValueSourceAnonymousClass(TestRangeFacetCounts outerInstance, Document doc)
-            {
-                this.outerInstance = outerInstance;
-                this.doc = doc;
-            }
-
             public override FunctionValues GetValues(IDictionary ignored, AtomicReaderContext ignored2)
             {
-                return new DoubleDocValuesAnonymousClass(this);
+                return new DoubleDocValuesAnonymousClass();
             }
 
             private sealed class DoubleDocValuesAnonymousClass : DoubleDocValues
             {
-                private readonly ValueSourceAnonymousClass outerInstance;
-
-                public DoubleDocValuesAnonymousClass(ValueSourceAnonymousClass outerInstance)
+                public DoubleDocValuesAnonymousClass()
                     : base(null)
                 {
-                    this.outerInstance = outerInstance;
                 }
 
                 public override double DoubleVal(int doc)
@@ -1159,19 +1146,15 @@ namespace Lucene.Net.Facet.Range
             {
                 throw UnsupportedOperationException.Create();
             }
-
         }
 
         private sealed class CachingWrapperFilterAnonymousClass : CachingWrapperFilter
         {
-            private readonly TestRangeFacetCounts outerInstance;
-
             private readonly AtomicBoolean filterWasUsed;
 
-            public CachingWrapperFilterAnonymousClass(TestRangeFacetCounts outerInstance, QueryWrapperFilter org, AtomicBoolean filterWasUsed)
+            public CachingWrapperFilterAnonymousClass(QueryWrapperFilter org, AtomicBoolean filterWasUsed)
                 : base(org)
             {
-                this.outerInstance = outerInstance;
                 this.filterWasUsed = filterWasUsed;
             }
 
@@ -1186,22 +1169,17 @@ namespace Lucene.Net.Facet.Range
 
         private sealed class DrillSidewaysAnonymousClass2 : DrillSideways
         {
-            private readonly TestRangeFacetCounts outerInstance;
-
             private readonly ValueSource vs;
             private readonly DoubleRange[] ranges;
             private readonly Filter fastMatchFilter;
 
-
-            public DrillSidewaysAnonymousClass2(TestRangeFacetCounts outerInstance, IndexSearcher indexSearcher, FacetsConfig facetsConfig, TaxonomyReader org, ValueSource valueSource, DoubleRange[] doubleRanges, Filter filter)
+            public DrillSidewaysAnonymousClass2(IndexSearcher indexSearcher, FacetsConfig facetsConfig, TaxonomyReader org, ValueSource valueSource, DoubleRange[] doubleRanges, Filter filter)
                 : base(indexSearcher, facetsConfig, org)
             {
-                this.outerInstance = outerInstance;
                 this.vs = valueSource;
                 this.ranges = doubleRanges;
                 this.fastMatchFilter = filter;
             }
-
 
             protected override Facets BuildFacetsResult(FacetsCollector drillDowns, FacetsCollector[] drillSideways, string[] drillSidewaysDims)
             {

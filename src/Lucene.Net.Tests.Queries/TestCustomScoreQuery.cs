@@ -193,10 +193,10 @@ namespace Lucene.Net.Tests.Queries
                 FieldCache.Int32s values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, INT_FIELD, false);
                 return new CustomScoreProviderAnonymousClass(context, values);
             }
-            
+
             private sealed class CustomScoreProviderAnonymousClass : CustomScoreProvider
             {
-                private FieldCache.Int32s values;
+                private readonly FieldCache.Int32s values;
 
                 public CustomScoreProviderAnonymousClass(AtomicReaderContext context, FieldCache.Int32s values) : base(context)
                 {
@@ -214,7 +214,7 @@ namespace Lucene.Net.Tests.Queries
             {
             }
         }
-        
+
         [Test]
         public virtual void TestCustomExternalQuery()
         {
@@ -238,8 +238,8 @@ namespace Lucene.Net.Tests.Queries
             }
             r.Dispose();
         }
-       
-        [Test] 
+
+        [Test]
         public virtual void TestRewrite()
         {
             IndexReader r = DirectoryReader.Open(dir);
@@ -306,7 +306,7 @@ namespace Lucene.Net.Tests.Queries
             q5CustomMulAdd.Boost = boost;
             Log(q5CustomMulAdd);
 
-            // do al the searches 
+            // do al the searches
             TopDocs td1 = s.Search(q1, null, 1000);
             TopDocs td2CustomNeutral = s.Search(q2CustomNeutral, null, 1000);
             TopDocs td3CustomMul = s.Search(q3CustomMul, null, 1000);
@@ -374,7 +374,7 @@ namespace Lucene.Net.Tests.Queries
                 assertEquals("new score for custom mul add", boost * fieldScore * (score1 + fieldScore), score5, CheckHits.ExplainToleranceDelta(boost * fieldScore * (score1 + fieldScore), score5));
             }
         }
-        
+
         private void LogResult(string msg, IndexSearcher s, Query q, int doc, float score1)
         {
             Log(msg + " " + score1);

@@ -28,11 +28,11 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// An abstract <see cref="Query"/> that matches documents
-    /// containing a subset of terms provided by a 
+    /// containing a subset of terms provided by a
     /// <see cref="Index.FilteredTermsEnum"/> enumeration.
     ///
     /// <para/>This query cannot be used directly; you must subclass
-    /// it and define <see cref="GetTermsEnum(Terms,AttributeSource)"/> to provide a 
+    /// it and define <see cref="GetTermsEnum(Terms,AttributeSource)"/> to provide a
     /// <see cref="Index.FilteredTermsEnum"/> that iterates through the terms to be
     /// matched.
     ///
@@ -41,12 +41,12 @@ namespace Lucene.Net.Search
     /// <see cref="SCORING_BOOLEAN_QUERY_REWRITE"/>, you may encounter a
     /// <see cref="BooleanQuery.TooManyClausesException"/> exception during
     /// searching, which happens when the number of terms to be
-    /// searched exceeds 
-    /// <see cref="BooleanQuery.MaxClauseCount"/>.  Setting 
+    /// searched exceeds
+    /// <see cref="BooleanQuery.MaxClauseCount"/>.  Setting
     /// <see cref="MultiTermRewriteMethod"/> to <see cref="CONSTANT_SCORE_FILTER_REWRITE"/>
     /// prevents this.
     ///
-    /// <para/>The recommended rewrite method is 
+    /// <para/>The recommended rewrite method is
     /// <see cref="CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>: it doesn't spend CPU
     /// computing unhelpful scores, and it tries to pick the most
     /// performant rewrite method given the query. If you
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
     /// and not hit this limitation.
     ///
     /// <para/>Note that QueryParsers.Classic.QueryParser produces
-    /// <see cref="MultiTermQuery"/>s using 
+    /// <see cref="MultiTermQuery"/>s using
     /// <see cref="CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/> by default.
     /// </summary>
     public abstract class MultiTermQuery : Query
@@ -96,10 +96,6 @@ namespace Lucene.Net.Search
 
         private sealed class RewriteMethodAnonymousClass : RewriteMethod
         {
-            public RewriteMethodAnonymousClass()
-            {
-            }
-
             public override Query Rewrite(IndexReader reader, MultiTermQuery query)
             {
                 Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter<MultiTermQuery>(query));
@@ -114,10 +110,10 @@ namespace Lucene.Net.Search
         /// <see cref="BooleanQuery"/>, and keeps the scores as computed by the
         /// query.  Note that typically such scores are
         /// meaningless to the user, and require non-trivial CPU
-        /// to compute, so it's almost always better to use 
+        /// to compute, so it's almost always better to use
         /// <see cref="CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/> instead.
         ///
-        /// <para/><b>NOTE</b>: this rewrite method will hit 
+        /// <para/><b>NOTE</b>: this rewrite method will hit
         /// <see cref="BooleanQuery.TooManyClausesException"/> if the number of terms
         /// exceeds <see cref="BooleanQuery.MaxClauseCount"/>.
         /// </summary>
@@ -130,7 +126,7 @@ namespace Lucene.Net.Search
         /// document receives a constant score equal to the
         /// query's boost.
         ///
-        /// <para/><b>NOTE</b>: this rewrite method will hit 
+        /// <para/><b>NOTE</b>: this rewrite method will hit
         /// <see cref="BooleanQuery.TooManyClausesException"/> if the number of terms
         /// exceeds <see cref="BooleanQuery.MaxClauseCount"/>.
         /// </summary>
@@ -215,13 +211,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        // LUCENENET specific - just use the non-nested class directly. This is 
+        // LUCENENET specific - just use the non-nested class directly. This is
         // confusing in .NET.
 //        /// <summary>
 //        /// A rewrite method that tries to pick the best
 //        /// constant-score rewrite method based on term and
 //        /// document counts from the query.  If both the number of
-//        /// terms and documents is small enough, then 
+//        /// terms and documents is small enough, then
 //        /// <see cref="CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE"/> is used.
 //        /// Otherwise, <see cref="CONSTANT_SCORE_FILTER_REWRITE"/> is
 //        /// used.
@@ -232,10 +228,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Read-only default instance of
-        /// <see cref="ConstantScoreAutoRewrite"/>, with 
+        /// <see cref="ConstantScoreAutoRewrite"/>, with
         /// <see cref="Search.ConstantScoreAutoRewrite.TermCountCutoff"/> set to
         /// <see cref="Search.ConstantScoreAutoRewrite.DEFAULT_TERM_COUNT_CUTOFF"/>
-        /// and 
+        /// and
         /// <see cref="Search.ConstantScoreAutoRewrite.DocCountPercent"/> set to
         /// <see cref="Search.ConstantScoreAutoRewrite.DEFAULT_DOC_COUNT_PERCENT"/>.
         /// Note that you cannot alter the configuration of this
@@ -246,10 +242,6 @@ namespace Lucene.Net.Search
 
         private sealed class ConstantScoreAutoRewriteAnonymousClass : ConstantScoreAutoRewrite
         {
-            public ConstantScoreAutoRewriteAnonymousClass()
-            {
-            }
-
             public override int TermCountCutoff
             {
                 get => base.TermCountCutoff; // LUCENENET specific - adding getter for API consistency check
@@ -319,7 +311,7 @@ namespace Lucene.Net.Search
         /// query.  You can use one of the four core methods, or
         /// implement your own subclass of <see cref="RewriteMethod"/>.
         /// </summary>
-        public virtual RewriteMethod MultiTermRewriteMethod 
+        public virtual RewriteMethod MultiTermRewriteMethod
         {
             get => m_rewriteMethod;
             set => m_rewriteMethod = value;

@@ -62,10 +62,6 @@ namespace Lucene.Net.Index
 
         private sealed class IndexingChainAnonymousClass : IndexingChain
         {
-            public IndexingChainAnonymousClass()
-            {
-            }
-
             internal override DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread)
             {
                 /*

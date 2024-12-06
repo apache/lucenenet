@@ -483,7 +483,7 @@ namespace Lucene.Net.Search
                         docID = -1;
                     }
 
-                    internal int docID;
+                    private int docID;
 
                     public override int DocID => docID;
 

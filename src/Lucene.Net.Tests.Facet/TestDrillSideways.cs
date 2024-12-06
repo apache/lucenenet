@@ -127,7 +127,7 @@ namespace Lucene.Net.Facet
 
             //  case: drill-down on a single field; in this
             // case the drill-sideways + drill-down counts ==
-            // drill-down of just the query: 
+            // drill-down of just the query:
             DrillDownQuery ddq = new DrillDownQuery(config);
             ddq.Add("Author", "Lisa");
             DrillSidewaysResult r = ds.Search(null, ddq, 10);
@@ -742,7 +742,7 @@ namespace Lucene.Net.Facet
                     {
                         Console.WriteLine("  only-even filter");
                     }
-                    filter = new FilterAnonymousClass(this);
+                    filter = new FilterAnonymousClass();
                 }
                 else
                 {
@@ -752,7 +752,7 @@ namespace Lucene.Net.Facet
                 // Verify docs are always collected in order.  If we
                 // had an AssertingScorer it could catch it when
                 // Weight.scoresDocsOutOfOrder lies!:
-                new DrillSideways(s, config, tr).Search(ddq, new CollectorAnonymousClass(this));
+                new DrillSideways(s, config, tr).Search(ddq, new CollectorAnonymousClass());
 
                 // Also separately verify that DS respects the
                 // scoreSubDocsAtOnce method, to ensure that all
@@ -763,7 +763,7 @@ namespace Lucene.Net.Facet
                     // drill-down values, because in that case it's
                     // easily possible for one of the DD terms to be on
                     // a future docID:
-                    new DrillSidewaysAnonymousClass(this, s, config, tr)
+                    new DrillSidewaysAnonymousClass(s, config, tr)
                         .Search(ddq, new AssertingSubDocsAtOnceCollector());
                 }
 
@@ -810,13 +810,6 @@ namespace Lucene.Net.Facet
 
         private sealed class FilterAnonymousClass : Filter
         {
-            private readonly TestDrillSideways outerInstance;
-
-            public FilterAnonymousClass(TestDrillSideways outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 int maxDoc = context.Reader.MaxDoc;
@@ -835,14 +828,7 @@ namespace Lucene.Net.Facet
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            private readonly TestDrillSideways outerInstance;
-
-            public CollectorAnonymousClass(TestDrillSideways outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            internal int lastDocID;
+            private int lastDocID;
 
             public void SetScorer(Scorer scorer)
             {
@@ -864,12 +850,9 @@ namespace Lucene.Net.Facet
 
         private sealed class DrillSidewaysAnonymousClass : DrillSideways
         {
-            private readonly TestDrillSideways outerInstance;
-
-            public DrillSidewaysAnonymousClass(TestDrillSideways outerInstance, IndexSearcher s, FacetsConfig config, TaxonomyReader tr)
+            public DrillSidewaysAnonymousClass(IndexSearcher s, FacetsConfig config, TaxonomyReader tr)
                 : base(s, config, tr)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override bool ScoreSubDocsAtOnce => true;
@@ -967,7 +950,7 @@ namespace Lucene.Net.Facet
 
             // Naive (on purpose, to reduce bug in tester/gold):
             // sort all ids, then return top N slice:
-            new InPlaceMergeSorterAnonymousClass(this, counts, values, ids).Sort(0, ids.Length);
+            new InPlaceMergeSorterAnonymousClass(counts, values, ids).Sort(0, ids.Length);
 
             if (topN > ids.Length)
             {
@@ -991,20 +974,16 @@ namespace Lucene.Net.Facet
 
         private sealed class InPlaceMergeSorterAnonymousClass : InPlaceMergeSorter
         {
-            private readonly TestDrillSideways outerInstance;
-
             private readonly int[] counts;
             private readonly string[] values;
             private readonly int[] ids;
 
-            public InPlaceMergeSorterAnonymousClass(TestDrillSideways outerInstance, int[] counts, string[] values, int[] ids)
+            public InPlaceMergeSorterAnonymousClass(int[] counts, string[] values, int[] ids)
             {
-                this.outerInstance = outerInstance;
                 this.counts = counts;
                 this.values = values;
                 this.ids = ids;
             }
-
 
             protected override void Swap(int i, int j)
             {

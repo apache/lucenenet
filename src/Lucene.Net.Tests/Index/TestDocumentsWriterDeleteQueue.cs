@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private DocumentsWriterDeleteQueue queue;
+            private readonly DocumentsWriterDeleteQueue queue;
 
             public ThreadAnonymousClass(DocumentsWriterDeleteQueue queue)
             {

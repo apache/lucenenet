@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
                 this.hits = hits;
             }
 
-            internal int docBase;
+            private int docBase;
 
             public void SetScorer(Scorer scorer)
             {

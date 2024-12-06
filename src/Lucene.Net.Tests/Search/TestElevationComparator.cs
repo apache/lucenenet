@@ -167,10 +167,10 @@ namespace Lucene.Net.Search
                 tempBR = new BytesRef();
             }
 
-            internal SortedDocValues idIndex;
+            private SortedDocValues idIndex;
             private readonly int[] values;
             private readonly BytesRef tempBR;
-            internal int bottomVal;
+            private int bottomVal;
 
             public override int CompareValues(J2N.Numerics.Int32 first, J2N.Numerics.Int32 second)
             {

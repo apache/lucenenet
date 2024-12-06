@@ -181,7 +181,7 @@ namespace Lucene.Net.Search.Join
 
         /// <summary>
         /// LUCENE-5487: verify a join query inside a SHOULD BQ
-        ///  will still use the join query's optimized BulkScorers 
+        ///  will still use the join query's optimized BulkScorers
         /// </summary>
         [Test]
         public void TestInsideBooleanQuery()
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search.Join
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            internal bool sawFive;
+            private bool sawFive;
 
             public void SetNextReader(AtomicReaderContext context)
             {
@@ -397,7 +397,7 @@ namespace Lucene.Net.Search.Join
             int maxSearchIter = TestUtil.NextInt32(Random, 6, 12);
             ExecuteRandomJoin(true, maxIndexIter, maxSearchIter, TestUtil.NextInt32(Random, 11, 57));
         }
-        
+
         private void ExecuteRandomJoin(bool multipleValuesPerDocument, int maxIndexIter, int maxSearchIter,
             int numberOfDocumentsToIndex)
         {
@@ -436,7 +436,7 @@ namespace Lucene.Net.Search.Join
                     {
                         Console.WriteLine("actualQuery=" + actualQuery);
                     }
-                    
+
                     var scoreModeLength = Enum.GetNames(typeof(ScoreMode)).Length;
                     ScoreMode scoreMode = (ScoreMode) Random.Next(scoreModeLength);
                     if (Verbose)
@@ -519,9 +519,9 @@ namespace Lucene.Net.Search.Join
 
         private sealed class CollectorAnonymousClass2 : ICollector
         {
-            private bool scoreDocsInOrder;
-            private FixedBitSet actualResult;
-            private TopScoreDocCollector topScoreDocCollector;
+            private readonly bool scoreDocsInOrder;
+            private readonly FixedBitSet actualResult;
+            private readonly TopScoreDocCollector topScoreDocCollector;
 
             public CollectorAnonymousClass2(bool scoreDocsInOrder,
                 FixedBitSet actualResult,
@@ -532,9 +532,8 @@ namespace Lucene.Net.Search.Join
                 this.topScoreDocCollector = topScoreDocCollector;
             }
 
-
             private int _docBase;
-            
+
             public void Collect(int doc)
             {
                 actualResult.Set(doc + _docBase);
@@ -546,7 +545,7 @@ namespace Lucene.Net.Search.Join
                 _docBase = context.DocBase;
                 topScoreDocCollector.SetNextReader(context);
             }
-            
+
             public void SetScorer(Scorer scorer)
             {
                 topScoreDocCollector.SetScorer(scorer);
@@ -554,12 +553,12 @@ namespace Lucene.Net.Search.Join
 
             public bool AcceptsDocsOutOfOrder => scoreDocsInOrder;
         }
-        
+
         private IndexIterationContext CreateContext(int nDocs, RandomIndexWriter writer, bool multipleValuesPerDocument, bool scoreDocsInOrder)
         {
             return CreateContext(nDocs, writer, writer, multipleValuesPerDocument, scoreDocsInOrder);
         }
-        
+
         private IndexIterationContext CreateContext(int nDocs, RandomIndexWriter fromWriter, RandomIndexWriter toWriter,
             bool multipleValuesPerDocument, bool scoreDocsInOrder)
         {
@@ -756,11 +755,10 @@ namespace Lucene.Net.Search.Join
                 joinValue = new BytesRef();
             }
 
-
             private Scorer scorer;
             private SortedSetDocValues docTermOrds;
-            internal readonly BytesRef joinValue;
-            
+            private readonly BytesRef joinValue;
+
             public void Collect(int doc)
             {
                 docTermOrds.SetDocument(doc);
@@ -775,7 +773,7 @@ namespace Lucene.Net.Search.Join
                     joinScore.AddScore(scorer.GetScore());
                 }
             }
-            
+
             public void SetNextReader(AtomicReaderContext context)
             {
                 docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, fromField);
@@ -802,12 +800,11 @@ namespace Lucene.Net.Search.Join
                 spare = new BytesRef();
             }
 
-
             private Scorer scorer;
             private BinaryDocValues terms;
             private IBits docsWithField;
             private readonly BytesRef spare;
-            
+
             public void Collect(int doc)
             {
                 terms.Get(doc, spare);
@@ -823,7 +820,7 @@ namespace Lucene.Net.Search.Join
                 }
                 joinScore.AddScore(scorer.GetScore());
             }
-            
+
             public void SetNextReader(AtomicReaderContext context)
             {
                 terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, fromField, true);
@@ -849,7 +846,7 @@ namespace Lucene.Net.Search.Join
             private int docBase;
 
             public CollectorAnonymousClass5(
-                string toField, IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
+                string toField, IDictionary<BytesRef, JoinScore> joinValueToJoinScores,
                 IDictionary<int, JoinScore> docToJoinScore)
             {
                 this.toField = toField;
@@ -877,7 +874,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public void SetNextReader(AtomicReaderContext context)
             {
                 docBase = context.DocBase;
@@ -902,8 +899,8 @@ namespace Lucene.Net.Search.Join
             private readonly BytesRef spare = new BytesRef();
 
             public CollectorAnonymousClass6(
-                string toField, 
-                IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
+                string toField,
+                IDictionary<BytesRef, JoinScore> joinValueToJoinScores,
                 IDictionary<int, JoinScore> docToJoinScore)
             {
                 this.toField = toField;
@@ -920,7 +917,7 @@ namespace Lucene.Net.Search.Join
                 }
                 docToJoinScore[docBase + doc] = joinScore;
             }
-            
+
             public void SetNextReader(AtomicReaderContext context)
             {
                 terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, toField, false);

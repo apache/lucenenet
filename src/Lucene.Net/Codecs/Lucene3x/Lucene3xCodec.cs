@@ -62,11 +62,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private sealed class DocValuesFormatAnonymousClass : DocValuesFormat
         {
-            public DocValuesFormatAnonymousClass()
-                : base()
-            {
-            }
-
             public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)
             {
                 throw UnsupportedOperationException.Create("this codec cannot write docvalues");

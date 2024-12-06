@@ -59,7 +59,7 @@ namespace Lucene.Net.Facet.Taxonomy
         };
 
         /// <summary>
-        ///  When adding the above categories with ITaxonomyWriter.AddCategory(), 
+        ///  When adding the above categories with ITaxonomyWriter.AddCategory(),
         ///  the following paths are expected to be returned:
         ///  (note that currently the full path is not returned, and therefore
         ///  not tested - rather, just the last component, the ordinal, is returned
@@ -200,7 +200,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FillTaxonomy(tw);
             // run fillTaxonomy again - this will try to add the same categories
             // again, and check that we see the same ordinal paths again, not
-            // different ones. 
+            // different ones.
             FillTaxonomy(tw);
             // Let's check the number of categories again, to see that no
             // extraneous categories were created:
@@ -271,7 +271,7 @@ namespace Lucene.Net.Facet.Taxonomy
         ///  Another set of tests for the writer, which don't use an array and
         ///  try to distill the different cases, and therefore may be more helpful
         ///  for debugging a problem than testWriter() which is hard to know why
-        ///  or where it failed. 
+        ///  or where it failed.
         /// </summary>
         [Test]
         public virtual void TestWriterSimpler()
@@ -424,7 +424,7 @@ namespace Lucene.Net.Facet.Taxonomy
         ///  looking at the category string paths (where the parentage is obvious).
         ///  Note that after testReaderBasic(), we already know we can trust the
         ///  ordinal <=> category conversions.
-        ///  
+        ///
         ///  Note: At the moment, the parent methods in the reader are deprecated,
         ///  but this does not mean they should not be tested! Until they are
         ///  removed (*if* they are removed), these tests should remain to see
@@ -474,11 +474,11 @@ namespace Lucene.Net.Facet.Taxonomy
         /// string paths using a TaxonomyReader (where the parentage is obvious).
         /// Note that after testReaderBasic(), we already know we can trust the
         /// ordinal <=> category conversions from TaxonomyReader.
-        /// 
+        ///
         /// The difference between testWriterParent1 and testWriterParent2 is that
         /// the former closes the taxonomy writer before reopening it, while the
         /// latter does not.
-        /// 
+        ///
         /// This test code is virtually identical to that of testReaderParent().
         /// </summary>
         [Test]
@@ -826,7 +826,7 @@ namespace Lucene.Net.Facet.Taxonomy
             indexDirBase.Dispose();
         }
 
-        
+
         private void AssertConsistentYoungestChild(FacetLabel abPath, int abOrd, int abYoungChildBase1, int abYoungChildBase2, int retry, int numCategories)
         {
             var indexDir = new SlowRAMDirectory(-1, null); // no slowness for intialization
@@ -848,7 +848,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Exception[] error = new Exception[] { null };
             int[] retrieval = new int[] { 0 };
 
-            var thread = new ThreadAnonymousClass(this, abPath, abOrd, abYoungChildBase1, abYoungChildBase2, retry, tr, stop, error, retrieval);
+            var thread = new ThreadAnonymousClass(abPath, abOrd, abYoungChildBase1, abYoungChildBase2, retry, tr, stop, error, retrieval);
             thread.Start();
 
             indexDir.SetSleepMillis(1); // some delay for refresh
@@ -867,8 +867,6 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestTaxonomyCombined outerInstance;
-
             private readonly FacetLabel abPath;
             private readonly int abOrd;
             private readonly int abYoungChildBase1;
@@ -879,10 +877,9 @@ namespace Lucene.Net.Facet.Taxonomy
             private readonly Exception[] error;
             private readonly int[] retrieval;
 
-            public ThreadAnonymousClass(TestTaxonomyCombined outerInstance, FacetLabel abPath, int abOrd, int abYoungChildBase1, int abYoungChildBase2, int retry, DirectoryTaxonomyReader tr, AtomicBoolean stop, Exception[] error, int[] retrieval)
+            public ThreadAnonymousClass(FacetLabel abPath, int abOrd, int abYoungChildBase1, int abYoungChildBase2, int retry, DirectoryTaxonomyReader tr, AtomicBoolean stop, Exception[] error, int[] retrieval)
                 : base("Child Arrays Verifier")
             {
-                this.outerInstance = outerInstance;
                 this.abPath = abPath;
                 this.abOrd = abOrd;
                 this.abYoungChildBase1 = abYoungChildBase1;
@@ -926,8 +923,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Grab the stack trace into a string since the exception was thrown in a thread and we want the assert 
-        /// outside the thread to show the stack trace in case of failure.   
+        /// Grab the stack trace into a string since the exception was thrown in a thread and we want the assert
+        /// outside the thread to show the stack trace in case of failure.
         /// </summary>
         private string stackTraceStr(Exception error)
         {
@@ -947,7 +944,7 @@ namespace Lucene.Net.Facet.Taxonomy
         ///  Note that this test obviously doesn't cover all the different
         ///  concurrency scenarios, all different methods, and so on. We may
         ///  want to write more tests of this sort.
-        /// 
+        ///
         ///  This test simulates what would happen when there are two separate
         ///  processes, one doing indexing, and the other searching, and each opens
         ///  its own object (with obviously no connection between the objects) using

@@ -258,15 +258,15 @@ namespace Lucene.Net.Spatial.Serialized
 
                 BinaryDocValues docValues = readerContext.AtomicReader.GetBinaryDocValues(fieldName);
 
-                return new FuctionValuesAnonymousClass(this, docValues);
+                return new FunctionValuesAnonymousClass(this, docValues);
             }
 
-            private sealed class FuctionValuesAnonymousClass : FunctionValues
+            private sealed class FunctionValuesAnonymousClass : FunctionValues
             {
                 private readonly ShapeDocValueSource outerInstance;
                 private readonly BinaryDocValues docValues;
 
-                public FuctionValuesAnonymousClass(ShapeDocValueSource outerInstance, BinaryDocValues docValues)
+                public FunctionValuesAnonymousClass(ShapeDocValueSource outerInstance, BinaryDocValues docValues)
                 {
                     // LUCENENET specific - added guard clauses
                     this.outerInstance = outerInstance ?? throw new ArgumentNullException(nameof(outerInstance));
@@ -276,7 +276,7 @@ namespace Lucene.Net.Spatial.Serialized
                 private int bytesRefDoc = -1;
                 private readonly BytesRef bytesRef = new BytesRef();//scratch
 
-                internal bool FillBytes(int doc)
+                private bool FillBytes(int doc)
                 {
                     if (bytesRefDoc != doc)
                     {

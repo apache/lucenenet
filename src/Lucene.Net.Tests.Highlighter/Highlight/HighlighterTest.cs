@@ -1511,7 +1511,7 @@ namespace Lucene.Net.Search.Highlight
             // for
             // highlighting but scores a single fragment for selection
 
-            Highlighter highlighter = new Highlighter(this, new SimpleHTMLEncoder(), new TestEncodingScorerAnonymousClass(this));
+            Highlighter highlighter = new Highlighter(this, new SimpleHTMLEncoder(), new TestEncodingScorerAnonymousClass());
 
             highlighter.TextFragmenter = (new SimpleFragmenter(2000));
             TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, rawDocContent);
@@ -1546,13 +1546,6 @@ namespace Lucene.Net.Search.Highlight
 
         private sealed class TestEncodingScorerAnonymousClass : IScorer
         {
-            private readonly HighlighterTest outerInstance;
-
-            public TestEncodingScorerAnonymousClass(HighlighterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public void StartFragment(TextFragment newFragment)
             {
             }
@@ -1657,8 +1650,8 @@ namespace Lucene.Net.Search.Highlight
                 iter = lst.GetEnumerator();
             }
 
-            IEnumerator<Token> iter;
-            internal IList<Token> lst;
+            private IEnumerator<Token> iter;
+            private readonly IList<Token> lst; // LUCENENET: made readonly
             private readonly ICharTermAttribute termAtt;
             private readonly IPositionIncrementAttribute posIncrAtt;
             private readonly IOffsetAttribute offsetAtt;
@@ -1719,8 +1712,8 @@ namespace Lucene.Net.Search.Highlight
                 iter = lst.GetEnumerator();
             }
 
-            IEnumerator<Token> iter;
-            internal IList<Token> lst;
+            private IEnumerator<Token> iter;
+            private readonly IList<Token> lst; // LUCENENET: made readonly
             private readonly ICharTermAttribute termAtt;
             private readonly IPositionIncrementAttribute posIncrAtt;
             private readonly IOffsetAttribute offsetAtt;

@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Packed
                 this.numBits = numBits;
             }
 
-            int doc = -1;
+            private int doc = -1;
 
             public override int NextDoc()
             {

@@ -48,10 +48,10 @@ namespace Lucene.Net.Search
         /// <see cref="BooleanQuery"/>, and keeps the scores as computed by the
         /// query.  Note that typically such scores are
         /// meaningless to the user, and require non-trivial CPU
-        /// to compute, so it's almost always better to use 
+        /// to compute, so it's almost always better to use
         /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/> instead.
         ///
-        /// <para/><b>NOTE</b>: this rewrite method will hit 
+        /// <para/><b>NOTE</b>: this rewrite method will hit
         /// <see cref="BooleanQuery.TooManyClausesException"/> if the number of terms
         /// exceeds <see cref="BooleanQuery.MaxClauseCount"/>.
         /// </summary>
@@ -60,10 +60,6 @@ namespace Lucene.Net.Search
 
         private sealed class ScoringRewriteAnonymousClass : ScoringRewrite<BooleanQuery>
         {
-            public ScoringRewriteAnonymousClass()
-            {
-            }
-
             protected override BooleanQuery GetTopLevelQuery()
             {
                 return new BooleanQuery(true);
@@ -91,7 +87,7 @@ namespace Lucene.Net.Search
         /// document receives a constant score equal to the
         /// query's boost.
         ///
-        /// <para/><b>NOTE</b>: this rewrite method will hit 
+        /// <para/><b>NOTE</b>: this rewrite method will hit
         /// <see cref="BooleanQuery.TooManyClausesException"/> if the number of terms
         /// exceeds <see cref="BooleanQuery.MaxClauseCount"/>.
         /// </summary>
@@ -100,10 +96,6 @@ namespace Lucene.Net.Search
 
         private sealed class RewriteMethodAnonymousClass : RewriteMethod
         {
-            public RewriteMethodAnonymousClass()
-            {
-            }
-
             public override Query Rewrite(IndexReader reader, MultiTermQuery query)
             {
                 BooleanQuery bq = (BooleanQuery)SCORING_BOOLEAN_QUERY_REWRITE.Rewrite(reader, query);

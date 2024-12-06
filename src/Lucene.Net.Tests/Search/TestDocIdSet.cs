@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
                     docid = -1;
                 }
 
-                internal int docid;
+                private int docid;
 
                 public override int DocID => docid;
 

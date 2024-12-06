@@ -1003,9 +1003,9 @@ namespace Lucene.Net.Util
                     nextElement = FetchNext();
                 }
 
-                internal int pos;
-                internal object nextElement;
-                internal KType current;
+                private int pos;
+                private object nextElement;
+                private KType current;
 
                 public bool MoveNext()
                 {

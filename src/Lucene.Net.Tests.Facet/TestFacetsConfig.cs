@@ -98,25 +98,18 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// LUCENE-5479 
+        /// LUCENE-5479
         /// </summary>
         [Test]
         public virtual void TestCustomDefault()
         {
-            FacetsConfig config = new FacetsConfigAnonymousClass(this);
+            FacetsConfig config = new FacetsConfigAnonymousClass();
 
             Assert.IsTrue(config.GetDimConfig("foobar").IsHierarchical);
         }
 
         private sealed class FacetsConfigAnonymousClass : FacetsConfig
         {
-            private readonly TestFacetsConfig outerInstance;
-
-            public FacetsConfigAnonymousClass(TestFacetsConfig outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             protected override DimConfig DefaultDimConfig
             {
                 get

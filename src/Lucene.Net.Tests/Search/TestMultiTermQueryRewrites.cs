@@ -217,7 +217,7 @@ namespace Lucene.Net.Search
                     boostAtt = Attributes.AddAttribute<IBoostAttribute>();
                 }
 
-                internal readonly IBoostAttribute boostAtt;
+                private readonly IBoostAttribute boostAtt;
 
                 protected override AcceptStatus Accept(BytesRef term)
                 {
