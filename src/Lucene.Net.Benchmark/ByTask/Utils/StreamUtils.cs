@@ -47,25 +47,51 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         /// based on the file name (e.g., if it ends with .bz2 or .bzip, return a
         /// 'bzip' <see cref="Stream"/>).
         /// </summary>
-        public static Stream GetInputStream(FileInfo file)
+        /// <remarks>
+        /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public static Stream GetInputStream(string fileName)
         {
             // First, create a FileInputStream, as this will be required by all types.
             // Wrap with BufferedInputStream for better performance
-            Stream @in = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
-            return GetFileType(file).GetInputStream(@in);
+            Stream @in = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+            return GetFileType(fileName).GetInputStream(@in);
         }
 
+        /// <summary>
+        /// Returns an <see cref="Stream"/> over the requested file. This method
+        /// attempts to identify the appropriate <see cref="Stream"/> instance to return
+        /// based on the file name (e.g., if it ends with .bz2 or .bzip, return a
+        /// 'bzip' <see cref="Stream"/>).
+        /// </summary>
+        public static Stream GetInputStream(FileInfo file)
+            => GetInputStream(file.FullName);
+
         /// <summary>Return the type of the file, or <c>null</c> if unknown.</summary>
-        private static FileType GetFileType(FileInfo file)
+        private static FileType GetFileType(string fileName)
         {
             FileType? type = null;
-            string fileName = file.Name;
             int idx = fileName.LastIndexOf('.');
             if (idx != -1)
             {
                 extensionToType.TryGetValue(fileName.Substring(idx).ToLowerInvariant(), out type);
             }
-            return type ?? FileType.PLAIN ;
+            return type ?? FileType.PLAIN;
+        }
+
+        /// <summary>
+        /// Returns an <see cref="Stream"/> over the requested file, identifying
+        /// the appropriate <see cref="Stream"/> instance similar to <see cref="GetInputStream(string)"/>.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public static Stream GetOutputStream(string fileName)
+        {
+            // First, create a FileInputStream, as this will be required by all types.
+            // Wrap with BufferedInputStream for better performance
+            Stream os = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+            return GetFileType(fileName).GetOutputStream(os);
         }
 
         /// <summary>
@@ -73,12 +99,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         /// the appropriate <see cref="Stream"/> instance similar to <see cref="GetInputStream(FileInfo)"/>.
         /// </summary>
         public static Stream GetOutputStream(FileInfo file)
-        {
-            // First, create a FileInputStream, as this will be required by all types.
-            // Wrap with BufferedInputStream for better performance
-            Stream os = new FileStream(file.FullName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
-            return GetFileType(file).GetOutputStream(os);
-        }
+            => GetOutputStream(file.FullName);
     }
 
     /// <summary>File format type.</summary>
@@ -109,7 +130,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 case FileType.BZIP2:
                     return new BZip2InputStream(input);
                 case FileType.GZIP:
-                    return new GZipStream(input, CompressionMode.Decompress); 
+                    return new GZipStream(input, CompressionMode.Decompress);
                 default:
                     return input;
             }

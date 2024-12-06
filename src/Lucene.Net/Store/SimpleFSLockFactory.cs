@@ -22,8 +22,8 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// <para>Implements <see cref="LockFactory"/> using 
-    /// <see cref="File.WriteAllText(string, string, Encoding)"/> 
+    /// <para>Implements <see cref="LockFactory"/> using
+    /// <see cref="File.WriteAllText(string, string, Encoding)"/>
     /// (writes the file with UTF8 encoding and no byte order mark).</para>
     ///
     /// <para>Special care needs to be taken if you change the locking
@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
     ///
     /// <para>If you suspect that this or any other <see cref="LockFactory"/> is
     /// not working properly in your environment, you can easily
-    /// test it by using <see cref="VerifyingLockFactory"/>, 
+    /// test it by using <see cref="VerifyingLockFactory"/>,
     /// <see cref="LockVerifyServer"/> and <see cref="LockStressTest"/>.</para>
     /// </summary>
     /// <seealso cref="LockFactory"/>
@@ -87,14 +87,14 @@ namespace Lucene.Net.Store
                 {
                     lockName = m_lockPrefix + "-" + lockName;
                 }
-                FileInfo lockFile = new FileInfo(Path.Combine(m_lockDir.FullName, lockName));
+                string lockFile = Path.Combine(m_lockDir.FullName, lockName); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
                 try
                 {
-                    lockFile.Delete();
+                    File.Delete(lockFile);
                 }
                 catch (Exception e)
                 {
-                    if (lockFile.Exists) // Delete failed and lockFile exists
+                    if (File.Exists(lockFile)) // Delete failed and lockFile exists
                         throw new IOException("Cannot delete " + lockFile, e); // LUCENENET specific: wrapped inner exception
                 }
             }
@@ -103,13 +103,13 @@ namespace Lucene.Net.Store
 
     internal class SimpleFSLock : Lock
     {
-        internal FileInfo lockFile;
+        internal string lockFile; // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
         internal DirectoryInfo lockDir;
 
         public SimpleFSLock(DirectoryInfo lockDir, string lockFileName)
         {
             this.lockDir = lockDir;
-            lockFile = new FileInfo(Path.Combine(lockDir.FullName, lockFileName));
+            lockFile = Path.Combine(lockDir.FullName, lockFileName);
         }
 
         public override bool Obtain()
@@ -134,16 +134,16 @@ namespace Lucene.Net.Store
             // LUCENENET: Since WriteAllText doesn't care if the file exists or not,
             // we need to make that check first. We create a new IOException "failure reason"
             // in this case to simulate what happens in Java
-            if (File.Exists(lockFile.FullName))
+            if (File.Exists(lockFile))
             {
-                FailureReason = new IOException(string.Format("lockFile '{0}' alredy exists.", lockFile.FullName));
+                FailureReason = new IOException($"lockFile '{lockFile}' already exists.");
                 return false;
             }
 
             try
             {
                 // Create the file, and close it immediately
-                File.WriteAllText(lockFile.FullName, string.Empty, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) /* No BOM */);
+                File.WriteAllText(lockFile, string.Empty, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) /* No BOM */);
                 return true;
             }
             catch (Exception e) // LUCENENET: Some of the exceptions that can happen are not IOException, so we catch everything
@@ -161,12 +161,12 @@ namespace Lucene.Net.Store
         {
             if (disposing)
             {
-                if (File.Exists(lockFile.FullName))
+                if (File.Exists(lockFile))
                 {
-                    File.Delete(lockFile.FullName);
+                    File.Delete(lockFile);
 
                     // If lockFile still exists, delete failed
-                    if (File.Exists(lockFile.FullName))
+                    if (File.Exists(lockFile))
                     {
                         throw new LockReleaseFailedException("failed to delete " + lockFile);
                     }
@@ -176,7 +176,7 @@ namespace Lucene.Net.Store
 
         public override bool IsLocked()
         {
-            return File.Exists(lockFile.FullName);
+            return File.Exists(lockFile);
         }
 
         public override string ToString()

@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// Base class for <see cref="Analyzer"/>s that need to make use of stopword sets. 
+    /// Base class for <see cref="Analyzer"/>s that need to make use of stopword sets.
     /// </summary>
     public abstract class StopwordAnalyzerBase : Analyzer
     {
@@ -97,6 +97,35 @@ namespace Lucene.Net.Analysis.Util
 #pragma warning disable 612, 618
                     LuceneVersion.LUCENE_CURRENT, 16, ignoreCase));
 #pragma warning restore 612, 618
+            }
+            finally
+            {
+                IOUtils.Dispose(reader);
+            }
+        }
+
+        /// <summary>
+        /// Creates a <see cref="CharArraySet"/> from a file.
+        /// </summary>
+        /// <param name="stopwordsFileName">
+        ///          the stopwords file name to load
+        /// </param>
+        /// <param name="matchVersion">
+        ///          the Lucene version for cross version compatibility </param>
+        /// <returns> a <see cref="CharArraySet"/> containing the distinct stopwords from the given
+        ///         file </returns>
+        /// <exception cref="IOException">
+        ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
+        /// </remarks>
+        protected static CharArraySet LoadStopwordSet(string stopwordsFileName, LuceneVersion matchVersion)
+        {
+            TextReader reader = null;
+            try
+            {
+                reader = IOUtils.GetDecodingReader(stopwordsFileName, Encoding.UTF8);
+                return WordlistLoader.GetWordSet(reader, matchVersion);
             }
             finally
             {
