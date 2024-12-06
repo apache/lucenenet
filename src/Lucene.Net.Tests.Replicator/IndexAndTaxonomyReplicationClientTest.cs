@@ -346,7 +346,7 @@ namespace Lucene.Net.Replicator
             }
 
             // disable errors -- maybe randomness didn't exhaust all allowed failures,
-            // and we don't want e.g. CheckIndex to hit false errors. 
+            // and we don't want e.g. CheckIndex to hit false errors.
             handlerIndexDir.MaxSizeInBytes = (0);
             handlerIndexDir.RandomIOExceptionRate = (0.0);
             handlerIndexDir.RandomIOExceptionRateOnOpen = (0.0);
@@ -425,8 +425,6 @@ namespace Lucene.Net.Replicator
             }
         }
 
-
-
         private sealed class ReplicationClientAnonymousClass : ReplicationClient
         {
             private readonly IndexAndTaxonomyReplicationClientTest test;
@@ -497,6 +495,5 @@ namespace Lucene.Net.Replicator
                 }
             }
         }
-
     }
 }

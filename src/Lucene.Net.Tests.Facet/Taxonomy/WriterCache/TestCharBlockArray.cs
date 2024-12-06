@@ -313,7 +313,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private sealed class CharSequenceAnonymousClass : ICharSequence
         {
-            private string longTestString;
+            private readonly string longTestString; // LUCENENET: made readonly
 
             public CharSequenceAnonymousClass(string longTestString)
             {

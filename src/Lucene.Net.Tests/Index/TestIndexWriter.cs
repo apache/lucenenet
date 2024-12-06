@@ -1052,11 +1052,11 @@ namespace Lucene.Net.Index
                 first = true;
             }
 
-            internal readonly ICharTermAttribute termAtt;
-            internal readonly IPositionIncrementAttribute posIncrAtt;
+            private readonly ICharTermAttribute termAtt;
+            private readonly IPositionIncrementAttribute posIncrAtt;
 
-            internal readonly IEnumerator<string> terms;
-            internal bool first;
+            private readonly IEnumerator<string> terms;
+            private bool first;
 
             public sealed override bool IncrementToken()
             {
@@ -2894,7 +2894,7 @@ namespace Lucene.Net.Index
 
         private sealed class TestPointAnonymousClass : ITestPoint
         {
-            private SetOnce<IndexWriter> iwRef;
+            private readonly SetOnce<IndexWriter> iwRef;
 
             public TestPointAnonymousClass(SetOnce<IndexWriter> iwRef)
             {

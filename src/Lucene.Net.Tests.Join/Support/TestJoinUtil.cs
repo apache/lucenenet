@@ -184,7 +184,7 @@ namespace Lucene.Net.Tests.Join
 
         /// <summary>
         /// LUCENE-5487: verify a join query inside a SHOULD BQ
-        ///  will still use the join query's optimized BulkScorers 
+        ///  will still use the join query's optimized BulkScorers
         /// </summary>
         [Test]
         public void TestInsideBooleanQuery()
@@ -261,7 +261,7 @@ namespace Lucene.Net.Tests.Join
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            internal bool sawFive;
+            private bool sawFive;
 
             public void SetNextReader(AtomicReaderContext context)
             {
@@ -522,9 +522,9 @@ namespace Lucene.Net.Tests.Join
 
         private sealed class CollectorAnonymousClass2 : ICollector
         {
-            private bool scoreDocsInOrder;
-            private FixedBitSet actualResult;
-            private TopScoreDocCollector topScoreDocCollector;
+            private readonly bool scoreDocsInOrder;
+            private readonly FixedBitSet actualResult;
+            private readonly TopScoreDocCollector topScoreDocCollector;
 
             public CollectorAnonymousClass2(bool scoreDocsInOrder,
                 FixedBitSet actualResult,
@@ -534,7 +534,6 @@ namespace Lucene.Net.Tests.Join
                 this.actualResult = actualResult;
                 this.topScoreDocCollector = topScoreDocCollector;
             }
-
 
             private int _docBase;
 
@@ -759,10 +758,9 @@ namespace Lucene.Net.Tests.Join
                 joinValue = new BytesRef();
             }
 
-
             private Scorer scorer;
             private SortedSetDocValues docTermOrds;
-            internal readonly BytesRef joinValue;
+            private readonly BytesRef joinValue;
 
             public void Collect(int doc)
             {

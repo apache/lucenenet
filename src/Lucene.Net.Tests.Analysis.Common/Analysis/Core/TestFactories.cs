@@ -204,9 +204,9 @@ namespace Lucene.Net.Analysis.Core
 
         private sealed class FactoryAnalyzer : Analyzer
         {
-            internal readonly TokenizerFactory tokenizer;
-            internal readonly CharFilterFactory charFilter;
-            internal readonly TokenFilterFactory tokenfilter;
+            private readonly TokenizerFactory tokenizer;
+            private readonly CharFilterFactory charFilter;
+            private readonly TokenFilterFactory tokenfilter;
 
             internal FactoryAnalyzer(TokenizerFactory tokenizer, TokenFilterFactory tokenfilter, CharFilterFactory charFilter)
             {

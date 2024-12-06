@@ -282,6 +282,7 @@ namespace Lucene.Net.Analysis
         private sealed class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
             private readonly Analyzer @delegate;
+
             public AnalyzerWrapperAnonymousClass(Analyzer @delegate)
                 : base(@delegate.Strategy)
             {
@@ -292,6 +293,7 @@ namespace Lucene.Net.Analysis
             {
                 return new MockCharFilter(reader, 7);
             }
+
             protected override Analyzer GetWrappedAnalyzer(string fieldName)
             {
                 return @delegate;
@@ -314,7 +316,7 @@ namespace Lucene.Net.Analysis
         // LUCENENET NOTE: This has some compatibility issues with Lucene 4.8.1, but need this test when
         // DelegatingAnalyzerWrapper is ported
         //[Test]
-        //public void TestChangeGaps() 
+        //public void TestChangeGaps()
         //{
         //    // LUCENE-5324: check that it is possible to change the wrapper's gaps
         //     int positionGap = Random.nextInt(1000);

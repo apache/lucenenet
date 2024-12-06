@@ -77,8 +77,8 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            internal readonly bool outOfOrder = Random.NextBoolean();
-            internal bool collectionTerminated = true;
+            private readonly bool outOfOrder = Random.NextBoolean();
+            private bool collectionTerminated = true;
 
             public void SetScorer(Scorer scorer)
             {

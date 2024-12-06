@@ -350,7 +350,7 @@ namespace Lucene.Net.Facet.Taxonomy
             DirectoryReader r = DirectoryReader.Open(iw, true);
             DirectoryTaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoWriter);
 
-            ValueSource valueSource = new ValueSourceAnonymousClass(this);
+            ValueSource valueSource = new ValueSourceAnonymousClass();
 
             FacetsCollector fc = new FacetsCollector(true);
             // score documents by their 'price' field - makes asserting the correct counts for the categories easier
@@ -365,34 +365,22 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private sealed class ValueSourceAnonymousClass : ValueSource
         {
-            private readonly TestTaxonomyFacetSumValueSource outerInstance;
-
-            public ValueSourceAnonymousClass(TestTaxonomyFacetSumValueSource outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
             {
                 Scorer scorer = (Scorer)context["scorer"];
                 if (Debugging.AssertsEnabled) Debugging.Assert(scorer != null);
-                return new DoubleDocValuesAnonymousClass(this, scorer);
+                return new DoubleDocValuesAnonymousClass(scorer);
             }
 
             private sealed class DoubleDocValuesAnonymousClass : DoubleDocValues
             {
-                private readonly ValueSourceAnonymousClass outerInstance;
-
                 private readonly Scorer scorer;
 
-                public DoubleDocValuesAnonymousClass(ValueSourceAnonymousClass outerInstance, Scorer scorer)
+                public DoubleDocValuesAnonymousClass(Scorer scorer)
                     : base(null) //todo: value source
                 {
-                    this.outerInstance = outerInstance;
                     this.scorer = scorer;
                 }
-
-
 
                 public override double DoubleVal(int document)
                 {
@@ -411,6 +399,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 return o == this;
             }
+
             public override int GetHashCode()
             {
                 return RuntimeHelpers.GetHashCode(this);

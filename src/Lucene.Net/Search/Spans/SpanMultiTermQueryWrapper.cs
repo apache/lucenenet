@@ -165,18 +165,10 @@ namespace Lucene.Net.Search.Spans
 
         private sealed class SpanRewriteMethodAnonymousClass : SpanRewriteMethod
         {
-            public SpanRewriteMethodAnonymousClass()
-            {
-            }
-
             private readonly ScoringRewrite<SpanOrQuery> @delegate = new ScoringRewriteAnonymousClass();
 
             private sealed class ScoringRewriteAnonymousClass : ScoringRewrite<SpanOrQuery>
             {
-                public ScoringRewriteAnonymousClass()
-                {
-                }
-
                 protected override SpanOrQuery GetTopLevelQuery()
                 {
                     return new SpanOrQuery();

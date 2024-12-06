@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Util
     {
 
         /*
-         * test to read surrogate pairs without loosing the pairing 
+         * test to read surrogate pairs without loosing the pairing
          * if the surrogate pair is at the border of the internal IO buffer
          */
         [Test]
@@ -261,9 +261,6 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class AnalyzerAnonymousClass3 : Analyzer
         {
-            public AnalyzerAnonymousClass3()
-            { }
-
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new NumberAndSurrogatePairTokenizer(TEST_VERSION_CURRENT, reader);

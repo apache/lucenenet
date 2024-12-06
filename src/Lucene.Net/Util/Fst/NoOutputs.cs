@@ -35,10 +35,6 @@ namespace Lucene.Net.Util.Fst
 
         private sealed class ObjectAnonymousClass : object
         {
-            public ObjectAnonymousClass()
-            {
-            }
-
             /// <summary>
             /// NodeHash calls hashCode for this output; we fix this
             /// so we get deterministic hashing.

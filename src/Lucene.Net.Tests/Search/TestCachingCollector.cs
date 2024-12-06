@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
 
         private sealed class CollectorAnonymousClass : ICollector
         {
-            internal int prevDocID = -1;
+            private int prevDocID = -1;
 
             public void SetScorer(Scorer scorer)
             {

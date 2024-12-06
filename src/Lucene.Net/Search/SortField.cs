@@ -154,10 +154,6 @@ namespace Lucene.Net.Search
 
         private sealed class ObjectAnonymousClass : object
         {
-            public ObjectAnonymousClass()
-            {
-            }
-
             public override string ToString()
             {
                 return "SortField.STRING_FIRST";
@@ -172,10 +168,6 @@ namespace Lucene.Net.Search
 
         private sealed class ObjectAnonymousClass2 : object
         {
-            public ObjectAnonymousClass2()
-            {
-            }
-
             public override string ToString()
             {
                 return "SortField.STRING_LAST";
@@ -288,7 +280,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the type of contents in the field. </summary>
-        /// <returns> One of <see cref="SortFieldType.SCORE"/>, <see cref="SortFieldType.DOC"/>, 
+        /// <returns> One of <see cref="SortFieldType.SCORE"/>, <see cref="SortFieldType.DOC"/>,
         /// <see cref="SortFieldType.STRING"/>, <see cref="SortFieldType.INT32"/> or <see cref="SortFieldType.SINGLE"/>. </returns>
         public virtual SortFieldType Type => type;
 
@@ -384,7 +376,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <c>true</c> if <paramref name="o"/> is equal to this.  If a
-        /// <see cref="FieldComparerSource"/> or 
+        /// <see cref="FieldComparerSource"/> or
         /// <see cref="FieldCache.IParser"/> was provided, it must properly
         /// implement equals (unless a singleton is always used).
         /// </summary>
@@ -399,9 +391,9 @@ namespace Lucene.Net.Search
                 return false;
             }
             SortField other = (SortField)o;
-            return (StringHelper.Equals(other.field, this.field) 
-                && other.type == this.type 
-                && other.reverse == this.reverse 
+            return (StringHelper.Equals(other.field, this.field)
+                && other.type == this.type
+                && other.reverse == this.reverse
                 && (other.comparerSource is null ? this.comparerSource is null : other.comparerSource.Equals(this.comparerSource)));
         }
 
@@ -441,7 +433,7 @@ namespace Lucene.Net.Search
         /// @lucene.experimental
         /// </summary>
         /// <param name="numHits"> Number of top hits the queue will store </param>
-        /// <param name="sortPos"> Position of this <see cref="SortField"/> within 
+        /// <param name="sortPos"> Position of this <see cref="SortField"/> within
         ///   <see cref="Sort"/>.  The comparer is primary if sortPos==0,
         ///   secondary if sortPos==1, etc.  Some comparers can
         ///   optimize themselves when they are the primary sort. </param>
