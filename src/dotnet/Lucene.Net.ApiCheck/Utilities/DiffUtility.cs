@@ -17,6 +17,7 @@
 
 using Lucene.Net.ApiCheck.Models.Config;
 using Lucene.Net.ApiCheck.Models.Diff;
+using System.Reflection;
 
 namespace Lucene.Net.ApiCheck.Utilities;
 
@@ -28,16 +29,39 @@ public static class DiffUtility
     {
         Console.WriteLine("Generating diff...");
 
-        var libraries = await JarToolIntegration.ExtractApi(extractorJarPath,
+        var javaLibraries = await JarToolIntegration.ExtractApi(extractorJarPath,
             new FileInfo(Path.Combine(outputPath.FullName, "lucene-api.json")),
             config.LuceneVersion,
             config.Libraries.Select(i => i.LuceneName).ToList());
 
-        foreach (var lib in libraries)
+        var assemblyDiffs = new List<AssemblyDiff>();
+
+        foreach (var javaLib in javaLibraries)
         {
-            Console.WriteLine($"Processing {lib.Library.JarName}...");
+            Console.WriteLine($"Processing {javaLib.Library.JarName}...");
+
+            var libraryConfig = config.Libraries.FirstOrDefault(i => i.LuceneName == javaLib.Library.LibraryName)
+                ?? throw new InvalidOperationException($"Library {javaLib.Library.LibraryName} not found in config.");
+
+            var assembly = Assembly.Load(libraryConfig.LuceneNetName)
+                ?? throw new InvalidOperationException($"Assembly {libraryConfig.LuceneNetName} not found.");
+
+            var diff = new AssemblyDiff
+            {
+                LuceneName = javaLib.Library.LibraryName,
+                LuceneVersion = javaLib.Library.Version,
+                LuceneNetName = libraryConfig.LuceneNetName,
+                LuceneNetVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+                    ?? assembly.GetName().Version?.ToString()
+                    ?? "unknown"
+            };
+
+            assemblyDiffs.Add(diff);
         }
 
-        return new ApiDiffResult();
+        return new ApiDiffResult
+        {
+            Assemblies = assemblyDiffs
+        };
     }
 }
