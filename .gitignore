@@ -42,6 +42,7 @@ test-files/analysis/data/
 out.dot
 release/
 _artifacts/
+download/
 
 # NuGet v3's project.json files produces more ignoreable files
 *.nuget.props

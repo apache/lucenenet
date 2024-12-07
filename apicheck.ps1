@@ -7,7 +7,7 @@ $downloadPath = "_artifacts/lucene-api-extractor/download"
 $outputPath = "_artifacts/lucene-api-extractor/output"
 
 # delete existing output path
-Remove-Item -Recurse -Force $outputPath
+Remove-Item -Recurse -Force $outputPath -ErrorAction SilentlyContinue
 
 # create download and output paths recursively
 New-Item -ItemType Directory -Force -Path $downloadPath

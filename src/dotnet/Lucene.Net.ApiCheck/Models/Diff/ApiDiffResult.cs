@@ -19,5 +19,5 @@ namespace Lucene.Net.ApiCheck.Models.Diff;
 
 public class ApiDiffResult
 {
-
+    public required IList<AssemblyDiff> Assemblies { get; set; }
 }
