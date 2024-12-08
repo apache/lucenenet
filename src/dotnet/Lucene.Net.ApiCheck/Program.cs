@@ -41,13 +41,35 @@ var diffCommand = new Command("diff", "Generates a raw diff JSON data file of th
 
 diffCommand.SetHandler(async (j, d, c, o) =>
 {
+    if (!Directory.Exists(o.FullName))
+    {
+        Directory.CreateDirectory(o.FullName);
+    }
+
     var globalOptions = new GlobalOptions(j, d, c);
     await DiffCommand.GenerateDiff(globalOptions, o);
+}, extractorJarPath, extractorDownloadPath, configFilePath, outputPath);
+
+var reportCommand = new Command("report", "Generates an HTML report of the API differences between Lucene and Lucene.NET")
+{
+    outputPath,
+};
+
+reportCommand.SetHandler(async (j, d, c, o) =>
+{
+    if (!Directory.Exists(o.FullName))
+    {
+        Directory.CreateDirectory(o.FullName);
+    }
+
+    var globalOptions = new GlobalOptions(j, d, c);
+    await ReportCommand.GenerateReport(globalOptions, o);
 }, extractorJarPath, extractorDownloadPath, configFilePath, outputPath);
 
 var rootCommand = new RootCommand
 {
     diffCommand,
+    reportCommand,
 };
 
 rootCommand.AddGlobalOption(extractorJarPath);

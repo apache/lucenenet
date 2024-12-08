@@ -1,3 +1,7 @@
+param (
+    [switch] $clean = $false
+)
+
 $mvnPomPath = "src/java/lucene-api-extractor/pom.xml"
 $targetPath = "src/java/lucene-api-extractor/target"
 $dotnetProjectPath = "src/dotnet/Lucene.Net.ApiCheck/Lucene.Net.ApiCheck.csproj"
@@ -6,20 +10,38 @@ $artifactId = "lucene-api-extractor"
 $downloadPath = "_artifacts/lucene-api-extractor/download"
 $outputPath = "_artifacts/lucene-api-extractor/output"
 
-# delete existing output path
-Remove-Item -Recurse -Force $outputPath -ErrorAction SilentlyContinue
+if ($clean)
+{
+    # delete existing output path
+    Remove-Item -Recurse -Force $outputPath -ErrorAction SilentlyContinue
+}
 
 # create download and output paths recursively
-New-Item -ItemType Directory -Force -Path $downloadPath
-New-Item -ItemType Directory -Force -Path $outputPath
+New-Item -ItemType Directory -Force -Path $downloadPath -InformationAction SilentlyContinue -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force -Path $outputPath -InformationAction SilentlyContinue -ErrorAction SilentlyContinue
 
-# build jar
-Write-Host "Building jar file..."
-mvn -f $mvnPomPath clean package
+if ($clean)
+{
+    # build jar
+    Write-Host "Building jar file..."
+    mvn -f $mvnPomPath clean package
+}
+elseif (-not (Test-Path "$targetPath/$artifactId-*.jar"))
+{
+    # build jar
+    Write-Host "Building jar file..."
+    mvn -f $mvnPomPath package
+}
 
 $jarFile = Get-ChildItem -Path $targetPath -Filter "$artifactId-*.jar" | Select-Object -First 1
 Write-Host "Jar file: $jarFile"
 
+if ($clean) {
+    # Clean the API Check project
+    Write-Host "Cleaning API Check project..."
+    dotnet clean --project $dotnetProjectPath
+}
+
 # Run the API check
 Write-Host "Running API check..."
-dotnet run --project $dotnetProjectPath -- -j $jarFile -c $configFilePath diff -o $outputPath
+dotnet run --project $dotnetProjectPath -- -j $jarFile -c $configFilePath report -o $outputPath

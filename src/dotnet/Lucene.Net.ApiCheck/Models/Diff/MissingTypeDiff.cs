@@ -17,17 +17,13 @@
 
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
-public class AssemblyDiff
+public class MissingTypeDiff
 {
-    public required string LuceneName { get; set; }
+    public required string TypeKind { get; set; }
 
-    public required string LuceneVersion { get; set; }
+    public required string TypeName { get; set; }
 
-    public required string LuceneNetName { get; set; }
+    public required IReadOnlyList<string> Modifiers { get; set; }
 
-    public required string LuceneNetVersion { get; set; }
-
-    public required IList<MissingTypeDiff> LuceneNetTypesNotInLucene { get; set; }
-
-    public required IList<MissingTypeDiff> LuceneTypesNotInLuceneNet { get; set; }
+    public string ModifiersDisplay => string.Join(" ", Modifiers);
 }

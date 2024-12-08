@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lucene.NET API Diff Report</title>
+    <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+    <h1>Lucene.NET API Diff Report</h1>
+    {{#each Assemblies}}
+        <h2>{{LuceneNetName}} {{LuceneNetVersion}} / lucene-{{LuceneName}} {{LuceneVersion}}</h2>
+
+        <h3>Lucene Types Missing in Lucene.NET</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type Kind</th>
+                    <th>Modifiers</th>
+                    <th>Type Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each LuceneTypesNotInLuceneNet}}
+                    <tr>
+                        <td>{{TypeKind}}</td>
+                        <td>{{ModifiersDisplay}}</td>
+                        <td>{{TypeName}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+    {{/each}}
+    <script type="text/javascript" src="index.js" defer></script>
+</body>
+</html>

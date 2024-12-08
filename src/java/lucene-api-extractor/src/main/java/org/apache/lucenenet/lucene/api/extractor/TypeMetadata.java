@@ -23,6 +23,7 @@ public record TypeMetadata(
         String packageName,
         String kind,
         String name,
+        String fullName,
         String baseType,
         List<String> interfaces,
         List<String> modifiers,

@@ -3,7 +3,10 @@
     "libraries": [
         {
             "luceneName": "core",
-            "luceneNetName": "Lucene.Net"
+            "luceneNetName": "Lucene.Net",
+            "packageNameMappings": {
+                "org.apache.lucene.document": "Lucene.Net.Documents"
+            }
         }
     ]
 }
