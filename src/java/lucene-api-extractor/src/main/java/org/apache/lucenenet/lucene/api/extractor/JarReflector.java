@@ -107,6 +107,7 @@ public class JarReflector {
                     var type = new TypeMetadata(
                             packageName,
                             Modifier.isInterface(clazz.getModifiers()) ? "interface" : "class",
+                            clazz.getSimpleName(),
                             clazz.getTypeName(),
                             superClass != null ? superClass.getTypeName() : null,
                             Stream.of(clazz.getInterfaces()).map(Class::getTypeName).sorted().toList(),

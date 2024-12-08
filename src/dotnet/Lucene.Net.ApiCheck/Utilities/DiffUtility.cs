@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
+using Lucene.Net.ApiCheck.Comparison;
 using Lucene.Net.ApiCheck.Models.Config;
 using Lucene.Net.ApiCheck.Models.Diff;
+using Lucene.Net.ApiCheck.Models.JavaApi;
 using System.Reflection;
 
 namespace Lucene.Net.ApiCheck.Utilities;
@@ -46,15 +48,7 @@ public static class DiffUtility
             var assembly = Assembly.Load(libraryConfig.LuceneNetName)
                 ?? throw new InvalidOperationException($"Assembly {libraryConfig.LuceneNetName} not found.");
 
-            var diff = new AssemblyDiff
-            {
-                LuceneName = javaLib.Library.LibraryName,
-                LuceneVersion = javaLib.Library.Version,
-                LuceneNetName = libraryConfig.LuceneNetName,
-                LuceneNetVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-                    ?? assembly.GetName().Version?.ToString()
-                    ?? "unknown"
-            };
+            var diff = DiffAssembly(javaLib, libraryConfig, assembly);
 
             assemblyDiffs.Add(diff);
         }
@@ -63,5 +57,95 @@ public static class DiffUtility
         {
             Assemblies = assemblyDiffs
         };
+    }
+
+    private static AssemblyDiff DiffAssembly(LibraryResult javaLib, LibraryConfig libraryConfig, Assembly assembly)
+    {
+        // strategy:
+        // 1. get types in .NET that are not in Java library
+        // 2. get types in Java library that are not in .NET
+        // 3. get types that are in both, but have different members
+
+        var netTypesNotInJava = assembly.GetTypes()
+            .Where(t => t.IsPublic)
+            .Where(t => !javaLib.Types.Any(jt => TypeComparison.TypesMatch(libraryConfig, t, jt)))
+            .Select(t => new MissingTypeDiff
+            {
+                TypeKind = GetKindForType(t),
+                TypeName = t.FullName ?? t.Name,
+                Modifiers = GetModifiersForType(t),
+            })
+            .ToList();
+
+        var javaTypesNotInNet = javaLib.Types
+            .Where(jt => jt.Modifiers.Contains("public"))
+            .Where(jt => !assembly.GetTypes().Any(t => TypeComparison.TypesMatch(libraryConfig, t, jt)))
+            .Select(jt => new MissingTypeDiff
+            {
+                TypeKind = jt.Kind,
+                TypeName = jt.FullName,
+                Modifiers = jt.Modifiers,
+            })
+            .ToList();
+
+        // TODO: compare types that are in both assemblies
+
+        var diff = new AssemblyDiff
+        {
+            LuceneName = javaLib.Library.LibraryName,
+            LuceneVersion = javaLib.Library.Version,
+            LuceneNetName = libraryConfig.LuceneNetName,
+            LuceneNetVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+                               ?? assembly.GetName().Version?.ToString()
+                               ?? "unknown",
+            LuceneNetTypesNotInLucene = netTypesNotInJava,
+            LuceneTypesNotInLuceneNet = javaTypesNotInNet,
+        };
+
+        return diff;
+    }
+
+    private static IReadOnlyList<string> GetModifiersForType(Type type)
+    {
+        var modifiers = new List<string>();
+
+        if (type.IsAbstract)
+        {
+            modifiers.Add("abstract");
+        }
+
+        if (type.IsSealed)
+        {
+            modifiers.Add("sealed");
+        }
+
+        if (type.IsPublic)
+        {
+            modifiers.Add("public");
+        }
+
+        // TODO: other modifiers
+
+        return modifiers;
+    }
+
+    private static string GetKindForType(Type t)
+    {
+        if (t.IsInterface)
+        {
+            return "interface";
+        }
+
+        if (t.IsEnum)
+        {
+            return "enum";
+        }
+
+        if (t.IsValueType)
+        {
+            return "struct";
+        }
+
+        return t.IsClass ? "class" : "unknown";
     }
 }

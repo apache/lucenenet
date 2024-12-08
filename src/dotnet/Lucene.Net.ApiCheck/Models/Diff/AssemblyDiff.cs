@@ -26,4 +26,8 @@ public class AssemblyDiff
     public required string LuceneNetName { get; set; }
 
     public required string LuceneNetVersion { get; set; }
+
+    public required IList<MissingTypeDiff> LuceneNetTypesNotInLucene { get; set; }
+
+    public required IList<MissingTypeDiff> LuceneTypesNotInLuceneNet { get; set; }
 }

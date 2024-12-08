@@ -9,11 +9,22 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Handlebars.Net" Version="2.1.6" />
       <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Lucene.Net.Tests.ApiCheck" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Report\index.css" />
+      <EmbeddedResource Include="Report\index.js" />
+      <EmbeddedResource Include="Report\index.handlebars" />
     </ItemGroup>
 
 </Project>

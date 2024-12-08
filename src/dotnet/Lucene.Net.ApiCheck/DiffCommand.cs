@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.ApiCheck.Models.Diff;
 using Lucene.Net.ApiCheck.Utilities;
 using System.Text.Json;
 
@@ -22,7 +23,7 @@ namespace Lucene.Net.ApiCheck;
 
 public static class DiffCommand
 {
-    public static async Task GenerateDiff(GlobalOptions globalOptions, DirectoryInfo outputPath)
+    public static async Task<ApiDiffResult> GenerateDiff(GlobalOptions globalOptions, DirectoryInfo outputPath)
     {
         var config = await globalOptions.LoadConfig();
 
@@ -32,5 +33,7 @@ public static class DiffCommand
         await File.WriteAllTextAsync(fileName, JsonSerializer.Serialize(diff));
 
         Console.WriteLine($"API diff written to {fileName}");
+
+        return diff;
     }
 }
