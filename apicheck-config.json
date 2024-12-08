@@ -6,6 +6,40 @@
             "luceneNetName": "Lucene.Net",
             "packageNameMappings": {
                 "org.apache.lucene.document": "Lucene.Net.Documents"
+            },
+            "typeOverrides": {
+                "org.apache.lucene.document.FloatDocValuesField": {
+                    "type": "Lucene.Net.Documents.SingleDocValuesField",
+                    "justification": "Uses .NET numeric type naming conventions"
+                },
+                "org.apache.lucene.document.FloatField": {
+                    "type": "Lucene.Net.Documents.SingleField",
+                    "justification": "Uses .NET numeric type naming conventions"
+                },
+                "org.apache.lucene.document.IntDocValuesField": {
+                    "type": "Lucene.Net.Documents.Int32DocValuesField",
+                    "justification": "Uses .NET numeric type naming conventions"
+                },
+                "org.apache.lucene.document.IntField": {
+                    "type": "Lucene.Net.Documents.Int32Field",
+                    "justification": "Uses .NET numeric type naming conventions"
+                },
+                "org.apache.lucene.document.LongDocValuesField": {
+                    "type": "Lucene.Net.Documents.Int64DocValuesField",
+                    "justification": "Uses .NET numeric type naming conventions"
+                },
+                "org.apache.lucene.document.LongField": {
+                    "type": "Lucene.Net.Documents.Int64Field",
+                    "justification": "Uses .NET numeric type naming conventions"
+                },
+                "org.apache.lucene.document.PackedLongDocValuesField": {
+                    "type": "Lucene.Net.Documents.PackedInt64DocValuesField",
+                    "justification": "Uses .NET numeric type naming conventions"
+                },
+                "org.apache.lucene.document.ShortDocValuesField": {
+                    "type": "Lucene.Net.Documents.Int16DocValuesField",
+                    "justification": "Uses .NET numeric type naming conventions"
+                }
             }
         }
     ]

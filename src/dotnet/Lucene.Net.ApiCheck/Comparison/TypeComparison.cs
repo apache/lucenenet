@@ -25,6 +25,12 @@ internal static class TypeComparison
 {
     public static bool TypesMatch(LibraryConfig libraryConfig, Type dotNetType, TypeMetadata javaType)
     {
+        if (libraryConfig.TypeOverrides.TryGetValue(javaType.FullName, out var typeOverride)
+            && typeOverride.Type == dotNetType.FullName)
+        {
+            return true;
+        }
+
         var expectedNamespace = libraryConfig.PackageNameMappings.TryGetValue(javaType.PackageName, out var mappedNamespace)
             ? mappedNamespace
             : GetExpectedDotNetNamespace(javaType.PackageName);
@@ -34,8 +40,12 @@ internal static class TypeComparison
             ? $"I{cleanJavaName}"
             : cleanJavaName;
 
+        var cleanDotNetName = dotNetType.Name.IndexOf('`') is > 0 and var genericIndex
+            ? dotNetType.Name[..genericIndex]
+            : dotNetType.Name;
+
         return string.Equals(dotNetType.Namespace, expectedNamespace, StringComparison.OrdinalIgnoreCase)
-            && dotNetType.Name == expectedDotNetName;
+            && cleanDotNetName == expectedDotNetName;
     }
 
     public static string? GetExpectedDotNetNamespace(string packageName)

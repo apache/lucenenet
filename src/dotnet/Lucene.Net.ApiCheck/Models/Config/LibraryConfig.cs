@@ -20,4 +20,5 @@ namespace Lucene.Net.ApiCheck.Models.Config;
 public record LibraryConfig(
     string LuceneName,
     string LuceneNetName,
-    IDictionary<string, string> PackageNameMappings);
+    IReadOnlyDictionary<string, string> PackageNameMappings,
+    IReadOnlyDictionary<string, TypeOverride> TypeOverrides);
