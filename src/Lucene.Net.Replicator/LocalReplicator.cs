@@ -99,13 +99,15 @@ namespace Lucene.Net.Replicator
             public SessionToken Session { get; private set; }
             public RefCountedRevision Revision { get; private set; }
 
-            private long lastAccessTime;
+            // LUCENENET: was volatile long in Lucene, but that is not valid in .NET
+            // Instead, we use AtomicInt64 to ensure atomicity.
+            private readonly AtomicInt64 lastAccessTime;
 
             public ReplicationSession(SessionToken session, RefCountedRevision revision)
             {
                 Session = session;
                 Revision = revision;
-                lastAccessTime = Stopwatch.GetTimestamp(); // LUCENENET: Use the most accurate timer to determine expiration
+                lastAccessTime = new AtomicInt64(Stopwatch.GetTimestamp()); // LUCENENET: Use the most accurate timer to determine expiration
             }
 
             public virtual bool IsExpired(long expirationThreshold)
@@ -115,7 +117,7 @@ namespace Lucene.Net.Replicator
 
             public virtual void MarkAccessed()
             {
-                lastAccessTime = Stopwatch.GetTimestamp(); // LUCENENET: Use the most accurate timer to determine expiration
+                lastAccessTime.Value = Stopwatch.GetTimestamp(); // LUCENENET: Use the most accurate timer to determine expiration
             }
         }
 

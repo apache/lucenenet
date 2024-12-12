@@ -22,7 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
-  
+
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests._J-S</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
@@ -80,7 +80,7 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimeInformationPackageVersion)" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>

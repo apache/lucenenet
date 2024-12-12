@@ -50,8 +50,13 @@ namespace Lucene.Net.Search
         private readonly long targetMinStaleNS;
         private readonly TrackingIndexWriter writer;
         private volatile bool finish;
+
+        // LUCENENET note: these fields were originally volatile in Lucene,
+        // but since access to them is always done under a lock or with Interlocked,
+        // no need to make these AtomicInt64.
         private long waitingGen;
         private long searchingGen;
+
         private readonly AtomicInt64 refreshStartGen = new AtomicInt64();
         private readonly AtomicBoolean isDisposed = new AtomicBoolean(false);
 

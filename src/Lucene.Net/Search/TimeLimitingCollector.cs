@@ -1,4 +1,5 @@
 ﻿using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support.Threading;
 using System;
 
@@ -43,7 +44,7 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// Thrown when elapsed search time exceeds allowed search time. </summary>
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
@@ -150,7 +151,7 @@ namespace Lucene.Net.Search
         ///     collector.SetBaseline(baseline);
         ///     indexSearcher.Search(query, collector);
         /// </code>
-        /// </para> 
+        /// </para>
         /// </summary>
         /// <seealso cref="SetBaseline()"/>
         public virtual void SetBaseline(long clockTime)
@@ -173,7 +174,7 @@ namespace Lucene.Net.Search
         /// A non greedy collector, upon a timeout, would throw a <see cref="TimeExceededException"/>
         /// without allowing the wrapped collector to collect current doc. A greedy one would
         /// first allow the wrapped hit collector to collect current doc and only then
-        /// throw a <see cref="TimeExceededException"/>. 
+        /// throw a <see cref="TimeExceededException"/>.
         /// </summary>
         public virtual bool IsGreedy
         {
@@ -213,7 +214,7 @@ namespace Lucene.Net.Search
                 SetBaseline();
             }
         }
-        
+
         public virtual void SetScorer(Scorer scorer)
         {
             collector.SetScorer(scorer);
@@ -239,7 +240,7 @@ namespace Lucene.Net.Search
         /// the global <see cref="TimerThread"/> has never been accessed before. The thread
         /// returned from this method is started on creation and will be alive unless
         /// you stop the <see cref="TimerThread"/> via <see cref="TimerThread.StopTimer()"/>.
-        /// </para> 
+        /// </para>
         /// @lucene.experimental
         /// </summary>
         /// <returns> the global TimerThreads <seealso cref="Counter"/> </returns>
@@ -291,18 +292,19 @@ namespace Lucene.Net.Search
             //   afford losing a tick or two.
             //
             // See section 17 of the Java Language Specification for details.
-            private readonly long time = 0;
+            // LUCENENET NOTE: despite the explanation above, this value is never modified.
+            private const long time = 0;
 
             private volatile bool stop = false;
-            private long resolution;
+            private readonly AtomicInt64 resolution; // LUCENENET: was volatile long, using AtomicInt64 instead
             internal readonly Counter counter;
 
             public TimerThread(long resolution, Counter counter)
                 : base(THREAD_NAME)
             {
-                this.resolution = resolution;
+                this.resolution = new AtomicInt64(resolution);
                 this.counter = counter;
-                this.IsBackground = (true);
+                this.IsBackground = true;
             }
 
             public TimerThread(Counter counter)
@@ -319,7 +321,7 @@ namespace Lucene.Net.Search
 
                     try
                     {
-                        Thread.Sleep(TimeSpan.FromMilliseconds(Interlocked.Read(ref resolution)));
+                        Thread.Sleep(TimeSpan.FromMilliseconds(resolution.Value));
                     }
                     catch (Exception ie) when (ie.IsInterruptedException())
                     {
@@ -346,7 +348,7 @@ namespace Lucene.Net.Search
             public long Resolution
             {
                 get => resolution;
-                set => this.resolution = Math.Max(value, 5); // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
+                set => this.resolution.Value = Math.Max(value, 5); // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Diagnostics;
+﻿using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -128,12 +129,17 @@ namespace Lucene.Net.Index
             }
             private int maxNumSegments = -1;
 
+            // LUCENENET NOTE: original was volatile, using AtomicInt64 instead.
+            // Also, we expose the value as a `long` property instead of exposing
+            // the AtomicInt64 object itself.
+            internal readonly AtomicInt64 estimatedMergeBytes = new AtomicInt64();
+
             /// <summary>
             /// Estimated size in bytes of the merged segment. </summary>
-            public long EstimatedMergeBytes { get; internal set; } // used by IndexWriter // LUCENENET NOTE: original was volatile, but long cannot be in .NET
+            public long EstimatedMergeBytes => estimatedMergeBytes.Value;
 
             // Sum of sizeInBytes of all SegmentInfos; set by IW.mergeInit
-            internal long totalMergeBytes; // LUCENENET NOTE: original was volatile, but long cannot be in .NET
+            internal readonly AtomicInt64 totalMergeBytes = new AtomicInt64(); // LUCENENET NOTE: original was volatile, using AtomicInt64 instead
 
             internal IList<SegmentReader> readers; // used by IndexWriter
 
@@ -413,7 +419,7 @@ namespace Lucene.Net.Index
             /// input total size. This is only set once the merge is
             /// initialized by <see cref="IndexWriter"/>.
             /// </summary>
-            public virtual long TotalBytesSize => totalMergeBytes;
+            public virtual long TotalBytesSize => totalMergeBytes.Value;
 
             /// <summary>
             /// Returns the total number of documents that are included with this merge.

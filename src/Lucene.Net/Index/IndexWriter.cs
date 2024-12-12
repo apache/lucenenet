@@ -228,13 +228,14 @@ namespace Lucene.Net.Index
         private readonly Directory directory; // where this index resides
         private readonly Analyzer analyzer; // how to analyze text
 
-        private long changeCount; // increments every time a change is completed
-        private long lastCommitChangeCount; // last changeCount that was committed
+        // LUCENENET specific - since we don't have `volatile long` in .NET, we use AtomicInt64
+        private readonly AtomicInt64 changeCount = new AtomicInt64(); // increments every time a change is completed
+        private readonly AtomicInt64 lastCommitChangeCount = new AtomicInt64(); // last changeCount that was committed
 
         private IList<SegmentCommitInfo> rollbackSegments; // list of segmentInfo we will fallback to if the commit fails
 
         internal volatile SegmentInfos pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
-        internal long pendingCommitChangeCount;
+        internal readonly AtomicInt64 pendingCommitChangeCount = new AtomicInt64(); // LUCENENET specific - since we don't have `volatile long` in .NET, we use AtomicInt64
 
         private ICollection<string> filesToCommit;
 
@@ -2197,7 +2198,7 @@ namespace Lucene.Net.Index
                 // could close, re-open and re-return the same segment
                 // name that was previously returned which can cause
                 // problems at least with ConcurrentMergeScheduler.
-                changeCount++;
+                _ = changeCount.IncrementAndGet();
                 segmentInfos.Changed();
                 return "_" + SegmentInfos.SegmentNumberToString(segmentInfos.Counter++, allowLegacyNames: false); // LUCENENET specific - we had this right thru all of the betas, so don't change if the legacy feature is enabled
             }
@@ -2821,7 +2822,7 @@ namespace Lucene.Net.Index
                     deleter.Checkpoint(segmentInfos, false);
                     deleter.Refresh();
 
-                    lastCommitChangeCount = changeCount;
+                    lastCommitChangeCount.Value = changeCount.Value;
 
                     deleter.Refresh();
                     deleter.Dispose();
@@ -2957,7 +2958,7 @@ namespace Lucene.Net.Index
                             // Don't bother saving any changes in our segmentInfos
                             readerPool.DropAll(false);
                             // Mark that the index has changed
-                            ++changeCount;
+                            _ = changeCount.IncrementAndGet();
                             segmentInfos.Changed();
                             globalFieldNumberMap.Clear();
                             success = true;
@@ -3128,7 +3129,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                changeCount++;
+                _ = changeCount.IncrementAndGet();
                 deleter.Checkpoint(segmentInfos, false);
             }
             finally
@@ -3144,7 +3145,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                changeCount++;
+                _ = changeCount.IncrementAndGet();
                 segmentInfos.Changed();
             }
             finally
@@ -3935,7 +3936,7 @@ namespace Lucene.Net.Index
                                 // sneak into the commit point:
                                 toCommit = (SegmentInfos)segmentInfos.Clone();
 
-                                pendingCommitChangeCount = changeCount;
+                                pendingCommitChangeCount.Value = changeCount.Value;
 
                                 // this protects the segmentInfos we are now going
                                 // to commit.  this is important in case, eg, while
@@ -4027,7 +4028,7 @@ namespace Lucene.Net.Index
             try
             {
                 segmentInfos.UserData = new Dictionary<string, string>(commitUserData);
-                ++changeCount;
+                _ = changeCount.IncrementAndGet();
             }
             finally
             {
@@ -4170,7 +4171,7 @@ namespace Lucene.Net.Index
                             infoStream.Message("IW", "commit: wrote segments file \"" + pendingCommit.GetSegmentsFileName() + "\"");
                         }
                         segmentInfos.UpdateGeneration(pendingCommit);
-                        lastCommitChangeCount = pendingCommitChangeCount;
+                        lastCommitChangeCount.Value = pendingCommitChangeCount.Value;
                         rollbackSegments = pendingCommit.CreateBackupSegmentInfos();
                         // NOTE: don't use this.checkpoint() here, because
                         // we do not want to increment changeCount:
@@ -5144,8 +5145,8 @@ namespace Lucene.Net.Index
                         int delCount = NumDeletedDocs(info);
                         if (Debugging.AssertsEnabled) Debugging.Assert(delCount <= info.Info.DocCount);
                         double delRatio = ((double)delCount) / info.Info.DocCount;
-                        merge.EstimatedMergeBytes += (long)(info.GetSizeInBytes() * (1.0 - delRatio));
-                        merge.totalMergeBytes += info.GetSizeInBytes();
+                        _ = merge.estimatedMergeBytes.AddAndGet((long)(info.GetSizeInBytes() * (1.0 - delRatio)));
+                        _ = merge.totalMergeBytes.AddAndGet(info.GetSizeInBytes());
                     }
                 }
 
