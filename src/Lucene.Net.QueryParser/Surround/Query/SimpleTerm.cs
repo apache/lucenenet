@@ -2,6 +2,7 @@
 using Lucene.Net.Index;
 using System;
 using System.Text;
+#pragma warning disable CS0660, CS0661 - CompareTo is deprecated, so skipping implementing equality members (lucenenet#683)
 
 namespace Lucene.Net.QueryParsers.Surround.Query
 {
@@ -117,30 +118,32 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         #region Operator overrides
+        #nullable enable
         // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
         // NOTE: The CompareTo method is marked as obsolete, but we still need to implement the comparison operators
         // since this is public in 4.8. Suppressing the obsolete warning here.
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public static bool operator <(SimpleTerm left, SimpleTerm right)
+        public static bool operator <(SimpleTerm? left, SimpleTerm? right)
             => left is null ? right is not null : left.CompareTo(right) < 0;
 
-        public static bool operator <=(SimpleTerm left, SimpleTerm right)
+        public static bool operator <=(SimpleTerm? left, SimpleTerm? right)
             => left is null || left.CompareTo(right) <= 0;
 
-        public static bool operator >(SimpleTerm left, SimpleTerm right)
+        public static bool operator >(SimpleTerm? left, SimpleTerm? right)
             => left is not null && left.CompareTo(right) > 0;
 
-        public static bool operator >=(SimpleTerm left, SimpleTerm right)
+        public static bool operator >=(SimpleTerm? left, SimpleTerm? right)
             => left is null ? right is null : left.CompareTo(right) >= 0;
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        public static bool operator ==(SimpleTerm left, SimpleTerm right)
+        public static bool operator ==(SimpleTerm? left, SimpleTerm? right)
             => left?.Equals(right) ?? right is null;
 
-        public static bool operator !=(SimpleTerm left, SimpleTerm right)
+        public static bool operator !=(SimpleTerm? left, SimpleTerm? right)
             => !(left == right);
 
+        #nullable restore
         #endregion
     }
 }

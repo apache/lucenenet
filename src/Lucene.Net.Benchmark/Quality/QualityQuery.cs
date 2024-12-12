@@ -102,14 +102,12 @@ namespace Lucene.Net.Benchmarks.Quality
         }
 
         // LUCENENET specific - provide Equals and GetHashCode due to providing operator overrides
-        protected bool Equals(QualityQuery? other) => queryID == other?.queryID;
-
         public override bool Equals(object? obj)
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((QualityQuery)obj);
+            return queryID == ((QualityQuery)obj).queryID;
         }
 
         public override int GetHashCode() => queryID.GetHashCode();

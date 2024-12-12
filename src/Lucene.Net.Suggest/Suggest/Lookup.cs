@@ -39,25 +39,25 @@ namespace Lucene.Net.Search.Suggest
         {
             /// <summary>
             /// the key's text </summary>
-            public string Key { get; private set; }
+            public string Key { get; }
 
             /// <summary>
             /// Expert: custom Object to hold the result of a
             /// highlighted suggestion.
             /// </summary>
-            public object HighlightKey { get; private set; }
+            public object HighlightKey { get; }
 
             /// <summary>
             /// the key's weight </summary>
-            public long Value { get; private set; }
+            public long Value { get; }
 
             /// <summary>
             /// the key's payload (null if not present) </summary>
-            public BytesRef Payload { get; private set; }
+            public BytesRef Payload { get; }
 
             /// <summary>
             /// the key's contexts (null if not present) </summary>
-            public IEnumerable<BytesRef> Contexts { get; private set; }
+            public IEnumerable<BytesRef> Contexts { get; }
 
             /// <summary>
             /// Create a new result from a key+weight pair.
@@ -121,6 +121,22 @@ namespace Lucene.Net.Search.Suggest
             public int CompareTo(LookupResult o)
             {
                 return CHARSEQUENCE_COMPARER.Compare(Key, o.Key);
+            }
+
+            // LUCENENET specific - per CS0660 and CS0661, we need to override Equals and GetHashCode
+            public override bool Equals(object obj) => ReferenceEquals(this, obj);
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    var hashCode = (Key != null ? Key.GetHashCode() : 0);
+                    hashCode = (hashCode * 397) ^ (HighlightKey != null ? HighlightKey.GetHashCode() : 0);
+                    hashCode = (hashCode * 397) ^ Value.GetHashCode();
+                    hashCode = (hashCode * 397) ^ (Payload != null ? Payload.GetHashCode() : 0);
+                    hashCode = (hashCode * 397) ^ (Contexts != null ? Contexts.GetHashCode() : 0);
+                    return hashCode;
+                }
             }
 
             #region Operator overrides

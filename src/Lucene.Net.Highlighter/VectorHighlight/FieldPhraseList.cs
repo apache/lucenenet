@@ -471,26 +471,28 @@ namespace Lucene.Net.Search.VectorHighlight
             }
 
             #region Operator overrides
+            #nullable enable
             // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
 
-            public static bool operator <(WeightedPhraseInfo left, WeightedPhraseInfo right)
+            public static bool operator <(WeightedPhraseInfo? left, WeightedPhraseInfo? right)
                 => left is null ? right is not null : left.CompareTo(right) < 0;
 
-            public static bool operator <=(WeightedPhraseInfo left, WeightedPhraseInfo right)
+            public static bool operator <=(WeightedPhraseInfo? left, WeightedPhraseInfo? right)
                 => left is null || left.CompareTo(right) <= 0;
 
-            public static bool operator >(WeightedPhraseInfo left, WeightedPhraseInfo right)
+            public static bool operator >(WeightedPhraseInfo? left, WeightedPhraseInfo? right)
                 => left is not null && left.CompareTo(right) > 0;
 
-            public static bool operator >=(WeightedPhraseInfo left, WeightedPhraseInfo right)
+            public static bool operator >=(WeightedPhraseInfo? left, WeightedPhraseInfo? right)
                 => left is null ? right is null : left.CompareTo(right) >= 0;
 
-            public static bool operator ==(WeightedPhraseInfo left, WeightedPhraseInfo right)
+            public static bool operator ==(WeightedPhraseInfo? left, WeightedPhraseInfo? right)
                 => left?.Equals(right) ?? right is null;
 
-            public static bool operator !=(WeightedPhraseInfo left, WeightedPhraseInfo right)
+            public static bool operator !=(WeightedPhraseInfo? left, WeightedPhraseInfo? right)
                 => !(left == right);
 
+            #nullable restore
             #endregion
 
             /// <summary>
@@ -567,26 +569,28 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
 
                 #region Operator overrides
+                #nullable enable
                 // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
 
-                public static bool operator <(Toffs left, Toffs right)
+                public static bool operator <(Toffs? left, Toffs? right)
                     => left is null ? right is not null : left.CompareTo(right) < 0;
 
-                public static bool operator <=(Toffs left, Toffs right)
+                public static bool operator <=(Toffs? left, Toffs? right)
                     => left is null || left.CompareTo(right) <= 0;
 
-                public static bool operator >(Toffs left, Toffs right)
+                public static bool operator >(Toffs? left, Toffs? right)
                     => left is not null && left.CompareTo(right) > 0;
 
-                public static bool operator >=(Toffs left, Toffs right)
+                public static bool operator >=(Toffs? left, Toffs? right)
                     => left is null ? right is null : left.CompareTo(right) >= 0;
 
-                public static bool operator ==(Toffs left, Toffs right)
+                public static bool operator ==(Toffs? left, Toffs? right)
                     => left?.Equals(right) ?? right is null;
 
-                public static bool operator !=(Toffs left, Toffs right)
+                public static bool operator !=(Toffs? left, Toffs? right)
                     => !(left == right);
 
+                #nullable restore
                 #endregion
             }
         }
