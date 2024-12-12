@@ -93,17 +93,19 @@ namespace Lucene.Net.Expressions.JS
             AssertEvaluatesTo("10/5/2", 1);
             AssertEvaluatesTo("(27/9)/3", 1);
             AssertEvaluatesTo("27/(9/3)", 9);
-            // LUCENENET: division overflow cast to double then to long evaluates to long.MinValue, except on arm64
+            // LUCENENET: division overflow cast to double then to long evaluates to long.MinValue, except on arm64 (and .NET 9 x64)
             // where it matches Java's behavior and Lucene's assertion. This only happens with the conv.i8 opcode with
             // positive infinity on the stack. 1.0 / 0.0 == double.PositiveInfinity. In C#, if you cast
             // double.PositiveInfinity to long in an unchecked context it returns 0. The C# spec for conversion in an
             // unchecked context from double to long states "If the value of the operand is NaN or infinite, the result
             // of the conversion is an unspecified value of the destination type." Likewise, the docs for conv.i8 state
             // "If overflow occurs converting a floating-point type to an integer the value returned is unspecified."
-            // Essentially this is undefined behavior, so we are going to assert an architecture-specific value
-            // primarily to ensure it produces something rather than throws. CPU architectures other than arm64, x86,
-            // and x64 may produce different results.
-            AssertEvaluatesTo("1/0", RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? 9223372036854775807 : -9223372036854775808);
+            // Essentially this is undefined behavior, so we are going to assert that it produces one of the two
+            // known expected values (long.MinValue or long.MaxValue) rather than throws.
+            // CPU architectures other than arm64, x86, and x64 may produce different results.
+            Expression evaluator = JavascriptCompiler.Compile("1/0");
+            long actual = (long)evaluator.Evaluate(0, null);
+            Assert.IsTrue(actual is long.MinValue or long.MaxValue, "Expected long.MaxValue or long.MinValue, but got: " + actual);
         }
 
         [Test]

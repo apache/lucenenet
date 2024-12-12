@@ -231,7 +231,9 @@ namespace Lucene.Net.Util
             using Stream is2 = sorted.Open(FileMode.Open, FileAccess.Read, FileShare.Delete);
             while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
             {
-                is2.Read(buf2, 0, len);
+                var numRead = is2.Read(buf2, 0, len); // LUCENENET specific - asserting that we read the entire buffer
+                Assert.AreEqual(len, numRead);
+
                 for (int i = 0; i < len; i++)
                 {
                     Assert.AreEqual(buf1[i], buf2[i]);
@@ -254,7 +256,9 @@ namespace Lucene.Net.Util
             Stream is2 = sorted;
             while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
             {
-                is2.Read(buf2, 0, len);
+                var numRead = is2.Read(buf2, 0, len); // LUCENENET specific - asserting that we read the entire buffer
+                Assert.AreEqual(len, numRead);
+
                 for (int i = 0; i < len; i++)
                 {
                     Assert.AreEqual(buf1[i], buf2[i]);

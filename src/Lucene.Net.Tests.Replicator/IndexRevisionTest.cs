@@ -160,7 +160,10 @@ namespace Lucene.Net.Replicator
                         offset = skip;
                     }
                     src.ReadBytes(srcBytes, offset, srcBytes.Length - offset);
-                    @in.Read(inBytes, offset, inBytes.Length - offset);
+
+                    var numRead = @in.Read(inBytes, offset, inBytes.Length - offset); // LUCENENET specific - asserting that we read the entire buffer
+                    assertEquals(inBytes.Length - offset, numRead);
+
                     assertArrayEquals(srcBytes, inBytes);
                     IOUtils.Dispose(src, @in);
                 }

@@ -30,7 +30,7 @@ namespace Lucene.Net.Tests.Replicator
     [LuceneNetSpecific]
     public class IndexInputStreamTest : LuceneTestCase
     {
-        
+
         [Test]
         [LuceneNetSpecific]
         public void Read_RemainingIndexInputLargerThanReadCount_ReturnsReadCount()
@@ -55,7 +55,11 @@ namespace Lucene.Net.Tests.Replicator
             int readBytes = 1.KiloBytes();
             byte[] readBuffer = new byte[readBytes];
             for (int i = section; i > 0; i--)
-                stream.Read(readBuffer, 0, readBytes);
+            {
+                var numRead = stream.Read(readBuffer, 0, readBytes); // LUCENENET specific - asserting that we read the entire buffer
+                Assert.AreEqual(readBytes, numRead);
+            }
+
             Assert.AreEqual(readBuffer, buffer.Skip((section - 1) * readBytes).Take(readBytes).ToArray());
         }
 
