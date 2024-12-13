@@ -387,9 +387,11 @@ namespace Lucene.Net.Support.Threading
         public static bool operator ==(AtomicDouble? a1, double? a2)
         {
             if (a1 is null)
-                return !a2.HasValue;
+                return a2 is null;
+            if (a2 is null)
+                return false;
 
-            return a1.Value.Equals(a2.GetValueOrDefault());
+            return a1.Value.Equals(a2.Value);
         }
 
         /// <summary>
