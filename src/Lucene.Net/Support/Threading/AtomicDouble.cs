@@ -364,7 +364,7 @@ namespace Lucene.Net.Support.Threading
             if (a2 is null)
                 return false;
 
-            return a1.Equals(a2.Value);
+            return a2.Equals(a1);
         }
 
         /// <summary>
@@ -411,10 +411,12 @@ namespace Lucene.Net.Support.Threading
         /// <returns><c>true</c> if the given numbers are equal; otherwise, <c>false</c>.</returns>
         public static bool operator ==(double? a1, AtomicDouble? a2)
         {
-            if (!a1.HasValue)
+            if (a1 is null)
                 return a2 is null;
+            if (a2 is null)
+                return false;
 
-            return a1.GetValueOrDefault().Equals(a2.Value);
+            return a2.Equals(a1.Value);
         }
 
         /// <summary>
