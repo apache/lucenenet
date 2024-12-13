@@ -471,7 +471,7 @@ namespace Lucene.Net.Search.VectorHighlight
             }
 
             #region Operator overrides
-            #nullable enable
+#nullable enable
             // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
 
             public static bool operator <(WeightedPhraseInfo? left, WeightedPhraseInfo? right)
@@ -492,7 +492,7 @@ namespace Lucene.Net.Search.VectorHighlight
             public static bool operator !=(WeightedPhraseInfo? left, WeightedPhraseInfo? right)
                 => !(left == right);
 
-            #nullable restore
+#nullable restore
             #endregion
 
             /// <summary>
@@ -569,7 +569,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
 
                 #region Operator overrides
-                #nullable enable
+#nullable enable
                 // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
 
                 public static bool operator <(Toffs? left, Toffs? right)
@@ -590,7 +590,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 public static bool operator !=(Toffs? left, Toffs? right)
                     => !(left == right);
 
-                #nullable restore
+#nullable restore
                 #endregion
             }
         }

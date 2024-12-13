@@ -377,7 +377,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         #region Operator overrides
-        #nullable enable
+#nullable enable
         // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
 
         public static bool operator <(State? left, State? right)
@@ -398,7 +398,7 @@ namespace Lucene.Net.Util.Automaton
         public static bool operator !=(State? left, State? right)
             => !(left == right);
 
-        #nullable restore
+#nullable restore
         #endregion
     }
 }

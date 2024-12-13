@@ -294,7 +294,7 @@ namespace Lucene.Net.Util
         }
 
         #region Operator overrides
-        #nullable enable
+#nullable enable
         // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
 
         public static bool operator <(Int64sRef? left, Int64sRef? right)
@@ -315,7 +315,7 @@ namespace Lucene.Net.Util
         public static bool operator !=(Int64sRef? left, Int64sRef? right)
             => !(left == right);
 
-        #nullable restore
+#nullable restore
         #endregion
     }
 }

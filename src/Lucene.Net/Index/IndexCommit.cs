@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
         }
 
         #region Operator overrides
-        #nullable enable
+#nullable enable
         // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
 
         public static bool operator <(IndexCommit? left, IndexCommit? right)
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
         public static bool operator !=(IndexCommit? left, IndexCommit? right)
             => !(left == right);
 
-        #nullable restore
+#nullable restore
         #endregion
     }
 }

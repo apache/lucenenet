@@ -93,7 +93,7 @@ namespace Lucene.Net.Util.Mutable
         }
 
         #region Operator overrides
-        #nullable enable
+#nullable enable
         // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
 
         public static bool operator <(MutableValue? left, MutableValue? right)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Util.Mutable
         public static bool operator !=(MutableValue? left, MutableValue? right)
             => !(left == right);
 
-        #nullable restore
+#nullable restore
         #endregion
     }
 }

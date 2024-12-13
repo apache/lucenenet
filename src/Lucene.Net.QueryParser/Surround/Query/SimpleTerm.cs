@@ -118,7 +118,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         #region Operator overrides
-        #nullable enable
+#nullable enable
         // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
         // NOTE: The CompareTo method is marked as obsolete, but we still need to implement the comparison operators
         // since this is public in 4.8. Suppressing the obsolete warning here.
@@ -143,7 +143,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public static bool operator !=(SimpleTerm? left, SimpleTerm? right)
             => !(left == right);
 
-        #nullable restore
+#nullable restore
         #endregion
     }
 }

@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             public override int GetHashCode() => base.GetHashCode();
 
             #region Operator overrides
-            #nullable enable
+#nullable enable
             // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
 
             public static bool operator <(Completion? left, Completion? right)
@@ -99,7 +99,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             public static bool operator !=(Completion? left, Completion? right)
                 => !(left == right);
 
-            #nullable restore
+#nullable restore
             #endregion
         }
 
