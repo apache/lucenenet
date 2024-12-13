@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            GroupingSearch groupingSearch = new GroupingSearch("carMake");
+            var groupingSearch = GroupingSearch.ByField<BytesRef>("carMake");
             groupingSearch.SetAllGroups(true);                    //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                 //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake_dv", SortFieldType.STRING)));
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<BytesRef> topGroups = groupingSearch.SearchByField(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
+            ITopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
 
 
             int? totalGroupCount = topGroups.TotalGroupCount;               //null if not computed
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search.Grouping
             writer.Commit();
 
             ValueSource vs = new BytesRefFieldSource("major");
-            GroupingSearch groupingSearch = new GroupingSearch(vs, new Hashtable());
+            var groupingSearch = GroupingSearch.ByFunction<MutableValueStr>(vs, new Hashtable());
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(10);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<MutableValueStr> topGroups = groupingSearch.SearchByFunction<MutableValueStr>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            ITopGroups<MutableValueStr> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValueStr> groupDocs in topGroups.Groups)
@@ -284,7 +284,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            GroupingSearch groupingSearch = new GroupingSearch("carMake");
+            var groupingSearch = GroupingSearch.ByField<object>("carMake");
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake", SortFieldType.STRING)));
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            GroupingSearch groupingSearch = new GroupingSearch("carMake");
+            var groupingSearch = GroupingSearch.ByField<object>("carMake");
             groupingSearch.SetAllGroups(true);                    //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                 //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake_dv", SortFieldType.STRING)));
@@ -490,7 +490,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            GroupingSearch groupingSearch = new GroupingSearch("major");
+            var groupingSearch = GroupingSearch.ByField<BytesRef>("major");
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(10);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
@@ -499,7 +499,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<BytesRef> topGroups = groupingSearch.Search<BytesRef>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            ITopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<BytesRef> groupDocs in topGroups.Groups)
@@ -601,7 +601,7 @@ namespace Lucene.Net.Search.Grouping
             writer.Commit();
 
             ValueSource vs = new BytesRefFieldSource("major");
-            GroupingSearch groupingSearch = new GroupingSearch(vs, new Hashtable());
+            var groupingSearch = GroupingSearch.ByFunction<MutableValue>(vs, new Hashtable());
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(10);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
@@ -610,7 +610,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<MutableValue> topGroups = groupingSearch.Search<MutableValue>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            ITopGroups<MutableValue> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValue> groupDocs in topGroups.Groups)
@@ -696,7 +696,7 @@ namespace Lucene.Net.Search.Grouping
             writer.Commit();
 
             ValueSource vs = new Int32FieldSource("major");
-            GroupingSearch groupingSearch = new GroupingSearch(vs, new Hashtable());
+            var groupingSearch = GroupingSearch.ByFunction<MutableValueInt32>(vs, new Hashtable());
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(10);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
@@ -706,7 +706,7 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
 
-            ITopGroups<MutableValueInt32> topGroups = groupingSearch.SearchByFunction<MutableValueInt32>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            ITopGroups<MutableValueInt32> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValueInt32> groupDocs in topGroups.Groups)
@@ -790,7 +790,7 @@ namespace Lucene.Net.Search.Grouping
             writer.Commit();
 
             ValueSource vs = new Int32FieldSource("major");
-            GroupingSearch groupingSearch = new GroupingSearch(vs, new Hashtable());
+            var groupingSearch = GroupingSearch.ByFunction<MutableValue>(vs, new Hashtable());
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(2);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
@@ -800,7 +800,7 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
 
-            ITopGroups<MutableValue> topGroups = groupingSearch.Search<MutableValue>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 4);
+            ITopGroups<MutableValue> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 4);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValue> groupDocs in topGroups.Groups)
