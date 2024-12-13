@@ -133,7 +133,7 @@ namespace Lucene.Net.Support.Threading
         public bool Equals(double other)
         {
             // NOTE: comparing long values rather than floating point comparison
-            return Interlocked.Read(ref value) == BitConversion.DoubleToRawInt64Bits(other));
+            return Interlocked.Read(ref value) == BitConversion.DoubleToRawInt64Bits(other);
         }
 
         /// <summary>
