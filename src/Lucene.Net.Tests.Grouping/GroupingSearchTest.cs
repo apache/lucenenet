@@ -256,9 +256,9 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
-            var gs = GroupingSearch.ByField<object>("group");
+            var gs = GroupingSearch.ByField<BytesRef>("group");
             gs.SetAllGroups(true);
-            ITopGroups<object> groups = gs.Search(indexSearcher, null, new TermQuery(new Index.Term("group", "foo")), 0, 10);
+            ITopGroups<BytesRef> groups = gs.Search(indexSearcher, null, new TermQuery(new Index.Term("group", "foo")), 0, 10);
             assertEquals(1, groups.TotalHitCount);
             //assertEquals(1, groups.totalGroupCount.intValue());
             assertEquals(1, groups.TotalGroupedHitCount);

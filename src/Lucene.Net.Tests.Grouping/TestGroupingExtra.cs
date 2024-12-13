@@ -284,7 +284,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            var groupingSearch = GroupingSearch.ByField<object>("carMake");
+            var groupingSearch = GroupingSearch.ByField<BytesRef>("carMake");
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake", SortFieldType.STRING)));
@@ -295,7 +295,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<object> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
+            ITopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
 
 
             int? totalGroupCount = topGroups.TotalGroupCount;               //null if not computed
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            var groupingSearch = GroupingSearch.ByField<object>("carMake");
+            var groupingSearch = GroupingSearch.ByField<BytesRef>("carMake");
             groupingSearch.SetAllGroups(true);                    //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                 //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake_dv", SortFieldType.STRING)));
@@ -390,7 +390,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<object> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
+            ITopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
 
 
             int? totalGroupCount = topGroups.TotalGroupCount;               //null if not computed
