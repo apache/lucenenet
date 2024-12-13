@@ -39,6 +39,10 @@ namespace Lucene.Net.Support.Threading
     /// It does not have the increment, decrement, and add methods because those operations are not atomic
     /// due to the conversion to/from <see cref="long"/>.
     /// </summary>
+    /// <remarks>
+    /// Note that this class is set up to mimic <c>double</c> in Java, rather than the J2N <see cref="J2N.Numerics.Double"/> class.
+    /// This may cause differences in comparing NaN values.
+    /// </remarks>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -60,7 +64,7 @@ namespace Lucene.Net.Support.Threading
         /// <param name="value">The initial value.</param>
         public AtomicDouble(double value)
         {
-            this.value = BitConversion.DoubleToInt64Bits(value);
+            this.value = BitConversion.DoubleToRawInt64Bits(value);
         }
 
         /// <summary>
@@ -78,7 +82,7 @@ namespace Lucene.Net.Support.Threading
         public double Value
         {
             get => BitConversion.Int64BitsToDouble(Interlocked.Read(ref this.value));
-            set => Interlocked.Exchange(ref this.value, BitConversion.DoubleToInt64Bits(value));
+            set => Interlocked.Exchange(ref this.value, BitConversion.DoubleToRawInt64Bits(value));
         }
 
         /// <summary>
@@ -88,7 +92,7 @@ namespace Lucene.Net.Support.Threading
         /// <returns>The previous value.</returns>
         public double GetAndSet(double newValue)
         {
-            return BitConversion.Int64BitsToDouble(Interlocked.Exchange(ref value, BitConversion.DoubleToInt64Bits(newValue)));
+            return BitConversion.Int64BitsToDouble(Interlocked.Exchange(ref value, BitConversion.DoubleToRawInt64Bits(newValue)));
         }
 
         /// <summary>
@@ -101,8 +105,8 @@ namespace Lucene.Net.Support.Threading
         /// was not equal to the expected value.</returns>
         public bool CompareAndSet(double expect, double update)
         {
-            long expectLong = BitConversion.DoubleToInt64Bits(expect);
-            long updateLong = BitConversion.DoubleToInt64Bits(update);
+            long expectLong = BitConversion.DoubleToRawInt64Bits(expect);
+            long updateLong = BitConversion.DoubleToRawInt64Bits(update);
             long rc = Interlocked.CompareExchange(ref value, updateLong, expectLong);
             return rc == expectLong;
         }
@@ -118,7 +122,7 @@ namespace Lucene.Net.Support.Threading
                 return false;
 
             // NOTE: comparing long values rather than floating point comparison
-            return value == other.value;
+            return Interlocked.Read(ref value) == Interlocked.Read(ref other.value);
         }
 
         /// <summary>
@@ -129,7 +133,7 @@ namespace Lucene.Net.Support.Threading
         public bool Equals(double other)
         {
             // NOTE: comparing long values rather than floating point comparison
-            return value == BitConversion.DoubleToInt64Bits(other);
+            return Interlocked.Read(ref value) == BitConversion.DoubleToRawInt64Bits(other));
         }
 
         /// <summary>
@@ -303,10 +307,14 @@ namespace Lucene.Net.Support.Threading
         /// <param name="a1">The first number.</param>
         /// <param name="a2">The second number.</param>
         /// <returns><c>true</c> if the given numbers are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(AtomicDouble a1, AtomicDouble a2)
+        public static bool operator ==(AtomicDouble? a1, AtomicDouble? a2)
         {
-            // NOTE: comparing long values rather than floating point comparison
-            return a1.value == a2.value;
+            if (a1 is null)
+                return a2 is null;
+            if (a2 is null)
+                return false;
+
+            return a1.Equals(a2);
         }
 
         /// <summary>
@@ -315,7 +323,7 @@ namespace Lucene.Net.Support.Threading
         /// <param name="a1">The first number.</param>
         /// <param name="a2">The second number.</param>
         /// <returns><c>true</c> if the given numbers are not equal; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(AtomicDouble a1, AtomicDouble a2)
+        public static bool operator !=(AtomicDouble? a1, AtomicDouble? a2)
         {
             return !(a1 == a2);
         }
@@ -326,8 +334,11 @@ namespace Lucene.Net.Support.Threading
         /// <param name="a1">The first number.</param>
         /// <param name="a2">The second number.</param>
         /// <returns><c>true</c> if the given numbers are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(AtomicDouble a1, double a2)
+        public static bool operator ==(AtomicDouble? a1, double a2)
         {
+            if (a1 is null)
+                return false;
+
             return a1.Value.Equals(a2);
         }
 
@@ -337,7 +348,7 @@ namespace Lucene.Net.Support.Threading
         /// <param name="a1">The first number.</param>
         /// <param name="a2">The second number.</param>
         /// <returns><c>true</c> if the given numbers are not equal; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(AtomicDouble a1, double a2)
+        public static bool operator !=(AtomicDouble? a1, double a2)
         {
             return !(a1 == a2);
         }
@@ -348,8 +359,11 @@ namespace Lucene.Net.Support.Threading
         /// <param name="a1">The first number.</param>
         /// <param name="a2">The second number.</param>
         /// <returns><c>true</c> if the given numbers are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(double a1, AtomicDouble a2)
+        public static bool operator ==(double a1, AtomicDouble? a2)
         {
+            if (a2 is null)
+                return false;
+
             return a1.Equals(a2.Value);
         }
 
@@ -359,7 +373,7 @@ namespace Lucene.Net.Support.Threading
         /// <param name="a1">The first number.</param>
         /// <param name="a2">The second number.</param>
         /// <returns><c>true</c> if the given numbers are not equal; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(double a1, AtomicDouble a2)
+        public static bool operator !=(double a1, AtomicDouble? a2)
         {
             return !(a1 == a2);
         }
@@ -370,8 +384,11 @@ namespace Lucene.Net.Support.Threading
         /// <param name="a1">The first number.</param>
         /// <param name="a2">The second number.</param>
         /// <returns><c>true</c> if the given numbers are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(AtomicDouble a1, double? a2)
+        public static bool operator ==(AtomicDouble? a1, double? a2)
         {
+            if (a1 is null)
+                return !a2.HasValue;
+
             return a1.Value.Equals(a2.GetValueOrDefault());
         }
 
@@ -381,7 +398,7 @@ namespace Lucene.Net.Support.Threading
         /// <param name="a1">The first number.</param>
         /// <param name="a2">The second number.</param>
         /// <returns><c>true</c> if the given numbers are not equal; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(AtomicDouble a1, double? a2)
+        public static bool operator !=(AtomicDouble? a1, double? a2)
         {
             return !(a1 == a2);
         }
@@ -392,8 +409,11 @@ namespace Lucene.Net.Support.Threading
         /// <param name="a1">The first number.</param>
         /// <param name="a2">The second number.</param>
         /// <returns><c>true</c> if the given numbers are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(double? a1, AtomicDouble a2)
+        public static bool operator ==(double? a1, AtomicDouble? a2)
         {
+            if (!a1.HasValue)
+                return a2 is null;
+
             return a1.GetValueOrDefault().Equals(a2.Value);
         }
 
@@ -403,7 +423,7 @@ namespace Lucene.Net.Support.Threading
         /// <param name="a1">The first number.</param>
         /// <param name="a2">The second number.</param>
         /// <returns><c>true</c> if the given numbers are not equal; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(double? a1, AtomicDouble a2)
+        public static bool operator !=(double? a1, AtomicDouble? a2)
         {
             return !(a1 == a2);
         }
