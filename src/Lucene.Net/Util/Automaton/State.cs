@@ -367,7 +367,8 @@ namespace Lucene.Net.Util.Automaton
         // IndexOutOfRangeExceptions when using FuzzyTermsEnum.
         // See GH-296.
         // Overriding here to prevent CS0660 warning due to defining the == operator.
-        public override bool Equals(object obj) => ReferenceEquals(this, obj);
+        // ReSharper disable once BaseObjectEqualsIsObjectEquals
+        public override bool Equals(object obj) => base.Equals(obj);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()

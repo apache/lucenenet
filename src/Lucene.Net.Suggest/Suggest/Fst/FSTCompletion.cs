@@ -69,15 +69,13 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
 
             // LUCENENET specific - per CS0660 and CS0661, we need to override Equals and GetHashCode
-            public override bool Equals(object obj) => ReferenceEquals(this, obj);
+            // ReSharper disable once BaseObjectEqualsIsObjectEquals
+            // ReSharper disable once RedundantOverriddenMember
+            public override bool Equals(object obj) => base.Equals(obj);
 
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    return (Utf8.GetHashCode() * 397) ^ Bucket;
-                }
-            }
+            // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
+            // ReSharper disable once RedundantOverriddenMember
+            public override int GetHashCode() => base.GetHashCode();
 
             #region Operator overrides
             #nullable enable

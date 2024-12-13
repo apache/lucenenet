@@ -2,7 +2,7 @@
 using Lucene.Net.Index;
 using System;
 using System.Text;
-#pragma warning disable CS0660, CS0661 - CompareTo is deprecated, so skipping implementing equality members (lucenenet#683)
+#pragma warning disable CS0660, CS0661 // CompareTo is deprecated, so skipping implementing equality members (lucenenet#683)
 
 namespace Lucene.Net.QueryParsers.Surround.Query
 {

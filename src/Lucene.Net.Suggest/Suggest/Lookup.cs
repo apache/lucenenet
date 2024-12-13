@@ -124,20 +124,13 @@ namespace Lucene.Net.Search.Suggest
             }
 
             // LUCENENET specific - per CS0660 and CS0661, we need to override Equals and GetHashCode
-            public override bool Equals(object obj) => ReferenceEquals(this, obj);
+            // ReSharper disable once BaseObjectEqualsIsObjectEquals
+            // ReSharper disable once RedundantOverriddenMember
+            public override bool Equals(object obj) => base.Equals(obj);
 
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    var hashCode = (Key != null ? Key.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ (HighlightKey != null ? HighlightKey.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ Value.GetHashCode();
-                    hashCode = (hashCode * 397) ^ (Payload != null ? Payload.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ (Contexts != null ? Contexts.GetHashCode() : 0);
-                    return hashCode;
-                }
-            }
+            // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
+            // ReSharper disable once RedundantOverriddenMember
+            public override int GetHashCode() => base.GetHashCode();
 
             #region Operator overrides
             // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
