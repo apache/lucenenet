@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Grouping
         {
             int topN = groupOffset + groupLimit;
             IAbstractFirstPassGroupingCollector<BytesRef> firstPassCollector;
-            IAbstractAllGroupsCollector<BytesRef> allGroupsCollector;
+            AbstractAllGroupsCollector<BytesRef> allGroupsCollector;
             AbstractAllGroupHeadsCollector allGroupHeadsCollector;
 
             if (groupField is null)

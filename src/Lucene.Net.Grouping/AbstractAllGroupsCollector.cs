@@ -34,7 +34,9 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractAllGroupsCollector<TGroupValue> : IAbstractAllGroupsCollector<TGroupValue>
+    // ReSharper disable once RedundantExtendsListEntry
+    public abstract class AbstractAllGroupsCollector<TGroupValue> : ICollector,
+        IGroupCountCollector // LUCENENET specific for non-generic access in tests
     {
         /// <summary>
         /// Returns the total number of groups for the executed search.
@@ -91,10 +93,9 @@ namespace Lucene.Net.Search.Grouping
     }
 
     /// <summary>
-    /// LUCENENET specific interface used to apply covariance to TGroupValue
+    /// LUCENENET specific: Non-generic interface to access GroupCount in tests
     /// </summary>
-    /// <typeparam name="TGroupValue"></typeparam>
-    public interface IAbstractAllGroupsCollector<out TGroupValue> : ICollector
+    public interface IGroupCountCollector : ICollector
     {
         /// <summary>
         /// Returns the total number of groups for the executed search.
@@ -102,15 +103,5 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <returns>The total number of groups for the executed search</returns>
         int GroupCount { get; }
-
-        /// <summary>
-        /// Returns the group values
-        /// <para>
-        /// This is an unordered collections of group values. For each group that matched the query there is a <see cref="Util.BytesRef"/>
-        /// representing a group value.
-        /// </para>
-        /// </summary>
-        /// <returns>the group values</returns>
-        IEnumerable<TGroupValue> Groups { get; }
     }
 }

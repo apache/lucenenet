@@ -281,17 +281,17 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private IAbstractAllGroupsCollector<T> CreateAllGroupsCollector<T>(IAbstractFirstPassGroupingCollector<T> firstPassGroupingCollector,
+        private IGroupCountCollector CreateAllGroupsCollector<T>(IAbstractFirstPassGroupingCollector<T> firstPassGroupingCollector,
                                                                     string groupField)
         {
             if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(TermFirstPassGroupingCollector)))
             {
-                return new TermAllGroupsCollector(groupField) as IAbstractAllGroupsCollector<T>;
+                return new TermAllGroupsCollector(groupField);
             }
             else
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                return new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable()) as IAbstractAllGroupsCollector<T>;        // LUCENENET Specific type for generic must be specified.
+                return new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());        // LUCENENET Specific type for generic must be specified.
             }
         }
 
@@ -1053,7 +1053,7 @@ namespace Lucene.Net.Search.Grouping
                         CachingCollector cCache;
                         ICollector c;
 
-                        IAbstractAllGroupsCollector<object> allGroupsCollector;
+                        IGroupCountCollector allGroupsCollector;
                         if (doAllGroups)
                         {
                             allGroupsCollector = CreateAllGroupsCollector(c1, groupField);
