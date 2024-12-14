@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
-            IAbstractAllGroupsCollector<object> allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
+            IGroupCountCollector allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), allGroupsCollector);
             assertEquals(4, allGroupsCollector.GroupCount);
 
@@ -127,9 +127,9 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private IAbstractAllGroupsCollector<object> CreateRandomCollector(string groupField, bool canUseIDV)
+        private IGroupCountCollector CreateRandomCollector(string groupField, bool canUseIDV)
         {
-            IAbstractAllGroupsCollector<object> selected;
+            IGroupCountCollector selected;
             if (Random.nextBoolean())
             {
                 selected = new TermAllGroupsCollector(groupField);
