@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Grouping
         /// Group results in groupSort order </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public IGroupDocs<TGroupValue>[] Groups { get; private set; }
+        public GroupDocs<TGroupValue>[] Groups { get; private set; }
 
         /// <summary>
         /// How groups are sorted against each other </summary>
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         public float MaxScore { get; private set; }
 
-        public TopGroups(SortField[] groupSort, SortField[] withinGroupSort, int totalHitCount, int totalGroupedHitCount, IGroupDocs<TGroupValue>[] groups, float maxScore)
+        public TopGroups(SortField[] groupSort, SortField[] withinGroupSort, int totalHitCount, int totalGroupedHitCount, GroupDocs<TGroupValue>[] groups, float maxScore)
         {
             GroupSort = groupSort;
             WithinGroupSort = withinGroupSort;

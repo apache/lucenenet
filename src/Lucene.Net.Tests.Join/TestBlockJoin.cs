@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Join
             assertFalse(float.IsNaN(results.MaxScore));
             assertEquals(1, results.TotalGroupedHitCount);
             assertEquals(1, results.Groups.Length);
-            IGroupDocs<int> group = results.Groups[0];
+            GroupDocs<int> group = results.Groups[0];
             Document childDoc = s.Doc(group.ScoreDocs[0].Doc);
             assertEquals("java", childDoc.Get("skill"));
             assertNotNull(group.GroupValue);
@@ -183,7 +183,7 @@ namespace Lucene.Net.Search.Join
             assertEquals(1, results.TotalGroupedHitCount);
             assertEquals(1, results.Groups.Length);
 
-            IGroupDocs<int> group = results.Groups[0];
+            GroupDocs<int> group = results.Groups[0];
             assertEquals(1, group.TotalHits);
             assertFalse(float.IsNaN(group.Score));
 
@@ -843,10 +843,10 @@ namespace Lucene.Net.Search.Join
                     Console.WriteLine("\nTEST: block join index gets " + (joinResults is null ? 0 : joinResults.Groups.Length) + " groups; hitsPerGroup=" + hitsPerGroup);
                     if (joinResults != null)
                     {
-                        IGroupDocs<int>[] groups = joinResults.Groups;
+                        GroupDocs<int>[] groups = joinResults.Groups;
                         for (int groupIDX = 0; groupIDX < groups.Length; groupIDX++)
                         {
-                            IGroupDocs<int> group = groups[groupIDX];
+                            GroupDocs<int> group = groups[groupIDX];
                             if (group.GroupSortValues != null)
                             {
                                 Console.Write("  ");
@@ -1094,11 +1094,11 @@ namespace Lucene.Net.Search.Join
             int joinGroupUpto = 0;
 
             ScoreDoc[] hits = results.ScoreDocs;
-            IGroupDocs<int>[] groupDocs = joinResults.Groups;
+            GroupDocs<int>[] groupDocs = joinResults.Groups;
 
             while (joinGroupUpto < groupDocs.Length)
             {
-                IGroupDocs<int> group = groupDocs[joinGroupUpto++];
+                GroupDocs<int> group = groupDocs[joinGroupUpto++];
                 ScoreDoc[] groupHits = group.ScoreDocs;
                 assertNotNull(group.GroupValue);
                 Document parentDoc = joinR.Document(group.GroupValue);
@@ -1189,7 +1189,7 @@ namespace Lucene.Net.Search.Join
             assertEquals(1, jobResults.TotalGroupedHitCount);
             assertEquals(1, jobResults.Groups.Length);
 
-            IGroupDocs<int> group = jobResults.Groups[0];
+            GroupDocs<int> group = jobResults.Groups[0];
             assertEquals(1, group.TotalHits);
 
             Document childJobDoc = s.Doc(group.ScoreDocs[0].Doc);
@@ -1205,7 +1205,7 @@ namespace Lucene.Net.Search.Join
             assertEquals(1, qualificationResults.TotalGroupedHitCount);
             assertEquals(1, qualificationResults.Groups.Length);
 
-            IGroupDocs<int> qGroup = qualificationResults.Groups[0];
+            GroupDocs<int> qGroup = qualificationResults.Groups[0];
             assertEquals(1, qGroup.TotalHits);
 
             Document childQualificationDoc = s.Doc(qGroup.ScoreDocs[0].Doc);
@@ -1324,7 +1324,7 @@ namespace Lucene.Net.Search.Join
                 assertEquals(2, results.TotalGroupedHitCount);
                 assertEquals(1, results.Groups.Length);
 
-                IGroupDocs<int> resultGroup = results.Groups[0];
+                GroupDocs<int> resultGroup = results.Groups[0];
                 assertEquals(2, resultGroup.TotalHits);
                 assertFalse(float.IsNaN(resultGroup.Score));
                 assertNotNull(resultGroup.GroupValue);
@@ -1348,7 +1348,7 @@ namespace Lucene.Net.Search.Join
             assertEquals(2, boundedResults.TotalGroupedHitCount);
             assertEquals(1, boundedResults.Groups.Length);
 
-            IGroupDocs<int> group = boundedResults.Groups[0];
+            GroupDocs<int> group = boundedResults.Groups[0];
             assertEquals(2, group.TotalHits);
             assertFalse(float.IsNaN(group.Score));
             assertNotNull(group.GroupValue);
@@ -1422,7 +1422,7 @@ namespace Lucene.Net.Search.Join
             // One child docs:
             assertEquals(1, groups.TotalGroupedHitCount);
 
-            IGroupDocs<int> group = groups.Groups[0];
+            GroupDocs<int> group = groups.Groups[0];
             Document doc = r.Document((int)group.GroupValue);
             assertEquals("0", doc.Get("parentID"));
 
@@ -1488,7 +1488,7 @@ namespace Lucene.Net.Search.Join
             // One child docs:
             assertEquals(0, groups.TotalGroupedHitCount);
 
-            IGroupDocs<int> group = groups.Groups[0];
+            GroupDocs<int> group = groups.Groups[0];
             Document doc = r.Document((int)group.GroupValue);
             assertEquals("0", doc.Get("parentID"));
 

@@ -141,7 +141,7 @@ namespace Lucene.Net.Search.Grouping
 
             // the later a document is added the higher this docId
             // value
-            IGroupDocs<object> group = groups.Groups[0];
+            GroupDocs<object> group = groups.Groups[0];
             CompareGroupValue("author3", group);
             assertEquals(2, group.ScoreDocs.Length);
             assertEquals(5, group.ScoreDocs[0].Doc);
@@ -334,7 +334,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private void CompareGroupValue<T>(string expected, IGroupDocs<T> group)
+        private void CompareGroupValue<T>(string expected, GroupDocs<T> group)
         {
             if (expected is null)
             {
@@ -1277,7 +1277,7 @@ namespace Lucene.Net.Search.Grouping
                             else
                             {
                                 Console.WriteLine("TEST: expected groups totalGroupedHitCount=" + expectedGroups.TotalGroupedHitCount);
-                                foreach (IGroupDocs<BytesRef> gd in expectedGroups.Groups)
+                                foreach (GroupDocs<BytesRef> gd in expectedGroups.Groups)
                                 {
                                     Console.WriteLine("  group=" + (gd.GroupValue is null ? "null" : gd.GroupValue.Utf8ToString()) + " totalHits=" + gd.TotalHits + " scoreDocs.len=" + gd.ScoreDocs.Length);
                                     foreach (ScoreDoc sd in gd.ScoreDocs)
@@ -1642,8 +1642,8 @@ namespace Lucene.Net.Search.Grouping
                 {
                     Console.WriteLine("  check groupIDX=" + groupIDX);
                 }
-                IGroupDocs<BytesRef> expectedGroup = expected.Groups[groupIDX];
-                IGroupDocs<BytesRef> actualGroup = actual.Groups[groupIDX];
+                GroupDocs<BytesRef> expectedGroup = expected.Groups[groupIDX];
+                GroupDocs<BytesRef> actualGroup = actual.Groups[groupIDX];
                 if (verifyGroupValues)
                 {
                     if (idvBasedImplsUsed)
