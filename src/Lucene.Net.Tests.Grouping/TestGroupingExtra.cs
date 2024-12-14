@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            var groupingSearch = GroupingSearch.ByField<BytesRef>("carMake");
+            var groupingSearch = GroupingSearch.ByField("carMake");
             groupingSearch.SetAllGroups(true);                    //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                 //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake_dv", SortFieldType.STRING)));
@@ -284,7 +284,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            var groupingSearch = GroupingSearch.ByField<BytesRef>("carMake");
+            var groupingSearch = GroupingSearch.ByField("carMake");
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake", SortFieldType.STRING)));
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            var groupingSearch = GroupingSearch.ByField<BytesRef>("carMake");
+            var groupingSearch = GroupingSearch.ByField("carMake");
             groupingSearch.SetAllGroups(true);                    //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                 //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake_dv", SortFieldType.STRING)));
@@ -490,7 +490,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            var groupingSearch = GroupingSearch.ByField<BytesRef>("major");
+            var groupingSearch = GroupingSearch.ByField("major");
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(10);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));

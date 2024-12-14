@@ -227,7 +227,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else
             {
-                var groupingSearch = GroupingSearch.ByField<object>(groupField);
+                var groupingSearch = GroupingSearch.ByField(groupField);
                 groupingSearch.SetGroupSort(groupSort);
                 groupingSearch.SetGroupDocsLimit(docsInGroup);
 
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
-            var gs = GroupingSearch.ByField<BytesRef>("group");
+            var gs = GroupingSearch.ByField("group");
             gs.SetAllGroups(true);
             ITopGroups<BytesRef> groups = gs.Search(indexSearcher, null, new TermQuery(new Index.Term("group", "foo")), 0, 10);
             assertEquals(1, groups.TotalHitCount);
