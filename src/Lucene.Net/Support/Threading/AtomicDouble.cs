@@ -339,7 +339,7 @@ namespace Lucene.Net.Support.Threading
             if (a1 is null)
                 return false;
 
-            return a1.Value.Equals(a2);
+            return a1.Equals(a2);
         }
 
         /// <summary>
@@ -391,7 +391,7 @@ namespace Lucene.Net.Support.Threading
             if (a2 is null)
                 return false;
 
-            return a1.Value.Equals(a2.Value);
+            return a1.Equals(a2.Value);
         }
 
         /// <summary>
