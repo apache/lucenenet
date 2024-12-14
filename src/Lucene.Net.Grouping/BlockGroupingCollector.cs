@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Grouping
     /// <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/> or
     /// <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>
     /// API.
-    /// 
+    ///
     /// <para>
     /// This results in faster performance (~25% faster QPS)
     /// than the two-pass grouping collectors, with the tradeoff
@@ -317,7 +317,7 @@ namespace Lucene.Net.Search.Grouping
         /// <summary>
         /// Returns the grouped results.  Returns null if the
         /// number of groups collected is &lt;= groupOffset.
-        /// 
+        ///
         /// <para>
         /// <b>NOTE</b>: This collector is unable to compute
         /// the groupValue per group so it will always be null.
@@ -342,7 +342,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="fillSortFields">
         /// If true then the Comparable values for the sort fields will be set
         /// </param>
-        public virtual ITopGroups<object> GetTopGroups(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
+        public virtual TopGroups<object> GetTopGroups(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
         {
             return GetTopGroups<object>(withinGroupSort, groupOffset, withinGroupOffset, maxDocsPerGroup, fillSortFields);
         }
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search.Grouping
         /// <summary>
         /// Returns the grouped results.  Returns null if the
         /// number of groups collected is &lt;= groupOffset.
-        /// 
+        ///
         /// <para>
         /// <b>NOTE</b>: This collector is unable to compute
         /// the groupValue per group so it will always be null.
@@ -376,7 +376,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="fillSortFields">
         /// If true then the Comparable values for the sort fields will be set
         /// </param>
-        public virtual ITopGroups<TGroupValue> GetTopGroups<TGroupValue>(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
+        public virtual TopGroups<TGroupValue> GetTopGroups<TGroupValue>(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
         {
 
             //if (queueFull) {
