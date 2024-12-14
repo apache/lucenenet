@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
+            TopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
 
 
             int? totalGroupCount = topGroups.TotalGroupCount;               //null if not computed
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<MutableValueStr> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            TopGroups<MutableValueStr> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValueStr> groupDocs in topGroups.Groups)
@@ -295,7 +295,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
+            TopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
 
 
             int? totalGroupCount = topGroups.TotalGroupCount;               //null if not computed
@@ -390,7 +390,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
+            TopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
 
 
             int? totalGroupCount = topGroups.TotalGroupCount;               //null if not computed
@@ -499,7 +499,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            TopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<BytesRef> groupDocs in topGroups.Groups)
@@ -610,7 +610,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<MutableValue> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            TopGroups<MutableValue> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValue> groupDocs in topGroups.Groups)
@@ -706,7 +706,7 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
 
-            ITopGroups<MutableValueInt32> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            TopGroups<MutableValueInt32> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValueInt32> groupDocs in topGroups.Groups)
@@ -800,7 +800,7 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
 
-            ITopGroups<MutableValue> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 4);
+            TopGroups<MutableValue> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 4);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValue> groupDocs in topGroups.Groups)
@@ -911,7 +911,7 @@ namespace Lucene.Net.Search.Grouping
             TermSecondPassGroupingCollector secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups,
                 groupSort, sortWithinGroup, topNInsideGroup, getScores: true, getMaxScores: true, fillSortFields);
             searcher.Search(query, filter, secondPassCollector);
-            ITopGroups<BytesRef> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
+            TopGroups<BytesRef> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
 
             //Validate topGroups are as expected
             StringBuilder sb = new StringBuilder();
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Search.Grouping
             TermSecondPassGroupingCollector secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups,
                 groupSort, sortWithinGroup, topNInsideGroup, getScores: true, getMaxScores: true, fillSortFields);
             searcher.Search(query, filter, secondPassCollector);
-            ITopGroups<BytesRef> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
+            TopGroups<BytesRef> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
 
             //Validate topGroups are as expected
             StringBuilder sb = new StringBuilder();
@@ -1163,7 +1163,7 @@ namespace Lucene.Net.Search.Grouping
                                             new FunctionSecondPassGroupingCollector<MutableValueStr>(topSearchGroups, groupSort, sortWithinGroup,
                                                     topNInsideGroup, getScores: true, getMaxScores: true, fillSortFields, groupByValueSource, valueSourceContext);
             searcher.Search(query, filter, secondPassCollector);
-            ITopGroups<MutableValue> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
+            TopGroups<MutableValueStr> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
 
             //Validate topGroups are as expected
             StringBuilder sb = new StringBuilder();
@@ -1276,7 +1276,7 @@ namespace Lucene.Net.Search.Grouping
                                             new FunctionSecondPassGroupingCollector<MutableValueInt32>(topSearchGroups, groupSort, sortWithinGroup,
                                                     topNInsideGroup, getScores: true, getMaxScores: true, fillSortFields, groupByValueSource, valueSourceContext);
             searcher.Search(query, filter, secondPassCollector);
-            ITopGroups<MutableValueInt32> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
+            TopGroups<MutableValueInt32> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
 
             //Validate topGroups are as expected
             StringBuilder sb = new StringBuilder();
