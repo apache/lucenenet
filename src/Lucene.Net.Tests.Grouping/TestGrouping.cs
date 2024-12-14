@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Grouping
         {
             if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(TermFirstPassGroupingCollector)))
             {
-                return new TermSecondPassGroupingCollector(groupField, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields) 
+                return new TermSecondPassGroupingCollector(groupField, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
                     as IAbstractSecondPassGroupingCollector<T>;
             }
             else
@@ -282,17 +282,17 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private IAbstractAllGroupsCollector<T> CreateAllGroupsCollector<T>(IAbstractFirstPassGroupingCollector<T> firstPassGroupingCollector,
+        private IGroupCountCollector CreateAllGroupsCollector<T>(IAbstractFirstPassGroupingCollector<T> firstPassGroupingCollector,
                                                                     string groupField)
         {
             if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(TermFirstPassGroupingCollector)))
             {
-                return new TermAllGroupsCollector(groupField) as IAbstractAllGroupsCollector<T>;
+                return new TermAllGroupsCollector(groupField);
             }
             else
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                return new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable()) as IAbstractAllGroupsCollector<T>;        // LUCENENET Specific type for generic must be specified.
+                return new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());        // LUCENENET Specific type for generic must be specified.
             }
         }
 
@@ -340,7 +340,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else if (typeof(FunctionFirstPassGroupingCollector<MutableValue>).IsAssignableFrom(c.GetType()))        // LUCENENET Specific type for generic must be specified.
             {
-                // LUCENENET NOTE: This is IEnumerable instead of ICollection because it 
+                // LUCENENET NOTE: This is IEnumerable instead of ICollection because it
                 // needs to be covariant to mimic the wildcard generics in Java
                 IEnumerable<ISearchGroup<MutableValue>> mutableValueGroups = ((FunctionFirstPassGroupingCollector<MutableValue>)c).GetTopGroups(groupOffset, fillFields);        // LUCENENET Specific type for generic must be specified.
                 if (mutableValueGroups is null)
@@ -551,7 +551,7 @@ namespace Lucene.Net.Search.Grouping
             // when the values differ.
             //Arrays.Sort(groupDocs, groupSortComp);
             ArrayUtil.TimSort(groupDocs, groupSortComp);
-            
+
             IDictionary<BytesRef, IList<GroupDoc>> groups = new JCG.Dictionary<BytesRef, IList<GroupDoc>>();
             IList<BytesRef> sortedGroups = new JCG.List<BytesRef>();
             IList<IComparable[]> sortedGroupFields = new JCG.List<IComparable[]>();
@@ -1054,7 +1054,7 @@ namespace Lucene.Net.Search.Grouping
                         CachingCollector cCache;
                         ICollector c;
 
-                        IAbstractAllGroupsCollector<object> allGroupsCollector;
+                        IGroupCountCollector allGroupsCollector;
                         if (doAllGroups)
                         {
                             allGroupsCollector = CreateAllGroupsCollector(c1, groupField);
