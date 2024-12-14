@@ -208,6 +208,26 @@ namespace Lucene.Net.Support.Threading
             return J2N.Numerics.Double.ToString(Value, format, provider);
         }
 
+        #region TryFormat
+
+        /// <summary>
+        /// Tries to format the value of the current double instance into the provided span of characters.
+        /// </summary>
+        /// <param name="destination">The span in which to write this instance's value formatted as a span of characters.</param>
+        /// <param name="charsWritten">When this method returns, contains the number of characters that were written in
+        /// <paramref name="destination"/>.</param>
+        /// <param name="format">A span containing the characters that represent a standard or custom format string that
+        /// defines the acceptable format for <paramref name="destination"/>.</param>
+        /// <param name="provider">An optional object that supplies culture-specific formatting information for
+        /// <paramref name="destination"/>.</param>
+        /// <returns><c>true</c> if the formatting was successful; otherwise, <c>false</c>.</returns>
+        public override bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = null)
+        {
+            return J2N.Numerics.Double.TryFormat(Value, destination, out charsWritten, format, provider);
+        }
+
+        #endregion
+
         #region IConvertible Members
 
         /// <inheritdoc/>
