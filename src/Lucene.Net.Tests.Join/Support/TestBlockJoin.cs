@@ -117,7 +117,7 @@ namespace Lucene.Net.Tests.Join
             fullQuery.Add(new BooleanClause(new MatchAllDocsQuery(), Occur.MUST));
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(Sort.RELEVANCE, 1, true, true);
             s.Search(fullQuery, c);
-            ITopGroups<int> results = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, true);
+            TopGroups<int> results = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, true);
             assertFalse(float.IsNaN(results.MaxScore));
             assertEquals(1, results.TotalGroupedHitCount);
             assertEquals(1, results.Groups.Length);
@@ -179,7 +179,7 @@ namespace Lucene.Net.Tests.Join
 
             s.Search(fullQuery, c);
 
-            ITopGroups<int> results = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, true);
+            TopGroups<int> results = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, true);
             assertFalse(float.IsNaN(results.MaxScore));
 
             //assertEquals(1, results.totalHitCount);
@@ -245,7 +245,7 @@ namespace Lucene.Net.Tests.Join
 
             MultiTermQuery qc = NumericRangeQuery.NewInt32Range("year", 2007, 2007, true, true);
             // Hacky: this causes the query to need 2 rewrite
-            // iterations: 
+            // iterations:
             qc.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 
             Filter parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("docType", "resume"))));
@@ -264,7 +264,7 @@ namespace Lucene.Net.Tests.Join
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(Sort.RELEVANCE, 10, true, true);
 
             s.Search(qp, c);
-            ITopGroups<int> groups = c.GetTopGroups(qp, Sort.INDEXORDER, 0, 10, 0, true);
+            TopGroups<int> groups = c.GetTopGroups(qp, Sort.INDEXORDER, 0, 10, 0, true);
             foreach (GroupDocs<int> group in groups.Groups)
             {
                 assertEquals(1, group.TotalHits);
@@ -839,7 +839,7 @@ namespace Lucene.Net.Tests.Join
 
                 int hitsPerGroup = TestUtil.NextInt32(Random, 1, 20);
                 //final int hitsPerGroup = 100;
-                ITopGroups<int> joinResults = c.GetTopGroups(childJoinQuery, childSort, 0, hitsPerGroup, 0, true);
+                TopGroups<int> joinResults = c.GetTopGroups(childJoinQuery, childSort, 0, hitsPerGroup, 0, true);
 
                 if (Verbose)
                 {
@@ -1090,7 +1090,7 @@ namespace Lucene.Net.Tests.Join
             }
         }
 
-        private void CompareHits(IndexReader r, IndexReader joinR, TopDocs results, ITopGroups<int> joinResults)
+        private void CompareHits(IndexReader r, IndexReader joinR, TopDocs results, TopGroups<int> joinResults)
         {
             // results is 'complete'; joinResults is a subset
             int resultUpto = 0;
@@ -1186,7 +1186,7 @@ namespace Lucene.Net.Tests.Join
             s.Search(fullQuery, c);
 
             // Examine "Job" children
-            ITopGroups<int> jobResults = c.GetTopGroups(childJobJoinQuery, null, 0, 10, 0, true);
+            TopGroups<int> jobResults = c.GetTopGroups(childJobJoinQuery, null, 0, 10, 0, true);
 
             //assertEquals(1, results.totalHitCount);
             assertEquals(1, jobResults.TotalGroupedHitCount);
@@ -1203,7 +1203,7 @@ namespace Lucene.Net.Tests.Join
             assertEquals("Lisa", parentDoc.Get("name"));
 
             // Now Examine qualification children
-            ITopGroups<int> qualificationResults = c.GetTopGroups(childQualificationJoinQuery, null, 0, 10, 0, true);
+            TopGroups<int> qualificationResults = c.GetTopGroups(childQualificationJoinQuery, null, 0, 10, 0, true);
 
             assertEquals(1, qualificationResults.TotalGroupedHitCount);
             assertEquals(1, qualificationResults.Groups.Length);
@@ -1317,11 +1317,11 @@ namespace Lucene.Net.Tests.Join
             s.Search(childJoinQuery, c);
 
             //Get all child documents within groups
-            ITopGroups<int>[] getTopGroupsResults = new ITopGroups<int>[2];
+            TopGroups<int>[] getTopGroupsResults = new TopGroups<int>[2];
             getTopGroupsResults[0] = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, true);
             getTopGroupsResults[1] = c.GetTopGroupsWithAllChildDocs(childJoinQuery, null, 0, 0, true);
 
-            foreach (ITopGroups<int> results in getTopGroupsResults)
+            foreach (TopGroups<int> results in getTopGroupsResults)
             {
                 assertFalse(float.IsNaN(results.MaxScore));
                 assertEquals(2, results.TotalGroupedHitCount);
@@ -1346,7 +1346,7 @@ namespace Lucene.Net.Tests.Join
             }
 
             //Get part of child documents
-            ITopGroups<int> boundedResults = c.GetTopGroups(childJoinQuery, null, 0, 1, 0, true);
+            TopGroups<int> boundedResults = c.GetTopGroups(childJoinQuery, null, 0, 1, 0, true);
             assertFalse(float.IsNaN(boundedResults.MaxScore));
             assertEquals(2, boundedResults.TotalGroupedHitCount);
             assertEquals(1, boundedResults.Groups.Length);
@@ -1417,7 +1417,7 @@ namespace Lucene.Net.Tests.Join
 
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortFieldType.STRING)), 10, true, true);
             NewSearcher(r).Search(parentQuery, c);
-            ITopGroups<int> groups = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, false);
+            TopGroups<int> groups = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, false);
 
             // Two parents:
             assertEquals(2, (int)groups.TotalGroupCount);
@@ -1483,7 +1483,7 @@ namespace Lucene.Net.Tests.Join
 
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortFieldType.STRING)), 10, true, true);
             NewSearcher(r).Search(parentQuery, c);
-            ITopGroups<int> groups = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, false);
+            TopGroups<int> groups = c.GetTopGroups(childJoinQuery, null, 0, 10, 0, false);
 
             // Two parents:
             assertEquals(2, (int)groups.TotalGroupCount);
