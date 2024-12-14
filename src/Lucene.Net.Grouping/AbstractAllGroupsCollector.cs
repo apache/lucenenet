@@ -1,6 +1,5 @@
 using Lucene.Net.Index;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -43,7 +42,7 @@ namespace Lucene.Net.Search.Grouping
         /// This is a convenience method. The following code snippet has the same effect: <code>GetGroups().Count</code>
         /// </summary>
         /// <returns>The total number of groups for the executed search</returns>
-        public virtual int GroupCount => Groups.Count();
+        public virtual int GroupCount => Groups.Count;
 
         /// <summary>
         /// Returns the group values
@@ -53,7 +52,7 @@ namespace Lucene.Net.Search.Grouping
         /// </para>
         /// </summary>
         /// <returns>the group values</returns>
-        public abstract IEnumerable<TGroupValue> Groups { get; }
+        public abstract ICollection<TGroupValue> Groups { get; }
 
 
         // Empty not necessary
