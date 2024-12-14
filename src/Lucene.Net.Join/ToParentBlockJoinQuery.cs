@@ -49,7 +49,7 @@ namespace Lucene.Net.Search.Join
     /// documents: the wrapped child query must never
     /// return a parent document.</para>
     ///
-    /// <para>If you'd like to retrieve <see cref="Lucene.Net.Search.Grouping.ITopGroups{T}"/> for the
+    /// <para>If you'd like to retrieve <see cref="Lucene.Net.Search.Grouping.TopGroups{T}"/> for the
     /// resulting query, use the <see cref="ToParentBlockJoinCollector"/>.
     /// Note that this is not necessary, ie, if you simply want
     /// to collect the parent documents and don't need to see
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search.Join
     /// <para><b>NOTE</b>: If the overall query contains parent-only
     /// matches, for example you OR a parent-only query with a
     /// joined child-only query, then the resulting collected documents
-    /// will be correct, however the <see cref="Lucene.Net.Search.Grouping.ITopGroups{T}"/> you get
+    /// will be correct, however the <see cref="Lucene.Net.Search.Grouping.TopGroups{T}"/> you get
     /// from <see cref="ToParentBlockJoinCollector"/> will not contain every
     /// child for parents that had matched.</para>
     ///

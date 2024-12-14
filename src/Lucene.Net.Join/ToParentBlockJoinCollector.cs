@@ -54,12 +54,12 @@ namespace Lucene.Net.Search.Join
     /// parent table were indexed as a doc block.</para>
     ///
     /// <para>For the simple star join you can retrieve the
-    /// <see cref="ITopGroups{T}"/> instance containing each <see cref="ToParentBlockJoinQuery"/>'s
+    /// <see cref="TopGroups{T}"/> instance containing each <see cref="ToParentBlockJoinQuery"/>'s
     /// matching child documents for the top parent groups,
     /// using <see cref="GetTopGroups"/>.  Ie,
     /// a single query, which will contain two or more
     /// <see cref="ToParentBlockJoinQuery"/>'s as clauses representing the star join,
-    /// can then retrieve two or more <see cref="ITopGroups{T}"/> instances.</para>
+    /// can then retrieve two or more <see cref="TopGroups{T}"/> instances.</para>
     ///
     /// <para>For nested joins, the query will run correctly (ie,
     /// match the right parent and child documents), however,
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search.Join
         }
 
         /// <summary>
-        /// Returns the <see cref="ITopGroups{T}"/> for the specified
+        /// Returns the <see cref="TopGroups{T}"/> for the specified
         /// BlockJoinQuery. The groupValue of each GroupDocs will
         /// be the parent docID for that group.
         /// The number of documents within each group is calculated as minimum of <paramref name="maxDocsPerGroup"/>
@@ -392,9 +392,9 @@ namespace Lucene.Net.Search.Join
         /// <param name="maxDocsPerGroup"> Upper bound of documents per group number </param>
         /// <param name="withinGroupOffset"> Offset within each group of child docs </param>
         /// <param name="fillSortFields"> Specifies whether to add sort fields or not </param>
-        /// <returns> <see cref="ITopGroups{T}"/> for specified query </returns>
+        /// <returns> <see cref="TopGroups{T}"/> for specified query </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public virtual ITopGroups<int> GetTopGroups(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int maxDocsPerGroup, int withinGroupOffset, bool fillSortFields)
+        public virtual TopGroups<int> GetTopGroups(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int maxDocsPerGroup, int withinGroupOffset, bool fillSortFields)
         {
             if (!joinQueryID.TryGetValue(query, out int slot))
             {
@@ -430,9 +430,9 @@ namespace Lucene.Net.Search.Join
         /// <param name="withinGroupOffset"> Offset within each group of child docs </param>
         /// <param name="withinGroupSort"> Sort criteria within groups </param>
         /// <param name="fillSortFields"> Specifies whether to add sort fields or not </param>
-        /// <returns> <see cref="ITopGroups{T}"/> for the query specified by slot </returns>
+        /// <returns> <see cref="TopGroups{T}"/> for the query specified by slot </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        private ITopGroups<int> AccumulateGroups(int slot, int offset, int maxDocsPerGroup, int withinGroupOffset, Sort withinGroupSort, bool fillSortFields)
+        private TopGroups<int> AccumulateGroups(int slot, int offset, int maxDocsPerGroup, int withinGroupOffset, Sort withinGroupSort, bool fillSortFields)
         {
             var groups = new GroupDocs<int>[sortedGroups.Length - offset];
             var fakeScorer = new FakeScorer();
@@ -534,9 +534,9 @@ namespace Lucene.Net.Search.Join
         /// <param name="offset">Parent docs offset</param>
         /// <param name="withinGroupOffset">Offset within each group of child docs</param>
         /// <param name="fillSortFields">Specifies whether to add sort fields or not</param>
-        /// <returns><see cref="ITopGroups{T}"/> for specified query</returns>
+        /// <returns><see cref="TopGroups{T}"/> for specified query</returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public virtual ITopGroups<int> GetTopGroupsWithAllChildDocs(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int withinGroupOffset, bool fillSortFields)
+        public virtual TopGroups<int> GetTopGroupsWithAllChildDocs(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int withinGroupOffset, bool fillSortFields)
         {
             return GetTopGroups(query, withinGroupSort, offset, int.MaxValue, withinGroupOffset, fillSortFields);
         }
