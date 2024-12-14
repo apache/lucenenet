@@ -7,7 +7,6 @@ using Lucene.Net.Util.Mutable;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -133,7 +132,7 @@ namespace Lucene.Net.Search.Grouping
 
             if (AllGroups)
             {
-                MatchingGroups = (ICollection<BytesRef>)allGroupsCollector.Groups;
+                MatchingGroups = allGroupsCollector.Groups;
             }
             else
             {
@@ -284,7 +283,7 @@ namespace Lucene.Net.Search.Grouping
 
             if (AllGroups)
             {
-                MatchingGroups = (ICollection<T>)allGroupsCollector.Groups;
+                MatchingGroups = allGroupsCollector.Groups;
             }
             else
             {

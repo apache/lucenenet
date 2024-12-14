@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        public override IEnumerable<BytesRef> Groups => groups;
+        public override ICollection<BytesRef> Groups => groups;
 
         public override void SetNextReader(AtomicReaderContext context)
         {
