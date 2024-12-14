@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Grouping
             this.groupField = groupField;
         }
 
-        public override ITopGroups<BytesRef> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        public override TopGroups<BytesRef> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
             IAbstractFirstPassGroupingCollector<BytesRef> firstPassCollector;
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Grouping
             }
 
             int topNInsideGroup = GroupDocsOffset + GroupDocsLimit;
-            IAbstractSecondPassGroupingCollector<BytesRef> secondPassCollector;
+            AbstractSecondPassGroupingCollector<BytesRef> secondPassCollector;
 
             secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups,
                 GroupSort, SortWithinGroup, topNInsideGroup, IncludeScores, IncludeMaxScore, FillSortFields);
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search.Grouping
             this.valueSourceContext = valueSourceContext;
         }
 
-        public override ITopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        public override TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
             FunctionFirstPassGroupingCollector<T> firstPassCollector;
@@ -306,7 +306,7 @@ namespace Lucene.Net.Search.Grouping
             }
 
             int topNInsideGroup = GroupDocsOffset + GroupDocsLimit;
-            IAbstractSecondPassGroupingCollector<T> secondPassCollector;
+            AbstractSecondPassGroupingCollector<T> secondPassCollector;
 
             secondPassCollector = new FunctionSecondPassGroupingCollector<T>(topSearchGroups,
                 GroupSort, SortWithinGroup, topNInsideGroup, IncludeScores, IncludeMaxScore, FillSortFields, groupFunction, valueSourceContext);
@@ -341,7 +341,7 @@ namespace Lucene.Net.Search.Grouping
             this.groupEndDocs = groupEndDocs;
         }
 
-        public override ITopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+        public override TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
             BlockGroupingCollector c = new BlockGroupingCollector(GroupSort, topN, IncludeScores, groupEndDocs);
@@ -480,12 +480,12 @@ namespace Lucene.Net.Search.Grouping
         protected bool FillSortFields { get; private set; }
         protected bool IncludeScores { get; private set; } = true;
 
-        public ITopGroups<T> Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
+        public TopGroups<T> Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
         {
             return Search(searcher, null, query, groupOffset, groupLimit);
         }
 
-        public abstract ITopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit);
+        public abstract TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit);
 
         /// <summary>
         /// Specifies how groups are sorted.
