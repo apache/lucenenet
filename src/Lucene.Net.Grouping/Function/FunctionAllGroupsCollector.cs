@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.Grouping.Function
             this.groupBy = groupBy;
         }
 
-        public override IEnumerable<TMutableValue> Groups => groups;
+        public override ICollection<TMutableValue> Groups => groups;
 
         public override void Collect(int doc)
         {
