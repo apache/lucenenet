@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Grouping
     ///
     /// @lucene.experimental
     /// </summary>
-    public class GroupDocs<TGroupValue> : IGroupDocs<TGroupValue>
+    public class GroupDocs<TGroupValue>
     {
         /// <summary>
         /// The groupField value for all docs in this group; this
@@ -72,47 +72,5 @@ namespace Lucene.Net.Search.Grouping
             GroupValue = groupValue;
             GroupSortValues = groupSortValues;
         }
-    }
-
-    /// <summary>
-    /// LUCENENET specific interface used to apply covariance to TGroupValue
-    /// to simulate Java's wildcard generics.
-    /// </summary>
-    /// <typeparam name="TGroupValue"></typeparam>
-    public interface IGroupDocs<out TGroupValue>
-    {
-        /// <summary>
-        /// The groupField value for all docs in this group; this
-        /// may be null if hits did not have the groupField.
-        /// </summary>
-        TGroupValue GroupValue { get; }
-
-        /// <summary>
-        /// Max score in this group
-        /// </summary>
-        float MaxScore { get; }
-
-        /// <summary>
-        /// Overall aggregated score of this group (currently only set by join queries).
-        /// </summary>
-        float Score { get; }
-
-        /// <summary>
-        /// Hits; this may be <see cref="FieldDoc"/> instances if the
-        /// withinGroupSort sorted by fields.
-        /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        ScoreDoc[] ScoreDocs { get; }
-
-        /// <summary>
-        /// Total hits within this group
-        /// </summary>
-        int TotalHits { get; }
-
-        /// <summary>
-        /// Matches the groupSort passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>.
-        /// </summary>
-        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
-        object[] GroupSortValues { get; }
     }
 }
