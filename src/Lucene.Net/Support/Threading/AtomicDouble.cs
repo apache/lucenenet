@@ -1,4 +1,4 @@
-#region Copyright 2010 by Apache Harmony, Licensed under the Apache License, Version 2.0
+﻿#region Copyright 2010 by Apache Harmony, Licensed under the Apache License, Version 2.0
 /*  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -145,10 +145,10 @@ namespace Lucene.Net.Support.Threading
         /// <returns><c>true</c> if <paramref name="other"/> is equal to the current <see cref="AtomicDouble"/>; otherwise, <c>false</c>.</returns>
         public override bool Equals(object? other)
         {
-            if (other is AtomicDouble ai)
-                return Equals(ai);
-            if (other is double i)
-                return Equals(i);
+            if (other is AtomicDouble ad)
+                return Equals(ad);
+            if (other is double d)
+                return Equals(d);
             return false;
         }
 
@@ -295,10 +295,10 @@ namespace Lucene.Net.Support.Threading
         /// <summary>
         /// Implicitly converts an <see cref="AtomicDouble"/> to a <see cref="double"/>.
         /// </summary>
-        /// <param name="atomicInt64">The <see cref="AtomicDouble"/> to convert.</param>
-        public static implicit operator double(AtomicDouble atomicInt64)
+        /// <param name="atomicDouble">The <see cref="AtomicDouble"/> to convert.</param>
+        public static implicit operator double(AtomicDouble atomicDouble)
         {
-            return atomicInt64.Value;
+            return atomicDouble.Value;
         }
 
         /// <summary>
