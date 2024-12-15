@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     ///
     /// @lucene.experimental
     /// </summary>
-    public class TermDistinctValuesCollector : AbstractDistinctValuesCollector<TermDistinctValuesCollector.GroupCount>
+    public class TermDistinctValuesCollector : AbstractDistinctValuesCollector<TermDistinctValuesCollector.GroupCount, BytesRef>
     {
         private readonly string groupField;
         private readonly string countField;

@@ -29,7 +29,7 @@ namespace Lucene.Net.Search.Grouping.Function
     ///
     /// @lucene.experimental
     /// </summary>
-    public class FunctionDistinctValuesCollector : AbstractDistinctValuesCollector<FunctionDistinctValuesCollector.GroupCount>
+    public class FunctionDistinctValuesCollector : AbstractDistinctValuesCollector<FunctionDistinctValuesCollector.GroupCount, MutableValue>
     {
         private readonly IDictionary /* Map<?, ?> */ vsContext;
         private readonly ValueSource groupSource;
