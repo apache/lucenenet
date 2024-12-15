@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Grouping.Function
         private MutableValue groupMval;
         private MutableValue countMval;
 
-        public FunctionDistinctValuesCollector(IDictionary /*Map<?, ?>*/ vsContext, ValueSource groupSource, ValueSource countSource, IEnumerable<ISearchGroup<MutableValue>> groups)
+        public FunctionDistinctValuesCollector(IDictionary /*Map<?, ?>*/ vsContext, ValueSource groupSource, ValueSource countSource, IEnumerable<SearchGroup<MutableValue>> groups)
         {
             this.vsContext = vsContext;
             this.groupSource = groupSource;
