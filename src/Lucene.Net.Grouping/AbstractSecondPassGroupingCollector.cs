@@ -42,14 +42,14 @@ namespace Lucene.Net.Search.Grouping
         protected readonly IDictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>> m_groupMap;
         private readonly int maxDocsPerGroup;
         protected AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>[] m_groupDocs;
-        private readonly IEnumerable<ISearchGroup<TGroupValue>> groups;
+        private readonly IEnumerable<SearchGroup<TGroupValue>> groups;
         private readonly Sort withinGroupSort;
         private readonly Sort groupSort;
 
         private int totalHitCount;
         private int totalGroupedHitCount;
 
-        protected AbstractSecondPassGroupingCollector(IEnumerable<ISearchGroup<TGroupValue>> groups, Sort groupSort, Sort withinGroupSort,
+        protected AbstractSecondPassGroupingCollector(IEnumerable<SearchGroup<TGroupValue>> groups, Sort groupSort, Sort withinGroupSort,
                                                    int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
 
