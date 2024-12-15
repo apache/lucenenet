@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Grouping
             public int ShardIndex => shardIndex;
             private readonly int shardIndex;
 
-            public ShardIter(IEnumerable<SearchGroup<T>> shard, int shardIndex)
+            public ShardIter(ICollection<SearchGroup<T>> shard, int shardIndex)
             {
                 this.shardIndex = shardIndex;
                 iter = shard.GetEnumerator();
