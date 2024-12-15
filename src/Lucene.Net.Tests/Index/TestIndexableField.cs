@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 
             private sealed class IndexableFieldTypeAnonymousClass : IIndexableFieldType
             {
-                private MyField outerInstance;
+                private readonly MyField outerInstance;
 
                 public IndexableFieldTypeAnonymousClass(MyField outerInstance)
                 {

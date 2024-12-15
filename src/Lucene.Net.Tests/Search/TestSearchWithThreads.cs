@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
                 col = new TotalHitCountCollector();
             }
 
-            internal TotalHitCountCollector col;
+            private readonly TotalHitCountCollector col;
 
             public override void Run()
             {

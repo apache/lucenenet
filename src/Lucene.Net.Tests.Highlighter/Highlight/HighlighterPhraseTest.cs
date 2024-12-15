@@ -111,7 +111,7 @@ namespace Lucene.Net.Search.Highlight
                     new SpanTermQuery(new Term(FIELD, "fox")),
                     new SpanTermQuery(new Term(FIELD, "jumped")) }, 0, true);
                 FixedBitSet bitset = new FixedBitSet(indexReader.MaxDoc);
-                indexSearcher.Search(phraseQuery, new ConcurrentSpanCollectorAnonymousClass(this, bitset));
+                indexSearcher.Search(phraseQuery, new ConcurrentSpanCollectorAnonymousClass(bitset));
 
                 assertEquals(1, bitset.Cardinality);
                 int maxDoc = indexReader.MaxDoc;
@@ -138,11 +138,10 @@ namespace Lucene.Net.Search.Highlight
 
         private sealed class ConcurrentSpanCollectorAnonymousClass : ICollector
         {
-            private readonly HighlighterPhraseTest outerInstance;
             private readonly FixedBitSet bitset;
-            public ConcurrentSpanCollectorAnonymousClass(HighlighterPhraseTest outerInstance, FixedBitSet bitset)
+
+            public ConcurrentSpanCollectorAnonymousClass(FixedBitSet bitset)
             {
-                this.outerInstance = outerInstance;
                 this.bitset = bitset;
             }
 

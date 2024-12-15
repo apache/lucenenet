@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
 
         private sealed class PerFieldSimilarityWrapperAnonymousClass : PerFieldSimilarityWrapper
         {
-            private Similarity @base;
+            private readonly Similarity @base;
 
             public PerFieldSimilarityWrapperAnonymousClass(Similarity @base)
             {

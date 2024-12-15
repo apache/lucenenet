@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
                     this.outerInstance = outerInstance;
                 }
 
-                internal int upto;
+                private int upto;
                 private Document current;
 
                 public bool MoveNext()
@@ -166,9 +166,9 @@ namespace Lucene.Net.Index
         {
             private readonly TestIndexWriterExceptions outerInstance;
 
-            internal IndexWriter writer;
+            private readonly IndexWriter writer;
 
-            internal readonly Random r = new J2N.Randomizer(Random.NextInt64());
+            private readonly Random r = new J2N.Randomizer(Random.NextInt64());
             internal volatile Exception failure = null;
 
             public IndexerThread(TestIndexWriterExceptions outerInstance, int i, IndexWriter writer)
@@ -295,7 +295,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
-            internal Random r = new J2N.Randomizer(Random.NextInt64());
+            private Random r = new J2N.Randomizer(Random.NextInt64());
 
             public void Apply(string name)
             {
@@ -677,8 +677,8 @@ namespace Lucene.Net.Index
 
         private class FailOnlyOnFlush : Failure
         {
-            internal bool doFail = false;
-            internal int count;
+            private bool doFail = false;
+            private int count;
 
             public override void SetDoFail()
             {

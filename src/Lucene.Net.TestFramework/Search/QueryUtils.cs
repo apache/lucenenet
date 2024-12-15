@@ -84,10 +84,6 @@ namespace Lucene.Net.Search
 
         private sealed class QueryAnonymousClass : Query
         {
-            public QueryAnonymousClass()
-            {
-            }
-
             public override string ToString(string field)
             {
                 return "My Whacky Query";
@@ -187,13 +183,13 @@ namespace Lucene.Net.Search
             IndexReader[] readers = new IndexReader[] {
                 edge < 0 ? r : emptyReaders[0],
                 emptyReaders[0],
-                new FCInvisibleMultiReader(edge < 0 ? emptyReaders[4] : emptyReaders[0], 
-                    emptyReaders[0], 
+                new FCInvisibleMultiReader(edge < 0 ? emptyReaders[4] : emptyReaders[0],
+                    emptyReaders[0],
                     0 == edge ? r : emptyReaders[0]),
                 0 < edge ? emptyReaders[0] : emptyReaders[7],
                 emptyReaders[0],
-                new FCInvisibleMultiReader(0 < edge ? emptyReaders[0] : emptyReaders[5], 
-                    emptyReaders[0], 
+                new FCInvisibleMultiReader(0 < edge ? emptyReaders[0] : emptyReaders[5],
+                    emptyReaders[0],
                     0 < edge ? r : emptyReaders[0])
             };
 
@@ -300,7 +296,7 @@ namespace Lucene.Net.Search
             private readonly float maxDiff;
             private readonly AtomicReader[] lastReader;
 
-            public CollectorAnonymousClass(Query q, IndexSearcher s, IList<AtomicReaderContext> readerContextArray, 
+            public CollectorAnonymousClass(Query q, IndexSearcher s, IList<AtomicReaderContext> readerContextArray,
                 int skip_op, int[] order, int[] opidx, int[] lastDoc, float maxDiff, AtomicReader[] lastReader)
             {
                 this.q = q;

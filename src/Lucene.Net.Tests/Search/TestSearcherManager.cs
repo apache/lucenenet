@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
         {
             private readonly TestSearcherManager outerInstance;
 
-            private TaskScheduler es;
+            private readonly TaskScheduler es;
 
             public SearcherFactoryAnonymousClass(TestSearcherManager outerInstance, TaskScheduler es)
             {
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
         {
             private readonly TestSearcherManager outerInstance;
 
-            private long stopTime;
+            private readonly long stopTime;
 
             public ThreadAnonymousClass(TestSearcherManager outerInstance, long stopTime)
             {
@@ -333,10 +333,10 @@ namespace Lucene.Net.Search
 
         private sealed class SearcherFactoryAnonymousClass2 : SearcherFactory
         {
-            private CountdownEvent awaitEnterWarm;
-            private CountdownEvent awaitClose;
-            private AtomicBoolean triedReopen;
-            private TaskScheduler es;
+            private readonly CountdownEvent awaitEnterWarm;
+            private readonly CountdownEvent awaitClose;
+            private readonly AtomicBoolean triedReopen;
+            private readonly TaskScheduler es;
 
             public SearcherFactoryAnonymousClass2(CountdownEvent awaitEnterWarm, CountdownEvent awaitClose, AtomicBoolean triedReopen, TaskScheduler es)
             {
@@ -366,10 +366,10 @@ namespace Lucene.Net.Search
 
         private sealed class RunnableAnonymousClass //: IThreadRunnable
         {
-            private AtomicBoolean triedReopen;
-            private SearcherManager searcherManager;
-            private AtomicBoolean success;
-            private Exception[] exc;
+            private readonly AtomicBoolean triedReopen;
+            private readonly SearcherManager searcherManager;
+            private readonly AtomicBoolean success;
+            private readonly Exception[] exc;
 
             public RunnableAnonymousClass(AtomicBoolean triedReopen, SearcherManager searcherManager, AtomicBoolean success, Exception[] exc)
             {
@@ -511,7 +511,7 @@ namespace Lucene.Net.Search
 
         private sealed class RefreshListenerAnonymousClass : ReferenceManager.IRefreshListener
         {
-            private AtomicBoolean afterRefreshCalled;
+            private readonly AtomicBoolean afterRefreshCalled;
 
             public RefreshListenerAnonymousClass(AtomicBoolean afterRefreshCalled)
             {
@@ -545,7 +545,7 @@ namespace Lucene.Net.Search
 
             try
             {
-                new SearcherManager(dir, theEvilOne);
+                _ = new SearcherManager(dir, theEvilOne);
             }
             catch (Exception ise) when (ise.IsIllegalStateException())
             {
@@ -553,7 +553,7 @@ namespace Lucene.Net.Search
             }
             try
             {
-                new SearcherManager(w.IndexWriter, random.NextBoolean(), theEvilOne);
+                _ = new SearcherManager(w.IndexWriter, random.NextBoolean(), theEvilOne);
             }
             catch (Exception ise) when (ise.IsIllegalStateException())
             {
@@ -566,7 +566,7 @@ namespace Lucene.Net.Search
 
         private sealed class SearcherFactoryAnonymousClass3 : SearcherFactory
         {
-            private IndexReader other;
+            private readonly IndexReader other;
 
             public SearcherFactoryAnonymousClass3(IndexReader other)
             {
@@ -603,7 +603,7 @@ namespace Lucene.Net.Search
 
         private sealed class ThreadAnonymousClass2 : ThreadJob
         {
-            private SearcherManager sm;
+            private readonly SearcherManager sm;
 
             public ThreadAnonymousClass2(SearcherManager sm)
             {

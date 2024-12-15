@@ -37,11 +37,7 @@ namespace Lucene.Net.Search
 
         private sealed class DocIdSetIteratorAnonymousClass : DocIdSetIterator
         {
-            public DocIdSetIteratorAnonymousClass()
-            {
-            }
-
-            internal bool exhausted = false;
+            private bool exhausted = false;
 
             public override int Advance(int target)
             {
@@ -114,10 +110,10 @@ namespace Lucene.Net.Search
         /// When <c> target &gt; current</c> it behaves as if written:
         ///
         /// <code>
-        /// int Advance(int target) 
+        /// int Advance(int target)
         /// {
         ///     int doc;
-        ///     while ((doc = NextDoc()) &lt; target) 
+        ///     while ((doc = NextDoc()) &lt; target)
         ///     {
         ///     }
         ///     return doc;

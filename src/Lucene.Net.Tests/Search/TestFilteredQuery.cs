@@ -646,8 +646,8 @@ namespace Lucene.Net.Search
                         this.termDocsEnum = termDocsEnum;
                     }
 
-                    internal bool nextCalled;
-                    internal bool advanceCalled;
+                    private bool nextCalled;
+                    private bool advanceCalled;
 
                     public override int NextDoc()
                     {

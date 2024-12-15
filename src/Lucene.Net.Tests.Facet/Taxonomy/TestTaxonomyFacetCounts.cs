@@ -287,7 +287,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            iwc.SetSimilarity(new PerFieldSimilarityWrapperAnonymousClass(this));
+            iwc.SetSimilarity(new PerFieldSimilarityWrapperAnonymousClass());
             ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             FacetsConfig config = new FacetsConfig();
@@ -301,15 +301,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private sealed class PerFieldSimilarityWrapperAnonymousClass : PerFieldSimilarityWrapper
         {
-            private readonly TestTaxonomyFacetCounts outerInstance;
-
-            public PerFieldSimilarityWrapperAnonymousClass(TestTaxonomyFacetCounts outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                sim = new DefaultSimilarity();
-            }
-
-            private readonly Similarity sim;
+            private readonly Similarity sim = new DefaultSimilarity();
 
             public override Similarity Get(string name)
             {

@@ -41,9 +41,9 @@ namespace Lucene.Net.Search.VectorHighlight
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_STORED);
-            type.StoreTermVectorOffsets = (true);
-            type.StoreTermVectorPositions = (true);
-            type.StoreTermVectors = (true);
+            type.StoreTermVectorOffsets = true;
+            type.StoreTermVectorPositions = true;
+            type.StoreTermVectors = true;
             type.Freeze();
             Field field = new Field("field", "This is a test where foo is highlighed and should be highlighted", type);
 
@@ -54,8 +54,8 @@ namespace Lucene.Net.Search.VectorHighlight
             IndexReader reader = DirectoryReader.Open(writer, true);
             int docId = 0;
             FieldQuery fieldQuery = highlighter.GetFieldQuery(new TermQuery(new Term("field", "foo")), reader);
-            String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader, docId, "field", 54, 1);
-            // highlighted results are centered 
+            string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader, docId, "field", 54, 1);
+            // highlighted results are centered
             assertEquals("This is a test where <b>foo</b> is highlighed and should be highlighted", bestFragments[0]);
             bestFragments = highlighter.GetBestFragments(fieldQuery, reader, docId, "field", 52, 1);
             assertEquals("This is a test where <b>foo</b> is highlighed and should be", bestFragments[0]);
@@ -73,9 +73,9 @@ namespace Lucene.Net.Search.VectorHighlight
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_STORED);
-            type.StoreTermVectorOffsets = (true);
-            type.StoreTermVectorPositions = (true);
-            type.StoreTermVectors = (true);
+            type.StoreTermVectorOffsets = true;
+            type.StoreTermVectorPositions = true;
+            type.StoreTermVectors = true;
             type.Freeze();
             Field text = new Field("text",
                 "Netscape was the general name for a series of web browsers originally produced by Netscape Communications Corporation, now a subsidiary of AOL The original browser was once the dominant browser in terms of usage share, but as a result of the first browser war it lost virtually all of its share to Internet Explorer Netscape was discontinued and support for all Netscape browsers and client products was terminated on March 1, 2008 Netscape Navigator was the name of Netscape\u0027s web browser from versions 1.0 through 4.8 The first beta release versions of the browser were released in 1994 and known as Mosaic and then Mosaic Netscape until a legal challenge from the National Center for Supercomputing Applications (makers of NCSA Mosaic, which many of Netscape\u0027s founders used to develop), led to the name change to Netscape Navigator The company\u0027s name also changed from Mosaic Communications Corporation to Netscape Communications Corporation The browser was easily the most advanced...", type);
@@ -84,13 +84,13 @@ namespace Lucene.Net.Search.VectorHighlight
             FastVectorHighlighter highlighter = new FastVectorHighlighter();
             IndexReader reader = DirectoryReader.Open(writer, true);
             int docId = 0;
-            String field = "text";
+            string field = "text";
             {
                 BooleanQuery query = new BooleanQuery();
                 query.Add(new TermQuery(new Term(field, "internet")), Occur.MUST);
                 query.Add(new TermQuery(new Term(field, "explorer")), Occur.MUST);
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
-                String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
+                string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 128, 1);
                 // highlighted results are centered
                 assertEquals(1, bestFragments.Length);
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 query.Add(new Term(field, "internet"));
                 query.Add(new Term(field, "explorer"));
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
-                String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
+                string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 128, 1);
                 // highlighted results are centered
                 assertEquals(1, bestFragments.Length);
@@ -121,9 +121,9 @@ namespace Lucene.Net.Search.VectorHighlight
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_STORED);
-            type.StoreTermVectorOffsets = (true);
-            type.StoreTermVectorPositions = (true);
-            type.StoreTermVectors = (true);
+            type.StoreTermVectorOffsets = true;
+            type.StoreTermVectorPositions = true;
+            type.StoreTermVectors = true;
             type.Freeze();
             Field longTermField = new Field("long_term", "This is a test thisisaverylongwordandmakessurethisfails where foo is highlighed and should be highlighted", type);
             Field noLongTermField = new Field("no_long_term", "This is a test where foo is highlighed and should be highlighted", type);
@@ -134,14 +134,14 @@ namespace Lucene.Net.Search.VectorHighlight
             FastVectorHighlighter highlighter = new FastVectorHighlighter();
             IndexReader reader = DirectoryReader.Open(writer, true);
             int docId = 0;
-            String field = "no_long_term";
+            string field = "no_long_term";
             {
                 BooleanQuery query = new BooleanQuery();
                 query.Add(new TermQuery(new Term(field, "test")), Occur.MUST);
                 query.Add(new TermQuery(new Term(field, "foo")), Occur.MUST);
                 query.Add(new TermQuery(new Term(field, "highlighed")), Occur.MUST);
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
-                String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
+                string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 18, 1);
                 // highlighted results are centered
                 assertEquals(1, bestFragments.Length);
@@ -153,12 +153,12 @@ namespace Lucene.Net.Search.VectorHighlight
                 pq.Add(new Term(field, "test"));
                 pq.Add(new Term(field, "foo"));
                 pq.Add(new Term(field, "highlighed"));
-                pq.Slop = (5);
+                pq.Slop = 5;
                 query.Add(new TermQuery(new Term(field, "foo")), Occur.MUST);
                 query.Add(pq, Occur.MUST);
                 query.Add(new TermQuery(new Term(field, "highlighed")), Occur.MUST);
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
-                String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
+                string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 18, 1);
                 // highlighted results are centered
                 assertEquals(0, bestFragments.Length);
@@ -174,9 +174,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 query.Add(new Term(field, "test"));
                 query.Add(new Term(field, "foo"));
                 query.Add(new Term(field, "highlighed"));
-                query.Slop = (3);
+                query.Slop = 3;
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
-                String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
+                string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 18, 1);
                 // highlighted results are centered
                 assertEquals(0, bestFragments.Length);
@@ -192,9 +192,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 query.Add(new Term(field, "test"));
                 query.Add(new Term(field, "foo"));
                 query.Add(new Term(field, "highlighted"));
-                query.Slop = (30);
+                query.Slop = 30;
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
-                String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
+                string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 18, 1);
                 assertEquals(0, bestFragments.Length);
             }
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 pq.Add(new Term(field, "test"));
                 pq.Add(new Term(field, "foo"));
                 pq.Add(new Term(field, "highlighed"));
-                pq.Slop = (5);
+                pq.Slop = 5;
                 BooleanQuery inner = new BooleanQuery();
                 inner.Add(pq, Occur.MUST);
                 inner.Add(new TermQuery(new Term(field, "foo")), Occur.MUST);
@@ -212,7 +212,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 query.Add(pq, Occur.MUST);
                 query.Add(new TermQuery(new Term(field, "highlighed")), Occur.MUST);
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
-                String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
+                string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 18, 1);
                 assertEquals(0, bestFragments.Length);
 
@@ -231,7 +231,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 query.Add(new TermQuery(new Term(field, "foo")), Occur.MUST);
                 query.Add(new TermQuery(new Term(field, "highlighed")), Occur.MUST);
                 FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
-                String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
+                string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader,
                     docId, field, 18, 1);
                 // highlighted results are centered
                 assertEquals(1, bestFragments.Length);
@@ -250,9 +250,9 @@ namespace Lucene.Net.Search.VectorHighlight
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_STORED);
-            type.StoreTermVectorOffsets = (true);
-            type.StoreTermVectorPositions = (true);
-            type.StoreTermVectors = (true);
+            type.StoreTermVectorOffsets = true;
+            type.StoreTermVectorPositions = true;
+            type.StoreTermVectors = true;
             type.Freeze();
             StringBuilder text = new StringBuilder();
             text.append("words words junk junk junk junk junk junk junk junk highlight junk junk junk junk together junk ");
@@ -278,13 +278,13 @@ namespace Lucene.Net.Search.VectorHighlight
             // This mimics what some query parsers do to <"highlight words together">
             BooleanQuery phrase = new BooleanQuery();
             phrase.Add(clause("text", "highlight", "words", "together"), Occur.MUST);
-            phrase.Boost = (100);
-            // Now combine those results in a boolean query which should pull the phrases to the front of the list of fragments 
+            phrase.Boost = 100;
+            // Now combine those results in a boolean query which should pull the phrases to the front of the list of fragments
             BooleanQuery query = new BooleanQuery();
             query.Add(phrase, Occur.MUST);
             query.Add(phrase, Occur.SHOULD);
             FieldQuery fieldQuery = new FieldQuery(query, reader, true, false);
-            String fragment = highlighter.GetBestFragment(fieldQuery, reader, 0, "text", 100);
+            string fragment = highlighter.GetBestFragment(fieldQuery, reader, 0, "text", 100);
             assertEquals("junk junk junk junk junk junk junk junk <b>highlight words together</b> junk junk junk junk junk junk junk junk", fragment);
 
             reader.Dispose();
@@ -298,11 +298,11 @@ namespace Lucene.Net.Search.VectorHighlight
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)));
             FieldType type = new FieldType(TextField.TYPE_STORED);
-            type.StoreTermVectorOffsets = (true);
-            type.StoreTermVectorPositions = (true);
-            type.StoreTermVectors = (true);
+            type.StoreTermVectorOffsets = true;
+            type.StoreTermVectorPositions = true;
+            type.StoreTermVectors = true;
             type.Freeze();
-            String[] texts = {
+            string[] texts = {
                 "Hello this is a piece of text that is very long and contains too much preamble and the meat is really here which says kennedy has been shot",
                 "This piece of text refers to Kennedy at the beginning then has a longer piece of text that is very long in the middle and finally ends with another reference to Kennedy",
                 "JFK has been shot", "John Kennedy has been shot",
@@ -326,7 +326,7 @@ namespace Lucene.Net.Search.VectorHighlight
             TopDocs hits = searcher.Search(query, 10);
             assertEquals(2, hits.TotalHits);
             FieldQuery fieldQuery = highlighter.GetFieldQuery(query, reader);
-            String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader, hits.ScoreDocs[0].Doc, "field", 1000, 1);
+            string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader, hits.ScoreDocs[0].Doc, "field", 1000, 1);
             assertEquals("This piece of <b>text</b> refers to Kennedy at the beginning then has a longer piece of <b>text</b> that is <b>very</b> <b>long</b> in the middle and finally ends with another reference to Kennedy", bestFragments[0]);
 
             fieldQuery = highlighter.GetFieldQuery(query, reader);
@@ -457,9 +457,9 @@ namespace Lucene.Net.Search.VectorHighlight
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_STORED);
-            type.StoreTermVectorOffsets = (true);
-            type.StoreTermVectorPositions = (true);
-            type.StoreTermVectors = (true);
+            type.StoreTermVectorOffsets = true;
+            type.StoreTermVectorPositions = true;
+            type.StoreTermVectors = true;
             type.Freeze();
             doc.Add(new Field("field", "zero if naught", type)); // The first two fields contain the best match
             doc.Add(new Field("field", "hero of legend", type)); // but total a lower score (3) than the bottom
@@ -470,10 +470,10 @@ namespace Lucene.Net.Search.VectorHighlight
             FastVectorHighlighter highlighter = new FastVectorHighlighter();
 
             ScoreOrderFragmentsBuilder fragmentsBuilder = new ScoreOrderFragmentsBuilder();
-            fragmentsBuilder.IsDiscreteMultiValueHighlighting = (true);
+            fragmentsBuilder.IsDiscreteMultiValueHighlighting = true;
             IndexReader reader = DirectoryReader.Open(writer, true);
-            String[] preTags = new String[] { "<b>" };
-            String[] postTags = new String[] { "</b>" };
+            string[] preTags = new string[] { "<b>" };
+            string[] postTags = new string[] { "</b>" };
             IEncoder encoder = new DefaultEncoder();
             int docId = 0;
             BooleanQuery query = new BooleanQuery();
@@ -485,7 +485,7 @@ namespace Lucene.Net.Search.VectorHighlight
             foreach (IFragListBuilder fragListBuilder in new IFragListBuilder[] {
       new SimpleFragListBuilder(), new WeightedFragListBuilder() })
             {
-                String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader, docId, "field", 20, 1,
+                string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader, docId, "field", 20, 1,
                     fragListBuilder, fragmentsBuilder, preTags, postTags, encoder);
                 assertEquals("<b>hero</b> <b>of</b> <b>legend</b>", bestFragments[0]);
                 bestFragments = highlighter.GetBestFragments(fieldQuery, reader, docId, "field", 28, 1,
@@ -508,12 +508,12 @@ namespace Lucene.Net.Search.VectorHighlight
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_NOT_STORED);
-            type.StoreTermVectorOffsets = (true);
-            type.StoreTermVectorPositions = (true);
-            type.StoreTermVectors = (true);
+            type.StoreTermVectorOffsets = true;
+            type.StoreTermVectorPositions = true;
+            type.StoreTermVectors = true;
             type.Freeze();
             Token syn = new Token("httpwwwfacebookcom", 6, 29);
-            syn.PositionIncrement = (0);
+            syn.PositionIncrement = 0;
             CannedTokenStream ts = new CannedTokenStream(
                 new Token("test", 0, 4),
                 new Token("http", 6, 10),
@@ -539,7 +539,7 @@ namespace Lucene.Net.Search.VectorHighlight
             pq.Add(new Term("field", "facebook"));
             pq.Add(new Term("field", "com"));
             FieldQuery fieldQuery = highlighter.GetFieldQuery(pq, reader);
-            String[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader, docId, "field", 54, 1);
+            string[] bestFragments = highlighter.GetBestFragments(fieldQuery, reader, docId, "field", 54, 1);
             assertEquals("<b>Test: http://www.facebook.com</b>", bestFragments[0]);
 
             // query2: match
@@ -566,23 +566,23 @@ namespace Lucene.Net.Search.VectorHighlight
             dir.Dispose();
         }
 
-        private void matchedFieldsTestCase(String fieldValue, String expected, params Query[] queryClauses)
+        private void matchedFieldsTestCase(string fieldValue, string expected, params Query[] queryClauses)
         {
             matchedFieldsTestCase(true, true, fieldValue, expected, queryClauses);
         }
 
-        private void matchedFieldsTestCase(bool useMatchedFields, bool fieldMatch, String fieldValue, String expected, params Query[] queryClauses)
+        private void matchedFieldsTestCase(bool useMatchedFields, bool fieldMatch, string fieldValue, string expected, params Query[] queryClauses)
         {
             Document doc = new Document();
             FieldType stored = new FieldType(TextField.TYPE_STORED);
-            stored.StoreTermVectorOffsets = (true);
-            stored.StoreTermVectorPositions = (true);
-            stored.StoreTermVectors = (true);
+            stored.StoreTermVectorOffsets = true;
+            stored.StoreTermVectorPositions = true;
+            stored.StoreTermVectors = true;
             stored.Freeze();
             FieldType matched = new FieldType(TextField.TYPE_NOT_STORED);
-            matched.StoreTermVectorOffsets = (true);
-            matched.StoreTermVectorPositions = (true);
-            matched.StoreTermVectors = (true);
+            matched.StoreTermVectorOffsets = true;
+            matched.StoreTermVectorPositions = true;
+            matched.StoreTermVectors = true;
             matched.Freeze();
             doc.Add(new Field("field", fieldValue, stored));               // Whitespace tokenized with English stop words
             doc.Add(new Field("field_exact", fieldValue, matched));        // Whitespace tokenized without stop words
@@ -606,8 +606,8 @@ namespace Lucene.Net.Search.VectorHighlight
             IFragListBuilder fragListBuilder = new SimpleFragListBuilder();
             IFragmentsBuilder fragmentsBuilder = new ScoreOrderFragmentsBuilder();
             IndexReader reader = DirectoryReader.Open(writer, true);
-            String[] preTags = new String[] { "<b>" };
-            String[] postTags = new String[] { "</b>" };
+            string[] preTags = new string[] { "<b>" };
+            string[] postTags = new string[] { "</b>" };
             IEncoder encoder = new DefaultEncoder();
             int docId = 0;
             BooleanQuery query = new BooleanQuery();
@@ -616,10 +616,10 @@ namespace Lucene.Net.Search.VectorHighlight
                 query.Add(clause, Occur.MUST);
             }
             FieldQuery fieldQuery = new FieldQuery(query, reader, true, fieldMatch);
-            String[] bestFragments;
+            string[] bestFragments;
             if (useMatchedFields)
             {
-                ISet<String> matchedFields = new JCG.HashSet<String>();
+                ISet<string> matchedFields = new JCG.HashSet<string>();
                 matchedFields.Add("field");
                 matchedFields.Add("field_exact");
                 matchedFields.Add("field_super_exact");
@@ -644,7 +644,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         private sealed class AnalyzerWrapperAnonymousClass : AnalyzerWrapper
         {
-            IDictionary<String, Analyzer> fieldAnalyzers = new JCG.SortedDictionary<String, Analyzer>(StringComparer.Ordinal);
+            private readonly IDictionary<string, Analyzer> fieldAnalyzers = new JCG.SortedDictionary<string, Analyzer>(StringComparer.Ordinal);
 
 #pragma warning disable 612, 618 // LUCENENET NOTE: Class calls obsolete (default) constructor
             public AnalyzerWrapperAnonymousClass()
@@ -664,12 +664,12 @@ namespace Lucene.Net.Search.VectorHighlight
             }
         }
 
-        private Query clause(String field, params String[] terms)
+        private Query clause(string field, params string[] terms)
         {
             return clause(field, 1, terms);
         }
 
-        private Query clause(String field, float boost, params String[] terms)
+        private Query clause(string field, float boost, params string[] terms)
         {
             Query q;
             if (terms.Length == 1)
@@ -679,20 +679,20 @@ namespace Lucene.Net.Search.VectorHighlight
             else
             {
                 PhraseQuery pq = new PhraseQuery();
-                foreach (String term in terms)
+                foreach (string term in terms)
                 {
                     pq.Add(new Term(field, term));
                 }
                 q = pq;
             }
-            q.Boost = (boost);
+            q.Boost = boost;
             return q;
         }
 
-        private static Token token(String term, int posInc, int startOffset, int endOffset)
+        private static Token token(string term, int posInc, int startOffset, int endOffset)
         {
             Token t = new Token(term, startOffset, endOffset);
-            t.PositionIncrement = (posInc);
+            t.PositionIncrement = posInc;
             return t;
         }
     }

@@ -60,7 +60,7 @@ namespace Lucene.Net.Facet.Taxonomy
             ThreadJob[] threads = new ThreadJob[3];
             for (int i = 0; i < threads.Length; i++)
             {
-                threads[i] = new ThreadAnonymousClass(this, "CachedOrdsThread-" + i, reader, ordsReader);
+                threads[i] = new ThreadAnonymousClass("CachedOrdsThread-" + i, reader, ordsReader);
             }
 
             long ramBytesUsed = 0;
@@ -83,15 +83,12 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private sealed class ThreadAnonymousClass : ThreadJob
         {
-            private readonly TestCachedOrdinalsReader outerInstance;
-
             private readonly DirectoryReader reader;
             private readonly CachedOrdinalsReader ordsReader;
 
-            public ThreadAnonymousClass(TestCachedOrdinalsReader outerInstance, string threadName, DirectoryReader reader, CachedOrdinalsReader ordsReader)
+            public ThreadAnonymousClass(string threadName, DirectoryReader reader, CachedOrdinalsReader ordsReader)
                 : base(threadName)
             {
-                this.outerInstance = outerInstance;
                 this.reader = reader;
                 this.ordsReader = ordsReader;
             }

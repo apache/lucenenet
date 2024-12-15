@@ -32,9 +32,6 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
 
         private sealed class CompressionModeAnonymousClass : CompressionMode
         {
-            public CompressionModeAnonymousClass()
-            { }
-
             public override Compressor NewCompressor()
             {
                 return DUMMY_COMPRESSOR;

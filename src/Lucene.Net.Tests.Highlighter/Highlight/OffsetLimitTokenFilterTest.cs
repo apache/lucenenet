@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.Highlight
         [Test]
         public void TestFilter()
         {
-            // we disable MockTokenizer checks because we will forcefully limit the 
+            // we disable MockTokenizer checks because we will forcefully limit the
             // tokenstream and call end() before incrementToken() returns false.
             MockTokenizer stream = new MockTokenizer(new StringReader(
                 "short toolong evenmuchlongertext a ab toolong foo"),
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search.Highlight
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                tokenizer.EnableChecks = (false);
+                tokenizer.EnableChecks = false;
                 return new TokenStreamComponents(tokenizer, new OffsetLimitTokenFilter(tokenizer, 10));
             }
         }

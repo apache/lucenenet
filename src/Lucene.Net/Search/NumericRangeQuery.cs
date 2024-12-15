@@ -430,7 +430,7 @@ namespace Lucene.Net.Search
                     this.outerInstance = outerInstance;
                 }
 
-                public override sealed void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
+                public override void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
                 {
                     outerInstance.rangeBounds.Enqueue(minPrefixCoded);
                     outerInstance.rangeBounds.Enqueue(maxPrefixCoded);
@@ -446,7 +446,7 @@ namespace Lucene.Net.Search
                     this.outerInstance = outerInstance;
                 }
 
-                public override sealed void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
+                public override void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
                 {
                     outerInstance.rangeBounds.Enqueue(minPrefixCoded);
                     outerInstance.rangeBounds.Enqueue(maxPrefixCoded);

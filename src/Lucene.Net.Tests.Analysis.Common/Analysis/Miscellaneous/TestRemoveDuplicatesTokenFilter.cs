@@ -64,9 +64,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
-            internal ICharTermAttribute termAtt;
-            internal IOffsetAttribute offsetAtt;
-            internal IPositionIncrementAttribute posIncAtt;
+            private ICharTermAttribute termAtt;
+            private IOffsetAttribute offsetAtt;
+            private IPositionIncrementAttribute posIncAtt;
             public override sealed bool IncrementToken()
             {
                 if (toks.MoveNext())

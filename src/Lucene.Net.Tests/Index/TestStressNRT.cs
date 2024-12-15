@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
                 rand = new J2N.Randomizer(Random.NextInt64());
             }
 
-            internal Random rand;
+            private readonly Random rand;
 
             public override void Run()
             {
@@ -443,7 +443,7 @@ namespace Lucene.Net.Index
                 rand = new J2N.Randomizer(Random.NextInt64());
             }
 
-            internal Random rand;
+            private readonly Random rand;
 
             public override void Run()
             {

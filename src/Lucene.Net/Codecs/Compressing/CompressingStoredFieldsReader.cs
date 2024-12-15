@@ -391,9 +391,9 @@ namespace Lucene.Net.Codecs.Compressing
                 decompressed = outerInstance.bytes.Length;
             }
 
-            internal int decompressed;
+            private int decompressed;
 
-            internal void FillBuffer()
+            private void FillBuffer()
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(decompressed <= length);
                 if (decompressed == length)

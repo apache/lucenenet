@@ -30,7 +30,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// <summary>
     /// Finds docs where its indexed shape <see cref="Queries.SpatialOperation.Contains"/>
     /// the query shape. For use on <see cref="RecursivePrefixTreeStrategy"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class ContainsPrefixTreeFilter : AbstractPrefixTreeFilter
@@ -114,7 +114,7 @@ namespace Lucene.Net.Spatial.Prefix
                     {
                         combinedSubResults = GetDocs(subCell, acceptContains);
                     }
-                    else if (!outerInstance.m_multiOverlappingIndexedShapes && 
+                    else if (!outerInstance.m_multiOverlappingIndexedShapes &&
                         subCell.ShapeRel == SpatialRelation.Within)
                     {
                         combinedSubResults = GetLeafDocs(subCell, acceptContains); //recursion
@@ -123,7 +123,7 @@ namespace Lucene.Net.Spatial.Prefix
                     {
                         combinedSubResults = Visit(subCell, acceptContains);
                     }
-                    
+
                     if (combinedSubResults is null)
                     {
                         break;
@@ -131,7 +131,7 @@ namespace Lucene.Net.Spatial.Prefix
 
                     acceptContains = combinedSubResults;//has the 'AND' effect on next iteration
                 }
-                
+
                 // Result: OR the leaf docs with AND of all child results
                 if (combinedSubResults != null)
                 {
@@ -331,7 +331,7 @@ namespace Lucene.Net.Spatial.Prefix
                     this.docs = docs;
                 }
 
-                internal int idx = -1;
+                private int idx = -1;
 
                 public override int DocID
                 {

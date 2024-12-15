@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
                     this.outerInstance = outerInstance;
                 }
 
-                internal bool done;
+                private bool done;
                 private IEnumerable<IndexableField> current;
 
                 public bool MoveNext()
@@ -265,7 +265,7 @@ namespace Lucene.Net.Index
                 return new EnumeratorAnonymousClass2(this);
             }
 
-            IEnumerator IEnumerable.GetEnumerator() 
+            IEnumerator IEnumerable.GetEnumerator()
                 => GetEnumerator();
 
             private sealed class EnumeratorAnonymousClass2 : IEnumerator<IEnumerable<IIndexableField>>
@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
                     this.outerInstance = outerInstance;
                 }
 
-                internal bool done;
+                private bool done;
                 private IEnumerable<IIndexableField> current;
 
                 public bool MoveNext()
