@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -34,7 +35,7 @@ namespace Lucene.Net.Search.Grouping
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     // ReSharper disable once RedundantExtendsListEntry
-    public abstract class AbstractAllGroupsCollector<TGroupValue> : ICollector
+    public abstract class AbstractAllGroupsCollector<TGroupValue> : IAbstractAllGroupsCollector
     {
         /// <summary>
         /// Returns the total number of groups for the executed search.
@@ -88,5 +89,31 @@ namespace Lucene.Net.Search.Grouping
         public abstract void SetNextReader(AtomicReaderContext context);
 
         public virtual bool AcceptsDocsOutOfOrder => true;
+
+        #region Explicit interface implementations
+
+        ICollection<object> IAbstractAllGroupsCollector.Groups => new CastingCollectionAdapter<TGroupValue, object>(Groups);
+
+        #endregion
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="AbstractAllGroupsCollector{TGroupValue}"/>.
+    /// </summary>
+    public interface IAbstractAllGroupsCollector : ICollector
+    {
+        /// <summary>
+        /// Returns the total number of groups for the executed search.
+        /// </summary>
+        int GroupCount { get; }
+
+        /// <summary>
+        /// Returns the group values
+        /// <para />
+        /// This is an unordered collections of group values. For each group that matched the query there is a <see cref="Util.BytesRef"/>
+        /// representing a group value.
+        /// </summary>
+        ICollection<object> Groups { get; }
     }
 }

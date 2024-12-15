@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : ICollector
+    public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : IAbstractFirstPassGroupingCollector
     {
         private readonly Sort groupSort;
         private readonly FieldComparer[] comparers;
@@ -419,5 +420,29 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="reuse">Optionally a reuse instance to prevent a new instance creation</param>
         /// <returns>a copy of the specified group value</returns>
         protected abstract TGroupValue CopyDocGroupValue(TGroupValue groupValue, TGroupValue reuse);
+
+        #region Explicit interface implementations
+
+        ICollection<ISearchGroup> IAbstractFirstPassGroupingCollector.GetTopGroups(int groupOffset, bool fillFields)
+            => new CastingCollectionAdapter<SearchGroup<TGroupValue>, ISearchGroup>(GetTopGroups(groupOffset, fillFields));
+
+        #endregion
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>.
+    /// </summary>
+    public interface IAbstractFirstPassGroupingCollector : ICollector
+    {
+        /// <summary>
+        /// Returns top groups, starting from offset.  This may
+        /// return null, if no groups were collected, or if the
+        /// number of unique groups collected is &lt;= offset.
+        /// </summary>
+        /// <param name="groupOffset">The offset in the collected groups</param>
+        /// <param name="fillFields">Whether to fill to <see cref="ISearchGroup.SortValues"/></param>
+        /// <returns>top groups, starting from offset</returns>
+        ICollection<ISearchGroup> GetTopGroups(int groupOffset, bool fillFields);
     }
 }
