@@ -82,6 +82,9 @@ namespace Lucene.Net.Search.Grouping
 
         #region Explicit interface implementations
 
+        /// <summary>
+        /// LUCENENET specific implementation to provide an object-based implementation of <see cref="GroupValue"/>.
+        /// </summary>
         object ISearchGroup.GroupValue
         {
             get => GroupValue;
@@ -490,8 +493,20 @@ namespace Lucene.Net.Search.Grouping
     /// </summary>
     public interface ISearchGroup
     {
+        /// <summary>
+        /// The value that defines this group
+        /// </summary>
         object GroupValue { get; set; }
 
+        /// <summary>
+        /// The sort values used during sorting. These are the
+        /// groupSort field values of the highest rank document
+        /// (by the groupSort) within the group.  Can be
+        /// <c>null</c> if <c>fillFields=false</c> had
+        /// been passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}.GetTopGroups(int, bool)"/>
+        /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        [WritableArray]
         object[] SortValues { get; set; }
     }
 }

@@ -75,6 +75,10 @@ namespace Lucene.Net.Search.Grouping
 
         #region Explicit interface implementations
 
+        /// <summary>
+        /// LUCENENET specific method to provide an object-based implementation of <see cref="GroupValue"/>.
+        /// </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         object IGroupDocs.GroupValue => GroupValue;
 
         #endregion
@@ -86,16 +90,38 @@ namespace Lucene.Net.Search.Grouping
     /// </summary>
     public interface IGroupDocs
     {
+        /// <summary>
+        /// The groupField value for all docs in this group; this
+        /// may be null if hits did not have the groupField.
+        /// </summary>
         object GroupValue { get; }
 
+        /// <summary>
+        /// Max score in this group
+        /// </summary>
         float MaxScore { get; }
 
+        /// <summary>
+        /// Overall aggregated score of this group (currently only set by join queries).
+        /// </summary>
         float Score { get; }
 
+        /// <summary>
+        /// Hits; this may be <see cref="FieldDoc"/> instances if the
+        /// withinGroupSort sorted by fields.
+        /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         ScoreDoc[] ScoreDocs { get; }
 
+        /// <summary>
+        /// Total hits within this group
+        /// </summary>
         int TotalHits { get; }
 
+        /// <summary>
+        /// Matches the groupSort passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>.
+        /// </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         object[] GroupSortValues { get; }
     }
 }
