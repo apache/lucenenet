@@ -26,9 +26,14 @@ namespace Lucene.Net.Search.Grouping
     ///
     /// @lucene.experimental
     /// </summary>
-    /// <typeparam name="GC"></typeparam>
-    public abstract class AbstractDistinctValuesCollector<GC> : ICollector
-        where GC : AbstractDistinctValuesCollector.IGroupCount<object>
+    /// <typeparam name="GC">The type of group counts</typeparam>
+    /// <typeparam name="TGroupValue">The type of the group values</typeparam>
+    /// <remarks>
+    /// The <typeparamref name="TGroupValue"/> type parameter is LUCENENET specific to allow for
+    /// strongly-typed group values.
+    /// </remarks>
+    public abstract class AbstractDistinctValuesCollector<GC, TGroupValue> : ICollector
+        where GC : AbstractDistinctValuesCollector.GroupCount<TGroupValue>
     {
         /// <summary>
         /// Returns all unique values for each top N group.
@@ -80,16 +85,16 @@ namespace Lucene.Net.Search.Grouping
     public static class AbstractDistinctValuesCollector // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
-        /// Returned by <see cref="AbstractDistinctValuesCollector{GC}.Groups"/>,
+        /// Returned by <see cref="AbstractDistinctValuesCollector{GC, TGroupValue}.Groups"/>,
         /// representing the value and set of distinct values for the group.
         /// </summary>
         /// <typeparam name="TGroupValue"></typeparam>
         /// <remarks>
         /// LUCENENET - removed this class from being a nested class of
-        /// <see cref="AbstractDistinctValuesCollector{GC}"/> and renamed
+        /// <see cref="AbstractDistinctValuesCollector{GC, TGroupValue}"/> and renamed
         /// from GroupCount to AbstractGroupCount
         /// </remarks>
-        public abstract class GroupCount<TGroupValue> : IGroupCount<TGroupValue>
+        public abstract class GroupCount<TGroupValue>
         {
             public TGroupValue GroupValue { get; protected set; }
             public IEnumerable<TGroupValue> UniqueValues { get; protected set; }
@@ -99,16 +104,6 @@ namespace Lucene.Net.Search.Grouping
                 this.GroupValue = groupValue;
                 this.UniqueValues = new JCG.HashSet<TGroupValue>();
             }
-        }
-
-        /// <summary>
-        /// LUCENENET specific interface used to apply covariance to TGroupValue
-        /// </summary>
-        /// <typeparam name="TGroupValue"></typeparam>
-        public interface IGroupCount<out TGroupValue>
-        {
-            TGroupValue GroupValue { get; }
-            IEnumerable<TGroupValue> UniqueValues { get; }
         }
     }
 }
