@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : ICollector
+    public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : IAbstractSecondPassGroupingCollector
     {
         protected readonly IDictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>> m_groupMap;
         private readonly int maxDocsPerGroup;
@@ -146,7 +146,12 @@ namespace Lucene.Net.Search.Grouping
         }
 
 
+        #region Explicit interface implementations
 
+        ITopGroups IAbstractSecondPassGroupingCollector.GetTopGroups(int withinGroupOffset)
+            => GetTopGroups(withinGroupOffset);
+
+        #endregion
     }
 
     /// <summary>
@@ -172,5 +177,14 @@ namespace Lucene.Net.Search.Grouping
                 this.collector = collector;
             }
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="AbstractSecondPassGroupingCollector{TGroupValue}"/>.
+    /// </summary>
+    public interface IAbstractSecondPassGroupingCollector : ICollector
+    {
+        ITopGroups GetTopGroups(int withinGroupOffset);
     }
 }
