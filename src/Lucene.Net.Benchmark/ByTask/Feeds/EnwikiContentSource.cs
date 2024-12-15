@@ -225,7 +225,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     {
                         Stream localFileIS = outerInstance.@is;
                         if (localFileIS != null)
-                        { // null means fileIS was closed on us 
+                        { // null means fileIS was closed on us
                             try
                             {
                                 // To work around a bug in XERCES (XERCESJ-1257), we assume the XML is always UTF8, so we simply provide reader.
@@ -374,7 +374,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             return ELEMENTS.TryGetValue(elem, out int val) ? val : -1;
         }
 
-        private FileInfo file;
+        private string file; // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
         private bool keepImages = true;
         private Stream @is;
         private readonly Parser parser;
@@ -430,7 +430,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             string fileName = config.Get("docs.file", null);
             if (fileName != null)
             {
-                file = new FileInfo(fileName);
+                // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+                file = fileName;
             }
         }
     }
