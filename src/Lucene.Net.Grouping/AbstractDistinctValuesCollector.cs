@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="GC"></typeparam>
-    public abstract class AbstractDistinctValuesCollector<GC> : IAbstractDistinctValuesCollector<GC>
+    public abstract class AbstractDistinctValuesCollector<GC> : ICollector
         where GC : AbstractDistinctValuesCollector.IGroupCount<object>
     {
         /// <summary>
@@ -110,18 +110,5 @@ namespace Lucene.Net.Search.Grouping
             TGroupValue GroupValue { get; }
             IEnumerable<TGroupValue> UniqueValues { get; }
         }
-    }
-
-    /// <summary>
-    /// LUCENENET specific interface used to apply covariance to GC
-    /// </summary>
-    /// <typeparam name="GC"></typeparam>
-    public interface IAbstractDistinctValuesCollector<out GC> : ICollector
-    {
-        /// <summary>
-        /// Returns all unique values for each top N group.
-        /// </summary>
-        /// <returns>all unique values for each top N group</returns>
-        IEnumerable<GC> Groups { get; }
     }
 }
