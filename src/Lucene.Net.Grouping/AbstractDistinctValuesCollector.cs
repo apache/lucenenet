@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Grouping
         /// Returns all unique values for each top N group.
         /// </summary>
         /// <returns>all unique values for each top N group</returns>
-        public abstract IEnumerable<GC> Groups { get; }
+        public abstract IList<GC> Groups { get; }
 
         public virtual bool AcceptsDocsOutOfOrder => true;
 
@@ -91,13 +91,12 @@ namespace Lucene.Net.Search.Grouping
         /// <typeparam name="TGroupValue"></typeparam>
         /// <remarks>
         /// LUCENENET - removed this class from being a nested class of
-        /// <see cref="AbstractDistinctValuesCollector{GC, TGroupValue}"/> and renamed
-        /// from GroupCount to AbstractGroupCount
+        /// <see cref="AbstractDistinctValuesCollector{GC, TGroupValue}"/>
         /// </remarks>
         public abstract class GroupCount<TGroupValue>
         {
             public TGroupValue GroupValue { get; protected set; }
-            public IEnumerable<TGroupValue> UniqueValues { get; protected set; }
+            public ISet<TGroupValue> UniqueValues { get; protected set; }
 
             protected GroupCount(TGroupValue groupValue) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {

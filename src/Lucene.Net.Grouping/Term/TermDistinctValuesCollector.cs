@@ -3,7 +3,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping.Terms
@@ -48,11 +47,11 @@ namespace Lucene.Net.Search.Grouping.Terms
         /// <param name="groupField">The field to group by</param>
         /// <param name="countField">The field to count distinct values for</param>
         /// <param name="groups">The top N groups, collected during the first phase search</param>
-        public TermDistinctValuesCollector(string groupField, string countField, IEnumerable<SearchGroup<BytesRef>> groups)
+        public TermDistinctValuesCollector(string groupField, string countField, ICollection<SearchGroup<BytesRef>> groups)
         {
             this.groupField = groupField;
             this.countField = countField;
-            int groupCount = groups.Count();
+            int groupCount = groups.Count;
             this.groups = new JCG.List<GroupCount>(groupCount);
             foreach (SearchGroup<BytesRef> group in groups)
             {
@@ -107,7 +106,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             return Array.BinarySearch(ords, ord) < 0;
         }
 
-        public override IEnumerable<GroupCount> Groups => groups;
+        public override IList<GroupCount> Groups => groups;
 
         public override void SetNextReader(AtomicReaderContext context)
         {
@@ -123,7 +122,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 }
 
                 groupCounts[ordSet.Put(groupOrd)] = group;
-                group.ords = new int[group.UniqueValues.Count()];
+                group.ords = new int[group.UniqueValues.Count];
                 Arrays.Fill(group.ords, -2);
                 int i = 0;
                 foreach (BytesRef value2 in group.UniqueValues)
