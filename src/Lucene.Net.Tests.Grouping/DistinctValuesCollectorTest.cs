@@ -481,7 +481,7 @@ namespace Lucene.Net.Search.Grouping
                         GroupValue = groupValue,
                         SortValues = group.SortValues
                     };
-                });
+                }).ToList();
                 // LUCENENET specific - we have to wrap this due to generic type mismatch
                 var innerCollector = new FunctionDistinctValuesCollector(new Hashtable(), new BytesRefFieldSource(groupField), new BytesRefFieldSource(countField), mutableValueSearchGroups);
                 return new ComparableDistinctValuesCollector<FunctionDistinctValuesCollector.GroupCount, MutableValue>(innerCollector);
