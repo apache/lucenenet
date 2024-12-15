@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// <summary>
     /// A term based implementation of <see cref="T:AbstractDistinctValuesCollector{TermDistinctValuesCollector.GroupCount}"/> that relies
     /// on <see cref="SortedDocValues"/> to count the distinct values per group.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class TermDistinctValuesCollector : AbstractDistinctValuesCollector<TermDistinctValuesCollector.GroupCount>
@@ -48,13 +48,13 @@ namespace Lucene.Net.Search.Grouping.Terms
         /// <param name="groupField">The field to group by</param>
         /// <param name="countField">The field to count distinct values for</param>
         /// <param name="groups">The top N groups, collected during the first phase search</param>
-        public TermDistinctValuesCollector(string groupField, string countField, IEnumerable<ISearchGroup<BytesRef>> groups)
+        public TermDistinctValuesCollector(string groupField, string countField, IEnumerable<SearchGroup<BytesRef>> groups)
         {
             this.groupField = groupField;
             this.countField = countField;
             int groupCount = groups.Count();
             this.groups = new JCG.List<GroupCount>(groupCount);
-            foreach (ISearchGroup<BytesRef> group in groups)
+            foreach (SearchGroup<BytesRef> group in groups)
             {
                 this.groups.Add(new GroupCount(group.GroupValue));
             }
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
         /// <summary>
         /// Holds distinct values for a single group.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public class GroupCount : AbstractDistinctValuesCollector.GroupCount<BytesRef>
