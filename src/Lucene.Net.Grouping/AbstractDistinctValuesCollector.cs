@@ -117,8 +117,14 @@ namespace Lucene.Net.Search.Grouping
 
             #region Explicit interface implementations
 
+            /// <summary>
+            /// LUCENENET specific method to provide an object-based implementation of <see cref="GroupValue"/>.
+            /// </summary>
             object IGroupCount.GroupValue => GroupValue;
 
+            /// <summary>
+            /// LUCENENET specific method to provide an object-based implementation of <see cref="UniqueValues"/>.
+            /// </summary>
             ISet<object> IGroupCount.UniqueValues => new CastingSetAdapter<TGroupValue, object>(UniqueValues);
 
             #endregion
