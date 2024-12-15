@@ -3,7 +3,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using JCG = J2N.Collections.Generic;
@@ -40,7 +39,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : IAbstractFirstPassGroupingCollector<TGroupValue>
+    public abstract class AbstractFirstPassGroupingCollector<TGroupValue> : ICollector
     {
         private readonly Sort groupSort;
         private readonly FieldComparer[] comparers;
@@ -106,7 +105,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="groupOffset">The offset in the collected groups</param>
         /// <param name="fillFields">Whether to fill to <see cref="SearchGroup{TGroupValue}.SortValues"/></param>
         /// <returns>top groups, starting from offset</returns>
-        public virtual IEnumerable<ISearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields)
+        public virtual IEnumerable<SearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields)
         {
 
             //System.out.println("FP.getTopGroups groupOffset=" + groupOffset + " fillFields=" + fillFields + " groupMap.size()=" + groupMap.size());
@@ -126,7 +125,7 @@ namespace Lucene.Net.Search.Grouping
                 BuildSortedSet();
             }
 
-            ICollection<ISearchGroup<TGroupValue>> result = new JCG.List<ISearchGroup<TGroupValue>>();
+            ICollection<SearchGroup<TGroupValue>> result = new JCG.List<SearchGroup<TGroupValue>>();
             int upto = 0;
             int sortFieldCount = groupSort.GetSort().Length;
             foreach (CollectedSearchGroup<TGroupValue> group in m_orderedGroups)
@@ -420,28 +419,5 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="reuse">Optionally a reuse instance to prevent a new instance creation</param>
         /// <returns>a copy of the specified group value</returns>
         protected abstract TGroupValue CopyDocGroupValue(TGroupValue groupValue, TGroupValue reuse);
-
-    }
-
-    /// <summary>
-    /// LUCENENET specific interface used to apply covariance to TGroupValue
-    /// to simulate Java's wildcard generics.
-    /// </summary>
-    /// <typeparam name="TGroupValue"></typeparam>
-    public interface IAbstractFirstPassGroupingCollector<out TGroupValue> : ICollector
-    {
-        /// <summary>
-        /// Returns top groups, starting from offset.  This may
-        /// return null, if no groups were collected, or if the
-        /// number of unique groups collected is &lt;= offset.
-        /// </summary>
-        /// <param name="groupOffset">The offset in the collected groups</param>
-        /// <param name="fillFields">Whether to fill to <see cref="SearchGroup{TGroupValue}.SortValues"/></param>
-        /// <returns>top groups, starting from offset</returns>
-        /// <remarks>
-        /// LUCENENET NOTE: We must use <see cref="IEnumerable{TGroupValue}"/> rather than
-        /// <see cref="ICollection{TGroupValue}"/> here because we need this to be covariant
-        /// </remarks>
-        IEnumerable<ISearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields);
     }
 }

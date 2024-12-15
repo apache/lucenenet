@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Grouping
             });
 
             // === Search for content:random
-            IAbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, new Sort(), groupField, 10);
+            AbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, new Sort(), groupField, 10);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), firstCollector);
             IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> distinctValuesCollector
                 = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType);
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search.Grouping
 
                     IList<AbstractDistinctValuesCollector.IGroupCount<IComparable>> expectedResult = CreateExpectedResult(context, term, groupSort, topN);
 
-                    IAbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, groupSort, groupField, topN);
+                    AbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, groupSort, groupField, topN);
                     searcher.Search(new TermQuery(new Term("content", term)), firstCollector);
                     IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> distinctValuesCollector
                         = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType);
@@ -417,50 +417,182 @@ namespace Lucene.Net.Search.Grouping
             doc.Add(valuesField);
         }
 
-        private IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<T>> CreateDistinctCountCollector<T>(IAbstractFirstPassGroupingCollector<T> firstPassGroupingCollector,
+        // LUCENENET specific - wrapper class to adapt to a collector of IComparable group counts
+        private class ComparableDistinctValuesCollector<T> : AbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>>
+            where T : AbstractDistinctValuesCollector.IGroupCount<IComparable>
+        {
+            private readonly AbstractDistinctValuesCollector<T> wrapped;
+
+            public ComparableDistinctValuesCollector(AbstractDistinctValuesCollector<T> wrapped)
+            {
+                this.wrapped = wrapped;
+            }
+
+            public override IEnumerable<AbstractDistinctValuesCollector.IGroupCount<IComparable>> Groups
+                => wrapped.Groups.Select(group => new ComparableGroupCount(group.GroupValue, group.UniqueValues));
+
+            public override void Collect(int doc)
+                => wrapped.Collect(doc);
+
+            public override bool AcceptsDocsOutOfOrder
+                => wrapped.AcceptsDocsOutOfOrder;
+
+            public override void SetScorer(Scorer scorer)
+                => wrapped.SetScorer(scorer);
+
+            public override void SetNextReader(AtomicReaderContext context)
+                => wrapped.SetNextReader(context);
+        }
+
+        // LUCENENET specific - IComparable group count type
+        private class ComparableGroupCount : AbstractDistinctValuesCollector.GroupCount<IComparable>
+        {
+            public ComparableGroupCount(IComparable groupValue, IEnumerable<IComparable> uniqueValues)
+                : base(groupValue)
+            {
+                GroupValue = groupValue;
+                UniqueValues = uniqueValues;
+            }
+        }
+
+        private IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> CreateDistinctCountCollector(AbstractFirstPassGroupingCollector<IComparable> firstPassGroupingCollector,
                                                                             string groupField,
                                                                             string countField,
                                                                             DocValuesType dvType)
         {
             Random random = Random;
-            IEnumerable<ISearchGroup<T>> searchGroups = firstPassGroupingCollector.GetTopGroups(0, false);
+            IEnumerable<SearchGroup<IComparable>> searchGroups = firstPassGroupingCollector.GetTopGroups(0, false);
             if (typeof(FunctionFirstPassGroupingCollector<MutableValue>).IsAssignableFrom(firstPassGroupingCollector.GetType()))     // LUCENENET Specific type for generic must be specified.
             {
-                return (IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<T>>)new FunctionDistinctValuesCollector(new Hashtable(), new BytesRefFieldSource(groupField), new BytesRefFieldSource(countField), searchGroups as IEnumerable<ISearchGroup<MutableValue>>);
+                // LUCENENET specific - we have to convert the object groups back to SearchGroup<MutableValue> to avoid a type mismatch
+                var mutableValueSearchGroups = searchGroups.Select(group =>
+                {
+                    MutableValue groupValue;
+
+                    if (group.GroupValue is BytesRef bytesRef)
+                    {
+                        groupValue = new MutableValueStr
+                        {
+                            Value = bytesRef,
+                        };
+                    }
+                    else
+                    {
+                        groupValue = (MutableValue)group.GroupValue;
+                    }
+
+                    return new SearchGroup<MutableValue>
+                    {
+                        GroupValue = groupValue,
+                        SortValues = group.SortValues
+                    };
+                });
+                // LUCENENET specific - we have to wrap this due to generic type mismatch
+                var innerCollector = new FunctionDistinctValuesCollector(new Hashtable(), new BytesRefFieldSource(groupField), new BytesRefFieldSource(countField), mutableValueSearchGroups);
+                return new ComparableDistinctValuesCollector<FunctionDistinctValuesCollector.GroupCount>(innerCollector);
             }
             else
             {
-                return (IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<T>>)new TermDistinctValuesCollector(groupField, countField, searchGroups as IEnumerable<ISearchGroup<BytesRef>>);
+                // LUCENENET specific - we have to convert the object groups back to SearchGroup<BytesRef> to avoid a type mismatch
+                var bytesRefSearchGroups = searchGroups.Select(group =>
+                {
+                    BytesRef groupValue;
+
+                    if (group.GroupValue is MutableValueStr { Exists: true } mutableValueStr)
+                    {
+                        groupValue = mutableValueStr.Value;
+                    }
+                    else if (group.GroupValue is MutableValue { Exists: false })
+                    {
+                        groupValue = null;
+                    }
+                    else
+                    {
+                        groupValue = (BytesRef)group.GroupValue;
+                    }
+
+                    return new SearchGroup<BytesRef>
+                    {
+                        GroupValue = groupValue,
+                        SortValues = group.SortValues
+                    };
+                });
+                // LUCENENET specific - we have to wrap this due to generic type mismatch
+                var innerCollector = new TermDistinctValuesCollector(groupField, countField, bytesRefSearchGroups);
+                return new ComparableDistinctValuesCollector<TermDistinctValuesCollector.GroupCount>(innerCollector);
             }
         }
 
-        private IAbstractFirstPassGroupingCollector<IComparable> CreateRandomFirstPassCollector(DocValuesType dvType, Sort groupSort, string groupField, int topNGroups)
+        // LUCENENET specific - wrapper class to adapt to AbstractFirstPassGroupingCollector<IComparable>
+        private class ComparableAbstractFirstPassGroupingCollector<T> : AbstractFirstPassGroupingCollector<IComparable>
+            where T : IComparable
+        {
+            private readonly AbstractFirstPassGroupingCollector<T> wrapped;
+
+            public ComparableAbstractFirstPassGroupingCollector(AbstractFirstPassGroupingCollector<T> wrapped, Sort groupSort, int topNGroups)
+                : base(groupSort, topNGroups)
+            {
+                this.wrapped = wrapped;
+            }
+
+            public override IEnumerable<SearchGroup<IComparable>> GetTopGroups(int groupOffset, bool fillFields)
+            {
+                var result = wrapped.GetTopGroups(groupOffset, fillFields);
+
+                return result.Select(group => new SearchGroup<IComparable>
+                {
+                    GroupValue = group.GroupValue,
+                    SortValues = group.SortValues
+                });
+            }
+
+            public override void Collect(int doc)
+                => wrapped.Collect(doc);
+
+            public override void SetScorer(Scorer scorer)
+                => wrapped.SetScorer(scorer);
+
+            public override void SetNextReader(AtomicReaderContext context)
+                => wrapped.SetNextReader(context);
+
+            protected override IComparable GetDocGroupValue(int doc)
+                => throw new InvalidOperationException("Should not be called");
+
+            protected override IComparable CopyDocGroupValue(IComparable groupValue, IComparable reuse)
+                => throw new InvalidOperationException("Should not be called");
+        }
+
+        private AbstractFirstPassGroupingCollector<IComparable> CreateRandomFirstPassCollector(DocValuesType dvType, Sort groupSort, string groupField, int topNGroups)
         {
             Random random = Random;
             if (dvType != DocValuesType.NONE)
             {
                 if (random.nextBoolean())
                 {
-                    return new FunctionFirstPassGroupingCollector<MutableValue>(new BytesRefFieldSource(groupField), new Hashtable(), groupSort, topNGroups)        // LUCENENET Specific type for generic must be specified.
-                        as IAbstractFirstPassGroupingCollector<IComparable>;
+                    // LUCENENET: we have to wrap this due to generic type mismatch
+                    var innerCollector = new FunctionFirstPassGroupingCollector<MutableValue>(new BytesRefFieldSource(groupField), new Hashtable(), groupSort, topNGroups);
+                    return new ComparableAbstractFirstPassGroupingCollector<MutableValue>(innerCollector, groupSort, topNGroups);
                 }
                 else
                 {
-                    return new TermFirstPassGroupingCollector(groupField, groupSort, topNGroups)
-                        as IAbstractFirstPassGroupingCollector<IComparable>;
+                    // LUCENENET: we have to wrap this due to generic type mismatch
+                    var innerCollector = new TermFirstPassGroupingCollector(groupField, groupSort, topNGroups);
+                    return new ComparableAbstractFirstPassGroupingCollector<BytesRef>(innerCollector, groupSort, topNGroups);
                 }
             }
             else
             {
                 if (random.nextBoolean())
                 {
-                    return new FunctionFirstPassGroupingCollector<MutableValue>(new BytesRefFieldSource(groupField), new Hashtable(), groupSort, topNGroups)        // LUCENENET Specific type for generic must be specified.
-                        as IAbstractFirstPassGroupingCollector<IComparable>;
+                    // LUCENENET: we have to wrap this due to generic type mismatch
+                    var innerCollector = new FunctionFirstPassGroupingCollector<MutableValue>(new BytesRefFieldSource(groupField), new Hashtable(), groupSort, topNGroups);
+                    return new ComparableAbstractFirstPassGroupingCollector<MutableValue>(innerCollector, groupSort, topNGroups);
                 }
                 else
                 {
-                    return new TermFirstPassGroupingCollector(groupField, groupSort, topNGroups)
-                        as IAbstractFirstPassGroupingCollector<IComparable>;
+                    // LUCENENET: we have to wrap this due to generic type mismatch
+                    var innerCollector = new TermFirstPassGroupingCollector(groupField, groupSort, topNGroups);
+                    return new ComparableAbstractFirstPassGroupingCollector<BytesRef>(innerCollector, groupSort, topNGroups);
                 }
             }
         }

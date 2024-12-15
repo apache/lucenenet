@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Grouping
         public override TopGroups<BytesRef> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
-            IAbstractFirstPassGroupingCollector<BytesRef> firstPassCollector;
+            AbstractFirstPassGroupingCollector<BytesRef> firstPassCollector;
             AbstractAllGroupsCollector<BytesRef> allGroupsCollector;
             AbstractAllGroupHeadsCollector allGroupHeadsCollector;
 
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Grouping
                 MatchingGroupHeads = new Bits.MatchNoBits(searcher.IndexReader.MaxDoc);
             }
 
-            IEnumerable<ISearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, FillSortFields);
+            IEnumerable<SearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, FillSortFields);
             if (topSearchGroups is null)
             {
                 // LUCENENET specific - optimized empty array creation
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search.Grouping
                 MatchingGroupHeads = new Bits.MatchNoBits(searcher.IndexReader.MaxDoc);
             }
 
-            IEnumerable<ISearchGroup<T>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, FillSortFields);
+            IEnumerable<SearchGroup<T>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, FillSortFields);
             if (topSearchGroups is null)
             {
                 // LUCENENET specific - optimized empty array creation
