@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// Concrete implementation of <see cref="AbstractSecondPassGroupingCollector{BytesRef}"/> that groups based on
     /// field values and more specifically uses <see cref="SortedDocValues"/>
     /// to collect grouped docs.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class TermSecondPassGroupingCollector : AbstractSecondPassGroupingCollector<BytesRef>
@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private SortedDocValues index;
         private readonly string groupField;
 
-        public TermSecondPassGroupingCollector(string groupField, IEnumerable<ISearchGroup<BytesRef>> groups, Sort groupSort, Sort withinGroupSort,
+        public TermSecondPassGroupingCollector(string groupField, IEnumerable<SearchGroup<BytesRef>> groups, Sort groupSort, Sort withinGroupSort,
                                                int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
                   : base(groups, groupSort, withinGroupSort, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
         {
