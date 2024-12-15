@@ -1,4 +1,5 @@
 ﻿using J2N;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
@@ -46,7 +47,7 @@ namespace Lucene.Net.Store
         /// rate at or below the target.
         /// <para>
         /// Note: the implementation is thread-safe
-        /// </para> 
+        /// </para>
         /// </summary>
         /// <returns> the pause time in nano seconds </returns>
         public abstract long Pause(long bytes);
@@ -56,9 +57,11 @@ namespace Lucene.Net.Store
         /// </summary>
         public class SimpleRateLimiter : RateLimiter
         {
-            private double mbPerSec;
-            private double nsPerByte;
-            private long lastNS;
+            // LUCENENET: these fields are volatile in Lucene, but that is not
+            // valid in .NET. Instead, we use AtomicInt64/AtomicDouble to ensure atomicity.
+            private readonly AtomicDouble mbPerSec = new AtomicDouble();
+            private readonly AtomicDouble nsPerByte = new AtomicDouble();
+            private readonly AtomicInt64 lastNS = new AtomicInt64();
 
             // TODO: we could also allow eg a sub class to dynamically
             // determine the allowed rate, eg if an app wants to
@@ -76,11 +79,11 @@ namespace Lucene.Net.Store
             /// </summary>
             public override void SetMbPerSec(double mbPerSec)
             {
-                this.mbPerSec = mbPerSec;
+                this.mbPerSec.Value = mbPerSec;
                 if (mbPerSec == 0)
-                    nsPerByte = 0;
+                    nsPerByte.Value = 0;
                 else
-                    nsPerByte = 1000000000.0 / (1024 * 1024 * mbPerSec);
+                    nsPerByte.Value = 1000000000.0 / (1024 * 1024 * mbPerSec);
             }
 
             /// <summary>
@@ -106,12 +109,12 @@ namespace Lucene.Net.Store
 
                 // TODO: this is purely instantaneous rate; maybe we
                 // should also offer decayed recent history one?
-                var targetNS = lastNS = lastNS + ((long)(bytes * nsPerByte));
+                var targetNS = /*lastNS =*/ lastNS.AddAndGet((long)(bytes * nsPerByte));
                 long startNS;
                 var curNS = startNS = Time.NanoTime() /* ns */;
                 if (lastNS < curNS)
                 {
-                    lastNS = curNS;
+                    lastNS.Value = curNS;
                 }
 
                 // While loop because Thread.sleep doesn't always sleep

@@ -293,8 +293,8 @@ namespace Lucene.Net.Index
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public long WriteLockTimeout
         {
-            get => writeLockTimeout;
-            set => this.writeLockTimeout = value;
+            get => writeLockTimeout.Value;
+            set => writeLockTimeout.Value = value;
         }
 
         /// <summary>

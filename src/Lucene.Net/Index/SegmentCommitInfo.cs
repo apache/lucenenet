@@ -1,4 +1,5 @@
 ﻿using J2N.Collections.Generic.Extensions;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -58,7 +59,7 @@ namespace Lucene.Net.Index
         // Track the per-generation updates files
         private readonly IDictionary<long, ISet<string>> genUpdatesFiles = new Dictionary<long, ISet<string>>();
 
-        private long sizeInBytes = -1; // LUCENENET NOTE: This was volatile in the original, but long cannot be volatile in .NET
+        private readonly AtomicInt64 sizeInBytes = new AtomicInt64(-1L); // LUCENENET NOTE: This was volatile in the original, using AtomicInt64 instead
 
         /// <summary>
         /// Sole constructor.
@@ -115,7 +116,7 @@ namespace Lucene.Net.Index
         {
             delGen = nextWriteDelGen;
             nextWriteDelGen = delGen + 1;
-            sizeInBytes = -1;
+            sizeInBytes.Value = -1;
         }
 
         /// <summary>
@@ -134,7 +135,7 @@ namespace Lucene.Net.Index
         {
             fieldInfosGen = nextWriteFieldInfosGen;
             nextWriteFieldInfosGen = fieldInfosGen + 1;
-            sizeInBytes = -1;
+            sizeInBytes.Value = -1;
         }
 
         /// <summary>
@@ -161,7 +162,7 @@ namespace Lucene.Net.Index
                 {
                     sum += Info.Dir.FileLength(fileName);
                 }
-                sizeInBytes = sum;
+                sizeInBytes.Value = sum;
             }
 
             return sizeInBytes;
@@ -198,7 +199,7 @@ namespace Lucene.Net.Index
         internal void SetBufferedDeletesGen(long value)
         {
             bufferedDeletesGen = value;
-            sizeInBytes = -1;
+            sizeInBytes.Value = -1;
         }
 
         /// <summary>

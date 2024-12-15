@@ -1,4 +1,6 @@
-﻿using Lucene.Net.Util;
+﻿using J2N.Threading.Atomic;
+using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Text;
 
@@ -40,7 +42,7 @@ namespace Lucene.Net.Index
         private readonly Analyzer analyzer;
 
         private volatile int maxBufferedDocs;
-        private double ramBufferSizeMB;
+        private readonly AtomicDouble ramBufferSizeMB; // LUCENENET specific: Changed from volatile double to AtomicDouble
         private volatile int maxBufferedDeleteTerms;
         private volatile int readerTermsIndexDivisor;
         private volatile IndexReaderWarmer mergedSegmentWarmer;
@@ -48,7 +50,7 @@ namespace Lucene.Net.Index
 
         // LUCENENET specific: Volatile fields are not CLS compliant,
         // so we are making them internal. This class cannot be inherited
-        // from outside of the assembly anyway, since it has no public 
+        // from outside of the assembly anyway, since it has no public
         // constructors, so protected members are moot.
 
         // modified by IndexWriterConfig
@@ -80,7 +82,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Timeout when trying to obtain the write lock on init. </summary>
-        internal long writeLockTimeout;
+        // LUCENENET specific - since we don't have `volatile long` in .NET, we use AtomicInt64
+        internal readonly AtomicInt64 writeLockTimeout;
 
         /// <summary>
         /// <see cref="DocumentsWriterPerThread.IndexingChain"/> that determines how documents are
@@ -139,7 +142,7 @@ namespace Lucene.Net.Index
         {
             this.analyzer = analyzer;
             this.matchVersion = matchVersion;
-            ramBufferSizeMB = IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB;
+            ramBufferSizeMB = new AtomicDouble(IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB);
             maxBufferedDocs = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DOCS;
             maxBufferedDeleteTerms = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DELETE_TERMS;
             readerTermsIndexDivisor = IndexWriterConfig.DEFAULT_READER_TERMS_INDEX_DIVISOR;
@@ -151,7 +154,7 @@ namespace Lucene.Net.Index
             openMode = Index.OpenMode.CREATE_OR_APPEND;
             similarity = IndexSearcher.DefaultSimilarity;
             mergeScheduler = new ConcurrentMergeScheduler();
-            writeLockTimeout = IndexWriterConfig.WRITE_LOCK_TIMEOUT;
+            writeLockTimeout = new AtomicInt64(IndexWriterConfig.WRITE_LOCK_TIMEOUT);
             indexingChain = DocumentsWriterPerThread.DefaultIndexingChain;
             codec = Codec.Default;
             if (codec is null)
@@ -175,7 +178,7 @@ namespace Lucene.Net.Index
             maxBufferedDeleteTerms = config.MaxBufferedDeleteTerms;
             maxBufferedDocs = config.MaxBufferedDocs;
             mergedSegmentWarmer = config.MergedSegmentWarmer;
-            ramBufferSizeMB = config.RAMBufferSizeMB;
+            ramBufferSizeMB = new AtomicDouble(config.RAMBufferSizeMB);
             readerTermsIndexDivisor = config.ReaderTermsIndexDivisor;
             termIndexInterval = config.TermIndexInterval;
             matchVersion = config.matchVersion;
@@ -185,7 +188,7 @@ namespace Lucene.Net.Index
             openMode = config.OpenMode;
             similarity = config.Similarity;
             mergeScheduler = config.MergeScheduler;
-            writeLockTimeout = config.WriteLockTimeout;
+            writeLockTimeout = new AtomicInt64(config.WriteLockTimeout);
             indexingChain = config.IndexingChain;
             codec = config.Codec;
             infoStream = config.InfoStream;
@@ -239,7 +242,7 @@ namespace Lucene.Net.Index
         /// {
         ///     //customize Lucene41PostingsFormat, passing minBlockSize=50, maxBlockSize=100
         ///     private readonly PostingsFormat tweakedPostings = new Lucene41PostingsFormat(50, 100);
-        /// 
+        ///
         ///     public override PostingsFormat GetPostingsFormatForField(string field)
         ///     {
         ///         if (field.Equals("fieldWithTonsOfTerms", StringComparison.Ordinal))
@@ -249,7 +252,7 @@ namespace Lucene.Net.Index
         ///     }
         /// }
         /// ...
-        /// 
+        ///
         /// iwc.Codec = new MyLucene45Codec();
         /// </code>
         /// Note that other implementations may have their own parameters, or no parameters at all.
@@ -351,7 +354,7 @@ namespace Lucene.Net.Index
                 {
                     throw new ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
                 }
-                this.ramBufferSizeMB = value;
+                this.ramBufferSizeMB.Value = value;
             }
         }
 
