@@ -424,7 +424,12 @@ namespace Lucene.Net.Search.Grouping
         #region Explicit interface implementations
 
         ICollection<ISearchGroup> IAbstractFirstPassGroupingCollector.GetTopGroups(int groupOffset, bool fillFields)
-            => new CastingCollectionAdapter<SearchGroup<TGroupValue>, ISearchGroup>(GetTopGroups(groupOffset, fillFields));
+        {
+            var topGroups = GetTopGroups(groupOffset, fillFields);
+            return topGroups != null
+                ? new CastingCollectionAdapter<SearchGroup<TGroupValue>, ISearchGroup>(topGroups)
+                : null;
+        }
 
         #endregion
     }
