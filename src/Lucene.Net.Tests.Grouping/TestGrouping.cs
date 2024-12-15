@@ -126,24 +126,24 @@ namespace Lucene.Net.Search.Grouping
                 groupField += "_dv";
             }
 
-            AbstractFirstPassGroupingCollector<object> c1 = CreateRandomFirstPassCollector(groupField, groupSort, 10);
+            IAbstractFirstPassGroupingCollector c1 = CreateRandomFirstPassCollector(groupField, groupSort, 10);
             indexSearcher.Search(new TermQuery(new Index.Term("content", "random")), c1);
 
-            AbstractSecondPassGroupingCollector<object> c2 = CreateSecondPassCollector(c1, groupField, groupSort, null, 0, 5, true, true, true);
+            IAbstractSecondPassGroupingCollector c2 = CreateSecondPassCollector(c1, groupField, groupSort, null, 0, 5, true, true, true);
             indexSearcher.Search(new TermQuery(new Index.Term("content", "random")), c2);
 
-            TopGroups<object> groups = c2.GetTopGroups(0);
+            ITopGroups groups = c2.GetTopGroups(0);
             assertFalse(float.IsNaN(groups.MaxScore));
 
             assertEquals(7, groups.TotalHitCount);
             assertEquals(7, groups.TotalGroupedHitCount);
-            assertEquals(4, groups.Groups.Length);
+            assertEquals(4, groups.Groups.Count);
 
             // relevance order: 5, 0, 3, 4, 1, 2, 6
 
             // the later a document is added the higher this docId
             // value
-            GroupDocs<object> group = groups.Groups[0];
+            IGroupDocs group = groups.Groups[0];
             CompareGroupValue("author3", group);
             assertEquals(2, group.ScoreDocs.Length);
             assertEquals(5, group.ScoreDocs[0].Doc);
@@ -182,62 +182,18 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        // LUCENENET specific - object-based wrapper to avoid covariance
-        private class ObjectFirstPassGroupingCollector<T> : AbstractFirstPassGroupingCollector<object>
+
+        private IAbstractFirstPassGroupingCollector CreateRandomFirstPassCollector(string groupField, Sort groupSort, int topDocs)
         {
-            private readonly AbstractFirstPassGroupingCollector<T> wrapped;
-
-            public ObjectFirstPassGroupingCollector(AbstractFirstPassGroupingCollector<T> wrapped, Sort groupSort, int topNGroups)
-                : base(groupSort, topNGroups)
-            {
-                this.wrapped = wrapped;
-            }
-
-            public override void SetNextReader(AtomicReaderContext context)
-                => wrapped.SetNextReader(context);
-
-            public override void SetScorer(Scorer scorer)
-                => wrapped.SetScorer(scorer);
-
-            public override ICollection<SearchGroup<object>> GetTopGroups(int withinGroupOffset, bool fillFields)
-            {
-                var result = wrapped.GetTopGroups(withinGroupOffset, fillFields);
-
-                return result.Select(group => new SearchGroup<object>
-                {
-                    GroupValue = group.GroupValue,
-                    SortValues = group.SortValues
-                }).ToList();
-            }
-
-            public override void Collect(int doc)
-                => wrapped.Collect(doc);
-
-            public override bool AcceptsDocsOutOfOrder
-                => wrapped.AcceptsDocsOutOfOrder;
-
-            protected override object GetDocGroupValue(int doc)
-                => throw new InvalidOperationException("Should not be called");
-
-            protected override object CopyDocGroupValue(object groupValue, object reuse)
-                => throw new InvalidOperationException("Should not be called");
-        }
-
-        private AbstractFirstPassGroupingCollector<object> CreateRandomFirstPassCollector(string groupField, Sort groupSort, int topDocs)
-        {
-            AbstractFirstPassGroupingCollector<object> selected;
+            IAbstractFirstPassGroupingCollector selected;
             if (Random.nextBoolean())
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                // LUCENENET: we have to wrap this due to generic type mismatch
-                var innerCollector = new FunctionFirstPassGroupingCollector<MutableValue>(vs, new Hashtable(), groupSort, topDocs);
-                selected = new ObjectFirstPassGroupingCollector<MutableValue>(innerCollector, groupSort, topDocs);
+                selected = new FunctionFirstPassGroupingCollector<MutableValue>(vs, new Hashtable(), groupSort, topDocs);
             }
             else
             {
-                // LUCENENET: we have to wrap this due to generic type mismatch
-                var innerCollector = new TermFirstPassGroupingCollector(groupField, groupSort, topDocs);
-                selected = new ObjectFirstPassGroupingCollector<BytesRef>(innerCollector, groupSort, topDocs);
+                selected = new TermFirstPassGroupingCollector(groupField, groupSort, topDocs);
             }
             if (Verbose)
             {
@@ -246,61 +202,24 @@ namespace Lucene.Net.Search.Grouping
             return selected;
         }
 
-        private AbstractFirstPassGroupingCollector<object> CreateFirstPassCollector<T>(string groupField, Sort groupSort, int topDocs, AbstractFirstPassGroupingCollector<T> firstPassGroupingCollector)
+        private IAbstractFirstPassGroupingCollector CreateFirstPassCollector(string groupField, Sort groupSort, int topDocs, IAbstractFirstPassGroupingCollector firstPassGroupingCollector)
         {
             // LUCENENET specific - we need to look for our wrapper types
-            if (typeof(ObjectFirstPassGroupingCollector<BytesRef>).IsAssignableFrom(firstPassGroupingCollector.GetType()))
+            if (typeof(TermFirstPassGroupingCollector).IsAssignableFrom(firstPassGroupingCollector.GetType()))
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                // LUCENENET: we have to wrap this due to generic type mismatch
-                var innerCollector = new FunctionFirstPassGroupingCollector<MutableValue>(vs, new Hashtable(), groupSort, topDocs);
-                return new ObjectFirstPassGroupingCollector<MutableValue>(innerCollector, groupSort, topDocs);
+                return new FunctionFirstPassGroupingCollector<MutableValue>(vs, new Hashtable(), groupSort, topDocs);
             }
-            else if (typeof(ObjectFirstPassGroupingCollector<MutableValue>).IsAssignableFrom(firstPassGroupingCollector.GetType()))
+            else if (typeof(FunctionFirstPassGroupingCollector<MutableValue>).IsAssignableFrom(firstPassGroupingCollector.GetType()))
             {
-                // LUCENENET: we have to wrap this due to generic type mismatch
-                var innerCollector = new TermFirstPassGroupingCollector(groupField, groupSort, topDocs);
-                return new ObjectFirstPassGroupingCollector<BytesRef>(innerCollector, groupSort, topDocs);
+                return new TermFirstPassGroupingCollector(groupField, groupSort, topDocs);
             }
 
             fail();
             return null;
         }
 
-        // LUCENENET specific - object-based wrapper to avoid covariance
-        private class ObjectSecondPassGroupingCollector<T> : AbstractSecondPassGroupingCollector<object>
-        {
-            private readonly AbstractSecondPassGroupingCollector<T> wrapped;
-
-            public ObjectSecondPassGroupingCollector(AbstractSecondPassGroupingCollector<T> wrapped, IEnumerable<SearchGroup<T>> groups, Sort groupSort, Sort withinGroupSort, int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
-                : base(groups.Select(i => new SearchGroup<object> { GroupValue = i.GroupValue, SortValues = i.SortValues }).ToList(),
-                    groupSort, withinGroupSort, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
-            {
-                this.wrapped = wrapped;
-            }
-
-            public override void SetNextReader(AtomicReaderContext context) => wrapped.SetNextReader(context);
-
-            public override void SetScorer(Scorer scorer) => wrapped.SetScorer(scorer);
-
-            public override void Collect(int doc) => wrapped.Collect(doc);
-
-            public override TopGroups<object> GetTopGroups(int withinGroupOffset)
-            {
-                var result = wrapped.GetTopGroups(withinGroupOffset);
-
-                // convert the group value to object
-                var groups = result.Groups.Select(i => new GroupDocs<object>(i.Score, i.MaxScore, i.TotalHits, i.ScoreDocs, i.GroupValue, i.GroupSortValues)).ToArray();
-                return new TopGroups<object>(result.GroupSort, result.WithinGroupSort, result.TotalHitCount, result.TotalGroupedHitCount, groups, result.MaxScore);
-            }
-
-            protected override AbstractSecondPassGroupingCollector.SearchGroupDocs<object> RetrieveGroup(int doc)
-            {
-                throw new InvalidOperationException("Should never be called");
-            }
-        }
-
-        private AbstractSecondPassGroupingCollector<object> CreateSecondPassCollector(AbstractFirstPassGroupingCollector<object> firstPassGroupingCollector,
+        private IAbstractSecondPassGroupingCollector CreateSecondPassCollector(IAbstractFirstPassGroupingCollector firstPassGroupingCollector,
                                                                               string groupField,
                                                                               Sort groupSort,
                                                                               Sort sortWithinGroup,
@@ -310,18 +229,16 @@ namespace Lucene.Net.Search.Grouping
                                                                               bool getMaxScores,
                                                                               bool fillSortFields)
         {
-            // LUCENENET specific - we need to look for our wrapper types
-            if (typeof(ObjectFirstPassGroupingCollector<BytesRef>).IsAssignableFrom(firstPassGroupingCollector.GetType()))
+            if (typeof(TermFirstPassGroupingCollector).IsAssignableFrom(firstPassGroupingCollector.GetType()))
             {
-                // LUCENENET specific - we need to use the object version wrapper for testing, and convert object groups back to BytesRef
+                // LUCENENET specific - we need to convert non-generic groups back to BytesRef
                 var searchGroups = firstPassGroupingCollector.GetTopGroups(groupOffset, fillSortFields)
                     .Select(i => new SearchGroup<BytesRef>
                     {
                         GroupValue = (BytesRef)i.GroupValue,
                         SortValues = i.SortValues
                     }).ToList();
-                var innerCollector = new TermSecondPassGroupingCollector(groupField, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
-                return new ObjectSecondPassGroupingCollector<BytesRef>(innerCollector, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
+                return new TermSecondPassGroupingCollector(groupField, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
             }
             else
             {
@@ -333,13 +250,12 @@ namespace Lucene.Net.Search.Grouping
                         GroupValue = (MutableValue)i.GroupValue,
                         SortValues = i.SortValues
                     }).ToList();
-                var innerCollector = new FunctionSecondPassGroupingCollector<MutableValue>(searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields, vs, new Hashtable());
-                return new ObjectSecondPassGroupingCollector<MutableValue>(innerCollector, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
+                return new FunctionSecondPassGroupingCollector<MutableValue>(searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields, vs, new Hashtable());
             }
         }
 
         // Basically converts searchGroups from MutableValue to BytesRef if grouping by ValueSource
-        private AbstractSecondPassGroupingCollector<object> CreateSecondPassCollector<T>(AbstractFirstPassGroupingCollector<T> firstPassGroupingCollector,
+        private IAbstractSecondPassGroupingCollector CreateSecondPassCollector(IAbstractFirstPassGroupingCollector firstPassGroupingCollector,
                                                                               string groupField,
                                                                               ICollection<SearchGroup<BytesRef>> searchGroups,
                                                                               Sort groupSort,
@@ -349,14 +265,11 @@ namespace Lucene.Net.Search.Grouping
                                                                               bool getMaxScores,
                                                                               bool fillSortFields)
         {
-            // LUCENENET specific - we need to look for our wrapper types
-            if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(ObjectFirstPassGroupingCollector<BytesRef>)))
+            if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(TermFirstPassGroupingCollector)))
             {
-                // LUCENENET specific - we need to use the object version wrapper for testing
-                var innerCollector = new TermSecondPassGroupingCollector(groupField, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
-                return new ObjectSecondPassGroupingCollector<BytesRef>(innerCollector, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
+                return new TermSecondPassGroupingCollector(groupField, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
             }
-            else if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(ObjectFirstPassGroupingCollector<MutableValue>)))
+            else if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(FunctionFirstPassGroupingCollector<MutableValue>)))
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
                 JCG.List<SearchGroup<MutableValue>> mvalSearchGroups = new JCG.List<SearchGroup<MutableValue>>(searchGroups.size());
@@ -378,67 +291,31 @@ namespace Lucene.Net.Search.Grouping
                     mvalSearchGroups.Add(sg);
                 }
 
-                // LUCENENET specific - we need to use the object version wrapper for testing
-                var innerCollector = new FunctionSecondPassGroupingCollector<MutableValue>(mvalSearchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields, vs, new Hashtable());
-                return new ObjectSecondPassGroupingCollector<MutableValue>(innerCollector, mvalSearchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
+                return new FunctionSecondPassGroupingCollector<MutableValue>(mvalSearchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields, vs, new Hashtable());
             }
 
             fail();
             return null;
         }
 
-        // LUCENENET specific - wrapper class to avoid generic type mismatch
-        private class ObjectAllGroupsCollector<T> : AbstractAllGroupsCollector<object>
-        {
-            private readonly AbstractAllGroupsCollector<T> wrapped;
-
-            public ObjectAllGroupsCollector(AbstractAllGroupsCollector<T> wrapped)
-            {
-                this.wrapped = wrapped;
-            }
-
-            public override ICollection<object> Groups
-                => wrapped.Groups.Cast<object>().ToList();
-
-            public override void Collect(int doc)
-                => wrapped.Collect(doc);
-
-            public override void SetNextReader(AtomicReaderContext context)
-                => wrapped.SetNextReader(context);
-
-            public override int GroupCount
-                => wrapped.GroupCount;
-
-            public override void SetScorer(Scorer scorer)
-                => wrapped.SetScorer(scorer);
-
-            public override bool AcceptsDocsOutOfOrder
-                => wrapped.AcceptsDocsOutOfOrder;
-        }
-
-        private AbstractAllGroupsCollector<object> CreateAllGroupsCollector(AbstractFirstPassGroupingCollector<object> firstPassGroupingCollector,
+        private IAbstractAllGroupsCollector CreateAllGroupsCollector(IAbstractFirstPassGroupingCollector firstPassGroupingCollector,
                                                                     string groupField)
         {
-            // LUCENENET specific - we need to look for our wrapper types
-            if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(ObjectFirstPassGroupingCollector<BytesRef>)))
+            if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(TermFirstPassGroupingCollector)))
             {
-                // LUCENENET specific - we have to wrap the collector to avoid generic type mismatch
-                var innerCollector = new TermAllGroupsCollector(groupField);
-                return new ObjectAllGroupsCollector<BytesRef>(innerCollector);
+                return new TermAllGroupsCollector(groupField);
             }
-            else if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(ObjectFirstPassGroupingCollector<MutableValue>)))
+            else if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(FunctionFirstPassGroupingCollector<MutableValue>)))
             {
-                // LUCENENET specific - we have to wrap the collector to avoid generic type mismatch
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                var innerCollector = new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());        // LUCENENET Specific type for generic must be specified.
-                return new ObjectAllGroupsCollector<MutableValue>(innerCollector);
+                return new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());        // LUCENENET Specific type for generic must be specified.
             }
 
             fail();
             return null;
         }
 
-        private void CompareGroupValue<T>(string expected, GroupDocs<T> group)
+        private void CompareGroupValue(string expected, IGroupDocs group)
         {
             if (expected is null)
             {
@@ -473,10 +350,9 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private ICollection<SearchGroup<BytesRef>> GetSearchGroups(AbstractFirstPassGroupingCollector<object> c, int groupOffset, bool fillFields)
+        private ICollection<SearchGroup<BytesRef>> GetSearchGroups(IAbstractFirstPassGroupingCollector c, int groupOffset, bool fillFields)
         {
-            // LUCENENET specific - we need to look for our wrapper types
-            if (typeof(ObjectFirstPassGroupingCollector<BytesRef>).IsAssignableFrom(c.GetType()))
+            if (typeof(TermFirstPassGroupingCollector).IsAssignableFrom(c.GetType()))
             {
                 // LUCENENET specific - we have to cast the group value back from object to BytesRef
                 return c.GetTopGroups(groupOffset, fillFields)?.Select(i => new SearchGroup<BytesRef>
@@ -485,7 +361,7 @@ namespace Lucene.Net.Search.Grouping
                     SortValues = i.SortValues
                 }).ToList();
             }
-            else if (typeof(ObjectFirstPassGroupingCollector<MutableValue>).IsAssignableFrom(c.GetType()))
+            else if (typeof(FunctionFirstPassGroupingCollector<MutableValue>).IsAssignableFrom(c.GetType()))
             {
                 // LUCENENET specific - we have to cast the group value back from object to MutableValue
                 IEnumerable<SearchGroup<MutableValue>> mutableValueGroups = c.GetTopGroups(groupOffset, fillFields)
@@ -514,27 +390,26 @@ namespace Lucene.Net.Search.Grouping
             return null;
         }
 
-        private TopGroups<BytesRef> GetTopGroups(AbstractSecondPassGroupingCollector<object> c, int withinGroupOffset)
+        private TopGroups<BytesRef> GetTopGroups(IAbstractSecondPassGroupingCollector c, int withinGroupOffset)
         {
-            // LUCENENET specific - we need to look for our wrapper types
-            if (c.GetType().IsAssignableFrom(typeof(ObjectSecondPassGroupingCollector<BytesRef>)))
+            if (c.GetType().IsAssignableFrom(typeof(TermSecondPassGroupingCollector)))
             {
                 // LUCENENET Specific - we need to first convert from object to BytesRef
-                TopGroups<object> bytesRefTopGroups = c.GetTopGroups(withinGroupOffset);
-                JCG.List<GroupDocs<BytesRef>> groups = new JCG.List<GroupDocs<BytesRef>>(bytesRefTopGroups.Groups.Length);
-                foreach (GroupDocs<object> bytesRefGd in bytesRefTopGroups.Groups)
+                ITopGroups bytesRefTopGroups = c.GetTopGroups(withinGroupOffset);
+                JCG.List<GroupDocs<BytesRef>> groups = new JCG.List<GroupDocs<BytesRef>>(bytesRefTopGroups.Groups.Count);
+                foreach (IGroupDocs bytesRefGd in bytesRefTopGroups.Groups)
                 {
                     BytesRef groupValue = (BytesRef)bytesRefGd.GroupValue;
                     groups.Add(new GroupDocs<BytesRef>(bytesRefGd.Score, bytesRefGd.MaxScore, bytesRefGd.TotalHits, bytesRefGd.ScoreDocs, groupValue, bytesRefGd.GroupSortValues));
                 }
                 return new TopGroups<BytesRef>(bytesRefTopGroups.GroupSort, bytesRefTopGroups.WithinGroupSort, bytesRefTopGroups.TotalHitCount, bytesRefTopGroups.TotalGroupedHitCount, groups.ToArray(/*new GroupDocs[groups.size()]*/), bytesRefTopGroups.MaxScore);
             }
-            else if (c.GetType().IsAssignableFrom(typeof(ObjectSecondPassGroupingCollector<MutableValue>)))        // LUCENENET Specific type for generic must be specified.
+            else if (c.GetType().IsAssignableFrom(typeof(FunctionSecondPassGroupingCollector<MutableValue>)))        // LUCENENET Specific type for generic must be specified.
             {
                 // LUCENENET Specific - we need to first convert from object to MutableValue
-                TopGroups<object> mvalTopGroups = c.GetTopGroups(withinGroupOffset);
-                JCG.List<GroupDocs<BytesRef>> groups = new JCG.List<GroupDocs<BytesRef>>(mvalTopGroups.Groups.Length);
-                foreach (GroupDocs<object> mvalGd in mvalTopGroups.Groups)
+                ITopGroups mvalTopGroups = c.GetTopGroups(withinGroupOffset);
+                JCG.List<GroupDocs<BytesRef>> groups = new JCG.List<GroupDocs<BytesRef>>(mvalTopGroups.Groups.Count);
+                foreach (IGroupDocs mvalGd in mvalTopGroups.Groups)
                 {
                     MutableValue mval = (MutableValue)mvalGd.GroupValue;
                     BytesRef groupValue = mval.Exists ? ((MutableValueStr)mval).Value : null;
@@ -1213,11 +1088,11 @@ namespace Lucene.Net.Search.Grouping
                         {
                             Console.WriteLine("  groupField=" + groupField);
                         }
-                        AbstractFirstPassGroupingCollector<object> c1 = CreateRandomFirstPassCollector(groupField, groupSort, groupOffset + topNGroups);
+                        IAbstractFirstPassGroupingCollector c1 = CreateRandomFirstPassCollector(groupField, groupSort, groupOffset + topNGroups);
                         CachingCollector cCache;
                         ICollector c;
 
-                        AbstractAllGroupsCollector<object> allGroupsCollector;
+                        IAbstractAllGroupsCollector allGroupsCollector;
                         if (doAllGroups)
                         {
                             allGroupsCollector = CreateAllGroupsCollector(c1, groupField);
@@ -1297,9 +1172,7 @@ namespace Lucene.Net.Search.Grouping
                         }
 
                         // Get 1st pass top groups
-                        // LUCENENET NOTE: This is IEnumerable rather than ICollection because we need it to be
-                        // covariant in order to mimic Java's wildcard generics
-                        IEnumerable<SearchGroup<BytesRef>> topGroups = GetSearchGroups(c1, groupOffset, fillFields);
+                        ICollection<SearchGroup<BytesRef>> topGroups = GetSearchGroups(c1, groupOffset, fillFields);
                         TopGroups<BytesRef> groupsResult;
                         if (Verbose)
                         {
@@ -1322,7 +1195,7 @@ namespace Lucene.Net.Search.Grouping
                         ValueHolder<bool> idvBasedImplsUsedSharded = new ValueHolder<bool>(false);
                         TopGroups<BytesRef> topGroupsShards = SearchShards(s, shards.subSearchers, query, groupSort, docSort,
                            groupOffset, topNGroups, docOffset, docsPerGroup, getScores, getMaxScores, canUseIDV, preFlex, idvBasedImplsUsedSharded);
-                        AbstractSecondPassGroupingCollector<object> c2;
+                        IAbstractSecondPassGroupingCollector c2;
                         if (topGroups != null)
                         {
 
@@ -1617,8 +1490,8 @@ namespace Lucene.Net.Search.Grouping
             // Run 1st pass collector to get top groups per shard
             Weight w = topSearcher.CreateNormalizedWeight(query);
             IList<ICollection<SearchGroup<BytesRef>>> shardGroups = new JCG.List<ICollection<SearchGroup<BytesRef>>>();
-            IList<AbstractFirstPassGroupingCollector<object>> firstPassGroupingCollectors = new JCG.List<AbstractFirstPassGroupingCollector<object>>();
-            AbstractFirstPassGroupingCollector<object> firstPassCollector = null;
+            IList<IAbstractFirstPassGroupingCollector> firstPassGroupingCollectors = new JCG.List<IAbstractFirstPassGroupingCollector>();
+            IAbstractFirstPassGroupingCollector firstPassCollector = null;
             bool shardsCanUseIDV;
             if (canUseIDV)
             {
@@ -1702,7 +1575,7 @@ namespace Lucene.Net.Search.Grouping
                 TopGroups<BytesRef>[] shardTopGroups = new TopGroups<BytesRef>[subSearchers.Length];
                 for (int shardIDX = 0; shardIDX < subSearchers.Length; shardIDX++)
                 {
-                    AbstractSecondPassGroupingCollector<object> secondPassCollector = CreateSecondPassCollector(firstPassGroupingCollectors[shardIDX],
+                    IAbstractSecondPassGroupingCollector secondPassCollector = CreateSecondPassCollector(firstPassGroupingCollectors[shardIDX],
                         groupField, mergedTopGroups, groupSort, docSort, docOffset + topNDocs, getScores, getMaxScores, true);
                     subSearchers[shardIDX].Search(w, secondPassCollector);
                     shardTopGroups[shardIDX] = GetTopGroups(secondPassCollector, 0);

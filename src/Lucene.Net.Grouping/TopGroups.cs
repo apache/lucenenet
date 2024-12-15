@@ -1,6 +1,7 @@
 using J2N.Collections;
 using Lucene.Net.Support;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search.Grouping
@@ -27,7 +28,7 @@ namespace Lucene.Net.Search.Grouping
     ///
     /// @lucene.experimental
     /// </summary>
-    public class TopGroups<TGroupValue>
+    public class TopGroups<TGroupValue> : ITopGroups
     {
         /// <summary>
         /// Number of documents matching the search </summary>
@@ -86,6 +87,12 @@ namespace Lucene.Net.Search.Grouping
             MaxScore = oldTopGroups.MaxScore;
             TotalGroupCount = totalGroupCount;
         }
+
+        #region Explicit interface implementations
+
+        IList<IGroupDocs> ITopGroups.Groups => new CastingListAdapter<GroupDocs<TGroupValue>, IGroupDocs>(Groups);
+
+        #endregion
     }
 
     /// <summary>
@@ -266,5 +273,31 @@ namespace Lucene.Net.Search.Grouping
 
             return new TopGroups<T>(groupSort.GetSort(), docSort?.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="TopGroups{TGroupValue}"/>.
+    /// </summary>
+    public interface ITopGroups
+    {
+        int TotalHitCount { get; }
+
+        int TotalGroupedHitCount { get; }
+
+        int? TotalGroupCount { get; }
+
+        /// <summary>
+        /// LUCENENET specific - this uses IList instead of an array
+        /// as it would require a new array to be created each time
+        /// the property is accessed.
+        /// </summary>
+        IList<IGroupDocs> Groups { get; }
+
+        SortField[] GroupSort { get; }
+
+        SortField[] WithinGroupSort { get; }
+
+        float MaxScore { get; }
     }
 }

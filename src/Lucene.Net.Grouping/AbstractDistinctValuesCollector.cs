@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -32,7 +33,7 @@ namespace Lucene.Net.Search.Grouping
     /// The <typeparamref name="TGroupValue"/> type parameter is LUCENENET specific to allow for
     /// strongly-typed group values.
     /// </remarks>
-    public abstract class AbstractDistinctValuesCollector<GC, TGroupValue> : ICollector
+    public abstract class AbstractDistinctValuesCollector<GC, TGroupValue> : IAbstractDistinctValuesCollector
         where GC : AbstractDistinctValuesCollector.GroupCount<TGroupValue>
     {
         /// <summary>
@@ -74,6 +75,16 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <param name="context">next atomic reader context </param>
         public abstract void SetNextReader(AtomicReaderContext context);
+
+        #region Explicit interface implementations
+
+        /// <summary>
+        /// LUCENENET specific implementation to provide a non-generic abstraction
+        /// </summary>
+        IList<AbstractDistinctValuesCollector.IGroupCount> IAbstractDistinctValuesCollector.Groups
+            => new CastingListAdapter<GC, AbstractDistinctValuesCollector.IGroupCount>(Groups);
+
+        #endregion
     }
 
     /// <summary>
@@ -93,7 +104,7 @@ namespace Lucene.Net.Search.Grouping
         /// LUCENENET - removed this class from being a nested class of
         /// <see cref="AbstractDistinctValuesCollector{GC, TGroupValue}"/>
         /// </remarks>
-        public abstract class GroupCount<TGroupValue>
+        public abstract class GroupCount<TGroupValue> : IGroupCount
         {
             public TGroupValue GroupValue { get; protected set; }
             public ISet<TGroupValue> UniqueValues { get; protected set; }
@@ -103,6 +114,37 @@ namespace Lucene.Net.Search.Grouping
                 this.GroupValue = groupValue;
                 this.UniqueValues = new JCG.HashSet<TGroupValue>();
             }
+
+            #region Explicit interface implementations
+
+            object IGroupCount.GroupValue => GroupValue;
+
+            ISet<object> IGroupCount.UniqueValues => new CastingSetAdapter<TGroupValue, object>(UniqueValues);
+
+            #endregion
         }
+
+        /// <summary>
+        /// LUCENENET specific interface to provide a non-generic abstraction
+        /// for <see cref="GroupCount{TGroupValue}"/>.
+        /// </summary>
+        public interface IGroupCount
+        {
+            object GroupValue { get; }
+
+            ISet<object> UniqueValues { get; }
+        }
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="AbstractDistinctValuesCollector{GC, TGroupValue}"/>.
+    /// </summary>
+    public interface IAbstractDistinctValuesCollector : ICollector
+    {
+        /// <summary>
+        /// Returns all unique values for each top N group.
+        /// </summary>
+        IList<AbstractDistinctValuesCollector.IGroupCount> Groups { get; }
     }
 }

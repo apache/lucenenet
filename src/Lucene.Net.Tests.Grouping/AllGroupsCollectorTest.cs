@@ -104,7 +104,7 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
-            AbstractAllGroupsCollector<object> allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
+            IAbstractAllGroupsCollector allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), allGroupsCollector);
             assertEquals(4, allGroupsCollector.GroupCount);
 
@@ -129,50 +129,17 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        // LUCENENET specific - wrapper class to avoid generic type mismatch
-        private class ObjectAllGroupsCollector<T> : AbstractAllGroupsCollector<object>
+        private IAbstractAllGroupsCollector CreateRandomCollector(string groupField, bool canUseIDV)
         {
-            private readonly AbstractAllGroupsCollector<T> wrapped;
-
-            public ObjectAllGroupsCollector(AbstractAllGroupsCollector<T> wrapped)
-            {
-                this.wrapped = wrapped;
-            }
-
-            public override ICollection<object> Groups
-                => wrapped.Groups.Cast<object>().ToList();
-
-            public override void Collect(int doc)
-                => wrapped.Collect(doc);
-
-            public override void SetNextReader(AtomicReaderContext context)
-                => wrapped.SetNextReader(context);
-
-            public override int GroupCount
-                => wrapped.GroupCount;
-
-            public override void SetScorer(Scorer scorer)
-                => wrapped.SetScorer(scorer);
-
-            public override bool AcceptsDocsOutOfOrder
-                => wrapped.AcceptsDocsOutOfOrder;
-        }
-
-        private AbstractAllGroupsCollector<object> CreateRandomCollector(string groupField, bool canUseIDV)
-        {
-            AbstractAllGroupsCollector<object> selected;
+            IAbstractAllGroupsCollector selected;
             if (Random.nextBoolean())
             {
-                // LUCENENET: We need to wrap the collector to avoid generic type mismatch
-                var innerCollector = new TermAllGroupsCollector(groupField);
-                selected = new ObjectAllGroupsCollector<BytesRef>(innerCollector);
+                selected = new TermAllGroupsCollector(groupField);
             }
             else
             {
-                // LUCENENET: We need to wrap the collector to avoid generic type mismatch
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                var innerCollector = new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());   // LUCENENET Specific type for generic must be specified.
-                selected = new ObjectAllGroupsCollector<MutableValue>(innerCollector);
+                selected = new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());   // LUCENENET Specific type for generic must be specified.
             }
 
             if (Verbose)

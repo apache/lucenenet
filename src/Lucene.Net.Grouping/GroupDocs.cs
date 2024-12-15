@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Grouping
     ///
     /// @lucene.experimental
     /// </summary>
-    public class GroupDocs<TGroupValue>
+    public class GroupDocs<TGroupValue> : IGroupDocs
     {
         /// <summary>
         /// The groupField value for all docs in this group; this
@@ -72,5 +72,30 @@ namespace Lucene.Net.Search.Grouping
             GroupValue = groupValue;
             GroupSortValues = groupSortValues;
         }
+
+        #region Explicit interface implementations
+
+        object IGroupDocs.GroupValue => GroupValue;
+
+        #endregion
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="GroupDocs{TGroupValue}"/>.
+    /// </summary>
+    public interface IGroupDocs
+    {
+        object GroupValue { get; }
+
+        float MaxScore { get; }
+
+        float Score { get; }
+
+        ScoreDoc[] ScoreDocs { get; }
+
+        int TotalHits { get; }
+
+        object[] GroupSortValues { get; }
     }
 }
