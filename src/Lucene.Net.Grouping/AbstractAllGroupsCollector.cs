@@ -34,8 +34,7 @@ namespace Lucene.Net.Search.Grouping
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     // ReSharper disable once RedundantExtendsListEntry
-    public abstract class AbstractAllGroupsCollector<TGroupValue> : ICollector,
-        IGroupCountCollector // LUCENENET specific for non-generic access in tests
+    public abstract class AbstractAllGroupsCollector<TGroupValue> : ICollector
     {
         /// <summary>
         /// Returns the total number of groups for the executed search.
@@ -89,18 +88,5 @@ namespace Lucene.Net.Search.Grouping
         public abstract void SetNextReader(AtomicReaderContext context);
 
         public virtual bool AcceptsDocsOutOfOrder => true;
-    }
-
-    /// <summary>
-    /// LUCENENET specific: Non-generic interface to access GroupCount in tests
-    /// </summary>
-    public interface IGroupCountCollector : ICollector
-    {
-        /// <summary>
-        /// Returns the total number of groups for the executed search.
-        /// This is a convenience method. The following code snippet has the same effect: <code>GetGroups().Count</code>
-        /// </summary>
-        /// <returns>The total number of groups for the executed search</returns>
-        int GroupCount { get; }
     }
 }
