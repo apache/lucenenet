@@ -447,6 +447,10 @@ namespace Lucene.Net.Search.Grouping
     /// Abstract base class for grouping search implementations that groups documents by index terms or function.
     /// </summary>
     /// <typeparam name="T">The type of the group value</typeparam>
+    /// <remarks>
+    /// LUCENENET specific
+    /// </remarks>
+    /// <seealso cref="GroupingSearch"/>
     public abstract class AbstractFieldOrFunctionGroupingSearch<T> : AbstractGroupingSearch<T>
     {
         // LUCENENET: Converted to protected properties
@@ -569,7 +573,11 @@ namespace Lucene.Net.Search.Grouping
     /// Abstract base class for grouping search implementations.
     /// </summary>
     /// <typeparam name="T">The type of the group value</typeparam>
-    public abstract class AbstractGroupingSearch<T>
+    /// <remarks>
+    /// LUCENENET specific
+    /// </remarks>
+    /// <seealso cref="GroupingSearch"/>
+    public abstract class AbstractGroupingSearch<T> : IAbstractGroupingSearch
     {
         // LUCENENET: Converted to protected properties
         protected Sort GroupSort { get; private set; } = Sort.RELEVANCE;
@@ -671,5 +679,44 @@ namespace Lucene.Net.Search.Grouping
             this.IncludeScores = includeScores;
             return this;
         }
+
+        #region Explicit interface implementations
+
+        /// <inheritdoc cref="IAbstractGroupingSearch.Search(IndexSearcher, Query, int, int)"/>
+        ITopGroups IAbstractGroupingSearch.Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
+            => Search(searcher, query, groupOffset, groupLimit);
+
+        /// <inheritdoc cref="IAbstractGroupingSearch.Search(IndexSearcher, Filter, Query, int, int)"/>
+        ITopGroups IAbstractGroupingSearch.Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
+            => Search(searcher, filter, query, groupOffset, groupLimit);
+
+        #endregion
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface for non-generic access to <see cref="AbstractGroupingSearch{T}"/>.
+    /// </summary>
+    public interface IAbstractGroupingSearch
+    {
+        /// <summary>
+        /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as an <see cref="ITopGroups"/> instance</returns>
+        ITopGroups Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit);
+
+        /// <summary>
+        /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="filter">The filter to execute with the grouping</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as an <see cref="ITopGroups"/> instance</returns>
+        ITopGroups Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit);
     }
 }
