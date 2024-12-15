@@ -905,7 +905,7 @@ namespace Lucene.Net.Search.Grouping
             //First Pass
             TermFirstPassGroupingCollector firstPassCollector = new TermFirstPassGroupingCollector(groupField, groupSort, topN);
             searcher.Search(query, filter, firstPassCollector);
-            IEnumerable<SearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
+            ICollection<SearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
 
             //Second Pass
             TermSecondPassGroupingCollector secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups,
@@ -1030,7 +1030,7 @@ namespace Lucene.Net.Search.Grouping
             //First Pass
             TermFirstPassGroupingCollector firstPassCollector = new TermFirstPassGroupingCollector(groupField, groupSort, topN);
             searcher.Search(query, filter, firstPassCollector);
-            IEnumerable<SearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
+            ICollection<SearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
 
             //Second Pass
             TermSecondPassGroupingCollector secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups,
@@ -1156,7 +1156,7 @@ namespace Lucene.Net.Search.Grouping
             FunctionFirstPassGroupingCollector<MutableValueStr> firstPassCollector =
                                             new FunctionFirstPassGroupingCollector<MutableValueStr>(groupByValueSource, valueSourceContext, groupSort, topN);
             searcher.Search(query, filter, firstPassCollector);
-            IEnumerable<SearchGroup<MutableValueStr>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
+            ICollection<SearchGroup<MutableValueStr>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
 
             //Second Pass
             FunctionSecondPassGroupingCollector<MutableValueStr> secondPassCollector =
@@ -1269,7 +1269,7 @@ namespace Lucene.Net.Search.Grouping
             FunctionFirstPassGroupingCollector<MutableValueInt32> firstPassCollector =
                                             new FunctionFirstPassGroupingCollector<MutableValueInt32>(groupByValueSource, valueSourceContext, groupSort, topN);
             searcher.Search(query, filter, firstPassCollector);
-            IEnumerable<SearchGroup<MutableValueInt32>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
+            ICollection<SearchGroup<MutableValueInt32>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
 
             //Second Pass
             FunctionSecondPassGroupingCollector<MutableValueInt32> secondPassCollector =
