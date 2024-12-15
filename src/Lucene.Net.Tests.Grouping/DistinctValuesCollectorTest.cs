@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.Grouping
             // === Search for content:random
             AbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, new Sort(), groupField, 10);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), firstCollector);
-            IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> distinctValuesCollector
+            AbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> distinctValuesCollector
                 = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), distinctValuesCollector);
 
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Grouping
 
                     AbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, groupSort, groupField, topN);
                     searcher.Search(new TermQuery(new Term("content", term)), firstCollector);
-                    IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> distinctValuesCollector
+                    AbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> distinctValuesCollector
                         = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType);
                     searcher.Search(new TermQuery(new Term("content", term)), distinctValuesCollector);
 
@@ -455,7 +455,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private IAbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> CreateDistinctCountCollector(AbstractFirstPassGroupingCollector<IComparable> firstPassGroupingCollector,
+        private AbstractDistinctValuesCollector<AbstractDistinctValuesCollector.IGroupCount<IComparable>> CreateDistinctCountCollector(AbstractFirstPassGroupingCollector<IComparable> firstPassGroupingCollector,
                                                                             string groupField,
                                                                             string countField,
                                                                             DocValuesType dvType)
