@@ -53,7 +53,7 @@ namespace Lucene.Net.Search.Grouping.Function
             }
         }
 
-        public override IEnumerable<GroupCount> Groups => new JCG.List<GroupCount>(groupMap.Values);
+        public override IList<GroupCount> Groups => new JCG.List<GroupCount>(groupMap.Values);
 
         public override void Collect(int doc)
         {

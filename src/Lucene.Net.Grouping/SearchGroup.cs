@@ -3,7 +3,6 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -391,7 +390,7 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            public virtual ICollection<SearchGroup<T>> Merge(IList<IEnumerable<SearchGroup<T>>> shards, int offset, int topN)
+            public virtual ICollection<SearchGroup<T>> Merge(IList<ICollection<SearchGroup<T>>> shards, int offset, int topN)
             {
 
                 int maxQueueSize = offset + topN;
@@ -400,8 +399,8 @@ namespace Lucene.Net.Search.Grouping
                 // Init queue:
                 for (int shardIDX = 0; shardIDX < shards.Count; shardIDX++)
                 {
-                    IEnumerable<SearchGroup<T>> shard = shards[shardIDX];
-                    if (shard.Any()) // LUCENENET TODO: Change back to .Count if/when IEnumerable<T> is changed to ICollection<T> or IReadOnlyCollection<T>
+                    ICollection<SearchGroup<T>> shard = shards[shardIDX];
+                    if (shard.Count > 0)
                     {
                         //System.out.println("  insert shard=" + shardIDX);
                         UpdateNextGroup(maxQueueSize, new ShardIter<T>(shard, shardIDX));
@@ -462,7 +461,7 @@ namespace Lucene.Net.Search.Grouping
         /// NOTE: this returns null if the topGroups is empty.
         /// </para>
         /// </summary>
-        public static ICollection<SearchGroup<T>> Merge<T>(IList<IEnumerable<SearchGroup<T>>> topGroups, int offset, int topN, Sort groupSort)
+        public static ICollection<SearchGroup<T>> Merge<T>(IList<ICollection<SearchGroup<T>>> topGroups, int offset, int topN, Sort groupSort)
         {
             if (topGroups.Count == 0)
             {

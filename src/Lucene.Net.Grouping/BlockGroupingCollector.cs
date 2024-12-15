@@ -3,7 +3,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search.Grouping
 {

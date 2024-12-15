@@ -199,7 +199,7 @@ namespace Lucene.Net.Search.Grouping
             public override void SetScorer(Scorer scorer)
                 => wrapped.SetScorer(scorer);
 
-            public override IEnumerable<SearchGroup<object>> GetTopGroups(int withinGroupOffset, bool fillFields)
+            public override ICollection<SearchGroup<object>> GetTopGroups(int withinGroupOffset, bool fillFields)
             {
                 var result = wrapped.GetTopGroups(withinGroupOffset, fillFields);
 
@@ -207,7 +207,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     GroupValue = group.GroupValue,
                     SortValues = group.SortValues
-                });
+                }).ToList();
             }
 
             public override void Collect(int doc)
@@ -273,7 +273,7 @@ namespace Lucene.Net.Search.Grouping
             private readonly AbstractSecondPassGroupingCollector<T> wrapped;
 
             public ObjectSecondPassGroupingCollector(AbstractSecondPassGroupingCollector<T> wrapped, IEnumerable<SearchGroup<T>> groups, Sort groupSort, Sort withinGroupSort, int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
-                : base(groups.Select(i => new SearchGroup<object> { GroupValue = i.GroupValue, SortValues = i.SortValues }),
+                : base(groups.Select(i => new SearchGroup<object> { GroupValue = i.GroupValue, SortValues = i.SortValues }).ToList(),
                     groupSort, withinGroupSort, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
             {
                 this.wrapped = wrapped;
@@ -300,7 +300,6 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private AbstractSecondPassGroupingCollector<object> CreateSecondPassCollector(AbstractFirstPassGroupingCollector<object> firstPassGroupingCollector,
                                                                               string groupField,
                                                                               Sort groupSort,
@@ -320,7 +319,7 @@ namespace Lucene.Net.Search.Grouping
                     {
                         GroupValue = (BytesRef)i.GroupValue,
                         SortValues = i.SortValues
-                    });
+                    }).ToList();
                 var innerCollector = new TermSecondPassGroupingCollector(groupField, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
                 return new ObjectSecondPassGroupingCollector<BytesRef>(innerCollector, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
             }
@@ -333,7 +332,7 @@ namespace Lucene.Net.Search.Grouping
                     {
                         GroupValue = (MutableValue)i.GroupValue,
                         SortValues = i.SortValues
-                    });
+                    }).ToList();
                 var innerCollector = new FunctionSecondPassGroupingCollector<MutableValue>(searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields, vs, new Hashtable());
                 return new ObjectSecondPassGroupingCollector<MutableValue>(innerCollector, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields);
             }
@@ -474,7 +473,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private IEnumerable<SearchGroup<BytesRef>> GetSearchGroups(AbstractFirstPassGroupingCollector<object> c, int groupOffset, bool fillFields)
+        private ICollection<SearchGroup<BytesRef>> GetSearchGroups(AbstractFirstPassGroupingCollector<object> c, int groupOffset, bool fillFields)
         {
             // LUCENENET specific - we need to look for our wrapper types
             if (typeof(ObjectFirstPassGroupingCollector<BytesRef>).IsAssignableFrom(c.GetType()))
@@ -484,7 +483,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     GroupValue = (BytesRef)i.GroupValue,
                     SortValues = i.SortValues
-                });
+                }).ToList();
             }
             else if (typeof(ObjectFirstPassGroupingCollector<MutableValue>).IsAssignableFrom(c.GetType()))
             {
@@ -1617,7 +1616,7 @@ namespace Lucene.Net.Search.Grouping
             }
             // Run 1st pass collector to get top groups per shard
             Weight w = topSearcher.CreateNormalizedWeight(query);
-            IList<IEnumerable<SearchGroup<BytesRef>>> shardGroups = new JCG.List<IEnumerable<SearchGroup<BytesRef>>>();
+            IList<ICollection<SearchGroup<BytesRef>>> shardGroups = new JCG.List<ICollection<SearchGroup<BytesRef>>>();
             IList<AbstractFirstPassGroupingCollector<object>> firstPassGroupingCollectors = new JCG.List<AbstractFirstPassGroupingCollector<object>>();
             AbstractFirstPassGroupingCollector<object> firstPassCollector = null;
             bool shardsCanUseIDV;
@@ -1664,7 +1663,7 @@ namespace Lucene.Net.Search.Grouping
                 }
                 firstPassGroupingCollectors.Add(firstPassCollector);
                 subSearchers[shardIDX].Search(w, firstPassCollector);
-                IEnumerable<SearchGroup<BytesRef>> topGroups = GetSearchGroups(firstPassCollector, 0, true);
+                ICollection<SearchGroup<BytesRef>> topGroups = GetSearchGroups(firstPassCollector, 0, true);
                 if (topGroups != null)
                 {
                     if (Verbose)

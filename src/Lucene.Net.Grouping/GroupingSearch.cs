@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Grouping
                 MatchingGroupHeads = new Bits.MatchNoBits(searcher.IndexReader.MaxDoc);
             }
 
-            IEnumerable<SearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, FillSortFields);
+            ICollection<SearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, FillSortFields);
             if (topSearchGroups is null)
             {
                 // LUCENENET specific - optimized empty array creation
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search.Grouping
                 MatchingGroupHeads = new Bits.MatchNoBits(searcher.IndexReader.MaxDoc);
             }
 
-            IEnumerable<SearchGroup<T>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, FillSortFields);
+            ICollection<SearchGroup<T>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, FillSortFields);
             if (topSearchGroups is null)
             {
                 // LUCENENET specific - optimized empty array creation
