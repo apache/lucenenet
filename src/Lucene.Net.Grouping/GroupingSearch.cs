@@ -30,37 +30,108 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// Convenience class to perform grouping in a non distributed environment.
+    /// <para />
+    /// LUCENENET Note: This class has been significantly changed from Lucene.
+    /// The previous implementation combined field, function, and doc block grouping
+    /// into one large class and required the use of Java's generic type erasure and
+    /// wildcard generics to handle the different types of grouping. This implementation
+    /// splits the different types of grouping into separate classes and uses a common
+    /// base class to handle the common functionality.
+    /// <para />
+    /// This class contains three static factory methods to create instances of the
+    /// different types of grouping:
+    /// <list type="bullet">
+    ///     <item>
+    ///         <description>
+    ///             <see cref="ByField(string)"/> - Constructs a <see cref="FieldGroupingSearch" /> instance
+    ///             that groups documents by index terms using the <see cref="FieldCache"/>.
+    ///             The group field can only have one token per document. This means that the field must not be analysed.
+    ///         </description>
+    ///     </item>
+    ///     <item>
+    ///         <description>
+    ///             <see cref="ByFunction{TMutableValue}(ValueSource, IDictionary)"/> - Constructs a <see cref="FunctionGroupingSearch{TMutableValue}"/> instance
+    ///             that groups documents by function using a <see cref="ValueSource"/> instance.
+    ///         </description>
+    ///     </item>
+    ///     <item>
+    ///         <description>
+    ///             <see cref="ByDocBlock{TGroupValue}(Filter)"/> - Constructs a <see cref="DocBlockGroupingSearch{TGroupValue}"/> instance
+    ///             that groups documents by doc block. This method can only be used when documents belonging in a group are indexed in one block.
+    ///         </description>
+    ///     </item>
+    /// </list>
+    /// These types each return a type that behaves like the original GroupingSearch class,
+    /// but specific to the type of grouping being performed.
+    /// <para />
+    /// It is not required to use these methods; you can also create instances of the
+    /// specific grouping classes directly which will be closer to the original Lucene
+    /// usage.
+    /// <para />
     /// @lucene.experimental
     /// </summary>
+    /// <seealso cref="FieldGroupingSearch"/>
+    /// <seealso cref="FunctionGroupingSearch{TMutableValue}"/>
+    /// <seealso cref="DocBlockGroupingSearch{TGroupValue}"/>
     public static class GroupingSearch
     {
+        /// <summary>
+        /// Constructs a <see cref="FieldGroupingSearch"/> instance that groups documents by index terms using the <see cref="FieldCache"/>.
+        /// The group field can only have one token per document. This means that the field must not be analysed.
+        /// </summary>
+        /// <param name="groupField">The name of the field to group by.</param>
+        /// <returns>A <see cref="FieldGroupingSearch"/> instance.</returns>
         public static FieldGroupingSearch ByField(string groupField)
         {
             return new FieldGroupingSearch(groupField);
         }
 
+        /// <summary>
+        /// Constructs a <see cref="FunctionGroupingSearch{TMutableValue}"/> instance that groups documents by function using a <see cref="ValueSource"/> instance.
+        /// </summary>
+        /// <param name="groupFunction">The function to group by specified as <see cref="ValueSource"/></param>
+        /// <param name="valueSourceContext">The context of the specified groupFunction</param>
+        /// <typeparam name="TMutableValue">The type of the mutable value</typeparam>
+        /// <returns>A <see cref="FunctionGroupingSearch{TMutableValue}"/> instance.</returns>
         public static FunctionGroupingSearch<TMutableValue> ByFunction<TMutableValue>(ValueSource groupFunction, IDictionary valueSourceContext)
             where TMutableValue : MutableValue
         {
             return new FunctionGroupingSearch<TMutableValue>(groupFunction, valueSourceContext);
         }
 
+        /// <summary>
+        /// Constructs a <see cref="DocBlockGroupingSearch{TGroupValue}"/> instance that groups documents by doc block.
+        /// This method can only be used when documents belonging in a group are indexed in one block.
+        /// </summary>
+        /// <param name="groupEndDocs">The filter that marks the last document in all doc blocks</param>
+        /// <typeparam name="TGroupValue">The type of the group value</typeparam>
+        /// <returns>A <see cref="DocBlockGroupingSearch{TGroupValue}"/> instance.</returns>
         public static DocBlockGroupingSearch<TGroupValue> ByDocBlock<TGroupValue>(Filter groupEndDocs)
         {
             return new DocBlockGroupingSearch<TGroupValue>(groupEndDocs);
         }
     }
 
+    /// <summary>
+    /// A grouping search that groups documents by index terms using the <see cref="FieldCache"/>.
+    /// The group field can only have one token per document. This means that the field must not be analysed.
+    /// </summary>
+    /// <seealso cref="GroupingSearch.ByField(string)"/>
     public class FieldGroupingSearch : AbstractFieldOrFunctionGroupingSearch<BytesRef>
     {
         private readonly string groupField;
         private int initialSize = 128;
 
+        /// <summary>
+        /// Constructs a <see cref="FieldGroupingSearch"/> instance that groups documents by index terms using the <see cref="FieldCache"/>.
+        /// </summary>
+        /// <param name="groupField">The name of the field to group by.</param>
         public FieldGroupingSearch(string groupField)
         {
             this.groupField = groupField;
         }
 
+        /// <inheritdoc cref="AbstractGroupingSearch{T}.Search(IndexSearcher,Filter,Query,int,int)"/>
         public override TopGroups<BytesRef> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
@@ -179,7 +250,6 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-
         /// <summary>
         /// Sets the initial size of some internal used data structures.
         /// This prevents growing data structures many times. This can improve the performance of the grouping at the cost of
@@ -199,18 +269,29 @@ namespace Lucene.Net.Search.Grouping
         }
     }
 
+    /// <summary>
+    /// A grouping search that groups documents by function using a <see cref="ValueSource"/> instance.
+    /// </summary>
+    /// <typeparam name="T">The type of the mutable value</typeparam>
+    /// <seealso cref="GroupingSearch.ByFunction{TMutableValue}(ValueSource, IDictionary)"/>
     public class FunctionGroupingSearch<T> : AbstractFieldOrFunctionGroupingSearch<T>
         where T : MutableValue
     {
         private readonly ValueSource groupFunction;
         private readonly IDictionary /* Map<?, ?> */ valueSourceContext;
 
+        /// <summary>
+        /// Constructs a <see cref="FunctionGroupingSearch{T}"/> instance that groups documents by function using a <see cref="ValueSource"/> instance.
+        /// </summary>
+        /// <param name="groupFunction">The function to group by specified as <see cref="ValueSource"/></param>
+        /// <param name="valueSourceContext">The context of the specified groupFunction</param>
         public FunctionGroupingSearch(ValueSource groupFunction, IDictionary /* Map<?, ?> */ valueSourceContext)
         {
             this.groupFunction = groupFunction;
             this.valueSourceContext = valueSourceContext;
         }
 
+        /// <inheritdoc cref="AbstractGroupingSearch{T}.Search(IndexSearcher,Filter,Query,int,int)"/>
         public override TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
@@ -332,15 +413,26 @@ namespace Lucene.Net.Search.Grouping
         }
     }
 
+    /// <summary>
+    /// A grouping search that groups documents by doc block.
+    /// This class can only be used when documents belonging in a group are indexed in one block.
+    /// </summary>
+    /// <typeparam name="T">The type of the group value</typeparam>
     public class DocBlockGroupingSearch<T> : AbstractGroupingSearch<T>
     {
         private readonly Filter groupEndDocs;
 
+        /// <summary>
+        /// Constructs a <see cref="DocBlockGroupingSearch{T}"/> instance that groups documents by doc block.
+        /// This class can only be used when documents belonging in a group are indexed in one block.
+        /// </summary>
+        /// <param name="groupEndDocs">The filter that marks the last document in all doc blocks</param>
         public DocBlockGroupingSearch(Filter groupEndDocs)
         {
             this.groupEndDocs = groupEndDocs;
         }
 
+        /// <inheritdoc cref="AbstractGroupingSearch{T}.Search(IndexSearcher,Filter,Query,int,int)"/>
         public override TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
         {
             int topN = groupOffset + groupLimit;
@@ -351,6 +443,10 @@ namespace Lucene.Net.Search.Grouping
         }
     }
 
+    /// <summary>
+    /// Abstract base class for grouping search implementations that groups documents by index terms or function.
+    /// </summary>
+    /// <typeparam name="T">The type of the group value</typeparam>
     public abstract class AbstractFieldOrFunctionGroupingSearch<T> : AbstractGroupingSearch<T>
     {
         // LUCENENET: Converted to protected properties
@@ -469,6 +565,10 @@ namespace Lucene.Net.Search.Grouping
         }
     }
 
+    /// <summary>
+    /// Abstract base class for grouping search implementations.
+    /// </summary>
+    /// <typeparam name="T">The type of the group value</typeparam>
     public abstract class AbstractGroupingSearch<T>
     {
         // LUCENENET: Converted to protected properties
@@ -480,11 +580,28 @@ namespace Lucene.Net.Search.Grouping
         protected bool FillSortFields { get; private set; }
         protected bool IncludeScores { get; private set; } = true;
 
+        /// <summary>
+        /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="TopGroups"/> instance</returns>
         public TopGroups<T> Search(IndexSearcher searcher, Query query, int groupOffset, int groupLimit)
         {
             return Search(searcher, null, query, groupOffset, groupLimit);
         }
 
+        /// <summary>
+        /// Executes a grouped search. Both the first pass and second pass are executed on the specified searcher.
+        /// </summary>
+        /// <param name="searcher">The <see cref="IndexSearcher"/> instance to execute the grouped search on.</param>
+        /// <param name="filter">The filter to execute with the grouping</param>
+        /// <param name="query">The query to execute with the grouping</param>
+        /// <param name="groupOffset">The group offset</param>
+        /// <param name="groupLimit">The number of groups to return from the specified group offset</param>
+        /// <returns>the grouped result as a <see cref="TopGroups"/> instance</returns>
         public abstract TopGroups<T> Search(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit);
 
         /// <summary>
