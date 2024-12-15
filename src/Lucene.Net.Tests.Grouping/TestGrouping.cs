@@ -389,18 +389,51 @@ namespace Lucene.Net.Search.Grouping
             return null;
         }
 
-        private IGroupCountCollector CreateAllGroupsCollector<T>(AbstractFirstPassGroupingCollector<T> firstPassGroupingCollector,
+        // LUCENENET specific - wrapper class to avoid generic type mismatch
+        private class ObjectAllGroupsCollector<T> : AbstractAllGroupsCollector<object>
+        {
+            private readonly AbstractAllGroupsCollector<T> wrapped;
+
+            public ObjectAllGroupsCollector(AbstractAllGroupsCollector<T> wrapped)
+            {
+                this.wrapped = wrapped;
+            }
+
+            public override ICollection<object> Groups
+                => wrapped.Groups.Cast<object>().ToList();
+
+            public override void Collect(int doc)
+                => wrapped.Collect(doc);
+
+            public override void SetNextReader(AtomicReaderContext context)
+                => wrapped.SetNextReader(context);
+
+            public override int GroupCount
+                => wrapped.GroupCount;
+
+            public override void SetScorer(Scorer scorer)
+                => wrapped.SetScorer(scorer);
+
+            public override bool AcceptsDocsOutOfOrder
+                => wrapped.AcceptsDocsOutOfOrder;
+        }
+
+        private AbstractAllGroupsCollector<object> CreateAllGroupsCollector(AbstractFirstPassGroupingCollector<object> firstPassGroupingCollector,
                                                                     string groupField)
         {
             // LUCENENET specific - we need to look for our wrapper types
             if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(ObjectFirstPassGroupingCollector<BytesRef>)))
             {
-                return new TermAllGroupsCollector(groupField);
+                // LUCENENET specific - we have to wrap the collector to avoid generic type mismatch
+                var innerCollector = new TermAllGroupsCollector(groupField);
+                return new ObjectAllGroupsCollector<BytesRef>(innerCollector);
             }
             else if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(ObjectFirstPassGroupingCollector<MutableValue>)))
             {
+                // LUCENENET specific - we have to wrap the collector to avoid generic type mismatch
                 ValueSource vs = new BytesRefFieldSource(groupField);
-                return new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());        // LUCENENET Specific type for generic must be specified.
+                var innerCollector = new FunctionAllGroupsCollector<MutableValue>(vs, new Hashtable());        // LUCENENET Specific type for generic must be specified.
+                return new ObjectAllGroupsCollector<MutableValue>(innerCollector);
             }
 
             fail();
@@ -1186,7 +1219,7 @@ namespace Lucene.Net.Search.Grouping
                         CachingCollector cCache;
                         ICollector c;
 
-                        IGroupCountCollector allGroupsCollector;
+                        AbstractAllGroupsCollector<object> allGroupsCollector;
                         if (doAllGroups)
                         {
                             allGroupsCollector = CreateAllGroupsCollector(c1, groupField);
