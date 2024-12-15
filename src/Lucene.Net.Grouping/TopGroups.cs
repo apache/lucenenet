@@ -90,6 +90,9 @@ namespace Lucene.Net.Search.Grouping
 
         #region Explicit interface implementations
 
+        /// <summary>
+        /// LUCENENET specific method to provide an <see cref="IGroupDocs"/>-based implementation of <see cref="Groups"/>.
+        /// </summary>
         IList<IGroupDocs> ITopGroups.Groups => new CastingListAdapter<GroupDocs<TGroupValue>, IGroupDocs>(Groups);
 
         #endregion
@@ -281,23 +284,46 @@ namespace Lucene.Net.Search.Grouping
     /// </summary>
     public interface ITopGroups
     {
+        /// <summary>
+        /// Number of documents matching the search
+        /// </summary>
         int TotalHitCount { get; }
 
+        /// <summary>
+        /// Number of documents grouped into the topN groups
+        /// </summary>
         int TotalGroupedHitCount { get; }
 
+        /// <summary>
+        /// The total number of unique groups. If <c>null</c> this value is not computed.
+        /// </summary>
         int? TotalGroupCount { get; }
 
         /// <summary>
+        /// Group results in groupSort order
+        /// <para />
         /// LUCENENET specific - this uses IList instead of an array
         /// as it would require a new array to be created each time
         /// the property is accessed.
         /// </summary>
         IList<IGroupDocs> Groups { get; }
 
+        /// <summary>
+        /// How groups are sorted against each other
+        /// </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         SortField[] GroupSort { get; }
 
+        /// <summary>
+        /// How docs are sorted within each group
+        /// </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         SortField[] WithinGroupSort { get; }
 
+        /// <summary>
+        /// Highest score across all hits, or
+        /// <see cref="float.NaN"/> if scores were not computed.
+        /// </summary>
         float MaxScore { get; }
     }
 }
