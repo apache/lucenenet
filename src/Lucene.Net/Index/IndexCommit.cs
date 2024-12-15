@@ -117,8 +117,8 @@ namespace Lucene.Net.Index
         public abstract long Generation { get; }
 
         /// <summary>
-        /// Returns userData, previously passed to 
-        /// <see cref="IndexWriter.SetCommitData(IDictionary{string, string})"/>} for this commit.  
+        /// Returns userData, previously passed to
+        /// <see cref="IndexWriter.SetCommitData(IDictionary{string, string})"/>} for this commit.
         /// The dictionary is <see cref="string"/> -> <see cref="string"/>.
         /// </summary>
         public abstract IDictionary<string, string> UserData { get; }
@@ -145,5 +145,30 @@ namespace Lucene.Net.Index
                 return 0;
             }
         }
+
+        #region Operator overrides
+#nullable enable
+        // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+        public static bool operator <(IndexCommit? left, IndexCommit? right)
+            => left is null ? right is not null : left.CompareTo(right) < 0;
+
+        public static bool operator <=(IndexCommit? left, IndexCommit? right)
+            => left is null || left.CompareTo(right) <= 0;
+
+        public static bool operator >(IndexCommit? left, IndexCommit? right)
+            => left is not null && left.CompareTo(right) > 0;
+
+        public static bool operator >=(IndexCommit? left, IndexCommit? right)
+            => left is null ? right is null : left.CompareTo(right) >= 0;
+
+        public static bool operator ==(IndexCommit? left, IndexCommit? right)
+            => left?.Equals(right) ?? right is null;
+
+        public static bool operator !=(IndexCommit? left, IndexCommit? right)
+            => !(left == right);
+
+#nullable restore
+        #endregion
     }
 }

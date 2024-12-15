@@ -39,25 +39,25 @@ namespace Lucene.Net.Search.Suggest
         {
             /// <summary>
             /// the key's text </summary>
-            public string Key { get; private set; }
+            public string Key { get; }
 
             /// <summary>
             /// Expert: custom Object to hold the result of a
-            /// highlighted suggestion. 
+            /// highlighted suggestion.
             /// </summary>
-            public object HighlightKey { get; private set; }
+            public object HighlightKey { get; }
 
             /// <summary>
             /// the key's weight </summary>
-            public long Value { get; private set; }
+            public long Value { get; }
 
             /// <summary>
             /// the key's payload (null if not present) </summary>
-            public BytesRef Payload { get; private set; }
+            public BytesRef Payload { get; }
 
             /// <summary>
             /// the key's contexts (null if not present) </summary>
-            public IEnumerable<BytesRef> Contexts { get; private set; }
+            public IEnumerable<BytesRef> Contexts { get; }
 
             /// <summary>
             /// Create a new result from a key+weight pair.
@@ -122,6 +122,38 @@ namespace Lucene.Net.Search.Suggest
             {
                 return CHARSEQUENCE_COMPARER.Compare(Key, o.Key);
             }
+
+            // LUCENENET specific - per CS0660 and CS0661, we need to override Equals and GetHashCode
+            // ReSharper disable once BaseObjectEqualsIsObjectEquals
+            // ReSharper disable once RedundantOverriddenMember
+            public override bool Equals(object obj) => base.Equals(obj);
+
+            // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
+            // ReSharper disable once RedundantOverriddenMember
+            public override int GetHashCode() => base.GetHashCode();
+
+            #region Operator overrides
+            // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+            public static bool operator <(LookupResult left, LookupResult right)
+                => left is null ? right is not null : left.CompareTo(right) < 0;
+
+            public static bool operator <=(LookupResult left, LookupResult right)
+                => left is null || left.CompareTo(right) <= 0;
+
+            public static bool operator >(LookupResult left, LookupResult right)
+                => left is not null && left.CompareTo(right) > 0;
+
+            public static bool operator >=(LookupResult left, LookupResult right)
+                => left is null ? right is null : left.CompareTo(right) >= 0;
+
+            public static bool operator ==(LookupResult left, LookupResult right)
+                => left?.Equals(right) ?? right is null;
+
+            public static bool operator !=(LookupResult left, LookupResult right)
+                => !(left == right);
+
+            #endregion
         }
 
         /// <summary>
@@ -129,7 +161,7 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public static readonly IComparer<string> CHARSEQUENCE_COMPARER = new CharSequenceComparer();
 
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -201,7 +233,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Sole constructor. (For invocation by subclass 
+        /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
         protected Lookup() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)

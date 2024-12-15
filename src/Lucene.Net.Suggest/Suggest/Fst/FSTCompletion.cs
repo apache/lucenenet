@@ -46,10 +46,10 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             /// <summary>
             /// UTF-8 bytes of the suggestion </summary>
-            public BytesRef Utf8 { get; private set; }
+            public BytesRef Utf8 { get; }
             /// <summary>
             /// source bucket (weight) of the suggestion </summary>
-            public int Bucket { get; private set; }
+            public int Bucket { get; }
 
             internal Completion(BytesRef key, int bucket)
             {
@@ -67,6 +67,40 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 return this.Utf8.CompareTo(o.Utf8);
             }
+
+            // LUCENENET specific - per CS0660 and CS0661, we need to override Equals and GetHashCode
+            // ReSharper disable once BaseObjectEqualsIsObjectEquals
+            // ReSharper disable once RedundantOverriddenMember
+            public override bool Equals(object obj) => base.Equals(obj);
+
+            // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
+            // ReSharper disable once RedundantOverriddenMember
+            public override int GetHashCode() => base.GetHashCode();
+
+            #region Operator overrides
+#nullable enable
+            // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+            public static bool operator <(Completion? left, Completion? right)
+                => left is null ? right is not null : left.CompareTo(right) < 0;
+
+            public static bool operator <=(Completion? left, Completion? right)
+                => left is null || left.CompareTo(right) <= 0;
+
+            public static bool operator >(Completion? left, Completion? right)
+                => left is not null && left.CompareTo(right) > 0;
+
+            public static bool operator >=(Completion? left, Completion? right)
+                => left is null ? right is null : left.CompareTo(right) >= 0;
+
+            public static bool operator ==(Completion? left, Completion? right)
+                => left?.Equals(right) ?? right is null;
+
+            public static bool operator !=(Completion? left, Completion? right)
+                => !(left == right);
+
+#nullable restore
+            #endregion
         }
 
         /// <summary>

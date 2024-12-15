@@ -189,5 +189,30 @@ namespace Lucene.Net.Index
         {
             return Field + ":" + Text;
         }
+
+        #region Operator overrides
+#nullable enable
+        // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+        public static bool operator <(Term? left, Term? right)
+            => left is null ? right is not null : left.CompareTo(right) < 0;
+
+        public static bool operator <=(Term? left, Term? right)
+            => left is null || left.CompareTo(right) <= 0;
+
+        public static bool operator >(Term? left, Term? right)
+            => left is not null && left.CompareTo(right) > 0;
+
+        public static bool operator >=(Term? left, Term? right)
+            => left is null ? right is null : left.CompareTo(right) >= 0;
+
+        public static bool operator ==(Term? left, Term? right)
+            => left?.Equals(right) ?? right is null;
+
+        public static bool operator !=(Term? left, Term? right)
+            => !(left == right);
+
+#nullable restore
+        #endregion
     }
 }

@@ -360,17 +360,45 @@ namespace Lucene.Net.Util.Automaton
             return s.id - id;
         }
 
-        // LUCENENET NOTE: DO NOT IMPLEMENT Equals()!!!
+        // LUCENENET NOTE: DO NOT IMPLEMENT Equals() with structural equality!!!
         // Although it doesn't match GetHashCode(), checking for
         // reference equality is by design.
         // Implementing Equals() causes difficult to diagnose
         // IndexOutOfRangeExceptions when using FuzzyTermsEnum.
         // See GH-296.
+        // Overriding here to prevent CS0660 warning due to defining the == operator.
+        // ReSharper disable once BaseObjectEqualsIsObjectEquals
+        public override bool Equals(object obj) => base.Equals(obj);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
             return id;
         }
+
+        #region Operator overrides
+#nullable enable
+        // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+        public static bool operator <(State? left, State? right)
+            => left is null ? right is not null : left.CompareTo(right) < 0;
+
+        public static bool operator <=(State? left, State? right)
+            => left is null || left.CompareTo(right) <= 0;
+
+        public static bool operator >(State? left, State? right)
+            => left is not null && left.CompareTo(right) > 0;
+
+        public static bool operator >=(State? left, State? right)
+            => left is null ? right is null : left.CompareTo(right) >= 0;
+
+        public static bool operator ==(State? left, State? right)
+            => left is null ? right is null : ReferenceEquals(left, right);
+
+        public static bool operator !=(State? left, State? right)
+            => !(left == right);
+
+#nullable restore
+        #endregion
     }
 }

@@ -400,6 +400,31 @@ namespace Lucene.Net.Util
             }
             return true;
         }
+
+        #region Operator overrides
+#nullable enable
+        // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+        public static bool operator <(BytesRef? left, BytesRef? right)
+            => left is null ? right is not null : left.CompareTo(right) < 0;
+
+        public static bool operator <=(BytesRef? left, BytesRef? right)
+            => left is null || left.CompareTo(right) <= 0;
+
+        public static bool operator >(BytesRef? left, BytesRef? right)
+            => left is not null && left.CompareTo(right) > 0;
+
+        public static bool operator >=(BytesRef? left, BytesRef? right)
+            => left is null ? right is null : left.CompareTo(right) >= 0;
+
+        public static bool operator ==(BytesRef? left, BytesRef? right)
+            => left?.Equals(right) ?? right is null;
+
+        public static bool operator !=(BytesRef? left, BytesRef? right)
+            => !(left == right);
+
+#nullable restore
+        #endregion
     }
 
     // LUCENENET: It is no longer good practice to use binary serialization.

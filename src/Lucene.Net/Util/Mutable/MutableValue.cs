@@ -61,8 +61,8 @@ namespace Lucene.Net.Util.Mutable
         }
 
 
-        // LUCENENET specific implementation, for use with FunctionFirstPassGroupingCollector 
-        // (note that IComparable<T> does not inherit IComparable, so we need to explicitly 
+        // LUCENENET specific implementation, for use with FunctionFirstPassGroupingCollector
+        // (note that IComparable<T> does not inherit IComparable, so we need to explicitly
         // implement here in order to support IComparable)
         public virtual int CompareTo(object other)
         {
@@ -82,7 +82,7 @@ namespace Lucene.Net.Util.Mutable
 
         public override bool Equals(object other)
         {
-            return (this.GetType() == other.GetType()) && this.EqualsSameType(other);
+            return this.GetType() == other?.GetType() && this.EqualsSameType(other);
         }
 
         public override abstract int GetHashCode();
@@ -91,5 +91,30 @@ namespace Lucene.Net.Util.Mutable
         {
             return Exists ? ToObject().ToString() : "(null)";
         }
+
+        #region Operator overrides
+#nullable enable
+        // LUCENENET specific - per csharpsquid:S1210, IComparable<T> should override comparison operators
+
+        public static bool operator <(MutableValue? left, MutableValue? right)
+            => left is null ? right is not null : left.CompareTo(right) < 0;
+
+        public static bool operator <=(MutableValue? left, MutableValue? right)
+            => left is null || left.CompareTo(right) <= 0;
+
+        public static bool operator >(MutableValue? left, MutableValue? right)
+            => left is not null && left.CompareTo(right) > 0;
+
+        public static bool operator >=(MutableValue? left, MutableValue? right)
+            => left is null ? right is null : left.CompareTo(right) >= 0;
+
+        public static bool operator ==(MutableValue? left, MutableValue? right)
+            => left?.Equals(right) ?? right is null;
+
+        public static bool operator !=(MutableValue? left, MutableValue? right)
+            => !(left == right);
+
+#nullable restore
+        #endregion
     }
 }
