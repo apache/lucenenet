@@ -34,7 +34,6 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    // ReSharper disable once RedundantExtendsListEntry
     public abstract class AbstractAllGroupsCollector<TGroupValue> : IAbstractAllGroupsCollector
     {
         /// <summary>
@@ -92,6 +91,9 @@ namespace Lucene.Net.Search.Grouping
 
         #region Explicit interface implementations
 
+        /// <summary>
+        /// LUCENENET specific method to provide an object-based implementation of <see cref="Groups"/>.
+        /// </summary>
         ICollection<object> IAbstractAllGroupsCollector.Groups => new CastingCollectionAdapter<TGroupValue, object>(Groups);
 
         #endregion
