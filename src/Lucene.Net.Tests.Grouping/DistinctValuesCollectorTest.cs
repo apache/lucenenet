@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.Grouping
             // === Search for content:random
             AbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, new Sort(), groupField, 10);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), firstCollector);
-            AbstractDistinctValuesCollector<AbstractDistinctValuesCollector.GroupCount<IComparable>, IComparable> distinctValuesCollector
+            AbstractDistinctValuesCollector<ComparableGroupCount, IComparable> distinctValuesCollector
                 = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), distinctValuesCollector);
 
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Grouping
 
                     AbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, groupSort, groupField, topN);
                     searcher.Search(new TermQuery(new Term("content", term)), firstCollector);
-                    AbstractDistinctValuesCollector<AbstractDistinctValuesCollector.GroupCount<IComparable>, IComparable> distinctValuesCollector
+                    AbstractDistinctValuesCollector<ComparableGroupCount, IComparable> distinctValuesCollector
                         = CreateDistinctCountCollector(firstCollector, groupField, countField, dvType);
                     searcher.Search(new TermQuery(new Term("content", term)), distinctValuesCollector);
 
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search.Grouping
         }
 
         // LUCENENET specific - wrapper class to adapt to a collector of IComparable group counts
-        private class ComparableDistinctValuesCollector<T, TGroupValue> : AbstractDistinctValuesCollector<AbstractDistinctValuesCollector.GroupCount<IComparable>, IComparable>
+        private class ComparableDistinctValuesCollector<T, TGroupValue> : AbstractDistinctValuesCollector<ComparableGroupCount, IComparable>
             where T : AbstractDistinctValuesCollector.GroupCount<TGroupValue>
             where TGroupValue : IComparable
         {
@@ -429,8 +429,8 @@ namespace Lucene.Net.Search.Grouping
                 this.wrapped = wrapped;
             }
 
-            public override IEnumerable<AbstractDistinctValuesCollector.GroupCount<IComparable>> Groups
-                => wrapped.Groups.Select(group => new ComparableGroupCount(group.GroupValue, group.UniqueValues.Cast<IComparable>()));
+            public override IList<ComparableGroupCount> Groups
+                => wrapped.Groups.Select(group => new ComparableGroupCount(group.GroupValue, new JCG.HashSet<IComparable>(group.UniqueValues.Cast<IComparable>()))).ToList();
 
             public override void Collect(int doc)
                 => wrapped.Collect(doc);
@@ -448,7 +448,7 @@ namespace Lucene.Net.Search.Grouping
         // LUCENENET specific - IComparable group count type
         private class ComparableGroupCount : AbstractDistinctValuesCollector.GroupCount<IComparable>
         {
-            public ComparableGroupCount(IComparable groupValue, IEnumerable<IComparable> uniqueValues)
+            public ComparableGroupCount(IComparable groupValue, ISet<IComparable> uniqueValues)
                 : base(groupValue)
             {
                 GroupValue = groupValue;
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        private AbstractDistinctValuesCollector<AbstractDistinctValuesCollector.GroupCount<IComparable>, IComparable> CreateDistinctCountCollector(AbstractFirstPassGroupingCollector<IComparable> firstPassGroupingCollector,
+        private AbstractDistinctValuesCollector<ComparableGroupCount, IComparable> CreateDistinctCountCollector(AbstractFirstPassGroupingCollector<IComparable> firstPassGroupingCollector,
                                                                             string groupField,
                                                                             string countField,
                                                                             DocValuesType dvType)
@@ -517,7 +517,7 @@ namespace Lucene.Net.Search.Grouping
                         GroupValue = groupValue,
                         SortValues = group.SortValues
                     };
-                });
+                }).ToList();
                 // LUCENENET specific - we have to wrap this due to generic type mismatch
                 var innerCollector = new TermDistinctValuesCollector(groupField, countField, bytesRefSearchGroups);
                 return new ComparableDistinctValuesCollector<TermDistinctValuesCollector.GroupCount, BytesRef>(innerCollector);
@@ -536,7 +536,7 @@ namespace Lucene.Net.Search.Grouping
                 this.wrapped = wrapped;
             }
 
-            public override IEnumerable<SearchGroup<IComparable>> GetTopGroups(int groupOffset, bool fillFields)
+            public override ICollection<SearchGroup<IComparable>> GetTopGroups(int groupOffset, bool fillFields)
             {
                 var result = wrapped.GetTopGroups(groupOffset, fillFields);
 
@@ -544,7 +544,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     GroupValue = group.GroupValue,
                     SortValues = group.SortValues
-                });
+                }).ToList();
             }
 
             public override void Collect(int doc)
@@ -618,7 +618,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     break;
                 }
-                ISet<BytesRef> uniqueValues = new JCG.HashSet<BytesRef>();
+                ISet<IComparable> uniqueValues = new JCG.HashSet<IComparable>();
                 foreach (string val in groupCounts[group])
                 {
                     uniqueValues.Add(val != null ? new BytesRef(val) : null);
