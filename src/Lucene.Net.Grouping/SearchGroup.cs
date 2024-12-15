@@ -30,7 +30,7 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public class SearchGroup<TGroupValue>
+    public class SearchGroup<TGroupValue> : ISearchGroup
     {
         /// <summary>
         /// The value that defines this group
@@ -79,6 +79,16 @@ namespace Lucene.Net.Search.Grouping
         {
             return GroupValue != null ? GroupValue.GetHashCode() : 0;
         }
+
+        #region Explicit interface implementations
+
+        object ISearchGroup.GroupValue
+        {
+            get => GroupValue;
+            set => GroupValue = (TGroupValue)value;
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -472,5 +482,16 @@ namespace Lucene.Net.Search.Grouping
                 return new GroupMerger<T>(groupSort).Merge(topGroups, offset, topN);
             }
         }
+    }
+
+    /// <summary>
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="SearchGroup{TGroupValue}"/>.
+    /// </summary>
+    public interface ISearchGroup
+    {
+        object GroupValue { get; set; }
+
+        object[] SortValues { get; set; }
     }
 }
