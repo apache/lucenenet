@@ -423,6 +423,12 @@ namespace Lucene.Net.Search.Grouping
 
         #region Explicit interface implementations
 
+        /// <summary>
+        /// LUCENENET specific method to provide an <see cref="ISearchGroup"/>-based implementation of <see cref="GetTopGroups(int, bool)"/>.
+        /// </summary>
+        /// <param name="groupOffset">The offset in the collected groups</param>
+        /// <param name="fillFields">Whether to fill to <see cref="ISearchGroup.SortValues"/></param>
+        /// <returns>top groups, starting from offset</returns>
         ICollection<ISearchGroup> IAbstractFirstPassGroupingCollector.GetTopGroups(int groupOffset, bool fillFields)
         {
             var topGroups = GetTopGroups(groupOffset, fillFields);

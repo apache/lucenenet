@@ -148,6 +148,11 @@ namespace Lucene.Net.Search.Grouping
 
         #region Explicit interface implementations
 
+        /// <summary>
+        /// LUCENENET specific method to provide an <see cref="ITopGroups"/>-based implementation of <see cref="GetTopGroups(int)"/>.
+        /// </summary>
+        /// <param name="withinGroupOffset">The offset within each group</param>
+        /// <returns>The top groups</returns>
         ITopGroups IAbstractSecondPassGroupingCollector.GetTopGroups(int withinGroupOffset)
             => GetTopGroups(withinGroupOffset);
 
