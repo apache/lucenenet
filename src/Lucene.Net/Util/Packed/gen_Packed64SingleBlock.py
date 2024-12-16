@@ -1,0 +1,338 @@
+#! /usr/bin/env python
+
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# ## LUCENENET PORTING NOTES
+# This script was originally written for Python 2, but has been tested against Python 3.
+# No changes were necessary to run this script in Python 3.
+
+SUPPORTED_BITS_PER_VALUE = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 21, 32]
+
+HEADER="""using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
+using System;
+using System.Runtime.CompilerServices;
+
+// This file has been automatically generated, DO NOT EDIT
+
+namespace Lucene.Net.Util.Packed
+{
+
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements. See the NOTICE file distributed with this
+     * work for additional information regarding copyright ownership. The ASF
+     * licenses this file to You under the Apache License, Version 2.0 (the
+     * "License"); you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+     * License for the specific language governing permissions and limitations under
+     * the License.
+     */
+
+    using DataInput = Lucene.Net.Store.DataInput;
+
+    /// <summary>
+    /// This class is similar to <see cref="Packed64"/> except that it trades space for
+    /// speed by ensuring that a single block needs to be read/written in order to
+    /// read/write a value.
+    /// </summary>
+    internal abstract class Packed64SingleBlock : PackedInt32s.MutableImpl
+    {
+        public const int MAX_SUPPORTED_BITS_PER_VALUE = %d;
+        private static readonly int[] SUPPORTED_BITS_PER_VALUE = new int[] { %s };
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsSupported(int bitsPerValue)
+        {
+            return Array.BinarySearch(SUPPORTED_BITS_PER_VALUE, bitsPerValue) >= 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int RequiredCapacity(int valueCount, int valuesPerBlock)
+        {
+            return valueCount / valuesPerBlock + (valueCount %% valuesPerBlock == 0 ? 0 : 1);
+        }
+
+        internal readonly long[] blocks;
+
+        private protected Packed64SingleBlock(int valueCount, int bitsPerValue) // LUCENENET: Changed from internal to private protected
+            : base(valueCount, bitsPerValue)
+        {
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsSupported(bitsPerValue));
+            int valuesPerBlock = 64 / bitsPerValue;
+            blocks = new long[RequiredCapacity(valueCount, valuesPerBlock)];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override void Clear()
+        {
+            Arrays.Fill(blocks, 0L);
+        }
+
+        public override long RamBytesUsed()
+        {
+            return RamUsageEstimator.AlignObjectSize(
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
+                + 2 * RamUsageEstimator.NUM_BYTES_INT32     // valueCount,bitsPerValue
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref
+                + RamUsageEstimator.SizeOf(blocks);
+        }
+
+        public override int Get(int index, long[] arr, int off, int len)
+        {
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
+                Debugging.Assert(index >= 0 && index < m_valueCount);
+            }
+            len = Math.Min(len, m_valueCount - index);
+            if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
+
+            int originalIndex = index;
+
+            // go to the next block boundary
+            int valuesPerBlock = 64 / m_bitsPerValue;
+            int offsetInBlock = index %% valuesPerBlock;
+            if (offsetInBlock != 0)
+            {
+                for (int i = offsetInBlock; i < valuesPerBlock && len > 0; ++i)
+                {
+                    arr[off++] = Get(index++);
+                    --len;
+                }
+                if (len == 0)
+                {
+                    return index - originalIndex;
+                }
+            }
+
+            // bulk get
+            if (Debugging.AssertsEnabled) Debugging.Assert(index %% valuesPerBlock == 0);
+            PackedInt32s.IDecoder decoder = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(decoder.Int64BlockCount == 1);
+                Debugging.Assert(decoder.Int64ValueCount == valuesPerBlock);
+            }
+            int blockIndex = index / valuesPerBlock;
+            int nblocks = (index + len) / valuesPerBlock - blockIndex;
+            decoder.Decode(blocks, blockIndex, arr, off, nblocks);
+            int diff = nblocks * valuesPerBlock;
+            index += diff; len -= diff;
+
+            if (index > originalIndex)
+            {
+                // stay at the block boundary
+                return index - originalIndex;
+            }
+            else
+            {
+                // no progress so far => already at a block boundary but no full block to
+                // get
+                if (Debugging.AssertsEnabled) Debugging.Assert(index == originalIndex);
+                return base.Get(index, arr, off, len);
+            }
+        }
+
+        public override int Set(int index, long[] arr, int off, int len)
+        {
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
+                Debugging.Assert(index >= 0 && index < m_valueCount);
+            }
+            len = Math.Min(len, m_valueCount - index);
+            if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
+
+            int originalIndex = index;
+
+            // go to the next block boundary
+            int valuesPerBlock = 64 / m_bitsPerValue;
+            int offsetInBlock = index %% valuesPerBlock;
+            if (offsetInBlock != 0)
+            {
+                for (int i = offsetInBlock; i < valuesPerBlock && len > 0; ++i)
+                {
+                    Set(index++, arr[off++]);
+                    --len;
+                }
+                if (len == 0)
+                {
+                    return index - originalIndex;
+                }
+            }
+
+            // bulk set
+            if (Debugging.AssertsEnabled) Debugging.Assert(index %% valuesPerBlock == 0);
+            BulkOperation op = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
+            if (Debugging.AssertsEnabled) Debugging.Assert(op.Int64BlockCount == 1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(op.Int64ValueCount == valuesPerBlock);
+            int blockIndex = index / valuesPerBlock;
+            int nblocks = (index + len) / valuesPerBlock - blockIndex;
+            op.Encode(arr, off, blocks, blockIndex, nblocks);
+            int diff = nblocks * valuesPerBlock;
+            index += diff; len -= diff;
+
+            if (index > originalIndex)
+            {
+                // stay at the block boundary
+                return index - originalIndex;
+            }
+            else
+            {
+                // no progress so far => already at a block boundary but no full block to
+                // set
+                if (Debugging.AssertsEnabled) Debugging.Assert(index == originalIndex);
+                return base.Set(index, arr, off, len);
+            }
+        }
+
+        public override void Fill(int fromIndex, int toIndex, long val)
+        {
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(fromIndex >= 0);
+                Debugging.Assert(fromIndex <= toIndex);
+                Debugging.Assert(PackedInt32s.BitsRequired(val) <= m_bitsPerValue);
+            }
+
+            int valuesPerBlock = 64 / m_bitsPerValue;
+            if (toIndex - fromIndex <= valuesPerBlock << 1)
+            {
+                // there needs to be at least one full block to set for the block
+                // approach to be worth trying
+                base.Fill(fromIndex, toIndex, val);
+                return;
+            }
+
+            // set values naively until the next block start
+            int fromOffsetInBlock = fromIndex %% valuesPerBlock;
+            if (fromOffsetInBlock != 0)
+            {
+                for (int i = fromOffsetInBlock; i < valuesPerBlock; ++i)
+                {
+                    Set(fromIndex++, val);
+                }
+                if (Debugging.AssertsEnabled) Debugging.Assert(fromIndex %% valuesPerBlock == 0);
+            }
+
+            // bulk set of the inner blocks
+            int fromBlock = fromIndex / valuesPerBlock;
+            int toBlock = toIndex / valuesPerBlock;
+            if (Debugging.AssertsEnabled) Debugging.Assert(fromBlock * valuesPerBlock == fromIndex);
+
+            long blockValue = 0L;
+            for (int i = 0; i < valuesPerBlock; ++i)
+            {
+                blockValue |= (val << (i * m_bitsPerValue));
+            }
+            Arrays.Fill(blocks, fromBlock, toBlock, blockValue);
+
+            // fill the gap
+            for (int i = valuesPerBlock * toBlock; i < toIndex; ++i)
+            {
+                Set(i, val);
+            }
+        }
+
+        internal override PackedInt32s.Format Format => PackedInt32s.Format.PACKED_SINGLE_BLOCK;
+
+        public override string ToString()
+        {
+            return this.GetType().Name + "(bitsPerValue=" + m_bitsPerValue + ", size=" + Count + ", elements.length=" + blocks.Length + ")";
+        }
+
+        public static Packed64SingleBlock Create(DataInput @in, int valueCount, int bitsPerValue)
+        {
+            Packed64SingleBlock reader = Create(valueCount, bitsPerValue);
+            for (int i = 0; i < reader.blocks.Length; ++i)
+            {
+                reader.blocks[i] = @in.ReadInt64();
+            }
+            return reader;
+        }
+
+""" %(SUPPORTED_BITS_PER_VALUE[-1], ", ".join(map(str, SUPPORTED_BITS_PER_VALUE)))
+
+### LUCENENET specific - add namespace closing brace and EOF newline too
+FOOTER = "    }\n}\n"
+
+if __name__ == '__main__':
+
+  f = open("Packed64SingleBlock.cs", 'w')
+  f.write(HEADER)
+  f.write("        public static Packed64SingleBlock Create(int valueCount, int bitsPerValue)\n")
+  f.write("        {\n")
+  f.write("            switch (bitsPerValue)\n")
+  f.write("            {\n")
+  for bpv in SUPPORTED_BITS_PER_VALUE:
+    f.write("                case %d:\n" %bpv)
+    f.write("                    return new Packed64SingleBlock%d(valueCount);\n" %bpv)
+  f.write("                default:\n")
+  f.write("                    throw new ArgumentException(\"Unsupported number of bits per value: \" + %d);\n" %bpv) # LUCENENET NOTE: suspicious/incorrect use of range variable, but porting as-is
+  f.write("            }\n")
+  f.write("        }\n\n")
+
+  for bpv in SUPPORTED_BITS_PER_VALUE:
+    log_2 = 0
+    while (1 << log_2) < bpv:
+      log_2 = log_2 + 1
+    if (1 << log_2) != bpv:
+      log_2 = None
+
+    f.write("        internal class Packed64SingleBlock%d : Packed64SingleBlock\n" %bpv)
+    f.write("        {\n")
+
+    f.write("            internal Packed64SingleBlock%d(int valueCount)\n" %bpv)
+    f.write("                : base(valueCount, %d)\n" %bpv)
+    f.write("            {\n")
+    f.write("            }\n\n")
+
+    f.write("            public override long Get(int index)\n")
+    f.write("            {\n")
+    if log_2 is not None:
+      f.write("                int o = index >>> %d;\n" %(6 - log_2))
+      f.write("                int b = index & %d;\n" %((1 << (6 - log_2)) - 1))
+      f.write("                int shift = b << %d;\n" %log_2)
+    else:
+      f.write("                int o = index / %d;\n" %(64 / bpv))
+      f.write("                int b = index %% %d;\n" %(64 / bpv))
+      f.write("                int shift = b * %d;\n" %bpv)
+    f.write("                return (blocks[o] >>> shift) & %dL;\n" %((1 << bpv) - 1))
+    f.write("            }\n\n")
+
+    f.write("            public override void Set(int index, long value)\n")
+    f.write("            {\n")
+    if log_2 is not None:
+      f.write("                int o = index >>> %d;\n" %(6 - log_2))
+      f.write("                int b = index & %d;\n" %((1 << (6 - log_2)) - 1))
+      f.write("                int shift = b << %d;\n" %log_2)
+    else:
+      f.write("                int o = index / %d;\n" %(64 / bpv))
+      f.write("                int b = index %% %d;\n" %(64 / bpv))
+      f.write("                int shift = b * %d;\n" %bpv)
+    f.write("                blocks[o] = (blocks[o] & ~(%dL << shift)) | (value << shift);\n" % ((1 << bpv) - 1))
+    f.write("            }\n")
+    f.write("        }\n\n")
+
+  f.write(FOOTER)
+  f.close()
