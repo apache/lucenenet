@@ -1,4 +1,4 @@
-﻿// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Util.Packed
                 long block = blocks[blocksOffset++];
                 for (int shift = 63; shift >= 0; shift -= 1)
                 {
-                    values[valuesOffset++] = (int)((block >>> shift) & 1);
+                    values[valuesOffset++] = (int) ((block >>> shift) & 1);
                 }
             }
         }
@@ -45,7 +45,7 @@ namespace Lucene.Net.Util.Packed
         {
             for (int j = 0; j < iterations; ++j)
             {
-                var block = blocks[blocksOffset++];
+                byte block = blocks[blocksOffset++];
                 values[valuesOffset++] = (block >>> 7) & 1;
                 values[valuesOffset++] = (block >>> 6) & 1;
                 values[valuesOffset++] = (block >>> 5) & 1;
@@ -56,7 +56,6 @@ namespace Lucene.Net.Util.Packed
                 values[valuesOffset++] = block & 1;
             }
         }
-
         public override void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             for (int i = 0; i < iterations; ++i)
@@ -64,7 +63,7 @@ namespace Lucene.Net.Util.Packed
                 long block = blocks[blocksOffset++];
                 for (int shift = 63; shift >= 0; shift -= 1)
                 {
-                    values[valuesOffset++] = ((block >>> shift)) & 1;
+                    values[valuesOffset++] = (block >>> shift) & 1;
                 }
             }
         }
@@ -73,7 +72,7 @@ namespace Lucene.Net.Util.Packed
         {
             for (int j = 0; j < iterations; ++j)
             {
-                var block = blocks[blocksOffset++];
+                byte block = blocks[blocksOffset++];
                 values[valuesOffset++] = (block >>> 7) & 1;
                 values[valuesOffset++] = (block >>> 6) & 1;
                 values[valuesOffset++] = (block >>> 5) & 1;

@@ -1,4 +1,4 @@
-﻿// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
@@ -34,16 +34,16 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < iterations; ++i)
             {
                 long block0 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(block0 >>> 40);
-                values[valuesOffset++] = (int)((block0 >>> 16) & 16777215L);
+                values[valuesOffset++] = (int) (block0 >>> 40);
+                values[valuesOffset++] = (int) ((block0 >>> 16) & 16777215L);
                 long block1 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(((block0 & 65535L) << 8) | (block1 >>> 56));
-                values[valuesOffset++] = (int)((block1 >>> 32) & 16777215L);
-                values[valuesOffset++] = (int)((block1 >>> 8) & 16777215L);
+                values[valuesOffset++] = (int) (((block0 & 65535L) << 8) | (block1 >>> 56));
+                values[valuesOffset++] = (int) ((block1 >>> 32) & 16777215L);
+                values[valuesOffset++] = (int) ((block1 >>> 8) & 16777215L);
                 long block2 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(((block1 & 255L) << 16) | (block2 >>> 48));
-                values[valuesOffset++] = (int)((block2 >>> 24) & 16777215L);
-                values[valuesOffset++] = (int)(block2 & 16777215L);
+                values[valuesOffset++] = (int) (((block1 & 255L) << 16) | (block2 >>> 48));
+                values[valuesOffset++] = (int) ((block2 >>> 24) & 16777215L);
+                values[valuesOffset++] = (int) (block2 & 16777215L);
             }
         }
 
@@ -57,7 +57,6 @@ namespace Lucene.Net.Util.Packed
                 values[valuesOffset++] = (byte0 << 16) | (byte1 << 8) | byte2;
             }
         }
-
         public override void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             for (int i = 0; i < iterations; ++i)

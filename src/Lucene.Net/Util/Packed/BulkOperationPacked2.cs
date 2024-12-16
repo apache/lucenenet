@@ -1,4 +1,4 @@
-﻿// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Util.Packed
                 long block = blocks[blocksOffset++];
                 for (int shift = 62; shift >= 0; shift -= 2)
                 {
-                    values[valuesOffset++] = (int)((block >>> shift) & 3);
+                    values[valuesOffset++] = (int) ((block >>> shift) & 3);
                 }
             }
         }
@@ -45,14 +45,13 @@ namespace Lucene.Net.Util.Packed
         {
             for (int j = 0; j < iterations; ++j)
             {
-                var block = blocks[blocksOffset++];
+                byte block = blocks[blocksOffset++];
                 values[valuesOffset++] = (block >>> 6) & 3;
                 values[valuesOffset++] = (block >>> 4) & 3;
                 values[valuesOffset++] = (block >>> 2) & 3;
                 values[valuesOffset++] = block & 3;
             }
         }
-
         public override void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             for (int i = 0; i < iterations; ++i)
@@ -69,7 +68,7 @@ namespace Lucene.Net.Util.Packed
         {
             for (int j = 0; j < iterations; ++j)
             {
-                var block = blocks[blocksOffset++];
+                byte block = blocks[blocksOffset++];
                 values[valuesOffset++] = (block >>> 6) & 3;
                 values[valuesOffset++] = (block >>> 4) & 3;
                 values[valuesOffset++] = (block >>> 2) & 3;

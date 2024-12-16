@@ -1,0 +1,414 @@
+#! /usr/bin/env python
+
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# ## LUCENENET PORTING NOTES
+# This script was originally written for Python 2, but has been modified to work with Python 3.
+# It is noted below where changes were made to support Python 3.
+# Some of the changes have been backported from newer versions of Lucene,
+# so when upgrading this script in the future, feel free to remove those comments.
+
+# LUCENENET backport - Python 3 support (lucene 945b1cb)
+try:
+  # python 3.9+
+  from math import gcd
+except ImportError:
+  # old python
+  from fractions import gcd
+
+"""Code generation for bulk operations"""
+
+MAX_SPECIALIZED_BITS_PER_VALUE = 24
+PACKED_64_SINGLE_BLOCK_BPV = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 21, 32]
+OUTPUT_FILE = "BulkOperation.cs"
+
+# LUCENENET specific - we write the usings before the header, since
+# the numbered files don't need them
+HEADER = """// This file has been automatically generated, DO NOT EDIT
+
+namespace Lucene.Net.Util.Packed
+{
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
+"""
+
+FOOTER="""
+        /// <summary>
+        /// NOTE: This was writeLong() in Lucene.
+        /// </summary>
+        protected virtual int WriteInt64(long block, byte[] blocks, int blocksOffset)
+        {
+            for (int j = 1; j <= 8; ++j)
+            {
+                blocks[blocksOffset++] = (byte)(block >>> (64 - (j << 3)));
+            }
+            return blocksOffset;
+        }
+
+        /// <summary>
+        /// For every number of bits per value, there is a minimum number of
+        /// blocks (b) / values (v) you need to write in order to reach the next block
+        /// boundary:
+        ///  - 16 bits per value -> b=2, v=1
+        ///  - 24 bits per value -> b=3, v=1
+        ///  - 50 bits per value -> b=25, v=4
+        ///  - 63 bits per value -> b=63, v=8
+        ///  - ...
+        /// <para/>
+        /// A bulk read consists in copying <c>iterations*v</c> values that are
+        /// contained in <c>iterations*b</c> blocks into a <c>long[]</c>
+        /// (higher values of <c>iterations</c> are likely to yield a better
+        /// throughput) => this requires n * (b + 8v) bytes of memory.
+        /// <para/>
+        /// This method computes <c>iterations</c> as
+        /// <c>ramBudget / (b + 8v)</c> (since a long is 8 bytes).
+        /// </summary>
+        public int ComputeIterations(int valueCount, int ramBudget)
+        {
+            int iterations = ramBudget / (ByteBlockCount + 8 * ByteValueCount);
+            if (iterations == 0)
+            {
+                // at least 1
+                return 1;
+            }
+            else if ((iterations - 1) * ByteValueCount >= valueCount)
+            {
+                // don't allocate for more than the size of the reader
+                return (int)Math.Ceiling((double)valueCount / ByteValueCount);
+            }
+            else
+            {
+                return iterations;
+            }
+        }
+    }
+}
+"""
+
+def is_power_of_two(n):
+  return n & (n - 1) == 0
+
+def casts(typ):
+  cast_start = "(%s) (" %typ
+  cast_end = ")"
+  if typ == "long":
+    cast_start = ""
+    cast_end = ""
+  return cast_start, cast_end
+
+def hexNoLSuffix(n):
+  # On 32 bit Python values > (1 << 31)-1 will have L appended by hex function:
+  s = hex(n)
+  if s.endswith('L'):
+    s = s[:-1]
+  return s
+
+def masks(bits):
+  if bits == 64:
+    return "", ""
+  return "(", " & %sL)" %(hexNoLSuffix((1 << bits) - 1))
+
+def get_type(bits):
+  if bits == 8:
+    return "byte"
+  elif bits == 16:
+    return "short"
+  elif bits == 32:
+    return "int"
+  elif bits == 64:
+    return "long"
+  else:
+    assert False
+
+def block_value_count(bpv, bits=64):
+  blocks = bpv
+  values = blocks * bits // bpv # LUCENENET backport - Python 3 support (lucene 9302eee)
+  while blocks % 2 == 0 and values % 2 == 0:
+    blocks //= 2 # LUCENENET backport - Python 3 support (lucene 9302eee)
+    values //= 2 # LUCENENET backport - Python 3 support (lucene 9302eee)
+  assert values * bpv == bits * blocks, "%d values, %d blocks, %d bits per value" %(values, blocks, bpv)
+  return (blocks, values)
+
+def packed64(bpv, f):
+  mask = (1 << bpv) - 1
+
+  #f.write("\n") // LUCENENET: Not needed
+  f.write("        public BulkOperationPacked%d()\n" %bpv)
+  f.write("            : base(%d)\n" %bpv)
+  f.write("        {\n")
+  f.write("        }\n\n")
+
+  if bpv == 64:
+    # LUCENENET NOTE - these don't seem to be used?
+    f.write("""        public override void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
+        {
+            Array.Copy(blocks, blocksOffset, values, valuesOffset, valueCount() * iterations);
+        }
+
+        public override void Decode(long[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void Decode(byte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void Decode(byte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
+        {
+            LongBuffer.wrap(values, valuesOffset, iterations * valueCount()).put(ByteBuffer.wrap(blocks, blocksOffset, 8 * iterations * blockCount()).asLongBuffer());
+        }
+""")
+  else:
+    p64_decode(bpv, f, 32)
+    p64_decode(bpv, f, 64)
+
+def p64_decode(bpv, f, bits):
+  blocks, values = block_value_count(bpv)
+  typ = get_type(bits)
+  cast_start, cast_end = casts(typ)
+
+  f.write("        public override void Decode(long[] blocks, int blocksOffset, %s[] values, int valuesOffset, int iterations)\n" %typ)
+  f.write("        {\n")
+  if bits < bpv:
+    f.write("            throw new NotSupportedException();\n")
+  else:
+    f.write("            for (int i = 0; i < iterations; ++i)\n")
+    f.write("            {\n")
+    mask = (1 << bpv) - 1
+
+    if is_power_of_two(bpv):
+      f.write("                long block = blocks[blocksOffset++];\n")
+      f.write("                for (int shift = %d; shift >= 0; shift -= %d)\n" %(64 - bpv, bpv))
+      f.write("                {\n")
+      f.write("                    values[valuesOffset++] = %s(block >>> shift) & %d%s;\n" %(cast_start, mask, cast_end))
+      f.write("                }\n")
+    else:
+      for i in range(0, values): # LUCENENET backport - Python 3 support (lucene 9302eee)
+        block_offset = i * bpv // 64 # LUCENENET backport - Python 3 support (lucene 9302eee)
+        bit_offset = (i * bpv) % 64
+        if bit_offset == 0:
+          # start of block
+          f.write("                long block%d = blocks[blocksOffset++];\n" %block_offset)
+          f.write("                values[valuesOffset++] = %sblock%d >>> %d%s;\n" %(cast_start, block_offset, 64 - bpv, cast_end))
+        elif bit_offset + bpv == 64:
+          # end of block
+          f.write("                values[valuesOffset++] = %sblock%d & %dL%s;\n" %(cast_start, block_offset, mask, cast_end))
+        elif bit_offset + bpv < 64:
+          # middle of block
+          f.write("                values[valuesOffset++] = %s(block%d >>> %d) & %dL%s;\n" %(cast_start, block_offset, 64 - bit_offset - bpv, mask, cast_end))
+        else:
+          # value spans across 2 blocks
+          mask1 = (1 << (64 - bit_offset)) -1
+          shift1 = bit_offset + bpv - 64
+          shift2 = 64 - shift1
+          f.write("                long block%d = blocks[blocksOffset++];\n" %(block_offset + 1))
+          f.write("                values[valuesOffset++] = %s((block%d & %dL) << %d) | (block%d >>> %d)%s;\n" %(cast_start, block_offset, mask1, shift1, block_offset + 1, shift2, cast_end))
+    f.write("            }\n")
+  f.write("        }\n\n")
+
+  byte_blocks, byte_values = block_value_count(bpv, 8)
+
+  f.write("        public override void Decode(byte[] blocks, int blocksOffset, %s[] values, int valuesOffset, int iterations)\n" %typ)
+  f.write("        {\n")
+  if bits < bpv:
+    f.write("            throw new NotSupportedException();\n")
+  else:
+    if is_power_of_two(bpv) and bpv < 8:
+      f.write("            for (int j = 0; j < iterations; ++j)\n")
+      f.write("            {\n")
+      f.write("                byte block = blocks[blocksOffset++];\n")
+      for shift in range(8 - bpv, 0, -bpv): # LUCENENET backport - Python 3 support (lucene 9302eee)
+        f.write("                values[valuesOffset++] = (block >>> %d) & %d;\n" %(shift, mask))
+      f.write("                values[valuesOffset++] = block & %d;\n" %mask)
+      f.write("            }\n")
+    elif bpv == 8:
+      f.write("            for (int j = 0; j < iterations; ++j)\n")
+      f.write("            {\n")
+      f.write("                values[valuesOffset++] = blocks[blocksOffset++] & 0xFF;\n")
+      f.write("            }\n")
+    elif is_power_of_two(bpv) and bpv > 8:
+      f.write("            for (int j = 0; j < iterations; ++j)\n")
+      f.write("            {\n")
+      m = bits <= 32 and "0xFF" or "0xFFL"
+      f.write("                values[valuesOffset++] =")
+      for i in range(bpv // 8 - 1): # LUCENENET backport - Python 3 support (lucene 9302eee)
+        f.write(" ((blocks[blocksOffset++] & %s) << %d) |" %(m, bpv - 8))
+      f.write(" (blocks[blocksOffset++] & %s);\n" %m)
+      f.write("            }\n")
+    else:
+      f.write("            for (int i = 0; i < iterations; ++i)\n")
+      f.write("            {\n")
+      for i in range(0, byte_values): # LUCENENET backport - Python 3 support (lucene 9302eee)
+        byte_start = i * bpv // 8 # LUCENENET backport - Python 3 support (lucene 9302eee)
+        bit_start = (i * bpv) % 8
+        byte_end = ((i + 1) * bpv - 1) // 8 # LUCENENET backport - Python 3 support (lucene 9302eee)
+        bit_end = ((i + 1) * bpv - 1) % 8
+        shift = lambda b: 8 * (byte_end - b - 1) + 1 + bit_end
+        if bit_start == 0:
+          f.write("                %s byte%d = blocks[blocksOffset++] & 0xFF;\n" %(typ, byte_start))
+        for b in range(byte_start + 1, byte_end + 1): # LUCENENET backport - Python 3 support (lucene 9302eee)
+          f.write("                %s byte%d = blocks[blocksOffset++] & 0xFF;\n" %(typ, b))
+        f.write("                values[valuesOffset++] =")
+        if byte_start == byte_end:
+          if bit_start == 0:
+            if bit_end == 7:
+              f.write(" byte%d" %byte_start)
+            else:
+              f.write(" byte%d >>> %d" %(byte_start, 7 - bit_end))
+          else:
+            if bit_end == 7:
+              f.write(" byte%d & %d" %(byte_start, 2 ** (8 - bit_start) - 1))
+            else:
+              f.write(" (byte%d >>> %d) & %d" %(byte_start, 7 - bit_end, 2 ** (bit_end - bit_start + 1) - 1))
+        else:
+          if bit_start == 0:
+            f.write(" (byte%d << %d)" %(byte_start, shift(byte_start)))
+          else:
+            f.write(" ((byte%d & %d) << %d)" %(byte_start, 2 ** (8 - bit_start) - 1, shift(byte_start)))
+          for b in range(byte_start + 1, byte_end): # LUCENENET backport - Python 3 support (lucene 9302eee)
+            f.write(" | (byte%d << %d)" %(b, shift(b)))
+          if bit_end == 7:
+            f.write(" | byte%d" %byte_end)
+          else:
+            f.write(" | (byte%d >>> %d)" %(byte_end, 7 - bit_end))
+        f.write(";\n")
+      f.write("            }\n")
+  f.write("        }\n") # LUCENENET specific - removed extra newline
+
+if __name__ == '__main__':
+  f = open(OUTPUT_FILE, 'w')
+
+  # LUCENENET specific - we write the usings before the header, see top of file
+  f.write('using Lucene.Net.Diagnostics;\n')
+  f.write('using System;\n\n')
+
+  f.write(HEADER)
+  #f.write('\n') // LUCENENET: Not needed
+  f.write('''    /// <summary>
+    /// Efficient sequential read/write of packed integers.
+    /// </summary>\n''')
+
+  f.write('    internal abstract class BulkOperation : PackedInt32s.IDecoder, PackedInt32s.IEncoder\n')
+  f.write('    {')
+
+  # LUCENENET specific - write abstract methods
+  f.write("""
+        public abstract void Encode(int[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations);
+
+        public abstract void Encode(int[] values, int valuesOffset, long[] blocks, int blocksOffset, int iterations);
+
+        public abstract void Encode(long[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations);
+
+        public abstract void Encode(long[] values, int valuesOffset, long[] blocks, int blocksOffset, int iterations);
+
+        public abstract void Decode(byte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations);
+
+        public abstract void Decode(long[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations);
+
+        public abstract void Decode(byte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations);
+
+        public abstract void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations);
+
+        public abstract int ByteValueCount { get; }
+
+        public abstract int ByteBlockCount { get; }
+
+        /// <summary>
+        /// NOTE: This was longValueCount() in Lucene.
+        /// </summary>
+        public abstract int Int64ValueCount { get; }
+
+        /// <summary>
+        /// NOTE: This was longBlockCount() in Lucene.
+        /// </summary>
+        public abstract int Int64BlockCount { get; }
+
+""")
+
+  f.write('        private static readonly BulkOperation[] packedBulkOps = new BulkOperation[] {\n')
+
+  for bpv in range(1, 65): # LUCENENET backport - Python 3 support (lucene 9302eee)
+    if bpv > MAX_SPECIALIZED_BITS_PER_VALUE:
+      f.write('            new BulkOperationPacked(%d),\n' % bpv)
+      continue
+    f2 = open('BulkOperationPacked%d.cs' % bpv, 'w')
+    f2.write(HEADER)
+    if bpv == 64:
+      # LUCENENET NOTE - these don't seem to be used?
+      f2.write('//import java.nio.LongBuffer;\n')
+      f2.write('//import java.nio.ByteBuffer;\n')
+      f2.write('\n')
+    f2.write('''    /// <summary>
+    /// Efficient sequential read/write of packed integers.
+    /// </summary>\n''')
+    f2.write('    internal sealed class BulkOperationPacked%d : BulkOperationPacked\n' % bpv)
+    f2.write('    {\n')
+    packed64(bpv, f2)
+    f2.write('    }\n')
+    f2.write('}\n')
+    f2.close()
+    f.write('            new BulkOperationPacked%d(),\n' % bpv)
+
+  f.write('        };\n')
+  f.write('\n')
+
+  f.write('        // NOTE: this is sparse (some entries are null):\n')
+  f.write('        private static readonly BulkOperation[] packedSingleBlockBulkOps = new BulkOperation[] {\n')
+  for bpv in range(1, max(PACKED_64_SINGLE_BLOCK_BPV)+1): # LUCENENET backport - Python 3 support (lucene 9302eee)
+    if bpv in PACKED_64_SINGLE_BLOCK_BPV:
+      f.write('            new BulkOperationPackedSingleBlock(%d),\n' % bpv)
+    else:
+      f.write('            null,\n')
+  f.write('        };\n')
+  f.write('\n')
+
+  f.write("\n")
+  f.write("        public static BulkOperation Of(PackedInt32s.Format format, int bitsPerValue)\n")
+  f.write("        {\n")
+  f.write("            if (format == PackedInt32s.Format.PACKED)\n")
+  f.write("            {\n")
+  f.write("                if (Debugging.AssertsEnabled) Debugging.Assert(packedBulkOps[bitsPerValue - 1] != null);\n")
+  f.write("                return packedBulkOps[bitsPerValue - 1];\n")
+  f.write("            }\n")
+  f.write("            else if (format == PackedInt32s.Format.PACKED_SINGLE_BLOCK)\n")
+  f.write("            {\n")
+  f.write("                if (Debugging.AssertsEnabled) Debugging.Assert(packedSingleBlockBulkOps[bitsPerValue - 1] != null);\n")
+  f.write("                return packedSingleBlockBulkOps[bitsPerValue - 1];\n")
+  f.write("            }\n")
+  f.write("            else\n")
+  f.write("            {\n")
+  f.write("                throw AssertionError.Create();\n")
+  f.write("            }\n")
+  f.write("        }\n")
+  f.write(FOOTER)
+  f.close()

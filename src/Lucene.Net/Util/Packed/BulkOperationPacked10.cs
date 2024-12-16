@@ -1,4 +1,4 @@
-﻿// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
@@ -34,42 +34,42 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < iterations; ++i)
             {
                 long block0 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(block0 >>> 54);
-                values[valuesOffset++] = (int)((block0 >>> 44) & 1023L);
-                values[valuesOffset++] = (int)((block0 >>> 34) & 1023L);
-                values[valuesOffset++] = (int)((block0 >>> 24) & 1023L);
-                values[valuesOffset++] = (int)((block0 >>> 14) & 1023L);
-                values[valuesOffset++] = (int)((block0 >>> 4) & 1023L);
+                values[valuesOffset++] = (int) (block0 >>> 54);
+                values[valuesOffset++] = (int) ((block0 >>> 44) & 1023L);
+                values[valuesOffset++] = (int) ((block0 >>> 34) & 1023L);
+                values[valuesOffset++] = (int) ((block0 >>> 24) & 1023L);
+                values[valuesOffset++] = (int) ((block0 >>> 14) & 1023L);
+                values[valuesOffset++] = (int) ((block0 >>> 4) & 1023L);
                 long block1 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(((block0 & 15L) << 6) | (block1 >>> 58));
-                values[valuesOffset++] = (int)((block1 >>> 48) & 1023L);
-                values[valuesOffset++] = (int)((block1 >>> 38) & 1023L);
-                values[valuesOffset++] = (int)((block1 >>> 28) & 1023L);
-                values[valuesOffset++] = (int)((block1 >>> 18) & 1023L);
-                values[valuesOffset++] = (int)((block1 >>> 8) & 1023L);
+                values[valuesOffset++] = (int) (((block0 & 15L) << 6) | (block1 >>> 58));
+                values[valuesOffset++] = (int) ((block1 >>> 48) & 1023L);
+                values[valuesOffset++] = (int) ((block1 >>> 38) & 1023L);
+                values[valuesOffset++] = (int) ((block1 >>> 28) & 1023L);
+                values[valuesOffset++] = (int) ((block1 >>> 18) & 1023L);
+                values[valuesOffset++] = (int) ((block1 >>> 8) & 1023L);
                 long block2 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(((block1 & 255L) << 2) | (block2 >>> 62));
-                values[valuesOffset++] = (int)((block2 >>> 52) & 1023L);
-                values[valuesOffset++] = (int)((block2 >>> 42) & 1023L);
-                values[valuesOffset++] = (int)((block2 >>> 32) & 1023L);
-                values[valuesOffset++] = (int)((block2 >>> 22) & 1023L);
-                values[valuesOffset++] = (int)((block2 >>> 12) & 1023L);
-                values[valuesOffset++] = (int)((block2 >>> 2) & 1023L);
+                values[valuesOffset++] = (int) (((block1 & 255L) << 2) | (block2 >>> 62));
+                values[valuesOffset++] = (int) ((block2 >>> 52) & 1023L);
+                values[valuesOffset++] = (int) ((block2 >>> 42) & 1023L);
+                values[valuesOffset++] = (int) ((block2 >>> 32) & 1023L);
+                values[valuesOffset++] = (int) ((block2 >>> 22) & 1023L);
+                values[valuesOffset++] = (int) ((block2 >>> 12) & 1023L);
+                values[valuesOffset++] = (int) ((block2 >>> 2) & 1023L);
                 long block3 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(((block2 & 3L) << 8) | (block3 >>> 56));
-                values[valuesOffset++] = (int)((block3 >>> 46) & 1023L);
-                values[valuesOffset++] = (int)((block3 >>> 36) & 1023L);
-                values[valuesOffset++] = (int)((block3 >>> 26) & 1023L);
-                values[valuesOffset++] = (int)((block3 >>> 16) & 1023L);
-                values[valuesOffset++] = (int)((block3 >>> 6) & 1023L);
+                values[valuesOffset++] = (int) (((block2 & 3L) << 8) | (block3 >>> 56));
+                values[valuesOffset++] = (int) ((block3 >>> 46) & 1023L);
+                values[valuesOffset++] = (int) ((block3 >>> 36) & 1023L);
+                values[valuesOffset++] = (int) ((block3 >>> 26) & 1023L);
+                values[valuesOffset++] = (int) ((block3 >>> 16) & 1023L);
+                values[valuesOffset++] = (int) ((block3 >>> 6) & 1023L);
                 long block4 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(((block3 & 63L) << 4) | (block4 >>> 60));
-                values[valuesOffset++] = (int)((block4 >>> 50) & 1023L);
-                values[valuesOffset++] = (int)((block4 >>> 40) & 1023L);
-                values[valuesOffset++] = (int)((block4 >>> 30) & 1023L);
-                values[valuesOffset++] = (int)((block4 >>> 20) & 1023L);
-                values[valuesOffset++] = (int)((block4 >>> 10) & 1023L);
-                values[valuesOffset++] = (int)(block4 & 1023L);
+                values[valuesOffset++] = (int) (((block3 & 63L) << 4) | (block4 >>> 60));
+                values[valuesOffset++] = (int) ((block4 >>> 50) & 1023L);
+                values[valuesOffset++] = (int) ((block4 >>> 40) & 1023L);
+                values[valuesOffset++] = (int) ((block4 >>> 30) & 1023L);
+                values[valuesOffset++] = (int) ((block4 >>> 20) & 1023L);
+                values[valuesOffset++] = (int) ((block4 >>> 10) & 1023L);
+                values[valuesOffset++] = (int) (block4 & 1023L);
             }
         }
 
@@ -88,13 +88,12 @@ namespace Lucene.Net.Util.Packed
                 values[valuesOffset++] = ((byte3 & 3) << 8) | byte4;
             }
         }
-
         public override void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             for (int i = 0; i < iterations; ++i)
             {
                 long block0 = blocks[blocksOffset++];
-                values[valuesOffset++] = (block0 >>> 54);
+                values[valuesOffset++] = block0 >>> 54;
                 values[valuesOffset++] = (block0 >>> 44) & 1023L;
                 values[valuesOffset++] = (block0 >>> 34) & 1023L;
                 values[valuesOffset++] = (block0 >>> 24) & 1023L;

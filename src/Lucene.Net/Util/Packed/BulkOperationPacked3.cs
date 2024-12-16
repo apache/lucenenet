@@ -1,4 +1,4 @@
-﻿// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
@@ -34,72 +34,72 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < iterations; ++i)
             {
                 long block0 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(block0 >>> 61);
-                values[valuesOffset++] = (int)((block0 >>> 58) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 55) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 52) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 49) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 46) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 43) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 40) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 37) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 34) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 31) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 28) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 25) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 22) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 19) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 16) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 13) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 10) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 7) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 4) & 7L);
-                values[valuesOffset++] = (int)((block0 >>> 1) & 7L);
+                values[valuesOffset++] = (int) (block0 >>> 61);
+                values[valuesOffset++] = (int) ((block0 >>> 58) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 55) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 52) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 49) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 46) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 43) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 40) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 37) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 34) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 31) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 28) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 25) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 22) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 19) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 16) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 13) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 10) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 7) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 4) & 7L);
+                values[valuesOffset++] = (int) ((block0 >>> 1) & 7L);
                 long block1 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(((block0 & 1L) << 2) | (block1 >>> 62));
-                values[valuesOffset++] = (int)((block1 >>> 59) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 56) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 53) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 50) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 47) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 44) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 41) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 38) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 35) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 32) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 29) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 26) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 23) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 20) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 17) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 14) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 11) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 8) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 5) & 7L);
-                values[valuesOffset++] = (int)((block1 >>> 2) & 7L);
+                values[valuesOffset++] = (int) (((block0 & 1L) << 2) | (block1 >>> 62));
+                values[valuesOffset++] = (int) ((block1 >>> 59) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 56) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 53) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 50) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 47) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 44) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 41) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 38) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 35) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 32) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 29) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 26) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 23) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 20) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 17) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 14) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 11) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 8) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 5) & 7L);
+                values[valuesOffset++] = (int) ((block1 >>> 2) & 7L);
                 long block2 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int)(((block1 & 3L) << 1) | (block2 >>> 63));
-                values[valuesOffset++] = (int)((block2 >>> 60) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 57) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 54) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 51) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 48) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 45) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 42) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 39) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 36) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 33) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 30) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 27) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 24) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 21) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 18) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 15) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 12) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 9) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 6) & 7L);
-                values[valuesOffset++] = (int)((block2 >>> 3) & 7L);
-                values[valuesOffset++] = (int)(block2 & 7L);
+                values[valuesOffset++] = (int) (((block1 & 3L) << 1) | (block2 >>> 63));
+                values[valuesOffset++] = (int) ((block2 >>> 60) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 57) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 54) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 51) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 48) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 45) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 42) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 39) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 36) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 33) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 30) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 27) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 24) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 21) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 18) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 15) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 12) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 9) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 6) & 7L);
+                values[valuesOffset++] = (int) ((block2 >>> 3) & 7L);
+                values[valuesOffset++] = (int) (block2 & 7L);
             }
         }
 
@@ -120,7 +120,6 @@ namespace Lucene.Net.Util.Packed
                 values[valuesOffset++] = byte2 & 7;
             }
         }
-
         public override void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             for (int i = 0; i < iterations; ++i)
