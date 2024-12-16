@@ -2,11 +2,11 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
-
-// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
+
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -46,7 +46,7 @@ namespace Lucene.Net.Util.Packed
         {
             @in.ReadBytes(values, 0, valueCount);
             // because packed ints have not always been byte-aligned
-            int remaining = (int)(PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 8) - 1L * valueCount);
+            int remaining = (int) (PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 8) - 1L * valueCount);
             for (int i = 0; i < remaining; ++i)
             {
                 @in.ReadByte();
@@ -62,22 +62,22 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Set(int index, long value)
         {
-            values[index] = (byte)(value);
+            values[index] = (byte) (value);
         }
 
         public override long RamBytesUsed()
         {
             return RamUsageEstimator.AlignObjectSize(
-                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
-                + 2 * RamUsageEstimator.NUM_BYTES_INT32 // valueCount,bitsPerValue
-                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // values ref 
-                + RamUsageEstimator.SizeOf(values);  
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
+                + 2 * RamUsageEstimator.NUM_BYTES_INT32     // valueCount,bitsPerValue
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // values ref
+                + RamUsageEstimator.SizeOf(values);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Clear()
         {
-            Arrays.Fill(values, (byte)0L);
+            Arrays.Fill(values, (byte) 0L);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -117,7 +117,7 @@ namespace Lucene.Net.Util.Packed
             int sets = Math.Min(m_valueCount - index, len);
             for (int i = index, o = off, end = index + sets; i < end; ++i, ++o)
             {
-                values[i] = (byte)arr[o];
+                values[i] = (byte) arr[o];
             }
             return sets;
         }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Util.Packed
         public override void Fill(int fromIndex, int toIndex, long val)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(val == (val & 0xFFL));
-            Arrays.Fill(values, fromIndex, toIndex, (byte)val);
+            Arrays.Fill(values, fromIndex, toIndex, (byte) val);
         }
     }
 }
