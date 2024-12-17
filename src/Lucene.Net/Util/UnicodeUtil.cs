@@ -101,7 +101,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public static class UnicodeUtil
+    public static partial class UnicodeUtil
     {
         /// <summary>
         /// A binary term consisting of a number of 0xff bytes, likely to be bigger than other terms
@@ -818,7 +818,7 @@ namespace Lucene.Net.Util
         public static string NewString(int[] codePoints, int offset, int count)
         {
             // LUCENENET: Character.ToString() was optimized to use the stack for arrays
-            // of codepoints 256 or less, so it performs better than using ToCharArray().
+            // of codepoints 256 or less, so it performs better than the Lucene implementation.
             return Character.ToString(codePoints, offset, count);
         }
 
@@ -835,87 +835,8 @@ namespace Lucene.Net.Util
         public static string NewString(ReadOnlySpan<int> codePoints, int offset, int count)
         {
             // LUCENENET: Character.ToString() was optimized to use the stack for arrays
-            // of codepoints 256 or less, so it performs better than using ToCharArray().
+            // of codepoints 256 or less, so it performs better than the Lucene implementation.
             return Character.ToString(codePoints, offset, count);
-        }
-
-        /// <summary>
-        /// Generates char array that represents the provided input code points.
-        /// <para/>
-        /// LUCENENET specific.
-        /// </summary>
-        /// <param name="codePoints"> The code array. </param>
-        /// <param name="offset"> The start of the text in the code point array. </param>
-        /// <param name="count"> The number of code points. </param>
-        /// <returns> a char array representing the code points between offset and count. </returns>
-        // LUCENENET NOTE: This code was originally in the NewString() method (above).
-        // It has been refactored from the original to remove the exception throw/catch and
-        // instead proactively resizes the array instead of relying on exceptions + copy operations
-        public static char[] ToCharArray(int[] codePoints, int offset, int count)
-        {
-            return ToCharArray(codePoints.AsSpan(offset), count);
-        }
-
-        /// <summary>
-        /// Generates char array that represents the provided input code points.
-        /// <para/>
-        /// LUCENENET specific.
-        /// </summary>
-        /// <param name="codePoints"> The code span. </param>
-        /// <param name="count"> The number of code points. </param>
-        /// <returns> a char array representing the code points between offset and count. </returns>
-        // LUCENENET NOTE: This code was originally in the NewString() method (above).
-        // It has been refactored from the original to remove the exception throw/catch and
-        // instead proactively resizes the array instead of relying on exceptions + copy operations
-        public static char[] ToCharArray(ReadOnlySpan<int> codePoints, int count)
-        {
-            if (count < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(count), "count must be >= 0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
-            }
-            const int countThreshold = 1024; // If the number of chars exceeds this, we count them instead of allocating count * 2
-            // LUCENENET: as a first approximation, assume each codepoint
-            // is 2 characters (since it cannot be longer than this)
-            int arrayLength = count * 2;
-            // LUCENENET: if we go over the threshold, count the number of
-            // chars we will need so we can allocate the precise amount of memory
-            if (count > countThreshold)
-            {
-                arrayLength = 0;
-                for (int r = 0; r < count; ++r)
-                {
-                    arrayLength += codePoints[r] < 0x010000 ? 1 : 2;
-                }
-                if (arrayLength < 1)
-                {
-                    arrayLength = count * 2;
-                }
-            }
-            // Initialize our array to our exact or oversized length.
-            // It is now safe to assume we have enough space for all of the characters.
-            char[] chars = new char[arrayLength];
-            int w = 0;
-            for (int r = 0; r < count; ++r)
-            {
-                int cp = codePoints[r];
-                if (cp < 0 || cp > 0x10ffff)
-                {
-                    throw new ArgumentException($"Invalid code point: {cp}", nameof(codePoints));
-                }
-                if (cp < 0x010000)
-                {
-                    chars[w++] = (char)cp;
-                }
-                else
-                {
-                    chars[w++] = (char)(LEAD_SURROGATE_OFFSET_ + (cp >> LEAD_SURROGATE_SHIFT_));
-                    chars[w++] = (char)(TRAIL_SURROGATE_MIN_VALUE + (cp & TRAIL_SURROGATE_MASK_));
-                }
-            }
-
-            var result = new char[w];
-            Arrays.Copy(chars, result, w);
-            return result;
         }
 
         // for debugging
