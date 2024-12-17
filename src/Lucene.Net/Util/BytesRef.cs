@@ -243,6 +243,23 @@ namespace Lucene.Net.Util
             return @ref.ToString();
         }
 
+        /// <summary>
+        /// Interprets stored bytes as UTF8 bytes, returning the
+        /// resulting <see cref="string"/>.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific version that does not throw exceptions,
+        /// primarily for use in ToString() and other methods that
+        /// should not throw exceptions.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public string Utf8ToStringWithFallback()
+        {
+            CharsRef @ref = new CharsRef(Length);
+            UnicodeUtil.UTF8toUTF16WithFallback(bytes, Offset, Length, @ref);
+            return @ref.ToString();
+        }
+
         #nullable enable
         /// <summary>
         /// Tries to interpret the stored bytes as UTF8 bytes, returning the

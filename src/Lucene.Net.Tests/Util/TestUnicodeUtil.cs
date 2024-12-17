@@ -339,5 +339,17 @@ namespace Lucene.Net.Util
             Assert.IsTrue(success);
             Assert.AreEqual(unicode, chars?.ToString());
         }
+
+        [Test]
+        [LuceneNetSpecific] // this is a Lucene.NET specific method
+        public void TestUTF8toUTF16WithFallback()
+        {
+            byte[] invalidUtf8 = { 0x63, 0xc3 }; // Invalid ending UTF-8 sequence
+            var scratch = new CharsRef();
+
+            UnicodeUtil.UTF8toUTF16WithFallback(invalidUtf8, scratch);
+
+            Assert.AreEqual("c\ufffd", scratch.ToString());
+        }
     }
 }
