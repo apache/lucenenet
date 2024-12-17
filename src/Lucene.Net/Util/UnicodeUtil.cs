@@ -953,6 +953,90 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        /// Interprets the given byte array as UTF-8 and converts to UTF-16. The <see cref="CharsRef"/> will be extended if
+        /// it doesn't provide enough space to hold the worst case of each byte becoming a UTF-16 codepoint.
+        /// <para/>
+        /// NOTE: This method will replace any invalid UTF-8 byte sequences with the Unicode replacement character U+FFFD.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific, for use in ToString() where we want to avoid throwing exceptions.
+        /// </remarks>
+        /// <seealso cref="UTF8toUTF16WithFallback(ReadOnlySpan{byte}, CharsRef)"/>
+        // TODO: broken if chars.offset != 0
+        public static void UTF8toUTF16WithFallback(byte[] utf8, int offset, int length, CharsRef chars)
+        {
+            UTF8toUTF16(utf8.AsSpan(offset, length), chars);
+        }
+
+        /// <summary>
+        /// Interprets the given byte span as UTF-8 and converts to UTF-16. The <see cref="CharsRef"/> will be extended if
+        /// it doesn't provide enough space to hold the worst case of each byte becoming a UTF-16 codepoint.
+        /// <para/>
+        /// NOTE: This method will replace any invalid UTF-8 byte sequences with the Unicode replacement character U+FFFD.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific, for use in ToString() where we want to avoid throwing exceptions.
+        /// </remarks>
+        // TODO: broken if chars.offset != 0
+        public static void UTF8toUTF16WithFallback(ReadOnlySpan<byte> utf8, CharsRef chars)
+        {
+            int out_offset = chars.Offset = 0;
+            char[] @out = chars.Chars = ArrayUtil.Grow(chars.Chars, utf8.Length);
+            int i = 0;
+
+            while (i < utf8.Length)
+            {
+                int b = utf8[i++] & 0xff;
+                if (b < 0xc0)
+                {
+                    if (Debugging.AssertsEnabled) Debugging.Assert(b < 0x80);
+                    @out[out_offset++] = (char)b;
+                }
+                else if (b < 0xe0)
+                {
+                    if (utf8.Length <= i)
+                    {
+                        @out[out_offset++] = (char)0xfffd;
+                        continue;
+                    }
+                    @out[out_offset++] = (char)(((b & 0x1f) << 6) + (utf8[i++] & 0x3f));
+                }
+                else if (b < 0xf0)
+                {
+                    if (utf8.Length <= i + 1)
+                    {
+                        @out[out_offset++] = (char)0xfffd;
+                        break;
+                    }
+                    @out[out_offset++] = (char)(((b & 0xf) << 12) + ((utf8[i] & 0x3f) << 6) + (utf8[i + 1] & 0x3f));
+                    i += 2;
+                }
+                else
+                {
+                    if (utf8.Length <= i + 2)
+                    {
+                        @out[out_offset++] = (char)0xfffd;
+                        break;
+                    }
+                    if (Debugging.AssertsEnabled) Debugging.Assert(b < 0xf8, "b = 0x{0:x}", b);
+                    int ch = ((b & 0x7) << 18) + ((utf8[i] & 0x3f) << 12) + ((utf8[i + 1] & 0x3f) << 6) + (utf8[i + 2] & 0x3f);
+                    i += 3;
+                    if (ch < UNI_MAX_BMP)
+                    {
+                        @out[out_offset++] = (char)ch;
+                    }
+                    else
+                    {
+                        int chHalf = ch - 0x0010000;
+                        @out[out_offset++] = (char)((chHalf >> 10) + 0xD800);
+                        @out[out_offset++] = (char)((chHalf & HALF_MASK) + 0xDC00);
+                    }
+                }
+            }
+            chars.Length = out_offset - chars.Offset;
+        }
+
+        /// <summary>
         /// Tries to interpret the given byte span as UTF-8 and convert to UTF-16, providing the result in a new <see cref="CharsRef"/>.
         /// <para/>
         /// NOTE: Explicit checks for valid UTF-8 are not performed.
@@ -983,12 +1067,6 @@ namespace Lucene.Net.Util
 
             while (i < utf8.Length)
             {
-                if (utf8.Length <= i)
-                {
-                    chars = null;
-                    return false;
-                }
-
                 int b = utf8[i++] & 0xff;
                 if (b < 0xc0)
                 {
