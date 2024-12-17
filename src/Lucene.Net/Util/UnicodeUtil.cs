@@ -159,7 +159,7 @@ namespace Lucene.Net.Util
 
             while (i < end)
             {
-                int code = (int)source[i++];
+                var code = (int)source[i++];
 
                 if (code < 0x80)
                 {
@@ -227,100 +227,7 @@ namespace Lucene.Net.Util
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            UTF16toUTF8(source.AsSpan(), offset, length, result);
-        }
-
-        /// <summary>
-        /// Encode characters from a <see cref="ReadOnlySpan{T}"/> (with generic type argument <see cref="char"/>) <paramref name="source"/>, starting at
-        /// <paramref name="offset"/> for <paramref name="length"/> chars. After encoding, <c>result.Offset</c> will always be 0.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="result"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="offset"/> or <paramref name="length"/> is less than zero.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// <paramref name="offset"/> and <paramref name="length"/> refer to a location outside of <paramref name="source"/>.
-        /// </exception>
-        /// <remarks>
-        /// LUCENENET specific overload.
-        /// </remarks>
-        // TODO: broken if incoming result.offset != 0
-        public static void UTF16toUTF8(ReadOnlySpan<char> source, int offset, int length, BytesRef result)
-        {
-            // LUCENENET: Added guard clauses
-            if (result is null)
-                throw new ArgumentNullException(nameof(result));
-            if (offset < 0)
-                throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must not be negative.");
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length), $"{nameof(length)} must not be negative.");
-            if (offset > source.Length - length) // Checks for int overflow
-                throw new ArgumentOutOfRangeException(nameof(length),
-                    $"Index and length must refer to a location within the string. For example {nameof(offset)} + {nameof(length)} <= source.{nameof(source.Length)}.");
-
-            int upto = 0;
-            int i = offset;
-            int end = offset + length;
-            var @out = result.Bytes;
-            // Pre-allocate for worst case 4-for-1
-            int maxLen = length * 4;
-            if (@out.Length < maxLen)
-            {
-                @out = result.Bytes = new byte[maxLen];
-            }
-
-            result.Offset = 0;
-
-            while (i < end)
-            {
-                int code = (int)source[i++];
-
-                if (code < 0x80)
-                {
-                    @out[upto++] = (byte)code;
-                }
-                else if (code < 0x800)
-                {
-                    @out[upto++] = (byte)(0xC0 | (code >> 6));
-                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
-                }
-                else if (code < 0xD800 || code > 0xDFFF)
-                {
-                    @out[upto++] = (byte)(0xE0 | (code >> 12));
-                    @out[upto++] = (byte)(0x80 | ((code >> 6) & 0x3F));
-                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
-                }
-                else
-                {
-                    // surrogate pair
-                    // confirm valid high surrogate
-                    if (code < 0xDC00 && i < end)
-                    {
-                        var utf32 = (int)source[i];
-                        // confirm valid low surrogate and write pair
-                        if (utf32 >= 0xDC00 && utf32 <= 0xDFFF)
-                        {
-                            utf32 = (code << 10) + utf32 + SURROGATE_OFFSET;
-                            i++;
-                            @out[upto++] = (byte)(0xF0 | (utf32 >> 18));
-                            @out[upto++] = (byte)(0x80 | ((utf32 >> 12) & 0x3F));
-                            @out[upto++] = (byte)(0x80 | ((utf32 >> 6) & 0x3F));
-                            @out[upto++] = (byte)(0x80 | (utf32 & 0x3F));
-                            continue;
-                        }
-                    }
-
-                    // replace unpaired surrogate or out-of-order low surrogate
-                    // with substitution character
-                    @out[upto++] = 0xEF;
-                    @out[upto++] = 0xBF;
-                    @out[upto++] = 0xBD;
-                }
-            }
-
-            //assert matches(source, offset, length, out, upto);
-            result.Length = upto;
+            UTF16toUTF8(source.AsSpan(offset, length), result);
         }
 
         /// <summary>
@@ -599,8 +506,8 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        public static bool
-            ValidUTF16String(string s) // LUCENENET specific overload because string doesn't implement ICharSequence
+        // LUCENENET specific overload because string doesn't implement ICharSequence
+        public static bool ValidUTF16String(string s)
         {
             int size = s.Length;
             for (int i = 0; i < size; i++)
@@ -638,9 +545,8 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        public static bool
-            ValidUTF16String(
-                StringBuilder s) // LUCENENET specific overload because StringBuilder doesn't implement ICharSequence
+        // LUCENENET specific overload because StringBuilder doesn't implement ICharSequence
+        public static bool ValidUTF16String(StringBuilder s)
         {
             int size = s.Length;
             for (int i = 0; i < size; i++)
@@ -725,8 +631,8 @@ namespace Lucene.Net.Util
          * means illegal prefix.  see RFC 2279 for details */
         internal static readonly int[] utf8CodeLength = LoadUTF8CodeLength();
 
-        private static int[]
-            LoadUTF8CodeLength() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static int[] LoadUTF8CodeLength()
         {
             const int v = int.MinValue;
             return new int[]
@@ -947,7 +853,7 @@ namespace Lucene.Net.Util
         // instead proactively resizes the array instead of relying on exceptions + copy operations
         public static char[] ToCharArray(int[] codePoints, int offset, int count)
         {
-            return ToCharArray(codePoints.AsSpan(), offset, count);
+            return ToCharArray(codePoints.AsSpan(offset), count);
         }
 
         /// <summary>
@@ -956,13 +862,12 @@ namespace Lucene.Net.Util
         /// LUCENENET specific.
         /// </summary>
         /// <param name="codePoints"> The code span. </param>
-        /// <param name="offset"> The start of the text in the code point span. </param>
         /// <param name="count"> The number of code points. </param>
         /// <returns> a char array representing the code points between offset and count. </returns>
         // LUCENENET NOTE: This code was originally in the NewString() method (above).
         // It has been refactored from the original to remove the exception throw/catch and
         // instead proactively resizes the array instead of relying on exceptions + copy operations
-        public static char[] ToCharArray(ReadOnlySpan<int> codePoints, int offset, int count)
+        public static char[] ToCharArray(ReadOnlySpan<int> codePoints, int count)
         {
             if (count < 0)
             {
@@ -977,7 +882,7 @@ namespace Lucene.Net.Util
             if (count > countThreshold)
             {
                 arrayLength = 0;
-                for (int r = offset, e = offset + count; r < e; ++r)
+                for (int r = 0; r < count; ++r)
                 {
                     arrayLength += codePoints[r] < 0x010000 ? 1 : 2;
                 }
@@ -990,7 +895,7 @@ namespace Lucene.Net.Util
             // It is now safe to assume we have enough space for all of the characters.
             char[] chars = new char[arrayLength];
             int w = 0;
-            for (int r = offset, e = offset + count; r < e; ++r)
+            for (int r = 0; r < count; ++r)
             {
                 int cp = codePoints[r];
                 if (cp < 0 || cp > 0x10ffff)
@@ -1064,10 +969,11 @@ namespace Lucene.Net.Util
         /// can result in an <see cref="IndexOutOfRangeException"/> if invalid UTF-8 is passed).
         /// Explicit checks for valid UTF-8 are not performed.
         /// </summary>
+        /// <seealso cref="UTF8toUTF16(ReadOnlySpan{byte}, CharsRef)"/>
         // TODO: broken if chars.offset != 0
         public static void UTF8toUTF16(byte[] utf8, int offset, int length, CharsRef chars)
         {
-            UTF8toUTF16(utf8.AsSpan(), offset, length, chars);
+            UTF8toUTF16(utf8.AsSpan(offset, length), chars);
         }
 
         /// <summary>
@@ -1082,14 +988,15 @@ namespace Lucene.Net.Util
         /// LUCENENET specific overload.
         /// </remarks>
         // TODO: broken if chars.offset != 0
-        public static void UTF8toUTF16(ReadOnlySpan<byte> utf8, int offset, int length, CharsRef chars)
+        public static void UTF8toUTF16(ReadOnlySpan<byte> utf8, CharsRef chars)
         {
             int out_offset = chars.Offset = 0;
-            char[] @out = chars.Chars = ArrayUtil.Grow(chars.Chars, length);
-            int limit = offset + length;
-            while (offset < limit)
+            char[] @out = chars.Chars = ArrayUtil.Grow(chars.Chars, utf8.Length);
+            int i = 0;
+
+            while (i < utf8.Length)
             {
-                int b = utf8[offset++] & 0xff;
+                int b = utf8[i++] & 0xff;
                 if (b < 0xc0)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(b < 0x80);
@@ -1097,18 +1004,18 @@ namespace Lucene.Net.Util
                 }
                 else if (b < 0xe0)
                 {
-                    @out[out_offset++] = (char)(((b & 0x1f) << 6) + (utf8[offset++] & 0x3f));
+                    @out[out_offset++] = (char)(((b & 0x1f) << 6) + (utf8[i++] & 0x3f));
                 }
                 else if (b < 0xf0)
                 {
-                    @out[out_offset++] = (char)(((b & 0xf) << 12) + ((utf8[offset] & 0x3f) << 6) + (utf8[offset + 1] & 0x3f));
-                    offset += 2;
+                    @out[out_offset++] = (char)(((b & 0xf) << 12) + ((utf8[i] & 0x3f) << 6) + (utf8[i + 1] & 0x3f));
+                    i += 2;
                 }
                 else
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(b < 0xf8, "b = 0x{0:x}", b);
-                    int ch = ((b & 0x7) << 18) + ((utf8[offset] & 0x3f) << 12) + ((utf8[offset + 1] & 0x3f) << 6) + (utf8[offset + 2] & 0x3f);
-                    offset += 3;
+                    int ch = ((b & 0x7) << 18) + ((utf8[i] & 0x3f) << 12) + ((utf8[i + 1] & 0x3f) << 6) + (utf8[i + 2] & 0x3f);
+                    i += 3;
                     if (ch < UNI_MAX_BMP)
                     {
                         @out[out_offset++] = (char)ch;
@@ -1132,21 +1039,36 @@ namespace Lucene.Net.Util
         /// <remarks>
         /// LUCENENET specific: This method uses <see cref="ReadOnlySpan{T}"/> (with generic type argument <see cref="byte"/>) instead of byte[].
         /// </remarks>
-        public static bool TryUTF8toUTF16(ReadOnlySpan<byte> utf8, int offset, int length, [NotNullWhen(true)] out CharsRef? chars)
+        /// <seealso cref="UTF8toUTF16(ReadOnlySpan{byte}, CharsRef)"/>
+        public static bool TryUTF8toUTF16(byte[] utf8, int offset, int length, [NotNullWhen(true)] out CharsRef? chars)
         {
-            CharsRef result = new CharsRef(length);
+            return TryUTF8toUTF16(utf8.AsSpan(offset, length), out chars);
+        }
+
+        /// <summary>
+        /// Tries to interpret the given byte span as UTF-8 and convert to UTF-16, providing the result in a new <see cref="CharsRef"/>.
+        /// <para/>
+        /// NOTE: Explicit checks for valid UTF-8 are not performed.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific: This method uses <see cref="ReadOnlySpan{T}"/> (with generic type argument <see cref="byte"/>) instead of byte[].
+        /// </remarks>
+        public static bool TryUTF8toUTF16(ReadOnlySpan<byte> utf8, [NotNullWhen(true)] out CharsRef? chars)
+        {
+            CharsRef result = new CharsRef(utf8.Length);
             int out_offset = 0;
             char[] @out = result.Chars;
-            int limit = offset + length;
-            while (offset < limit)
+            int i = 0;
+
+            while (i < utf8.Length)
             {
-                if (utf8.Length <= offset)
+                if (utf8.Length <= i)
                 {
                     chars = null;
                     return false;
                 }
 
-                int b = utf8[offset++] & 0xff;
+                int b = utf8[i++] & 0xff;
                 if (b < 0xc0)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(b < 0x80);
@@ -1154,33 +1076,33 @@ namespace Lucene.Net.Util
                 }
                 else if (b < 0xe0)
                 {
-                    if (utf8.Length <= offset)
+                    if (utf8.Length <= i)
                     {
                         chars = null;
                         return false;
                     }
-                    @out[out_offset++] = (char)(((b & 0x1f) << 6) + (utf8[offset++] & 0x3f));
+                    @out[out_offset++] = (char)(((b & 0x1f) << 6) + (utf8[i++] & 0x3f));
                 }
                 else if (b < 0xf0)
                 {
-                    if (utf8.Length <= offset + 1)
+                    if (utf8.Length <= i + 1)
                     {
                         chars = null;
                         return false;
                     }
-                    @out[out_offset++] = (char)(((b & 0xf) << 12) + ((utf8[offset] & 0x3f) << 6) + (utf8[offset + 1] & 0x3f));
-                    offset += 2;
+                    @out[out_offset++] = (char)(((b & 0xf) << 12) + ((utf8[i] & 0x3f) << 6) + (utf8[i + 1] & 0x3f));
+                    i += 2;
                 }
                 else
                 {
-                    if (utf8.Length <= offset + 2)
+                    if (utf8.Length <= i + 2)
                     {
                         chars = null;
                         return false;
                     }
                     if (Debugging.AssertsEnabled) Debugging.Assert(b < 0xf8, "b = 0x{0:x}", b);
-                    int ch = ((b & 0x7) << 18) + ((utf8[offset] & 0x3f) << 12) + ((utf8[offset + 1] & 0x3f) << 6) + (utf8[offset + 2] & 0x3f);
-                    offset += 3;
+                    int ch = ((b & 0x7) << 18) + ((utf8[i] & 0x3f) << 12) + ((utf8[i + 1] & 0x3f) << 6) + (utf8[i + 2] & 0x3f);
+                    i += 3;
                     if (ch < UNI_MAX_BMP)
                     {
                         @out[out_offset++] = (char)ch;
@@ -1199,20 +1121,20 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Utility method for <see cref="UTF8toUTF16(ReadOnlySpan{byte}, int, int, CharsRef)"/> </summary>
-        /// <seealso cref="UTF8toUTF16(ReadOnlySpan{byte}, int, int, CharsRef)"/>
+        /// Utility method for <see cref="UTF8toUTF16(ReadOnlySpan{byte}, CharsRef)"/> </summary>
+        /// <seealso cref="UTF8toUTF16(ReadOnlySpan{byte}, CharsRef)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void UTF8toUTF16(BytesRef bytesRef, CharsRef chars)
         {
-            UTF8toUTF16(bytesRef.Bytes.AsSpan(), bytesRef.Offset, bytesRef.Length, chars);
+            UTF8toUTF16(bytesRef.Bytes.AsSpan(bytesRef.Offset, bytesRef.Length), chars);
         }
 
         /// <summary>
-        /// Utility method for <see cref="TryUTF8toUTF16(ReadOnlySpan{byte}, int, int, out CharsRef)"/> </summary>
-        /// <seealso cref="TryUTF8toUTF16(ReadOnlySpan{byte}, int, int, out CharsRef)"/>
+        /// Utility method for <see cref="TryUTF8toUTF16(ReadOnlySpan{byte}, out CharsRef)"/> </summary>
+        /// <seealso cref="TryUTF8toUTF16(ReadOnlySpan{byte}, out CharsRef)"/>
         public static bool TryUTF8toUTF16(BytesRef bytesRef, out CharsRef? chars)
         {
-            return TryUTF8toUTF16(bytesRef.Bytes.AsSpan(), bytesRef.Offset, bytesRef.Length, out chars);
+            return TryUTF8toUTF16(bytesRef.Bytes.AsSpan(bytesRef.Offset, bytesRef.Length), out chars);
         }
     }
 }
