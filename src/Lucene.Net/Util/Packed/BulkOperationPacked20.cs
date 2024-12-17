@@ -34,26 +34,26 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < iterations; ++i)
             {
                 long block0 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int) (block0 >>> 44);
-                values[valuesOffset++] = (int) ((block0 >>> 24) & 1048575L);
-                values[valuesOffset++] = (int) ((block0 >>> 4) & 1048575L);
+                values[valuesOffset++] = (int)(block0 >>> 44);
+                values[valuesOffset++] = (int)((block0 >>> 24) & 1048575L);
+                values[valuesOffset++] = (int)((block0 >>> 4) & 1048575L);
                 long block1 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int) (((block0 & 15L) << 16) | (block1 >>> 48));
-                values[valuesOffset++] = (int) ((block1 >>> 28) & 1048575L);
-                values[valuesOffset++] = (int) ((block1 >>> 8) & 1048575L);
+                values[valuesOffset++] = (int)(((block0 & 15L) << 16) | (block1 >>> 48));
+                values[valuesOffset++] = (int)((block1 >>> 28) & 1048575L);
+                values[valuesOffset++] = (int)((block1 >>> 8) & 1048575L);
                 long block2 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int) (((block1 & 255L) << 12) | (block2 >>> 52));
-                values[valuesOffset++] = (int) ((block2 >>> 32) & 1048575L);
-                values[valuesOffset++] = (int) ((block2 >>> 12) & 1048575L);
+                values[valuesOffset++] = (int)(((block1 & 255L) << 12) | (block2 >>> 52));
+                values[valuesOffset++] = (int)((block2 >>> 32) & 1048575L);
+                values[valuesOffset++] = (int)((block2 >>> 12) & 1048575L);
                 long block3 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int) (((block2 & 4095L) << 8) | (block3 >>> 56));
-                values[valuesOffset++] = (int) ((block3 >>> 36) & 1048575L);
-                values[valuesOffset++] = (int) ((block3 >>> 16) & 1048575L);
+                values[valuesOffset++] = (int)(((block2 & 4095L) << 8) | (block3 >>> 56));
+                values[valuesOffset++] = (int)((block3 >>> 36) & 1048575L);
+                values[valuesOffset++] = (int)((block3 >>> 16) & 1048575L);
                 long block4 = blocks[blocksOffset++];
-                values[valuesOffset++] = (int) (((block3 & 65535L) << 4) | (block4 >>> 60));
-                values[valuesOffset++] = (int) ((block4 >>> 40) & 1048575L);
-                values[valuesOffset++] = (int) ((block4 >>> 20) & 1048575L);
-                values[valuesOffset++] = (int) (block4 & 1048575L);
+                values[valuesOffset++] = (int)(((block3 & 65535L) << 4) | (block4 >>> 60));
+                values[valuesOffset++] = (int)((block4 >>> 40) & 1048575L);
+                values[valuesOffset++] = (int)((block4 >>> 20) & 1048575L);
+                values[valuesOffset++] = (int)(block4 & 1048575L);
             }
         }
 

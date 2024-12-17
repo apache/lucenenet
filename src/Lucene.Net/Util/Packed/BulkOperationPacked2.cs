@@ -36,7 +36,7 @@ namespace Lucene.Net.Util.Packed
                 long block = blocks[blocksOffset++];
                 for (int shift = 62; shift >= 0; shift -= 2)
                 {
-                    values[valuesOffset++] = (int) ((block >>> shift) & 3);
+                    values[valuesOffset++] = (int)((block >>> shift) & 3);
                 }
             }
         }

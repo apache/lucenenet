@@ -117,7 +117,7 @@ def is_power_of_two(n):
   return n & (n - 1) == 0
 
 def casts(typ):
-  cast_start = "(%s) (" %typ
+  cast_start = "(%s)(" %typ # LUCENENET specific - removed space to match existing C# port style
   cast_end = ")"
   if typ == "long":
     cast_start = ""
