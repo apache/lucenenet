@@ -49,7 +49,7 @@ namespace Lucene.Net.Util.Packed
                 values[i] = @in.ReadInt32();
             }
             // because packed ints have not always been byte-aligned
-            int remaining = (int) (PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 32) - 4L * valueCount);
+            int remaining = (int)(PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 32) - 4L * valueCount);
             for (int i = 0; i < remaining; ++i)
             {
                 @in.ReadByte();
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Set(int index, long value)
         {
-            values[index] = (int) (value);
+            values[index] = (int)(value);
         }
 
         public override long RamBytesUsed()
@@ -80,7 +80,7 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Clear()
         {
-            Arrays.Fill(values, (int) 0L);
+            Arrays.Fill(values, (int)0L);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -120,7 +120,7 @@ namespace Lucene.Net.Util.Packed
             int sets = Math.Min(m_valueCount - index, len);
             for (int i = index, o = off, end = index + sets; i < end; ++i, ++o)
             {
-                values[i] = (int) arr[o];
+                values[i] = (int)arr[o];
             }
             return sets;
         }
@@ -129,7 +129,7 @@ namespace Lucene.Net.Util.Packed
         public override void Fill(int fromIndex, int toIndex, long val)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(val == (val & 0xFFFFFFFFL));
-            Arrays.Fill(values, fromIndex, toIndex, (int) val);
+            Arrays.Fill(values, fromIndex, toIndex, (int)val);
         }
     }
 }

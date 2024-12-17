@@ -52,7 +52,7 @@ namespace Lucene.Net.Util.Packed
 TYPES = {8: "byte", 16: "short"}
 DOTNET_READ_TYPES = {8: "Byte", 16: "Int16"} # LUCENENET specific
 MASKS = {8: " & 0xFFL", 16: " & 0xFFFFL", 32: " & 0xFFFFFFFFL", 64: ""}
-CASTS = {8: "(byte) ", 16: "(short) ", 32: "(int) ", 64: ""}
+CASTS = {8: "(byte)", 16: "(short)", 32: "(int)", 64: ""} # LUCENENET specific - removed space from casts to match existing C# port style
 
 if __name__ == '__main__':
   for bpv in TYPES.keys():
@@ -91,7 +91,7 @@ if __name__ == '__main__':
       f.write("                blocks[i] = @in.Read%s();\n" %DOTNET_READ_TYPES[bpv].title()) # LUCENENET specific
       f.write("            }\n")
     f.write("            // because packed ints have not always been byte-aligned\n")
-    f.write("            int remaining = (int) (PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, %d) - 3L * valueCount * %d);\n" %(3 * bpv, bpv / 8))
+    f.write("            int remaining = (int)(PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, %d) - 3L * valueCount * %d);\n" %(3 * bpv, bpv / 8))
     f.write("            for (int i = 0; i < remaining; ++i)\n")
     f.write("            {\n")
     f.write("                @in.ReadByte();\n")

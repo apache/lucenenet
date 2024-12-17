@@ -52,7 +52,7 @@ namespace Lucene.Net.Util.Packed
         {
             @in.ReadBytes(blocks, 0, 3 * valueCount);
             // because packed ints have not always been byte-aligned
-            int remaining = (int) (PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 24) - 3L * valueCount * 1);
+            int remaining = (int)(PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 24) - 3L * valueCount * 1);
             for (int i = 0; i < remaining; ++i)
             {
                 @in.ReadByte();
@@ -86,9 +86,9 @@ namespace Lucene.Net.Util.Packed
         public override void Set(int index, long value)
         {
             int o = index * 3;
-            blocks[o] = (byte) (value >>> 16);
-            blocks[o + 1] = (byte) (value >>> 8);
-            blocks[o + 2] = (byte) value;
+            blocks[o] = (byte)(value >>> 16);
+            blocks[o + 1] = (byte)(value >>> 8);
+            blocks[o + 2] = (byte)value;
         }
 
         public override int Set(int index, long[] arr, int off, int len)
@@ -104,18 +104,18 @@ namespace Lucene.Net.Util.Packed
             for (int i = off, o = index * 3, end = off + sets; i < end; ++i)
             {
                 long value = arr[i];
-                blocks[o++] = (byte) (value >>> 16);
-                blocks[o++] = (byte) (value >>> 8);
-                blocks[o++] = (byte) value;
+                blocks[o++] = (byte)(value >>> 16);
+                blocks[o++] = (byte)(value >>> 8);
+                blocks[o++] = (byte)value;
             }
             return sets;
         }
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
-            byte block1 = (byte) (val >>> 16);
-            byte block2 = (byte) (val >>> 8);
-            byte block3 = (byte) val;
+            byte block1 = (byte)(val >>> 16);
+            byte block2 = (byte)(val >>> 8);
+            byte block3 = (byte)val;
             for (int i = fromIndex * 3, end = toIndex * 3; i < end; i += 3)
             {
                 blocks[i] = block1;
@@ -127,7 +127,7 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Clear()
         {
-            Arrays.Fill(blocks, (byte) 0);
+            Arrays.Fill(blocks, (byte)0);
         }
 
         public override long RamBytesUsed()
