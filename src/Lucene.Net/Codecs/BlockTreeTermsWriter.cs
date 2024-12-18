@@ -440,7 +440,8 @@ namespace Lucene.Net.Codecs
 
             public override string ToString()
             {
-                return Term.Utf8ToString();
+                // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                return Term.Utf8ToStringWithFallback();
             }
         }
 
@@ -468,7 +469,8 @@ namespace Lucene.Net.Codecs
 
             public override string ToString()
             {
-                return $"BLOCK: {Prefix.Utf8ToString()}";
+                // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                return $"BLOCK: {Prefix.Utf8ToStringWithFallback()}";
             }
 
             #nullable enable

@@ -106,8 +106,9 @@ namespace Lucene.Net.Codecs.SimpleText
 
             if (StringHelper.StartsWith(scratch, CHECKSUM) == false)
             {
+                // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
                 throw new CorruptIndexException("SimpleText failure: expected checksum line but got " +
-                                                scratch.Utf8ToString() + " (resource=" + input + ")");
+                                                scratch.Utf8ToStringWithFallback() + " (resource=" + input + ")");
             }
             var actualChecksum =
                 (new BytesRef(scratch.Bytes, CHECKSUM.Length, scratch.Length - CHECKSUM.Length)).Utf8ToString();

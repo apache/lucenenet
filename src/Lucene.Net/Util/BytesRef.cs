@@ -248,9 +248,9 @@ namespace Lucene.Net.Util
         /// resulting <see cref="string"/>.
         /// </summary>
         /// <remarks>
-        /// LUCENENET specific version that does not throw exceptions,
-        /// primarily for use in ToString() and other methods that
-        /// should not throw exceptions.
+        /// LUCENENET specific version that does not throw exceptions on invalid UTF-8,
+        /// primarily for use in ToString() and other cases that should not throw exceptions,
+        /// such as when building a message for another exception.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public string Utf8ToStringWithFallback()
@@ -604,11 +604,11 @@ namespace Lucene.Net.Util
             switch (format)
             {
                 case BytesRefFormat.UTF8:
-                    try
+                    if (bytesRef.TryUtf8ToString(out var utf8String))
                     {
-                        return bytesRef.Utf8ToString();
+                        return utf8String;
                     }
-                    catch (Exception e) when (e.IsIndexOutOfBoundsException())
+                    else
                     {
                         return bytesRef.ToString();
                     }
