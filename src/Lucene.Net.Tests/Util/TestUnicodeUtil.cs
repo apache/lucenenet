@@ -339,7 +339,7 @@ namespace Lucene.Net.Util
 
             if (shouldThrow)
             {
-                Assert.Throws<ParseException>(() => UnicodeUtil.UTF8toUTF16(invalidUtf8, scratch));
+                Assert.Throws<FormatException>(() => UnicodeUtil.UTF8toUTF16(invalidUtf8, scratch));
             }
             else
             {

@@ -1,7 +1,6 @@
 using J2N;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
-using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -887,7 +886,7 @@ namespace Lucene.Net.Util
         /// it doesn't provide enough space to hold the worst case of each byte becoming a UTF-16 codepoint.
         /// <para/>
         /// NOTE: Full characters are read, even if this reads past the length passed (and
-        /// can result in an <see cref="IndexOutOfRangeException"/> if invalid UTF-8 is passed).
+        /// can result in an <see cref="FormatException"/> if invalid UTF-8 is passed).
         /// Explicit checks for valid UTF-8 are not performed.
         /// </summary>
         /// <seealso cref="UTF8toUTF16(ReadOnlySpan{byte}, CharsRef)"/>
@@ -902,7 +901,7 @@ namespace Lucene.Net.Util
         /// it doesn't provide enough space to hold the worst case of each byte becoming a UTF-16 codepoint.
         /// <para/>
         /// NOTE: Full characters are read, even if this reads past the length passed (and
-        /// can result in an <see cref="IndexOutOfRangeException"/> if invalid UTF-8 is passed).
+        /// can result in an <see cref="FormatException"/> if invalid UTF-8 is passed).
         /// Explicit checks for valid UTF-8 are not performed.
         /// </summary>
         /// <remarks>
@@ -927,7 +926,7 @@ namespace Lucene.Net.Util
                 {
                     if (utf8.Length <= i)
                     {
-                        throw new ParseException($"Invalid UTF-8 starting at [{b:x2}] at offset {i - 1}", i - 1);
+                        throw new FormatException($"Invalid UTF-8 starting at [{b:x2}] at offset {i - 1}");
                     }
                     @out[out_offset++] = (char)(((b & 0x1f) << 6) + (utf8[i++] & 0x3f));
                 }
@@ -935,7 +934,7 @@ namespace Lucene.Net.Util
                 {
                     if (utf8.Length <= i + 1)
                     {
-                        throw new ParseException($"Invalid UTF-8 starting at [{b:x2}] at offset {i - 1}", i - 1);
+                        throw new FormatException($"Invalid UTF-8 starting at [{b:x2}] at offset {i - 1}");
                     }
                     @out[out_offset++] = (char)(((b & 0xf) << 12) + ((utf8[i] & 0x3f) << 6) + (utf8[i + 1] & 0x3f));
                     i += 2;
@@ -944,7 +943,7 @@ namespace Lucene.Net.Util
                 {
                     if (utf8.Length <= i + 2)
                     {
-                        throw new ParseException($"Invalid UTF-8 starting at [{b:x2}] at offset {i - 1}", i - 1);
+                        throw new FormatException($"Invalid UTF-8 starting at [{b:x2}] at offset {i - 1}");
                     }
                     if (Debugging.AssertsEnabled) Debugging.Assert(b < 0xf8, "b = 0x{0:x}", b);
                     int ch = ((b & 0x7) << 18) + ((utf8[i] & 0x3f) << 12) + ((utf8[i + 1] & 0x3f) << 6) + (utf8[i + 2] & 0x3f);
