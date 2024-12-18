@@ -328,7 +328,28 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        [LuceneNetSpecific]
+        [TestCase(new byte[] { 0x63, 0x61, 0xc3 }, true)] // ca�, start of 2-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xe3 }, true)] // ca�, start of 3-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xf3 }, true)] // ca�, start of 4-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xc3, 0xb1, 0x6f, 0x6e }, false)] // cañon
+        public void TestUTF8toUTF16Exception(byte[] invalidUtf8, bool shouldThrow)
+        {
+            var scratch = new CharsRef();
+
+            if (shouldThrow)
+            {
+                Assert.Throws<ParseException>(() => UnicodeUtil.UTF8toUTF16(invalidUtf8, scratch));
+            }
+            else
+            {
+                UnicodeUtil.UTF8toUTF16(invalidUtf8, scratch);
+            }
+        }
+
+        [Test]
         [LuceneNetSpecific] // this is a Lucene.NET specific method
+        [Repeat(100)]
         public void TestTryUTF8toUTF16()
         {
             string unicode = TestUtil.RandomRealisticUnicodeString(Random);
@@ -342,14 +363,17 @@ namespace Lucene.Net.Util
 
         [Test]
         [LuceneNetSpecific] // this is a Lucene.NET specific method
-        public void TestUTF8toUTF16WithFallback()
+        [TestCase(new byte[] { 0x63, 0x61, 0xc3 }, "ca\ufffd")] // ca�, start of 2-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xe3 }, "ca\ufffd")] // ca�, start of 3-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xf3 }, "ca\ufffd")] // ca�, start of 4-byte sequence
+        [TestCase(new byte[] { 0x63, 0x61, 0xc3, 0xb1, 0x6f, 0x6e }, "cañon")]
+        public void TestUTF8toUTF16WithFallback(byte[] utf8, string expected)
         {
-            byte[] invalidUtf8 = { 0x63, 0xc3 }; // Invalid ending UTF-8 sequence
             var scratch = new CharsRef();
 
-            UnicodeUtil.UTF8toUTF16WithFallback(invalidUtf8, scratch);
+            UnicodeUtil.UTF8toUTF16WithFallback(utf8, scratch);
 
-            Assert.AreEqual("c\ufffd", scratch.ToString());
+            Assert.AreEqual(expected, scratch.ToString());
         }
     }
 }

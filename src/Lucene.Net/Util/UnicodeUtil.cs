@@ -925,15 +925,27 @@ namespace Lucene.Net.Util
                 }
                 else if (b < 0xe0)
                 {
+                    if (utf8.Length <= i)
+                    {
+                        throw new ParseException($"Invalid UTF-8 starting at [{b:x2}] at offset {i - 1}", i - 1);
+                    }
                     @out[out_offset++] = (char)(((b & 0x1f) << 6) + (utf8[i++] & 0x3f));
                 }
                 else if (b < 0xf0)
                 {
+                    if (utf8.Length <= i + 1)
+                    {
+                        throw new ParseException($"Invalid UTF-8 starting at [{b:x2}] at offset {i - 1}", i - 1);
+                    }
                     @out[out_offset++] = (char)(((b & 0xf) << 12) + ((utf8[i] & 0x3f) << 6) + (utf8[i + 1] & 0x3f));
                     i += 2;
                 }
                 else
                 {
+                    if (utf8.Length <= i + 2)
+                    {
+                        throw new ParseException($"Invalid UTF-8 starting at [{b:x2}] at offset {i - 1}", i - 1);
+                    }
                     if (Debugging.AssertsEnabled) Debugging.Assert(b < 0xf8, "b = 0x{0:x}", b);
                     int ch = ((b & 0x7) << 18) + ((utf8[i] & 0x3f) << 12) + ((utf8[i + 1] & 0x3f) << 6) + (utf8[i + 2] & 0x3f);
                     i += 3;
