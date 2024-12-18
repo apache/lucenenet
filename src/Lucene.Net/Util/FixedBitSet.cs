@@ -734,7 +734,7 @@ namespace Lucene.Net.Util
                 }
                 // fold leftmost bits into right and add a constant to prevent
                 // empty sets from returning 0, which is too common.
-                return (int)((h >> 32) ^ h) + unchecked((int)0x98761234);
+                return (int)((h >> 32) ^ h) + (int)0x98761234;
             }
         }
     }
