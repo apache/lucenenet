@@ -81,7 +81,10 @@ namespace Lucene.Net.Util.Mutable
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
-            return (int)Value + (int)(Value >> 32);
+            unchecked
+            {
+                return (int)Value + (int)(Value >> 32);
+            }
         }
     }
 }

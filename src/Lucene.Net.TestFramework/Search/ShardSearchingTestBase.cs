@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Thrown when the lease for a searcher has expired.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
@@ -96,7 +96,10 @@ namespace Lucene.Net.Search
 
             public override int GetHashCode()
             {
-                return (int)(version * nodeID + field.GetHashCode());
+                unchecked
+                {
+                    return (int)(version * nodeID + field.GetHashCode());
+                }
             }
 
             public override bool Equals(object other)
@@ -132,7 +135,10 @@ namespace Lucene.Net.Search
 
             public override int GetHashCode()
             {
-                return (int)(version * nodeID + term.GetHashCode());
+                unchecked
+                {
+                    return (int)(version * nodeID + term.GetHashCode());
+                }
             }
 
             public override bool Equals(object other)

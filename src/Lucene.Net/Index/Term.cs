@@ -115,11 +115,14 @@ namespace Lucene.Net.Index
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 1;
-            result = prime * result + ((Field is null) ? 0 : Field.GetHashCode());
-            result = prime * result + ((Bytes is null) ? 0 : Bytes.GetHashCode());
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + (Field is null ? 0 : Field.GetHashCode());
+                result = prime * result + (Bytes is null ? 0 : Bytes.GetHashCode());
+                return result;
+            }
         }
 
         /// <summary>

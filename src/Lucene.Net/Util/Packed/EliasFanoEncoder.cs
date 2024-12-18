@@ -393,10 +393,13 @@ namespace Lucene.Net.Util.Packed
 
         public override int GetHashCode()
         {
-            int h = ((int)(31 * (numValues + 7 * (numEncoded + 5 * (numLowBits + 3 * (numIndexEntries + 11 * indexInterval))))))
-                ^ Arrays.GetHashCode(upperLongs)
-                ^ Arrays.GetHashCode(lowerLongs);
-            return h;
+            unchecked
+            {
+                int h = ((int)(31 * (numValues + 7 * (numEncoded + 5 * (numLowBits + 3 * (numIndexEntries + 11 * indexInterval))))))
+                        ^ Arrays.GetHashCode(upperLongs)
+                        ^ Arrays.GetHashCode(lowerLongs);
+                return h;
+            }
         }
     }
 }

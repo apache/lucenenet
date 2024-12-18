@@ -249,17 +249,20 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            int hash = base.GetHashCode();
-            hash += precisionStep ^ 0x64365465;
-            if (min != null)
+            unchecked
             {
-                hash += min.GetHashCode() ^ 0x14fa55fb;
+                int hash = base.GetHashCode();
+                hash += precisionStep ^ 0x64365465;
+                if (min != null)
+                {
+                    hash += min.GetHashCode() ^ 0x14fa55fb;
+                }
+                if (max != null)
+                {
+                    hash += max.GetHashCode() ^ 0x733fa5fe;
+                }
+                return hash + (minInclusive.GetHashCode() ^ 0x14fa55fb) + (maxInclusive.GetHashCode() ^ 0x733fa5fe);
             }
-            if (max != null)
-            {
-                hash += max.GetHashCode() ^ 0x733fa5fe;
-            }
-            return hash + (minInclusive.GetHashCode() ^ 0x14fa55fb) + (maxInclusive.GetHashCode() ^ 0x733fa5fe);
         }
 
         // members (package private, to be also fast accessible by NumericRangeTermEnum)

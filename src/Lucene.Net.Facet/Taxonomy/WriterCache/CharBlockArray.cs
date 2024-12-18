@@ -599,8 +599,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 var chars = b.chars;
                 for (int i = indexInBlock; i < end; i++)
                 {
-                    // Hash code calculation from J2N/Apache Harmony
-                    hash = chars[i] + ((hash << 5) - hash);
+                    unchecked
+                    {
+                        // Hash code calculation from J2N/Apache Harmony
+                        hash = chars[i] + ((hash << 5) - hash);
+                    }
                 }
                 remaining -= numToCheck;
                 indexInBlock = 0; // 2nd+ iterations read from start of the block

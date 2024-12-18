@@ -95,7 +95,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public static readonly int hash = typeof(LiteralValueSource).GetHashCode();
         public override int GetHashCode()
         {
-            return hash + m_str.GetHashCode();
+            unchecked
+            {
+                return hash + m_str.GetHashCode();
+            }
         }
     }
 }

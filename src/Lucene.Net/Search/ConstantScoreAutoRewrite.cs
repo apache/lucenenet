@@ -36,13 +36,13 @@ namespace Lucene.Net.Search
     /// A rewrite method that tries to pick the best
     /// constant-score rewrite method based on term and
     /// document counts from the query.  If both the number of
-    /// terms and documents is small enough, then 
+    /// terms and documents is small enough, then
     /// <see cref="MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE"/> is used.
     /// Otherwise, <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE"/> is
     /// used.
     /// </summary>
-    // LUCENENET specific: made this class public. In Lucene there was a derived class 
-    // with the same name that was nested within MultiTermQuery, but in .NET it is 
+    // LUCENENET specific: made this class public. In Lucene there was a derived class
+    // with the same name that was nested within MultiTermQuery, but in .NET it is
     // more intuitive if our classes are not nested.
     public class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
     {
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// If the number of terms in this query is equal to or
-        /// larger than this setting then 
+        /// larger than this setting then
         /// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE"/> is used.
         /// </summary>
         public virtual int TermCountCutoff
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
         /// If the number of documents to be visited in the
         /// postings exceeds this specified percentage of the
         /// <see cref="Index.IndexReader.MaxDoc"/> for the index, then
-        /// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE"/> is used. 
+        /// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE"/> is used.
         /// Value may be 0.0 to 100.0.
         /// </summary>
         public virtual double DocCountPercent
@@ -183,8 +183,11 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            const int prime = 1279;
-            return (int)(prime * termCountCutoff + J2N.BitConversion.DoubleToInt64Bits(docCountPercent));
+            unchecked
+            {
+                const int prime = 1279;
+                return (int)(prime * termCountCutoff + J2N.BitConversion.DoubleToInt64Bits(docCountPercent));
+            }
         }
 
         public override bool Equals(object obj)

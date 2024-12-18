@@ -31,7 +31,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <para/>
     /// Note that the configured Similarity for the field must be
     /// a subclass of <see cref="TFIDFSimilarity"/>
-    /// @lucene.internal 
+    /// @lucene.internal
     /// </summary>
     public class NormValueSource : ValueSource
     {
@@ -104,7 +104,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return this.GetType().GetHashCode() + m_field.GetHashCode();
+            unchecked
+            {
+                return this.GetType().GetHashCode() + m_field.GetHashCode();
+            }
         }
     }
 }

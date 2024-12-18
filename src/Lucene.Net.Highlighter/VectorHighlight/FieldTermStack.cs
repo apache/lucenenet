@@ -257,10 +257,13 @@ namespace Lucene.Net.Search.VectorHighlight
 
             public override int GetHashCode()
             {
-                int prime = 31;
-                int result = 1;
-                result = prime * result + position;
-                return result;
+                unchecked
+                {
+                    const int prime = 31;
+                    int result = 1;
+                    result = prime * result + position;
+                    return result;
+                }
             }
 
             public override bool Equals(object obj)

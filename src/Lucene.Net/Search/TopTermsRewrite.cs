@@ -218,7 +218,10 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            return 31 * size;
+            unchecked
+            {
+                return 31 * size;
+            }
         }
 
         public override bool Equals(object obj)
@@ -251,7 +254,7 @@ namespace Lucene.Net.Search
             if (Debugging.AssertsEnabled) Debugging.Assert(st1.TermComp == st2.TermComp, "term comparer should not change between segments");
             return st1.TermComp.Compare(st1.Bytes, st2.Bytes);
         });
-        
+
         internal sealed class ScoreTerm : IComparable<ScoreTerm>
         {
             public IComparer<BytesRef> TermComp { get; private set; }

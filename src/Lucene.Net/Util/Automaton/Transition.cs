@@ -128,7 +128,10 @@ namespace Lucene.Net.Util.Automaton
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
-            return min * 2 + max * 3;
+            unchecked
+            {
+                return min * 2 + max * 3;
+            }
         }
 
         /// <summary>
@@ -252,7 +255,7 @@ namespace Lucene.Net.Util.Automaton
                 return 0;
             }
         }
-        
+
         // LUCENENET NOTE: Renamed to follow convention of static fields/constants
         public static readonly IComparer<Transition> COMPARE_BY_DEST_THEN_MIN_MAX = new CompareByDestThenMinMaxSingle();
 

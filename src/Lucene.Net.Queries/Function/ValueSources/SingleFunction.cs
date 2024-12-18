@@ -45,14 +45,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return m_source.GetHashCode() + Name.GetHashCode();
+            unchecked
+            {
+                return m_source.GetHashCode() + Name.GetHashCode();
+            }
         }
 
         public override bool Equals(object o)
         {
             if (!(o is SingularFunction other))
                 return false;
-            return Name.Equals(other.Name, StringComparison.Ordinal) 
+            return Name.Equals(other.Name, StringComparison.Ordinal)
                 && m_source.Equals(other.m_source);
         }
 

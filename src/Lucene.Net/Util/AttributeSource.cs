@@ -396,9 +396,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The caller must pass in an interface type that extends <see cref="IAttribute"/>.
-        /// This method first checks if an instance of the corresponding class is 
+        /// This method first checks if an instance of the corresponding class is
         /// already in this <see cref="AttributeSource"/> and returns it. Otherwise a
-        /// new instance is created, added to this <see cref="AttributeSource"/> and returned. 
+        /// new instance is created, added to this <see cref="AttributeSource"/> and returned.
         /// </summary>
         public T AddAttribute<T>()
             where T : IAttribute
@@ -532,12 +532,15 @@ namespace Lucene.Net.Util
 
         public override int GetHashCode()
         {
-            int code = 0;
-            for (State state = GetCurrentState(); state != null; state = state.next)
+            unchecked
             {
-                code = code * 31 + state.attribute.GetHashCode();
+                int code = 0;
+                for (State state = GetCurrentState(); state != null; state = state.next)
+                {
+                    code = code * 31 + state.attribute.GetHashCode();
+                }
+                return code;
             }
-            return code;
         }
 
         public override bool Equals(object obj)

@@ -41,11 +41,14 @@
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 1;
-            result = prime * result + (int)(EstimatedSegmentSize ^ (EstimatedSegmentSize >>> 32));
-            result = prime * result + NumDocs;
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + (int)(EstimatedSegmentSize ^ (EstimatedSegmentSize >>> 32));
+                result = prime * result + NumDocs;
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

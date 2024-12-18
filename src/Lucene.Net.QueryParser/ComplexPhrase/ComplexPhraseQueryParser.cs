@@ -419,16 +419,19 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
 
             public override int GetHashCode()
             {
-                int prime = 31;
-                int result = base.GetHashCode();
-                result = prime * result + ((field is null) ? 0 : field.GetHashCode());
-                result = prime
-                    * result
-                    + ((phrasedQueryStringContents is null) ? 0
-                        : phrasedQueryStringContents.GetHashCode());
-                result = prime * result + slopFactor;
-                result = prime * result + (inOrder ? 1 : 0);
-                return result;
+                unchecked
+                {
+                    const int prime = 31;
+                    int result = base.GetHashCode();
+                    result = prime * result + (field is null ? 0 : field.GetHashCode());
+                    result = prime
+                        * result
+                        + (phrasedQueryStringContents is null ? 0
+                            : phrasedQueryStringContents.GetHashCode());
+                    result = prime * result + slopFactor;
+                    result = prime * result + (inOrder ? 1 : 0);
+                    return result;
+                }
             }
 
             public override bool Equals(object obj)

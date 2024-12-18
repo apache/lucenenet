@@ -195,11 +195,14 @@ namespace Lucene.Net.Sandbox.Queries
 
         public override int GetHashCode()
         {
-            int hash = 217;
-            hash = 31 * hash + keepMode.GetHashCode();
-            hash = 31 * hash + processingMode.GetHashCode();
-            hash = 31 * hash + fieldName.GetHashCode();
-            return hash;
+            unchecked
+            {
+                int hash = 217;
+                hash = 31 * hash + keepMode.GetHashCode();
+                hash = 31 * hash + processingMode.GetHashCode();
+                hash = 31 * hash + fieldName.GetHashCode();
+                return hash;
+            }
         }
 
         public ProcessingMode ProcessingMode

@@ -119,13 +119,16 @@ namespace Lucene.Net.Store
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 1;
-            result = prime * result + /*((Context is null) ? 0 :*/ Context.GetHashCode()/*)*/; // LUCENENET NOTE: Enum can never be null in .NET
-            result = prime * result + ((FlushInfo is null) ? 0 : FlushInfo.GetHashCode());
-            result = prime * result + ((MergeInfo is null) ? 0 : MergeInfo.GetHashCode());
-            result = prime * result + (ReadOnce ? 1231 : 1237);
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + /*((Context is null) ? 0 :*/ Context.GetHashCode()/*)*/; // LUCENENET NOTE: Enum can never be null in .NET
+                result = prime * result + (FlushInfo is null ? 0 : FlushInfo.GetHashCode());
+                result = prime * result + (MergeInfo is null ? 0 : MergeInfo.GetHashCode());
+                result = prime * result + (ReadOnce ? 1231 : 1237);
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

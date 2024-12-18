@@ -74,10 +74,13 @@ namespace Lucene.Net.Search.Spans
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + ((m_term is null) ? 0 : m_term.GetHashCode());
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + (m_term is null ? 0 : m_term.GetHashCode());
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

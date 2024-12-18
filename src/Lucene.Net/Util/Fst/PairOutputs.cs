@@ -58,7 +58,10 @@ namespace Lucene.Net.Util.Fst
 
             public override int GetHashCode()
             {
-                return Output1.GetHashCode() + Output2.GetHashCode();
+                unchecked
+                {
+                    return Output1.GetHashCode() + Output2.GetHashCode();
+                }
             }
         }
 

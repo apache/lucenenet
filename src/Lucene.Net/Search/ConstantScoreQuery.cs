@@ -267,7 +267,7 @@ namespace Lucene.Net.Search
                     this.outerInstance = outerInstance;
                     this.collector = collector;
                 }
-                
+
                 public void SetScorer(Scorer scorer)
                 {
                     // we must wrap again here, but using the value passed in as parameter:
@@ -371,7 +371,10 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            return 31 * base.GetHashCode() + (m_query ?? (object)m_filter).GetHashCode();
+            unchecked
+            {
+                return 31 * base.GetHashCode() + (m_query ?? (object)m_filter).GetHashCode();
+            }
         }
     }
 }

@@ -1104,17 +1104,20 @@ namespace Lucene.Net.Util
 
         public override int GetHashCode()
         {
-            // Start with a zero hash and use a mix that results in zero if the input is zero.
-            // this effectively truncates trailing zeros without an explicit check.
-            long h = 0;
-            for (int i = m_bits.Length; --i >= 0; )
+            unchecked
             {
-                h ^= m_bits[i];
-                h = (h << 1) | (h >>> 63); // rotate left
+                // Start with a zero hash and use a mix that results in zero if the input is zero.
+                // this effectively truncates trailing zeros without an explicit check.
+                long h = 0;
+                for (int i = m_bits.Length; --i >= 0; )
+                {
+                    h ^= m_bits[i];
+                    h = (h << 1) | (h >>> 63); // rotate left
+                }
+                // fold leftmost bits into right and add a constant to prevent
+                // empty sets from returning 0, which is too common.
+                return (int)((h >> 32) ^ h) + unchecked((int)0x98761234);
             }
-            // fold leftmost bits into right and add a constant to prevent
-            // empty sets from returning 0, which is too common.
-            return (int)((h >> 32) ^ h) + unchecked((int)0x98761234);
         }
     }
 }

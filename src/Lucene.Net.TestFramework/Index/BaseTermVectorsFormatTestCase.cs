@@ -216,7 +216,10 @@ namespace Lucene.Net.Index
 
             public override int GetHashCode()
             {
-                return start + 31 * end;
+                unchecked
+                {
+                    return start + 31 * end;
+                }
             }
 
             public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute

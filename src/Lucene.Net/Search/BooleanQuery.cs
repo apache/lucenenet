@@ -46,22 +46,22 @@ namespace Lucene.Net.Search
     /// <para/>
     /// Collection initializer note: To create and populate a <see cref="BooleanQuery"/>
     /// in a single statement, you can use the following example as a guide:
-    /// 
+    ///
     /// <code>
     /// var booleanQuery = new BooleanQuery() {
     ///     { new WildcardQuery(new Term("field2", "foobar")), Occur.SHOULD },
     ///     { new MultiPhraseQuery() {
-    ///         new Term("field", "microsoft"), 
+    ///         new Term("field", "microsoft"),
     ///         new Term("field", "office")
     ///     }, Occur.SHOULD }
     /// };
-    /// 
+    ///
     /// // or
-    /// 
+    ///
     /// var booleanQuery = new BooleanQuery() {
     ///     new BooleanClause(new WildcardQuery(new Term("field2", "foobar")), Occur.SHOULD),
     ///     new BooleanClause(new MultiPhraseQuery() {
-    ///         new Term("field", "microsoft"), 
+    ///         new Term("field", "microsoft"),
     ///         new Term("field", "office")
     ///     }, Occur.SHOULD)
     /// };
@@ -72,12 +72,12 @@ namespace Lucene.Net.Search
         private static int maxClauseCount = 1024;
 
         /// <summary>
-        /// Thrown when an attempt is made to add more than 
+        /// Thrown when an attempt is made to add more than
         /// <see cref="MaxClauseCount"/> clauses. This typically happens if
         /// a <see cref="PrefixQuery"/>, <see cref="FuzzyQuery"/>, <see cref="WildcardQuery"/>, or <see cref="TermRangeQuery"/>
         /// is expanded to many terms during search.
         /// </summary>
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Return the maximum number of clauses permitted, 1024 by default.
-        /// Attempts to add more than the permitted number of clauses cause 
+        /// Attempts to add more than the permitted number of clauses cause
         /// <see cref="TooManyClausesException"/> to be thrown. </summary>
         public static int MaxClauseCount
         {
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// <see cref="Similarity.Coord(int,int)"/> may be disabled in scoring, as
         /// appropriate. For example, this score factor does not make sense for most
-        /// automatically generated queries, like <see cref="WildcardQuery"/> and 
+        /// automatically generated queries, like <see cref="WildcardQuery"/> and
         /// <see cref="FuzzyQuery"/>.
         /// </summary>
         /// <param name="disableCoord"> Disables <see cref="Similarity.Coord(int,int)"/> in scoring. </param>
@@ -694,8 +694,11 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return BitConversion.SingleToInt32Bits(Boost) ^ clauses.GetHashCode()
-                + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
+            unchecked
+            {
+                return BitConversion.SingleToInt32Bits(Boost) ^ clauses.GetHashCode()
+                    + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
+            }
         }
     }
 }

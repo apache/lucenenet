@@ -52,10 +52,10 @@ namespace Lucene.Net.Search
     /// <para/>
     /// Collection initializer note: To create and populate a <see cref="PhraseQuery"/>
     /// in a single statement, you can use the following example as a guide:
-    /// 
+    ///
     /// <code>
     /// var phraseQuery = new PhraseQuery() {
-    ///     new Term("field", "microsoft"), 
+    ///     new Term("field", "microsoft"),
     ///     new Term("field", "office")
     /// };
     /// </code>
@@ -251,15 +251,18 @@ namespace Lucene.Net.Search
 
             public override int GetHashCode()
             {
-                const int prime = 31;
-                int result = 1;
-                result = prime * result + docFreq;
-                result = prime * result + position;
-                for (int i = 0; i < nTerms; i++)
+                unchecked
                 {
-                    result = prime * result + terms[i].GetHashCode();
+                    const int prime = 31;
+                    int result = 1;
+                    result = prime * result + docFreq;
+                    result = prime * result + position;
+                    for (int i = 0; i < nTerms; i++)
+                    {
+                        result = prime * result + terms[i].GetHashCode();
+                    }
+                    return result;
                 }
-                return result;
             }
 
             public override bool Equals(object obj)
@@ -300,7 +303,7 @@ namespace Lucene.Net.Search
             internal readonly Similarity similarity;
             internal readonly Similarity.SimWeight stats;
 
-            
+
             internal TermContext[] states;
 
             public PhraseWeight(PhraseQuery outerInstance, IndexSearcher searcher)
@@ -506,9 +509,9 @@ namespace Lucene.Net.Search
             }
             PhraseQuery other = (PhraseQuery)o;
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
-            return (NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)) 
-                && (this.slop == other.slop) 
-                && this.terms.Equals(other.terms) 
+            return (NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost))
+                && (this.slop == other.slop)
+                && this.terms.Equals(other.terms)
                 && this.positions.Equals(other.positions);
         }
 
@@ -516,9 +519,9 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return J2N.BitConversion.SingleToInt32Bits(Boost) 
-                ^ slop 
-                ^ terms.GetHashCode() 
+            return J2N.BitConversion.SingleToInt32Bits(Boost)
+                ^ slop
+                ^ terms.GetHashCode()
                 ^ positions.GetHashCode();
         }
 

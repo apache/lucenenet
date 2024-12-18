@@ -124,7 +124,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return hcode + m_field.GetHashCode();
+            unchecked
+            {
+                return hcode + m_field.GetHashCode();
+            }
         }
     }
 }

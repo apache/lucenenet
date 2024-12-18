@@ -23,18 +23,18 @@ namespace Lucene.Net.Queries
 
 
     /// <summary>
-    /// The <see cref="BoostingQuery"/> class can be used to effectively demote results that match a given query. 
-    /// Unlike the "NOT" clause, this still selects documents that contain undesirable terms, 
+    /// The <see cref="BoostingQuery"/> class can be used to effectively demote results that match a given query.
+    /// Unlike the "NOT" clause, this still selects documents that contain undesirable terms,
     /// but reduces their overall score:
     /// <code>
     ///     Query balancedQuery = new BoostingQuery(positiveQuery, negativeQuery, 0.01f);
     /// </code>
-    /// In this scenario the positiveQuery contains the mandatory, desirable criteria which is used to 
-    /// select all matching documents, and the negativeQuery contains the undesirable elements which 
-    /// are simply used to lessen the scores. Documents that match the negativeQuery have their score 
-    /// multiplied by the supplied "boost" parameter, so this should be less than 1 to achieve a 
+    /// In this scenario the positiveQuery contains the mandatory, desirable criteria which is used to
+    /// select all matching documents, and the negativeQuery contains the undesirable elements which
+    /// are simply used to lessen the scores. Documents that match the negativeQuery have their score
+    /// multiplied by the supplied "boost" parameter, so this should be less than 1 to achieve a
     /// demoting effect
-    /// 
+    ///
     /// This code was originally made available here: <c>[WWW] http://marc.theaimsgroup.com/?l=lucene-user&amp;m=108058407130459&amp;w=2 </c>
     /// and is documented here: <c>http://wiki.apache.org/lucene-java/CommunityContributions</c>
     /// </summary>
@@ -106,12 +106,15 @@ namespace Lucene.Net.Queries
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + J2N.BitConversion.SingleToInt32Bits(boost);
-            result = prime * result + ((context is null) ? 0 : context.GetHashCode());
-            result = prime * result + ((match is null) ? 0 : match.GetHashCode());
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + J2N.BitConversion.SingleToInt32Bits(boost);
+                result = prime * result + ((context is null) ? 0 : context.GetHashCode());
+                result = prime * result + ((match is null) ? 0 : match.GetHashCode());
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

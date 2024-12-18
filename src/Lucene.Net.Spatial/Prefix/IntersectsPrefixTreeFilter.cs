@@ -28,14 +28,14 @@ namespace Lucene.Net.Spatial.Prefix
     /// <summary>
     /// A Filter matching documents that have an <see cref="SpatialRelation.INTERSECTS"/>
     /// (i.e. not DISTINCT) relationship with a provided query shape.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public class IntersectsPrefixTreeFilter : AbstractVisitingPrefixTreeFilter
     {
         private readonly bool hasIndexedLeaves;
 
-        public IntersectsPrefixTreeFilter(IShape queryShape, string fieldName, 
+        public IntersectsPrefixTreeFilter(IShape queryShape, string fieldName,
                                           SpatialPrefixTree grid, int detailLevel,
                                           int prefixGridScanLevel, bool hasIndexedLeaves)
             : base(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel)
@@ -49,7 +49,7 @@ namespace Lucene.Net.Spatial.Prefix
         }
 
         /// <summary>
-        /// LUCENENET specific: need to override GetHashCode to 
+        /// LUCENENET specific: need to override GetHashCode to
         /// prevent a compiler warning and realistically, the hash code
         /// should work similarly to Equals.
         /// </summary>

@@ -343,12 +343,15 @@ namespace Lucene.Net.Queries
 
             public override int GetHashCode()
             {
-                const int prime = 31;
-                int result = 1;
-                result = prime * result + ((field is null) ? 0 : field.GetHashCode());
-                result = prime * result + end;
-                result = prime * result + start;
-                return result;
+                unchecked
+                {
+                    const int prime = 31;
+                    int result = 1;
+                    result = prime * result + ((field is null) ? 0 : field.GetHashCode());
+                    result = prime * result + end;
+                    result = prime * result + start;
+                    return result;
+                }
             }
 
             public override bool Equals(object obj)

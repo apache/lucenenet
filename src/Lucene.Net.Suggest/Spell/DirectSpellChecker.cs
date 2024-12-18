@@ -553,10 +553,13 @@ namespace Lucene.Net.Search.Spell
 
             public override int GetHashCode()
             {
-                const int prime = 31;
-                int result = 1;
-                result = prime * result + ((Term is null) ? 0 : Term.GetHashCode());
-                return result;
+                unchecked
+                {
+                    const int prime = 31;
+                    int result = 1;
+                    result = prime * result + ((Term is null) ? 0 : Term.GetHashCode());
+                    return result;
+                }
             }
 
             public override bool Equals(object obj)

@@ -92,11 +92,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = J2N.BitConversion.SingleToInt32Bits(m_slope);
-            h = (h >>> 2) | (h << 30);
-            h += J2N.BitConversion.SingleToInt32Bits(m_intercept);
-            h ^= (h << 14) | (h >>> 19);
-            return h + m_source.GetHashCode();
+            unchecked
+            {
+                int h = J2N.BitConversion.SingleToInt32Bits(m_slope);
+                h = (h >>> 2) | (h << 30);
+                h += J2N.BitConversion.SingleToInt32Bits(m_intercept);
+                h ^= (h << 14) | (h >>> 19);
+                return h + m_source.GetHashCode();
+            }
         }
 
         public override bool Equals(object o)

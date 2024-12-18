@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
+
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
@@ -181,8 +182,11 @@ namespace Lucene.Net.Queries
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return (this.GetType().GetHashCode() + subQuery.GetHashCode() + Arrays.GetHashCode(scoringQueries)) ^
-                   J2N.BitConversion.SingleToInt32Bits(Boost) ^ (strict ? 1234 : 4321);
+            unchecked
+            {
+                return (this.GetType().GetHashCode() + subQuery.GetHashCode() + Arrays.GetHashCode(scoringQueries)) ^
+                       J2N.BitConversion.SingleToInt32Bits(Boost) ^ (strict ? 1234 : 4321);
+            }
         }
 
         /// <summary>

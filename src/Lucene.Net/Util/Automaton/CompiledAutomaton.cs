@@ -452,12 +452,15 @@ namespace Lucene.Net.Util.Automaton
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 1;
-            result = prime * result + ((RunAutomaton is null) ? 0 : RunAutomaton.GetHashCode());
-            result = prime * result + ((Term is null) ? 0 : Term.GetHashCode());
-            result = prime * result + Type.GetHashCode(); //((Type is null) ? 0 : Type.GetHashCode()); // LUCENENET NOTE: Enum cannot be null in .NET
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + (RunAutomaton is null ? 0 : RunAutomaton.GetHashCode());
+                result = prime * result + (Term is null ? 0 : Term.GetHashCode());
+                result = prime * result + Type.GetHashCode(); //((Type is null) ? 0 : Type.GetHashCode()); // LUCENENET NOTE: Enum cannot be null in .NET
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

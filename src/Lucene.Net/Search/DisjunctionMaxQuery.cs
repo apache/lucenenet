@@ -48,10 +48,10 @@ namespace Lucene.Net.Search
     /// <para/>
     /// Collection initializer note: To create and populate a <see cref="DisjunctionMaxQuery"/>
     /// in a single statement, you can use the following example as a guide:
-    /// 
+    ///
     /// <code>
     /// var disjunctionMaxQuery = new DisjunctionMaxQuery(0.1f) {
-    ///     new TermQuery(new Term("field1", "albino")), 
+    ///     new TermQuery(new Term("field1", "albino")),
     ///     new TermQuery(new Term("field2", "elephant"))
     /// };
     /// </code>
@@ -99,9 +99,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Add a collection of disjuncts to this disjunction
-        /// via <see cref="T:IEnumerable{Query}"/> 
+        /// via <see cref="T:IEnumerable{Query}"/>
         ///
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls
         /// a private method and not this virtual method. So if you need to override
         /// the behavior during the initialization, call your own private method from the constructor
         /// with whatever custom behavior you need.
@@ -377,9 +377,12 @@ namespace Lucene.Net.Search
         /// <returns> the hash code </returns>
         public override int GetHashCode()
         {
-            return J2N.BitConversion.SingleToInt32Bits(Boost) 
-                + J2N.BitConversion.SingleToInt32Bits(tieBreakerMultiplier) 
-                + disjuncts.GetHashCode();
+            unchecked
+            {
+                return J2N.BitConversion.SingleToInt32Bits(Boost)
+                       + J2N.BitConversion.SingleToInt32Bits(tieBreakerMultiplier)
+                       + disjuncts.GetHashCode();
+            }
         }
     }
 }

@@ -184,7 +184,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return this.GetType().GetHashCode() + m_indexedField.GetHashCode() * 29 + m_indexedBytes.GetHashCode();
+            unchecked
+            {
+                return this.GetType().GetHashCode() + m_indexedField.GetHashCode() * 29 + m_indexedBytes.GetHashCode();
+            }
         }
 
         public override bool Equals(object o)

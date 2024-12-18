@@ -45,10 +45,13 @@ namespace Lucene.Net.Search.Payloads
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 1;
-            result = prime * result + this.GetType().GetHashCode();
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + this.GetType().GetHashCode();
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

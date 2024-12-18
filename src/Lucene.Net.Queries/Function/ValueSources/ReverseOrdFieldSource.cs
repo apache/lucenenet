@@ -106,7 +106,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
         private static readonly int hcode = typeof(ReverseOrdFieldSource).GetHashCode();
         public override int GetHashCode()
         {
-            return hcode + field.GetHashCode();
+            unchecked
+            {
+                return hcode + field.GetHashCode();
+            }
         }
     }
 }

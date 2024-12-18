@@ -1800,18 +1800,23 @@ namespace Lucene.Net.Analysis.Util
         /// <returns></returns>
         public override int GetHashCode()
         {
-            const int PRIME = 31; // arbitrary prime
-            int hash = PRIME;
-            using (var iter = GetEnumerator())
+            unchecked
             {
-                while (iter.MoveNext())
+                const int PRIME = 31; // arbitrary prime
+                int hash = PRIME;
+                using (var iter = GetEnumerator())
                 {
-                    hash = (hash * PRIME) ^ iter.CurrentKeyString.GetHashCode();
-                    TValue? value = iter.CurrentValue;
-                    hash = (hash * PRIME) ^ (value is null ? 0 : JCG.EqualityComparer<TValue>.Default.GetHashCode(value));
+                    while (iter.MoveNext())
+                    {
+                        hash = (hash * PRIME) ^ iter.CurrentKeyString.GetHashCode();
+                        TValue? value = iter.CurrentValue;
+                        hash = (hash * PRIME) ^
+                               (value is null ? 0 : JCG.EqualityComparer<TValue>.Default.GetHashCode(value));
+                    }
                 }
+
+                return hash;
             }
-            return hash;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1832,16 +1837,22 @@ namespace Lucene.Net.Analysis.Util
             {
                 for (int i = startIndex; i < stop;)
                 {
-                    int codePointAt = charUtils.CodePointAt(text, i, stop);
-                    code = code * 31 + Character.ToLower(codePointAt, CultureInfo.InvariantCulture); // LUCENENET specific - need to use invariant culture to match Java
-                    i += Character.CharCount(codePointAt);
+                    unchecked
+                    {
+                        int codePointAt = charUtils.CodePointAt(text, i, stop);
+                        code = code * 31 + Character.ToLower(codePointAt, CultureInfo.InvariantCulture); // LUCENENET specific - need to use invariant culture to match Java
+                        i += Character.CharCount(codePointAt);
+                    }
                 }
             }
             else
             {
                 for (int i = startIndex; i < stop; i++)
                 {
-                    code = code * 31 + text[i];
+                    unchecked
+                    {
+                        code = code * 31 + text[i];
+                    }
                 }
             }
             return code;
@@ -1859,16 +1870,22 @@ namespace Lucene.Net.Analysis.Util
             {
                 for (int i = 0; i < length;)
                 {
-                    int codePointAt = charUtils.CodePointAt(text, i);
-                    code = code * 31 + Character.ToLower(codePointAt, CultureInfo.InvariantCulture); // LUCENENET specific - need to use invariant culture to match Java
-                    i += Character.CharCount(codePointAt);
+                    unchecked
+                    {
+                        int codePointAt = charUtils.CodePointAt(text, i);
+                        code = code * 31 + Character.ToLower(codePointAt, CultureInfo.InvariantCulture); // LUCENENET specific - need to use invariant culture to match Java
+                        i += Character.CharCount(codePointAt);
+                    }
                 }
             }
             else
             {
                 for (int i = 0; i < length; i++)
                 {
-                    code = code * 31 + text[i];
+                    unchecked
+                    {
+                        code = code * 31 + text[i];
+                    }
                 }
             }
             return code;
@@ -1886,16 +1903,22 @@ namespace Lucene.Net.Analysis.Util
             {
                 for (int i = 0; i < length;)
                 {
-                    int codePointAt = charUtils.CodePointAt(text, i);
-                    code = code * 31 + Character.ToLower(codePointAt, CultureInfo.InvariantCulture); // LUCENENET specific - need to use invariant culture to match Java
-                    i += Character.CharCount(codePointAt);
+                    unchecked
+                    {
+                        int codePointAt = charUtils.CodePointAt(text, i);
+                        code = code * 31 + Character.ToLower(codePointAt, CultureInfo.InvariantCulture); // LUCENENET specific - need to use invariant culture to match Java
+                        i += Character.CharCount(codePointAt);
+                    }
                 }
             }
             else
             {
                 for (int i = 0; i < length; i++)
                 {
-                    code = code * 31 + text[i];
+                    unchecked
+                    {
+                        code = code * 31 + text[i];
+                    }
                 }
             }
             return code;

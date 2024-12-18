@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Parses a char array into an <see cref="int"/>. 
+        /// Parses a char array into an <see cref="int"/>.
         /// <para/>
         /// NOTE: This was parseInt() in Lucene
         /// </summary>
@@ -638,12 +638,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public static int GetHashCode(char[] array, int start, int end)
         {
-            int code = 0;
-            for (int i = end - 1; i >= start; i--)
+            unchecked
             {
-                code = code * 31 + array[i];
+                int code = 0;
+                for (int i = end - 1; i >= start; i--)
+                {
+                    code = code * 31 + array[i];
+                }
+                return code;
             }
-            return code;
         }
 
         /// <summary>
@@ -652,12 +655,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public static int GetHashCode(byte[] array, int start, int end)
         {
-            int code = 0;
-            for (int i = end - 1; i >= start; i--)
+            unchecked
             {
-                code = code * 31 + array[i];
+                int code = 0;
+                for (int i = end - 1; i >= start; i--)
+                {
+                    code = code * 31 + array[i];
+                }
+                return code;
             }
-            return code;
         }
 
         // Since Arrays.equals doesn't implement offsets for equals
@@ -773,7 +779,7 @@ namespace Lucene.Net.Util
             return false;
         }
 
-        // LUCENENET: The toIntArray() method was only here to convert Integer[] to int[] in Java, but is not necessary when dealing with 
+        // LUCENENET: The toIntArray() method was only here to convert Integer[] to int[] in Java, but is not necessary when dealing with
 
         /// <summary>
         /// NOTE: This was toIntArray() in Lucene

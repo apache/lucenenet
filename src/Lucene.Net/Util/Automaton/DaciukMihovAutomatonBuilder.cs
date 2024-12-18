@@ -98,26 +98,29 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             public override int GetHashCode()
             {
-                int hash = is_final ? 1 : 0;
-
-                hash ^= hash * 31 + this.labels.Length;
-                foreach (int c in this.labels)
+                unchecked
                 {
-                    hash ^= hash * 31 + c;
-                }
+                    int hash = is_final ? 1 : 0;
 
-                /*
-                 * Compare the right-language of this state using reference-identity of
-                 * outgoing states. this is possible because states are interned (stored
-                 * in registry) and traversed in post-order, so any outgoing transitions
-                 * are already interned.
-                 */
-                foreach (State s in this.states)
-                {
-                    hash ^= s.GetHashCode();
-                }
+                    hash ^= hash * 31 + this.labels.Length;
+                    foreach (int c in this.labels)
+                    {
+                        hash ^= hash * 31 + c;
+                    }
 
-                return hash;
+                    /*
+                     * Compare the right-language of this state using reference-identity of
+                     * outgoing states. this is possible because states are interned (stored
+                     * in registry) and traversed in post-order, so any outgoing transitions
+                     * are already interned.
+                     */
+                    foreach (State s in this.states)
+                    {
+                        hash ^= s.GetHashCode();
+                    }
+
+                    return hash;
+                }
             }
 
             /// <summary>

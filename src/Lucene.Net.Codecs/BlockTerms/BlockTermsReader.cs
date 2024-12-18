@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
     /// <summary>
     /// Handles a terms dict, but decouples all details of
-    /// doc/freqs/positions reading to an instance of 
+    /// doc/freqs/positions reading to an instance of
     /// <see cref="PostingsReaderBase"/>.  This class is reusable for
     /// codecs that use a different format for
     /// docs/freqs/positions (though codecs are also free to
@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// <para/>
     /// This class also interacts with an instance of
     /// <see cref="TermsIndexReaderBase"/>, to abstract away the specific
-    /// implementation of the terms dict index. 
+    /// implementation of the terms dict index.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
@@ -90,7 +90,10 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override int GetHashCode()
             {
-                return Field.GetHashCode() * 31 + Term.GetHashCode();
+                unchecked
+                {
+                    return Field.GetHashCode() * 31 + Term.GetHashCode();
+                }
             }
         }
 
@@ -372,7 +375,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 /// the terms data from that"; eg FuzzyTermsEnum will
                 /// (usually) just immediately call seek again if we
                 /// return NOT_FOUND so it's a waste for us to fill in
-                /// the term that was actually NOT_FOUND 
+                /// the term that was actually NOT_FOUND
                 /// </remarks>
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
@@ -876,7 +879,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 // Does initial decode of next block of terms; this
                 // doesn't actually decode the docFreq, totalTermFreq,
                 // postings details (frq/prx offset, etc.) metadata;
-                // it just loads them as byte[] blobs which are then      
+                // it just loads them as byte[] blobs which are then
                 // decoded on-demand if the metadata is ever requested
                 // for any term in this block.  This enables terms-only
                 // intensive consumes (eg certain MTQs, respelling) to

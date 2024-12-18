@@ -27,7 +27,7 @@ namespace Lucene.Net.Expressions
     {
         private readonly ExpressionValueSource source;
 
-        internal ExpressionSortField(string name, ExpressionValueSource source, bool reverse) 
+        internal ExpressionSortField(string name, ExpressionValueSource source, bool reverse)
             : base(name, SortFieldType.CUSTOM, reverse)
         {
             this.source = source;
@@ -40,10 +40,13 @@ namespace Lucene.Net.Expressions
 
         public override int GetHashCode()
         {
-            int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + ((source is null) ? 0 : source.GetHashCode());
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + (source is null ? 0 : source.GetHashCode());
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

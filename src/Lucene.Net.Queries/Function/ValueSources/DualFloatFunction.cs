@@ -94,12 +94,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = m_a.GetHashCode();
-            h ^= (h << 13) | (h >>> 20);
-            h += m_b.GetHashCode();
-            h ^= (h << 23) | (h >>> 10);
-            h += Name.GetHashCode();
-            return h;
+            unchecked
+            {
+                int h = m_a.GetHashCode();
+                h ^= (h << 13) | (h >>> 20);
+                h += m_b.GetHashCode();
+                h ^= (h << 23) | (h >>> 10);
+                h += Name.GetHashCode();
+                return h;
+            }
         }
 
         public override bool Equals(object o)

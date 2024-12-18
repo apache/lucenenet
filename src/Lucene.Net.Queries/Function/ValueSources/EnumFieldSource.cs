@@ -267,13 +267,16 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int result = base.GetHashCode();
-            result = 31 * result + parser.GetHashCode();
-            // LUCENENET specific: must use DictionaryEqualityComparer.GetHashCode() to ensure values
-            // contained within the dictionaries are compared for equality
-            result = 31 * result + JCG.DictionaryEqualityComparer<int, string>.Default.GetHashCode(enumIntToStringMap);
-            result = 31 * result + JCG.DictionaryEqualityComparer<string, int>.Default.GetHashCode(enumStringToIntMap);
-            return result;
+            unchecked
+            {
+                int result = base.GetHashCode();
+                result = 31 * result + parser.GetHashCode();
+                // LUCENENET specific: must use DictionaryEqualityComparer.GetHashCode() to ensure values
+                // contained within the dictionaries are compared for equality
+                result = 31 * result + JCG.DictionaryEqualityComparer<int, string>.Default.GetHashCode(enumIntToStringMap);
+                result = 31 * result + JCG.DictionaryEqualityComparer<string, int>.Default.GetHashCode(enumStringToIntMap);
+                return result;
+            }
         }
     }
 }

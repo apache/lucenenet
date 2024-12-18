@@ -139,19 +139,22 @@ namespace Lucene.Net.Queries.Mlt
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + ((analyzer is null) ? 0 : analyzer.GetHashCode());
-            result = prime * result + ((fieldName is null) ? 0 : fieldName.GetHashCode());
-            result = prime * result + ((likeText is null) ? 0 : likeText.GetHashCode());
-            result = prime * result + maxQueryTerms;
-            result = prime * result + minDocFreq;
-            result = prime * result + minTermFrequency;
-            result = prime * result + Arrays.GetHashCode(moreLikeFields);
-            result = prime * result + J2N.BitConversion.SingleToInt32Bits(percentTermsToMatch);
-            // LUCENENET specific: use structural equality comparison
-            result = prime * result + ((stopWords is null) ? 0 : JCG.SetEqualityComparer<string>.Default.GetHashCode(stopWords));
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + (analyzer is null ? 0 : analyzer.GetHashCode());
+                result = prime * result + (fieldName is null ? 0 : fieldName.GetHashCode());
+                result = prime * result + (likeText is null ? 0 : likeText.GetHashCode());
+                result = prime * result + maxQueryTerms;
+                result = prime * result + minDocFreq;
+                result = prime * result + minTermFrequency;
+                result = prime * result + Arrays.GetHashCode(moreLikeFields);
+                result = prime * result + J2N.BitConversion.SingleToInt32Bits(percentTermsToMatch);
+                // LUCENENET specific: use structural equality comparison
+                result = prime * result + (stopWords is null ? 0 : JCG.SetEqualityComparer<string>.Default.GetHashCode(stopWords));
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

@@ -127,8 +127,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            // LUCENENET specific: use structural equality comparison
-            return JCG.ListEqualityComparer<ValueSource>.Default.GetHashCode(m_sources) + Name.GetHashCode();
+            unchecked
+            {
+                // LUCENENET specific: use structural equality comparison
+                return JCG.ListEqualityComparer<ValueSource>.Default.GetHashCode(m_sources) + Name.GetHashCode();
+            }
         }
 
         public override bool Equals(object o)

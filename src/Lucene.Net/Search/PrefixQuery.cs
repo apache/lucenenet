@@ -80,10 +80,13 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + ((_prefix is null) ? 0 : _prefix.GetHashCode());
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + (_prefix is null ? 0 : _prefix.GetHashCode());
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

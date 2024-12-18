@@ -58,10 +58,10 @@ namespace Lucene.Net.Queries
     /// <para/>
     /// Collection initializer note: To create and populate a <see cref="CommonTermsQuery"/>
     /// in a single statement, you can use the following example as a guide:
-    /// 
+    ///
     /// <code>
     /// var query = new CommonTermsQuery() {
-    ///     new Term("field", "microsoft"), 
+    ///     new Term("field", "microsoft"),
     ///     new Term("field", "office")
     /// };
     /// </code>
@@ -316,7 +316,7 @@ namespace Lucene.Net.Queries
         /// part. This method accepts a float value in the range [0..1) as a fraction
         /// of the actual query terms in the low frequent clause or a number
         /// <tt>&gt;=1</tt> as an absolut number of clauses that need to match.
-        /// 
+        ///
         /// <para>
         /// By default no optional clauses are necessary for a match (unless there are
         /// no required clauses). If this method is used, then the specified number of
@@ -336,7 +336,7 @@ namespace Lucene.Net.Queries
         /// part. This method accepts a float value in the range [0..1) as a fraction
         /// of the actual query terms in the low frequent clause or a number
         /// <tt>&gt;=1</tt> as an absolut number of clauses that need to match.
-        /// 
+        ///
         /// <para>
         /// By default no optional clauses are necessary for a match (unless there are
         /// no required clauses). If this method is used, then the specified number of
@@ -394,19 +394,22 @@ namespace Lucene.Net.Queries
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + (m_disableCoord ? 1231 : 1237);
-            result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_highFreqBoost);
-            result = prime * result + /*((highFreqOccur is null) ? 0 :*/ m_highFreqOccur.GetHashCode()/*)*/;
-            result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_lowFreqBoost);
-            result = prime * result + /*((lowFreqOccur is null) ? 0 :*/ m_lowFreqOccur.GetHashCode()/*)*/;
-            result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_maxTermFrequency);
-            result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_lowFreqMinNrShouldMatch);
-            result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_highFreqMinNrShouldMatch);
-            // LUCENENET specific: use structural equality comparison
-            result = prime * result + ((m_terms is null) ? 0 : JCG.ListEqualityComparer<Term>.Default.GetHashCode(m_terms));
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + (m_disableCoord ? 1231 : 1237);
+                result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_highFreqBoost);
+                result = prime * result + /*((highFreqOccur is null) ? 0 :*/ m_highFreqOccur.GetHashCode()/*)*/;
+                result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_lowFreqBoost);
+                result = prime * result + /*((lowFreqOccur is null) ? 0 :*/ m_lowFreqOccur.GetHashCode()/*)*/;
+                result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_maxTermFrequency);
+                result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_lowFreqMinNrShouldMatch);
+                result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_highFreqMinNrShouldMatch);
+                // LUCENENET specific: use structural equality comparison
+                result = prime * result + (m_terms is null ? 0 : JCG.ListEqualityComparer<Term>.Default.GetHashCode(m_terms));
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

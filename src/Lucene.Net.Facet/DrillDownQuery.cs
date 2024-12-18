@@ -50,7 +50,7 @@ namespace Lucene.Net.Facet
     /// <para/>
     /// Collection initializer note: To create and populate a <see cref="DrillDownQuery"/>
     /// in a single statement, you can use the following example as a guide:
-    /// 
+    ///
     /// <code>
     /// var drillDownQuery = new DrillDownQuery(config)
     /// {
@@ -129,9 +129,9 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Creates a new <see cref="DrillDownQuery"/> without a base query, 
+        /// Creates a new <see cref="DrillDownQuery"/> without a base query,
         /// to perform a pure browsing query (equivalent to using
-        /// <see cref="MatchAllDocsQuery"/> as base). 
+        /// <see cref="MatchAllDocsQuery"/> as base).
         /// </summary>
         public DrillDownQuery(FacetsConfig config)
             : this(config, null)
@@ -142,7 +142,7 @@ namespace Lucene.Net.Facet
         /// Creates a new <see cref="DrillDownQuery"/> over the given base query. Can be
         /// <c>null</c>, in which case the result <see cref="Query"/> from
         /// <see cref="Rewrite(IndexReader)"/> will be a pure browsing query, filtering on
-        /// the added categories only. 
+        /// the added categories only.
         /// </summary>
         public DrillDownQuery(FacetsConfig config, Query baseQuery)
         {
@@ -156,7 +156,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Merges (ORs) a new path into an existing AND'd
-        /// clause. 
+        /// clause.
         /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void Merge(string dim, string[] path)
@@ -188,7 +188,7 @@ namespace Lucene.Net.Facet
         /// Adds one dimension of drill downs; if you pass the same
         /// dimension more than once it is OR'd with the previous
         /// cofnstraints on that dimension, and all dimensions are
-        /// AND'd against each other and the base query. 
+        /// AND'd against each other and the base query.
         /// </summary>
         public void Add(string dim, params string[] path)
         {
@@ -210,7 +210,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Expert: add a custom drill-down subQuery.  Use this
         /// when you have a separate way to drill-down on the
-        /// dimension than the indexed facet ordinals. 
+        /// dimension than the indexed facet ordinals.
         /// </summary>
         public void Add(string dim, Query subQuery)
         {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Expert: add a custom drill-down Filter, e.g. when
-        /// drilling down after range faceting. 
+        /// drilling down after range faceting.
         /// </summary>
         public void Add(string dim, Filter subFilter)
         {
@@ -281,9 +281,12 @@ namespace Lucene.Net.Facet
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            return prime * result + query.GetHashCode();
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                return prime * result + query.GetHashCode();
+            }
         }
 
         public override bool Equals(object obj)

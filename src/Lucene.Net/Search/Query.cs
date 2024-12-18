@@ -116,10 +116,13 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 1;
-            result = prime * result + J2N.BitConversion.SingleToInt32Bits(Boost);
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + J2N.BitConversion.SingleToInt32Bits(Boost);
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

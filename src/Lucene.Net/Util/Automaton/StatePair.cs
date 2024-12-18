@@ -97,7 +97,10 @@ namespace Lucene.Net.Util.Automaton
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
-            return s1.GetHashCode() + s2.GetHashCode();
+            unchecked
+            {
+                return s1.GetHashCode() + s2.GetHashCode();
+            }
         }
     }
 }

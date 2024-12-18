@@ -81,9 +81,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public override int GetHashCode()
         {
-            int code = startOffset;
-            code = code * 31 + endOffset;
-            return code;
+            unchecked
+            {
+                int code = startOffset;
+                code = code * 31 + endOffset;
+                return code;
+            }
         }
 
         public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute

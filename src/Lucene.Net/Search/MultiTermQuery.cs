@@ -319,15 +319,18 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 1;
-            result = prime * result + J2N.BitConversion.SingleToInt32Bits(Boost);
-            result = prime * result + m_rewriteMethod.GetHashCode();
-            if (m_field != null)
+            unchecked
             {
-                result = prime * result + m_field.GetHashCode();
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + J2N.BitConversion.SingleToInt32Bits(Boost);
+                result = prime * result + m_rewriteMethod.GetHashCode();
+                if (m_field != null)
+                {
+                    result = prime * result + m_field.GetHashCode();
+                }
+                return result;
             }
-            return result;
         }
 
         public override bool Equals(object obj)

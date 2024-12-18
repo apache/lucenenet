@@ -89,9 +89,12 @@ namespace Lucene.Net.Spatial
 
         public override int GetHashCode()
         {
-            int result = field is null ? 0 : field.GetHashCode();
-            result = 31 * result + intersectsFilter.GetHashCode();
-            return result;
+            unchecked
+            {
+                int result = field is null ? 0 : field.GetHashCode();
+                result = 31 * result + intersectsFilter.GetHashCode();
+                return result;
+            }
         }
 
         /// <exception cref="IOException"></exception>
@@ -129,7 +132,7 @@ namespace Lucene.Net.Spatial
                     docsWithField = null;//all docs
                 }
             }
-            
+
             //not so much a chain but a way to conveniently invert the Filter
             DocIdSet docIdSet = new ChainedFilter(new Filter[] { intersectsFilter }, ChainedFilter.ANDNOT).GetDocIdSet(context, acceptDocs);
             return BitsFilteredDocIdSet.Wrap(docIdSet, docsWithField);

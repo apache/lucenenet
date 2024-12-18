@@ -452,11 +452,14 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            int hash = base.GetHashCode();
-            hash = hash * 31 + strategy.GetHashCode();
-            hash = hash * 31 + query.GetHashCode();
-            hash = hash * 31 + filter.GetHashCode();
-            return hash;
+            unchecked
+            {
+                int hash = base.GetHashCode();
+                hash = hash * 31 + strategy.GetHashCode();
+                hash = hash * 31 + query.GetHashCode();
+                hash = hash * 31 + filter.GetHashCode();
+                return hash;
+            }
         }
 
         /// <summary>

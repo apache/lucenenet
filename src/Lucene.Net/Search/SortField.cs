@@ -406,16 +406,19 @@ namespace Lucene.Net.Search
         /// </summary>
         public override int GetHashCode()
         {
-            int hash = (int)(type.GetHashCode() ^ 0x346565dd + reverse.GetHashCode() ^ 0xaf5998bb);
-            if (field != null)
+            unchecked
             {
-                hash += (int)(field.GetHashCode() ^ 0xff5685dd);
+                int hash = (int)(type.GetHashCode() ^ 0x346565dd + reverse.GetHashCode() ^ 0xaf5998bb);
+                if (field != null)
+                {
+                    hash += (int)(field.GetHashCode() ^ 0xff5685dd);
+                }
+                if (comparerSource != null)
+                {
+                    hash += comparerSource.GetHashCode();
+                }
+                return hash;
             }
-            if (comparerSource != null)
-            {
-                hash += comparerSource.GetHashCode();
-            }
-            return hash;
         }
 
         private IComparer<BytesRef> bytesComparer = BytesRef.UTF8SortedAsUnicodeComparer;

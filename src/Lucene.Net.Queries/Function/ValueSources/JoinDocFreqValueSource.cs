@@ -28,7 +28,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
     /// <summary>
     /// Use a field value and find the Document Frequency within another field.
-    /// 
+    ///
     /// @since solr 4.0
     /// </summary>
     public class JoinDocFreqValueSource : FieldCacheSource
@@ -113,7 +113,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return m_qfield.GetHashCode() + base.GetHashCode();
+            unchecked
+            {
+                return m_qfield.GetHashCode() + base.GetHashCode();
+            }
         }
     }
 }
