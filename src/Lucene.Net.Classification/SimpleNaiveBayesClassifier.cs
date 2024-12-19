@@ -48,7 +48,7 @@ namespace Lucene.Net.Classification
         /// classify any documents.
         /// </summary>
         public SimpleNaiveBayesClassifier()
-        {      
+        {
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Lucene.Net.Classification
         /// <param name="atomicReader">the reader to use to access the Lucene index</param>
         /// <param name="classFieldName">the name of the field containing the class assigned to documents</param>
         /// <param name="textFieldName">the name of the field used to compare documents</param>
-        public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer) 
+        public virtual void Train(AtomicReader atomicReader, string textFieldName, string classFieldName, Analyzer analyzer)
         {
             Train(atomicReader, textFieldName, classFieldName, analyzer, null);
         }
@@ -91,17 +91,17 @@ namespace Lucene.Net.Classification
             docsWithClassSize = CountDocsWithClass();
         }
 
-        private int CountDocsWithClass() 
+        private int CountDocsWithClass()
         {
             int docCount = MultiFields.GetTerms(atomicReader, classFieldName).DocCount;
-            if (docCount == -1) 
+            if (docCount == -1)
             { // in case codec doesn't support getDocCount
                 TotalHitCountCollector totalHitCountCollector = new TotalHitCountCollector();
                 BooleanQuery q = new BooleanQuery
                 {
                     new BooleanClause(new WildcardQuery(new Term(classFieldName, WildcardQuery.WILDCARD_STRING.ToString())), Occur.MUST)
                 };
-                if (query != null) 
+                if (query != null)
                 {
                     q.Add(query, Occur.MUST);
                 }
@@ -116,19 +116,19 @@ namespace Lucene.Net.Classification
             ICollection<string> result = new LinkedList<string>();
             foreach (string textFieldName in textFieldNames) {
                 TokenStream tokenStream = analyzer.GetTokenStream(textFieldName, new StringReader(doc));
-                try 
+                try
                 {
                     ICharTermAttribute charTermAttribute = tokenStream.AddAttribute<ICharTermAttribute>();
                     tokenStream.Reset();
-                    while (tokenStream.IncrementToken()) 
+                    while (tokenStream.IncrementToken())
                     {
                         result.Add(charTermAttribute.ToString());
                     }
                     tokenStream.End();
-                } 
-                finally 
+                }
+                finally
                 {
-                    IOUtils.DisposeWhileHandlingException(tokenStream);
+                    IOUtils.CloseWhileHandlingException(tokenStream);
                 }
             }
             var ret = new string[result.Count];
@@ -141,9 +141,9 @@ namespace Lucene.Net.Classification
         /// </summary>
         /// <param name="inputDocument">a string containing text to be classified</param>
         /// <returns>a <see cref="ClassificationResult{BytesRef}"/> holding assigned class of type <see cref="BytesRef"/> and score</returns>
-        public virtual ClassificationResult<BytesRef> AssignClass(string inputDocument) 
+        public virtual ClassificationResult<BytesRef> AssignClass(string inputDocument)
         {
-            if (atomicReader is null) 
+            if (atomicReader is null)
             {
                 throw new IOException("You must first call Classifier#train");
             }
@@ -154,11 +154,11 @@ namespace Lucene.Net.Classification
             TermsEnum termsEnum = terms.GetEnumerator();
             BytesRef next;
             string[] tokenizedDoc = TokenizeDoc(inputDocument);
-            while (termsEnum.MoveNext()) 
+            while (termsEnum.MoveNext())
             {
                 next = termsEnum.Term;
                 double clVal = CalculateLogPrior(next) + CalculateLogLikelihood(tokenizedDoc, next);
-                if (clVal > max) 
+                if (clVal > max)
                 {
                     max = clVal;
                     foundClass = BytesRef.DeepCopyOf(next);
@@ -173,7 +173,7 @@ namespace Lucene.Net.Classification
         {
             // for each word
             double result = 0d;
-            foreach (string word in tokenizedDoc) 
+            foreach (string word in tokenizedDoc)
             {
                 // search with text:word AND class:c
                 int hits = GetWordFreqForClass(word, c);
@@ -196,7 +196,7 @@ namespace Lucene.Net.Classification
         private double GetTextTermFreqForClass(BytesRef c)
         {
             double avgNumberOfUniqueTerms = 0;
-            foreach (string textFieldName in textFieldNames) 
+            foreach (string textFieldName in textFieldNames)
             {
                 Terms terms = MultiFields.GetTerms(atomicReader, textFieldName);
                 long numPostings = terms.SumDocFreq; // number of term/doc pairs
@@ -210,13 +210,13 @@ namespace Lucene.Net.Classification
         {
             BooleanQuery booleanQuery = new BooleanQuery();
             BooleanQuery subQuery = new BooleanQuery();
-            foreach (string textFieldName in textFieldNames) 
+            foreach (string textFieldName in textFieldNames)
             {
                 subQuery.Add(new BooleanClause(new TermQuery(new Term(textFieldName, word)), Occur.SHOULD));
             }
             booleanQuery.Add(new BooleanClause(subQuery, Occur.MUST));
             booleanQuery.Add(new BooleanClause(new TermQuery(new Term(classFieldName, c)), Occur.MUST));
-            if (query != null) 
+            if (query != null)
             {
                 booleanQuery.Add(query, Occur.MUST);
             }
@@ -230,9 +230,9 @@ namespace Lucene.Net.Classification
             return Math.Log((double) DocCount(currentClass)) - Math.Log(docsWithClassSize);
         }
 
-        private int DocCount(BytesRef countedClass) 
+        private int DocCount(BytesRef countedClass)
         {
             return atomicReader.DocFreq(new Term(classFieldName, countedClass));
         }
-    }   
+    }
 }

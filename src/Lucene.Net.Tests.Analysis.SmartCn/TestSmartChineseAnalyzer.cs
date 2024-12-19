@@ -273,7 +273,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(stream);
+                IOUtils.CloseWhileHandlingException(stream);
             }
         }
 
@@ -298,7 +298,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(stream);
+                IOUtils.CloseWhileHandlingException(stream);
             }
         }
 

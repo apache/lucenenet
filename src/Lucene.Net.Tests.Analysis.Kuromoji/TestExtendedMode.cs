@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Ja
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ts);
+                    IOUtils.CloseWhileHandlingException(ts);
                 }
             }
         }

@@ -147,7 +147,7 @@ namespace Lucene.Net.Analysis.Compound
             assertTrue(tf.IncrementToken());
             assertEquals("Rind", termAtt.ToString());
             tf.End();
-            tf.Dispose();
+            tf.Close();
             wsTokenizer.SetReader(new StringReader("Rindfleischüberwachungsgesetz"));
             tf.Reset();
             assertTrue(tf.IncrementToken());
