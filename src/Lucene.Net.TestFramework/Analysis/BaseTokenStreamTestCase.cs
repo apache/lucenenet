@@ -986,6 +986,10 @@ namespace Lucene.Net.Analysis
                 // LUCENENET: We are doing this in the finally block to ensure it happens
                 // when there are exceptions thrown (such as when the assert fails).
                 ts.Close();
+
+                // ... and we dispose of it because it's the last use of the token stream
+                // before being reassigned below
+                ts.Dispose();
             }
 
             // verify reusing is "reproducable" and also get the normal tokenstream sanity checks
@@ -1043,6 +1047,7 @@ namespace Lucene.Net.Analysis
                         finally
                         {
                             ts.Close();
+                            ts.Dispose();
                         }
                     }
                     else if (evilness == 7)
@@ -1075,6 +1080,7 @@ namespace Lucene.Net.Analysis
                         finally
                         {
                             ts.Close();
+                            ts.Dispose();
                         }
                     }
                 }
@@ -1179,6 +1185,7 @@ namespace Lucene.Net.Analysis
             finally
             {
                 ts.Close();
+                ts.Dispose();
             }
 
             if (field != null)
