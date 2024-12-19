@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// <summary>
     /// Exposes flex API on a pre-flex index, as a codec.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [Obsolete("(4.0)")]
     internal class Lucene3xFields : FieldsProducer
@@ -344,7 +344,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 if (DEBUG_SURROGATES)
                 {
-                    Console.WriteLine("      try seek term=" + UnicodeUtil.ToHexString(term.Utf8ToString()));
+                    // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                    Console.WriteLine("      try seek term=" + UnicodeUtil.ToHexString(term.Utf8ToStringWithFallback()));
                 }
 
                 // Seek "back":
@@ -488,7 +489,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     if (DEBUG_SURROGATES)
                     {
-                        Console.WriteLine("    seek to term=" + UnicodeUtil.ToHexString(scratchTerm.Utf8ToString()) + " " + scratchTerm.ToString());
+                        // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                        Console.WriteLine("    seek to term=" + UnicodeUtil.ToHexString(scratchTerm.Utf8ToStringWithFallback()) + " " + scratchTerm.ToString());
                     }
 
                     // TODO: more efficient seek?  can we simply swap
@@ -599,10 +601,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 if (DEBUG_SURROGATES)
                 {
+                    // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
                     Console.WriteLine("  dance");
-                    Console.WriteLine("    prev=" + UnicodeUtil.ToHexString(prevTerm.Utf8ToString()));
+                    Console.WriteLine("    prev=" + UnicodeUtil.ToHexString(prevTerm.Utf8ToStringWithFallback()));
                     Console.WriteLine("         " + prevTerm.ToString());
-                    Console.WriteLine("    term=" + UnicodeUtil.ToHexString(scratchTerm.Utf8ToString()));
+                    Console.WriteLine("    term=" + UnicodeUtil.ToHexString(scratchTerm.Utf8ToStringWithFallback()));
                     Console.WriteLine("         " + scratchTerm.ToString());
                 }
 
@@ -679,7 +682,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                         if (DEBUG_SURROGATES)
                         {
-                            Console.WriteLine("    try seek 1 pos=" + upTo + " term=" + UnicodeUtil.ToHexString(scratchTerm.Utf8ToString()) + " " + scratchTerm.ToString() + " len=" + scratchTerm.Length);
+                            // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                            Console.WriteLine("    try seek 1 pos=" + upTo + " term=" + UnicodeUtil.ToHexString(scratchTerm.Utf8ToStringWithFallback()) + " " + scratchTerm.ToString() + " len=" + scratchTerm.Length);
                         }
 
                         // Seek "forward":
@@ -777,7 +781,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 //System.out.println("pff.reset te=" + termEnum);
                 this.fieldInfo = fieldInfo;
-                
+
                 internedFieldName = fieldInfo.Name.Intern();
 
                 Term term = new Term(internedFieldName);
@@ -832,7 +836,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (DEBUG_SURROGATES)
                 {
-                    Console.WriteLine("TE.seek target=" + UnicodeUtil.ToHexString(term.Utf8ToString()));
+                    // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                    Console.WriteLine("TE.seek target=" + UnicodeUtil.ToHexString(term.Utf8ToStringWithFallback()));
                 }
                 skipNext = false;
                 TermInfosReader tis = outerInstance.TermsDict;
