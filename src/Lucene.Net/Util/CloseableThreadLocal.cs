@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// This class works around the issue by using an alternative approach than using <see cref="ThreadLocal{T}"/>.
     /// It keeps track of each thread's local and global state in order to later optimize garbage collection.
-    /// A complete explanation can be found at 
+    /// A complete explanation can be found at
     /// <a href="https://ayende.com/blog/189793-A/the-design-and-implementation-of-a-better-threadlocal-t">
     /// https://ayende.com/blog/189793-A/the-design-and-implementation-of-a-better-threadlocal-t</a>.
     /// <para/>
@@ -168,6 +168,21 @@ namespace Lucene.Net.Util
             copy = Interlocked.CompareExchange(ref _values, null, copy);
             if (copy is null)
                 return;
+
+            foreach (var value in copy.Values)
+            {
+                if (value is IDisposable disposable)
+                {
+                    try
+                    {
+                        disposable.Dispose();
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                }
+            }
 
             Interlocked.Increment(ref globalVersion);
             _disposed = true;

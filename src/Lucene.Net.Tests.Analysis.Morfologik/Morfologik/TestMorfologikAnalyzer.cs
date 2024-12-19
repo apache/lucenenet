@@ -6,6 +6,7 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -33,7 +34,7 @@ namespace Lucene.Net.Analysis.Morfologik
      */
 
     /// <summary>
-    /// TODO: The tests below rely on the order of returned lemmas, which is probably not good. 
+    /// TODO: The tests below rely on the order of returned lemmas, which is probably not good.
     /// </summary>
     public class TestMorfologikAnalyzer : BaseTokenStreamTestCase
     {
@@ -80,24 +81,33 @@ namespace Lucene.Net.Analysis.Morfologik
         private void dumpTokens(String input)
         {
             using Analyzer a = getTestAnalyzer();
-            using TokenStream ts = a.GetTokenStream("dummy", input);
-            ts.Reset();
-
-            IMorphosyntacticTagsAttribute attribute = ts.GetAttribute<IMorphosyntacticTagsAttribute>();
-            ICharTermAttribute charTerm = ts.GetAttribute<ICharTermAttribute>();
-            while (ts.IncrementToken())
+            TokenStream ts = a.GetTokenStream("dummy", input);
+            try
             {
-                Console.WriteLine(charTerm.ToString() + " => " + string.Format(StringFormatter.InvariantCulture, "{0}", attribute.Tags));
+                ts.Reset();
+
+                IMorphosyntacticTagsAttribute attribute = ts.GetAttribute<IMorphosyntacticTagsAttribute>();
+                ICharTermAttribute charTerm = ts.GetAttribute<ICharTermAttribute>();
+                while (ts.IncrementToken())
+                {
+                    Console.WriteLine(charTerm.ToString() + " => " + string.Format(StringFormatter.InvariantCulture, "{0}", attribute.Tags));
+                }
+
+                ts.End();
             }
-            ts.End();
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(ts);
+            }
         }
 
         /** Test reuse of MorfologikFilter with leftover stems. */
         [Test]
         public void TestLeftoverStems()
         {
-            Analyzer a = getTestAnalyzer();
-            using (TokenStream ts_1 = a.GetTokenStream("dummy", "liście"))
+            using Analyzer a = getTestAnalyzer();
+            TokenStream ts_1 = a.GetTokenStream("dummy", "liście");
+            try
             {
                 ICharTermAttribute termAtt_1 = ts_1.GetAttribute<ICharTermAttribute>();
                 ts_1.Reset();
@@ -105,8 +115,13 @@ namespace Lucene.Net.Analysis.Morfologik
                 assertEquals("first stream", "liście", termAtt_1.ToString());
                 ts_1.End();
             }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(ts_1);
+            }
 
-            using (TokenStream ts_2 = a.GetTokenStream("dummy", "danych"))
+            TokenStream ts_2 = a.GetTokenStream("dummy", "danych");
+            try
             {
                 ICharTermAttribute termAtt_2 = ts_2.GetAttribute<ICharTermAttribute>();
                 ts_2.Reset();
@@ -114,14 +129,17 @@ namespace Lucene.Net.Analysis.Morfologik
                 assertEquals("second stream", "dany", termAtt_2.toString());
                 ts_2.End();
             }
-            a.Dispose();
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(ts_2);
+            }
         }
 
         /** Test stemming of mixed-case tokens. */
         [Test]
         public void TestCase()
         {
-            Analyzer a = getTestAnalyzer();
+            using Analyzer a = getTestAnalyzer();
 
             AssertAnalyzesTo(a, "AGD", new String[] { "AGD", "artykuły gospodarstwa domowego" });
             AssertAnalyzesTo(a, "agd", new String[] { "artykuły gospodarstwa domowego" });
@@ -133,7 +151,6 @@ namespace Lucene.Net.Analysis.Morfologik
             AssertAnalyzesTo(a, "aarona", new String[] { "aarona" });
 
             AssertAnalyzesTo(a, "Liście", new String[] { "liście", "liść", "list", "lista" });
-            a.Dispose();
         }
 
         private void assertPOSToken(TokenStream ts, String term, params String[] tags)
@@ -166,26 +183,33 @@ namespace Lucene.Net.Analysis.Morfologik
         public void TestPOSAttribute()
         {
             using Analyzer a = getTestAnalyzer();
-            using TokenStream ts = a.GetTokenStream("dummy", "liście");
-            ts.Reset();
-            assertPOSToken(ts, "liście",
-              "subst:sg:acc:n2",
-              "subst:sg:nom:n2",
-              "subst:sg:voc:n2");
+            TokenStream ts = a.GetTokenStream("dummy", "liście");
+            try
+            {
+                ts.Reset();
+                assertPOSToken(ts, "liście",
+                    "subst:sg:acc:n2",
+                    "subst:sg:nom:n2",
+                    "subst:sg:voc:n2");
 
-            assertPOSToken(ts, "liść",
-              "subst:pl:acc:m3",
-              "subst:pl:nom:m3",
-              "subst:pl:voc:m3");
+                assertPOSToken(ts, "liść",
+                    "subst:pl:acc:m3",
+                    "subst:pl:nom:m3",
+                    "subst:pl:voc:m3");
 
-            assertPOSToken(ts, "list",
-              "subst:sg:loc:m3",
-              "subst:sg:voc:m3");
+                assertPOSToken(ts, "list",
+                    "subst:sg:loc:m3",
+                    "subst:sg:voc:m3");
 
-            assertPOSToken(ts, "lista",
-              "subst:sg:dat:f",
-              "subst:sg:loc:f");
-            ts.End();
+                assertPOSToken(ts, "lista",
+                    "subst:sg:dat:f",
+                    "subst:sg:loc:f");
+                ts.End();
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(ts);
+            }
         }
 
         private class MockMorfologikAnalyzer : MorfologikAnalyzer

@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Synonym
                 }
             }
             tokensOut.End();
-            tokensOut.Dispose();
+            tokensOut.Close();
             if (Verbose)
             {
                 Console.WriteLine("  incr: END");
@@ -229,7 +229,7 @@ namespace Lucene.Net.Analysis.Synonym
             assertTrue(tokensIn.IncrementToken());
             assertFalse(tokensIn.IncrementToken());
             tokensIn.End();
-            tokensIn.Dispose();
+            tokensIn.Close();
 
             tokensOut = new SynonymFilter(tokensIn, b.Build(), true);
             termAtt = tokensOut.AddAttribute<ICharTermAttribute>();
@@ -482,7 +482,7 @@ namespace Lucene.Net.Analysis.Synonym
             assertTrue(tokensIn.IncrementToken());
             assertFalse(tokensIn.IncrementToken());
             tokensIn.End();
-            tokensIn.Dispose();
+            tokensIn.Close();
 
             tokensOut = new SynonymFilter(tokensIn, b.Build(), true);
             termAtt = tokensOut.AddAttribute<ICharTermAttribute>();
@@ -724,7 +724,7 @@ namespace Lucene.Net.Analysis.Synonym
             assertTrue(tokensIn.IncrementToken());
             assertFalse(tokensIn.IncrementToken());
             tokensIn.End();
-            tokensIn.Dispose();
+            tokensIn.Close();
 
             tokensOut = new SynonymFilter(tokensIn, b.Build(), true);
             termAtt = tokensOut.AddAttribute<ICharTermAttribute>();
@@ -861,7 +861,7 @@ namespace Lucene.Net.Analysis.Synonym
             assertTrue(tokensIn.IncrementToken());
             assertFalse(tokensIn.IncrementToken());
             tokensIn.End();
-            tokensIn.Dispose();
+            tokensIn.Close();
 
             tokensOut = new SynonymFilter(tokensIn, b.Build(), true);
             termAtt = tokensOut.AddAttribute<ICharTermAttribute>();

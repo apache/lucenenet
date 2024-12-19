@@ -30,14 +30,14 @@ namespace Lucene.Net.Analysis.Standard
     /// A grammar-based tokenizer constructed with JFlex.
     /// <para>
     /// As of Lucene version 3.1, this class implements the Word Break rules from the
-    /// Unicode Text Segmentation algorithm, as specified in 
+    /// Unicode Text Segmentation algorithm, as specified in
     /// <a href="http://unicode.org/reports/tr29/">Unicode Standard Annex #29</a>.
     /// <p/>
     /// </para>
     /// <para>Many applications have specific tokenizer needs.  If this tokenizer does
     /// not suit your application, please consider copying this source code
     /// directory to your project and maintaining your own grammar-based tokenizer.
-    /// 
+    ///
     /// </para>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="StandardTokenizer"/>:
@@ -58,25 +58,25 @@ namespace Lucene.Net.Analysis.Standard
         private IStandardTokenizerInterface scanner;
 
         public const int ALPHANUM = 0;
-        /// @deprecated (3.1) 
+        /// @deprecated (3.1)
         [Obsolete("(3.1)")]
         public const int APOSTROPHE = 1;
-        /// @deprecated (3.1) 
+        /// @deprecated (3.1)
         [Obsolete("(3.1)")]
         public const int ACRONYM = 2;
-        /// @deprecated (3.1) 
+        /// @deprecated (3.1)
         [Obsolete("(3.1)")]
         public const int COMPANY = 3;
         public const int EMAIL = 4;
-        /// @deprecated (3.1) 
+        /// @deprecated (3.1)
         [Obsolete("(3.1)")]
         public const int HOST = 5;
         public const int NUM = 6;
-        /// @deprecated (3.1) 
+        /// @deprecated (3.1)
         [Obsolete("(3.1)")]
         public const int CJ = 7;
 
-        /// @deprecated (3.1) 
+        /// @deprecated (3.1)
         [Obsolete("(3.1)")]
         public const int ACRONYM_DEP = 8;
 
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Set the max allowed token length.  Any token longer
-        ///  than this is skipped. 
+        ///  than this is skipped.
         /// </summary>
         public int MaxTokenLength
         {
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         /// <param name="matchVersion"> Lucene compatibility version - See <see cref="StandardTokenizer"/> </param>
         /// <param name="input"> The input reader
-        /// 
+        ///
         /// See http://issues.apache.org/jira/browse/LUCENE-1068 </param>
         public StandardTokenizer(LuceneVersion matchVersion, TextReader input)
             : base(input)
@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Creates a new <see cref="StandardTokenizer"/> with a given <see cref="AttributeSource.AttributeFactory"/> 
+        /// Creates a new <see cref="StandardTokenizer"/> with a given <see cref="AttributeSource.AttributeFactory"/>
         /// </summary>
         public StandardTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
             : base(factory, input)
@@ -248,13 +248,10 @@ namespace Lucene.Net.Analysis.Standard
             posIncrAtt.PositionIncrement = posIncrAtt.PositionIncrement + skippedPositions;
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                scanner.YyReset(m_input);
-            }
+            base.Close();
+            scanner.YyReset(m_input);
         }
 
         public override void Reset()
