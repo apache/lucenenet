@@ -2,11 +2,11 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
-
-// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
+
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -33,7 +33,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal sealed class Direct16 : PackedInt32s.MutableImpl
     {
-        internal readonly short[] values;
+        private readonly short[] values;
 
         internal Direct16(int valueCount)
             : base(valueCount, 16)
@@ -71,8 +71,8 @@ namespace Lucene.Net.Util.Packed
         public override long RamBytesUsed()
         {
             return RamUsageEstimator.AlignObjectSize(
-                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
-                + 2 * RamUsageEstimator.NUM_BYTES_INT32 // valueCount,bitsPerValue
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
+                + 2 * RamUsageEstimator.NUM_BYTES_INT32     // valueCount,bitsPerValue
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // values ref
                 + RamUsageEstimator.SizeOf(values);
         }

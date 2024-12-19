@@ -1,4 +1,4 @@
-﻿// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
@@ -132,13 +132,12 @@ namespace Lucene.Net.Util.Packed
                 values[valuesOffset++] = ((byte7 & 1) << 8) | byte8;
             }
         }
-
         public override void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             for (int i = 0; i < iterations; ++i)
             {
                 long block0 = blocks[blocksOffset++];
-                values[valuesOffset++] = (long)((ulong)block0 >> 55);
+                values[valuesOffset++] = block0 >>> 55;
                 values[valuesOffset++] = (block0 >>> 46) & 511L;
                 values[valuesOffset++] = (block0 >>> 37) & 511L;
                 values[valuesOffset++] = (block0 >>> 28) & 511L;

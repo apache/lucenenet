@@ -1,7 +1,7 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System;
 
-// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
@@ -121,7 +121,7 @@ namespace Lucene.Net.Util.Packed
             new BulkOperationPacked(61),
             new BulkOperationPacked(62),
             new BulkOperationPacked(63),
-            new BulkOperationPacked(64)
+            new BulkOperationPacked(64),
         };
 
         // NOTE: this is sparse (some entries are null):
@@ -157,8 +157,9 @@ namespace Lucene.Net.Util.Packed
             null,
             null,
             null,
-            new BulkOperationPackedSingleBlock(32)
+            new BulkOperationPackedSingleBlock(32),
         };
+
 
         public static BulkOperation Of(PackedInt32s.Format format, int bitsPerValue)
         {

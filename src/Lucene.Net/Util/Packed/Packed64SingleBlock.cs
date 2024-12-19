@@ -1,27 +1,28 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
-// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
+
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
+     * contributor license agreements. See the NOTICE file distributed with this
+     * work for additional information regarding copyright ownership. The ASF
+     * licenses this file to You under the Apache License, Version 2.0 (the
+     * "License"); you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
      *
-     *     http://www.apache.org/licenses/LICENSE-2.0
+     * http://www.apache.org/licenses/LICENSE-2.0
      *
      * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
+     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+     * License for the specific language governing permissions and limitations under
+     * the License.
      */
 
     using DataInput = Lucene.Net.Store.DataInput;
@@ -68,7 +69,7 @@ namespace Lucene.Net.Util.Packed
         {
             return RamUsageEstimator.AlignObjectSize(
                 RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
-                + 2 * RamUsageEstimator.NUM_BYTES_INT32 // valueCount,bitsPerValue
+                + 2 * RamUsageEstimator.NUM_BYTES_INT32     // valueCount,bitsPerValue
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref
                 + RamUsageEstimator.SizeOf(blocks);
         }
@@ -113,8 +114,7 @@ namespace Lucene.Net.Util.Packed
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             decoder.Decode(blocks, blockIndex, arr, off, nblocks);
             int diff = nblocks * valuesPerBlock;
-            index += diff;
-            len -= diff;
+            index += diff; len -= diff;
 
             if (index > originalIndex)
             {
@@ -167,8 +167,7 @@ namespace Lucene.Net.Util.Packed
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             op.Encode(arr, off, blocks, blockIndex, nblocks);
             int diff = nblocks * valuesPerBlock;
-            index += diff;
-            len -= diff;
+            index += diff; len -= diff;
 
             if (index > originalIndex)
             {
@@ -255,46 +254,32 @@ namespace Lucene.Net.Util.Packed
             {
                 case 1:
                     return new Packed64SingleBlock1(valueCount);
-
                 case 2:
                     return new Packed64SingleBlock2(valueCount);
-
                 case 3:
                     return new Packed64SingleBlock3(valueCount);
-
                 case 4:
                     return new Packed64SingleBlock4(valueCount);
-
                 case 5:
                     return new Packed64SingleBlock5(valueCount);
-
                 case 6:
                     return new Packed64SingleBlock6(valueCount);
-
                 case 7:
                     return new Packed64SingleBlock7(valueCount);
-
                 case 8:
                     return new Packed64SingleBlock8(valueCount);
-
                 case 9:
                     return new Packed64SingleBlock9(valueCount);
-
                 case 10:
                     return new Packed64SingleBlock10(valueCount);
-
                 case 12:
                     return new Packed64SingleBlock12(valueCount);
-
                 case 16:
                     return new Packed64SingleBlock16(valueCount);
-
                 case 21:
                     return new Packed64SingleBlock21(valueCount);
-
                 case 32:
                     return new Packed64SingleBlock32(valueCount);
-
                 default:
                     throw new ArgumentException("Unsupported number of bits per value: " + 32);
             }
@@ -635,5 +620,6 @@ namespace Lucene.Net.Util.Packed
                 blocks[o] = (blocks[o] & ~(4294967295L << shift)) | (value << shift);
             }
         }
+
     }
 }

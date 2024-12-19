@@ -1,9 +1,9 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 
-// this file has been automatically generated, DO NOT EDIT
+// This file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
@@ -33,7 +33,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal sealed class Packed16ThreeBlocks : PackedInt32s.MutableImpl
     {
-        internal readonly short[] blocks;
+        private readonly short[] blocks;
 
         public const int MAX_SIZE = int.MaxValue / 3;
 
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (valueCount > MAX_SIZE)
             {
-                throw new IndexOutOfRangeException("MAX_SIZE exceeded");
+                throw new ArgumentOutOfRangeException(nameof(valueCount), "MAX_SIZE exceeded");
             }
             blocks = new short[valueCount * 3];
         }
@@ -137,7 +137,7 @@ namespace Lucene.Net.Util.Packed
         {
             return RamUsageEstimator.AlignObjectSize(
                 RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
-                + 2 * RamUsageEstimator.NUM_BYTES_INT32 // valueCount,bitsPerValue
+                + 2 * RamUsageEstimator.NUM_BYTES_INT32     // valueCount,bitsPerValue
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF) // blocks ref
                 + RamUsageEstimator.SizeOf(blocks);
         }
