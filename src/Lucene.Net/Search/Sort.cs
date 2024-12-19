@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Sets the sort to the given criteria.
         ///
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls
         /// a private method and not this virtual method. So if you need to override
         /// the behavior during the initialization, call your own private method from the constructor
         /// with whatever custom behavior you need.
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Sets the sort to the given criteria in succession.
         ///
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls
         /// a private method and not this virtual method. So if you need to override
         /// the behavior during the initialization, call your own private method from the constructor
         /// with whatever custom behavior you need.
@@ -233,7 +233,10 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return 0x45aaf665 + Arrays.GetHashCode(fields);
+            unchecked
+            {
+                return 0x45aaf665 + Arrays.GetHashCode(fields);
+            }
         }
 
         /// <summary>

@@ -646,7 +646,10 @@ namespace Lucene.Net.Util.Automaton
             visited.Add(this.initial);
             while (worklist.TryDequeue(out State current))
             {
-                hash = 31 * hash + current.accept.GetHashCode();
+                unchecked
+                {
+                    hash = 31 * hash + current.accept.GetHashCode();
+                }
 
                 Transition[] t1 = transitions[current.number];
 
@@ -654,8 +657,11 @@ namespace Lucene.Net.Util.Automaton
                 {
                     int min1 = t1[n1].min, max1 = t1[n1].max;
 
-                    hash = 31 * hash + min1.GetHashCode();
-                    hash = 31 * hash + max1.GetHashCode();
+                    unchecked
+                    {
+                        hash = 31 * hash + min1.GetHashCode();
+                        hash = 31 * hash + max1.GetHashCode();
+                    }
 
                     State next = t1[n1].to;
                     if (!visited.Contains(next))

@@ -94,7 +94,10 @@ namespace Lucene.Net.Sandbox.Queries
 
         public override int GetHashCode()
         {
-            return 31 * base.GetHashCode() + selector.GetHashCode();
+            unchecked
+            {
+                return 31 * base.GetHashCode() + selector.GetHashCode();
+            }
         }
 
         public override bool Equals(object obj)

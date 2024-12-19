@@ -126,16 +126,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             if (!(o is Int16FieldSource other))
                 return false;
-            return base.Equals(other) 
-                && (parser is null ? other.parser is null : 
+            return base.Equals(other)
+                && (parser is null ? other.parser is null :
                 parser.GetType() == other.parser.GetType());
         }
 
         public override int GetHashCode()
         {
-            var h = parser is null ? typeof(short).GetHashCode() : parser.GetType().GetHashCode();
-            h += base.GetHashCode();
-            return h;
+            unchecked
+            {
+                var h = parser is null ? typeof(short).GetHashCode() : parser.GetType().GetHashCode();
+                h += base.GetHashCode();
+                return h;
+            }
         }
     }
 }

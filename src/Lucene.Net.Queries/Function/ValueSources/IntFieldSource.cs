@@ -147,9 +147,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = parser is null ? typeof(int).GetHashCode() : parser.GetType().GetHashCode();
-            h += base.GetHashCode();
-            return h;
+            unchecked
+            {
+                int h = parser is null ? typeof(int).GetHashCode() : parser.GetType().GetHashCode();
+                h += base.GetHashCode();
+                return h;
+            }
         }
     }
 }

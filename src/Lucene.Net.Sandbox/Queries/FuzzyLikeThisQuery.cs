@@ -61,14 +61,17 @@ namespace Lucene.Net.Sandbox.Queries
 
         public override int GetHashCode()
         {
-            int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + ((analyzer is null) ? 0 : analyzer.GetHashCode());
-            result = prime * result
-                + ((fieldVals is null) ? 0 : fieldVals.GetHashCode());
-            result = prime * result + (ignoreTF ? 1231 : 1237);
-            result = prime * result + maxNumTerms;
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + (analyzer is null ? 0 : analyzer.GetHashCode());
+                result = prime * result
+                    + (fieldVals is null ? 0 : fieldVals.GetHashCode());
+                result = prime * result + (ignoreTF ? 1231 : 1237);
+                result = prime * result + maxNumTerms;
+                return result;
+            }
         }
 
         public override bool Equals(object obj)
@@ -133,15 +136,18 @@ namespace Lucene.Net.Sandbox.Queries
 
             public override int GetHashCode()
             {
-                int prime = 31;
-                int result = 1;
-                result = prime * result
-                    + ((fieldName is null) ? 0 : fieldName.GetHashCode());
-                result = prime * result + J2N.BitConversion.SingleToInt32Bits(minSimilarity);
-                result = prime * result + prefixLength;
-                result = prime * result
-                    + ((queryString is null) ? 0 : queryString.GetHashCode());
-                return result;
+                unchecked
+                {
+                    const int prime = 31;
+                    int result = 1;
+                    result = prime * result
+                        + (fieldName is null ? 0 : fieldName.GetHashCode());
+                    result = prime * result + J2N.BitConversion.SingleToInt32Bits(minSimilarity);
+                    result = prime * result + prefixLength;
+                    result = prime * result
+                        + (queryString is null ? 0 : queryString.GetHashCode());
+                    return result;
+                }
             }
 
             public override bool Equals(object obj)

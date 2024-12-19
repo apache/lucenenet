@@ -122,14 +122,17 @@ namespace Lucene.Net.Util
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 0;
-            int end = Offset + Length;
-            for (int i = Offset; i < end; i++)
+            unchecked
             {
-                result = prime * result + chars[i];
+                const int prime = 31;
+                int result = 0;
+                int end = Offset + Length;
+                for (int i = Offset; i < end; i++)
+                {
+                    result = prime * result + chars[i];
+                }
+                return result;
             }
-            return result;
         }
 
         public override bool Equals(object other)

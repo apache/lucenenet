@@ -178,14 +178,17 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + maxEdits;
-            result = prime * result + prefixLength;
-            result = prime * result + maxExpansions;
-            result = prime * result + (transpositions ? 0 : 1);
-            result = prime * result + ((term is null) ? 0 : term.GetHashCode());
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + maxEdits;
+                result = prime * result + prefixLength;
+                result = prime * result + maxExpansions;
+                result = prime * result + (transpositions ? 0 : 1);
+                result = prime * result + ((term is null) ? 0 : term.GetHashCode());
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

@@ -99,11 +99,14 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 1;
-            result = prime * result + ((field is null) ? 0 : field.GetHashCode());
-            result = prime * result + (negate ? 1231 : 1237);
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + (field is null ? 0 : field.GetHashCode());
+                result = prime * result + (negate ? 1231 : 1237);
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

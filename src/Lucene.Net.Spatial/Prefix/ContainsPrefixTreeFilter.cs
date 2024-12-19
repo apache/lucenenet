@@ -62,7 +62,10 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override int GetHashCode()
         {
-            return base.GetHashCode() + (m_multiOverlappingIndexedShapes ? 1 : 0);
+            unchecked
+            {
+                return base.GetHashCode() + (m_multiOverlappingIndexedShapes ? 1 : 0);
+            }
         }
 
         public override DocIdSet? GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)

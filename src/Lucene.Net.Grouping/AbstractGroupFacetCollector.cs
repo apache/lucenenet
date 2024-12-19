@@ -267,9 +267,12 @@ namespace Lucene.Net.Search.Grouping
 
             public override int GetHashCode()
             {
-                int result = value.GetHashCode();
-                result = 31 * result + count;
-                return result;
+                unchecked
+                {
+                    int result = value.GetHashCode();
+                    result = 31 * result + count;
+                    return result;
+                }
             }
 
             public override string ToString()

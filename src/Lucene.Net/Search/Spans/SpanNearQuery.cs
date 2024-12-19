@@ -215,16 +215,19 @@ namespace Lucene.Net.Search.Spans
 
         public override int GetHashCode()
         {
-            int result;
-            result = JCG.ListEqualityComparer<SpanQuery>.Default.GetHashCode(m_clauses);
-            // Mix bits before folding in things like boost, since it could cancel the
-            // last element of clauses.  this particular mix also serves to
-            // differentiate SpanNearQuery hashcodes from others.
-            result ^= (result << 14) | (result >>> 19); // reversible
-            result += J2N.BitConversion.SingleToRawInt32Bits(Boost);
-            result += m_slop;
-            result ^= (m_inOrder ? unchecked((int)0x99AFD3BD) : 0);
-            return result;
+            unchecked
+            {
+                int result;
+                result = JCG.ListEqualityComparer<SpanQuery>.Default.GetHashCode(m_clauses);
+                // Mix bits before folding in things like boost, since it could cancel the
+                // last element of clauses.  this particular mix also serves to
+                // differentiate SpanNearQuery hashcodes from others.
+                result ^= (result << 14) | (result >>> 19); // reversible
+                result += J2N.BitConversion.SingleToRawInt32Bits(Boost);
+                result += m_slop;
+                result ^= (m_inOrder ? unchecked((int)0x99AFD3BD) : 0);
+                return result;
+            }
         }
     }
 }

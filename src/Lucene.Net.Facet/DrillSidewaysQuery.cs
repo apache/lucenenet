@@ -37,7 +37,7 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Only purpose is to punch through and return a
-    /// <see cref="DrillSidewaysScorer"/> 
+    /// <see cref="DrillSidewaysScorer"/>
     /// </summary>
     internal class DrillSidewaysQuery : Query
     {
@@ -243,13 +243,16 @@ namespace Lucene.Net.Facet
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + ((baseQuery is null) ? 0 : baseQuery.GetHashCode());
-            result = prime * result + ((drillDownCollector is null) ? 0 : drillDownCollector.GetHashCode());
-            result = prime * result + Arrays.GetHashCode(drillDownQueries);
-            result = prime * result + Arrays.GetHashCode(drillSidewaysCollectors);
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + (baseQuery is null ? 0 : baseQuery.GetHashCode());
+                result = prime * result + (drillDownCollector is null ? 0 : drillDownCollector.GetHashCode());
+                result = prime * result + Arrays.GetHashCode(drillDownQueries);
+                result = prime * result + Arrays.GetHashCode(drillSidewaysCollectors);
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

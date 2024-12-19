@@ -216,13 +216,16 @@ namespace Lucene.Net.Util.Automaton
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 1;
-            result = prime * result + m_initial;
-            result = prime * result + _maxInterval;
-            result = prime * result + _points.Length;
-            result = prime * result + _size;
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + m_initial;
+                result = prime * result + _maxInterval;
+                result = prime * result + _points.Length;
+                result = prime * result + _size;
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

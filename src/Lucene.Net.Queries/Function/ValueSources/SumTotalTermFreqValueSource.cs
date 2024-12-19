@@ -27,7 +27,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// <see cref="SumTotalTermFreqValueSource"/> returns the number of tokens.
     /// (sum of term freqs across all documents, across all terms).
-    /// Returns -1 if frequencies were omitted for the field, or if 
+    /// Returns -1 if frequencies were omitted for the field, or if
     /// the codec doesn't support this statistic.
     /// @lucene.internal
     /// </summary>
@@ -103,7 +103,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return this.GetType().GetHashCode() + m_indexedField.GetHashCode();
+            unchecked
+            {
+                return this.GetType().GetHashCode() + m_indexedField.GetHashCode();
+            }
         }
 
         public override bool Equals(object o)

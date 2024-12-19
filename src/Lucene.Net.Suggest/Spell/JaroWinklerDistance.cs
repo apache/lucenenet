@@ -125,7 +125,7 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Gets or sets the threshold used to determine when Winkler bonus should be used.
-        /// The default value is 0.7. Set to a negative value to get the Jaro distance. 
+        /// The default value is 0.7. Set to a negative value to get the Jaro distance.
         /// </summary>
         public virtual float Threshold
         {
@@ -136,7 +136,10 @@ namespace Lucene.Net.Search.Spell
 
         public override int GetHashCode()
         {
-            return 113 * J2N.BitConversion.SingleToInt32Bits(threshold) * this.GetType().GetHashCode();
+            unchecked
+            {
+                return 113 * J2N.BitConversion.SingleToInt32Bits(threshold) * this.GetType().GetHashCode();
+            }
         }
 
         public override bool Equals(object obj)

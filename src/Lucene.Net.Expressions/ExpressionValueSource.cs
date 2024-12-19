@@ -120,12 +120,15 @@ namespace Lucene.Net.Expressions
 
         public override int GetHashCode()
         {
-            int prime = 31;
-            int result = 1;
-            result = prime * result + ((expression is null) ? 0 : expression.GetHashCode());
-            result = prime * result + (needsScores ? 1231 : 1237);
-            result = prime * result + Arrays.GetHashCode(variables);
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + (expression is null ? 0 : expression.GetHashCode());
+                result = prime * result + (needsScores ? 1231 : 1237);
+                result = prime * result + Arrays.GetHashCode(variables);
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

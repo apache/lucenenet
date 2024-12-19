@@ -96,7 +96,10 @@ namespace Lucene.Net.Util.Fst
 
             public override int GetHashCode()
             {
-                return (int)((first ^ (first >>> 32)) ^ (second ^ (second >> 32)));
+                unchecked
+                {
+                    return (int)((first ^ (first >>> 32)) ^ (second ^ (second >> 32)));
+                }
             }
         }
 

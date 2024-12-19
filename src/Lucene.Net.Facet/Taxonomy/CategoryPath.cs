@@ -29,7 +29,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <summary>
     /// Holds a sequence of string components, specifying the hierarchical name of a
     /// category.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class CategoryPath : IComparable<CategoryPath>
@@ -185,7 +185,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Copies the path components to the given <see cref="T:char[]"/>, starting at index
         /// <paramref name="start"/>. <paramref name="delimiter"/> is copied between the path components.
         /// Returns the number of chars copied.
-        /// 
+        ///
         /// <para>
         /// <b>NOTE:</b> this method relies on the array being large enough to hold the
         /// components and separators - the amount of needed space can be calculated
@@ -250,7 +250,10 @@ namespace Lucene.Net.Facet.Taxonomy
             int hash = Length;
             for (int i = 0; i < Length; i++)
             {
-                hash = hash * 31 + Components[i].GetHashCode();
+                unchecked
+                {
+                    hash = hash * 31 + Components[i].GetHashCode();
+                }
             }
             return hash;
         }

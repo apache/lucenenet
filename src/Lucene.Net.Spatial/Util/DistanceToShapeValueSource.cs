@@ -127,13 +127,16 @@ namespace Lucene.Net.Spatial.Util
 
         public override int GetHashCode()
         {
-            int result;
-            long temp;
-            result = shapeValueSource.GetHashCode();
-            result = 31 * result + queryPoint.GetHashCode();
-            temp = J2N.BitConversion.DoubleToInt64Bits(multiplier);
-            result = 31 * result + (int)(temp ^ (temp >>> 32));
-            return result;
+            unchecked
+            {
+                int result;
+                long temp;
+                result = shapeValueSource.GetHashCode();
+                result = 31 * result + queryPoint.GetHashCode();
+                temp = J2N.BitConversion.DoubleToInt64Bits(multiplier);
+                result = 31 * result + (int)(temp ^ (temp >>> 32));
+                return result;
+            }
         }
     }
 }

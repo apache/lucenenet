@@ -431,13 +431,16 @@ namespace Lucene.Net.Search.VectorHighlight
 
             public override int GetHashCode()
             {
-                int prime = 31;
-                int result = 1;
-                result = prime * result + StartOffset;
-                result = prime * result + EndOffset;
-                long b = J2N.BitConversion.DoubleToInt64Bits(Boost);
-                result = prime * result + (int)(b ^ (b >>> 32));
-                return result;
+                unchecked
+                {
+                    const int prime = 31;
+                    int result = 1;
+                    result = prime * result + StartOffset;
+                    result = prime * result + EndOffset;
+                    long b = J2N.BitConversion.DoubleToInt64Bits(Boost);
+                    result = prime * result + (int)(b ^ (b >>> 32));
+                    return result;
+                }
             }
 
             public override bool Equals(object obj)
@@ -528,11 +531,14 @@ namespace Lucene.Net.Search.VectorHighlight
 
                 public override int GetHashCode()
                 {
-                    int prime = 31;
-                    int result = 1;
-                    result = prime * result + StartOffset;
-                    result = prime * result + EndOffset;
-                    return result;
+                    unchecked
+                    {
+                        const int prime = 31;
+                        int result = 1;
+                        result = prime * result + StartOffset;
+                        result = prime * result + EndOffset;
+                        return result;
+                    }
                 }
 
                 public override bool Equals(object obj)

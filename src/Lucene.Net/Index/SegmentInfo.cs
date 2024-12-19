@@ -238,7 +238,10 @@ namespace Lucene.Net.Index
 
         public override int GetHashCode()
         {
-            return Dir.GetHashCode() + Name.GetHashCode();
+            unchecked
+            {
+                return Dir.GetHashCode() + Name.GetHashCode();
+            }
         }
 
         /// <summary>

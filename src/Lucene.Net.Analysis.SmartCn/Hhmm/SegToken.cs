@@ -83,18 +83,21 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// </summary>
         public override int GetHashCode()
         {
-            int prime = 31;
-            int result = 1;
-            for (int i = 0; i < CharArray.Length; i++)
+            unchecked
             {
-                result = prime * result + CharArray[i];
+                const int prime = 31;
+                int result = 1;
+                for (int i = 0; i < CharArray.Length; i++)
+                {
+                    result = prime * result + CharArray[i];
+                }
+                result = prime * result + EndOffset;
+                result = prime * result + Index;
+                result = prime * result + StartOffset;
+                result = prime * result + Weight;
+                result = prime * result + (int)WordType;
+                return result;
             }
-            result = prime * result + EndOffset;
-            result = prime * result + Index;
-            result = prime * result + StartOffset;
-            result = prime * result + Weight;
-            result = prime * result + (int)WordType;
-            return result;
         }
 
         /// <summary>

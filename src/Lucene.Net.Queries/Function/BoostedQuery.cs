@@ -217,12 +217,15 @@ namespace Lucene.Net.Queries.Function
 
         public override int GetHashCode()
         {
-            int h = q.GetHashCode();
-            h ^= (h << 17) | (h >>> 16);
-            h += boostVal.GetHashCode();
-            h ^= (h << 8) | (h >>> 25);
-            h += J2N.BitConversion.SingleToInt32Bits(Boost);
-            return h;
+            unchecked
+            {
+                int h = q.GetHashCode();
+                h ^= (h << 17) | (h >>> 16);
+                h += boostVal.GetHashCode();
+                h ^= (h << 8) | (h >>> 25);
+                h += J2N.BitConversion.SingleToInt32Bits(Boost);
+                return h;
+            }
         }
     }
 }

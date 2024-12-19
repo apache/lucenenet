@@ -99,7 +99,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return J2N.BitConversion.SingleToInt32Bits(constant) * 31;
+            unchecked
+            {
+                return J2N.BitConversion.SingleToInt32Bits(constant) * 31;
+            }
         }
 
         public override bool Equals(object o)

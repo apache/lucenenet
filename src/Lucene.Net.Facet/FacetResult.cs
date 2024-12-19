@@ -40,12 +40,12 @@ namespace Lucene.Net.Facet
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public string[] Path { get; private set; } 
+        public string[] Path { get; private set; }
 
         /// <summary>
         /// Total value for this path (sum of all child counts, or
         /// sum of all child values), even those not included in
-        /// the topN. 
+        /// the topN.
         /// </summary>
         public float Value { get; private set; }
 
@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet
         public Type TypeOfValue { get; private set; }
 
         /// <summary>
-        /// Constructor for <see cref="float"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// Constructor for <see cref="float"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method
         /// print the <paramref name="value"/> as a <see cref="float"/> with at least 1 number after the decimal.
         /// </summary>
         public FacetResult(string dim, string[] path, float value, LabelAndValue[] labelValues, int childCount)
@@ -81,7 +81,7 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Constructor for <see cref="int"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// Constructor for <see cref="int"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method
         /// print the <paramref name="value"/> as an <see cref="int"/> with no decimal.
         /// </summary>
         public FacetResult(string dim, string[] path, int value, LabelAndValue[] labelValues, int childCount)
@@ -151,12 +151,15 @@ namespace Lucene.Net.Facet
 
         public override int GetHashCode()
         {
-            int hashCode = Value.GetHashCode() + 31 * ChildCount;
-            foreach (LabelAndValue labelValue in LabelValues)
+            unchecked
             {
-                hashCode = labelValue.GetHashCode() + 31 * hashCode;
+                int hashCode = Value.GetHashCode() + 31 * ChildCount;
+                foreach (LabelAndValue labelValue in LabelValues)
+                {
+                    hashCode = labelValue.GetHashCode() + 31 * hashCode;
+                }
+                return hashCode;
             }
-            return hashCode;
         }
     }
 }

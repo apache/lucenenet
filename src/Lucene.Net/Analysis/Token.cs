@@ -417,20 +417,23 @@ namespace Lucene.Net.Analysis
 
         public override int GetHashCode()
         {
-            int code = base.GetHashCode();
-            code = code * 31 + startOffset;
-            code = code * 31 + endOffset;
-            code = code * 31 + flags;
-            code = code * 31 + positionIncrement;
-            if (type != null)
+            unchecked
             {
-                code = code * 31 + type.GetHashCode();
+                int code = base.GetHashCode();
+                code = code * 31 + startOffset;
+                code = code * 31 + endOffset;
+                code = code * 31 + flags;
+                code = code * 31 + positionIncrement;
+                if (type != null)
+                {
+                    code = code * 31 + type.GetHashCode();
+                }
+                if (payload != null)
+                {
+                    code = code * 31 + payload.GetHashCode();
+                }
+                return code;
             }
-            if (payload != null)
-            {
-                code = code * 31 + payload.GetHashCode();
-            }
-            return code;
         }
 
         // like clear() but doesn't clear termBuffer/text

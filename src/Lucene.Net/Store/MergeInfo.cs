@@ -47,14 +47,17 @@
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = 1;
-            result = prime * result
-                + (int)(EstimatedMergeBytes ^ (EstimatedMergeBytes >>> 32));
-            result = prime * result + (IsExternal ? 1231 : 1237);
-            result = prime * result + MergeMaxNumSegments;
-            result = prime * result + TotalDocCount;
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result
+                         + (int)(EstimatedMergeBytes ^ (EstimatedMergeBytes >>> 32));
+                result = prime * result + (IsExternal ? 1231 : 1237);
+                result = prime * result + MergeMaxNumSegments;
+                result = prime * result + TotalDocCount;
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

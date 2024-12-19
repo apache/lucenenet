@@ -277,12 +277,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return 1303507063;
             }
 
-            int h = 1;
-            h = 31 * h + pattern.ToString().GetHashCode();
-            h = 31 * h + (int)pattern.Options;
-            h = 31 * h + (toLowerCase ? 1231 : 1237);
-            h = 31 * h + (stopWords != null ? stopWords.GetHashCode() : 0);
-            return h;
+            unchecked
+            {
+                int h = 1;
+                h = 31 * h + pattern.ToString().GetHashCode();
+                h = 31 * h + (int)pattern.Options;
+                h = 31 * h + (toLowerCase ? 1231 : 1237);
+                h = 31 * h + (stopWords != null ? stopWords.GetHashCode() : 0);
+                return h;
+            }
         }
 
         /// <summary>

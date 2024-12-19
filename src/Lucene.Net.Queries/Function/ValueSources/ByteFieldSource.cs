@@ -23,7 +23,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// Obtains <see cref="int"/> field values from the <see cref="Search.FieldCache"/>
     /// using <see cref="IFieldCache.GetInt32s(AtomicReader, string, FieldCache.IInt32Parser, bool)"/>
@@ -137,9 +137,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = parser is null ? typeof(sbyte?).GetHashCode() : parser.GetType().GetHashCode();
-            h += base.GetHashCode();
-            return h;
+            unchecked
+            {
+                int h = parser is null ? typeof(sbyte?).GetHashCode() : parser.GetType().GetHashCode();
+                h += base.GetHashCode();
+                return h;
+            }
         }
     }
 }

@@ -73,10 +73,13 @@ namespace Lucene.Net.Spatial.Prefix
 
         public override int GetHashCode()
         {
-            int result = m_queryShape.GetHashCode();
-            result = 31 * result + m_fieldName.GetHashCode();
-            result = 31 * result + m_detailLevel;
-            return result;
+            unchecked
+            {
+                int result = m_queryShape.GetHashCode();
+                result = 31 * result + m_fieldName.GetHashCode();
+                result = 31 * result + m_detailLevel;
+                return result;
+            }
         }
 
         // LUCENENET specific - de-nested BaseTermsEnumTraverser

@@ -73,26 +73,29 @@ namespace Lucene.Net.Codecs.Memory
             // aren't NO_OUTPUTs.
             public override int GetHashCode()
             {
-                var hash = 0;
-                if (longs != null)
+                unchecked
                 {
-                    var end = longs.Length;
-                    for (var i = 0; i < end; i++)
+                    var hash = 0;
+                    if (longs != null)
                     {
-                        hash -= (int) longs[i];
+                        var end = longs.Length;
+                        for (var i = 0; i < end; i++)
+                        {
+                            hash -= (int) longs[i];
+                        }
                     }
-                }
-                if (bytes != null)
-                {
-                    hash = -hash;
-                    var end = bytes.Length;
-                    for (var i = 0; i < end; i++)
+                    if (bytes != null)
                     {
-                        hash += bytes[i];
+                        hash = -hash;
+                        var end = bytes.Length;
+                        for (var i = 0; i < end; i++)
+                        {
+                            hash += bytes[i];
+                        }
                     }
+                    hash += (int) (docFreq + totalTermFreq);
+                    return hash;
                 }
-                hash += (int) (docFreq + totalTermFreq);
-                return hash;
             }
 
             public override bool Equals(object other)

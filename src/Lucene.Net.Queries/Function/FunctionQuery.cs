@@ -28,7 +28,7 @@ namespace Lucene.Net.Queries.Function
     /// <summary>
     /// Returns a score for each document based on a <see cref="Function.ValueSource"/>,
     /// often some function of the value of a field.
-    /// 
+    ///
     /// <b>Note: This API is experimental and may change in non backward-compatible ways in the future</b>
     /// </summary>
     public class FunctionQuery : Query
@@ -203,7 +203,7 @@ namespace Lucene.Net.Queries.Function
         {
             if (o is null) return false;
             if (!(o is FunctionQuery other)) return false;
-            return Boost == other.Boost 
+            return Boost == other.Boost
                 && func.Equals(other.func);
         }
 
@@ -212,7 +212,10 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public override int GetHashCode()
         {
-            return func.GetHashCode() * 31 + J2N.BitConversion.SingleToInt32Bits(Boost);
+            unchecked
+            {
+                return func.GetHashCode() * 31 + J2N.BitConversion.SingleToInt32Bits(Boost);
+            }
         }
     }
 }

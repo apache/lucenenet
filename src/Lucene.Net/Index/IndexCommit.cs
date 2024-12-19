@@ -107,7 +107,10 @@ namespace Lucene.Net.Index
 
         public override int GetHashCode()
         {
-            return Directory.GetHashCode() + Generation.GetHashCode();
+            unchecked
+            {
+                return Directory.GetHashCode() + Generation.GetHashCode();
+            }
         }
 
         /// <summary>

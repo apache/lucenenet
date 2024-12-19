@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// <see cref="BoolFunction"/> implementation which applies an extendible <see cref="bool"/>
     /// function to the values of a single wrapped <see cref="ValueSource"/>.
-    /// 
+    ///
     /// Functions this can be used for include whether a field has a value or not,
     /// or inverting the <see cref="bool"/> value of the wrapped <see cref="ValueSource"/>.
     /// </summary>
@@ -79,7 +79,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return m_source.GetHashCode() + Name.GetHashCode();
+            unchecked
+            {
+                return m_source.GetHashCode() + Name.GetHashCode();
+            }
         }
 
         public override bool Equals(object o)

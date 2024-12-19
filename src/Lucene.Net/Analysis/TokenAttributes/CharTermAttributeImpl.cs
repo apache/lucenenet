@@ -380,9 +380,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public override int GetHashCode()
         {
-            int code = termLength;
-            code = code * 31 + ArrayUtil.GetHashCode(termBuffer, 0, termLength);
-            return code;
+            unchecked
+            {
+                int code = termLength;
+                code = code * 31 + ArrayUtil.GetHashCode(termBuffer, 0, termLength);
+                return code;
+            }
         }
 
         public override void Clear()

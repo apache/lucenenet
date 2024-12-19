@@ -31,7 +31,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <summary>
     /// Holds a sequence of string components, specifying the hierarchical name of a
     /// category.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public class FacetLabel : IComparable<FacetLabel>
@@ -174,8 +174,11 @@ namespace Lucene.Net.Facet.Taxonomy
             int hash = Length;
             for (int i = 0; i < Length; i++)
             {
-                // LUCENENET specific: Use CharSequenceComparer to get the same value as StringCharSequence.GetHashCode()
-                hash = hash * 31 + CharSequenceComparer.Ordinal.GetHashCode(Components[i]);
+                unchecked
+                {
+                    // LUCENENET specific: Use CharSequenceComparer to get the same value as StringCharSequence.GetHashCode()
+                    hash = hash * 31 + CharSequenceComparer.Ordinal.GetHashCode(Components[i]);
+                }
             }
             return hash;
         }
@@ -183,7 +186,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Calculate a 64-bit hash function for this path.  This
         /// is necessary for <see cref="NameHashInt32CacheLru"/> (the
-        /// default cache impl for <see cref="LruTaxonomyWriterCache"/>) 
+        /// default cache impl for <see cref="LruTaxonomyWriterCache"/>)
         /// to reduce the chance of "silent but deadly" collisions.
         /// <para/>
         /// NOTE: This was longHashCode() in Lucene

@@ -151,7 +151,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             public override string ToString(int doc)
             {
                 // LUCENENET specific - changed formatting to ensure the same culture is used for each value.
-                return string.Format(CultureInfo.InvariantCulture, "scale({0},toMin={1},toMax={2},fromMin={3})", 
+                return string.Format(CultureInfo.InvariantCulture, "scale({0},toMin={1},toMax={2},fromMin={3})",
                     vals.ToString(doc),
                     outerInstance.m_min,
                     outerInstance.m_max,
@@ -166,12 +166,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = J2N.BitConversion.SingleToInt32Bits(m_min);
-            h = h * 29;
-            h += J2N.BitConversion.SingleToInt32Bits(m_max);
-            h = h * 29;
-            h += m_source.GetHashCode();
-            return h;
+            unchecked
+            {
+                int h = J2N.BitConversion.SingleToInt32Bits(m_min);
+                h = h * 29;
+                h += J2N.BitConversion.SingleToInt32Bits(m_max);
+                h = h * 29;
+                h += m_source.GetHashCode();
+                return h;
+            }
         }
 
         public override bool Equals(object o)
@@ -179,7 +182,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             if (!(o is ScaleSingleFunction other))
                 return false;
             return J2N.BitConversion.SingleToInt32Bits(this.m_min) == J2N.BitConversion.SingleToInt32Bits(other.m_min)
-                && J2N.BitConversion.SingleToInt32Bits(this.m_max) == J2N.BitConversion.SingleToInt32Bits(other.m_max) 
+                && J2N.BitConversion.SingleToInt32Bits(this.m_max) == J2N.BitConversion.SingleToInt32Bits(other.m_max)
                 && this.m_source.Equals(other.m_source);
         }
     }

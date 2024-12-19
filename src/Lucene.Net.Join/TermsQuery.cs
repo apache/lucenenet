@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Join
     /// <summary>
     /// A query that has an array of terms from a specific field. This query will match documents have one or more terms in
     /// the specified field that match with the terms specified in the array.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     internal class TermsQuery : MultiTermQuery
@@ -35,12 +35,12 @@ namespace Lucene.Net.Search.Join
         private readonly Query _fromQuery; // Used for equals() only
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">The field that should contain terms that are specified in the previous parameter.</param>
         /// <param name="fromQuery"></param>
         /// <param name="terms">The terms that matching documents should have. The terms must be sorted by natural order.</param>
-        internal TermsQuery(string field, Query fromQuery, BytesRefHash terms) 
+        internal TermsQuery(string field, Query fromQuery, BytesRefHash terms)
             : base(field)
         {
             _fromQuery = fromQuery;
@@ -89,10 +89,13 @@ namespace Lucene.Net.Search.Join
 
         public override int GetHashCode()
         {
-            int prime = 31;
-            int result = base.GetHashCode();
-            result += prime * _fromQuery.GetHashCode();
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result += prime * _fromQuery.GetHashCode();
+                return result;
+            }
         }
 
         private class SeekingTermSetTermsEnum : FilteredTermsEnum
@@ -108,7 +111,7 @@ namespace Lucene.Net.Search.Join
             private BytesRef _seekTerm;
             private int _upto;
 
-            internal SeekingTermSetTermsEnum(TermsEnum tenum, BytesRefHash terms, int[] ords) 
+            internal SeekingTermSetTermsEnum(TermsEnum tenum, BytesRefHash terms, int[] ords)
                 : base(tenum)
             {
                 this.terms = terms;
@@ -125,7 +128,7 @@ namespace Lucene.Net.Search.Join
                 _seekTerm = null;
                 return temp;
             }
-            
+
             protected override AcceptStatus Accept(BytesRef term)
             {
                 if (_comparer.Compare(term, _lastTerm) > 0)

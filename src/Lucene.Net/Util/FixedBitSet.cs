@@ -724,15 +724,18 @@ namespace Lucene.Net.Util
 
         public override int GetHashCode()
         {
-            long h = 0;
-            for (int i = numWords; --i >= 0; )
+            unchecked
             {
-                h ^= bits[i];
-                h = (h << 1) | (h >>> 63); // rotate left
+                long h = 0;
+                for (int i = numWords; --i >= 0; )
+                {
+                    h ^= bits[i];
+                    h = (h << 1) | (h >>> 63); // rotate left
+                }
+                // fold leftmost bits into right and add a constant to prevent
+                // empty sets from returning 0, which is too common.
+                return (int)((h >> 32) ^ h) + (int)0x98761234;
             }
-            // fold leftmost bits into right and add a constant to prevent
-            // empty sets from returning 0, which is too common.
-            return (int)((h >> 32) ^ h) + unchecked((int)0x98761234);
         }
     }
 }

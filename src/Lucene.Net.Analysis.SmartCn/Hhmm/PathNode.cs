@@ -48,13 +48,16 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// </summary>
         public override int GetHashCode()
         {
-            int prime = 31;
-            int result = 1;
-            result = prime * result + PreNode;
-            long temp;
-            temp = J2N.BitConversion.DoubleToInt64Bits(Weight);
-            result = prime * result + (int)(temp ^ (temp >>> 32));
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = 1;
+                result = prime * result + PreNode;
+                long temp;
+                temp = J2N.BitConversion.DoubleToInt64Bits(Weight);
+                result = prime * result + (int)(temp ^ (temp >>> 32));
+                return result;
+            }
         }
 
         /// <summary>

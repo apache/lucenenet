@@ -110,17 +110,20 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = m_source.GetHashCode();
-            h ^= (h << 10) | (h >>> 23);
-            h += J2N.BitConversion.SingleToInt32Bits(m_min);
-            h ^= (h << 14) | (h >>> 19);
-            h += J2N.BitConversion.SingleToInt32Bits(m_max);
-            h += m_target.GetHashCode();
-            if (m_defaultVal != null)
+            unchecked
             {
-                h += m_defaultVal.GetHashCode();
+                int h = m_source.GetHashCode();
+                h ^= (h << 10) | (h >>> 23);
+                h += J2N.BitConversion.SingleToInt32Bits(m_min);
+                h ^= (h << 14) | (h >>> 19);
+                h += J2N.BitConversion.SingleToInt32Bits(m_max);
+                h += m_target.GetHashCode();
+                if (m_defaultVal != null)
+                {
+                    h += m_defaultVal.GetHashCode();
+                }
+                return h;
             }
-            return h;
         }
 
         public override bool Equals(object o)

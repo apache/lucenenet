@@ -225,11 +225,14 @@ namespace Lucene.Net.Search.Payloads
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + ((m_function is null) ? 0 : m_function.GetHashCode());
-            result = prime * result + (includeSpanScore ? 1231 : 1237);
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + (m_function is null ? 0 : m_function.GetHashCode());
+                result = prime * result + (includeSpanScore ? 1231 : 1237);
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

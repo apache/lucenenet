@@ -103,12 +103,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// </summary>
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + this.precisionStep.GetHashCode();
-            result = prime * result + this.type.GetHashCode();
-            result = prime * result + this.format.GetHashCode();
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + this.precisionStep.GetHashCode();
+                result = prime * result + this.type.GetHashCode();
+                result = prime * result + this.format.GetHashCode();
+                return result;
+            }
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Single label and its value, usually contained in a
-    /// <see cref="FacetResult"/>. 
+    /// <see cref="FacetResult"/>.
     /// </summary>
     public sealed class LabelAndValue : IFormattable
     {
@@ -42,7 +42,7 @@ namespace Lucene.Net.Facet
         public Type TypeOfValue { get; private set; }
 
         /// <summary>
-        /// Constructor for <see cref="float"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// Constructor for <see cref="float"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method
         /// print the <paramref name="value"/> as a <see cref="float"/> with at least 1 number after the decimal.
         /// </summary>
         public LabelAndValue(string label, float value)
@@ -53,7 +53,7 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Constructor for <see cref="int"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method 
+        /// Constructor for <see cref="int"/> <paramref name="value"/>. Makes the <see cref="ToString()"/> method
         /// print the <paramref name="value"/> as an <see cref="int"/> with no decimal.
         /// </summary>
         public LabelAndValue(string label, int value)
@@ -101,7 +101,10 @@ namespace Lucene.Net.Facet
 
         public override int GetHashCode()
         {
-            return Label.GetHashCode() + 1439 * Value.GetHashCode();
+            unchecked
+            {
+                return Label.GetHashCode() + 1439 * Value.GetHashCode();
+            }
         }
     }
 }

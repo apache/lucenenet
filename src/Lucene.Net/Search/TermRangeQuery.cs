@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
     /// A <see cref="Query"/> that matches documents within an range of terms.
     ///
     /// <para/>This query matches the documents looking for terms that fall into the
-    /// supplied range according to 
+    /// supplied range according to
     /// <see cref="byte.CompareTo(byte)"/>. It is not intended
     /// for numerical ranges; use <see cref="NumericRangeQuery"/> instead.
     ///
@@ -143,13 +143,16 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            const int prime = 31;
-            int result = base.GetHashCode();
-            result = prime * result + (includeLower ? 1231 : 1237);
-            result = prime * result + (includeUpper ? 1231 : 1237);
-            result = prime * result + ((lowerTerm is null) ? 0 : lowerTerm.GetHashCode());
-            result = prime * result + ((upperTerm is null) ? 0 : upperTerm.GetHashCode());
-            return result;
+            unchecked
+            {
+                const int prime = 31;
+                int result = base.GetHashCode();
+                result = prime * result + (includeLower ? 1231 : 1237);
+                result = prime * result + (includeUpper ? 1231 : 1237);
+                result = prime * result + ((lowerTerm is null) ? 0 : lowerTerm.GetHashCode());
+                result = prime * result + ((upperTerm is null) ? 0 : upperTerm.GetHashCode());
+                return result;
+            }
         }
 
         public override bool Equals(object obj)

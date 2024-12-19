@@ -39,7 +39,7 @@ namespace Lucene.Net.Spatial.Util
         private readonly IShape queryShape;//the right hand side (constant)
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="shapeValueSource">
         /// Must yield <see cref="IShape"/> instances from it's ObjectVal(doc). If null
@@ -119,10 +119,13 @@ namespace Lucene.Net.Spatial.Util
 
         public override int GetHashCode()
         {
-            int result = shapeValueSource.GetHashCode();
-            result = 31 * result + op.GetHashCode();
-            result = 31 * result + queryShape.GetHashCode();
-            return result;
+            unchecked
+            {
+                int result = shapeValueSource.GetHashCode();
+                result = 31 * result + op.GetHashCode();
+                result = 31 * result + queryShape.GetHashCode();
+                return result;
+            }
         }
     }
 }
