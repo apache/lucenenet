@@ -559,7 +559,7 @@ namespace Lucene.Net.Analysis
             try
             {
                 ts = a.GetTokenStream("bogus", new StringReader(input));
-                Assert.Fail("Didn't get expected exception when Dispose() not called");
+                Assert.Fail("Didn't get expected exception when Close() not called");
             }
             catch (Exception expected) when (expected.IsIllegalStateException())
             {
