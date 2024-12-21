@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
     /// an allowed number of segments per tier.  This is similar
     /// to <see cref="LogByteSizeMergePolicy"/>, except this merge
     /// policy is able to merge non-adjacent segment, and
-    /// separates how many segments are merged at once (<see cref="MaxMergeAtOnce"/>) 
+    /// separates how many segments are merged at once (<see cref="MaxMergeAtOnce"/>)
     /// from how many segments are allowed
     /// per tier (<see cref="SegmentsPerTier"/>).  This merge
     /// policy also does not over-merge (i.e. cascade merges).
@@ -100,8 +100,8 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Gets or sets maximum number of segments to be merged at a time
         /// during "normal" merging.  For explicit merging (eg,
-        /// <see cref="IndexWriter.ForceMerge(int)"/> or 
-        /// <see cref="IndexWriter.ForceMergeDeletes()"/> was called), see 
+        /// <see cref="IndexWriter.ForceMerge(int)"/> or
+        /// <see cref="IndexWriter.ForceMergeDeletes()"/> was called), see
         /// <see cref="MaxMergeAtOnceExplicit"/>.  Default is 10.
         /// </summary>
         public virtual int MaxMergeAtOnce
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Gets or sets maximum number of segments to be merged at a time,
-        /// during <see cref="IndexWriter.ForceMerge(int)"/> or 
+        /// during <see cref="IndexWriter.ForceMerge(int)"/> or
         /// <see cref="IndexWriter.ForceMergeDeletes()"/>. Default is 30.
         /// </summary>
         public virtual int MaxMergeAtOnceExplicit
@@ -223,11 +223,11 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Gets or sets the allowed number of segments per tier.  Smaller
         /// values mean more merging but fewer segments.
-        /// 
-        /// <para/><b>NOTE</b>: this value should be >= the 
+        ///
+        /// <para/><b>NOTE</b>: this value should be >= the
         /// <see cref="MaxMergeAtOnce"/> otherwise you'll force too much
         /// merging to occur.
-        /// 
+        ///
         /// <para/>Default is 10.0.
         /// </summary>
         public virtual double SegmentsPerTier
@@ -315,7 +315,8 @@ namespace Lucene.Net.Index
             {
                 return null;
             }
-            ICollection<SegmentCommitInfo> merging = m_writer.Get().MergingSegments;
+            ICollection<SegmentCommitInfo> merging = m_writer.Value?.MergingSegments
+                ?? throw new InvalidOperationException("The writer has not been initialized"); // LUCENENET specific - throw exception if writer is null
             ICollection<SegmentCommitInfo> toBeMerged = new JCG.HashSet<SegmentCommitInfo>();
 
             JCG.List<SegmentCommitInfo> infosSorted = new JCG.List<SegmentCommitInfo>(infos.AsList());
@@ -338,7 +339,7 @@ namespace Lucene.Net.Index
                     {
                         extra += " [floored]";
                     }
-                    Message("  seg=" + m_writer.Get().SegString(info) + " size=" + string.Format("{0:0.000}", segBytes / 1024 / 1024.0) + " MB" + extra);
+                    Message("  seg=" + m_writer.Value?.SegString(info) + " size=" + string.Format("{0:0.000}", segBytes / 1024 / 1024.0) + " MB" + extra);
                 }
 
                 minSegmentBytes = Math.Min(segBytes, minSegmentBytes);
@@ -449,7 +450,7 @@ namespace Lucene.Net.Index
                         MergeScore score = Score(candidate, hitTooLarge, mergingBytes);
                         if (Verbose())
                         {
-                            Message("  maybe=" + m_writer.Get().SegString(candidate) + " score=" + score.Score + " " + score.Explanation + " tooLarge=" + hitTooLarge + " size=" + string.Format("{0:0.000} MB", totAfterMergeBytes / 1024.0 / 1024.0));
+                            Message("  maybe=" + m_writer.Value?.SegString(candidate) + " score=" + score.Score + " " + score.Explanation + " tooLarge=" + hitTooLarge + " size=" + string.Format("{0:0.000} MB", totAfterMergeBytes / 1024.0 / 1024.0));
                         }
 
                         // If we are already running a max sized merge
@@ -479,7 +480,7 @@ namespace Lucene.Net.Index
 
                         if (Verbose())
                         {
-                            Message("  add merge=" + m_writer.Get().SegString(merge.Segments) + " size=" + string.Format("{0:0.000} MB", bestMergeBytes / 1024.0 / 1024.0) + " score=" + string.Format("{0:0.000}", bestScore.Score) + " " + bestScore.Explanation + (bestTooLarge ? " [max merge]" : ""));
+                            Message("  add merge=" + m_writer.Value?.SegString(merge.Segments) + " size=" + string.Format("{0:0.000} MB", bestMergeBytes / 1024.0 / 1024.0) + " score=" + string.Format("{0:0.000}", bestScore.Score) + " " + bestScore.Explanation + (bestTooLarge ? " [max merge]" : ""));
                         }
                     }
                     else
@@ -570,14 +571,15 @@ namespace Lucene.Net.Index
         {
             if (Verbose())
             {
-                Message("FindForcedMerges maxSegmentCount=" + maxSegmentCount + 
-                    " infos=" + m_writer.Get().SegString(infos.Segments) + 
+                Message("FindForcedMerges maxSegmentCount=" + maxSegmentCount +
+                    " infos=" + m_writer.Value?.SegString(infos.Segments) +
                     " segmentsToMerge=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", segmentsToMerge));
             }
 
             JCG.List<SegmentCommitInfo> eligible = new JCG.List<SegmentCommitInfo>();
             bool forceMergeRunning = false;
-            ICollection<SegmentCommitInfo> merging = m_writer.Get().MergingSegments;
+            ICollection<SegmentCommitInfo> merging = m_writer.Value?.MergingSegments
+                ?? throw new InvalidOperationException("The writer has not been initialized"); // LUCENENET specific - throw exception if writer is null
             bool segmentIsOriginal = false;
             foreach (SegmentCommitInfo info in infos.Segments)
             {
@@ -631,7 +633,7 @@ namespace Lucene.Net.Index
                 OneMerge merge = new OneMerge(eligible.GetView(end - maxMergeAtOnceExplicit, maxMergeAtOnceExplicit)); // LUCENENET: Converted end index to length
                 if (Verbose())
                 {
-                    Message("add merge=" + m_writer.Get().SegString(merge.Segments));
+                    Message("add merge=" + m_writer.Value?.SegString(merge.Segments));
                 }
                 spec.Add(merge);
                 end -= maxMergeAtOnceExplicit;
@@ -644,7 +646,7 @@ namespace Lucene.Net.Index
                 OneMerge merge = new OneMerge(eligible.GetView(end - numToMerge, numToMerge)); // LUCENENET: Converted end index to length
                 if (Verbose())
                 {
-                    Message("add final merge=" + merge.SegString(m_writer.Get().Directory));
+                    Message("add final merge=" + merge.SegString(m_writer.Value?.Directory));
                 }
                 spec = new MergeSpecification();
                 spec.Add(merge);
@@ -657,13 +659,14 @@ namespace Lucene.Net.Index
         {
             if (Verbose())
             {
-                Message("findForcedDeletesMerges infos=" + m_writer.Get().SegString(infos.Segments) + " forceMergeDeletesPctAllowed=" + forceMergeDeletesPctAllowed);
+                Message("findForcedDeletesMerges infos=" + m_writer.Value?.SegString(infos.Segments) + " forceMergeDeletesPctAllowed=" + forceMergeDeletesPctAllowed);
             }
             JCG.List<SegmentCommitInfo> eligible = new JCG.List<SegmentCommitInfo>();
-            ICollection<SegmentCommitInfo> merging = m_writer.Get().MergingSegments;
+            ICollection<SegmentCommitInfo> merging = m_writer.Value?.MergingSegments
+                ?? throw new InvalidOperationException("The writer has not been initialized"); // LUCENENET specific - throw exception if writer is null
             foreach (SegmentCommitInfo info in infos.Segments)
             {
-                double pctDeletes = 100.0 * ((double)m_writer.Get().NumDeletedDocs(info)) / info.Info.DocCount;
+                double pctDeletes = 100.0 * ((double)m_writer.Value.NumDeletedDocs(info)) / info.Info.DocCount;
                 if (pctDeletes > forceMergeDeletesPctAllowed && !merging.Contains(info))
                 {
                     eligible.Add(info);
@@ -699,7 +702,7 @@ namespace Lucene.Net.Index
                 OneMerge merge = new OneMerge(eligible.GetView(start, end - start)); // LUCENENET: Converted end index to length
                 if (Verbose())
                 {
-                    Message("add merge=" + m_writer.Get().SegString(merge.Segments));
+                    Message("add merge=" + m_writer.Value.SegString(merge.Segments));
                 }
                 spec.Add(merge);
                 start = end;
@@ -719,13 +722,13 @@ namespace Lucene.Net.Index
 
         private bool Verbose()
         {
-            IndexWriter w = m_writer.Get();
+            IndexWriter w = m_writer.Value;
             return w != null && w.infoStream.IsEnabled("TMP");
         }
 
         private void Message(string message)
         {
-            m_writer.Get().infoStream.Message("TMP", message);
+            m_writer.Value?.infoStream.Message("TMP", message);
         }
 
         public override string ToString()

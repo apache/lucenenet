@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
         ///           if this config is already attached to a writer. </exception>
         internal IndexWriterConfig SetIndexWriter(IndexWriter writer)
         {
-            this.writer.Set(writer);
+            this.writer.Value = writer;
             return this;
         }
 
