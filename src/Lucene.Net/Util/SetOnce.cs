@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 #endif
+#nullable enable
 
 namespace Lucene.Net.Util
 {
@@ -28,21 +29,21 @@ namespace Lucene.Net.Util
     /// <summary>
     /// A convenient class which offers a semi-immutable object wrapper
     /// implementation which allows one to set the value of an object exactly once,
-    /// and retrieve it many times. If <see cref="Set(T)"/> is called more than once,
+    /// and retrieve it many times. If the <see cref="Value"/> setter is called more than once,
     /// <see cref="AlreadySetException"/> is thrown and the operation
     /// will fail.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed class SetOnce<T> // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
+    public sealed partial class SetOnce<T> // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
         where T : class // LUCENENET specific - added class constraint so we don't accept value types (which cannot be volatile)
     {
-        private volatile T obj = default;
+        private volatile T? obj;
         private readonly AtomicBoolean set;
 
         /// <summary>
         /// A default constructor which does not set the internal object, and allows
-        /// setting it by calling <see cref="Set(T)"/>.
+        /// setting it via <see cref="Value"/>.
         /// </summary>
         public SetOnce()
         {
@@ -51,37 +52,38 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Creates a new instance with the internal object set to the given object.
-        /// Note that any calls to <see cref="Set(T)"/> afterwards will result in
+        /// Note that any calls to the <see cref="Value"/> setter afterwards will result in
         /// <see cref="AlreadySetException"/>
         /// </summary>
         /// <exception cref="AlreadySetException"> if called more than once </exception>
-        /// <seealso cref="Set(T)"/>
-        public SetOnce(T obj)
+        /// <seealso cref="Value"/>
+        public SetOnce(T? obj)
         {
             this.obj = obj;
             set = new AtomicBoolean(true);
         }
 
         /// <summary>
-        /// Sets the given object. If the object has already been set, an exception is thrown. </summary>
-        public void Set(T obj)
+        /// Gets or sets the object.
+        /// </summary>
+        /// <remarks>
+        /// This property's getter and setter replace the Get() and Set(T) methods in the Java version.
+        /// </remarks>
+        /// <exception cref="AlreadySetException">Thrown if the object has already been set.</exception>
+        public T? Value
         {
-            if (set.CompareAndSet(false, true))
+            get => obj;
+            set
             {
-                this.obj = obj;
+                if (set.CompareAndSet(false, true))
+                {
+                    this.obj = value;
+                }
+                else
+                {
+                    throw new AlreadySetException();
+                }
             }
-            else
-            {
-                throw new AlreadySetException();
-            }
-        }
-
-        /// <summary>
-        /// Returns the object set by <see cref="Set(T)"/>. </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Get()
-        {
-            return obj;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -92,10 +94,10 @@ namespace Lucene.Net.Util
     }
 
     /// <summary>
-    /// Thrown when <see cref="SetOnce{T}.Set(T)"/> is called more than once. </summary>
+    /// Thrown when the <see cref="SetOnce{T}.Value"/> setter is called more than once. </summary>
     // LUCENENET specific - de-nested the class from SetOnce<T> to allow the test
     // framework to serialize it without the generic type.
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

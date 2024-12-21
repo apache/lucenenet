@@ -2877,7 +2877,7 @@ namespace Lucene.Net.Index
             SetOnce<IndexWriter> iwRef = new SetOnce<IndexWriter>();
             iwc.SetInfoStream(new TestPointInfoStream(iwc.InfoStream, new TestPointAnonymousClass(iwRef)));
             IndexWriter evilWriter = new IndexWriter(dir, iwc);
-            iwRef.Set(evilWriter);
+            iwRef.Value = evilWriter;
             for (int i = 0; i < 1000; i++)
             {
                 AddDoc(evilWriter);
@@ -2905,11 +2905,11 @@ namespace Lucene.Net.Index
             {
                 if ("startCommitMerge".Equals(message, StringComparison.Ordinal))
                 {
-                    iwRef.Get().KeepFullyDeletedSegments = false;
+                    iwRef.Value!.KeepFullyDeletedSegments = false;
                 }
                 else if ("startMergeInit".Equals(message, StringComparison.Ordinal))
                 {
-                    iwRef.Get().KeepFullyDeletedSegments = true;
+                    iwRef.Value!.KeepFullyDeletedSegments = true;
                 }
             }
         }

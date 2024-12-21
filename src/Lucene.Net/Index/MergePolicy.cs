@@ -658,7 +658,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="SetOnce{T}"/>
         public virtual void SetIndexWriter(IndexWriter writer)
         {
-            this.m_writer.Set(writer);
+            this.m_writer.Value = writer;
         }
 
         /// <summary>
@@ -754,7 +754,8 @@ namespace Lucene.Net.Index
         protected virtual long Size(SegmentCommitInfo info)
         {
             long byteSize = info.GetSizeInBytes();
-            int delCount = m_writer.Get().NumDeletedDocs(info);
+            int delCount = m_writer.Value?.NumDeletedDocs(info)
+                ?? throw new InvalidOperationException("The writer has not been initialized"); // LUCENENET specific - throw exception if writer is null
             double delRatio = (info.Info.DocCount <= 0 ? 0.0f : ((float)delCount / (float)info.Info.DocCount));
             if (Debugging.AssertsEnabled) Debugging.Assert(delRatio <= 1.0);
             return (info.Info.DocCount <= 0 ? byteSize : (long)(byteSize * (1.0 - delRatio)));
@@ -767,7 +768,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected bool IsMerged(SegmentInfos infos, SegmentCommitInfo info)
         {
-            IndexWriter w = m_writer.Get();
+            IndexWriter w = m_writer.Value;
             if (Debugging.AssertsEnabled) Debugging.Assert(w != null);
             bool hasDeletions = w.NumDeletedDocs(info) > 0;
             return !hasDeletions

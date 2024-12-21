@@ -47,7 +47,8 @@ namespace Lucene.Net.Index
             int numSegments/* = segmentInfos.Count*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             JCG.List<SegmentCommitInfo> segments = new JCG.List<SegmentCommitInfo>();
-            ICollection<SegmentCommitInfo> merging = base.m_writer.Get().MergingSegments;
+            ICollection<SegmentCommitInfo> merging = base.m_writer.Value?.MergingSegments
+                ?? throw new InvalidOperationException("The writer has not been initialized"); // LUCENENET specific - throw exception if writer is null
 
             foreach (SegmentCommitInfo sipc in segmentInfos.Segments)
             {

@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
                 try
                 {
                     Sleep(RAND.Next(10)); // sleep for a short time
-                    set.Set(new Integer(Convert.ToInt32(Name.Substring(2), CultureInfo.InvariantCulture)));
+                    set.Value = new Integer(Convert.ToInt32(Name.Substring(2), CultureInfo.InvariantCulture));
                     success = true;
                 }
                 catch (Exception e) when (e.IsInterruptedException())
@@ -76,24 +76,24 @@ namespace Lucene.Net.Util
         public virtual void TestEmptyCtor()
         {
             SetOnce<Integer> set = new SetOnce<Integer>();
-            Assert.IsNull(set.Get());
+            Assert.IsNull(set.Value);
         }
 
         [Test]
         public virtual void TestSettingCtor()
         {
             SetOnce<Integer> set = new SetOnce<Integer>(new Integer(5));
-            Assert.AreEqual(5, set.Get().value);
-            Assert.Throws<AlreadySetException>(() => set.Set(new Integer(7)));
+            Assert.AreEqual(5, set.Value?.value);
+            Assert.Throws<AlreadySetException>(() => set.Value = new Integer(7));
         }
 
         [Test]
         public virtual void TestSetOnce_mem()
         {
             SetOnce<Integer> set = new SetOnce<Integer>();
-            set.Set(new Integer(5));
-            Assert.AreEqual(5, set.Get().value);
-            Assert.Throws<AlreadySetException>(() => set.Set(new Integer(7)));
+            set.Value = new Integer(5);
+            Assert.AreEqual(5, set.Value.value);
+            Assert.Throws<AlreadySetException>(() => set.Value = new Integer(7));
         }
 
         [Test]
@@ -124,7 +124,7 @@ namespace Lucene.Net.Util
                 if (t.success)
                 {
                     int expectedVal = Convert.ToInt32(t.Name.Substring(2));
-                    Assert.AreEqual(expectedVal, t.set.Get().value, "thread " + t.Name);
+                    Assert.AreEqual(expectedVal, t.set.Value?.value, "thread " + t.Name);
                 }
             }
         }
