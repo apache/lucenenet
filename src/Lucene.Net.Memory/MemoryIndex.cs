@@ -284,16 +284,32 @@ namespace Lucene.Net.Index.Memory
             return new TokenStreamAnonymousClass<T>(keywords);
         }
 
+        /// <summary>
+        /// An anonymous implementation of <see cref="TokenStream"/> for
+        /// <see cref="KeywordTokenStream{T}(ICollection{T})"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of item in the collection.</typeparam>
+        /// <remarks>
+        /// LUCENENET specific - This class originally got an enumerator in the constructor and stored it to a field
+        /// that was never reset, which meant that it could not be reused (since most IEnumerator implementations can
+        /// only be iterated once and throw on <see cref="System.Collections.IEnumerator.Reset()"/>). This class has
+        /// been modified to initialize <see cref="iter"/> on <see cref="TokenStream.Reset()"/> instead, which allows
+        /// it to be reused, per the TokenStream workflow contract of allowing <see cref="TokenStream.Reset()"/> after
+        /// <see cref="TokenStream.Close()"/>.
+        /// </remarks>
         private sealed class TokenStreamAnonymousClass<T> : TokenStream
         {
             public TokenStreamAnonymousClass(ICollection<T> keywords)
             {
-                iter = keywords.GetEnumerator();
+                // LUCENENET specific - initializing iter in Reset() instead of here and storing keywords, see remarks above
+                // iter = keywords.GetEnumerator();
+                this.keywords = keywords;
                 start = 0;
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
+            private ICollection<T> keywords; // LUCENENET specific - see remarks above
             private IEnumerator<T> iter;
             private int start;
             private readonly ICharTermAttribute termAtt;
@@ -301,6 +317,12 @@ namespace Lucene.Net.Index.Memory
 
             public override bool IncrementToken()
             {
+                // LUCENENET specific - check for null iter
+                if (iter is null)
+                {
+                    throw new InvalidOperationException("TokenStream is not properly initialized, IncrementToken() can only be called after Reset()");
+                }
+
                 if (!iter.MoveNext())
                 {
                     return false;
@@ -320,11 +342,21 @@ namespace Lucene.Net.Index.Memory
                 return true;
             }
 
+            // LUCENENET specific - added Close() method to clean up resources
             public override void Close()
             {
-                iter?.Dispose(); // LUCENENET specific - dispose iter and set to null, can't be reused
+                iter?.Dispose();
                 iter = null;
                 base.Close();
+            }
+
+            // LUCENENET specific - added Reset() method to allow reuse of the TokenStream
+            public override void Reset()
+            {
+                iter?.Dispose();
+                iter = keywords.GetEnumerator();
+                start = 0;
+                base.Reset();
             }
         }
 

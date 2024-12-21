@@ -141,7 +141,8 @@ namespace Lucene.Net.Spatial.Prefix
             //TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
             //  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
 
-            Field field = new Field(FieldName, new CellTokenStream(cells.GetEnumerator()), FIELD_TYPE);
+            // LUCENENET specific - see remarks in CellTokenStream for why we're passing IEnumerable<Cell> instead of IEnumerator<Cell>
+            Field field = new Field(FieldName, new CellTokenStream(cells), FIELD_TYPE);
             return new Field[] { field };
         }
 
@@ -157,17 +158,28 @@ namespace Lucene.Net.Spatial.Prefix
             IndexOptions = IndexOptions.DOCS_ONLY
         }.Freeze();
 
-        /// <summary>Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.</summary>
+        /// <summary>
+        /// Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific - This class originally took an enumerator, which meant that it could not
+        /// be reused (since most IEnumerator implementations can only be iterated once and throw on
+        /// <see cref="System.Collections.IEnumerator.Reset()"/>). This class has been modified to take an
+        /// <c>IEnumerable&lt;Cell&gt;</c> instead, which allows it to be reused, per the TokenStream
+        /// workflow contract of allowing <see cref="TokenStream.Reset()"/> after <see cref="TokenStream.Close()"/>.
+        /// </remarks>
         internal sealed class CellTokenStream : TokenStream
         {
             private readonly ICharTermAttribute termAtt;
 
-            private readonly IEnumerator<Cell> iter; // LUCENENET specific - marked readonly and got rid of null setting
+            private readonly IEnumerable<Cell> enumerable; // LUCENENET specific - see remarks above
+            private IEnumerator<Cell>? iter;
 
-            public CellTokenStream(IEnumerator<Cell> tokens)
+            public CellTokenStream(IEnumerable<Cell> tokens)
             {
                 // LUCENENET specific - added guard clause
-                this.iter = tokens ?? throw new ArgumentNullException(nameof(tokens));
+                enumerable = tokens ?? throw new ArgumentNullException(nameof(tokens));
+                // LUCENENET NOTE: not initializing iter here, should be done in Reset()
                 termAtt = AddAttribute<ICharTermAttribute>();
             }
 
@@ -183,9 +195,16 @@ namespace Lucene.Net.Spatial.Prefix
                     nextTokenStringNeedingLeaf = null;
                     return true;
                 }
+
+                // LUCENENET specific: throw if iter has not been initialized
+                if (iter is null)
+                {
+                    throw new InvalidOperationException("TokenStream is not initialized. Call Reset() before IncrementToken().");
+                }
+
                 if (iter.MoveNext())
                 {
-                    Cell cell = iter.Current;
+                    Cell cell = iter.Current ?? throw new InvalidOperationException("CellTokenStream received a null Cell from the enumerator.");
                     string token = cell.TokenString;
                     termAtt.Append(token);
                     if (cell.IsLeaf)
@@ -197,10 +216,20 @@ namespace Lucene.Net.Spatial.Prefix
                 return false;
             }
 
+            // LUCENENET specific - added Close() method to clean up resources
             public override void Close()
             {
-                iter.Dispose();
+                iter?.Dispose();
+                iter = null;
                 base.Close();
+            }
+
+            // LUCENENET specific - added Reset() method to allow for reuse of the TokenStream
+            public override void Reset()
+            {
+                iter?.Dispose();
+                iter = enumerable.GetEnumerator();
+                base.Reset();
             }
         }
 
