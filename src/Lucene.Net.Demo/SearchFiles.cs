@@ -112,57 +112,64 @@ namespace Lucene.Net.Demo
             // :Post-Release-Update-Version.LUCENE_XY:
             Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
 
+            FileStream fileStream = null; // LUCENENET specific - keep track of the FileStream so we can dispose of it
             TextReader input = null;
             if (queries != null)
             {
-                input = new StreamReader(new FileStream(queries, FileMode.Open, FileAccess.Read), Encoding.UTF8);
+                fileStream = new FileStream(queries, FileMode.Open, FileAccess.Read);
+                input = new StreamReader(fileStream, Encoding.UTF8);
             }
             else
             {
                 input = Console.In;
             }
-            // :Post-Release-Update-Version.LUCENE_XY:
-            QueryParser parser = new QueryParser(LuceneVersion.LUCENE_48, field, analyzer);
-            while (true)
+
+            using (fileStream) // LUCENENET specific - dispose of the FileStream when we are done with it
             {
-                if (queries is null && queryString is null)
+                // :Post-Release-Update-Version.LUCENE_XY:
+                QueryParser parser = new QueryParser(LuceneVersion.LUCENE_48, field, analyzer);
+                while (true)
                 {
-                    // prompt the user
-                    Console.WriteLine("Enter query (or press Enter to exit): ");
-                }
-
-                string line = queryString ?? input.ReadLine();
-
-                if (line is null || line.Length == 0)
-                {
-                    break;
-                }
-
-                line = line.Trim();
-                if (line.Length == 0)
-                {
-                    break;
-                }
-
-                Query query = parser.Parse(line);
-                Console.WriteLine("Searching for: " + query.ToString(field));
-
-                if (repeat > 0) // repeat & time as benchmark
-                {
-                    DateTime start = DateTime.UtcNow;
-                    for (int i = 0; i < repeat; i++)
+                    if (queries is null && queryString is null)
                     {
-                        searcher.Search(query, null, 100);
+                        // prompt the user
+                        Console.WriteLine("Enter query (or press Enter to exit): ");
                     }
-                    DateTime end = DateTime.UtcNow;
-                    Console.WriteLine("Time: " + (end - start).TotalMilliseconds + "ms");
-                }
 
-                DoPagingSearch(searcher, query, hitsPerPage, raw, queries is null && queryString is null);
+                    string line = queryString ?? input.ReadLine();
 
-                if (queryString != null)
-                {
-                    break;
+                    if (line is null || line.Length == 0)
+                    {
+                        break;
+                    }
+
+                    line = line.Trim();
+                    if (line.Length == 0)
+                    {
+                        break;
+                    }
+
+                    Query query = parser.Parse(line);
+                    Console.WriteLine("Searching for: " + query.ToString(field));
+
+                    if (repeat > 0) // repeat & time as benchmark
+                    {
+                        DateTime start = DateTime.UtcNow;
+                        for (int i = 0; i < repeat; i++)
+                        {
+                            searcher.Search(query, null, 100);
+                        }
+
+                        DateTime end = DateTime.UtcNow;
+                        Console.WriteLine("Time: " + (end - start).TotalMilliseconds + "ms");
+                    }
+
+                    DoPagingSearch(searcher, query, hitsPerPage, raw, queries is null && queryString is null);
+
+                    if (queryString != null)
+                    {
+                        break;
+                    }
                 }
             }
         }

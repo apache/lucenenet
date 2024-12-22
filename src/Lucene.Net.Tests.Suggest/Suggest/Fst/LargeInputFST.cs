@@ -32,30 +32,31 @@ namespace Lucene.Net.Search.Suggest.Fst
         // LUCENENET specific - renaming from Main() because we must only have 1 entry point.
         // Not sure why this utility is in a test project anyway - this seems like something that should
         // be in Lucene.Net.Suggest so we can put it into the lucene-cli tool.
-        public static void Main2(string[] args) 
+        public static void Main2(string[] args)
         {
             FileInfo input = new FileInfo("/home/dweiss/tmp/shuffled.dict");
 
-            int buckets = 20;
-            int shareMaxTail = 10;
+            const int buckets = 20;
+            const int shareMaxTail = 10;
 
             ExternalRefSorter sorter = new ExternalRefSorter(new OfflineSorter());
             FSTCompletionBuilder builder = new FSTCompletionBuilder(buckets, sorter, shareMaxTail);
 
-            TextReader reader =
-                new StreamReader(
-                    new FileStream(input.FullName, FileMode.Open), Encoding.UTF8);
-
-            BytesRef scratch = new BytesRef();
-            string line;
-            int count = 0;
-            while ((line = reader.ReadLine()) != null)
+            // LUCENENET specific - dispose of fileStream and reader when done
+            using (FileStream fileStream = new FileStream(input.FullName, FileMode.Open))
+            using (TextReader reader = new StreamReader(fileStream, Encoding.UTF8))
             {
-                scratch.CopyChars(line);
-                builder.Add(scratch, count % buckets);
-                if ((count++ % 100000) == 0)
+                BytesRef scratch = new BytesRef();
+                string line;
+                int count = 0;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    Console.WriteLine("Line: " + count);
+                    scratch.CopyChars(line);
+                    builder.Add(scratch, count % buckets);
+                    if ((count++ % 100000) == 0)
+                    {
+                        Console.WriteLine("Line: " + count);
+                    }
                 }
             }
 
