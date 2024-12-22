@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
         public virtual void Split(DirectoryInfo destDir, ICollection<string> segs) // LUCENENET specific - changed to ICollection to reduce copy operations
         {
             destDir.Create();
-            FSDirectory destFSDir = FSDirectory.Open(destDir);
+            using FSDirectory destFSDir = FSDirectory.Open(destDir); // LUCENENET specific - CA2000: dispose of destFSDir when finished
             SegmentInfos destInfos = new SegmentInfos();
             destInfos.Counter = Infos.Counter;
             foreach (string n in segs)

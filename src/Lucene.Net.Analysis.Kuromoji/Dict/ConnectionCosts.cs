@@ -39,8 +39,8 @@ namespace Lucene.Net.Analysis.Ja.Dict
             short[][] costs = null;
 
             using (Stream @is = BinaryDictionary.GetTypeResource(GetType(), FILENAME_SUFFIX))
+            using (var @in = new InputStreamDataInput(@is)) // LUCENENET: CA2000: Use using statement
             {
-                DataInput @in = new InputStreamDataInput(@is);
                 CodecUtil.CheckHeader(@in, HEADER, VERSION, VERSION);
                 int forwardSize = @in.ReadVInt32();
                 int backwardSize = @in.ReadVInt32();

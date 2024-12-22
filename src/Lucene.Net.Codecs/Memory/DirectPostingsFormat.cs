@@ -401,7 +401,7 @@ namespace Lucene.Net.Codecs.Memory
                 Int32ArrayWriter scratch = new Int32ArrayWriter();
 
                 // Used for payloads, if any:
-                RAMOutputStream ros = new RAMOutputStream();
+                using RAMOutputStream ros = new RAMOutputStream(); // LUCENENET specific - dispose when done
 
                 // if (DEBUG) {
                 //   System.out.println("\nLOAD terms seg=" + state.segmentInfo.name + " field=" + field + " hasOffsets=" + hasOffsets + " hasFreq=" + hasFreq + " hasPos=" + hasPos + " hasPayloads=" + hasPayloads);

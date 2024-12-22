@@ -144,8 +144,8 @@ namespace Lucene.Net.Store
             socket.Connect(verifierHost, verifierPort);
 
             using Stream stream = new NetworkStream(socket);
-            BinaryReader intReader = new BinaryReader(stream);
-            BinaryWriter intWriter = new BinaryWriter(stream);
+            using BinaryReader intReader = new BinaryReader(stream);
+            using BinaryWriter intWriter = new BinaryWriter(stream);
 
             intWriter.Write(myID);
             stream.Flush();

@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         public static ConnectionCostsWriter Build(string filename)
         {
             using Stream inputStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
-            StreamReader streamReader = new StreamReader(inputStream, Encoding.ASCII);
+            using StreamReader streamReader = new StreamReader(inputStream, Encoding.ASCII); // LUCENENET: CA2000: Use using statement
 
             string line = streamReader.ReadLine();
             string[] dimensions = whiteSpaceRegex.Split(line).TrimEnd();

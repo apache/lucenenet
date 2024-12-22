@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             {
                 using Stream inputStream = new FileStream(file, FileMode.Open, FileAccess.Read);
                 Encoding decoder = Encoding.GetEncoding(encoding);
-                TextReader reader = new StreamReader(inputStream, decoder);
+                using TextReader reader = new StreamReader(inputStream, decoder); // LUCENENET: CA2000: Use using statement
 
                 string line = null;
                 while ((line = reader.ReadLine()) != null)

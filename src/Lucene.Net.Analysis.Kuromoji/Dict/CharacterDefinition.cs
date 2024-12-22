@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         private CharacterDefinition()
         {
             using Stream @is = BinaryDictionary.GetTypeResource(GetType(), FILENAME_SUFFIX);
-            DataInput @in = new InputStreamDataInput(@is);
+            using var @in = new InputStreamDataInput(@is); // LUCENENET: CA2000: Use using statement
             CodecUtil.CheckHeader(@in, HEADER, VERSION, VERSION);
             @in.ReadBytes(characterCategoryMap, 0, characterCategoryMap.Length);
             for (int i = 0; i < CLASS_COUNT; i++)

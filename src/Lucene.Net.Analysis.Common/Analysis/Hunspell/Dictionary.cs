@@ -295,7 +295,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 [""] = 0
             };
 
-            var reader = new StreamReader(affixStream, decoder);
+            using var reader = new StreamReader(affixStream, decoder); // LUCENENET specific - CA2000: Use using pattern to ensure reader is disposed
             string line; // LUCENENET: Removed unnecessary null assignment
             int lineNumber = 0;
             while ((line = reader.ReadLine()) != null)
@@ -910,7 +910,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 foreach (Stream dictionary in dictionaries)
                 {
-                    var lines = new StreamReader(dictionary, decoder);
+                    using var lines = new StreamReader(dictionary, decoder); // LUCENENET specific - CA2000: Use using pattern to ensure reader is disposed
                     string line = lines.ReadLine(); // first line is number of entries (approximately, sometimes)
 
                     while ((line = lines.ReadLine()) != null)
