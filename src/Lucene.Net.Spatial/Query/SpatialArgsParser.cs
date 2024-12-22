@@ -181,7 +181,7 @@ namespace Lucene.Net.Spatial.Queries
                 throw new ArgumentNullException(nameof(body));
 
             var map = new Dictionary<string, string>();
-            StringTokenizer st = new StringTokenizer(body, " \n\t");
+            using StringTokenizer st = new StringTokenizer(body, " \n\t");
 
             while (st.MoveNext())
             {

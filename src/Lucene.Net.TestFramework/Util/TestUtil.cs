@@ -201,8 +201,9 @@ namespace Lucene.Net.Util
 
         public static void CheckReader(AtomicReader reader, bool crossCheckTermVectors)
         {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
-            StreamWriter infoStream = new StreamWriter(bos, Encoding.UTF8);
+            // LUCENENET: dispose the StreamWriter and ByteArrayOutputStream when done
+            using ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+            using StreamWriter infoStream = new StreamWriter(bos, Encoding.UTF8);
 
             reader.CheckIntegrity();
             CheckIndex.Status.FieldNormStatus fieldNormStatus = Index.CheckIndex.TestFieldNorms(reader, infoStream);

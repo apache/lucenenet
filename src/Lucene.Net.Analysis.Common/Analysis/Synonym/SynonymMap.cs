@@ -348,6 +348,9 @@ namespace Lucene.Net.Analysis.Synonym
             /// <summary>
             /// Parse the given input, adding synonyms to the inherited <see cref="Builder"/>. </summary>
             /// <param name="in"> The input to parse </param>
+            /// <remarks>
+            /// LUCENENET NOTE: Implementations are expected to dispose of the <paramref name="in"/> parameter.
+            /// </remarks>
             public abstract void Parse(TextReader @in);
 
             /// <summary>

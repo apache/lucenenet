@@ -101,8 +101,8 @@ namespace Lucene.Net.Analysis.Ja.Dict
             ByteBuffer buffer; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             using (Stream mapIS = GetResource(TARGETMAP_FILENAME_SUFFIX))
+            using (var @in = new InputStreamDataInput(mapIS)) // LUCENENET: CA2000: Use using statement
             {
-                DataInput @in = new InputStreamDataInput(mapIS);
                 CodecUtil.CheckHeader(@in, TARGETMAP_HEADER, VERSION, VERSION);
                 targetMap = new int[@in.ReadVInt32()];
                 targetMapOffsets = new int[@in.ReadVInt32()];
@@ -124,8 +124,8 @@ namespace Lucene.Net.Analysis.Ja.Dict
             }
 
             using (Stream posIS = GetResource(POSDICT_FILENAME_SUFFIX))
+            using (var @in = new InputStreamDataInput(posIS)) // LUCENENET: CA2000: Use using statement
             {
-                DataInput @in = new InputStreamDataInput(posIS);
                 CodecUtil.CheckHeader(@in, POSDICT_HEADER, VERSION, VERSION);
                 int posSize = @in.ReadVInt32();
                 posDict = new string[posSize];
@@ -151,9 +151,9 @@ namespace Lucene.Net.Analysis.Ja.Dict
             ByteBuffer tmpBuffer;
 
             using (Stream dictIS = GetResource(DICT_FILENAME_SUFFIX))
+            // no buffering here, as we load in one large buffer
+            using (var @in = new InputStreamDataInput(dictIS)) // LUCENENET: CA2000: Use using statement
             {
-                // no buffering here, as we load in one large buffer
-                DataInput @in = new InputStreamDataInput(dictIS);
                 CodecUtil.CheckHeader(@in, DICT_HEADER, VERSION, VERSION);
                 int size = @in.ReadVInt32();
                 tmpBuffer = ByteBuffer.Allocate(size); // AllocateDirect..?

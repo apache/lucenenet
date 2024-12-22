@@ -511,7 +511,7 @@ namespace Lucene.Net.Util.Fst
                 @out.WriteByte(1);
 
                 // Serialize empty-string output:
-                var ros = new RAMOutputStream();
+                using var ros = new RAMOutputStream();
                 Outputs.WriteFinalOutput(emptyOutput, ros);
 
                 var emptyOutputBytes = new byte[(int)ros.Position]; // LUCENENET specific: Renamed from getFilePointer() to match FileStream

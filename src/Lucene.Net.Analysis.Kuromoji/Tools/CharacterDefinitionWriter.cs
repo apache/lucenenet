@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(baseDir));
             using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
-            DataOutput @out = new OutputStreamDataOutput(os);
+            using var @out = new OutputStreamDataOutput(os); // LUCENENET: CA2000: Use using statement
             CodecUtil.WriteHeader(@out, CharacterDefinition.HEADER, CharacterDefinition.VERSION);
             @out.WriteBytes(characterCategoryMap, 0, characterCategoryMap.Length);
             for (int i = 0; i < CharacterDefinition.CLASS_COUNT; i++)

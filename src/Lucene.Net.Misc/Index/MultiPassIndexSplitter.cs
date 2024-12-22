@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
             // wrap a potentially read-only input
             // this way we don't have to preserve original deletions because neither
             // deleteDocument(int) or undeleteAll() is applied to the wrapped input index.
-            FakeDeleteIndexReader input = new FakeDeleteIndexReader(@in);
+            using FakeDeleteIndexReader input = new FakeDeleteIndexReader(@in); // LUCENENET: CA2000: Dispose FakeDeleteIndexReader
             int maxDoc = input.MaxDoc;
             int partLen = maxDoc / numParts;
             for (int i = 0; i < numParts; i++)

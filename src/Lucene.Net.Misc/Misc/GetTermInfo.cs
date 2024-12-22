@@ -50,31 +50,37 @@ namespace Lucene.Net.Misc
         /// <exception cref="ArgumentException">Thrown if the incorrect number of arguments are provided</exception>
         public static void Main(string[] args)
         {
-
-            FSDirectory dir; // LUCENENET: IDE0059: Remove unnecessary value assignment
-            string inputStr; // LUCENENET: IDE0059: Remove unnecessary value assignment
-            string field; // LUCENENET: IDE0059: Remove unnecessary value assignment
-
-            if (args.Length == 3)
+            // LUCENENET specific - CA2000: dispose of directory when finished
+            FSDirectory dir = null;
+            try
             {
-                dir = FSDirectory.Open(new DirectoryInfo(args[0]));
-                field = args[1];
-                inputStr = args[2];
-            }
-            else
-            {
-                // LUCENENET specific - our wrapper console shows the correct usage
-                throw new ArgumentException("GetTermInfo requires 3 arguments", nameof(args));
-                //Usage();
-                //Environment.Exit(1);
-            }
+                string inputStr; // LUCENENET: IDE0059: Remove unnecessary value assignment
+                string field; // LUCENENET: IDE0059: Remove unnecessary value assignment
+                if (args.Length == 3)
+                {
+                    dir = FSDirectory.Open(new DirectoryInfo(args[0]));
+                    field = args[1];
+                    inputStr = args[2];
+                }
+                else
+                {
+                    // LUCENENET specific - our wrapper console shows the correct usage
+                    throw new ArgumentException("GetTermInfo requires 3 arguments", nameof(args));
+                    //Usage();
+                    //Environment.Exit(1);
+                }
 
-            TermInfo(dir, new Term(field, inputStr));
+                TermInfo(dir, new Term(field, inputStr));
+            }
+            finally
+            {
+                dir?.Dispose();
+            }
         }
 
         public static void TermInfo(Store.Directory dir, Term term)
         {
-            IndexReader reader = DirectoryReader.Open(dir);
+            using IndexReader reader = DirectoryReader.Open(dir);
             Console.WriteLine("{0}:{1} \t totalTF = {2:#,##0} \t doc freq = {3:#,##0} \n", term.Field, term.Text, reader.TotalTermFreq(term), reader.DocFreq(term));
         }
 

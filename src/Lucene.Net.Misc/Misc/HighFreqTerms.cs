@@ -73,7 +73,7 @@ namespace Lucene.Net.Misc
                 //Environment.Exit(1);
             }
 
-            Store.Directory dir = FSDirectory.Open(new DirectoryInfo(args[0]));
+            using Store.Directory dir = FSDirectory.Open(new DirectoryInfo(args[0]));
 
             IComparer<TermStats> comparer = DocFreqComparer.Default;
 
