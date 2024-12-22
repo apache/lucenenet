@@ -1,0 +1,54 @@
+﻿# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+name: 'Lucene.Net.Util.Packed Python Scripts'
+
+# This will:
+# checkout this repo
+# run the python scripts in the src/Lucene.Net/Util/Packed folder
+# check for any pending git changes
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+    - '.github/workflows/Lucene-Net-Packed-Python-Scripts.yml'
+    - 'src/Lucene.Net/Util/Packed/*.py'
+    - 'src/Lucene.Net/Util/Packed/BulkOperation*.cs'
+    - 'src/Lucene.Net/Util/Packed/Direct*.cs'
+    - 'src/Lucene.Net/Util/Packed/Packed*.cs'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Lucene.Net source
+        uses: actions/checkout@v3
+
+      - name: Execute Python scripts
+        working-directory: src/Lucene.Net/Util/Packed
+        run: |
+          python3 ./gen_BulkOperation.py
+          python3 ./gen_Direct.py
+          python3 ./gen_Packed64SingleBlock.py
+          python3 ./gen_PackedThreeBlocks.py
+        shell: bash
+
+      - name: Check for changes
+        run: |
+          git diff --exit-code
+        shell: bash

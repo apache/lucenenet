@@ -23,13 +23,13 @@ summary: *content
 ## Packed integer arrays and streams.
 
  The packed package provides
- 
+
  * sequential and random access capable arrays of positive longs,
  * routines for efficient serialization and deserialization of streams of packed integers.
- 
- The implementations provide different trade-offs between memory usage and access speed. The standard usage scenario is replacing large int or long arrays in order to reduce the memory footprint. 
 
- The main access point is the <xref:Lucene.Net.Util.Packed.PackedInt32s> factory. 
+ The implementations provide different trade-offs between memory usage and access speed. The standard usage scenario is replacing large int or long arrays in order to reduce the memory footprint.
+
+ The main access point is the <xref:Lucene.Net.Util.Packed.PackedInt32s> factory.
 
 ### In-memory structures
 
@@ -43,9 +43,9 @@ summary: *content
 
 *   __<xref:Lucene.Net.Util.Packed.GrowableWriter>__
 
-    *   Same as PackedInts.Mutable but grows the number of bits per values when needed.
+    *   Same as PackedInt32s.Mutable but grows the number of bits per values when needed.
 
-    *   Useful to build a PackedInts.Mutable from a read-once stream of longs.
+    *   Useful to build a PackedInt32s.Mutable from a read-once stream of longs.
 
 *   __<xref:Lucene.Net.Util.Packed.PagedGrowableWriter>__
 
@@ -53,7 +53,7 @@ summary: *content
 
     *   Supports more than 2B values.
 
-    *   You should use Appending(Delta)PackedLongBuffer instead if you don't need random write access.
+    *   You should use Appending(Delta)PackedInt64Buffer instead if you don't need random write access.
 
 *   __<xref:Lucene.Net.Util.Packed.AppendingDeltaPackedInt64Buffer>__
 
