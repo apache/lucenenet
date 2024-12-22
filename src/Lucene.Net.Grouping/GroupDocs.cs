@@ -22,14 +22,14 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// Represents one group in the results.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
-    public class GroupDocs<TGroupValue> : IGroupDocs<TGroupValue>
+    public class GroupDocs<TGroupValue> : IGroupDocs
     {
         /// <summary>
         /// The groupField value for all docs in this group; this
-        /// may be null if hits did not have the groupField. 
+        /// may be null if hits did not have the groupField.
         /// </summary>
         public TGroupValue GroupValue { get; private set; }
 
@@ -39,13 +39,13 @@ namespace Lucene.Net.Search.Grouping
         public float MaxScore { get; private set; }
 
         /// <summary>
-        /// Overall aggregated score of this group (currently only set by join queries). 
+        /// Overall aggregated score of this group (currently only set by join queries).
         /// </summary>
         public float Score { get; private set; }
 
         /// <summary>
         /// Hits; this may be <see cref="FieldDoc"/> instances if the
-        /// withinGroupSort sorted by fields. 
+        /// withinGroupSort sorted by fields.
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.Grouping
         public int TotalHits { get; private set; }
 
         /// <summary>
-        /// Matches the groupSort passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>. 
+        /// Matches the groupSort passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>.
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
@@ -72,20 +72,29 @@ namespace Lucene.Net.Search.Grouping
             GroupValue = groupValue;
             GroupSortValues = groupSortValues;
         }
+
+        #region Explicit interface implementations
+
+        /// <summary>
+        /// LUCENENET specific method to provide an object-based implementation of <see cref="GroupValue"/>.
+        /// </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
+        object IGroupDocs.GroupValue => GroupValue;
+
+        #endregion
     }
 
     /// <summary>
-    /// LUCENENET specific interface used to apply covariance to TGroupValue
-    /// to simulate Java's wildcard generics.
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="GroupDocs{TGroupValue}"/>.
     /// </summary>
-    /// <typeparam name="TGroupValue"></typeparam>
-    public interface IGroupDocs<out TGroupValue>
+    public interface IGroupDocs
     {
         /// <summary>
         /// The groupField value for all docs in this group; this
-        /// may be null if hits did not have the groupField. 
+        /// may be null if hits did not have the groupField.
         /// </summary>
-        TGroupValue GroupValue { get; }
+        object GroupValue { get; }
 
         /// <summary>
         /// Max score in this group
@@ -93,13 +102,13 @@ namespace Lucene.Net.Search.Grouping
         float MaxScore { get; }
 
         /// <summary>
-        /// Overall aggregated score of this group (currently only set by join queries). 
+        /// Overall aggregated score of this group (currently only set by join queries).
         /// </summary>
         float Score { get; }
 
         /// <summary>
         /// Hits; this may be <see cref="FieldDoc"/> instances if the
-        /// withinGroupSort sorted by fields. 
+        /// withinGroupSort sorted by fields.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         ScoreDoc[] ScoreDocs { get; }
@@ -110,7 +119,7 @@ namespace Lucene.Net.Search.Grouping
         int TotalHits { get; }
 
         /// <summary>
-        /// Matches the groupSort passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>. 
+        /// Matches the groupSort passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>.
         /// </summary>
         [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         object[] GroupSortValues { get; }
