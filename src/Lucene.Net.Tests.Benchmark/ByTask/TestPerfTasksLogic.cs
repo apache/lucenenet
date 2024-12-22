@@ -63,7 +63,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestIndexAndSearchTasks()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "ResetSystemErase",
                 "CreateIndex",
                 "{ AddDoc } : 1000",
@@ -101,7 +101,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         [Test]
         public void TestTimedSearchTask()
         {
-            String[] algLines = {
+            string[] algLines = {
                 "log.step=100000",
                 "ResetSystemErase",
                 "CreateIndex",
@@ -125,7 +125,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         [Test]
         public void TestBGSearchTaskThreads()
         {
-            String[] algLines = {
+            string[] algLines = {
                 "log.time.step.msec = 100",
                 "log.step=100000",
                 "ResetSystemErase",
@@ -156,7 +156,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestHighlighting()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "doc.stored=true",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -196,7 +196,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestHighlightingTV()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "doc.stored=true",//doc storage is required in order to have text to highlight
                 "doc.term.vector=true",
                 "doc.term.vector.offsets=true",
@@ -238,7 +238,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestHighlightingNoTvNoStore()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "doc.stored=false",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -276,7 +276,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestExhaustContentSource()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.SingleDocSource, Lucene.Net.Benchmark",
                 "content.source.log.step=1",
@@ -319,7 +319,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestDocMakerThreadSafety()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.SortableSingleDocSource, Lucene.Net.Benchmark",
                 "doc.term.vector=false",
@@ -360,7 +360,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestParallelDocMaker()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -398,7 +398,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             int NUM_TRY_DOCS = 50;
 
             // Creates a line file with first 50 docs from SingleDocSource
-            String[] algLines1 = {
+            string[] algLines1 = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.SingleDocSource, Lucene.Net.Benchmark",
                 "content.source.forever=true",
@@ -414,7 +414,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                 new StreamReader(
                     new FileStream(lineFile.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8);
             int numLines = 0;
-            String line;
+            string line;
             while ((line = r.ReadLine()) != null)
             {
                 if (numLines == 0 && line.StartsWith(WriteLineDocTask.FIELDS_HEADER_INDICATOR, StringComparison.Ordinal))
@@ -427,7 +427,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             assertEquals("did not see the right number of docs; should be " + NUM_TRY_DOCS + " but was " + numLines, NUM_TRY_DOCS, numLines);
 
             // Index the line docs
-            String[] algLines2 = {
+            string[] algLines2 = {
                 "# ----- properties ",
                 "analyzer=Lucene.Net.Analysis.Core.WhitespaceAnalyzer, Lucene.Net.Analysis.Common",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
@@ -470,7 +470,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 
             // Read tokens from first NUM_DOCS docs from Reuters and
             // then build index from the same docs
-            String[] algLines1 = {
+            string[] algLines1 = {
                 "# ----- properties ",
                 "analyzer=Lucene.Net.Analysis.Core.WhitespaceAnalyzer, Lucene.Net.Analysis.Common",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
@@ -506,7 +506,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 
             Fields fields = MultiFields.GetFields(reader);
 
-            foreach (String fieldName in fields)
+            foreach (string fieldName in fields)
             {
                 if (fieldName.Equals(DocMaker.ID_FIELD, StringComparison.Ordinal) || fieldName.Equals(DocMaker.DATE_MSEC_FIELD, StringComparison.Ordinal) || fieldName.Equals(DocMaker.TIME_SEC_FIELD, StringComparison.Ordinal))
                 {
@@ -541,7 +541,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestParallelExhausted()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -579,7 +579,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestExhaustedLooped()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -617,7 +617,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestCloseIndexFalse()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -666,7 +666,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestMergeScheduler()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -716,7 +716,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestMergePolicy()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -757,7 +757,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestIndexWriterSettings()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -804,7 +804,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestIndexingWithFacets()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -842,7 +842,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         public void TestForceMerge()
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -894,7 +894,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         private void doTestDisableCounting(bool disable)
         {
             // 1. alg definition (required in every "logic" test)
-            String[] algLines = disableCountingLines(disable);
+            string[] algLines = disableCountingLines(disable);
 
             // 2. execute the algorithm  (required in every "logic" test)
             Benchmark benchmark = execBenchmark(algLines);
@@ -904,7 +904,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             int nChecked = 0;
             foreach (TaskStats stats in benchmark.RunData.Points.TaskStats)
             {
-                String taskName = stats.Task.GetName();
+                string taskName = stats.Task.GetName();
                 if (taskName.Equals("Rounds", StringComparison.Ordinal))
                 {
                     assertEquals("Wrong total count!", 20 + 2 * n, stats.Count);
@@ -924,10 +924,10 @@ namespace Lucene.Net.Benchmarks.ByTask
             assertEquals("Missing some tasks to check!", 3, nChecked);
         }
 
-        private String[] disableCountingLines(bool disable)
+        private string[] disableCountingLines(bool disable)
         {
-            String dis = disable ? "-" : "";
-            return new String[] {
+            string dis = disable ? "-" : "";
+            return new string[] {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -983,9 +983,9 @@ namespace Lucene.Net.Benchmarks.ByTask
             assertEquals(new CultureInfo("nb-NO"/*, "NY"*/), benchmark.RunData.Locale);
         }
 
-        private String[] getLocaleConfig(String localeParam)
+        private string[] getLocaleConfig(string localeParam)
         {
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -1045,7 +1045,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             assertEqualCollation(expected, benchmark.RunData.Analyzer, "foobar");
         }
 
-        private void assertEqualCollation(Analyzer a1, Analyzer a2, String text)
+        private void assertEqualCollation(Analyzer a1, Analyzer a2, string text)
         {
             TokenStream ts1 = a1.GetTokenStream("bogus", text);
             TokenStream ts2 = a2.GetTokenStream("bogus", text);
@@ -1062,14 +1062,14 @@ namespace Lucene.Net.Benchmarks.ByTask
             assertEquals(bytes1, bytes2);
             assertFalse(ts1.IncrementToken());
             assertFalse(ts2.IncrementToken());
-            ts1.Dispose();
-            ts2.Dispose();
+            ts1.Close();
+            ts2.Close();
         }
 
-        private String[] getCollatorConfig(String localeParam,
-            String collationParam)
+        private string[] getCollatorConfig(string localeParam,
+            string collationParam)
         {
-            String[] algLines = {
+            string[] algLines = {
                 "# ----- properties ",
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
@@ -1095,15 +1095,15 @@ namespace Lucene.Net.Benchmarks.ByTask
         [Test]
         public void TestShingleAnalyzer()
         {
-            String text = "one,two,three, four five six";
+            string text = "one,two,three, four five six";
 
             // StandardTokenizer, maxShingleSize, and outputUnigrams
             Benchmark benchmark = execBenchmark(getAnalyzerFactoryConfig
                 ("shingle-analyzer", "StandardTokenizer,ShingleFilter"));
             benchmark.RunData.Analyzer.GetTokenStream
-                ("bogus", text).Dispose();
+                ("bogus", text).Close();
             BaseTokenStreamTestCase.AssertAnalyzesTo(benchmark.RunData.Analyzer, text,
-                                                     new String[] { "one", "one two", "two", "two three",
+                                                     new string[] { "one", "one two", "two", "two three",
                                                             "three", "three four", "four", "four five",
                                                             "five", "five six", "six" });
             // StandardTokenizer, maxShingleSize = 3, and outputUnigrams = false
@@ -1112,7 +1112,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                   ("shingle-analyzer",
                    "StandardTokenizer,ShingleFilter(maxShingleSize:3,outputUnigrams:false)"));
             BaseTokenStreamTestCase.AssertAnalyzesTo(benchmark.RunData.Analyzer, text,
-                                                     new String[] { "one two", "one two three", "two three",
+                                                     new string[] { "one two", "one two three", "two three",
                                                             "two three four", "three four",
                                                             "three four five", "four five",
                                                             "four five six", "five six" });
@@ -1120,7 +1120,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             benchmark = execBenchmark
               (getAnalyzerFactoryConfig("shingle-analyzer", "WhitespaceTokenizer,ShingleFilter"));
             BaseTokenStreamTestCase.AssertAnalyzesTo(benchmark.RunData.Analyzer, text,
-                                                     new String[] { "one,two,three,", "one,two,three, four",
+                                                     new string[] { "one,two,three,", "one,two,three, four",
                                                             "four", "four five", "five", "five six",
                                                             "six" });
 
@@ -1130,13 +1130,13 @@ namespace Lucene.Net.Benchmarks.ByTask
                 ("shingle-factory",
                  "WhitespaceTokenizer,ShingleFilter(outputUnigrams:false,maxShingleSize:3)"));
             BaseTokenStreamTestCase.AssertAnalyzesTo(benchmark.RunData.Analyzer, text,
-                                                     new String[] { "one,two,three, four",
+                                                     new string[] { "one,two,three, four",
                                                             "one,two,three, four five",
                                                             "four five", "four five six",
                                                             "five six" });
         }
 
-        private String[] getAnalyzerFactoryConfig(String name, String @params)
+        private string[] getAnalyzerFactoryConfig(string name, string @params)
         {
             //String singleQuoteEscapedName = name.Replace("'", "\\\\'");
             //String[] algLines = {
@@ -1151,8 +1151,8 @@ namespace Lucene.Net.Benchmarks.ByTask
             //    "{ \"AddDocs\"  AddDoc > : * "
             //};
             //String singleQuoteEscapedName = name.Replace("'", @"\'");
-            String singleQuoteEscapedName = name.Replace("'", @"\'");
-            String[] algLines = {
+            string singleQuoteEscapedName = name.Replace("'", @"\'");
+            string[] algLines = {
                 "content.source=Lucene.Net.Benchmarks.ByTask.Feeds.LineDocSource, Lucene.Net.Benchmark",
                 "docs.file=" + getReuters20LinesFile(),
                 "work.dir=" + getWorkDir().FullName.Replace(@"\", "/"), // Fix Windows path
@@ -1169,7 +1169,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         [Test]
         public void TestAnalyzerFactory()
         {
-            String text = "Fortieth, Quarantième, Cuadragésimo";
+            string text = "Fortieth, Quarantième, Cuadragésimo";
             Benchmark benchmark = execBenchmark(getAnalyzerFactoryConfig
                 ("ascii folded, pattern replaced, standard tokenized, downcased, bigrammed.'analyzer'",
                  "positionIncrementGap:100,offsetGap:1111,"
@@ -1177,12 +1177,12 @@ namespace Lucene.Net.Benchmarks.ByTask
                  + "PatternReplaceCharFilterFactory(pattern:'e(\\\\\\\\S*)m',replacement:\"$1xxx$1\"),"
                  + "StandardTokenizer,LowerCaseFilter,NGramTokenFilter(minGramSize:2,maxGramSize:2)"));
             BaseTokenStreamTestCase.AssertAnalyzesTo(benchmark.RunData.Analyzer, text,
-                new String[] { "fo", "or", "rt", "ti", "ie", "et", "th",
+                new string[] { "fo", "or", "rt", "ti", "ie", "et", "th",
                        "qu", "ua", "ar", "ra", "an", "nt", "ti", "ix", "xx", "xx", "xe",
                        "cu", "ua", "ad", "dr", "ra", "ag", "gs", "si", "ix", "xx", "xx", "xs", "si", "io"});
         }
 
-        private String getReuters20LinesFile()
+        private string getReuters20LinesFile()
         {
             return getWorkDirResourcePath("reuters.first20.lines.txt");
         }

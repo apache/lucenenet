@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Th
 
     /// <summary>
     /// Test case for ThaiAnalyzer, modified from TestFrenchAnalyzer
-    /// 
+    ///
     /// </summary>
 
     public class TestThaiAnalyzer : BaseTokenStreamTestCase
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Th
 
         /// <summary>
         /// Thai numeric tokens were typed as <ALPHANUM> instead of <NUM>. </summary>
-        /// @deprecated (3.1) testing backwards behavior 
+        /// @deprecated (3.1) testing backwards behavior
         [Test]
         [Obsolete("(3.1) testing backwards behavior")]
         public virtual void TestBuggyTokenType30()
@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis.Th
             AssertAnalyzesTo(new ThaiAnalyzer(LuceneVersion.LUCENE_30), "การที่ได้ต้องแสดงว่างานดี ๑๒๓", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี", "๑๒๓" }, new string[] { "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>", "<ALPHANUM>" });
         }
 
-        /// @deprecated (3.1) testing backwards behavior 
+        /// @deprecated (3.1) testing backwards behavior
         [Test]
         [Obsolete("(3.1) testing backwards behavior")]
         public virtual void TestAnalyzer30()
@@ -166,7 +166,7 @@ namespace Lucene.Net.Analysis.Th
             AssertAnalyzesTo(analyzer, "บริษัทชื่อ XY&Z - คุยกับ xyz@demo.com", new string[] { "บริษัท", "ชื่อ", "xy", "z", "คุย", "กับ", "xyz", "demo.com" });
         }
 
-        /// @deprecated (3.1) for version back compat 
+        /// @deprecated (3.1) for version back compat
         [Test]
         [Obsolete("(3.1) for version back compat")]
         public virtual void TestReusableTokenStream30()
@@ -259,10 +259,10 @@ namespace Lucene.Net.Analysis.Th
             JCG.List<int> startOffsets = new JCG.List<int>();
             JCG.List<int> endOffsets = new JCG.List<int>();
 
-            TokenStream ts;
             TextReader reader = new StringReader(text);
+            TokenStream ts = analyzer.GetTokenStream("dummy", reader);
 
-            using (ts = analyzer.GetTokenStream("dummy", reader))
+            try
             {
                 bool isReset = false;
                 try
@@ -303,12 +303,19 @@ namespace Lucene.Net.Analysis.Th
                             // ignore
                         }
                     }
-                    ts.End(); // ts.end();
+
+                    ts.End();
                 }
-            } // ts.Dispose()
+            }
+            finally
+            {
+                ts.Close();
+            }
 
             reader = new StringReader(text);
-            using (ts = analyzer.GetTokenStream("dummy", reader))
+            ts = analyzer.GetTokenStream("dummy", reader);
+
+            try
             {
                 bool isReset = false;
                 try
@@ -346,11 +353,14 @@ namespace Lucene.Net.Analysis.Th
                             // ignore
                         }
                     }
-                    ts.End(); // ts.end();
+                    ts.End();
                 }
             }
-
-        } // ts.Dispose()
+            finally
+            {
+                ts.Close();
+            }
+        }
 
 
         /// <summary>
@@ -364,7 +374,7 @@ namespace Lucene.Net.Analysis.Th
 
         /// <summary>
         /// blast some random large strings through the analyzer </summary>
-        /// 
+        ///
         [Test]
         [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public virtual void TestRandomHugeStrings()
@@ -383,7 +393,7 @@ namespace Lucene.Net.Analysis.Th
             // just consume
             TokenStream ts = analyzer.GetTokenStream("dummy", "ภาษาไทย");
             AssertTokenStreamContents(ts, new string[] { "ภาษา", "ไทย" });
-            // this consumer adds flagsAtt, which this analyzer does not use. 
+            // this consumer adds flagsAtt, which this analyzer does not use.
             ts = analyzer.GetTokenStream("dummy", "ภาษาไทย");
             ts.AddAttribute<IFlagsAttribute>();
             AssertTokenStreamContents(ts, new string[] { "ภาษา", "ไทย" });

@@ -46,8 +46,8 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestBasicUsage()
         {
-            String turkishUpperCase = "I WİLL USE TURKİSH CASING";
-            String turkishLowerCase = "ı will use turkish casıng";
+            string turkishUpperCase = "I WİLL USE TURKİSH CASING";
+            string turkishLowerCase = "ı will use turkish casıng";
             TokenFilterFactory factory = tokenFilterFactory("ICUCollationKey",
                 "locale", "tr",
                 "strength", "primary");
@@ -64,8 +64,8 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestNormalization()
         {
-            String turkishUpperCase = "I W\u0049\u0307LL USE TURKİSH CASING";
-            String turkishLowerCase = "ı will use turkish casıng";
+            string turkishUpperCase = "I W\u0049\u0307LL USE TURKİSH CASING";
+            string turkishLowerCase = "ı will use turkish casıng";
             TokenFilterFactory factory = tokenFilterFactory("ICUCollationKey",
             "locale", "tr",
             "strength", "primary",
@@ -83,8 +83,8 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestSecondaryStrength()
         {
-            String upperCase = "TESTING";
-            String lowerCase = "testing";
+            string upperCase = "TESTING";
+            string lowerCase = "testing";
             TokenFilterFactory factory = tokenFilterFactory("ICUCollationKey",
                 "locale", "en",
                 "strength", "secondary",
@@ -98,13 +98,13 @@ namespace Lucene.Net.Collation
 
         /*
          * Setting alternate=shifted to shift whitespace, punctuation and symbols
-         * to quaternary level 
+         * to quaternary level
          */
         [Test]
         public void TestIgnorePunctuation()
         {
-            String withPunctuation = "foo-bar";
-            String withoutPunctuation = "foo bar";
+            string withPunctuation = "foo-bar";
+            string withoutPunctuation = "foo bar";
             TokenFilterFactory factory = tokenFilterFactory("ICUCollationKey",
                 "locale", "en",
                 "strength", "primary",
@@ -117,15 +117,15 @@ namespace Lucene.Net.Collation
         }
 
         /*
-         * Setting alternate=shifted and variableTop to shift whitespace, but not 
-         * punctuation or symbols, to quaternary level 
+         * Setting alternate=shifted and variableTop to shift whitespace, but not
+         * punctuation or symbols, to quaternary level
          */
         [Test]
         public void TestIgnoreWhitespace()
         {
-            String withSpace = "foo bar";
-            String withoutSpace = "foobar";
-            String withPunctuation = "foo-bar";
+            string withSpace = "foo bar";
+            string withoutSpace = "foobar";
+            string withPunctuation = "foo-bar";
             TokenFilterFactory factory = tokenFilterFactory("ICUCollationKey",
                 "locale", "en",
                 "strength", "primary",
@@ -151,8 +151,8 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestNumerics()
         {
-            String nine = "foobar-9";
-            String ten = "foobar-10";
+            string nine = "foobar-9";
+            string ten = "foobar-10";
             TokenFilterFactory factory = tokenFilterFactory("ICUCollationKey",
                 "locale", "en",
                 "numeric", "true");
@@ -170,10 +170,10 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestIgnoreAccentsButNotCase()
         {
-            String withAccents = "résumé";
-            String withoutAccents = "resume";
-            String withAccentsUpperCase = "Résumé";
-            String withoutAccentsUpperCase = "Resume";
+            string withAccents = "résumé";
+            string withoutAccents = "resume";
+            string withAccentsUpperCase = "Résumé";
+            string withoutAccentsUpperCase = "Resume";
             TokenFilterFactory factory = tokenFilterFactory("ICUCollationKey",
                 "locale", "en",
                 "strength", "primary",
@@ -205,8 +205,8 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestUpperCaseFirst()
         {
-            String lower = "resume";
-            String upper = "Resume";
+            string lower = "resume";
+            string upper = "Resume";
             TokenFilterFactory factory = tokenFilterFactory("ICUCollationKey",
                 "locale", "en",
                 "strength", "tertiary",
@@ -230,7 +230,7 @@ namespace Lucene.Net.Collation
         {
             RuleBasedCollator baseCollator = (RuleBasedCollator)Collator.GetInstance(new UCultureInfo("de_DE"));
 
-            String DIN5007_2_tailorings =
+            string DIN5007_2_tailorings =
               "& ae , a\u0308 & AE , A\u0308" +
               "& oe , o\u0308 & OE , O\u0308" +
               "& ue , u\u0308 & UE , u\u0308";
@@ -238,12 +238,12 @@ namespace Lucene.Net.Collation
             RuleBasedCollator tailoredCollator = new RuleBasedCollator(baseCollator.GetRules() + DIN5007_2_tailorings);
             string tailoredRules = tailoredCollator.GetRules();
             //
-            // at this point, you would save these tailoredRules to a file, 
+            // at this point, you would save these tailoredRules to a file,
             // and use the custom parameter.
             //
-            String germanUmlaut = "Töne";
-            String germanOE = "Toene";
-            IDictionary<String, String> args = new Dictionary<String, String>();
+            string germanUmlaut = "Töne";
+            string germanOE = "Toene";
+            IDictionary<string, string> args = new Dictionary<string, string>();
             args["custom"] = "rules.txt";
             args["strength"] = "primary";
             ICUCollationKeyFilterFactory factory = new ICUCollationKeyFilterFactory(args);
@@ -276,49 +276,49 @@ namespace Lucene.Net.Collation
             assertFalse(stream2.IncrementToken());
             stream1.End();
             stream2.End();
-            stream1.Dispose();
-            stream2.Dispose();
+            stream1.Close();
+            stream2.Close();
         }
 
         private class StringMockResourceLoader : IResourceLoader
         {
-            String text;
+            string text;
 
-            internal StringMockResourceLoader(String text)
+            internal StringMockResourceLoader(string text)
             {
                 this.text = text;
             }
 
-            public T NewInstance<T>(String cname)
+            public T NewInstance<T>(string cname)
             {
                 return default;
             }
 
-            public Type FindType(String cname)
+            public Type FindType(string cname)
             {
                 return null;
             }
 
-            public Stream OpenResource(String resource)
+            public Stream OpenResource(string resource)
             {
                 return new MemoryStream(Encoding.UTF8.GetBytes(text));
             }
         }
 
-        private TokenFilterFactory tokenFilterFactory(String name, params String[] keysAndValues)
+        private TokenFilterFactory tokenFilterFactory(string name, params string[] keysAndValues)
         {
             Type clazz = TokenFilterFactory.LookupClass(name);
             if (keysAndValues.Length % 2 == 1)
             {
                 throw new ArgumentException("invalid keysAndValues map");
             }
-            IDictionary<String, String> args = new Dictionary<String, String>();
+            IDictionary<string, string> args = new Dictionary<string, string>();
             for (int i = 0; i < keysAndValues.Length; i += 2)
             {
-                String prev = args.Put(keysAndValues[i], keysAndValues[i + 1]);
+                string prev = args.Put(keysAndValues[i], keysAndValues[i + 1]);
                 assertNull("duplicate values for key: " + keysAndValues[i], prev);
             }
-            String previous = args.Put("luceneMatchVersion", TEST_VERSION_CURRENT.ToString());
+            string previous = args.Put("luceneMatchVersion", TEST_VERSION_CURRENT.ToString());
             assertNull("duplicate values for key: luceneMatchVersion", previous);
             TokenFilterFactory factory = null;
             try

@@ -77,11 +77,11 @@ namespace Lucene.Net.Queries.Mlt
     /// <code>
     /// IndexReader ir = ...
     /// IndexSearcher is = ...
-    /// 
+    ///
     /// MoreLikeThis mlt = new MoreLikeThis(ir);
     /// TextReader target = ... // orig source of doc you want to find similarities to
     /// Query query = mlt.Like(target);
-    /// 
+    ///
     /// Hits hits = is.Search(query);
     /// // now the usual iteration thru 'hits' - the only thing to watch for is to make sure
     /// //you ignore the doc if it matches your 'target' document, as it should be similar to itself
@@ -192,7 +192,7 @@ namespace Lucene.Net.Queries.Mlt
         public static readonly int DEFAULT_MAX_QUERY_TERMS = 25;
 
         // LUCNENENET NOTE: The following fields were made into auto-implemented properties:
-        // analyzer, minTermFreq, minDocFreq, maxDocFreq, boost, 
+        // analyzer, minTermFreq, minDocFreq, maxDocFreq, boost,
         // fieldNames, maxNumTokensParsed, minWordLen, maxWordLen,
         // maxQueryTerms, similarity
 
@@ -250,7 +250,7 @@ namespace Lucene.Net.Queries.Mlt
 
         /// <summary>
         /// Gets or Sets an analyzer that will be used to parse source doc with. The default analyzer
-        /// is not set. An analyzer is not required for generating a query with the 
+        /// is not set. An analyzer is not required for generating a query with the
         /// <see cref="Like(int)"/> method, all other 'like' methods require an analyzer.
         /// </summary>
         public Analyzer Analyzer { get; set; }
@@ -299,7 +299,7 @@ namespace Lucene.Net.Queries.Mlt
 
         /// <summary>
         /// Gets or Sets the field names that will be used when generating the 'More Like This' query.
-        /// The default field names that will be used is <see cref="DEFAULT_FIELD_NAMES"/>. 
+        /// The default field names that will be used is <see cref="DEFAULT_FIELD_NAMES"/>.
         /// Set this to null for the field names to be determined at runtime from the <see cref="IndexReader"/>
         /// provided in the constructor.
         /// </summary>
@@ -617,7 +617,7 @@ namespace Lucene.Net.Queries.Mlt
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 

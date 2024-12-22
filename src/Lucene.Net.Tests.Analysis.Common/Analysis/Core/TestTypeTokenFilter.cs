@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Core
             reader = new StringReader(sb.ToString());
             typeTokenFilter =
 #pragma warning disable 612, 618
-                new TypeTokenFilter(LuceneVersion.LUCENE_43, 
+                new TypeTokenFilter(LuceneVersion.LUCENE_43,
 #pragma warning restore 612, 618
                     false, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopSet);
             TestPositons(typeTokenFilter);
@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Core
                 assertEquals("if position increment is enabled the positionIncrementAttribute value should be 3, otherwise 1", posIncrAtt.PositionIncrement, enablePositionIncrements ? 3 : 1);
             }
             stpf.End();
-            stpf.Dispose();
+            stpf.Close();
         }
 
         [Test]
