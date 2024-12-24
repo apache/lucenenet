@@ -5,6 +5,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -170,7 +171,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // DocMaker did not close its ContentSource if resetInputs was called twice,
             // leading to a file handle leak.
             FileInfo f = new FileInfo(Path.Combine(getWorkDir().FullName, "docMakerLeak.txt"));
-            TextWriter ps = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8);
+            TextWriter ps = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), IOUtils.CHARSET_UTF_8);
             ps.WriteLine("one title\t" + (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) + "\tsome content"); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             ps.Dispose();
 

@@ -167,7 +167,7 @@ namespace Lucene.Net.Util
             ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             CheckIndex checker = new CheckIndex(dir);
             checker.CrossCheckTermVectors = crossCheckTermVectors;
-            checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
+            checker.InfoStream = new StreamWriter(bos, IOUtils.CHARSET_UTF_8);
             CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
             if (indexStatus is null || indexStatus.Clean == false)
             {
@@ -203,7 +203,7 @@ namespace Lucene.Net.Util
         {
             // LUCENENET: dispose the StreamWriter and ByteArrayOutputStream when done
             using ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
-            using StreamWriter infoStream = new StreamWriter(bos, Encoding.UTF8, leaveOpen: true, bufferSize: 1024);
+            using StreamWriter infoStream = new StreamWriter(bos, IOUtils.CHARSET_UTF_8, leaveOpen: true, bufferSize: 1024);
 
             reader.CheckIntegrity();
             CheckIndex.Status.FieldNormStatus fieldNormStatus = Index.CheckIndex.TestFieldNorms(reader, infoStream);

@@ -4,6 +4,7 @@ using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -41,7 +42,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             Stream @out = new FileStream(file.FullName, FileMode.Create, FileAccess.Write);
             @out = new BZip2OutputStream(@out); // csFactory.createCompressorOutputStream("bzip2", @out);
-            TextWriter writer = new StreamWriter(@out, Encoding.UTF8);
+            TextWriter writer = new StreamWriter(@out, StandardCharsets.UTF_8);
             writeDocsToFile(writer, addHeader, null);
             writer.Dispose();
         }
@@ -59,7 +60,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 writer.Write(DocMaker.BODY_FIELD);
                 if (otherFields != null)
                 {
-                    // additional field names in the header 
+                    // additional field names in the header
                     foreach (Object fn in otherFields.Keys)
                     {
                         writer.Write(WriteLineDocTask.SEP);
@@ -72,7 +73,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             doc.append("title").append(WriteLineDocTask.SEP).append("date").append(WriteLineDocTask.SEP).append(DocMaker.BODY_FIELD);
             if (otherFields != null)
             {
-                // additional field values in the doc line 
+                // additional field values in the doc line
                 foreach (Object fv in otherFields.Values)
                 {
                     doc.append(WriteLineDocTask.SEP).append(fv.toString());
@@ -85,7 +86,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private void createRegularLineFile(FileInfo file, bool addHeader)
         {
             Stream @out = new FileStream(file.FullName, FileMode.Create, FileAccess.Write);
-            TextWriter writer = new StreamWriter(@out, Encoding.UTF8);
+            TextWriter writer = new StreamWriter(@out, StandardCharsets.UTF_8);
             writeDocsToFile(writer, addHeader, null);
             writer.Dispose();
         }
@@ -93,7 +94,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private void createRegularLineFileWithMoreFields(FileInfo file, params String[] extraFields)
         {
             Stream @out = new FileStream(file.FullName, FileMode.Create, FileAccess.Write);
-            TextWriter writer = new StreamWriter(@out, Encoding.UTF8);
+            TextWriter writer = new StreamWriter(@out, StandardCharsets.UTF_8);
             Dictionary<string, string> p = new Dictionary<string, string>();
             foreach (String f in extraFields)
             {
@@ -231,7 +232,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             for (int i = 0; i < testCases.Length; i++)
             {
                 FileInfo file = new FileInfo(Path.Combine(getWorkDir().FullName, "one-line"));
-                TextWriter writer = new StreamWriter(new FileStream(file.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8);
+                TextWriter writer = new StreamWriter(new FileStream(file.FullName, FileMode.Create, FileAccess.Write), StandardCharsets.UTF_8);
                 writer.Write(testCases[i]);
                 writer.WriteLine();
                 writer.Dispose();

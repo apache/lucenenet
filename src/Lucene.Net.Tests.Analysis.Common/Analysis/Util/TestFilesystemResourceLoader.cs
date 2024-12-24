@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using J2N;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -78,7 +79,7 @@ namespace Lucene.Net.Analysis.Util
             DirectoryInfo @base = CreateTempDir("fsResourceLoaderBase");
             try
             {
-                TextWriter os = new StreamWriter(new FileStream(System.IO.Path.Combine(@base.FullName, "template.txt"), FileMode.Create, FileAccess.Write), Encoding.UTF8);
+                TextWriter os = new StreamWriter(new FileStream(System.IO.Path.Combine(@base.FullName, "template.txt"), FileMode.Create, FileAccess.Write), StandardCharsets.UTF_8);
                 try
                 {
                     os.Write("foobar\n");

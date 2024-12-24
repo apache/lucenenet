@@ -318,16 +318,16 @@ namespace Lucene.Net.Util.Fst
 
             bool willRewrite = random.NextBoolean();
 
-            Builder<T> builder = new Builder<T>(inputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, 
-                                                prune1, prune2, 
-                                                prune1 == 0 && prune2 == 0, 
-                                                allowRandomSuffixSharing ? random.NextBoolean() : true, 
-                                                allowRandomSuffixSharing ? TestUtil.NextInt32(random, 1, 10) : int.MaxValue, 
-                                                outputs, 
-                                                null, 
-                                                willRewrite, 
-                                                PackedInt32s.DEFAULT, 
-                                                true, 
+            Builder<T> builder = new Builder<T>(inputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4,
+                                                prune1, prune2,
+                                                prune1 == 0 && prune2 == 0,
+                                                allowRandomSuffixSharing ? random.NextBoolean() : true,
+                                                allowRandomSuffixSharing ? TestUtil.NextInt32(random, 1, 10) : int.MaxValue,
+                                                outputs,
+                                                null,
+                                                willRewrite,
+                                                PackedInt32s.DEFAULT,
+                                                true,
                                                 15);
             if (LuceneTestCase.Verbose)
             {
@@ -386,7 +386,7 @@ namespace Lucene.Net.Util.Fst
 
             if (LuceneTestCase.Verbose && pairs.Count <= 20 && fst != null)
             {
-                using (TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.OpenOrCreate), Encoding.UTF8))
+                using (TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.OpenOrCreate), StandardCharsets.UTF_8))
                 {
                     Util.ToDot(fst, w, false, false);
                 }

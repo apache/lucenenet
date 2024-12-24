@@ -37,7 +37,7 @@ namespace Lucene.Net.Demo
                 var fakeSystemOut = new StreamWriter(bytes, Encoding.GetEncoding(0));
                 Console.SetOut(fakeSystemOut);
                 // LUCENENET specific: changed the arguments to act more like the dotnet.exe commands.
-                // * only optional arguments start with - 
+                // * only optional arguments start with -
                 // * options have a long form that starts with --
                 // * required arguments must be supplied without - or -- and in a specific order
                 // Since the demo is meant to be seen by end users, these changes were necessary to make
@@ -80,13 +80,13 @@ namespace Lucene.Net.Demo
 
             DirectoryInfo indexDir = CreateTempDir("DemoTest");
             // LUCENENET specific: changed the arguments to act more like the dotnet.exe commands.
-            // * only optional arguments start with - 
+            // * only optional arguments start with -
             // * options have a long form that starts with --
             // * required arguments must be supplied without - or -- and in a specific order
             // Since the demo is meant to be seen by end users, these changes were necessary to make
             // it consistent with the lucene-cli utility.
             // NOTE: There is no -create in lucene, but it has the same effect as if --update were left out
-            IndexFiles.Main(new string[] { indexDir.FullName, filesDir.FullName }); 
+            IndexFiles.Main(new string[] { indexDir.FullName, filesDir.FullName });
             //IndexFiles.Main(new string[] { "-create", "-docs", filesDir.FullName, "-index", indexDir.FullName });
             TestOneSearch(indexDir, "apache", 3);
             TestOneSearch(indexDir, "patent", 8);
