@@ -26,9 +26,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
      */
 
     /// <summary>
-    /// A <see cref="WriteLineDocTask"/> which for Wikipedia input, will write category pages 
+    /// A <see cref="WriteLineDocTask"/> which for Wikipedia input, will write category pages
     /// to another file, while remaining pages will be written to the original file.
-    /// The categories file is derived from the original file, by adding a prefix "categories-". 
+    /// The categories file is derived from the original file, by adding a prefix "categories-".
     /// </summary>
     public class WriteEnwikiLineDocTask : WriteLineDocTask
     {
@@ -37,9 +37,18 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public WriteEnwikiLineDocTask(PerfRunData runData)
                   : base(runData)
         {
-            Stream @out = StreamUtils.GetOutputStream(CategoriesLineFile(new FileInfo(m_fname)));
+            Stream @out = StreamUtils.GetOutputStream(CategoriesLineFile(m_fname)); // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
             categoryLineFileOut = new StreamWriter(@out, Encoding.UTF8);
             WriteHeader(categoryLineFileOut);
+        }
+
+        /// <summary>Compose categories line file out of original line file</summary>
+        // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+        public static string CategoriesLineFile(string fileName)
+        {
+            string dir = Path.GetDirectoryName(fileName);
+            string categoriesName = "categories-" + Path.GetFileName(fileName);
+            return dir is null ? categoriesName : Path.Combine(dir, categoriesName);
         }
 
         /// <summary>Compose categories line file out of original line file</summary>
@@ -47,7 +56,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             DirectoryInfo dir = f.Directory;
             string categoriesName = "categories-" + f.Name;
-            return dir is null ? new FileInfo(categoriesName) : new FileInfo(System.IO.Path.Combine(dir.FullName, categoriesName));
+            return dir is null ? new FileInfo(categoriesName) : new FileInfo(Path.Combine(dir.FullName, categoriesName));
         }
 
         protected override void Dispose(bool disposing)

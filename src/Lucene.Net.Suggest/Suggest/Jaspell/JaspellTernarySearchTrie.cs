@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2005 Bruno Martins
 // All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without 
-// modification, are permitted provided that the following conditions 
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
 // are met:
-// 1. Redistributions of source code must retain the above copyright 
+// 1. Redistributions of source code must retain the above copyright
 //    notice, this list of conditions and the following disclaimer.
 // 2. Redistributions in binary form must reproduce the above copyright
 //    notice, this list of conditions and the following disclaimer in the
@@ -12,9 +12,9 @@
 // 3. Neither the name of the organization nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 // ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 // LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
@@ -46,13 +46,13 @@ namespace Lucene.Net.Search.Suggest.Jaspell
     /// tree with the speed of a digital search trie, and is therefore ideal for
     /// practical use in sorting and searching data.
     /// <para>
-    /// 
+    ///
     /// This data structure is faster than hashing for many typical search problems,
     /// and supports a broader range of useful problems and operations. Ternary
     /// searches are faster than hashing and more powerful, too.
     /// </para>
     /// <para>
-    /// 
+    ///
     /// The theory of ternary search trees was described at a symposium in 1997 (see
     /// "Fast Algorithms for Sorting and Searching Strings," by J.L. Bentley and R.
     /// Sedgewick, Proceedings of the 8th Annual ACM-SIAM Symposium on Discrete
@@ -131,14 +131,14 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="culture">The culture used for lowercasing.</param>
         /// <returns> A negative number, 0 or a positive number if the second char is
         ///         less, equal or greater. </returns>
-        ///         
+        ///
         private static int CompareCharsAlphabetically(char cCompare2, char cRef, CultureInfo culture)
         {
             var textInfo = culture.TextInfo;
             return textInfo.ToLower(cCompare2) - textInfo.ToLower(cRef);
         }
 
-        /* what follows is the original Jaspell code. 
+        /* what follows is the original Jaspell code.
         private static int compareCharsAlphabetically(int cCompare2, int cRef) {
         int cCompare = 0;
         if (cCompare2 >= 65) {
@@ -209,12 +209,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             get => rootNode;
         }
 
-
         /// <summary>
         /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
         /// into the Trie. The file is a normal text document, where each line is of
         /// the form word TAB float.
-        /// 
+        ///
         /// <para>Uses the culture of the current thread to lowercase words before comparing.</para>
         /// </summary>
         /// <param name="file">
@@ -222,7 +221,26 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file)
-            : this(file, false, CultureInfo.CurrentCulture)
+            : this(file.FullName, false, CultureInfo.CurrentCulture)
+        {
+        }
+
+        /// <summary>
+        /// Constructs a Ternary Search Trie and loads data from a given <paramref name="fileName"/>
+        /// into the Trie. The file is a normal text document, where each line is of
+        /// the form word TAB float.
+        ///
+        /// <para>Uses the culture of the current thread to lowercase words before comparing.</para>
+        /// </summary>
+        /// <param name="fileName">
+        ///          The file name with the data to load into the Trie. </param>
+        /// <exception cref="IOException">
+        ///              A problem occured while reading the data. </exception>
+        /// <remarks>
+        /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public JaspellTernarySearchTrie(string fileName)
+            : this(fileName, false, CultureInfo.CurrentCulture)
         {
         }
 
@@ -230,7 +248,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
         /// into the Trie. The file is a normal text document, where each line is of
         /// the form word TAB float.
-        /// 
+        ///
         /// <para>Uses the supplied culture to lowercase words before comparing.</para>
         /// </summary>
         /// <param name="file">
@@ -239,15 +257,33 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, CultureInfo culture)
-            : this(file, false, culture)
-        {
-        }
+            : this(file.FullName, false, culture)
+        { }
+
+        /// <summary>
+        /// Constructs a Ternary Search Trie and loads data from a given <paramref name="fileName"/>
+        /// into the Trie. The file is a normal text document, where each line is of
+        /// the form word TAB float.
+        ///
+        /// <para>Uses the supplied culture to lowercase words before comparing.</para>
+        /// </summary>
+        /// <param name="fileName">
+        ///          The file name with the data to load into the Trie. </param>
+        /// <param name="culture">The culture used for lowercasing.</param>
+        /// <exception cref="IOException">
+        ///              A problem occured while reading the data. </exception>
+        /// <remarks>
+        /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public JaspellTernarySearchTrie(string fileName, CultureInfo culture)
+            : this(fileName, false, culture)
+        { }
 
         /// <summary>
         /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
         /// into the Trie. The file is a normal text document, where each line is of
         /// the form "word TAB float".
-        /// 
+        ///
         /// <para>Uses the culture of the current thread to lowercase words before comparing.</para>
         /// </summary>
         /// <param name="file">
@@ -258,14 +294,35 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, bool compression)
-            : this(file, compression, CultureInfo.CurrentCulture)
+            : this(file.FullName, compression, CultureInfo.CurrentCulture)
+        { }
+
+        /// <summary>
+        /// Constructs a Ternary Search Trie and loads data from a given <paramref name="fileName"/>
+        /// into the Trie. The file is a normal text document, where each line is of
+        /// the form "word TAB float".
+        ///
+        /// <para>Uses the culture of the current thread to lowercase words before comparing.</para>
+        /// </summary>
+        /// <param name="fileName">
+        ///          The file name with the data to load into the Trie. </param>
+        /// <param name="compression">
+        ///          If true, the file is compressed with the GZIP algorithm, and if
+        ///          false, the file is a normal text document. </param>
+        /// <exception cref="IOException">
+        ///              A problem occured while reading the data. </exception>
+        /// <remarks>
+        /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public JaspellTernarySearchTrie(string fileName, bool compression)
+            : this(fileName, compression, CultureInfo.CurrentCulture)
         { }
 
         /// <summary>
         /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
         /// into the Trie. The file is a normal text document, where each line is of
         /// the form "word TAB float".
-        /// 
+        ///
         /// <para>Uses the supplied culture to lowercase words before comparing.</para>
         /// <para>NOTE for subclasses: this constructor calls a virtual method, which could
         /// result in your override of it being called before the class is properly initialized.
@@ -281,14 +338,45 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="culture">The culture used for lowercasing.</param>
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
+        /// <remarks>
+        /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public JaspellTernarySearchTrie(FileInfo file, bool compression, CultureInfo culture)
+            : this(file.FullName, compression, culture)
+        {
+        }
+
+        /// <summary>
+        /// Constructs a Ternary Search Trie and loads data from a given <paramref name="fileName"/>
+        /// into the Trie. The file is a normal text document, where each line is of
+        /// the form "word TAB float".
+        ///
+        /// <para>Uses the supplied culture to lowercase words before comparing.</para>
+        /// <para>NOTE for subclasses: this constructor calls a virtual method, which could
+        /// result in your override of it being called before the class is properly initialized.
+        /// To overcome the issue, you could override <see cref="JaspellTernarySearchTrie(CultureInfo)"/>
+        /// constructor and then call the logic in a way that suits your needs.
+        /// </para>
+        /// </summary>
+        /// <param name="fileName">
+        ///          The file name with the data to load into the Trie. </param>
+        /// <param name="compression">
+        ///          If true, the file is compressed with the GZIP algorithm, and if
+        ///          false, the file is a normal text document. </param>
+        /// <param name="culture">The culture used for lowercasing.</param>
+        /// <exception cref="IOException">
+        ///              A problem occured while reading the data. </exception>
+        /// <remarks>
+        /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
+        /// </remarks>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "This class gets deprecated and removed in later versions")]
-        public JaspellTernarySearchTrie(FileInfo file, bool compression, CultureInfo culture)
+        public JaspellTernarySearchTrie(string fileName, bool compression, CultureInfo culture)
             : this(culture)
         {
-            using TextReader @in = (compression) ?
-                IOUtils.GetDecodingReader(new GZipStream(new FileStream(file.FullName, FileMode.Open), CompressionMode.Decompress), Encoding.UTF8) :
-                IOUtils.GetDecodingReader(new FileStream(file.FullName, FileMode.Open), Encoding.UTF8);
+            using TextReader @in = compression ?
+                IOUtils.GetDecodingReader(new GZipStream(new FileStream(fileName, FileMode.Open), CompressionMode.Decompress), Encoding.UTF8) :
+                IOUtils.GetDecodingReader(new FileStream(fileName, FileMode.Open), Encoding.UTF8);
             string word;
             int pos;
             float occur, one = 1f;
@@ -379,13 +467,13 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         /// <summary>
         /// Recursively visits each node to be deleted.
-        /// 
+        ///
         /// To delete a node, first set its data to null, then pass it into this
         /// method, then pass the node returned by this method into this method (make
         /// sure you don't delete the data of any of the nodes returned from this
         /// method!) and continue in this fashion until the node returned by this
         /// method is <c>null</c>.
-        /// 
+        ///
         /// The TSTNode instance returned by this method will be next node to be
         /// operated on by <see cref="DeleteNodeRecursion(TSTNode)"/> (This emulates recursive
         /// method call while avoiding the overhead normally associated with a
@@ -686,7 +774,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// If the <see cref="MatchAlmost(string, int)"/> method is called before the
         /// <see cref="MatchAlmostDiff"/> property has been called for the first time,
         /// then diff = 0.
-        /// 
+        ///
         /// </para>
         /// </summary>
         /// <param name="key">
@@ -706,7 +794,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// If the <see cref="MatchAlmost(string, int)"/> method is called before the
         /// <see cref="MatchAlmostDiff"/> property has been called for the first time,
         /// then diff = 0.
-        /// 
+        ///
         /// </para>
         /// </summary>
         /// <param name="key"> The target key. </param>
@@ -732,7 +820,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="matchAlmostResult2">
         ///          The results so far. </param>
         /// <param name="upTo">
-        ///          If true all keys having up to and including <see cref="MatchAlmostDiff"/> 
+        ///          If true all keys having up to and including <see cref="MatchAlmostDiff"/>
         ///          mismatched letters will be included in the result (including a key
         ///          that is exactly the same as the target string) otherwise keys will
         ///          be included in the result only if they have exactly
@@ -906,7 +994,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <para>
         /// Arguments less than 0 will set the char difference to 0, and arguments
         /// greater than 3 will set the char difference to 3.
-        /// 
+        ///
         /// </para>
         /// </summary>
         public virtual int MatchAlmostDiff
@@ -945,7 +1033,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <para>
         /// The number of keys returned is limited to numReturnValues. To get a list
         /// that isn't limited in size, set numReturnValues to -1.
-        /// 
+        ///
         /// </para>
         /// </summary>
         /// <param name="startNode">
@@ -965,7 +1053,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Sorted keys will be appended to the end of the resulting <see cref="List{String}"/>.
         /// The result may be empty when this method is invoked, but may not be
         /// <c>null</c>.
-        /// 
+        ///
         /// </para>
         /// </summary>
         /// <param name="currentNode">

@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Compound
         private readonly HyphenationTree hyphenator;
 
         /// <summary>
-        /// Creates a new <see cref="HyphenationCompoundWordTokenFilter"/> instance. 
+        /// Creates a new <see cref="HyphenationCompoundWordTokenFilter"/> instance.
         /// </summary>
         /// <param name="matchVersion">
         ///          Lucene version to enable correct Unicode 4.0 behavior in the
@@ -59,9 +59,9 @@ namespace Lucene.Net.Analysis.Compound
         ///          the hyphenation pattern tree to use for hyphenation </param>
         /// <param name="dictionary">
         ///          the word dictionary to match against. </param>
-        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, 
+        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input,
             HyphenationTree hyphenator, CharArraySet dictionary)
-            : this(matchVersion, input, hyphenator, dictionary, DEFAULT_MIN_WORD_SIZE, 
+            : this(matchVersion, input, hyphenator, dictionary, DEFAULT_MIN_WORD_SIZE,
                   DEFAULT_MIN_SUBWORD_SIZE, DEFAULT_MAX_SUBWORD_SIZE, false)
         {
         }
@@ -88,10 +88,10 @@ namespace Lucene.Net.Analysis.Compound
         ///          only subwords shorter than this get to the output stream </param>
         /// <param name="onlyLongestMatch">
         ///          Add only the longest matching subword to the stream </param>
-        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, 
-            HyphenationTree hyphenator, CharArraySet dictionary, int minWordSize, int minSubwordSize, 
+        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input,
+            HyphenationTree hyphenator, CharArraySet dictionary, int minWordSize, int minSubwordSize,
             int maxSubwordSize, bool onlyLongestMatch)
-            : base(matchVersion, input, dictionary, minWordSize, minSubwordSize, maxSubwordSize, 
+            : base(matchVersion, input, dictionary, minWordSize, minSubwordSize, maxSubwordSize,
                   onlyLongestMatch)
         {
             this.hyphenator = hyphenator;
@@ -103,10 +103,10 @@ namespace Lucene.Net.Analysis.Compound
         /// Calls <see cref="HyphenationCompoundWordTokenFilter.HyphenationCompoundWordTokenFilter(LuceneVersion, TokenStream, HyphenationTree, CharArraySet, int, int, int, bool)"/>
         /// </para>
         /// </summary>
-        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, 
-            HyphenationTree hyphenator, int minWordSize, int minSubwordSize, 
+        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input,
+            HyphenationTree hyphenator, int minWordSize, int minSubwordSize,
             int maxSubwordSize)
-            : this(matchVersion, input, hyphenator, null, minWordSize, minSubwordSize, 
+            : this(matchVersion, input, hyphenator, null, minWordSize, minSubwordSize,
                   maxSubwordSize, false)
         {
         }
@@ -117,9 +117,9 @@ namespace Lucene.Net.Analysis.Compound
         /// Calls <see cref="HyphenationCompoundWordTokenFilter.HyphenationCompoundWordTokenFilter(LuceneVersion, TokenStream, HyphenationTree, int, int, int)"/>
         /// </para>
         /// </summary>
-        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, 
+        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input,
             HyphenationTree hyphenator)
-            : this(matchVersion, input, hyphenator, DEFAULT_MIN_WORD_SIZE, DEFAULT_MIN_SUBWORD_SIZE, 
+            : this(matchVersion, input, hyphenator, DEFAULT_MIN_WORD_SIZE, DEFAULT_MIN_SUBWORD_SIZE,
                   DEFAULT_MAX_SUBWORD_SIZE)
         {
         }
@@ -131,9 +131,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(string hyphenationFilename)
-        {
-            return GetHyphenationTree(hyphenationFilename, Encoding.UTF8);
-        }
+            => GetHyphenationTree(hyphenationFilename, Encoding.UTF8);
 
         /// <summary>
         /// Create a hyphenator tree
@@ -143,9 +141,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(string hyphenationFilename, Encoding encoding)
-        {
-            return GetHyphenationTree(new FileStream(hyphenationFilename, FileMode.Open, FileAccess.Read), encoding);
-        }
+            => GetHyphenationTree(new FileStream(hyphenationFilename, FileMode.Open, FileAccess.Read), encoding);
 
         /// <summary>
         /// Create a hyphenator tree
@@ -154,9 +150,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(FileInfo hyphenationFile)
-        {
-            return GetHyphenationTree(hyphenationFile, Encoding.UTF8);
-        }
+            => GetHyphenationTree(hyphenationFile.FullName, Encoding.UTF8);
 
         /// <summary>
         /// Create a hyphenator tree
@@ -166,9 +160,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(FileInfo hyphenationFile, Encoding encoding)
-        {
-            return GetHyphenationTree(new FileStream(hyphenationFile.FullName, FileMode.Open, FileAccess.Read), encoding);
-        }
+            => GetHyphenationTree(hyphenationFile.FullName, encoding);
 
         /// <summary>
         /// Create a hyphenator tree
@@ -177,9 +169,7 @@ namespace Lucene.Net.Analysis.Compound
         /// <returns> An object representing the hyphenation patterns </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static HyphenationTree GetHyphenationTree(Stream hyphenationSource)
-        {
-            return GetHyphenationTree(hyphenationSource, Encoding.UTF8);
-        }
+            => GetHyphenationTree(hyphenationSource, Encoding.UTF8);
 
         /// <summary>
         /// Create a hyphenator tree
@@ -227,7 +217,7 @@ namespace Lucene.Net.Analysis.Compound
                     // that are longer than minPartSize
                     if (partLength < this.m_minSubwordSize)
                     {
-                        // BOGUS/BROKEN/FUNKY/WACKO: somehow we have negative 'parts' according to the 
+                        // BOGUS/BROKEN/FUNKY/WACKO: somehow we have negative 'parts' according to the
                         // calculation above, and we rely upon minSubwordSize being >=0 to filter them out...
                         continue;
                     }
