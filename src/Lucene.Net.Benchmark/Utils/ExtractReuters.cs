@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -118,7 +119,7 @@ namespace Lucene.Net.Benchmarks.Utils
                         string outFile = System.IO.Path.Combine(outputDir.FullName, sgmFile.Name + "-"
                             + (docNumber++) + ".txt");
                         // System.out.println("Writing " + outFile);
-                        StreamWriter writer = new StreamWriter(new FileStream(outFile, FileMode.Create, FileAccess.Write), Encoding.UTF8);
+                        StreamWriter writer = new StreamWriter(new FileStream(outFile, FileMode.Create, FileAccess.Write), StandardCharsets.UTF_8);
                         writer.Write(@out);
                         writer.Dispose();
                         outBuffer.Length = 0;
