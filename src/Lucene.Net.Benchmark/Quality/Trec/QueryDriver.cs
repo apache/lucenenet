@@ -71,7 +71,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
 
             FileInfo topicsFile = new FileInfo(args[0]);
             FileInfo qrelsFile = new FileInfo(args[1]);
-            SubmissionReport submitLog = new SubmissionReport(new StreamWriter(new FileStream(args[2], FileMode.Create, FileAccess.Write), Encoding.UTF8 /* huh, no nio.Charset ctor? */), "lucene");
+            SubmissionReport submitLog = new SubmissionReport(new StreamWriter(new FileStream(args[2], FileMode.Create, FileAccess.Write), IOUtils.CHARSET_UTF_8 /* huh, no nio.Charset ctor? */), "lucene");
             using Store.FSDirectory dir = Store.FSDirectory.Open(new DirectoryInfo(args[3]));
             using IndexReader reader = DirectoryReader.Open(dir);
             string fieldSpec = args.Length == 5 ? args[4] : "T"; // default to Title-only if not specified.

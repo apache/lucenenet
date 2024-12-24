@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -88,7 +89,7 @@ namespace Lucene.Net.Benchmarks.Utils
 
             try
             {
-                using TextWriter writer = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8);
+                using TextWriter writer = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), StandardCharsets.UTF_8);
                 writer.Write(contents.ToString());
             }
             catch (Exception ioe) when (ioe.IsIOException())

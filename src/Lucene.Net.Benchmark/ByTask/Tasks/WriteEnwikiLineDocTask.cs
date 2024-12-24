@@ -2,6 +2,7 @@
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.IO;
 using System.Text;
@@ -26,9 +27,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
      */
 
     /// <summary>
-    /// A <see cref="WriteLineDocTask"/> which for Wikipedia input, will write category pages 
+    /// A <see cref="WriteLineDocTask"/> which for Wikipedia input, will write category pages
     /// to another file, while remaining pages will be written to the original file.
-    /// The categories file is derived from the original file, by adding a prefix "categories-". 
+    /// The categories file is derived from the original file, by adding a prefix "categories-".
     /// </summary>
     public class WriteEnwikiLineDocTask : WriteLineDocTask
     {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                   : base(runData)
         {
             Stream @out = StreamUtils.GetOutputStream(CategoriesLineFile(new FileInfo(m_fname)));
-            categoryLineFileOut = new StreamWriter(@out, Encoding.UTF8);
+            categoryLineFileOut = new StreamWriter(@out, StandardCharsets.UTF_8);
             WriteHeader(categoryLineFileOut);
         }
 
