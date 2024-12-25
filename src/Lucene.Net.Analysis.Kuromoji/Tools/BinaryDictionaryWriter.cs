@@ -298,7 +298,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(filename));
             using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
-            using var @out = new OutputStreamDataOutput(os); // LUCENENET: CA2000: Use using statement
+            using var @out = new OutputStreamDataOutput(os, leaveOpen: true); // LUCENENET: CA2000: Use using statement
             CodecUtil.WriteHeader(@out, BinaryDictionary.TARGETMAP_HEADER, BinaryDictionary.VERSION);
 
             int numSourceIds = lastSourceId + 1;
@@ -328,7 +328,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(filename));
             using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
-            using var @out = new OutputStreamDataOutput(os); // LUCENENET: CA2000: Use using statement
+            using var @out = new OutputStreamDataOutput(os, leaveOpen: true); // LUCENENET: CA2000: Use using statement
             CodecUtil.WriteHeader(@out, BinaryDictionary.POSDICT_HEADER, BinaryDictionary.VERSION);
             @out.WriteVInt32(posDict.Count);
             foreach (string s in posDict)
@@ -355,7 +355,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(filename));
             using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
-            using var @out = new OutputStreamDataOutput(os); // LUCENENET: CA2000: Use using statement
+            using var @out = new OutputStreamDataOutput(os, leaveOpen: true); // LUCENENET: CA2000: Use using statement
             CodecUtil.WriteHeader(@out, BinaryDictionary.DICT_HEADER, BinaryDictionary.VERSION);
             @out.WriteVInt32(m_buffer.Position);
 

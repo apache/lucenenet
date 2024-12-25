@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(filename));
             using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
-            using var @out = new OutputStreamDataOutput(os); // LUCENENET: CA2000: Use using statement
+            using var @out = new OutputStreamDataOutput(os, leaveOpen: true); // LUCENENET: CA2000: Use using statement
             CodecUtil.WriteHeader(@out, ConnectionCosts.HEADER, ConnectionCosts.VERSION);
             @out.WriteVInt32(forwardSize);
             @out.WriteVInt32(backwardSize);
