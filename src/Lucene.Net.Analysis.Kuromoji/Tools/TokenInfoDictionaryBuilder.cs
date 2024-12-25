@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             {
                 using Stream inputStream = new FileStream(file, FileMode.Open, FileAccess.Read);
                 Encoding decoder = Encoding.GetEncoding(encoding);
-                using TextReader reader = new StreamReader(inputStream, decoder); // LUCENENET: CA2000: Use using statement
+                using TextReader reader = new StreamReader(inputStream, decoder, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true); // LUCENENET: CA2000: Use using statement
 
                 string line = null;
                 while ((line = reader.ReadLine()) != null)
@@ -159,10 +159,10 @@ namespace Lucene.Net.Analysis.Ja.Util
 
             return dictionary;
         }
-        
+
         /// <summary>
         /// IPADIC features
-        /// 
+        ///
         /// 0   - surface
         /// 1   - left cost
         /// 2   - right cost
@@ -171,9 +171,9 @@ namespace Lucene.Net.Analysis.Ja.Util
         /// 10  - base form
         /// 11  - reading
         /// 12  - pronounciation
-        /// 
+        ///
         /// UniDic features
-        /// 
+        ///
         /// 0   - surface
         /// 1   - left cost
         /// 2   - right cost

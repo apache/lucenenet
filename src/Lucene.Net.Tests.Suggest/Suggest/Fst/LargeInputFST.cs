@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             // LUCENENET specific - dispose of fileStream and reader when done
             using (FileStream fileStream = new FileStream(input.FullName, FileMode.Open))
-            using (TextReader reader = new StreamReader(fileStream, Encoding.UTF8))
+            using (TextReader reader = new StreamReader(fileStream, Encoding.UTF8, leaveOpen: true))
             {
                 BytesRef scratch = new BytesRef();
                 string line;

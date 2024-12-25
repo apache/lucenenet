@@ -99,7 +99,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Convenience method unzipping <paramref name="zipFileStream"/> into <paramref name="destDir"/>, cleaning up
-        /// <paramref name="destDir"/> first. 
+        /// <paramref name="destDir"/> first.
         /// </summary>
         public static void Unzip(Stream zipFileStream, DirectoryInfo destDir)
         {
@@ -180,7 +180,7 @@ namespace Lucene.Net.Util
             {
                 if (LuceneTestCase.UseInfoStream)
                 {
-                    checker.FlushInfoStream(); 
+                    checker.FlushInfoStream();
                     Console.WriteLine(bos.ToString());
                 }
                 return indexStatus;
@@ -203,7 +203,7 @@ namespace Lucene.Net.Util
         {
             // LUCENENET: dispose the StreamWriter and ByteArrayOutputStream when done
             using ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
-            using StreamWriter infoStream = new StreamWriter(bos, Encoding.UTF8);
+            using StreamWriter infoStream = new StreamWriter(bos, Encoding.UTF8, leaveOpen: true, bufferSize: 1024);
 
             reader.CheckIntegrity();
             CheckIndex.Status.FieldNormStatus fieldNormStatus = Index.CheckIndex.TestFieldNorms(reader, infoStream);
@@ -592,8 +592,8 @@ namespace Lucene.Net.Util
         public static bool FieldSupportsHugeBinaryDocValues(string field)
         {
             string dvFormat = GetDocValuesFormat(field);
-            if (dvFormat.Equals("Lucene40", StringComparison.Ordinal) 
-                || dvFormat.Equals("Lucene42", StringComparison.Ordinal) 
+            if (dvFormat.Equals("Lucene40", StringComparison.Ordinal)
+                || dvFormat.Equals("Lucene42", StringComparison.Ordinal)
                 || dvFormat.Equals("Memory", StringComparison.Ordinal))
             {
                 return false;
@@ -869,7 +869,7 @@ namespace Lucene.Net.Util
         /// Returns a valid (compiling) <see cref="Regex"/> instance with random stuff inside. Be careful
         /// when applying random patterns to longer strings as certain types of patterns
         /// may explode into exponential times in backtracking implementations (such as Java's).
-        /// </summary>        
+        /// </summary>
         public static Regex RandomRegex(Random random) // LUCENENET specific - renamed from RandomPattern()
         {
             return RandomizedTesting.Generators.RandomExtensions.NextRegex(random); // LUCENENET: Moved general random data generation to RandomizedTesting.Generators
