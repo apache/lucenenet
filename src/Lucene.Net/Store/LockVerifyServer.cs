@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -90,7 +91,7 @@ namespace Lucene.Net.Store
             object localLock = new object();
             int[] lockedID = new int[1];
             lockedID[0] = -1;
-            CountdownEvent startingGun = new CountdownEvent(1);
+            using CountdownEvent startingGun = new CountdownEvent(1); // LUCENENET specific - dispose when finished
             ThreadJob[] threads = new ThreadJob[maxClients];
 
             for (int count = 0; count < maxClients; count++)
@@ -134,8 +135,8 @@ namespace Lucene.Net.Store
             public override void Run()
             {
                 using Stream stream = new NetworkStream(cs);
-                BinaryReader intReader = new BinaryReader(stream);
-                BinaryWriter intWriter = new BinaryWriter(stream);
+                using BinaryReader intReader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
+                using BinaryWriter intWriter = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
                 try
                 {
                     int id = intReader.ReadInt32();

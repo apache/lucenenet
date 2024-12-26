@@ -27,11 +27,31 @@ namespace Lucene.Net.Store
     public class InputStreamDataInput : DataInput, IDisposable
     {
         private readonly Stream _is;
-        private int disposed = 0; // LUCENENET specific - allow double-dispose
+        private int disposed; // LUCENENET specific - allow double-dispose
+        private readonly bool leaveOpen; // LUCENENET specific - added to allow the stream to be left open
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="InputStreamDataInput"/> with the specified <paramref name="is"/> (input stream).
+        /// </summary>
+        /// <param name="is">The input stream to read from.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="is"/> is <c>null</c>.</exception>
         public InputStreamDataInput(Stream @is)
         {
             this._is = @is ?? throw new ArgumentNullException(nameof(@is)); // LUCENENET specific - added null guard clause
+        }
+
+        /// <inheritdoc cref="InputStreamDataInput(Stream)"/>
+        /// <summary>
+        /// Initializes a new instance of <see cref="InputStreamDataInput"/> with the specified <paramref name="is"/> (input stream) and <paramref name="leaveOpen"/> flag.
+        /// </summary>
+        /// <param name="leaveOpen">If <c>true</c>, the stream will not be disposed when this instance is disposed.</param>
+        /// <remarks>
+        /// LUCENENET specific - added to allow the stream to be left open.
+        /// </remarks>
+        public InputStreamDataInput(Stream @is, bool leaveOpen)
+            : this(@is)
+        {
+            this.leaveOpen = leaveOpen;
         }
 
         public override byte ReadByte()
@@ -71,7 +91,10 @@ namespace Lucene.Net.Store
 
             if (disposing)
             {
-                _is.Dispose();
+                if (!leaveOpen)
+                {
+                    _is.Dispose();
+                }
             }
         }
     }

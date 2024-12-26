@@ -384,7 +384,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 long startFP = data.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 // currently, we have to store the delta from expected for every 1/nth term
                 // we could avoid this, but its not much and less overall RAM than the previous approach!
-                RAMOutputStream addressBuffer = new RAMOutputStream();
+                using RAMOutputStream addressBuffer = new RAMOutputStream();
                 MonotonicBlockPackedWriter termAddresses = new MonotonicBlockPackedWriter(addressBuffer, BLOCK_SIZE);
                 BytesRef lastTerm = new BytesRef();
                 long count = 0;

@@ -178,9 +178,10 @@ namespace Lucene.Net.Util
         {
             const string subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
 
-            // As an alternative, if you know the computers you will query are running .NET Framework 4.5 
+            // As an alternative, if you know the computers you will query are running .NET Framework 4.5
             // or later, you can use:
-            using RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey);
+            using RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+            using RegistryKey ndpKey = baseKey.OpenSubKey(subkey);
             object releaseValue;
             if (ndpKey != null && (releaseValue = ndpKey.GetValue("Release")) != null)
             {

@@ -274,14 +274,14 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public virtual bool Store(Stream output)
         {
-            DataOutput dataOut = new OutputStreamDataOutput(output);
+            var dataOut = new OutputStreamDataOutput(output, leaveOpen: true);
             try
             {
                 return Store(dataOut);
             }
             finally
             {
-                IOUtils.Dispose(output);
+                IOUtils.Dispose(dataOut, output); // LUCENENET specific - dispose of dataOut
             }
         }
 

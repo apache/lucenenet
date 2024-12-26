@@ -1170,8 +1170,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
                 AddDone(); // in case this wasn't previously called
 
-                var ifs = new FileStream(tmpfile, FileMode.OpenOrCreate, FileAccess.Read);
-                using (var @in = new InputStreamDataInput(ifs))
+                // LUCENENET specific - dispose of resources
+                using (var ifs = new FileStream(tmpfile, FileMode.OpenOrCreate, FileAccess.Read))
+                using (var @in = new InputStreamDataInput(ifs, leaveOpen: true))
                 {
                     map = new int[@in.ReadInt32()];
                     // NOTE: The current code assumes here that the map is complete,

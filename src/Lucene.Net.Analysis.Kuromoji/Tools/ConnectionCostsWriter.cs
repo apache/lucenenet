@@ -54,11 +54,11 @@ namespace Lucene.Net.Analysis.Ja.Util
             // LUCENENET specific: we don't need to do a "classpath" output directory, since we
             // are changing the implementation to read files dynamically instead of making the
             // user recompile with the new files.
-            string filename = System.IO.Path.Combine(baseDir, typeof(ConnectionCosts).Name + CharacterDefinition.FILENAME_SUFFIX);
+            string filename = System.IO.Path.Combine(baseDir, nameof(ConnectionCosts) + CharacterDefinition.FILENAME_SUFFIX);
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(filename));
             using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
-            DataOutput @out = new OutputStreamDataOutput(os);
+            using var @out = new OutputStreamDataOutput(os, leaveOpen: true); // LUCENENET: CA2000: Use using statement
             CodecUtil.WriteHeader(@out, ConnectionCosts.HEADER, ConnectionCosts.VERSION);
             @out.WriteVInt32(forwardSize);
             @out.WriteVInt32(backwardSize);
