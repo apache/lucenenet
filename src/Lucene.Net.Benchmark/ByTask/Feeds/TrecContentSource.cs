@@ -55,10 +55,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     {
         // LUCENENET specific - DateFormatInfo not used
 
-        public static readonly string DOCNO = "<DOCNO>";
-        public static readonly string TERMINATING_DOCNO = "</DOCNO>";
-        public static readonly string DOC = "<DOC>";
-        public static readonly string TERMINATING_DOC = "</DOC>";
+        public const string DOCNO = "<DOCNO>";
+        public const string TERMINATING_DOCNO = "</DOCNO>";
+        public const string DOC = "<DOC>";
+        public const string TERMINATING_DOC = "</DOC>";
 
         /// <summary>separator between lines in the buffer</summary>
         public static readonly string NEW_LINE = Environment.NewLine;

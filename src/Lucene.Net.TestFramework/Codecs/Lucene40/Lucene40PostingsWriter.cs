@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Expert: The maximum number of skip levels. Smaller values result in
         /// slightly smaller indexes, but slower skipping in big posting lists.
         /// </summary>
-        internal readonly int maxSkipLevels = 10;
+        internal const int maxSkipLevels = 10;
 
         internal readonly int totalNumDocs;
 

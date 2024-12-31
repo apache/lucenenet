@@ -29,7 +29,7 @@ namespace Lucene.Net.Spatial.Queries
     /// </summary>
     public class SpatialArgs
     {
-        public static readonly double DEFAULT_DISTERRPCT = 0.025d;
+        public const double DEFAULT_DISTERRPCT = 0.025d;
 
         private SpatialOperation operation;
         private IShape shape;

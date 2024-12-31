@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Default termInfosIndexDivisor. </summary>
-        public static readonly int DEFAULT_TERMS_INDEX_DIVISOR = 1;
+        public const int DEFAULT_TERMS_INDEX_DIVISOR = 1;
 
         /// <summary>
         /// The index directory. </summary>

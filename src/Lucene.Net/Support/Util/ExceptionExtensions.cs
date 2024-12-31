@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
     /// </summary>
     public static class ExceptionExtensions
     {
-        public static readonly string SUPPRESSED_EXCEPTIONS_KEY = "Lucene_SuppressedExceptions";
+        public const string SUPPRESSED_EXCEPTIONS_KEY = "Lucene_SuppressedExceptions";
 
         public static Exception[] GetSuppressed(this Exception e)
         {

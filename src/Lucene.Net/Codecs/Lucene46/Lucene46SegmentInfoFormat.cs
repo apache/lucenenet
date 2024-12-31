@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs.Lucene46
 
         /// <summary>
         /// File extension used to store <see cref="SegmentInfo"/>. </summary>
-        public readonly static string SI_EXTENSION = "si";
+        public const string SI_EXTENSION = "si";
 
         internal const string CODEC_NAME = "Lucene46SegmentInfo";
         internal const int VERSION_START = 0;

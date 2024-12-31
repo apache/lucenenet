@@ -40,7 +40,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// </summary>
     public class SpatialDocMaker : DocMaker
     {
-        public static readonly string SPATIAL_FIELD = "spatial";
+        public const string SPATIAL_FIELD = "spatial";
 
         //cache spatialStrategy by round number
         private static readonly IDictionary<int, SpatialStrategy> spatialStrategyCache = new Dictionary<int, SpatialStrategy>(); // LUCENENET: marked readonly

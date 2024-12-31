@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs
         // the skipInterval. The top level can not contain more than
         // skipLevel entries, the second top level can not contain more
         // than skipLevel^2 entries and so forth.
-        private readonly int numberOfLevelsToBuffer = 1; // LUCENENET: marked readonly
+        private const int numberOfLevelsToBuffer = 1; // LUCENENET: marked const
 
         private int docCount;
         private bool haveSkipped;

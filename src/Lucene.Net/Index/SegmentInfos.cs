@@ -120,11 +120,11 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// The file format version for the segments_N codec header, up to 4.5. </summary>
-        public static readonly int VERSION_40 = 0;
+        public const int VERSION_40 = 0;
 
         /// <summary>
         /// The file format version for the segments_N codec header, since 4.6+. </summary>
-        public static readonly int VERSION_46 = 1;
+        public const int VERSION_46 = 1;
 
         /// <summary>
         /// The file format version for the segments_N codec header, since 4.8+ </summary>
@@ -139,6 +139,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Current format of segments.gen </summary>
+        // ReSharper disable once ConvertToConstant.Global - should always be evaluated, not inlined
         public static readonly int FORMAT_SEGMENTS_GEN_CURRENT = FORMAT_SEGMENTS_GEN_CHECKSUM;
 
         /// <summary>
