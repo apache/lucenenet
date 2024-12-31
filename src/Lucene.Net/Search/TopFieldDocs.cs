@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace Lucene.Net.Search
 {
@@ -22,7 +23,7 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Represents hits returned by
-    /// <see cref="IndexSearcher.Search(Query, Filter, int, Sort)"/>.
+    /// <see cref="IndexSearcher.Search(Query, Filter, int, Sort, CancellationToken)"/>.
     /// </summary>
     public class TopFieldDocs : TopDocs
     {
