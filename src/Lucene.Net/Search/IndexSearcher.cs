@@ -70,6 +70,14 @@ namespace Lucene.Net.Search
     /// synchronize on the <see cref="IndexSearcher"/> instance;
     /// use your own (non-Lucene) objects instead.</p>
     /// </summary>
+    /// <remarks>
+    /// LUCENENET Specific - Search methods have had an optional <see cref="CancellationToken"/> parameter added
+    /// to allow for cancellation of the search operation. For multithreaded search operations, the
+    /// <see cref="TaskScheduler"/> passed to the constructor will be used to execute the search operations
+    /// and the <see cref="CancellationToken"/> will be passed to the awaited tasks. If the <see cref="TaskScheduler"/>
+    /// is <c>null</c>, the search operations will be executed synchronously, and the <see cref="CancellationToken"/>
+    /// will throw if cancellation is requested upon entry to each leaf reader.
+    /// </remarks>
     public class IndexSearcher
     {
         internal readonly IndexReader reader; // package private for testing!
@@ -527,7 +535,7 @@ namespace Lucene.Net.Search
 
                 HitQueue hq = new HitQueue(nDocs, prePopulate: false);
                 ReentrantLock @lock = new ReentrantLock();
-                ExecutionHelper<TopDocs> runner = new ExecutionHelper<TopDocs>(executor);
+                ExecutionHelper<TopDocs> runner = new ExecutionHelper<TopDocs>(executor, cancellationToken);
 
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each sub
                 {
@@ -637,7 +645,7 @@ namespace Lucene.Net.Search
                 TopFieldCollector topCollector = TopFieldCollector.Create(sort, nDocs, after, fillFields, doDocScores, doMaxScore, false);
 
                 ReentrantLock @lock = new ReentrantLock();
-                ExecutionHelper<TopFieldDocs> runner = new ExecutionHelper<TopFieldDocs>(executor);
+                ExecutionHelper<TopFieldDocs> runner = new ExecutionHelper<TopFieldDocs>(executor, cancellationToken);
 
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each leaf slice
                 {
@@ -722,6 +730,8 @@ namespace Lucene.Net.Search
             // always use single thread:
             foreach (AtomicReaderContext ctx in leaves) // search each subreader
             {
+                cancellationToken.ThrowIfCancellationRequested(); // LUCENENET specific - cancellation support at leaf level
+
                 try
                 {
                     collector.SetNextReader(ctx);
@@ -960,12 +970,14 @@ namespace Lucene.Net.Search
         private sealed class ExecutionHelper<T> : IEnumerator<T>, IEnumerable<T>
         {
             private readonly TaskSchedulerCompletionService<T> service;
+            private readonly CancellationToken cancellationToken;
             private int numTasks;
             private T current;
 
-            internal ExecutionHelper(TaskScheduler executor)
+            internal ExecutionHelper(TaskScheduler executor, CancellationToken cancellationToken)
             {
                 this.service = new TaskSchedulerCompletionService<T>(executor);
+                this.cancellationToken = cancellationToken;
             }
 
             public T Current => current;
@@ -995,7 +1007,7 @@ namespace Lucene.Net.Search
                     try
                     {
                         var awaitable = service.Take();
-                        awaitable.Wait();
+                        awaitable.Wait(cancellationToken);
                         current = awaitable.Result;
 
                         return true;
