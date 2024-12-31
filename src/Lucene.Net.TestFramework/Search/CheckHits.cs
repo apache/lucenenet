@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -450,28 +451,28 @@ namespace Lucene.Net.Search
             base.Search(q, null, new ExplanationAsserter(q, null, this));
         }
 
-        public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
+        public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort, CancellationToken cancellationToken = default)
         {
             CheckExplanations(query);
-            return base.Search(query, filter, n, sort);
+            return base.Search(query, filter, n, sort, cancellationToken);
         }
 
-        public override void Search(Query query, ICollector results)
+        public override void Search(Query query, ICollector results, CancellationToken cancellationToken = default)
         {
             CheckExplanations(query);
-            base.Search(query, results);
+            base.Search(query, results, cancellationToken);
         }
 
-        public override void Search(Query query, Filter filter, ICollector results)
+        public override void Search(Query query, Filter filter, ICollector results, CancellationToken cancellationToken = default)
         {
             CheckExplanations(query);
-            base.Search(query, filter, results);
+            base.Search(query, filter, results, cancellationToken);
         }
 
-        public override TopDocs Search(Query query, Filter filter, int n)
+        public override TopDocs Search(Query query, Filter filter, int n, CancellationToken cancellationToken = default)
         {
             CheckExplanations(query);
-            return base.Search(query, filter, n);
+            return base.Search(query, filter, n, cancellationToken);
         }
     }
 

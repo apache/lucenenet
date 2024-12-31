@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Search
 {
@@ -48,7 +49,7 @@ namespace Lucene.Net.Search
         /// the <see cref="FieldComparer.GetValue(int)"/> method corresponding
         /// FieldComparer used to sort this field. </summary>
         /// <seealso cref="Sort"/>
-        /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort)"/>
+        /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort,CancellationToken)"/>
         public object[] Fields;
 
         /// <summary>

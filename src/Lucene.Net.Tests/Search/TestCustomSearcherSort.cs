@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
@@ -213,20 +214,20 @@ namespace Lucene.Net.Search
                 this.switcher = switcher;
             }
 
-            public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
+            public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort, CancellationToken cancellationToken = default)
             {
                 BooleanQuery bq = new BooleanQuery();
                 bq.Add(query, Occur.MUST);
                 bq.Add(new TermQuery(new Term("mandant", Convert.ToString(switcher))), Occur.MUST);
-                return base.Search(bq, filter, nDocs, sort);
+                return base.Search(bq, filter, nDocs, sort, cancellationToken);
             }
 
-            public override TopDocs Search(Query query, Filter filter, int nDocs)
+            public override TopDocs Search(Query query, Filter filter, int nDocs, CancellationToken cancellationToken = default)
             {
                 BooleanQuery bq = new BooleanQuery();
                 bq.Add(query, Occur.MUST);
                 bq.Add(new TermQuery(new Term("mandant", Convert.ToString(switcher))), Occur.MUST);
-                return base.Search(bq, filter, nDocs);
+                return base.Search(bq, filter, nDocs, cancellationToken);
             }
         }
 

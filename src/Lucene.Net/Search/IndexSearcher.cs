@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -7,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
@@ -42,25 +44,25 @@ namespace Lucene.Net.Search
     using Terms = Lucene.Net.Index.Terms;
 
     /// <summary>
-    /// Implements search over a single <see cref="Index.IndexReader"/>.
+    /// Implements search over a single <see cref="IndexReader"/>.
     ///
     /// <para/>Applications usually need only call the inherited
-    /// <see cref="Search(Query,int)"/>
-    /// or <see cref="Search(Query,Filter,int)"/> methods. For
+    /// <see cref="Search(Query,int,CancellationToken)"/>
+    /// or <see cref="Search(Query,Filter,int,CancellationToken)"/> methods. For
     /// performance reasons, if your index is unchanging, you
     /// should share a single <see cref="IndexSearcher"/> instance across
     /// multiple searches instead of creating a new one
     /// per-search.  If your index has changed and you wish to
     /// see the changes reflected in searching, you should
-    /// use <see cref="Index.DirectoryReader.OpenIfChanged(Index.DirectoryReader)"/>
+    /// use <see cref="DirectoryReader.OpenIfChanged(DirectoryReader)"/>
     /// to obtain a new reader and
     /// then create a new <see cref="IndexSearcher"/> from that.  Also, for
     /// low-latency turnaround it's best to use a near-real-time
-    /// reader (<see cref="Index.DirectoryReader.Open(Index.IndexWriter,bool)"/>).
-    /// Once you have a new <see cref="Index.IndexReader"/>, it's relatively
+    /// reader (<see cref="DirectoryReader.Open(IndexWriter,bool)"/>).
+    /// Once you have a new <see cref="Net.Index.IndexReader"/>, it's relatively
     /// cheap to create a new <see cref="IndexSearcher"/> from it.
     ///
-    /// <para/><a name="thread-safety"></a><p><b>NOTE</b>: 
+    /// <para/><a name="thread-safety"></a><p><b>NOTE</b>:
     /// <see cref="IndexSearcher"/> instances are completely
     /// thread safe, meaning multiple threads can call any of its
     /// methods, concurrently.  If your application requires
@@ -132,7 +134,7 @@ namespace Lucene.Net.Search
         /// <see cref="IndexSearcher"/> will not shutdown/awaitTermination this <see cref="TaskScheduler"/> on
         /// close; you must do so, eventually, on your own.
         /// <para/>
-        /// @lucene.experimental 
+        /// @lucene.experimental
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="context"/> is <c>null</c>.</exception>
         /// <seealso cref="IndexReaderContext"/>
@@ -212,7 +214,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Return the <see cref="Index.IndexReader"/> this searches. </summary>
+        /// Return the <see cref="IndexReader"/> this searches. </summary>
         public virtual IndexReader IndexReader => reader;
 
         /// <summary>
@@ -279,9 +281,9 @@ namespace Lucene.Net.Search
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
-        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, int n)
+        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, int n, CancellationToken cancellationToken = default)
         {
-            return Search(CreateNormalizedWeight(query), after, n);
+            return Search(CreateNormalizedWeight(query), after, n, cancellationToken);
         }
 
         /// <summary>
@@ -296,9 +298,9 @@ namespace Lucene.Net.Search
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
-        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n)
+        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n, CancellationToken cancellationToken = default)
         {
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), after, n);
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), after, n, cancellationToken);
         }
 
         /// <summary>
@@ -308,9 +310,9 @@ namespace Lucene.Net.Search
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> is <c>null</c>.</exception>
-        public virtual TopDocs Search(Query query, int n)
+        public virtual TopDocs Search(Query query, int n, CancellationToken cancellationToken = default)
         {
-            return Search(query, filter: null, n);
+            return Search(query, filter: null, n, cancellationToken);
         }
 
         /// <summary>
@@ -319,9 +321,9 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
-        public virtual TopDocs Search(Query query, Filter? filter, int n)
+        public virtual TopDocs Search(Query query, Filter? filter, int n, CancellationToken cancellationToken = default)
         {
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), after: null, n);
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), after: null, n, cancellationToken);
         }
 
         /// <summary>
@@ -337,9 +339,9 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="results"/> is <c>null</c>.</exception>
-        public virtual void Search(Query query, Filter? filter, ICollector results)
+        public virtual void Search(Query query, Filter? filter, ICollector results, CancellationToken cancellationToken = default)
         {
-            Search(m_leafContexts, CreateNormalizedWeight(WrapFilter(query, filter)), results);
+            Search(m_leafContexts, CreateNormalizedWeight(WrapFilter(query, filter)), results, cancellationToken);
         }
 
         /// <summary>
@@ -351,9 +353,9 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="results"/> is <c>null</c>.</exception>
-        public virtual void Search(Query query, ICollector results)
+        public virtual void Search(Query query, ICollector results, CancellationToken cancellationToken = default)
         {
-            Search(m_leafContexts, CreateNormalizedWeight(query), results);
+            Search(m_leafContexts, CreateNormalizedWeight(query), results, cancellationToken);
         }
 
         /// <summary>
@@ -363,16 +365,16 @@ namespace Lucene.Net.Search
         /// <paramref name="sort"/>.
         ///
         /// <para/>NOTE: this does not compute scores by default; use
-        /// <see cref="IndexSearcher.Search(Query,Filter,int,Sort,bool,bool)"/> to
+        /// <see cref="IndexSearcher.Search(Query,Filter,int,Sort,bool,bool,CancellationToken)"/> to
         /// control scoring.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
-        public virtual TopFieldDocs Search(Query query, Filter? filter, int n, Sort sort)
+        public virtual TopFieldDocs Search(Query query, Filter? filter, int n, Sort sort, CancellationToken cancellationToken = default)
         {
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), n, sort, false, false);
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), n, sort, false, false, cancellationToken);
         }
 
         /// <summary>
@@ -391,9 +393,9 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
-        public virtual TopFieldDocs Search(Query query, Filter? filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
+        public virtual TopFieldDocs Search(Query query, Filter? filter, int n, Sort sort, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken = default)
         {
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), n, sort, doDocScores, doMaxScore);
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), n, sort, doDocScores, doMaxScore, cancellationToken);
         }
 
         /// <summary>
@@ -409,11 +411,11 @@ namespace Lucene.Net.Search
         ///         <seealso cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
-        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n, Sort sort)
+        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n, Sort sort, CancellationToken cancellationToken = default)
         {
             FieldDoc? fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
 
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), fieldDoc, n, sort, true, false, false);
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), fieldDoc, n, sort, true, false, false, cancellationToken);
         }
 
         private static FieldDoc? GetScoreDocAsFieldDocIfNotNull(ScoreDoc? after)
@@ -439,9 +441,9 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
-        public virtual TopFieldDocs Search(Query query, int n, Sort sort)
+        public virtual TopFieldDocs Search(Query query, int n, Sort sort, CancellationToken cancellationToken = default)
         {
-            return Search(CreateNormalizedWeight(query), n, sort, false, false);
+            return Search(CreateNormalizedWeight(query), n, sort, false, false, cancellationToken);
         }
 
         /// <summary>
@@ -457,11 +459,11 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
-        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, int n, Sort sort)
+        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, int n, Sort sort, CancellationToken cancellationToken = default)
         {
             var fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
 
-            return Search(CreateNormalizedWeight(query), fieldDoc, n, sort, true, false, false);
+            return Search(CreateNormalizedWeight(query), fieldDoc, n, sort, true, false, false, cancellationToken);
         }
 
         /// <summary>
@@ -482,23 +484,23 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="query"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
-        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
+        public virtual TopDocs SearchAfter(ScoreDoc? after, Query query, Filter? filter, int n, Sort sort, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken = default)
         {
             var fieldDoc = GetScoreDocAsFieldDocIfNotNull(after);
 
-            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), fieldDoc, n, sort, true, doDocScores, doMaxScore);
+            return Search(CreateNormalizedWeight(WrapFilter(query, filter)), fieldDoc, n, sort, true, doDocScores, doMaxScore, cancellationToken);
         }
 
         /// <summary>
         /// Expert: Low-level search implementation.  Finds the top <paramref name="nDocs"/>
         /// hits for <c>query</c>, applying <c>filter</c> if non-null.
         ///
-        /// <para/>Applications should usually call <see cref="IndexSearcher.Search(Query,int)"/> or
-        /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> instead. </summary>
+        /// <para/>Applications should usually call <see cref="IndexSearcher.Search(Query,int,CancellationToken)"/> or
+        /// <see cref="IndexSearcher.Search(Query,Filter,int,CancellationToken)"/> instead. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="weight"/> is <c>null</c>.</exception>
-        protected virtual TopDocs Search(Weight weight, ScoreDoc? after, int nDocs)
+        protected virtual TopDocs Search(Weight weight, ScoreDoc? after, int nDocs, CancellationToken cancellationToken = default)
         {
             int limit = reader.MaxDoc;
             if (limit == 0)
@@ -513,7 +515,7 @@ namespace Lucene.Net.Search
 
             if (executor is null)
             {
-                return Search(m_leafContexts, weight, after, nDocs);
+                return Search(m_leafContexts, weight, after, nDocs, cancellationToken);
             }
             else
             {
@@ -557,13 +559,13 @@ namespace Lucene.Net.Search
         /// Expert: Low-level search implementation.  Finds the top <code>n</code>
         /// hits for <c>query</c>.
         ///
-        /// <para/>Applications should usually call <see cref="IndexSearcher.Search(Query,int)"/> or
-        /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> instead. </summary>
+        /// <para/>Applications should usually call <see cref="IndexSearcher.Search(Query,int,CancellationToken)"/> or
+        /// <see cref="IndexSearcher.Search(Query,Filter,int,CancellationToken)"/> instead. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="leaves"/> or
         ///         <paramref name="weight"/> is <c>null</c>.</exception>
-        protected virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc? after, int nDocs)
+        protected virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc? after, int nDocs, CancellationToken cancellationToken = default)
         {
             // LUCENENET: Added guard clause
             if (weight is null)
@@ -577,7 +579,7 @@ namespace Lucene.Net.Search
             }
             nDocs = Math.Min(nDocs, limit);
             TopScoreDocCollector collector = TopScoreDocCollector.Create(nDocs, after, !weight.ScoresDocsOutOfOrder);
-            Search(leaves, weight, collector);
+            Search(leaves, weight, collector, cancellationToken);
             return collector.GetTopDocs();
         }
 
@@ -588,26 +590,26 @@ namespace Lucene.Net.Search
         /// the top <paramref name="nDocs"/> hits for <c>query</c> and sorting the hits
         /// by the criteria in <paramref name="sort"/>.
         ///
-        /// <para/>Applications should usually call 
-        /// <see cref="IndexSearcher.Search(Query,Filter,int,Sort)"/> instead.
+        /// <para/>Applications should usually call
+        /// <see cref="IndexSearcher.Search(Query,Filter,int,Sort,CancellationToken)"/> instead.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="weight"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
-        protected virtual TopFieldDocs Search(Weight weight, int nDocs, Sort sort, bool doDocScores, bool doMaxScore)
+        protected virtual TopFieldDocs Search(Weight weight, int nDocs, Sort sort, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken = default)
         {
-            return Search(weight, after: null, nDocs, sort, true, doDocScores, doMaxScore);
+            return Search(weight, after: null, nDocs, sort, true, doDocScores, doMaxScore, cancellationToken);
         }
 
         /// <summary>
-        /// Just like <see cref="Search(Weight, int, Sort, bool, bool)"/>, but you choose
+        /// Just like <see cref="Search(Weight, int, Sort, bool, bool, CancellationToken)"/>, but you choose
         /// whether or not the fields in the returned <see cref="FieldDoc"/> instances should
         /// be set by specifying <paramref name="fillFields"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="weight"/> or
         ///         <paramref name="sort"/> is <c>null</c>.</exception>
-        protected virtual TopFieldDocs Search(Weight weight, FieldDoc? after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
+        protected virtual TopFieldDocs Search(Weight weight, FieldDoc? after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken = default)
         {
             if (sort is null)
                 throw new ArgumentNullException(nameof(sort), "Sort must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
@@ -622,7 +624,7 @@ namespace Lucene.Net.Search
             if (executor is null)
             {
                 // use all leaves here!
-                return Search(m_leafContexts, weight, after, nDocs, sort, fillFields, doDocScores, doMaxScore);
+                return Search(m_leafContexts, weight, after, nDocs, sort, fillFields, doDocScores, doMaxScore, cancellationToken);
             }
             else
             {
@@ -660,13 +662,13 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Just like <see cref="Search(Weight, int, Sort, bool, bool)"/>, but you choose
+        /// Just like <see cref="Search(Weight, int, Sort, bool, bool, CancellationToken)"/>, but you choose
         /// whether or not the fields in the returned <see cref="FieldDoc"/> instances should
         /// be set by specifying <paramref name="fillFields"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="leaves"/> or
         ///          <paramref name="weight"/> is <c>null</c>.</exception>
-        protected virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc? after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
+        protected virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc? after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken = default)
         {
             // LUCENENET: Added guard clause
             if (weight is null)
@@ -681,7 +683,7 @@ namespace Lucene.Net.Search
             nDocs = Math.Min(nDocs, limit);
 
             TopFieldCollector collector = TopFieldCollector.Create(sort, nDocs, after, fillFields, doDocScores, doMaxScore, !weight.ScoresDocsOutOfOrder);
-            Search(leaves, weight, collector);
+            Search(leaves, weight, collector, cancellationToken);
             return (TopFieldDocs)collector.GetTopDocs();
         }
 
@@ -689,7 +691,7 @@ namespace Lucene.Net.Search
         /// Lower-level search API.
         ///
         /// <para/>
-        /// <seealso cref="ICollector.Collect(int)"/> is called for every document. 
+        /// <seealso cref="ICollector.Collect(int)"/> is called for every document.
         ///
         /// <para/>
         /// NOTE: this method executes the searches on all given leaves exclusively.
@@ -705,7 +707,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="leaves"/>, <paramref name="weight"/>,
         ///         or <paramref name="collector"/> is <c>null</c>.</exception>
-        protected virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
+        protected virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector, CancellationToken cancellationToken = default)
         {
             // LUCENENET: Added guard clauses
             if (leaves is null)
@@ -1029,7 +1031,7 @@ namespace Lucene.Net.Search
             }
         }
 #nullable enable
-        
+
         /// <summary>
         /// A class holding a subset of the <see cref="IndexSearcher"/>s leaf contexts to be
         /// executed within a single thread.
