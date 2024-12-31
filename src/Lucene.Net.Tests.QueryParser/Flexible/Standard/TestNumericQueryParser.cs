@@ -94,7 +94,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             offset = TimeZoneInfo.ConvertTime(offset, timeZone);
             string formattedDate = offset.ToString(format, provider);
 
-            return DateTimeOffset.TryParseExact(formattedDate, format, provider, DateTimeStyles.None, out DateTimeOffset _);
+            return DateTimeOffset.TryParseExact(formattedDate, format, provider, DateTimeStyles.None, out DateTimeOffset parsed)
+                && parsed.ToUnixTimeMilliseconds() == date;
         }
 
         // LUCENENET specific bounds check
@@ -211,11 +212,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
                 dateFormatSanityCheckPass &= CheckDateFormatSanity(DATE_FORMAT, randomDate, TIMEZONE);
 
+                // LUCENENET NOTE - issue #846: the zh-Hant-TW culture on macOS and Linux in
+                // net6.0-net8.0 does not include the "tt" AM/PM designator in the long time pattern,
+                // causing midnight at the unix epoch to be interpreted as an AM time the day before
+                // when the time zone has a negative offset, instead of PM as it should be. This "sanity"
+                // check also makes sure that the round trip from the unix epoch to a string and back to
+                // a date is consistent. If it is not, we will try again with a different locale/time zone.
+                // This was fixed in net9.0, so that culture with a negative offset should work as expected.
                 dateFormatSanityCheckPass &= CheckDateFormatSanity(DATE_FORMAT, 0, TIMEZONE);
 
                 dateFormatSanityCheckPass &= CheckDateFormatSanity(DATE_FORMAT,
                           -randomDate, TIMEZONE);
-
                 count++;
             } while (!dateFormatSanityCheckPass);
 
