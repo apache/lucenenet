@@ -41,7 +41,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     ///     <item><term>doc.body.tokenized</term><description>specifies whether the body field should be tokenized (default = <b>doc.tokenized</b>).</description></item>
     ///     <item><term>doc.tokenized.norms</term><description>specifies whether norms should be stored in the index or not. (default <b>false</b>).</description></item>
     ///     <item><term>doc.body.tokenized.norms</term><description>
-    ///         specifies whether norms should be stored in the index for the body field. 
+    ///         specifies whether norms should be stored in the index for the body field.
     ///         This can be set to true, while <c>doc.tokenized.norms</c> is set to false, to allow norms storing just
     ///         for the body field. (default <b>true</b>).
     ///         </description></item>
@@ -180,14 +180,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private readonly DisposableThreadLocal<LeftOver> leftovr = new DisposableThreadLocal<LeftOver>();
         private DisposableThreadLocal<DocState> docState = new DisposableThreadLocal<DocState>();
 
-        public static readonly string BODY_FIELD = "body";
-        public static readonly string TITLE_FIELD = "doctitle";
-        public static readonly string DATE_FIELD = "docdate";
-        public static readonly string DATE_MSEC_FIELD = "docdatenum";
-        public static readonly string TIME_SEC_FIELD = "doctimesecnum";
-        public static readonly string ID_FIELD = "docid";
-        public static readonly string BYTES_FIELD = "bytes";
-        public static readonly string NAME_FIELD = "docname";
+        public const string BODY_FIELD = "body";
+        public const string TITLE_FIELD = "doctitle";
+        public const string DATE_FIELD = "docdate";
+        public const string DATE_MSEC_FIELD = "docdatenum";
+        public const string TIME_SEC_FIELD = "doctimesecnum";
+        public const string ID_FIELD = "docid";
+        public const string BYTES_FIELD = "bytes";
+        public const string NAME_FIELD = "docname";
 
         protected Config m_config;
 
@@ -275,7 +275,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             if (date is null)
             {
                 // just set to right now
-                date = DateTime.Now; 
+                date = DateTime.Now;
             }
 
             Field dateField = ds.GetNumericField(DATE_MSEC_FIELD, NumericType.INT64);

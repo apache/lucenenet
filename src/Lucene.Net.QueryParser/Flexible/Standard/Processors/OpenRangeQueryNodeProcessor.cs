@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// </summary>
     public class OpenRangeQueryNodeProcessor : QueryNodeProcessor
     {
-        public readonly static string OPEN_RANGE_TOKEN = "*";
+        public const string OPEN_RANGE_TOKEN = "*";
 
         public OpenRangeQueryNodeProcessor() { }
 

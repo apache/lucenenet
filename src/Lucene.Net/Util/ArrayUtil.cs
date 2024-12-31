@@ -38,6 +38,7 @@ namespace Lucene.Net.Util
         /// one JVM but failed later at search time with a
         /// different JVM.
         /// </summary>
+        // ReSharper disable once ConvertToConstant.Global - this changes to a computed value in later versions of Lucene
         public static readonly int MAX_ARRAY_LENGTH = int.MaxValue - 256;
 
         /*
