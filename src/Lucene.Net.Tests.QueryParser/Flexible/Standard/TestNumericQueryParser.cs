@@ -653,7 +653,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             TopDocs topDocs = searcher!.Search(query, 1000);
 
             string msg = $"Query <{queryStr}> retrieved {topDocs.TotalHits} document(s), {expectedDocCount} document(s) expected. " +
-                         $"[LOCALE: {LOCALE}, TIMEZONE: {{ Id: {TIMEZONE!.Id}, BaseUtcOffset: {TIMEZONE!.BaseUtcOffset}, Serialized: \"{TIMEZONE.ToSerializedString()}\" }}, DATE_STYLE: {DATE_STYLE}, TIME_STYLE: {TIME_STYLE}]";
+                         $"[LOCALE: {LOCALE}, TIMEZONE: {TIMEZONE!.Id}, DATE_STYLE: {DATE_STYLE}, TIME_STYLE: {TIME_STYLE}]";
 
             if (Verbose) Console.WriteLine(msg);
 
