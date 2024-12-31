@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
         public virtual void TestSingleLine()
         {
 #pragma warning disable 612, 618
-            CheckSort(new OfflineSorter(), new byte[][] { "Single line only.".GetBytes(IOUtils.CHARSET_UTF_8) });
+            CheckSort(new OfflineSorter(), new byte[][] { "Single line only.".GetBytes(IOUtils.ENCODING_UTF_8_NO_BOM) });
 #pragma warning restore 612, 618
         }
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util
         public virtual void TestSingleLine_AsStream()
         {
 #pragma warning disable 612, 618
-            CheckSortAsStream(new OfflineSorter(), new byte[][] { "Single line only.".GetBytes(IOUtils.CHARSET_UTF_8) });
+            CheckSortAsStream(new OfflineSorter(), new byte[][] { "Single line only.".GetBytes(IOUtils.ENCODING_UTF_8_NO_BOM) });
 #pragma warning restore 612, 618
         }
 

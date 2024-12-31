@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             CheckIndex checker = new CheckIndex(dir);
-            checker.InfoStream = new StreamWriter(bos, IOUtils.CHARSET_UTF_8);
+            checker.InfoStream = new StreamWriter(bos, IOUtils.ENCODING_UTF_8_NO_BOM);
             if (Verbose)
             {
                 checker.InfoStream = Console.Out;

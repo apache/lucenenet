@@ -51,15 +51,15 @@ namespace Lucene.Net.Util
         /// For reading data, either this or <see cref="Encoding.UTF8"/> can be used,
         /// as both will correctly interpret data with or without a BOM.
         /// </summary>
-        public static readonly Encoding CHARSET_UTF_8 = new UTF8Encoding(
+        public static readonly Encoding ENCODING_UTF_8_NO_BOM = new UTF8Encoding(
             encoderShouldEmitUTF8Identifier: false,
             throwOnInvalidBytes: true);
 
         /// <summary>
         /// UTF-8 charset string.
-        /// <para/>Where possible, use <see cref="CHARSET_UTF_8"/> instead,
+        /// <para/>Where possible, use <see cref="ENCODING_UTF_8_NO_BOM"/> instead,
         /// as using the <see cref="string"/> constant may slow things down. </summary>
-        /// <seealso cref="CHARSET_UTF_8"/>
+        /// <seealso cref="ENCODING_UTF_8_NO_BOM"/>
         public static readonly string UTF_8 = "UTF-8";
 
         /// <summary>

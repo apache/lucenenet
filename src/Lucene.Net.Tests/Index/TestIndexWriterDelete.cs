@@ -1400,7 +1400,7 @@ namespace Lucene.Net.Index
             ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             //MemoryStream bos = new MemoryStream(1024);
             CheckIndex checker = new CheckIndex(dir);
-            checker.InfoStream = new StreamWriter(bos, IOUtils.CHARSET_UTF_8);
+            checker.InfoStream = new StreamWriter(bos, IOUtils.ENCODING_UTF_8_NO_BOM);
             CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
             Assert.IsTrue(indexStatus.Clean);
             checker.FlushInfoStream();
@@ -1413,7 +1413,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             bos = new ByteArrayOutputStream(1024);
-            checker.InfoStream = new StreamWriter(bos, IOUtils.CHARSET_UTF_8);
+            checker.InfoStream = new StreamWriter(bos, IOUtils.ENCODING_UTF_8_NO_BOM);
             indexStatus = checker.DoCheckIndex(null);
             Assert.IsTrue(indexStatus.Clean);
             checker.FlushInfoStream();

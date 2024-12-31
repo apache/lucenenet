@@ -22,9 +22,9 @@ namespace Lucene.Net.Support;
 
 internal static class StandardCharsets
 {
-    /// <inheritdoc cref="IOUtils.CHARSET_UTF_8"/>
+    /// <inheritdoc cref="IOUtils.ENCODING_UTF_8_NO_BOM"/>
     /// <remarks>
-    /// This is a convenience reference to <see cref="IOUtils.CHARSET_UTF_8"/>.
+    /// This is a convenience reference to <see cref="IOUtils.ENCODING_UTF_8_NO_BOM"/>.
     /// </remarks>
-    public static readonly Encoding UTF_8 = IOUtils.CHARSET_UTF_8;
+    public static readonly Encoding UTF_8 = IOUtils.ENCODING_UTF_8_NO_BOM;
 }

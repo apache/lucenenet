@@ -600,7 +600,7 @@ namespace Lucene.Net.Util
             /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileStream"/>. </summary>
             /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
             public ByteSequencesWriter(FileStream stream)
-                : this(new BinaryWriter(stream, IOUtils.CHARSET_UTF_8, leaveOpen: false))
+                : this(new BinaryWriter(stream, IOUtils.ENCODING_UTF_8_NO_BOM, leaveOpen: false))
             {
             }
 
@@ -608,7 +608,7 @@ namespace Lucene.Net.Util
             /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileStream"/>. </summary>
             /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
             public ByteSequencesWriter(FileStream stream, bool leaveOpen)
-                : this(new BinaryWriter(stream, IOUtils.CHARSET_UTF_8, leaveOpen))
+                : this(new BinaryWriter(stream, IOUtils.ENCODING_UTF_8_NO_BOM, leaveOpen))
             {
             }
 
@@ -632,7 +632,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="BinaryWriter"/>.
             /// <b>NOTE:</b> To match Lucene, pass the <paramref name="writer"/>'s constructor the
-            /// <see cref="IOUtils.CHARSET_UTF_8"/>, which is UTF-8 without a byte order mark.
+            /// <see cref="IOUtils.ENCODING_UTF_8_NO_BOM"/>, which is UTF-8 without a byte order mark.
             /// </summary>
             /// <exception cref="ArgumentNullException"><paramref name="writer"/> is <c>null</c>.</exception>
             public ByteSequencesWriter(BinaryWriter writer)
@@ -722,7 +722,7 @@ namespace Lucene.Net.Util
             /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="FileStream"/>. </summary>
             /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
             public ByteSequencesReader(FileStream stream)
-                : this(new BinaryReader(stream, IOUtils.CHARSET_UTF_8, leaveOpen: false))
+                : this(new BinaryReader(stream, IOUtils.ENCODING_UTF_8_NO_BOM, leaveOpen: false))
             {
             }
 
@@ -730,7 +730,7 @@ namespace Lucene.Net.Util
             /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="FileStream"/>. </summary>
             /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
             public ByteSequencesReader(FileStream stream, bool leaveOpen)
-                : this(new BinaryReader(stream, IOUtils.CHARSET_UTF_8, leaveOpen))
+                : this(new BinaryReader(stream, IOUtils.ENCODING_UTF_8_NO_BOM, leaveOpen))
             {
             }
 
@@ -756,7 +756,7 @@ namespace Lucene.Net.Util
             /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="BinaryReader"/>.
             /// <para/>
             /// <b>NOTE:</b> To match Lucene, pass the <paramref name="reader"/>'s constructor the
-            /// <see cref="IOUtils.CHARSET_UTF_8"/>, which is UTF-8 without a byte order mark.
+            /// <see cref="IOUtils.ENCODING_UTF_8_NO_BOM"/>, which is UTF-8 without a byte order mark.
             /// </summary>
             /// <exception cref="ArgumentNullException"><paramref name="reader"/> is <c>null</c>.</exception>
             public ByteSequencesReader(BinaryReader reader)
