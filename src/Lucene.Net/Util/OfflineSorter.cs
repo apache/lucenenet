@@ -42,12 +42,6 @@ namespace Lucene.Net.Util
     public sealed class OfflineSorter
     {
         /// <summary>
-        /// The default encoding (UTF-8 without a byte order mark) used by <see cref="ByteSequencesReader"/> and <see cref="ByteSequencesWriter"/>.
-        /// This encoding should always be used when calling the constructor overloads that accept <see cref="BinaryReader"/> or <see cref="BinaryWriter"/>.
-        /// </summary>
-        public static readonly Encoding DEFAULT_ENCODING = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-
-        /// <summary>
         /// The recommended buffer size to use on <see cref="Sort(FileStream, FileStream)"/> or when creating a
         /// <see cref="ByteSequencesReader"/> and <see cref="ByteSequencesWriter"/>.
         /// </summary>
@@ -196,10 +190,10 @@ namespace Lucene.Net.Util
             /// </summary>
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, 
-                    "time={0:0.00} sec. total ({1:0.00} reading, {2:0.00} sorting, {3:0.00} merging), lines={4}, temp files={5}, merges={6}, soft ram limit={7:0.00} MB", 
-                    TotalTime / 1000.0d, ReadTime / 1000.0d, SortTime / 1000.0d, MergeTime / 1000.0d, 
-                    Lines, TempMergeFiles, MergeRounds, 
+                return string.Format(CultureInfo.InvariantCulture,
+                    "time={0:0.00} sec. total ({1:0.00} reading, {2:0.00} sorting, {3:0.00} merging), lines={4}, temp files={5}, merges={6}, soft ram limit={7:0.00} MB",
+                    TotalTime / 1000.0d, ReadTime / 1000.0d, SortTime / 1000.0d, MergeTime / 1000.0d,
+                    Lines, TempMergeFiles, MergeRounds,
                     (double)BufferSize / MB);
             }
         }
@@ -606,7 +600,7 @@ namespace Lucene.Net.Util
             /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileStream"/>. </summary>
             /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
             public ByteSequencesWriter(FileStream stream)
-                : this(new BinaryWriter(stream, DEFAULT_ENCODING, leaveOpen: false))
+                : this(new BinaryWriter(stream, IOUtils.CHARSET_UTF_8, leaveOpen: false))
             {
             }
 
@@ -614,7 +608,7 @@ namespace Lucene.Net.Util
             /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileStream"/>. </summary>
             /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
             public ByteSequencesWriter(FileStream stream, bool leaveOpen)
-                : this(new BinaryWriter(stream, DEFAULT_ENCODING, leaveOpen))
+                : this(new BinaryWriter(stream, IOUtils.CHARSET_UTF_8, leaveOpen))
             {
             }
 
@@ -638,7 +632,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="BinaryWriter"/>.
             /// <b>NOTE:</b> To match Lucene, pass the <paramref name="writer"/>'s constructor the
-            /// <see cref="DEFAULT_ENCODING"/>, which is UTF-8 without a byte order mark.
+            /// <see cref="IOUtils.CHARSET_UTF_8"/>, which is UTF-8 without a byte order mark.
             /// </summary>
             /// <exception cref="ArgumentNullException"><paramref name="writer"/> is <c>null</c>.</exception>
             public ByteSequencesWriter(BinaryWriter writer)
@@ -728,7 +722,7 @@ namespace Lucene.Net.Util
             /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="FileStream"/>. </summary>
             /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
             public ByteSequencesReader(FileStream stream)
-                : this(new BinaryReader(stream, DEFAULT_ENCODING, leaveOpen: false))
+                : this(new BinaryReader(stream, IOUtils.CHARSET_UTF_8, leaveOpen: false))
             {
             }
 
@@ -736,7 +730,7 @@ namespace Lucene.Net.Util
             /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="FileStream"/>. </summary>
             /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
             public ByteSequencesReader(FileStream stream, bool leaveOpen)
-                : this(new BinaryReader(stream, DEFAULT_ENCODING, leaveOpen))
+                : this(new BinaryReader(stream, IOUtils.CHARSET_UTF_8, leaveOpen))
             {
             }
 
@@ -762,7 +756,7 @@ namespace Lucene.Net.Util
             /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="BinaryReader"/>.
             /// <para/>
             /// <b>NOTE:</b> To match Lucene, pass the <paramref name="reader"/>'s constructor the
-            /// <see cref="DEFAULT_ENCODING"/>, which is UTF-8 without a byte order mark.
+            /// <see cref="IOUtils.CHARSET_UTF_8"/>, which is UTF-8 without a byte order mark.
             /// </summary>
             /// <exception cref="ArgumentNullException"><paramref name="reader"/> is <c>null</c>.</exception>
             public ByteSequencesReader(BinaryReader reader)
