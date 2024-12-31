@@ -41,7 +41,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// </summary>
     public class SpatialDocMaker : DocMaker
     {
-        public static readonly string SPATIAL_FIELD = "spatial";
+        public const string SPATIAL_FIELD = "spatial";
 
         //cache spatialStrategy by round number
         private static readonly IDictionary<int, SpatialStrategy> spatialStrategyCache = new Dictionary<int, SpatialStrategy>(); // LUCENENET: marked readonly
@@ -126,12 +126,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             void ICollection<KeyValuePair<string, string>>.Add(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
             void ICollection<KeyValuePair<string, string>>.Clear() => throw UnsupportedOperationException.Create();
             bool ICollection<KeyValuePair<string, string>>.Contains(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
-            
+
             void ICollection<KeyValuePair<string, string>>.CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) => throw UnsupportedOperationException.Create();
             IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator() => throw UnsupportedOperationException.Create();
             bool IDictionary<string, string>.Remove(string key) => throw UnsupportedOperationException.Create();
             bool ICollection<KeyValuePair<string, string>>.Remove(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
-            
+
             IEnumerator IEnumerable.GetEnumerator() => throw UnsupportedOperationException.Create();
 
             #endregion IDictionary<string, string> members
