@@ -424,7 +424,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [Test]
-        [Repeat(1000)]
         public void TestInclusiveNumericRange()
         {
             AssertRangeQuery(NumberType.ZERO, NumberType.ZERO, true, true, 1);
