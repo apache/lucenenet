@@ -69,25 +69,25 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Default value is 32. Change using <see cref="LiveIndexWriterConfig.TermIndexInterval"/> setter. </summary>
-        public static readonly int DEFAULT_TERM_INDEX_INTERVAL = 32; // TODO: this should be private to the codec, not settable here
+        public const int DEFAULT_TERM_INDEX_INTERVAL = 32; // TODO: this should be private to the codec, not settable here
 
         /// <summary>
         /// Denotes a flush trigger is disabled. </summary>
-        public static readonly int DISABLE_AUTO_FLUSH = -1;
+        public const int DISABLE_AUTO_FLUSH = -1;
 
         /// <summary>
         /// Disabled by default (because IndexWriter flushes by RAM usage by default). </summary>
-        public static readonly int DEFAULT_MAX_BUFFERED_DELETE_TERMS = DISABLE_AUTO_FLUSH;
+        public const int DEFAULT_MAX_BUFFERED_DELETE_TERMS = DISABLE_AUTO_FLUSH;
 
         /// <summary>
         /// Disabled by default (because IndexWriter flushes by RAM usage by default). </summary>
-        public static readonly int DEFAULT_MAX_BUFFERED_DOCS = DISABLE_AUTO_FLUSH;
+        public const int DEFAULT_MAX_BUFFERED_DOCS = DISABLE_AUTO_FLUSH;
 
         /// <summary>
         /// Default value is 16 MB (which means flush when buffered docs consume
         /// approximately 16 MB RAM).
         /// </summary>
-        public static readonly double DEFAULT_RAM_BUFFER_SIZE_MB = 16.0;
+        public const double DEFAULT_RAM_BUFFER_SIZE_MB = 16.0;
 
         /// <summary>
         /// Default value for the write lock timeout (1,000 ms).
@@ -97,15 +97,15 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Default setting for <see cref="UseReaderPooling"/>. </summary>
-        public static readonly bool DEFAULT_READER_POOLING = false;
+        public const bool DEFAULT_READER_POOLING = false;
 
         /// <summary>
         /// Default value is 1. Change using <see cref="LiveIndexWriterConfig.ReaderTermsIndexDivisor"/> setter. </summary>
-        public static readonly int DEFAULT_READER_TERMS_INDEX_DIVISOR = DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR;
+        public const int DEFAULT_READER_TERMS_INDEX_DIVISOR = DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR;
 
         /// <summary>
         /// Default value is 1945. Change using <see cref="RAMPerThreadHardLimitMB"/> setter. </summary>
-        public static readonly int DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB = 1945;
+        public const int DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB = 1945;
 
         /// <summary>
         /// The maximum number of simultaneous threads that may be
@@ -113,21 +113,21 @@ namespace Lucene.Net.Index
         /// than this many threads arrive they will wait for
         /// others to finish. Default value is 8.
         /// </summary>
-        public static readonly int DEFAULT_MAX_THREAD_STATES = 8;
+        public const int DEFAULT_MAX_THREAD_STATES = 8;
 
         /// <summary>
         /// Default value for compound file system for newly written segments
         /// (set to <c>true</c>). For batch indexing with very large
         /// ram buffers use <c>false</c>
         /// </summary>
-        public static readonly bool DEFAULT_USE_COMPOUND_FILE_SYSTEM = true;
+        public const bool DEFAULT_USE_COMPOUND_FILE_SYSTEM = true;
 
         /// <summary>
         /// Default value for calling <see cref="AtomicReader.CheckIntegrity()"/> before
         /// merging segments (set to <c>false</c>). You can set this
         /// to <c>true</c> for additional safety.
         /// </summary>
-        public static readonly bool DEFAULT_CHECK_INTEGRITY_AT_MERGE = false;
+        public const bool DEFAULT_CHECK_INTEGRITY_AT_MERGE = false;
 
         /// <summary>
         /// Gets or sets the default (for any instance) maximum time to wait for a write lock

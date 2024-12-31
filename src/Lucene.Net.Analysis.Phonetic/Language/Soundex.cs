@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <para/>
         /// since 1.11
         /// </summary>
-        public static readonly char SILENT_MARKER = '-';
+        public const char SILENT_MARKER = '-';
 
         /// <summary>
         /// This is a default mapping of the 26 letters used in US English. A value of <c>0</c> for a letter position
@@ -57,13 +57,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <seealso cref="US_ENGLISH_MAPPING"/>
         //                                                      ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        public static readonly string US_ENGLISH_MAPPING_STRING = "01230120022455012623010202";
+        public const string US_ENGLISH_MAPPING_STRING = "01230120022455012623010202";
 
         /// <summary>
         /// This is a default mapping of the 26 letters used in US English. A value of <c>0</c> for a letter position
         /// means do not encode.
         /// </summary>
-        /// <seealso cref="Soundex.Soundex(char[])"/>
+        /// <seealso cref="Soundex(char[])"/>
         private static readonly char[] US_ENGLISH_MAPPING = US_ENGLISH_MAPPING_STRING.ToCharArray();
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Creates an instance using <see cref="US_ENGLISH_MAPPING"/>.
         /// </summary>
-        /// <seealso cref="Soundex.Soundex(char[])"/>
+        /// <seealso cref="Soundex(char[])"/>
         /// <seealso cref="US_ENGLISH_MAPPING"/>
         public Soundex()
         {

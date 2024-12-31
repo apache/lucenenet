@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// index default field
         /// </summary>
         // TODO remove PLAINTEXT_FIELD_NAME replacing it with configuration APIs
-        public static readonly string PLAINTEXT_FIELD_NAME = "_plain";
+        public const string PLAINTEXT_FIELD_NAME = "_plain";
 
         private bool isLeaf = true;
 

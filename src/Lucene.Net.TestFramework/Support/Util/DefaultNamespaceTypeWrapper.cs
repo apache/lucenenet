@@ -291,6 +291,6 @@ namespace Lucene.Net.Util
 
         // From NUnit's Reflect class
 
-        internal static readonly BindingFlags AllMembers = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+        internal const BindingFlags AllMembers = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
     }
 }

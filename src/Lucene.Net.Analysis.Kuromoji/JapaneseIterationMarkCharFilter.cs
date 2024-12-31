@@ -42,10 +42,10 @@ namespace Lucene.Net.Analysis.Ja
     public class JapaneseIterationMarkCharFilter : CharFilter
     {
         /// <summary>Normalize kanji iteration marks by default</summary>
-        public static readonly bool NORMALIZE_KANJI_DEFAULT = true;
+        public const bool NORMALIZE_KANJI_DEFAULT = true;
 
         /// <summary>Normalize kana iteration marks by default</summary>
-        public static readonly bool NORMALIZE_KANA_DEFAULT = true;
+        public const bool NORMALIZE_KANA_DEFAULT = true;
 
         private const char KANJI_ITERATION_MARK = '\u3005';           // 々
 

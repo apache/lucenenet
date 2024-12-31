@@ -44,6 +44,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// NOTE: This was JAVA_VENDOR in Lucene
         /// </summary>
+        // ReSharper disable once ConvertToConstant.Global - matches other fields in this file, and might be computed in the future
         public static readonly string RUNTIME_VENDOR = "Microsoft"; // AppSettings.Get("java.vendor", "");
                                                                     //public static readonly string JVM_VENDOR = GetEnvironmentVariable("java.vm.vendor", "");
                                                                     //public static readonly string JVM_VERSION = GetEnvironmentVariable("java.vm.version", "");
@@ -150,6 +151,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// This is the Lucene version for display purposes.
         /// </summary>
+        // ReSharper disable once ConvertToConstant.Global - should always be evaluated, not inlined
         public static readonly string LUCENE_VERSION = "4.8.0";
 
         /// <summary>
