@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.Core
             }
             assertFalse(stpf.IncrementToken());
             stpf.End();
-            stpf.Dispose();
+            stpf.Close();
         }
 
         // print debug info depending on VERBOSE

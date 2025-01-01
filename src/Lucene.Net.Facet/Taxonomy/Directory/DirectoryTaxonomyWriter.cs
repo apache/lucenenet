@@ -435,7 +435,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     initializedReaderManager = false;
                 }
                 cache?.Dispose();
-                parentStream.Dispose(); // LUCENENET specific
+                parentStream.Close(); // LUCENENET specific
             }
             finally
             {

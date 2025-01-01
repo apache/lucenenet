@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Cn
      * limitations under the License.
      */
 
-    /// @deprecated Remove this test when ChineseAnalyzer is removed. 
+    /// @deprecated Remove this test when ChineseAnalyzer is removed.
     [Obsolete("Remove this test when ChineseAnalyzer is removed.")]
     public class TestChineseTokenizer : BaseTokenStreamTestCase
     {
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Cn
                 correctEndOffset++;
             }
             tokenizer.End();
-            tokenizer.Dispose();
+            tokenizer.Close();
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.Cn
         /*
          * ChineseTokenizer tokenizes english similar to SimpleAnalyzer.
          * it will lowercase terms automatically.
-         * 
+         *
          * ChineseFilter has an english stopword list, it also removes any single character tokens.
          * the stopword list is case-sensitive.
          */
