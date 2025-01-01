@@ -305,7 +305,7 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsParseException(this Exception e)
         {
-            // LUCENNET: Added this exception in J2N to cover this case because it is not a RuntimeException
+            // LUCENENET: Added this exception in J2N to cover this case because it is not a RuntimeException
             // which makes it different from NumberFormatException in Java and FormatException in .NET.
             return e is ParseException;
         }
@@ -591,7 +591,7 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsStackOverflowError(this Exception e)
         {
-            return e is StackOverflowException; // Uncatchable in .NET core, be sure to use with 
+            return e is StackOverflowException; // Uncatchable in .NET core, be sure to use with
         }
 
         /// <summary>
