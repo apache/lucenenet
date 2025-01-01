@@ -1,4 +1,5 @@
 ﻿using ICSharpCode.SharpZipLib.BZip2;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -27,7 +28,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
     public class StreamUtilsTest : BenchmarkTestCase
     {
-        private static readonly String TEXT = "Some-Text...";
+        private static readonly string TEXT = "Some-Text...";
         private DirectoryInfo testDir;
 
         [Test]
@@ -82,15 +83,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             assertReadText(autoOutFile("TEXT"));
         }
 
-        private FileInfo rawTextFile(String ext)
+        private FileInfo rawTextFile(string ext)
         {
             FileInfo f = new FileInfo(Path.Combine(testDir.FullName, "testfile." + ext));
-            using (TextWriter w = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8))
+            using (TextWriter w = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), StandardCharsets.UTF_8))
                 w.WriteLine(TEXT);
             return f;
         }
 
-        private FileInfo rawGzipFile(String ext)
+        private FileInfo rawGzipFile(string ext)
         {
             FileInfo f = new FileInfo(Path.Combine(testDir.FullName, "testfile." + ext));
             using (Stream os = new GZipStream(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), CompressionMode.Compress)) //new CompressorStreamFactory().createCompressorOutputStream(CompressorStreamFactory.GZIP, new FileOutputStream(f));
@@ -98,7 +99,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             return f;
         }
 
-        private FileInfo rawBzip2File(String ext)
+        private FileInfo rawBzip2File(string ext)
         {
             FileInfo f = new FileInfo(Path.Combine(testDir.FullName, "testfile." + ext));
             Stream os = new BZip2OutputStream(new FileStream(f.FullName, FileMode.Create, FileAccess.Write));  // new CompressorStreamFactory().createCompressorOutputStream(CompressorStreamFactory.BZIP2, new FileOutputStream(f));
@@ -106,7 +107,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             return f;
         }
 
-        private FileInfo autoOutFile(String ext)
+        private FileInfo autoOutFile(string ext)
         {
             FileInfo f = new FileInfo(Path.Combine(testDir.FullName, "testfile." + ext));
             Stream os = StreamUtils.GetOutputStream(f);
@@ -116,7 +117,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
         private void writeText(Stream os)
         {
-            TextWriter w = new StreamWriter(os, Encoding.UTF8);
+            TextWriter w = new StreamWriter(os, StandardCharsets.UTF_8);
             w.WriteLine(TEXT);
             w.Dispose();
         }
@@ -124,8 +125,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         private void assertReadText(FileInfo f)
         {
             Stream ir = StreamUtils.GetInputStream(f);
-            TextReader r = new StreamReader(ir, Encoding.UTF8);
-            String line = r.ReadLine();
+            TextReader r = new StreamReader(ir, StandardCharsets.UTF_8);
+            string line = r.ReadLine();
             assertEquals("Wrong text found in " + f.Name, TEXT, line);
             r.Dispose();
         }

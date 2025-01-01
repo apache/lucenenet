@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -63,7 +64,7 @@ namespace Lucene.Net.Index
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             CheckIndex checker = new CheckIndex(dir);
-            checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
+            checker.InfoStream = new StreamWriter(bos, IOUtils.ENCODING_UTF_8_NO_BOM);
             if (Verbose)
             {
                 checker.InfoStream = Console.Out;

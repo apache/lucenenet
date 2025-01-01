@@ -2,6 +2,7 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -589,7 +590,7 @@ namespace Lucene.Net.Util.Fst
                     Console.WriteLine(ord + " terms; " + fst.NodeCount + " nodes; " + fst.ArcCount + " arcs; " + fst.ArcWithOutputCount + " arcs w/ output; tot size " + fst.GetSizeInBytes());
                     if (fst.NodeCount < 100)
                     {
-                        TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.Create), Encoding.UTF8);
+                        TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.Create), StandardCharsets.UTF_8);
                         Util.ToDot(fst, w, false, false);
                         w.Dispose();
                         Console.WriteLine("Wrote FST to out.dot");

@@ -205,7 +205,7 @@ namespace Lucene.Net.Codecs.Compressing
                     data = new byte[length];
                     @in.ReadBytes(data, 0, length);
 #pragma warning disable 612, 618
-                    visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString(data));
+                    visitor.StringField(info, IOUtils.ENCODING_UTF_8_NO_BOM.GetString(data));
 #pragma warning restore 612, 618
                     break;
 

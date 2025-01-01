@@ -334,7 +334,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else
                 {
-                    visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString(bytes));
+                    visitor.StringField(info, IOUtils.ENCODING_UTF_8_NO_BOM.GetString(bytes));
                 }
             }
         }
