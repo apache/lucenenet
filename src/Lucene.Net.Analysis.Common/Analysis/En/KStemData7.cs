@@ -47,7 +47,9 @@ namespace Lucene.Net.Analysis.En
         private KStemData7()
         {
         }
-        internal static string[] data = new string[] {
+
+        // LUCENENET specific - made readonly
+        internal static readonly string[] data = {
             "rupee","rupture","rural","ruritanian","ruse",
             "rush","rushes","rushlight","rusk","russet",
             "rust","rustic","rusticate","rustication","rustle",

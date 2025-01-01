@@ -33,7 +33,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </summary>
     public class TaskSequence : PerfTask
     {
-        public static int REPEAT_EXHAUST = -2;
+        // LUCENENET specific - changed from a mutable static field to a constant.
+        // While the original Java code uses a mutable static field, it is only
+        // intended to be used as a sentinel value, so we are changing it to a
+        // constant to prevent accidental modification.
+        public const int REPEAT_EXHAUST = -2;
         private IList<PerfTask> tasks;
         private int repetitions = 1;
         private readonly bool parallel;

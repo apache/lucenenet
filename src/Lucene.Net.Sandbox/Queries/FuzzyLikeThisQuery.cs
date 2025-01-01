@@ -49,7 +49,7 @@ namespace Lucene.Net.Sandbox.Queries
         // a better way might be to convert this into multitermquery rewrite methods.
         // the rewrite method can 'average' the TermContext's term statistics (docfreq,totalTermFreq)
         // provided to TermQuery, so that the general idea is agnostic to any scoring system...
-        internal static TFIDFSimilarity sim = new DefaultSimilarity();
+        internal readonly static TFIDFSimilarity sim = new DefaultSimilarity(); // LUCENENET specific - made readonly
         private Query rewrittenQuery = null;
         private readonly IList<FieldVals> fieldVals = new JCG.List<FieldVals>();
         private readonly Analyzer analyzer;

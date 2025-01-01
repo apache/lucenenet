@@ -24,8 +24,8 @@ namespace Lucene.Net.Util.Events
 {
     internal static class Resources
     {
-        public static string EventAggregatorNotConstructedOnUIThread = "To use the UIThread option for subscribing, the EventAggregator must be constructed on the UI thread.";
-        public static string InvalidDelegateRerefenceTypeException = "Invalid Delegate Reference Type Exception";
+        public const string EventAggregatorNotConstructedOnUIThread = "To use the UIThread option for subscribing, the EventAggregator must be constructed on the UI thread.";
+        public const string InvalidDelegateRerefenceTypeException = "Invalid Delegate Reference Type Exception";
     }
 }
 
