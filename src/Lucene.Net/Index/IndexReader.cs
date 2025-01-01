@@ -85,10 +85,11 @@ namespace Lucene.Net.Index
 
         private protected IndexReader() // LUCENENET: Changed from internal to private protected
         {
-            if (!(this is CompositeReader || this is AtomicReader))
-            {
-                throw Error.Create("IndexReader should never be directly extended, subclass AtomicReader or CompositeReader instead.");
-            }
+            // LUCENENET NOTE: this is enforced by the compiler in .NET due to `private protected`, so we don't need to check it here.
+            // if (!(this is CompositeReader || this is AtomicReader))
+            // {
+            //     throw Error.Create("IndexReader should never be directly extended, subclass AtomicReader or CompositeReader instead.");
+            // }
         }
 
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
