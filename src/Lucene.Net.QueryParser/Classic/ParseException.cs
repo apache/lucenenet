@@ -204,7 +204,9 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// The end of line string for this machine.
         /// </summary>
-        protected static string eol = Environment.NewLine;
+        // LUCENENET specific - changed from a mutable protected static field into a property.
+        // While it's not likely that someone will change the end of line string, it is possible.
+        protected static string eol { get; set; } = Environment.NewLine;
 
         /// <summary>
         /// Used to convert raw characters to their escaped version
@@ -220,7 +222,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 switch (str[i])
                 {
 
-                    case (char)(0):
+                    case (char) (0):
                         continue;
 
                     case '\b':

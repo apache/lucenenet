@@ -659,7 +659,7 @@ namespace Lucene.Net.Index
 
             // LUCENENET: We created the segments names wrong in 4.8.0-beta00001 - 4.8.0-beta00015,
             // so we added a switch to be able to read these indexes in later versions.
-            int segmentRadix = SegmentInfos.useLegacySegmentNames ? 10 : J2N.Character.MaxRadix;
+            int segmentRadix = SegmentInfos.UseLegacySegmentNames ? 10 : J2N.Character.MaxRadix;
 
             for (int i = 0; i < numSegments; i++)
             {

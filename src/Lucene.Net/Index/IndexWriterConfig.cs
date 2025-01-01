@@ -93,7 +93,13 @@ namespace Lucene.Net.Index
         /// Default value for the write lock timeout (1,000 ms).
         /// </summary>
         /// <see cref="DefaultWriteLockTimeout"/>
-        public static long WRITE_LOCK_TIMEOUT = 1000;
+        /// <remarks>
+        /// WARNING: Per Lucene 4.8 behavior, modifying this also changes the static <see cref="DefaultWriteLockTimeout"/> value.
+        /// </remarks>
+        // LUCENENET specific - changed from a mutable static field to a property.
+        // NOTE: this is also accessed and set by DefaultWriteLockTimeout.
+        // This field is removed in later versions of Lucene.
+        public static long WRITE_LOCK_TIMEOUT { get; set; } = 1000;
 
         /// <summary>
         /// Default setting for <see cref="UseReaderPooling"/>. </summary>
@@ -133,6 +139,9 @@ namespace Lucene.Net.Index
         /// Gets or sets the default (for any instance) maximum time to wait for a write lock
         /// (in milliseconds).
         /// </summary>
+        /// <remarks>
+        /// WARNING: Per Lucene 4.8 behavior, modifying this also changes the static <see cref="WRITE_LOCK_TIMEOUT"/> value.
+        /// </remarks>
         public static long DefaultWriteLockTimeout
         {
             get => WRITE_LOCK_TIMEOUT;
