@@ -11,6 +11,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -449,7 +450,7 @@ namespace Lucene.Net.Search
                     return new CollectionStatistics(field, maxDoc, docCount, sumTotalTermFreq, sumDocFreq);
                 }
 
-                public override TopDocs Search(Query query, int numHits)
+                public override TopDocs Search(Query query, int numHits, CancellationToken cancellationToken = default)
                 {
                     TopDocs[] shardHits = new TopDocs[nodeVersions.Length];
                     for (int nodeID = 0; nodeID < nodeVersions.Length; nodeID++)
@@ -458,7 +459,7 @@ namespace Lucene.Net.Search
                         {
                             // My node; run using local shard searcher we
                             // already aquired:
-                            shardHits[nodeID] = LocalSearch(query, numHits);
+                            shardHits[nodeID] = LocalSearch(query, numHits, cancellationToken);
                         }
                         else
                         {
@@ -470,12 +471,12 @@ namespace Lucene.Net.Search
                     return TopDocs.Merge(null, numHits, shardHits);
                 }
 
-                public virtual TopDocs LocalSearch(Query query, int numHits)
+                public virtual TopDocs LocalSearch(Query query, int numHits, CancellationToken cancellationToken = default)
                 {
-                    return base.Search(query, numHits);
+                    return base.Search(query, numHits, cancellationToken);
                 }
 
-                public override TopDocs SearchAfter(ScoreDoc after, Query query, int numHits)
+                public override TopDocs SearchAfter(ScoreDoc after, Query query, int numHits, CancellationToken cancellationToken = default)
                 {
                     TopDocs[] shardHits = new TopDocs[nodeVersions.Length];
                     // results are merged in that order: score, shardIndex, doc. therefore we set
@@ -522,7 +523,7 @@ namespace Lucene.Net.Search
                         {
                             // My node; run using local shard searcher we
                             // already aquired:
-                            shardHits[nodeID] = LocalSearchAfter(shardAfter, query, numHits);
+                            shardHits[nodeID] = LocalSearchAfter(shardAfter, query, numHits, cancellationToken);
                         }
                         else
                         {
@@ -535,12 +536,12 @@ namespace Lucene.Net.Search
                     return TopDocs.Merge(null, numHits, shardHits);
                 }
 
-                public virtual TopDocs LocalSearchAfter(ScoreDoc after, Query query, int numHits)
+                public virtual TopDocs LocalSearchAfter(ScoreDoc after, Query query, int numHits, CancellationToken cancellationToken = default)
                 {
-                    return base.SearchAfter(after, query, numHits);
+                    return base.SearchAfter(after, query, numHits, cancellationToken);
                 }
 
-                public override TopFieldDocs Search(Query query, int numHits, Sort sort)
+                public override TopFieldDocs Search(Query query, int numHits, Sort sort, CancellationToken cancellationToken = default)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(sort != null);
                     TopDocs[] shardHits = new TopDocs[nodeVersions.Length];
@@ -550,7 +551,7 @@ namespace Lucene.Net.Search
                         {
                             // My node; run using local shard searcher we
                             // already aquired:
-                            shardHits[nodeID] = LocalSearch(query, numHits, sort);
+                            shardHits[nodeID] = LocalSearch(query, numHits, sort, cancellationToken);
                         }
                         else
                         {
@@ -562,9 +563,9 @@ namespace Lucene.Net.Search
                     return (TopFieldDocs)TopDocs.Merge(sort, numHits, shardHits);
                 }
 
-                public virtual TopFieldDocs LocalSearch(Query query, int numHits, Sort sort)
+                public virtual TopFieldDocs LocalSearch(Query query, int numHits, Sort sort, CancellationToken cancellationToken = default)
                 {
-                    return base.Search(query, numHits, sort);
+                    return base.Search(query, numHits, sort, cancellationToken);
                 }
             }
 

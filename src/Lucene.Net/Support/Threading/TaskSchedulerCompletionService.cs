@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.Support.Threading
@@ -31,9 +32,9 @@ namespace Lucene.Net.Support.Threading
             this.factory = new TaskFactory<T>(scheduler ?? TaskScheduler.Default);
         }
 
-        public Task<T> Submit(Func<T> task)
+        public Task<T> Submit(Func<T> task, CancellationToken cancellationToken = default)
         {
-            var t = factory.StartNew(task);
+            var t = factory.StartNew(task, cancellationToken);
             taskQueue.Enqueue(t);
             return t;
         }
