@@ -154,12 +154,7 @@ namespace Lucene.Net.Index
         /// System properties can also be injected by supplying a <see cref="Configuration.IConfigurationFactory"/> at application startup
         /// through <see cref="Configuration.ConfigurationSettings.SetConfigurationFactory(Configuration.IConfigurationFactory)"/>.
         /// </summary>
-        public static bool UseLegacySegmentNames
-        {
-            get => useLegacySegmentNames;
-            set => useLegacySegmentNames = value;
-        }
-        internal static bool useLegacySegmentNames = Util.SystemProperties.GetPropertyAsBoolean("useLegacySegmentNames", defaultValue: false);
+        public static bool UseLegacySegmentNames { get; set; } = Util.SystemProperties.GetPropertyAsBoolean("useLegacySegmentNames", defaultValue: false);
 
         /// <summary>
         /// Optimized version of <see cref="J2N.IntegralNumberExtensions.ToString(long, int)"/> with a radix of 36, that
@@ -184,7 +179,7 @@ namespace Lucene.Net.Index
                 case 9: return "9";
             }
 
-            if (!allowLegacyNames || !useLegacySegmentNames)
+            if (!allowLegacyNames || !UseLegacySegmentNames)
             {
                 return segment switch
                 {
