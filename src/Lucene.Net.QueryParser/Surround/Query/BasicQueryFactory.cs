@@ -107,9 +107,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (obj is not BasicQueryFactory bqf)
+            if (obj is not BasicQueryFactory other)
                 return false;
-            return AtMax == bqf.AtMax;
+            return AtMax == other.AtMax;
         }
     }
 }
