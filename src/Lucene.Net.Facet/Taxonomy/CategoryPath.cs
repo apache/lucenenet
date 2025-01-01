@@ -217,12 +217,11 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CategoryPath))
+            if (obj is not CategoryPath other)
             {
                 return false;
             }
 
-            CategoryPath other = (CategoryPath)obj;
             if (Length != other.Length)
             {
                 return false; // not same length, cannot be equal

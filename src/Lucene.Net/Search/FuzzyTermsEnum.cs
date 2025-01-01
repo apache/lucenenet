@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
 
         protected readonly int m_termLength;
 
-        protected int m_maxEdits; 
+        protected int m_maxEdits;
         protected readonly bool m_raw;
 
         protected readonly Terms m_terms;
@@ -487,11 +487,11 @@ namespace Lucene.Net.Search
                 {
                     return true;
                 }
-                if (!(other is LevenshteinAutomataAttribute))
+                if (other is not LevenshteinAutomataAttribute laa)
                 {
                     return false;
                 }
-                return automata.Equals(((LevenshteinAutomataAttribute)other).automata);
+                return automata.Equals(laa.automata);
             }
 
             public override void CopyTo(IAttribute target) // LUCENENET specific - intentionally expanding target to use IAttribute rather than Attribute

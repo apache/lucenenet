@@ -291,12 +291,11 @@ namespace Lucene.Net.Facet
 
         public override bool Equals(object obj)
         {
-            if (!(obj is DrillDownQuery))
+            if (obj is not DrillDownQuery other)
             {
                 return false;
             }
 
-            DrillDownQuery other = (DrillDownQuery)obj;
             return query.Equals(other.query) && base.Equals(other);
         }
 

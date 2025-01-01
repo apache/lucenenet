@@ -64,10 +64,10 @@ namespace Lucene.Net.Index
                 .SetOpenMode(OpenMode.CREATE));
 
             MergePolicy mp = w.Config.MergePolicy;
-            if (mp is LogByteSizeMergePolicy)
+            if (mp is LogByteSizeMergePolicy logByteSizeMergePolicy)
             {
                 // 1 petabyte:
-                ((LogByteSizeMergePolicy)mp).MaxMergeMB = 1024 * 1024 * 1024;
+                logByteSizeMergePolicy.MaxMergeMB = 1024 * 1024 * 1024;
             }
 
             Document doc = new Document();

@@ -351,14 +351,13 @@ namespace Lucene.Net.Util
 
             public override bool Equals(object that)
             {
-                if (!(that is ReaderField))
+                if (that is not ReaderField other)
                 {
                     return false;
                 }
 
-                ReaderField other = (ReaderField)that;
-                return (object.ReferenceEquals(this.readerKey, other.readerKey)
-                    && this.FieldName.Equals(other.FieldName, StringComparison.Ordinal));
+                return ReferenceEquals(this.readerKey, other.readerKey)
+                       && this.FieldName.Equals(other.FieldName, StringComparison.Ordinal);
             }
 
             public override string ToString()

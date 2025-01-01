@@ -41,9 +41,9 @@ namespace Lucene.Net.Util
         public virtual void Test()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("test2BPagedBytes"));
-            if (dir is MockDirectoryWrapper)
+            if (dir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
+                mockDirectoryWrapper.Throttling = Throttling.NEVER;
             }
             PagedBytes pb = new PagedBytes(15);
             IndexOutput dataOutput = dir.CreateOutput("foo", IOContext.DEFAULT);

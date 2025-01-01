@@ -82,12 +82,11 @@ namespace Lucene.Net.Search.Spans
             {
                 return true;
             }
-            if (!(o is SpanFirstQuery))
+            if (o is not SpanFirstQuery other)
             {
                 return false;
             }
 
-            SpanFirstQuery other = (SpanFirstQuery)o;
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
             return this.m_end == other.m_end
                 && this.m_match.Equals(other.m_match)

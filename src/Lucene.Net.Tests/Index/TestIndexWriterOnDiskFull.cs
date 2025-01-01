@@ -77,12 +77,12 @@ namespace Lucene.Net.Index
                     dir.MaxSizeInBytes = diskFree;
                     IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                     IMergeScheduler ms = writer.Config.MergeScheduler;
-                    if (ms is IConcurrentMergeScheduler)
+                    if (ms is IConcurrentMergeScheduler concurrentMergeScheduler)
                     {
                         // this test intentionally produces exceptions
                         // in the threads that CMS launches; we don't
                         // want to pollute test output with these.
-                        ((IConcurrentMergeScheduler)ms).SetSuppressExceptions();
+                        concurrentMergeScheduler.SetSuppressExceptions();
                     }
 
                     bool hitError = false;
@@ -304,18 +304,18 @@ namespace Lucene.Net.Index
                     IMergeScheduler ms = indWriter.Config.MergeScheduler;
                     for (int x = 0; x < 2; x++)
                     {
-                        if (ms is IConcurrentMergeScheduler)
+                        if (ms is IConcurrentMergeScheduler concurrentMergeScheduler)
                         // this test intentionally produces exceptions
                         // in the threads that CMS launches; we don't
                         // want to pollute test output with these.
                         {
                             if (0 == x)
                             {
-                                ((IConcurrentMergeScheduler)ms).SetSuppressExceptions();
+                                concurrentMergeScheduler.SetSuppressExceptions();
                             }
                             else
                             {
-                                ((IConcurrentMergeScheduler)ms).ClearSuppressExceptions();
+                                concurrentMergeScheduler.ClearSuppressExceptions();
                             }
                         }
 

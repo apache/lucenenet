@@ -140,15 +140,15 @@ namespace Lucene.Net.Search.Spans
 
         public override bool Equals(object o)
         {
-            if (!(o is FieldMaskingSpanQuery))
+            if (o is not FieldMaskingSpanQuery other)
             {
                 return false;
             }
-            FieldMaskingSpanQuery other = (FieldMaskingSpanQuery)o;
+
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
-            return (this.Field.Equals(other.Field, StringComparison.Ordinal)
-                && (NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost))
-                && this.MaskedQuery.Equals(other.MaskedQuery));
+            return this.Field.Equals(other.Field, StringComparison.Ordinal)
+                   && NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)
+                   && this.MaskedQuery.Equals(other.MaskedQuery);
         }
 
         public override int GetHashCode()

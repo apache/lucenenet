@@ -1468,9 +1468,9 @@ namespace Lucene.Net.Index
         public virtual void TestSimulatedCrashedWriter()
         {
             Directory dir = NewDirectory();
-            if (dir is MockDirectoryWrapper)
+            if (dir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).PreventDoubleWrite = false;
+                mockDirectoryWrapper.PreventDoubleWrite = false;
             }
 
             IndexWriter writer = null;
@@ -2116,11 +2116,10 @@ namespace Lucene.Net.Index
                 {
                     IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
                     IMergeScheduler ms = iwc.MergeScheduler;
-                    if (ms is IConcurrentMergeScheduler)
+                    if (ms is IConcurrentMergeScheduler cms)
                     {
                         IConcurrentMergeScheduler suppressFakeIOE = new ConcurrentMergeSchedulerAnonymousClass();
 
-                        IConcurrentMergeScheduler cms = (IConcurrentMergeScheduler)ms;
                         suppressFakeIOE.SetMaxMergesAndThreads(cms.MaxMergeCount, cms.MaxThreadCount);
                         suppressFakeIOE.SetMergeThreadPriority(cms.MergeThreadPriority);
                         iwc.SetMergeScheduler(suppressFakeIOE);

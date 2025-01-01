@@ -48,9 +48,9 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteLeftoverFiles()
         {
             Directory dir = NewDirectory();
-            if (dir is MockDirectoryWrapper)
+            if (dir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).PreventDoubleWrite = false;
+                mockDirectoryWrapper.PreventDoubleWrite = false;
             }
 
             MergePolicy mergePolicy = NewLogMergePolicy(true, 10);

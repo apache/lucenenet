@@ -49,9 +49,9 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostings"));
-            if (dir is MockDirectoryWrapper)
+            if (dir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
+                mockDirectoryWrapper.Throttling = Throttling.NEVER;
             }
 
             var iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
@@ -64,10 +64,10 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, iwc);
 
             MergePolicy mp = w.Config.MergePolicy;
-            if (mp is LogByteSizeMergePolicy)
+            if (mp is LogByteSizeMergePolicy logByteSizeMergePolicy)
             {
                 // 1 petabyte:
-                ((LogByteSizeMergePolicy)mp).MaxMergeMB = 1024 * 1024 * 1024;
+                logByteSizeMergePolicy.MaxMergeMB = 1024 * 1024 * 1024;
             }
 
             Document doc = new Document();

@@ -98,7 +98,7 @@ namespace Lucene.Net.Collation
 
         /*
          * Setting alternate=shifted to shift whitespace, punctuation and symbols
-         * to quaternary level 
+         * to quaternary level
          */
         [Test]
         public void TestIgnorePunctuation()
@@ -117,8 +117,8 @@ namespace Lucene.Net.Collation
         }
 
         /*
-         * Setting alternate=shifted and variableTop to shift whitespace, but not 
-         * punctuation or symbols, to quaternary level 
+         * Setting alternate=shifted and variableTop to shift whitespace, but not
+         * punctuation or symbols, to quaternary level
          */
         [Test]
         public void TestIgnoreWhitespace()
@@ -238,7 +238,7 @@ namespace Lucene.Net.Collation
             RuleBasedCollator tailoredCollator = new RuleBasedCollator(baseCollator.GetRules() + DIN5007_2_tailorings);
             string tailoredRules = tailoredCollator.GetRules();
             //
-            // at this point, you would save these tailoredRules to a file, 
+            // at this point, you would save these tailoredRules to a file,
             // and use the custom parameter.
             //
             String germanUmlaut = "Töne";
@@ -338,9 +338,9 @@ namespace Lucene.Net.Collation
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
             }
-            if (factory is IResourceLoaderAware)
+            if (factory is IResourceLoaderAware resourceLoaderAware)
             {
-                ((IResourceLoaderAware)factory).Inform(new ClasspathResourceLoader(GetType()));
+                resourceLoaderAware.Inform(new ClasspathResourceLoader(GetType()));
             }
             return factory;
         }

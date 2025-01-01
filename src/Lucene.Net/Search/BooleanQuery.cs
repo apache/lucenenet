@@ -678,11 +678,11 @@ namespace Lucene.Net.Search
         /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
-            if (!(o is BooleanQuery))
+            if (o is not BooleanQuery other)
             {
                 return false;
             }
-            BooleanQuery other = (BooleanQuery)o;
+
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
             return NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)
                 && this.clauses.Equals(other.clauses)

@@ -127,12 +127,11 @@ namespace Lucene.Net.Search.Spans
             {
                 return true;
             }
-            if (!(o is SpanPayloadCheckQuery))
+            if (o is not SpanPayloadCheckQuery other)
             {
                 return false;
             }
 
-            SpanPayloadCheckQuery other = (SpanPayloadCheckQuery)o;
             // LUCENENET NOTE: Need to use the structural equality comparer to compare equality of all contained values
             return payloadEqualityComparer.Equals(this.m_payloadToMatch, other.m_payloadToMatch)
                 && this.m_match.Equals(other.m_match)

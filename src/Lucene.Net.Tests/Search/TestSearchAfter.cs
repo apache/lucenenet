@@ -381,10 +381,10 @@ namespace Lucene.Net.Search
                 }
                 Assert.AreEqual(sd1.Doc, sd2.Doc);
                 Assert.AreEqual(sd1.Score, sd2.Score, 0f);
-                if (sd1 is FieldDoc)
+                if (sd1 is FieldDoc fieldDoc)
                 {
                     Assert.IsTrue(sd2 is FieldDoc);
-                    Assert.AreEqual(((FieldDoc)sd1).Fields, ((FieldDoc)sd2).Fields);
+                    Assert.AreEqual(fieldDoc.Fields, ((FieldDoc)sd2).Fields);
                 }
             }
         }

@@ -221,11 +221,11 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (!(o is Sort))
+            if (o is not Sort other)
             {
                 return false;
             }
-            Sort other = (Sort)o;
+
             return Arrays.Equals(this.fields, other.fields);
         }
 

@@ -742,11 +742,10 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (!(o is FieldCacheRangeFilter<T>))
+            if (o is not FieldCacheRangeFilter<T> other)
             {
                 return false;
             }
-            FieldCacheRangeFilter<T> other = (FieldCacheRangeFilter<T>)o;
 
             if (!this.field.Equals(other.field, StringComparison.Ordinal) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
             {

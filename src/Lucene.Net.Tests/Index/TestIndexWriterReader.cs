@@ -924,9 +924,9 @@ namespace Lucene.Net.Index
 
             Assert.AreEqual(0, excs.Count);
             r.Dispose();
-            if (dir1 is MockDirectoryWrapper)
+            if (dir1 is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ICollection<string> openDeletedFiles = ((MockDirectoryWrapper)dir1).GetOpenDeletedFiles();
+                ICollection<string> openDeletedFiles = mockDirectoryWrapper.GetOpenDeletedFiles();
                 Assert.AreEqual(0, openDeletedFiles.Count, "openDeleted=" + openDeletedFiles);
             }
 
@@ -970,9 +970,9 @@ namespace Lucene.Net.Index
 
         private Directory GetAssertNoDeletesDirectory(Directory directory)
         {
-            if (directory is MockDirectoryWrapper)
+            if (directory is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)directory).AssertNoDeleteOpenFile = true;
+                mockDirectoryWrapper.AssertNoDeleteOpenFile = true;
             }
             return directory;
         }

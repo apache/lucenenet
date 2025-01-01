@@ -386,15 +386,15 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (!(o is SortField))
+            if (o is not SortField other)
             {
                 return false;
             }
-            SortField other = (SortField)o;
-            return (StringHelper.Equals(other.field, this.field)
-                && other.type == this.type
-                && other.reverse == this.reverse
-                && (other.comparerSource is null ? this.comparerSource is null : other.comparerSource.Equals(this.comparerSource)));
+
+            return StringHelper.Equals(other.field, this.field)
+                   && other.type == this.type
+                   && other.reverse == this.reverse
+                   && (other.comparerSource is null ? this.comparerSource is null : other.comparerSource.Equals(this.comparerSource));
         }
 
         /// <summary>

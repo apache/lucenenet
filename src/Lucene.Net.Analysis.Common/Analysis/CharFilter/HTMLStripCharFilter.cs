@@ -30868,7 +30868,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// <returns></returns>
         private static BufferedCharFilter GetBufferedReader(TextReader reader)
         {
-            return (reader is BufferedCharFilter) ? (BufferedCharFilter)reader : new BufferedCharFilter(reader);
+            return reader as BufferedCharFilter ?? new BufferedCharFilter(reader);
         }
 
         public override int Read()

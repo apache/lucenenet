@@ -52,9 +52,9 @@ namespace Lucene.Net.Index
             // We want to "see" files removed if Lucene removed
             // them.  this is still worth running on Windows since
             // some files the IR opens and closes.
-            if (d is MockDirectoryWrapper)
+            if (d is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)d).NoDeleteOpenFile = false;
+                mockDirectoryWrapper.NoDeleteOpenFile = false;
             }
             RandomIndexWriter w = new RandomIndexWriter(Random, d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
             w.IndexWriter.Config.SetMaxBufferedDocs(TestUtil.NextInt32(Random, 5, 30));

@@ -503,14 +503,14 @@ namespace Lucene.Net.Search
         /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
-            if (!(o is PhraseQuery))
+            if (o is not PhraseQuery other)
             {
                 return false;
             }
-            PhraseQuery other = (PhraseQuery)o;
+
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
-            return (NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost))
-                && (this.slop == other.slop)
+            return NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)
+                && this.slop == other.slop
                 && this.terms.Equals(other.terms)
                 && this.positions.Equals(other.positions);
         }

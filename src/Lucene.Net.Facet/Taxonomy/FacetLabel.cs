@@ -141,12 +141,11 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public override bool Equals(object obj)
         {
-            if (!(obj is FacetLabel))
+            if (obj is not FacetLabel other)
             {
                 return false;
             }
 
-            FacetLabel other = (FacetLabel)obj;
             if (Length != other.Length)
             {
                 return false; // not same length, cannot be equal

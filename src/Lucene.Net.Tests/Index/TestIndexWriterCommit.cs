@@ -160,9 +160,9 @@ namespace Lucene.Net.Index
 
             // On abort, writer in fact may write to the same
             // segments_N file:
-            if (dir is MockDirectoryWrapper)
+            if (dir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).PreventDoubleWrite = false;
+                mockDirectoryWrapper.PreventDoubleWrite = false;
             }
 
             for (int i = 0; i < 12; i++)
@@ -291,9 +291,9 @@ namespace Lucene.Net.Index
             // Must disable throwing exc on double-write: this
             // test uses IW.rollback which easily results in
             // writing to same file more than once
-            if (dir is MockDirectoryWrapper)
+            if (dir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).PreventDoubleWrite = false;
+                mockDirectoryWrapper.PreventDoubleWrite = false;
             }
             IndexWriter writer = new IndexWriter(
                 dir,
@@ -638,9 +638,9 @@ namespace Lucene.Net.Index
         public virtual void TestPrepareCommitRollback()
         {
             Directory dir = NewDirectory();
-            if (dir is MockDirectoryWrapper)
+            if (dir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).PreventDoubleWrite = false;
+                mockDirectoryWrapper.PreventDoubleWrite = false;
             }
 
             IndexWriter writer = new IndexWriter(

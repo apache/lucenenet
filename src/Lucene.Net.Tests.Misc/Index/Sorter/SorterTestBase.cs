@@ -267,9 +267,9 @@ namespace Lucene.Net.Index.Sorter
             // test advance()
             DocsAndPositionsEnum reuse = sortedPositions;
             sortedPositions = termsEnum.DocsAndPositions(null, reuse);
-            if (sortedPositions is SortingAtomicReader.SortingDocsAndPositionsEnum)
+            if (sortedPositions is SortingAtomicReader.SortingDocsAndPositionsEnum positionsEnum)
             {
-                assertTrue(((SortingAtomicReader.SortingDocsAndPositionsEnum)sortedPositions).Reused(reuse)); // make sure reuse worked
+                assertTrue(positionsEnum.Reused(reuse)); // make sure reuse worked
             }
             doc = 0;
             while ((doc = sortedPositions.Advance(doc + TestUtil.NextInt32(Random, 1, 5))) != DocIdSetIterator.NO_MORE_DOCS)
@@ -345,9 +345,9 @@ namespace Lucene.Net.Index.Sorter
 
             DocsEnum reuse = docs;
             docs = termsEnum.Docs(mappedLiveDocs, reuse);
-            if (docs is SortingAtomicReader.SortingDocsEnum)
+            if (docs is SortingAtomicReader.SortingDocsEnum sortingDocsEnum)
             {
-                assertTrue(((SortingAtomicReader.SortingDocsEnum)docs).Reused(reuse)); // make sure reuse worked
+                assertTrue(sortingDocsEnum.Reused(reuse)); // make sure reuse worked
             }
             doc = -1;
             prev = -1;

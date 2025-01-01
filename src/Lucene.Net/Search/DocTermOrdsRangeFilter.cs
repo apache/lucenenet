@@ -162,11 +162,10 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (!(o is DocTermOrdsRangeFilter))
+            if (o is not DocTermOrdsRangeFilter other)
             {
                 return false;
             }
-            DocTermOrdsRangeFilter other = (DocTermOrdsRangeFilter)o;
 
             if (!this.field.Equals(other.field, StringComparison.Ordinal) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
             {

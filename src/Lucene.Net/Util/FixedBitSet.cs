@@ -710,11 +710,11 @@ namespace Lucene.Net.Util
             {
                 return true;
             }
-            if (!(o is FixedBitSet))
+            if (o is not FixedBitSet other)
             {
                 return false;
             }
-            var other = (FixedBitSet)o;
+
             if (numBits != other.Length)
             {
                 return false;

@@ -47,11 +47,11 @@ namespace Lucene.Net
             // LUCENENET: We compensate for the fact that
             // .NET doesn't have reliable results from ToString
             // by defaulting the behavior to return a concatenated
-            // list of the contents of enumerables rather than the 
+            // list of the contents of enumerables rather than the
             // .NET type name (similar to the way Java behaves).
             // Unless of course we already have a string (which
             // implements IEnumerable so we need skip it).
-            if (obj is IEnumerable && !(obj is string))
+            if (obj is IEnumerable list and not string)
             {
                 string result = obj.ToString();
                 // Assume that this is a default call to object.ToString()
@@ -63,7 +63,6 @@ namespace Lucene.Net
 
                 // If this is the default text, replace it with
                 // the contents of the enumerable as Java would.
-                IEnumerable list = obj as IEnumerable;
                 StringBuilder sb = new StringBuilder();
                 bool isArray = obj.GetType().IsArray;
                 sb.Append(isArray ? "{" : "[");

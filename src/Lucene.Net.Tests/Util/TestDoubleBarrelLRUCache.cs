@@ -183,8 +183,8 @@ namespace Lucene.Net.Util
             public override bool Equals(object other)
             {
                 // LUCENENET: Additional type check not present in Java code
-                if (other is CloneableObject)
-                    return this.value.Equals(((CloneableObject) other).value);
+                if (other is CloneableObject cloneableObject)
+                    return this.value.Equals(cloneableObject.value);
                 else
                     return false;
             }

@@ -57,10 +57,10 @@ namespace Lucene.Net.Search
     /// <para/>
     /// Collection initializer note: To create and populate a <see cref="MultiPhraseQuery"/>
     /// in a single statement, you can use the following example as a guide:
-    /// 
+    ///
     /// <code>
     /// var multiPhraseQuery = new MultiPhraseQuery() {
-    ///     new Term("field", "microsoft"), 
+    ///     new Term("field", "microsoft"),
     ///     new Term("field", "office")
     /// };
     /// </code>
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search
             private readonly MultiPhraseQuery outerInstance;
 
             private readonly Similarity similarity;
-            private readonly Similarity.SimWeight stats; 
+            private readonly Similarity.SimWeight stats;
             private readonly IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
 
             public MultiPhraseWeight(MultiPhraseQuery outerInstance, IndexSearcher searcher)
@@ -440,11 +440,11 @@ namespace Lucene.Net.Search
         /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
-            if (!(o is MultiPhraseQuery))
+            if (o is not MultiPhraseQuery other)
             {
                 return false;
             }
-            MultiPhraseQuery other = (MultiPhraseQuery)o;
+
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
             return NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)
                 && this.slop == other.slop
@@ -457,10 +457,10 @@ namespace Lucene.Net.Search
         public override int GetHashCode()
         {
             //If this doesn't work hash all elements of positions. This was used to reduce time overhead
-            return J2N.BitConversion.SingleToInt32Bits(Boost) 
-                ^ slop 
-                ^ TermArraysHashCode() 
-                ^ ((positions.Count == 0) ? 0 : positions.GetHashCode() 
+            return J2N.BitConversion.SingleToInt32Bits(Boost)
+                ^ slop
+                ^ TermArraysHashCode()
+                ^ ((positions.Count == 0) ? 0 : positions.GetHashCode()
                 ^ 0x4AC65113);
         }
 
@@ -470,7 +470,7 @@ namespace Lucene.Net.Search
             int hashCode = 1;
             foreach (Term[] termArray in termArrays)
             {
-                hashCode = 31 * hashCode 
+                hashCode = 31 * hashCode
                     + (termArray is null ? 0 : Arrays.GetHashCode(termArray));
             }
             return hashCode;

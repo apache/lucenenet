@@ -103,10 +103,9 @@ namespace Lucene.Net.Codecs.Memory
                 if (other == this)
                     return true;
 
-                if (!(other is TermData))
+                if (other is not TermData _other)
                     return false;
 
-                var _other = (TermData) other;
                 return StatsEqual(this, _other) && Int64sEqual(this, _other) && BytesEqual(this, _other);
             }
         }

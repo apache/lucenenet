@@ -72,9 +72,9 @@ namespace Lucene.Net.Index
                         iwc.SetInfoStream(new TextWriterInfoStream(Console.Out));
                     }
                     var ms = iwc.MergeScheduler;
-                    if (ms is IConcurrentMergeScheduler)
+                    if (ms is IConcurrentMergeScheduler concurrentMergeScheduler)
                     {
-                        ((IConcurrentMergeScheduler)ms).SetSuppressExceptions();
+                        concurrentMergeScheduler.SetSuppressExceptions();
                     }
                     w = new IndexWriter(dir, iwc);
                     if (r != null && Random.Next(5) == 3)

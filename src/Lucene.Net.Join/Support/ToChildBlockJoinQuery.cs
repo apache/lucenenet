@@ -135,12 +135,12 @@ namespace Lucene.Net.Join
                     // No matches
                     return null;
                 }
-                if (!(parents is FixedBitSet))
+                if (parents is not FixedBitSet fixedBitSet)
                 {
                     throw IllegalStateException.Create("parentFilter must return FixedBitSet; got " + parents);
                 }
 
-                return new ToChildBlockJoinScorer(this, parentScorer, (FixedBitSet)parents, _doScores, acceptDocs);
+                return new ToChildBlockJoinScorer(this, parentScorer, fixedBitSet, _doScores, acceptDocs);
             }
 
             public override Explanation Explain(AtomicReaderContext reader, int doc)

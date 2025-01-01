@@ -49,24 +49,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
 
         public override void CopyTo(IAttribute target)
         {
-
-            if (!(target is UniqueFieldAttribute))
+            if (target is not UniqueFieldAttribute uniqueFieldAttr)
             {
                 throw new ArgumentException(
                     "cannot copy the values from attribute UniqueFieldAttribute to an instance of "
                         + target.GetType().Name);
             }
 
-            UniqueFieldAttribute uniqueFieldAttr = (UniqueFieldAttribute)target;
             uniqueFieldAttr.uniqueField = uniqueField.toString();
         }
 
         public override bool Equals(object other)
         {
-            if (other is UniqueFieldAttribute)
+            if (other is UniqueFieldAttribute uniqueFieldAttr)
             {
-
-                return ((UniqueFieldAttribute)other).uniqueField
+                return uniqueFieldAttr.uniqueField
                     .Equals(this.uniqueField, System.StringComparison.Ordinal);
             }
 

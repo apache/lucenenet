@@ -679,11 +679,11 @@ namespace Lucene.Net.Index
         {
             Assert.AreEqual(0, reader.RefCount);
 
-            if (checkSubReaders && reader is CompositeReader)
+            if (checkSubReaders && reader is CompositeReader compositeReader)
             {
                 // we cannot use reader context here, as reader is
                 // already closed and calling getTopReaderContext() throws AlreadyClosed!
-                IList<IndexReader> subReaders = ((CompositeReader)reader).GetSequentialSubReaders();
+                IList<IndexReader> subReaders = compositeReader.GetSequentialSubReaders();
                 foreach (IndexReader r in subReaders)
                 {
                     AssertReaderClosed(r, checkSubReaders);

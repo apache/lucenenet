@@ -408,11 +408,11 @@ namespace Lucene.Net.Search
             // check the class and boosts of rewritten query
             Query rewritten = searcher.Rewrite(fq);
             Assert.IsTrue(clazz.IsInstanceOfType(rewritten), "is not instance of " + clazz.Name);
-            if (rewritten is FilteredQuery)
+            if (rewritten is FilteredQuery rewrittenFq)
             {
-                Assert.AreEqual(boost, rewritten.Boost, 1E-5f);
-                Assert.AreEqual(innerBoost, ((FilteredQuery)rewritten).Query.Boost, 1E-5f);
-                Assert.AreEqual(fq.Strategy, ((FilteredQuery)rewritten).Strategy);
+                Assert.AreEqual(boost, rewrittenFq.Boost, 1E-5f);
+                Assert.AreEqual(innerBoost, rewrittenFq.Query.Boost, 1E-5f);
+                Assert.AreEqual(fq.Strategy, rewrittenFq.Strategy);
             }
             else
             {

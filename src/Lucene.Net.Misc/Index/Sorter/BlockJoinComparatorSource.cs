@@ -176,11 +176,11 @@ namespace Lucene.Net.Index.Sorter
                 {
                     throw IllegalStateException.Create("AtomicReader " + context.AtomicReader + " contains no parents!");
                 }
-                if (!(parents is FixedBitSet))
+                if (parents is not FixedBitSet fixedBitSet)
                 {
                     throw IllegalStateException.Create("parentFilter must return FixedBitSet; got " + parents);
                 }
-                parentBits = (FixedBitSet)parents;
+                parentBits = fixedBitSet;
                 for (int i = 0; i < parentComparers.Length; i++)
                 {
                     parentComparers[i] = parentComparers[i].SetNextReader(context);

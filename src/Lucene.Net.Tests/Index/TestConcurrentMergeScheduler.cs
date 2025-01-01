@@ -398,9 +398,9 @@ namespace Lucene.Net.Index
         public virtual void TestTotalBytesSize()
         {
             Directory d = NewDirectory();
-            if (d is MockDirectoryWrapper)
+            if (d is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)d).Throttling = Throttling.NEVER;
+                mockDirectoryWrapper.Throttling = Throttling.NEVER;
             }
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMaxBufferedDocs(5);

@@ -197,11 +197,11 @@ namespace Lucene.Net.Spatial.Prefix
             if (shape != null)
             {
                 IList<IShape> shapes;
-                if (shape is ShapePair)
+                if (shape is ShapePair shapePair)
                 {
                     shapes = new JCG.List<IShape>(2);
-                    shapes.Add(((ShapePair)shape).shape1);
-                    shapes.Add(((ShapePair)shape).shape2);
+                    shapes.Add(shapePair.shape1);
+                    shapes.Add(shapePair.shape2);
                 }
                 else
                 {
@@ -412,9 +412,8 @@ namespace Lucene.Net.Spatial.Prefix
         {
             if (snapMe is null)
                 return null;
-            if (snapMe is ShapePair)
+            if (snapMe is ShapePair me)
             {
-                ShapePair me = (ShapePair)snapMe;
                 return new ShapePair(gridSnap(me.shape1), gridSnap(me.shape2), me.biasContainsThenWithin, ctx, ctx2D);
             }
             if (snapMe is IPoint)

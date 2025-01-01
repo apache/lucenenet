@@ -59,10 +59,10 @@ namespace Lucene.Net.Benchmarks.ByTask
                 {
                     foundAdd = true;
                 }
-                if (task is TaskSequence)
+                if (task is TaskSequence taskSequence)
                 {
-                    assertEquals("repetions should be 1000 for " + parsedTasks, 1000, ((TaskSequence)task).Repetitions);
-                    assertTrue("sequence for " + parsedTasks + " should be parallel!", ((TaskSequence)task).IsParallel);
+                    assertEquals("repetions should be 1000 for " + parsedTasks, 1000, taskSequence.Repetitions);
+                    assertTrue("sequence for " + parsedTasks + " should be parallel!", taskSequence.IsParallel);
                 }
                 assertTrue("Task " + taskStr + " was not found in " + alg.toString(), foundAdd);
             }
@@ -84,10 +84,10 @@ namespace Lucene.Net.Benchmarks.ByTask
                 {
                     foundAdd = true;
                 }
-                if (task is TaskSequence)
+                if (task is TaskSequence taskSequence)
                 {
-                    assertEquals("repetions should be 1000 for " + parsedTasks, 1000, ((TaskSequence)task).Repetitions);
-                    assertFalse("sequence for " + parsedTasks + " should be sequential!", ((TaskSequence)task).IsParallel);
+                    assertEquals("repetions should be 1000 for " + parsedTasks, 1000, taskSequence.Repetitions);
+                    assertFalse("sequence for " + parsedTasks + " should be sequential!", taskSequence.IsParallel);
                 }
                 assertTrue("Task " + taskStr + " was not found in " + alg.toString(), foundAdd);
             }

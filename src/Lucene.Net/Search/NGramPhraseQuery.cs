@@ -31,10 +31,10 @@ namespace Lucene.Net.Search
     /// <para/>
     /// Collection initializer note: To create and populate a <see cref="PhraseQuery"/>
     /// in a single statement, you can use the following example as a guide:
-    /// 
+    ///
     /// <code>
     /// var phraseQuery = new NGramPhraseQuery(2) {
-    ///     new Term("field", "ABCD"), 
+    ///     new Term("field", "ABCD"),
     ///     new Term("field", "EFGH")
     /// };
     /// </code>
@@ -105,11 +105,11 @@ namespace Lucene.Net.Search
         /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
-            if (!(o is NGramPhraseQuery))
+            if (o is not NGramPhraseQuery other)
             {
                 return false;
             }
-            NGramPhraseQuery other = (NGramPhraseQuery)o;
+
             if (this.n != other.n)
             {
                 return false;
@@ -121,10 +121,10 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return J2N.BitConversion.SingleToInt32Bits(Boost) 
-                ^ Slop 
-                ^ ArrayEqualityComparer<Term>.OneDimensional.GetHashCode(GetTerms()) 
-                ^ ArrayEqualityComparer<int>.OneDimensional.GetHashCode(GetPositions()) 
+            return J2N.BitConversion.SingleToInt32Bits(Boost)
+                ^ Slop
+                ^ ArrayEqualityComparer<Term>.OneDimensional.GetHashCode(GetTerms())
+                ^ ArrayEqualityComparer<int>.OneDimensional.GetHashCode(GetPositions())
                 ^ n;
         }
     }

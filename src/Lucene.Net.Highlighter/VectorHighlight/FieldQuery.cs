@@ -175,10 +175,10 @@ namespace Lucene.Net.Search.VectorHighlight
 
         /// <summary>
         /// Create expandQueries from <paramref name="flatQueries"/>.
-        /// 
+        ///
         /// <code>
         /// expandQueries := flatQueries + overlapped phrase queries
-        /// 
+        ///
         /// ex1) flatQueries={a,b,c}
         ///     => expandQueries={a,b,c}
         /// ex2) flatQueries={a,"b c","c d"}
@@ -200,13 +200,13 @@ namespace Lucene.Net.Search.VectorHighlight
                     i++;
                 }
                 expandQueries.Add(query);
-                if (!(query is PhraseQuery)) continue;
+                if (query is not PhraseQuery pq) continue;
                 using IEnumerator<Query> j = flatQueries.GetEnumerator();
                 while (j.MoveNext())
                 {
                     Query qj = j.Current;
-                    if (!(qj is PhraseQuery)) continue;
-                    CheckOverlap(expandQueries, (PhraseQuery)query, (PhraseQuery)qj);
+                    if (qj is not PhraseQuery pqj) continue;
+                    CheckOverlap(expandQueries, pq, pqj);
                 }
             }
 
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         /// <summary>
         /// Check if <see cref="PhraseQuery"/> A and B have overlapped part.
-        /// 
+        ///
         /// <code>
         /// ex1) A="a b", B="b c" => overlap; expandQueries={"a b c"}
         /// ex2) A="b c", B="a b" => overlap; expandQueries={"a b c"}
@@ -247,7 +247,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         /// <summary>
         /// Check if src and dest have overlapped part and if it is, create <see cref="PhraseQuery"/>s and add <paramref name="expandQueries"/>.
-        /// 
+        ///
         /// <code>
         /// ex1) src="a b", dest="c d"       => no overlap
         /// ex2) src="a b", dest="a b c"     => no overlap
@@ -328,7 +328,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         /// <summary>
         /// Save the set of terms in the queries to <see cref="termSetMap"/>.
-        /// 
+        ///
         /// <code>
         /// ex1) q=name:john
         ///      - fieldMatch==true
