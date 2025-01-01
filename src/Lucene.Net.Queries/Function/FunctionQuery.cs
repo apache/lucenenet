@@ -202,7 +202,7 @@ namespace Lucene.Net.Queries.Function
         public override bool Equals(object o)
         {
             if (o is null) return false;
-            if (!(o is FunctionQuery other)) return false;
+            if (o is not FunctionQuery other) return false;
             return Boost == other.Boost
                 && func.Equals(other.func);
         }

@@ -111,7 +111,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is SumTotalTermFreqValueSource other))
+            if (o is not SumTotalTermFreqValueSource other)
                 return false;
             return this.m_indexedField.Equals(other.m_indexedField, StringComparison.Ordinal);
         }

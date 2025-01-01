@@ -77,7 +77,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
                 node.Set(this.childrenBuffer);
             }
             else if (this.usingAnd && node is BooleanQueryNode
-                && !(node is OrQueryNode))
+                && node is not OrQueryNode)
             {
                 this.childrenBuffer.Clear();
                 IList<IQueryNode> children = node.GetChildren();
@@ -96,7 +96,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
         private static IQueryNode ApplyModifier(IQueryNode node, Modifier mod) // LUCENENET: CA1822: Mark members as static
         {
             // check if modifier is not already defined and is default
-            if (!(node is ModifierQueryNode modNode))
+            if (node is not ModifierQueryNode modNode)
             {
                 return new ModifierQueryNode(node, mod);
             }

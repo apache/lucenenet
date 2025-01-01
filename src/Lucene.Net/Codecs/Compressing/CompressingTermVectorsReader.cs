@@ -778,7 +778,7 @@ namespace Lucene.Net.Codecs.Compressing
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetEnumerator(TermsEnum reuse)
             {
-                if (reuse is null || !(reuse is TVTermsEnum termsEnum))
+                if (reuse is null || reuse is not TVTermsEnum termsEnum)
                     termsEnum = new TVTermsEnum();
 
                 termsEnum.Reset(numTerms, flags, prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex, payloadBytes, new ByteArrayDataInput(termBytes.Bytes, termBytes.Offset, termBytes.Length));
@@ -922,7 +922,7 @@ namespace Lucene.Net.Codecs.Compressing
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override sealed DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                if (reuse is null || !(reuse is TVDocsEnum docsEnum))
+                if (reuse is null || reuse is not TVDocsEnum docsEnum)
                     docsEnum = new TVDocsEnum();
 
                 docsEnum.Reset(liveDocs, termFreqs[ord], positionIndex[ord], positions, startOffsets, lengths, payloads, payloadIndex);

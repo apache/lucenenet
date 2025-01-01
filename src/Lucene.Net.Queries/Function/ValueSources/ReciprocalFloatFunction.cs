@@ -119,7 +119,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is ReciprocalSingleFunction other))
+            if (o is not ReciprocalSingleFunction other)
                 return false;
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
             return J2N.BitConversion.SingleToInt32Bits(this.m_m) == J2N.BitConversion.SingleToInt32Bits(other.m_m)

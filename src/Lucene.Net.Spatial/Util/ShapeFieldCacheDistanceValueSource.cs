@@ -118,7 +118,7 @@ namespace Lucene.Net.Spatial.Util
             if (this == o) return true;
             if (o is null || GetType() != o.GetType()) return false;
 
-            if (!(o is ShapeFieldCacheDistanceValueSource that)) return false;
+            if (o is not ShapeFieldCacheDistanceValueSource that) return false;
             if (!ctx.Equals(that.ctx)) return false;
             if (!from.Equals(that.from)) return false;
             if (!provider.Equals(that.provider)) return false;

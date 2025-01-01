@@ -221,7 +221,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return false;
             }
-            if (!(obj is SortedInt32Set other)) // LUCENENET specific - don't compare against FrozenInt32Set
+            if (obj is not SortedInt32Set other) // LUCENENET specific - don't compare against FrozenInt32Set
             {
                 return false;
             }

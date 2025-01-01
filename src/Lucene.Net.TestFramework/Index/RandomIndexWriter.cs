@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
 
             // Make sure we sometimes test indices that don't get
             // any forced merges:
-            doRandomForceMerge = !(c.MergePolicy is NoMergePolicy) && r.NextBoolean();
+            doRandomForceMerge = c.MergePolicy is not NoMergePolicy && r.NextBoolean();
         }
 
         /// <summary>

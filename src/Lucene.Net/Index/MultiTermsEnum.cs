@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
             if (queue.Count > 0)
             {
                 PullTop();
-                return !(current is null);
+                return current is not null;
             }
             else
             {
@@ -441,7 +441,7 @@ namespace Lucene.Net.Index
         {
             // Can only reuse if incoming enum is also a MultiDocsEnum
             // ... and was previously created w/ this MultiTermsEnum:
-            if (reuse is null || !(reuse is MultiDocsEnum docsEnum) || !docsEnum.CanReuse(this))
+            if (reuse is null || reuse is not MultiDocsEnum docsEnum || !docsEnum.CanReuse(this))
                 docsEnum = new MultiDocsEnum(this, subs.Length);
 
             int upto = 0;
@@ -511,7 +511,7 @@ namespace Lucene.Net.Index
         {
             // Can only reuse if incoming enum is also a MultiDocsAndPositionsEnum
             // ... and was previously created w/ this MultiTermsEnum:
-            if (reuse is null || !(reuse is MultiDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(this))
+            if (reuse is null || reuse is not MultiDocsAndPositionsEnum docsAndPositionsEnum || !docsAndPositionsEnum.CanReuse(this))
 
                 docsAndPositionsEnum = new MultiDocsAndPositionsEnum(this, subs.Length);
 

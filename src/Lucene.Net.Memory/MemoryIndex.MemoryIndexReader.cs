@@ -322,7 +322,7 @@ namespace Lucene.Net.Index.Memory
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
-                    if (reuse is null || !(reuse is MemoryDocsEnum toReuse))
+                    if (reuse is null || reuse is not MemoryDocsEnum toReuse)
                         toReuse = new MemoryDocsEnum();
 
                     return toReuse.Reset(liveDocs, info.sliceArray.freq[info.sortedTerms[termUpto]]);
@@ -330,7 +330,7 @@ namespace Lucene.Net.Index.Memory
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
-                    if (reuse is null || !(reuse is MemoryDocsAndPositionsEnum toReuse))
+                    if (reuse is null || reuse is not MemoryDocsAndPositionsEnum toReuse)
                         toReuse = new MemoryDocsAndPositionsEnum(outerInstance);
 
                     int ord = info.sortedTerms[termUpto];

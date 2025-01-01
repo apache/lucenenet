@@ -394,10 +394,10 @@ namespace Lucene.Net.Search
                             // Only check if key.custom (the parser) is
                             // non-null; else, we check twice for a single
                             // call to FieldCache.getXXX
-                            if (!(key.Custom is null) && !(wrapper is null))
+                            if (key.Custom is not null && wrapper is not null)
                             {
                                 TextWriter infoStream = wrapper.InfoStream;
-                                if (!(infoStream is null))
+                                if (infoStream is not null)
                                 {
                                     PrintNewInsanity(infoStream, progress.Value);
                                 }

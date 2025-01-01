@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Spans
             {
                 return true;
             }
-            if (!(o is SpanNearQuery spanNearQuery))
+            if (o is not SpanNearQuery spanNearQuery)
             {
                 return false;
             }

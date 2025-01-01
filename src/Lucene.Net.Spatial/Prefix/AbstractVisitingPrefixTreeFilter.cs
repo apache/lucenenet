@@ -331,7 +331,7 @@ namespace Lucene.Net.Spatial.Prefix
         {
             // LUCENENET specific - on the first loop, we need to check for null,
             // but on each subsequent loop, we can use the result of MoveNext()
-            if (!(thisTerm is null) && StringHelper.StartsWith(thisTerm, curVNodeTerm)) //TODO refactor to use method on curVNode.cell
+            if (thisTerm is not null && StringHelper.StartsWith(thisTerm, curVNodeTerm)) //TODO refactor to use method on curVNode.cell
             {
                 // LUCENENET specific - added guard clause for m_termsEnum
                 if (m_termsEnum is null)

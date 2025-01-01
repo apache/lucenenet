@@ -193,7 +193,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     this.latestNodeVerified = true;
                 }
             }
-            else if (!(node is BooleanQueryNode))
+            else if (node is not BooleanQueryNode)
             {
                 this.queryNodeList.Add(ApplyModifier(node, node.Parent));
                 this.latestNodeVerified = false;

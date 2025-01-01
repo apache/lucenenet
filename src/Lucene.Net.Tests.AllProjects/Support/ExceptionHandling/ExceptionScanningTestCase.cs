@@ -133,7 +133,7 @@ namespace Lucene.Net.Support.ExceptionHandling
             };
 
             // Special case - this doesn't exist on .NET Framework, so we only add it if not null
-            if (!(DebugAssertExceptionType is null))
+            if (DebugAssertExceptionType is not null)
             {
                 result.Add(DebugAssertExceptionType);                 // Corresponds to Java's AssertionError
             }
@@ -384,41 +384,41 @@ namespace Lucene.Net.Support.ExceptionHandling
             };
 
             // .NET Core 3.0 + only
-            if (!(SwitchExpressionExceptionType is null))
+            if (SwitchExpressionExceptionType is not null)
             {
                 result.Add(SwitchExpressionExceptionType);
             }
 
             // .NET Framework only
-            if (!(RemotingExceptionType is null))
+            if (RemotingExceptionType is not null)
             {
                 result.Add(RemotingExceptionType);
             }
-            if (!(RemotingTimeoutExceptionType is null))
+            if (RemotingTimeoutExceptionType is not null)
             {
                 result.Add(RemotingTimeoutExceptionType);
             }
-            if (!(RemotingServerExceptionType is null))
+            if (RemotingServerExceptionType is not null)
             {
                 result.Add(RemotingServerExceptionType);
             }
-            if (!(CryptographicUnexpectedOperationExceptionType is null))
+            if (CryptographicUnexpectedOperationExceptionType is not null)
             {
                 result.Add(CryptographicUnexpectedOperationExceptionType);
             }
-            if (!(HostProtectionExceptionType is null))
+            if (HostProtectionExceptionType is not null)
             {
                 result.Add(HostProtectionExceptionType);
             }
-            if (!(PolicyExceptionType is null))
+            if (PolicyExceptionType is not null)
             {
                 result.Add(PolicyExceptionType);
             }
-            if (!(IdentityNotMappedExceptionType is null))
+            if (IdentityNotMappedExceptionType is not null)
             {
                 result.Add(IdentityNotMappedExceptionType);
             }
-            if (!(XmlSyntaxExceptionType is null))
+            if (XmlSyntaxExceptionType is not null)
             {
                 result.Add(XmlSyntaxExceptionType);
             }
@@ -468,7 +468,7 @@ namespace Lucene.Net.Support.ExceptionHandling
             };
 
             // Special case - this doesn't exist on .NET Framework, so we only add it if not null
-            if (!(DebugAssertExceptionType is null))
+            if (DebugAssertExceptionType is not null)
             {
                 result[DebugAssertExceptionType] = (exceptionType, message) =>
                 {
@@ -480,7 +480,7 @@ namespace Lucene.Net.Support.ExceptionHandling
                 };
             }
 
-            if (!(MetadataExceptionType is null))
+            if (MetadataExceptionType is not null)
             {
                 result[MetadataExceptionType] = (exceptionType, message) =>
                 {
@@ -492,7 +492,7 @@ namespace Lucene.Net.Support.ExceptionHandling
                 };
             }
 
-            if (!(CrossAppDomainMarshaledExceptionType is null))
+            if (CrossAppDomainMarshaledExceptionType is not null)
             {
                 result[CrossAppDomainMarshaledExceptionType] = (exceptionType, message) =>
                 {

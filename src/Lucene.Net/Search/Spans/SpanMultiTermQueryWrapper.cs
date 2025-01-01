@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Spans
             get
             {
                 MultiTermQuery.RewriteMethod m = m_query.MultiTermRewriteMethod;
-                if (!(m is SpanRewriteMethod spanRewriteMethod))
+                if (m is not SpanRewriteMethod spanRewriteMethod)
                 {
                     throw UnsupportedOperationException.Create("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
                 }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Spans
         public override Query Rewrite(IndexReader reader)
         {
             Query q = m_query.Rewrite(reader);
-            if (!(q is SpanQuery))
+            if (q is not SpanQuery)
             {
                 throw UnsupportedOperationException.Create("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
             }

@@ -179,7 +179,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is ScaleSingleFunction other))
+            if (o is not ScaleSingleFunction other)
                 return false;
             return J2N.BitConversion.SingleToInt32Bits(this.m_min) == J2N.BitConversion.SingleToInt32Bits(other.m_min)
                 && J2N.BitConversion.SingleToInt32Bits(this.m_max) == J2N.BitConversion.SingleToInt32Bits(other.m_max)

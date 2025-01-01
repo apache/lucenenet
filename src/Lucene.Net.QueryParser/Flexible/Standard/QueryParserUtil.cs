@@ -66,7 +66,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 Query q = qp.Parse(queries[i], fields[i]);
 
                 if (q != null && // q never null, just being defensive
-                    (!(q is BooleanQuery booleanQuery) || booleanQuery.Clauses.Count > 0))
+                    (q is not BooleanQuery booleanQuery || booleanQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, Occur.SHOULD);
                 }
@@ -126,7 +126,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 Query q = qp.Parse(query, fields[i]);
 
                 if (q != null && // q never null, just being defensive
-                    (!(q is BooleanQuery booleanQuery) || booleanQuery.Clauses.Count > 0))
+                    (q is not BooleanQuery booleanQuery || booleanQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, flags[i]);
                 }
@@ -187,7 +187,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 Query q = qp.Parse(queries[i], fields[i]);
 
                 if (q != null && // q never null, just being defensive
-                    (!(q is BooleanQuery booleanQuery) || booleanQuery.Clauses.Count > 0))
+                    (q is not BooleanQuery booleanQuery || booleanQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, flags[i]);
                 }

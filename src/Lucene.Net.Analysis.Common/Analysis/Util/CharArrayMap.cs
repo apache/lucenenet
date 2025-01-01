@@ -2713,7 +2713,7 @@ namespace Lucene.Net.Analysis.Util
             }
             else
             {
-                if (!(array is object[] objects))
+                if (array is not object[] objects)
                 {
                     throw new ArgumentException(SR.Argument_InvalidArrayType);
                 }

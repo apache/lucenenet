@@ -252,7 +252,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public static bool operator <(FacetLabel left, FacetLabel right)
         {
-            return left is null ? !(right is null) : left.CompareTo(right) < 0;
+            return left is null ? right is not null : left.CompareTo(right) < 0;
         }
 
         public static bool operator <=(FacetLabel left, FacetLabel right)
@@ -262,7 +262,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public static bool operator >(FacetLabel left, FacetLabel right)
         {
-            return !(left is null) && left.CompareTo(right) > 0;
+            return left is not null && left.CompareTo(right) > 0;
         }
 
         public static bool operator >=(FacetLabel left, FacetLabel right)

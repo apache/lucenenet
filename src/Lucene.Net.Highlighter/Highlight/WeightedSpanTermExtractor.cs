@@ -372,7 +372,7 @@ namespace Lucene.Net.Search.Highlight
         {
             if (internalReader is null)
             {
-                if (wrapToCaching && !(tokenStream is CachingTokenFilter))
+                if (wrapToCaching && tokenStream is not CachingTokenFilter)
                 {
                     tokenStream = new CachingTokenFilter(new OffsetLimitTokenFilter(tokenStream, maxDocCharsToAnalyze));
                     cachedTokenStream = true;

@@ -242,7 +242,7 @@ namespace Lucene.Net.Codecs.Lucene41
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
-            if (reuse is null || !(reuse is BlockDocsEnum docsEnum) || !docsEnum.CanReuse(docIn, fieldInfo))
+            if (reuse is null || reuse is not BlockDocsEnum docsEnum || !docsEnum.CanReuse(docIn, fieldInfo))
                 docsEnum = new BlockDocsEnum(this, fieldInfo);
 
             return docsEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState, flags);
@@ -258,14 +258,14 @@ namespace Lucene.Net.Codecs.Lucene41
 
             if ((!indexHasOffsets || (flags & DocsAndPositionsFlags.OFFSETS) == 0) && (!indexHasPayloads || (flags & DocsAndPositionsFlags.PAYLOADS) == 0))
             {
-                if (reuse is null || !(reuse is BlockDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(docIn, fieldInfo))
+                if (reuse is null || reuse is not BlockDocsAndPositionsEnum docsAndPositionsEnum || !docsAndPositionsEnum.CanReuse(docIn, fieldInfo))
                     docsAndPositionsEnum = new BlockDocsAndPositionsEnum(this, fieldInfo);
 
                 return docsAndPositionsEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState);
             }
             else
             {
-                if (reuse is null || !(reuse is EverythingEnum everythingEnum) || !everythingEnum.CanReuse(docIn, fieldInfo))
+                if (reuse is null || reuse is not EverythingEnum everythingEnum || !everythingEnum.CanReuse(docIn, fieldInfo))
                     everythingEnum = new EverythingEnum(this, fieldInfo);
 
                 return everythingEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState, flags);

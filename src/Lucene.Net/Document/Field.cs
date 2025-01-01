@@ -403,7 +403,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetStringValue(string value)
         {
-            if (!(FieldsData is string))
+            if (FieldsData is not string)
             {
                 throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to string");
             }
@@ -416,7 +416,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetReaderValue(TextReader value)
         {
-            if (!(FieldsData is TextReader))
+            if (FieldsData is not TextReader)
             {
                 throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to TextReader");
             }
@@ -432,7 +432,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetBytesValue(BytesRef value)
         {
-            if (!(FieldsData is BytesRef))
+            if (FieldsData is not BytesRef)
             {
                 throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to BytesRef");
             }
@@ -458,7 +458,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetByteValue(byte value)
         {
-            if (!(FieldsData is Byte))
+            if (FieldsData is not Byte)
             {
                 throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Byte");
             }
@@ -471,7 +471,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetInt16Value(short value) // LUCENENET specific: Renamed from SetShortValue to follow .NET conventions
         {
-            if (!(FieldsData is Int16))
+            if (FieldsData is not Int16)
             {
                 throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Short");
             }
@@ -484,7 +484,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetInt32Value(int value) // LUCENENET specific: Renamed from SetIntValue to follow .NET conventions
         {
-            if (!(FieldsData is Int32))
+            if (FieldsData is not Int32)
             {
                 throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Integer");
             }
@@ -497,7 +497,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetInt64Value(long value) // LUCENENET specific: Renamed from SetLongValue to follow .NET conventions
         {
-            if (!(FieldsData is Int64))
+            if (FieldsData is not Int64)
             {
                 throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Long");
             }
@@ -510,7 +510,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetSingleValue(float value) // LUCENENET specific: Renamed from SetFloatValue to follow .NET conventions
         {
-            if (!(FieldsData is Single))
+            if (FieldsData is not Single)
             {
                 throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Float");
             }
@@ -523,7 +523,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetDoubleValue(double value)
         {
-            if (!(FieldsData is Double))
+            if (FieldsData is not Double)
             {
                 throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Double");
             }
@@ -877,7 +877,7 @@ namespace Lucene.Net.Documents
                 {
                     throw new ArgumentException("Non-Tokenized Fields must have a String value");
                 }
-                if (!(internalTokenStream is StringTokenStream))
+                if (internalTokenStream is not StringTokenStream)
                 {
                     // lazy init the TokenStream as it is heavy to instantiate
                     // (attributes,...) if not needed (stored field loading)

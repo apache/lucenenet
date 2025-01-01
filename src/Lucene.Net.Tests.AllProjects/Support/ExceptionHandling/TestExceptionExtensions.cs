@@ -390,7 +390,7 @@ namespace Lucene.Net.Support.ExceptionHandling
                     Assert.Pass($"Expected: Caught exception {e.GetType().FullName}");
                 }
             }
-            catch (Exception e) when (!(e is NUnit.Framework.SuccessException))
+            catch (Exception e) when (e is not NUnit.Framework.SuccessException)
             {
                 // not expected
                 Assert.Fail($"Exception thrown when expected to be caught: {e.GetType().FullName}");
@@ -418,7 +418,7 @@ namespace Lucene.Net.Support.ExceptionHandling
                     Assert.Fail($"Exception caught when expected to be thrown: {e.GetType().FullName}");
                 }
             }
-            catch (Exception e) when (!(e is NUnit.Framework.AssertionException))
+            catch (Exception e) when (e is not NUnit.Framework.AssertionException)
             {
                 // expected
                 Assert.Pass($"Expected: Did not catch exception {e.GetType().FullName}");

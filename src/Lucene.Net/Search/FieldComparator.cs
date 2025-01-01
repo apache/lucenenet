@@ -1001,7 +1001,7 @@ namespace Lucene.Net.Search
                 // wrap with a ScoreCachingWrappingScorer so that successive calls to
                 // score() will not incur score computation over and
                 // over again.
-                if (!(scorer is ScoreCachingWrappingScorer))
+                if (scorer is not ScoreCachingWrappingScorer)
                 {
                     this.scorer = new ScoreCachingWrappingScorer(scorer);
                 }

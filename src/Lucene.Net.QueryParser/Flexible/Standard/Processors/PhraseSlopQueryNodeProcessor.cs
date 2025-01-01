@@ -39,8 +39,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         {
             if (node is SlopQueryNode phraseSlopNode)
             {
-                if (!(phraseSlopNode.GetChild() is TokenizedPhraseQueryNode)
-                    && !(phraseSlopNode.GetChild() is MultiPhraseQueryNode))
+                if (phraseSlopNode.GetChild() is not TokenizedPhraseQueryNode
+                    && phraseSlopNode.GetChild() is not MultiPhraseQueryNode)
                 {
                     return phraseSlopNode.GetChild();
                 }

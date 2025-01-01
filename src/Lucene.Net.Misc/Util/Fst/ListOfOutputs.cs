@@ -88,8 +88,8 @@ namespace Lucene.Net.Util.Fst
 
         public override object Add(object prefix, object output)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!(prefix is IList));
-            if (!(output is IList outputList))
+            if (Debugging.AssertsEnabled) Debugging.Assert(prefix is not IList);
+            if (output is not IList outputList)
             {
                 return outputs.Add((T)prefix, (T)output);
             }
@@ -106,13 +106,13 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(object output, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!(output is IList));
+            if (Debugging.AssertsEnabled) Debugging.Assert(output is not IList);
             outputs.Write((T)output, @out);
         }
 
         public override void WriteFinalOutput(object output, DataOutput @out)
         {
-            if (!(output is IList outputList))
+            if (output is not IList outputList)
             {
                 @out.WriteVInt32(1);
                 outputs.Write((T)output, @out);
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util.Fst
 
         public override string OutputToString(object output)
         {
-            if (!(output is IList outputList))
+            if (output is not IList outputList)
             {
                 return outputs.OutputToString((T)output);
             }
@@ -180,7 +180,7 @@ namespace Lucene.Net.Util.Fst
         public override object Merge(object first, object second)
         {
             IList<T> outputList = new JCG.List<T>();
-            if (!(first is IList firstList))
+            if (first is not IList firstList)
             {
                 outputList.Add((T)first);
             }
@@ -191,7 +191,7 @@ namespace Lucene.Net.Util.Fst
                     outputList.Add((T)value);
                 }
             }
-            if (!(second is IList secondList))
+            if (second is not IList secondList)
             {
                 outputList.Add((T)second);
             }
@@ -214,7 +214,7 @@ namespace Lucene.Net.Util.Fst
 
         public IList<T> AsList(object output)
         {
-            if (!(output is IList<T> outputList))
+            if (output is not IList<T> outputList)
             {
                 return new JCG.List<T>(1) { (T)output };
             }

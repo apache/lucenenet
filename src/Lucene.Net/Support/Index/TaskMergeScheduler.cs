@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
                 {
                     ae.Handle(ex =>
                     {
-                        if (!(ex is OperationCanceledException))
+                        if (ex is not OperationCanceledException)
                         {
                             HandleMergeException(ex);
                             return true;
@@ -330,7 +330,7 @@ namespace Lucene.Net.Index
 
         private void OnMergeThreadCompleted(object sender, EventArgs e)
         {
-            if (!(sender is MergeThread mergeThread))
+            if (sender is not MergeThread mergeThread)
             {
                 return;
             }
@@ -604,7 +604,7 @@ namespace Lucene.Net.Index
                 catch (Exception exc)
                 {
                     // Ignore the exception if it was due to abort:
-                    if (!(exc is MergePolicy.MergeAbortedException))
+                    if (exc is not MergePolicy.MergeAbortedException)
                     {
                         //System.out.println(Thread.currentThread().getName() + ": CMS: exc");
                         //exc.printStackTrace(System.out)
@@ -649,7 +649,7 @@ namespace Lucene.Net.Index
 
             public override bool Equals(object obj)
             {
-                if (!(obj is MergeThread compared)
+                if (obj is not MergeThread compared
                     || (Instance is null && compared.Instance != null)
                     || (Instance != null && compared.Instance is null))
                 {

@@ -43,7 +43,7 @@ namespace Lucene.Net.Util.Events
         {
             if (actionReference == null)
                 throw new ArgumentNullException(nameof(actionReference));
-            if (!(actionReference.Target is Action))
+            if (actionReference.Target is not System.Action)
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.InvalidDelegateRerefenceTypeException, typeof(Action).FullName), nameof(actionReference));
 
             _actionReference = actionReference;
@@ -125,12 +125,12 @@ namespace Lucene.Net.Util.Events
         {
             if (actionReference == null)
                 throw new ArgumentNullException(nameof(actionReference));
-            if (!(actionReference.Target is Action<TPayload>))
+            if (actionReference.Target is not Action<TPayload>)
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.InvalidDelegateRerefenceTypeException, typeof(Action<TPayload>).FullName), nameof(actionReference));
 
             if (filterReference == null)
                 throw new ArgumentNullException(nameof(filterReference));
-            if (!(filterReference.Target is Predicate<TPayload>))
+            if (filterReference.Target is not Predicate<TPayload>)
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.InvalidDelegateRerefenceTypeException, typeof(Predicate<TPayload>).FullName), nameof(filterReference));
 
             _actionReference = actionReference;

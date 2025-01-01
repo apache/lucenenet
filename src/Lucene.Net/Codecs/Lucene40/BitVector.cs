@@ -262,7 +262,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public void Write(Directory d, string name, IOContext context)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!(d is CompoundFileDirectory));
+            if (Debugging.AssertsEnabled) Debugging.Assert(d is not CompoundFileDirectory);
             IndexOutput output = d.CreateOutput(name, context);
             try
             {

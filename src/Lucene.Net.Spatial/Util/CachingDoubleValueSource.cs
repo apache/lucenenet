@@ -104,7 +104,7 @@ namespace Lucene.Net.Spatial.Util
         public override bool Equals(object? o)
         {
             if (this == o) return true;
-            if (o is null || !(o is CachingDoubleValueSource that)) return false;
+            if (o is null || o is not CachingDoubleValueSource that) return false;
             if (m_source != null ? !m_source.Equals(that.m_source) : that.m_source != null) return false;
 
             return true;

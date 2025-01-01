@@ -1218,7 +1218,7 @@ namespace Lucene.Net.Index
                                 lastPos = pos;
                                 BytesRef payload = postings.GetPayload();
                                 // LUCENENET specific - restructured to reduce number of checks in production
-                                if (!(payload is null))
+                                if (payload is not null)
                                 {
                                     if (Debugging.AssertsEnabled) Debugging.Assert(payload.IsValid());
                                     if (payload.Length < 1)

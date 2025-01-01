@@ -98,10 +98,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
             if (node is ITextableQueryNode
-                && !(node is WildcardQueryNode)
-                && !(node is FuzzyQueryNode)
-                && !(node is RegexpQueryNode)
-                && !(node.Parent is IRangeQueryNode))
+                && node is not WildcardQueryNode
+                && node is not FuzzyQueryNode
+                && node is not RegexpQueryNode
+                && node.Parent is not IRangeQueryNode)
             {
                 FieldQueryNode fieldNode = ((FieldQueryNode)node);
                 string text = fieldNode.GetTextAsString();
@@ -190,9 +190,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                     return fieldNode;
                 }
-                else if (severalTokensAtSamePosition || !(node is QuotedFieldQueryNode))
+                else if (severalTokensAtSamePosition || node is not QuotedFieldQueryNode)
                 {
-                    if (positionCount == 1 || !(node is QuotedFieldQueryNode))
+                    if (positionCount == 1 || node is not QuotedFieldQueryNode)
                     {
                         // no phrase query:
 
@@ -241,7 +241,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 }
                                 if (posIncrAtt != null && posIncrAtt.PositionIncrement == 0)
                                 {
-                                    if (!(currentQuery is BooleanQueryNode))
+                                    if (currentQuery is not BooleanQueryNode)
                                     {
                                         IQueryNode t = currentQuery;
                                         currentQuery = new StandardBooleanQueryNode(Collections.EmptyList<IQueryNode>(), true);

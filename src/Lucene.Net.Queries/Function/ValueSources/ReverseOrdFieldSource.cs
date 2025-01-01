@@ -98,7 +98,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is ReverseOrdFieldSource other))
+            if (o is not ReverseOrdFieldSource other)
                 return false;
             return this.field.Equals(other.field, StringComparison.Ordinal);
         }

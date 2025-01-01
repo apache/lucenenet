@@ -269,7 +269,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // If you are using ParellelReader, and pass in a
                 // reused DocsEnum, it could have come from another
                 // reader also using standard codec
-                if (reuse is null || !(reuse is SegmentFullPositionsEnum docsEnum) || docsEnum.startFreqIn != freqIn)
+                if (reuse is null || reuse is not SegmentFullPositionsEnum docsEnum || docsEnum.startFreqIn != freqIn)
                     docsEnum = new SegmentFullPositionsEnum(this, freqIn, proxIn);
 
                 return docsEnum.Reset(fieldInfo, (StandardTermState)termState, liveDocs);
@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // If you are using ParellelReader, and pass in a
                 // reused DocsEnum, it could have come from another
                 // reader also using standard codec
-                if (reuse is null || !(reuse is SegmentDocsAndPositionsEnum docsEnum) || docsEnum.startFreqIn != freqIn)
+                if (reuse is null || reuse is not SegmentDocsAndPositionsEnum docsEnum || docsEnum.startFreqIn != freqIn)
                     docsEnum = new SegmentDocsAndPositionsEnum(this, freqIn, proxIn);
 
                 return docsEnum.Reset(fieldInfo, (StandardTermState)termState, liveDocs);

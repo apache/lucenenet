@@ -253,7 +253,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 return postings.Reset(liveDocs, termState2);
             }
 
-            if (!(reuse is PulsingDocsEnum))
+            if (reuse is not PulsingDocsEnum)
                 return _wrappedPostingsReader.Docs(field, termState2.WrappedTermState, liveDocs, reuse, flags);
 
             var wrapped = _wrappedPostingsReader.Docs(field, termState2.WrappedTermState, liveDocs,
@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 return postings.Reset(liveDocs, termState2);
             }
 
-            if (!(reuse is PulsingDocsAndPositionsEnum))
+            if (reuse is not PulsingDocsAndPositionsEnum)
                 return _wrappedPostingsReader.DocsAndPositions(field, termState2.WrappedTermState, liveDocs, reuse,
                     flags);
 

@@ -208,7 +208,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                if (reuse is null || !(reuse is SimpleTextDocsEnum docsEnum) || !docsEnum.CanReuse(outerInstance.input))
+                if (reuse is null || reuse is not SimpleTextDocsEnum docsEnum || !docsEnum.CanReuse(outerInstance.input))
                     docsEnum = new SimpleTextDocsEnum(outerInstance);
 
                 return docsEnum.Reset(docsStart, liveDocs, indexOptions == IndexOptions.DOCS_ONLY, docFreq);
@@ -223,7 +223,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     return null;
                 }
 
-                if (reuse is null || !(reuse is SimpleTextDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(outerInstance.input))
+                if (reuse is null || reuse is not SimpleTextDocsAndPositionsEnum docsAndPositionsEnum || !docsAndPositionsEnum.CanReuse(outerInstance.input))
                     docsAndPositionsEnum = new SimpleTextDocsAndPositionsEnum(outerInstance);
 
                 return docsAndPositionsEnum.Reset(docsStart, liveDocs, indexOptions, docFreq);

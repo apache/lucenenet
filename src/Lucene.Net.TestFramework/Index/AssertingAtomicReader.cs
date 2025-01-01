@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
         {
             // TODO: should we give this thing a random to be super-evil,
             // and randomly *not* unwrap?
-            if (!(reuse is null) && reuse is AssertingAtomicReader.AssertingTermsEnum reusable)
+            if (reuse is not null && reuse is AssertingAtomicReader.AssertingTermsEnum reusable)
             {
                 reuse = reusable.m_input;
             }

@@ -325,7 +325,7 @@ namespace Lucene.Net.Facet
 
             if (sort != null)
             {
-                if (after != null && !(after is FieldDoc))
+                if (after != null && after is not FieldDoc)
                 {
                     // TODO: if we fix type safety of TopFieldDocs we can
                     // remove this

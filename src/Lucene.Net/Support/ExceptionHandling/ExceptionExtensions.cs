@@ -47,8 +47,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool IsAlwaysIgnored(this Exception e)
         {
-            return (!(NUnitSuccessExceptionType is null) && NUnitSuccessExceptionType.IsAssignableFrom(e.GetType())) ||
-                (!(NUnitInvalidPlatformException is null) && NUnitInvalidPlatformException.IsAssignableFrom(e.GetType()));
+            return (NUnitSuccessExceptionType is not null && NUnitSuccessExceptionType.IsAssignableFrom(e.GetType())) ||
+                (NUnitInvalidPlatformException is not null && NUnitInvalidPlatformException.IsAssignableFrom(e.GetType()));
         }
 
         /// <summary>
@@ -79,10 +79,10 @@ namespace Lucene
             if (e is null || e.IsAlwaysIgnored()) return false;
 
             return e is AssertionException ||
-                (!(DebugAssertExceptionType is null) && DebugAssertExceptionType.IsAssignableFrom(e.GetType())) ||
+                (DebugAssertExceptionType is not null && DebugAssertExceptionType.IsAssignableFrom(e.GetType())) ||
                 // Ignore NUnit exceptions (in tests)
-                (!(NUnitAssertionExceptionType is null) && NUnitAssertionExceptionType.IsAssignableFrom(e.GetType())) ||
-                (!(NUnitMultipleAssertExceptionType is null) && NUnitMultipleAssertExceptionType.IsAssignableFrom(e.GetType()));
+                (NUnitAssertionExceptionType is not null && NUnitAssertionExceptionType.IsAssignableFrom(e.GetType())) ||
+                (NUnitMultipleAssertExceptionType is not null && NUnitMultipleAssertExceptionType.IsAssignableFrom(e.GetType()));
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Lucene
         {
             if (e is null || e.IsAlwaysIgnored() ||
                 // Exclude InconclusiveException - AssumptionViolatedException derives from RuntimeException in Java so it is not an Error type
-                (!(NUnitInconclusiveExceptionType is null) && NUnitInconclusiveExceptionType.IsAssignableFrom(e.GetType()))
+                (NUnitInconclusiveExceptionType is not null && NUnitInconclusiveExceptionType.IsAssignableFrom(e.GetType()))
                 ) return false;
 
             return
@@ -108,9 +108,9 @@ namespace Lucene
                 // e.IsNoClassDefFoundError() || // NOTE: These are technically errors, but they overlap other exception types in .NET. Since Lucene always catches this at the source, we can ignore here.
                 e is StackOverflowException || // Not catchable in .NET unless we throw it, but mainly here just for documentation purposes
                 // Ignore .NET debug assert statements (only valid when test framework is attached)
-                (!(DebugAssertExceptionType is null) && DebugAssertExceptionType.IsAssignableFrom(e.GetType())) ||
+                (DebugAssertExceptionType is not null && DebugAssertExceptionType.IsAssignableFrom(e.GetType())) ||
                 // Ignore NUnit exceptions (in tests)
-                (!(NUnitResultStateExceptionType is null) && NUnitResultStateExceptionType.IsAssignableFrom(e.GetType()));
+                (NUnitResultStateExceptionType is not null && NUnitResultStateExceptionType.IsAssignableFrom(e.GetType()));
         }
 
         /// <summary>
@@ -574,7 +574,7 @@ namespace Lucene
         public static bool IsIllegalStateException(this Exception e)
         {
             return e is InvalidOperationException &&
-                !(e is ObjectDisposedException); // In .NET, ObjectDisposedException subclases InvalidOperationException, but Lucene decided to use IOException for AlreadyClosedException
+                e is not ObjectDisposedException; // In .NET, ObjectDisposedException subclases InvalidOperationException, but Lucene decided to use IOException for AlreadyClosedException
         }
 
         /// <summary>

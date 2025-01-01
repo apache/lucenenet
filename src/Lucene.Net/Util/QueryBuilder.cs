@@ -324,7 +324,7 @@ namespace Lucene.Net.Util
                                 }
                                 if (posIncrAtt != null && posIncrAtt.PositionIncrement == 0)
                                 {
-                                    if (!(currentQuery is BooleanQuery))
+                                    if (currentQuery is not BooleanQuery)
                                     {
                                         Query t = currentQuery;
                                         currentQuery = NewBooleanQuery(true);

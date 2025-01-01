@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.Bloom
 
                 public override TermsEnum GetEnumerator(TermsEnum reuse)
                 {
-                    if (!(reuse is null) && reuse is BloomFilteredTermsEnum bfte && bfte.filter == _filter)
+                    if (reuse is not null && reuse is BloomFilteredTermsEnum bfte && bfte.filter == _filter)
                     {
                         // recycle the existing BloomFilteredTermsEnum by asking the delegate
                         // to recycle its contained TermsEnum

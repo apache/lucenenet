@@ -723,7 +723,7 @@ namespace Lucene.Net.Store
                 openFilesForWrite.Add(name);
 
                 // throttling REALLY slows down tests, so don't do it very often for SOMETIMES.
-                if (throttling == Throttling.ALWAYS || (throttling == Throttling.SOMETIMES && randomState.Next(50) == 0) && !(m_input is RateLimitedDirectoryWrapper))
+                if (throttling == Throttling.ALWAYS || (throttling == Throttling.SOMETIMES && randomState.Next(50) == 0) && m_input is not RateLimitedDirectoryWrapper)
                 {
                     if (LuceneTestCase.Verbose)
                     {

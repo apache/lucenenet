@@ -1914,7 +1914,7 @@ namespace Lucene.Net.Util
                 {
                     r = SlowCompositeReaderWrapper.Wrap(r);
                 }
-                else if ((r is CompositeReader) && !(r is FCInvisibleMultiReader))
+                else if ((r is CompositeReader) && r is not FCInvisibleMultiReader)
                 {
                     // prevent cache insanity caused by e.g. ParallelCompositeReader, to fix we wrap one more time:
                     r = new FCInvisibleMultiReader(r);

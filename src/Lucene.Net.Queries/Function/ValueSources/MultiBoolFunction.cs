@@ -129,7 +129,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            if (!(o is MultiBoolFunction other))
+            if (o is not MultiBoolFunction other)
                 return false;
 
             // LUCENENET specific: use structural equality comparison

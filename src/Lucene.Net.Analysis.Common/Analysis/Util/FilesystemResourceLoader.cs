@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Util
         {
             // LUCENENET NOTE: If you call DirectoryInfo.Create() it doesn't set the DirectoryInfo.Exists
             // flag to true, so we use the Directory object to check the path explicitly.
-            if (!(baseDirectory is null) && !Directory.Exists(baseDirectory.FullName))
+            if (baseDirectory is not null && !Directory.Exists(baseDirectory.FullName))
             {
                 throw new ArgumentException("baseDirectory is not a directory or is null");
             }

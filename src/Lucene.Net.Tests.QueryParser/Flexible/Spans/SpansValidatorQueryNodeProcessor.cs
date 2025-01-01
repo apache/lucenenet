@@ -42,7 +42,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-            if (!((node is BooleanQueryNode && !(node is AndQueryNode)) || node
+            if (!((node is BooleanQueryNode && node is not AndQueryNode) || node
                 .GetType() == typeof(FieldQueryNode)))
             {
                 // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
