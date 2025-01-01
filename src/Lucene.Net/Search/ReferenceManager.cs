@@ -326,7 +326,7 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> If the release operation on the given resource throws an <see cref="IOException"/> </exception>
         public void Release(G reference)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!(reference is null));
+            if (Debugging.AssertsEnabled) Debugging.Assert(reference is not null);
             DecRef(reference);
         }
 

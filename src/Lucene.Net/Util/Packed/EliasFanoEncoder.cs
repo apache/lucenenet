@@ -376,17 +376,17 @@ namespace Lucene.Net.Util.Packed
 
         public override bool Equals(object other)
         {
-            if (!(other is EliasFanoEncoder))
+            if (other is not EliasFanoEncoder oefs)
             {
                 return false;
             }
-            EliasFanoEncoder oefs = (EliasFanoEncoder)other;
+
             // no equality needed for upperBound
-            return (this.numValues == oefs.numValues)
-                && (this.numEncoded == oefs.numEncoded)
-                && (this.numLowBits == oefs.numLowBits)
-                && (this.numIndexEntries == oefs.numIndexEntries)
-                && (this.indexInterval == oefs.indexInterval)
+            return this.numValues == oefs.numValues
+                && this.numEncoded == oefs.numEncoded
+                && this.numLowBits == oefs.numLowBits
+                && this.numIndexEntries == oefs.numIndexEntries
+                && this.indexInterval == oefs.indexInterval
                 && Arrays.Equals(this.upperLongs, oefs.upperLongs)
                 && Arrays.Equals(this.lowerLongs, oefs.lowerLongs); // no need to check index content
         }

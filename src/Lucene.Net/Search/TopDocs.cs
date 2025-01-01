@@ -217,11 +217,11 @@ namespace Lucene.Net.Search
                         for (int hitIDX = 0; hitIDX < shard.Length; hitIDX++)
                         {
                             ScoreDoc sd = shard[hitIDX];
-                            if (!(sd is FieldDoc))
+                            if (sd is not FieldDoc fd)
                             {
                                 throw new ArgumentException("shard " + shardIDX + " was not sorted by the provided Sort (expected FieldDoc but got ScoreDoc)");
                             }
-                            FieldDoc fd = (FieldDoc)sd;
+
                             if (fd.Fields is null)
                             {
                                 throw new ArgumentException("shard " + shardIDX + " did not set sort field values (FieldDoc.fields is null); you must pass fillFields=true to IndexSearcher.search on each shard");

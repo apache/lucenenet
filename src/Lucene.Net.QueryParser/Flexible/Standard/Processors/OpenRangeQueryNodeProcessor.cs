@@ -44,13 +44,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 ICharSequence upperText = upperNode.Text;
 
                 if (OPEN_RANGE_TOKEN.Equals(upperNode.GetTextAsString(), StringComparison.Ordinal)
-                    && (!(upperText is UnescapedCharSequence unescapedUpperText) || !unescapedUpperText.WasEscaped(0)))
+                    && (upperText is not UnescapedCharSequence unescapedUpperText || !unescapedUpperText.WasEscaped(0)))
                 {
                     upperText = "".AsCharSequence();
                 }
 
                 if (OPEN_RANGE_TOKEN.Equals(lowerNode.GetTextAsString(), StringComparison.Ordinal)
-                    && (!(lowerText is UnescapedCharSequence unescapedLowerText) || !unescapedLowerText.WasEscaped(0)))
+                    && (lowerText is not UnescapedCharSequence unescapedLowerText || !unescapedLowerText.WasEscaped(0)))
                 {
                     lowerText = "".AsCharSequence();
                 }

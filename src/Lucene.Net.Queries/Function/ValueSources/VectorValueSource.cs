@@ -273,7 +273,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             if (this == o)
                 return true;
 
-            if (!(o is VectorValueSource that))
+            if (o is not VectorValueSource that)
                 return false;
 
             // LUCENENET specific: use structural equality comparison

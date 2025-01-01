@@ -79,13 +79,13 @@ namespace Lucene.Net.Index
             }
             MergePolicy mp = w.Config.MergePolicy;
             int mergeAtOnce = 1 + w.segmentInfos.Count;
-            if (mp is TieredMergePolicy)
+            if (mp is TieredMergePolicy tieredMergePolicy)
             {
-                ((TieredMergePolicy)mp).MaxMergeAtOnce = mergeAtOnce;
+                tieredMergePolicy.MaxMergeAtOnce = mergeAtOnce;
             }
-            else if (mp is LogMergePolicy)
+            else if (mp is LogMergePolicy logMergePolicy)
             {
-                ((LogMergePolicy)mp).MergeFactor = mergeAtOnce;
+                logMergePolicy.MergeFactor = mergeAtOnce;
             }
             else
             {

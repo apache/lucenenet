@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public SegmentInfo(Directory dir, string version, string name, int docCount, bool isCompoundFile, Codec codec, IDictionary<string, string> diagnostics, IDictionary<string, string> attributes)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!(dir is TrackingDirectoryWrapper));
+            if (Debugging.AssertsEnabled) Debugging.Assert(dir is not TrackingDirectoryWrapper);
             this.Dir = dir;
             this.version = version;
             this.Name = name;

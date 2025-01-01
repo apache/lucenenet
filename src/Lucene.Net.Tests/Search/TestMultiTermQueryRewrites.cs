@@ -98,10 +98,10 @@ namespace Lucene.Net.Search
 
         private Query ExtractInnerQuery(Query q)
         {
-            if (q is ConstantScoreQuery)
+            if (q is ConstantScoreQuery constantScoreQuery)
             {
                 // wrapped as ConstantScoreQuery
-                q = ((ConstantScoreQuery)q).Query;
+                q = constantScoreQuery.Query;
             }
             return q;
         }

@@ -1361,7 +1361,7 @@ namespace Lucene.Net.Util.Packed
                     }
                     Assert.AreEqual(i, it.Ord);
                 }
-                assertEquals(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput)@in).Position : ((IndexInput)@in).Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                assertEquals(fp, @in is ByteArrayDataInput input1 ? input1.Position : ((IndexInput)@in).Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 try
                 {
                     it.Next();
@@ -1372,9 +1372,9 @@ namespace Lucene.Net.Util.Packed
                     // OK
                 }
 
-                if (@in is ByteArrayDataInput)
+                if (@in is ByteArrayDataInput input2)
                 {
-                    ((ByteArrayDataInput)@in).Position = 0;
+                    input2.Position = 0;
                 }
                 else
                 {
@@ -1398,7 +1398,7 @@ namespace Lucene.Net.Util.Packed
                         ++k;
                     }
                 }
-                assertEquals(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput)@in).Position : (((IndexInput)@in).Position)); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+                assertEquals(fp, @in is ByteArrayDataInput input3 ? input3.Position : ((IndexInput)@in).Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 try
                 {
                     it2.Skip(1);

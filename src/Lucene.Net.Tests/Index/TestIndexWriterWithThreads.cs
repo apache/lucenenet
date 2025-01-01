@@ -637,9 +637,9 @@ namespace Lucene.Net.Index
         public virtual void TestRollbackAndCommitWithThreads()
         {
             BaseDirectoryWrapper d = NewDirectory();
-            if (d is MockDirectoryWrapper)
+            if (d is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)d).PreventDoubleWrite = false;
+                mockDirectoryWrapper.PreventDoubleWrite = false;
             }
 
             int threadCount = TestUtil.NextInt32(Random, 2, 6);

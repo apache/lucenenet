@@ -217,12 +217,11 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CategoryPath))
+            if (obj is not CategoryPath other)
             {
                 return false;
             }
 
-            CategoryPath other = (CategoryPath)obj;
             if (Length != other.Length)
             {
                 return false; // not same length, cannot be equal
@@ -350,7 +349,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public static bool operator <(CategoryPath left, CategoryPath right)
         {
-            return left is null ? !(right is null) : left.CompareTo(right) < 0;
+            return left is null ? right is not null : left.CompareTo(right) < 0;
         }
 
         public static bool operator <=(CategoryPath left, CategoryPath right)
@@ -360,7 +359,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public static bool operator >(CategoryPath left, CategoryPath right)
         {
-            return !(left is null) && left.CompareTo(right) > 0;
+            return left is not null && left.CompareTo(right) > 0;
         }
 
         public static bool operator >=(CategoryPath left, CategoryPath right)

@@ -156,7 +156,7 @@ namespace Lucene.Net.Search
         public override bool Equals(object o)
         {
             if (o is null) return false;
-            if (!(o is CachingWrapperFilter other)) return false;
+            if (o is not CachingWrapperFilter other) return false;
             return filter.Equals(other.filter);
         }
 

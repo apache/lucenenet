@@ -321,7 +321,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public override bool Equals(object? obj)
         {
-            return !(obj is null || !(obj is Cell cell)) &&
+            return !(obj is null || obj is not Cell cell) &&
                 TokenString.Equals(cell.TokenString, StringComparison.Ordinal);
         }
 

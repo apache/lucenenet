@@ -84,11 +84,11 @@ namespace Lucene.Net.Search
 
         public override bool Equals(object o)
         {
-            if (!(o is QueryWrapperFilter))
+            if (o is not QueryWrapperFilter other)
             {
                 return false;
             }
-            return this.query.Equals(((QueryWrapperFilter)o).query);
+            return this.query.Equals(other.query);
         }
 
         public override int GetHashCode()

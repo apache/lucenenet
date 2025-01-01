@@ -104,12 +104,10 @@ namespace Lucene.Net.Search
 
             public override bool Equals(object other)
             {
-                if (!(other is FieldAndShardVersion))
+                if (other is not FieldAndShardVersion other_)
                 {
                     return false;
                 }
-
-                FieldAndShardVersion other_ = (FieldAndShardVersion)other;
 
                 return field.Equals(other_.field, StringComparison.Ordinal) && version == other_.version && nodeID == other_.nodeID;
             }
@@ -143,12 +141,10 @@ namespace Lucene.Net.Search
 
             public override bool Equals(object other)
             {
-                if (!(other is TermAndShardVersion))
+                if (other is not TermAndShardVersion other_)
                 {
                     return false;
                 }
-
-                TermAndShardVersion other_ = (TermAndShardVersion)other;
 
                 return term.Equals(other_.term) && version == other_.version && nodeID == other_.nodeID;
             }

@@ -43,9 +43,9 @@ namespace Lucene.Net.Index
         public virtual void TestNumerics()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BNumerics"));
-            if (dir is MockDirectoryWrapper)
+            if (dir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
+                mockDirectoryWrapper.Throttling = Throttling.NEVER;
             }
 
             IndexWriter w = new IndexWriter(dir,

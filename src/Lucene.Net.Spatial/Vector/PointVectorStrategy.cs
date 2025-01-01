@@ -29,7 +29,7 @@ namespace Lucene.Net.Spatial.Vector
     /// <summary>
     /// Simple <see cref="SpatialStrategy"/> which represents Points in two numeric <see cref="DoubleField"/>s.
     /// The Strategy's best feature is decent distance sort.
-    /// 
+    ///
     /// <h4>Characteristics:</h4>
     /// <list type="bullet">
     ///     <item><description>Only indexes points; just one per field value.</description></item>
@@ -38,7 +38,7 @@ namespace Lucene.Net.Spatial.Vector
     ///     <item><description>Uses the FieldCache for <see cref="SpatialStrategy.MakeDistanceValueSource(IPoint)"/> and for
     ///     searching with a Circle.</description></item>
     /// </list>
-    /// 
+    ///
     /// <h4>Implementation:</h4>
     /// This is a simple Strategy.  Search works with <see cref="NumericRangeQuery"/>s on
     /// an x &amp; y pair of fields.  A Circle query does the same bbox query but adds a
@@ -150,10 +150,9 @@ namespace Lucene.Net.Spatial.Vector
             }
 
             IShape shape = args.Shape;
-            if (shape is IRectangle)
+            if (shape is IRectangle bboxRect)
             {
-                var bbox = (IRectangle)shape;
-                return new ConstantScoreQuery(MakeWithin(bbox));
+                return new ConstantScoreQuery(MakeWithin(bboxRect));
             }
             else if (shape is ICircle circle)
             {

@@ -132,7 +132,7 @@ namespace Lucene.Net.Spatial.Vector
             if (this == o) return true;
             if (o is null || GetType() != o.GetType()) return false;
 
-            if (!(o is DistanceValueSource that)) return false;
+            if (o is not DistanceValueSource that) return false;
 
             if (!from.Equals(that.from)) return false;
             if (!strategy.Equals(that.strategy)) return false;

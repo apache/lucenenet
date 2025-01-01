@@ -284,7 +284,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
                 Query q = qp.Parse(queries[i]);
-                if (q != null && (!(q is BooleanQuery booleanQuery) || booleanQuery.Clauses.Count > 0))
+                if (q != null && (q is not BooleanQuery booleanQuery || booleanQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, Occur.SHOULD);
                 }
@@ -340,7 +340,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
                 Query q = qp.Parse(query);
-                if (q != null && (!(q is BooleanQuery booleanQuery) || booleanQuery.Clauses.Count > 0))
+                if (q != null && (q is not BooleanQuery booleanQuery || booleanQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, flags[i]);
                 }
@@ -394,7 +394,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
                 Query q = qp.Parse(queries[i]);
-                if (q != null && (!(q is BooleanQuery booleanQuery) || booleanQuery.Clauses.Count > 0))
+                if (q != null && (q is not BooleanQuery booleanQuery || booleanQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, flags[i]);
                 }

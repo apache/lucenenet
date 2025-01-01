@@ -245,7 +245,7 @@ namespace Lucene.Net.Tests.Join
 
             MultiTermQuery qc = NumericRangeQuery.NewInt32Range("year", 2007, 2007, true, true);
             // Hacky: this causes the query to need 2 rewrite
-            // iterations: 
+            // iterations:
             qc.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 
             Filter parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("docType", "resume"))));
@@ -807,9 +807,9 @@ namespace Lucene.Net.Tests.Join
                             Console.Write("    ");
                             foreach (object o in fd.Fields)
                             {
-                                if (o is BytesRef)
+                                if (o is BytesRef bytesRef)
                                 {
-                                    Console.Write(((BytesRef)o).Utf8ToString() + " ");
+                                    Console.Write(bytesRef.Utf8ToString() + " ");
                                 }
                                 else
                                 {
@@ -855,9 +855,9 @@ namespace Lucene.Net.Tests.Join
                                 Console.Write("  ");
                                 foreach (object o in group.GroupSortValues)
                                 {
-                                    if (o is BytesRef)
+                                    if (o is BytesRef bytesRef)
                                     {
-                                        Console.Write(((BytesRef)o).Utf8ToString() + " ");
+                                        Console.Write(bytesRef.Utf8ToString() + " ");
                                     }
                                     else
                                     {

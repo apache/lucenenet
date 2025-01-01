@@ -808,7 +808,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 DecodeMetaData();
 
-                if (reuse is null || !(reuse is FSTDocsEnum docsEnum) || !docsEnum.CanReuse(field.IndexOptions, field.HasPayloads))
+                if (reuse is null || reuse is not FSTDocsEnum docsEnum || !docsEnum.CanReuse(field.IndexOptions, field.HasPayloads))
                     docsEnum = new FSTDocsEnum(field.IndexOptions, field.HasPayloads);
 
                 return docsEnum.Reset(this.postingsSpare, liveDocs, docFreq);
@@ -823,7 +823,7 @@ namespace Lucene.Net.Codecs.Memory
                     return null;
                 }
                 DecodeMetaData();
-                if (reuse is null || !(reuse is FSTDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(field.HasPayloads, hasOffsets))
+                if (reuse is null || reuse is not FSTDocsAndPositionsEnum docsAndPositionsEnum || !docsAndPositionsEnum.CanReuse(field.HasPayloads, hasOffsets))
                     docsAndPositionsEnum = new FSTDocsAndPositionsEnum(field.HasPayloads, hasOffsets);
 
                 //System.out.println("D&P reset this=" + this);

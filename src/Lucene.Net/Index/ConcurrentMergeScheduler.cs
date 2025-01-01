@@ -728,7 +728,7 @@ namespace Lucene.Net.Index
                 catch (Exception exc) when (exc.IsThrowable())
                 {
                     // Ignore the exception if it was due to abort:
-                    if (!(exc is MergePolicy.MergeAbortedException))
+                    if (exc is not MergePolicy.MergeAbortedException)
                     {
                         //System.out.println(Thread.currentThread().getName() + ": CMS: exc");
                         //exc.printStackTrace(System.out);

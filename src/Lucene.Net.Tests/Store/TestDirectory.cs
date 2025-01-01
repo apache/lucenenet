@@ -90,9 +90,9 @@ namespace Lucene.Net.Store
         {
             BaseDirectoryWrapper dir = NewDirectory();
             dir.CheckIndexOnDispose = false; // we arent making an index
-            if (dir is MockDirectoryWrapper)
+            if (dir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER; // makes this test really slow
+                mockDirectoryWrapper.Throttling = Throttling.NEVER; // makes this test really slow
             }
 
             if (Verbose)

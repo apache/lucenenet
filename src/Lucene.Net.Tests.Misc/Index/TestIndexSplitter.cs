@@ -35,9 +35,9 @@ namespace Lucene.Net.Index
             Store.Directory fsDir = NewFSDirectory(dir);
             // IndexSplitter.split makes its own commit directly with SIPC/SegmentInfos,
             // so the unreferenced files are expected.
-            if (fsDir is MockDirectoryWrapper)
+            if (fsDir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)fsDir).AssertNoUnreferencedFilesOnDispose = (false);
+                mockDirectoryWrapper.AssertNoUnreferencedFilesOnDispose = (false);
             }
 
             MergePolicy mergePolicy = new LogByteSizeMergePolicy();

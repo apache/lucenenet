@@ -53,9 +53,9 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostingsBytes1"));
-            if (dir is MockDirectoryWrapper)
+            if (dir is MockDirectoryWrapper mockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
+                mockDirectoryWrapper.Throttling = Throttling.NEVER;
             }
 
             IndexWriter w = new IndexWriter(dir,
@@ -67,10 +67,10 @@ namespace Lucene.Net.Index
                 .SetOpenMode(OpenMode.CREATE));
 
             MergePolicy mp = w.Config.MergePolicy;
-            if (mp is LogByteSizeMergePolicy)
+            if (mp is LogByteSizeMergePolicy logByteSizeMergePolicy)
             {
                 // 1 petabyte:
-                ((LogByteSizeMergePolicy)mp).MaxMergeMB = 1024 * 1024 * 1024;
+                logByteSizeMergePolicy.MaxMergeMB = 1024 * 1024 * 1024;
             }
 
             Document doc = new Document();
@@ -102,9 +102,9 @@ namespace Lucene.Net.Index
             Arrays.Fill(subReaders, oneThousand);
             MultiReader mr = new MultiReader(subReaders);
             BaseDirectoryWrapper dir2 = NewFSDirectory(CreateTempDir("2BPostingsBytes2"));
-            if (dir2 is MockDirectoryWrapper)
+            if (dir2 is MockDirectoryWrapper mockDirectoryWrapper2)
             {
-                ((MockDirectoryWrapper)dir2).Throttling = Throttling.NEVER;
+                mockDirectoryWrapper2.Throttling = Throttling.NEVER;
             }
             IndexWriter w2 = new IndexWriter(dir2,
                 new IndexWriterConfig(TEST_VERSION_CURRENT, null));
@@ -118,9 +118,9 @@ namespace Lucene.Net.Index
             Arrays.Fill(subReaders, oneMillion);
             mr = new MultiReader(subReaders);
             BaseDirectoryWrapper dir3 = NewFSDirectory(CreateTempDir("2BPostingsBytes3"));
-            if (dir3 is MockDirectoryWrapper)
+            if (dir3 is MockDirectoryWrapper mockDirectoryWrapper3)
             {
-                ((MockDirectoryWrapper)dir3).Throttling = Throttling.NEVER;
+                mockDirectoryWrapper3.Throttling = Throttling.NEVER;
             }
             IndexWriter w3 = new IndexWriter(dir3,
                 new IndexWriterConfig(TEST_VERSION_CURRENT, null));

@@ -194,7 +194,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// If set to true (the default), when we throw random
-        /// <see cref="IOException"/> on <see cref="OpenInput(string, IOContext)"/> or 
+        /// <see cref="IOException"/> on <see cref="OpenInput(string, IOContext)"/> or
         /// <see cref="CreateOutput(string, IOContext)"/>, we may
         /// sometimes throw <see cref="FileNotFoundException"/>.
         /// </summary>
@@ -723,7 +723,7 @@ namespace Lucene.Net.Store
                 openFilesForWrite.Add(name);
 
                 // throttling REALLY slows down tests, so don't do it very often for SOMETIMES.
-                if (throttling == Throttling.ALWAYS || (throttling == Throttling.SOMETIMES && randomState.Next(50) == 0) && !(m_input is RateLimitedDirectoryWrapper))
+                if (throttling == Throttling.ALWAYS || (throttling == Throttling.SOMETIMES && randomState.Next(50) == 0) && m_input is not RateLimitedDirectoryWrapper)
                 {
                     if (LuceneTestCase.Verbose)
                     {
@@ -848,12 +848,12 @@ namespace Lucene.Net.Store
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (!(m_input is RAMDirectory))
+                if (m_input is not RAMDirectory ramDirectory)
                 {
                     return GetSizeInBytes();
                 }
                 long size = 0;
-                foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
+                foreach (RAMFile file in ramDirectory.m_fileMap.Values)
                 {
                     size += file.GetSizeInBytes();
                 }
@@ -877,12 +877,12 @@ namespace Lucene.Net.Store
             UninterruptableMonitor.Enter(this);
             try
             {
-                if (!(m_input is RAMDirectory))
+                if (m_input is not RAMDirectory ramDirectory)
                 {
                     return GetSizeInBytes();
                 }
                 long size = 0;
-                foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
+                foreach (RAMFile file in ramDirectory.m_fileMap.Values)
                 {
                     size += file.Length;
                 }
@@ -1028,7 +1028,7 @@ namespace Lucene.Net.Store
                                                     if (Debugging.AssertsEnabled) Debugging.Assert(pendingDeletions.Contains(s));
                                                     if (LuceneTestCase.Verbose)
                                                     {
-                                                        Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + 
+                                                        Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " +
                                                             "from " + file + " that we could not delete.");
                                                     }
                                                     startSet.Add(s);
@@ -1538,7 +1538,7 @@ namespace Lucene.Net.Store
     /// Use this when throwing fake <see cref="IOException"/>,
     /// e.g. from <see cref="Failure"/>.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

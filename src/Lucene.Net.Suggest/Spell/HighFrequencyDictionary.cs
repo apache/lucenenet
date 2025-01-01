@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Spell
 
             public bool MoveNext()
             {
-                if (!(termsEnum is null))
+                if (termsEnum is not null)
                 {
                     while (termsEnum.MoveNext())
                     {

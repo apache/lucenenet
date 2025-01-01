@@ -352,7 +352,7 @@ namespace Lucene.Net.Codecs.Lucene40
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetEnumerator(TermsEnum reuse)
             {
-                if (reuse is null || !(reuse is TVTermsEnum termsEnum) || !termsEnum.CanReuse(outerInstance.tvf))
+                if (reuse is null || reuse is not TVTermsEnum termsEnum || !termsEnum.CanReuse(outerInstance.tvf))
                     termsEnum = new TVTermsEnum(outerInstance);
 
                 termsEnum.Reset(numTerms, tvfFPStart, storePositions, storeOffsets, storePayloads);
@@ -562,7 +562,7 @@ namespace Lucene.Net.Codecs.Lucene40
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags) // ignored
             {
-                if (reuse is null || !(reuse is TVDocsEnum docsEnum))
+                if (reuse is null || reuse is not TVDocsEnum docsEnum)
                     docsEnum = new TVDocsEnum();
 
                 docsEnum.Reset(liveDocs, freq);
@@ -577,7 +577,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     return null;
                 }
 
-                if (reuse is null || !(reuse is TVDocsAndPositionsEnum docsAndPositionsEnum))
+                if (reuse is null || reuse is not TVDocsAndPositionsEnum docsAndPositionsEnum)
                     docsAndPositionsEnum = new TVDocsAndPositionsEnum();
 
                 docsAndPositionsEnum.Reset(liveDocs, positions, startOffsets, endOffsets, payloadOffsets, payloadData);

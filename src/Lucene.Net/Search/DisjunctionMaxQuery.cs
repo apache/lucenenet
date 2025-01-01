@@ -361,11 +361,11 @@ namespace Lucene.Net.Search
         /// <returns> <c>true</c> if <paramref name="o"/> is a <see cref="DisjunctionMaxQuery"/> with the same boost and the same subqueries, in the same order, as us </returns>
         public override bool Equals(object o)
         {
-            if (!(o is DisjunctionMaxQuery))
+            if (o is not DisjunctionMaxQuery other)
             {
                 return false;
             }
-            DisjunctionMaxQuery other = (DisjunctionMaxQuery)o;
+
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
             return NumericUtils.SingleToSortableInt32(this.Boost) == NumericUtils.SingleToSortableInt32(other.Boost)
                 && NumericUtils.SingleToSortableInt32(this.tieBreakerMultiplier) == NumericUtils.SingleToSortableInt32(other.tieBreakerMultiplier)

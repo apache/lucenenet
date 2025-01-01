@@ -100,12 +100,12 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 {
                     return true;
                 }
-                if (!(other is Branch))
+                if (other is not Branch branch)
                 {
                     return false;
                 }
 
-                return ToString().Equals(((Branch)other).ToString(), StringComparison.Ordinal);
+                return ToString().Equals(branch.ToString(), StringComparison.Ordinal);
             }
 
             /// <summary>

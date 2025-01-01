@@ -102,7 +102,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
             {
                 IQueryBuilder<TQuery> builder = GetBuilder(node);
 
-                if (!(builder is QueryTreeBuilder<TQuery>))
+                if (builder is not QueryTreeBuilder<TQuery>)
                 {
                     IList<IQueryNode> children = node.GetChildren();
 

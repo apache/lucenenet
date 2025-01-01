@@ -31,12 +31,12 @@ namespace Lucene.Net.Search.Highlight.Custom
     /// </summary>
     public class HighlightCustomQueryTest : LuceneTestCase
     {
-        private static readonly String FIELD_NAME = "contents";
+        private static readonly string FIELD_NAME = "contents";
 
         [Test]
         public void TestHighlightCustomQuery()
         {
-            String s1 = "I call our world Flatland, not because we call it so,";
+            string s1 = "I call our world Flatland, not because we call it so,";
 
             // Verify that a query against the default field results in text being
             // highlighted
@@ -44,8 +44,8 @@ namespace Lucene.Net.Search.Highlight.Custom
 
             CustomQuery q = new CustomQuery(new Term(FIELD_NAME, "world"));
 
-            String expected = "I call our <B>world</B> Flatland, not because we call it so,";
-            String observed = highlightField(q, "SOME_FIELD_NAME", s1);
+            string expected = "I call our <B>world</B> Flatland, not because we call it so,";
+            string observed = highlightField(q, "SOME_FIELD_NAME", s1);
             if (Verbose)
                 Console.WriteLine("Expected: \"" + expected + "\n" + "Observed: \""
                     + observed);
@@ -75,8 +75,8 @@ namespace Lucene.Net.Search.Highlight.Custom
          * This method intended for use with
          * <tt>testHighlightingWithDefaultField()</tt>
          */
-        private String highlightField(Query query, String fieldName,
-            String text)
+        private string highlightField(Query query, string fieldName,
+            string text)
         {
             TokenStream tokenStream = new MockAnalyzer(Random, MockTokenizer.SIMPLE,
                 true, MockTokenFilter.ENGLISH_STOPSET).GetTokenStream(fieldName, text);
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Highlight.Custom
             Highlighter highlighter = new Highlighter(formatter, scorer);
             highlighter.TextFragmenter = (new SimpleFragmenter(int.MaxValue));
 
-            String rv = highlighter.GetBestFragments(tokenStream, text, 1,
+            string rv = highlighter.GetBestFragments(tokenStream, text, 1,
                 "(FIELD TEXT TRUNCATED)");
             return rv.Length == 0 ? text : rv;
         }
@@ -99,33 +99,31 @@ namespace Lucene.Net.Search.Highlight.Custom
             {
             }
 
-            public MyWeightedSpanTermExtractor(String defaultField)
+            public MyWeightedSpanTermExtractor(string defaultField)
                             : base(defaultField)
             {
             }
 
-
             protected override void ExtractUnknownQuery(Query query,
-                IDictionary<String, WeightedSpanTerm> terms)
+                IDictionary<string, WeightedSpanTerm> terms)
             {
-                if (query is CustomQuery)
+                if (query is CustomQuery cq)
                 {
-                    ExtractWeightedTerms(terms, new TermQuery(((CustomQuery)query).term));
+                    ExtractWeightedTerms(terms, new TermQuery(cq.term));
                 }
             }
-
         }
 
         public class MyQueryScorer : QueryScorer
         {
 
-            public MyQueryScorer(Query query, String field, String defaultField)
+            public MyQueryScorer(Query query, string field, string defaultField)
                         : base(query, field, defaultField)
             {
             }
 
 
-            protected override WeightedSpanTermExtractor NewTermExtractor(String defaultField)
+            protected override WeightedSpanTermExtractor NewTermExtractor(string defaultField)
             {
                 return defaultField is null ? new MyWeightedSpanTermExtractor()
                     : new MyWeightedSpanTermExtractor(defaultField);
@@ -143,7 +141,7 @@ namespace Lucene.Net.Search.Highlight.Custom
                 this.term = term;
             }
 
-            public override String ToString(String field)
+            public override string ToString(string field)
             {
                 return new TermQuery(term).ToString(field);
             }
@@ -162,7 +160,7 @@ namespace Lucene.Net.Search.Highlight.Custom
                 return result;
             }
 
-            public override bool Equals(Object obj)
+            public override bool Equals(object obj)
             {
                 if (this == obj)
                     return true;

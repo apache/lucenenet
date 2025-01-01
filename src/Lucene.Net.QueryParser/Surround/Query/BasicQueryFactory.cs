@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
      // The basic queries are TermQuery and SpanTermQuery.
      // An exception can be thrown when too many of these are used.
      // SpanTermQuery and TermQuery use IndexReader.termEnum(Term), which causes the buffer usage.
-     
+
      // Use this class to limit the buffer usage for reading terms from an index.
      // Default is 1024, the same as the max. number of subqueries for a BooleanQuery.
 
@@ -107,9 +107,8 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (!(obj is BasicQueryFactory))
+            if (obj is not BasicQueryFactory other)
                 return false;
-            BasicQueryFactory other = (BasicQueryFactory)obj;
             return AtMax == other.AtMax;
         }
     }

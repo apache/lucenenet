@@ -799,7 +799,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override TermsEnum GetEnumerator(TermsEnum reuse)
             {
-                if (!(reuse is DirectTermsEnum termsEnum) || !termsEnum.CanReuse(terms))
+                if (reuse is not DirectTermsEnum termsEnum || !termsEnum.CanReuse(terms))
                     termsEnum = new DirectTermsEnum(this);
 
                 termsEnum.Reset();

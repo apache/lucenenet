@@ -131,7 +131,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override bool Equals(object o)
         {
             if (o is null) return false;
-            if (!(o is ByteFieldSource other)) return false;
+            if (o is not ByteFieldSource other) return false;
             return base.Equals(other) && (this.parser is null ? other.parser is null : this.parser.GetType() == other.parser.GetType());
         }
 

@@ -1065,12 +1065,11 @@ namespace Lucene.Net.Util
             {
                 return true;
             }
-            if (!(o is OpenBitSet))
+            if (o is not OpenBitSet b)
             {
                 return false;
             }
             OpenBitSet a;
-            OpenBitSet b = (OpenBitSet)o;
             // make a the larger set.
             if (b.m_wlen > this.m_wlen)
             {

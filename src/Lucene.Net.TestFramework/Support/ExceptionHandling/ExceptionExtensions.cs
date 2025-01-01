@@ -57,8 +57,8 @@ namespace Lucene.Net
             if (e is null || e.IsError() || e.IsAlwaysIgnored()) return false;
 
             return e is ArgumentException &&
-                !(e is ArgumentNullException) &&     // Corresponds to NullPointerException, so we don't catch it here.
-                !(e is ArgumentOutOfRangeException); // Corresponds to IndexOutOfBoundsException (and subclasses), so we don't catch it here.
+                e is not ArgumentNullException &&     // Corresponds to NullPointerException, so we don't catch it here.
+                e is not ArgumentOutOfRangeException; // Corresponds to IndexOutOfBoundsException (and subclasses), so we don't catch it here.
         }
     }
 }

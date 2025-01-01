@@ -40,10 +40,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-            if (node is IFieldableNode)
+            if (node is IFieldableNode fieldNode)
             {
-                IFieldableNode fieldNode = (IFieldableNode)node;
-
                 QueryConfigHandler queryConfig = GetQueryConfigHandler();
 
                 if (queryConfig is null)

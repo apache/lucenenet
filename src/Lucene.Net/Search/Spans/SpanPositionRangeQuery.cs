@@ -87,12 +87,11 @@ namespace Lucene.Net.Search.Spans
             {
                 return true;
             }
-            if (!(o is SpanPositionRangeQuery))
+            if (o is not SpanPositionRangeQuery other)
             {
                 return false;
             }
 
-            SpanPositionRangeQuery other = (SpanPositionRangeQuery)o;
             // LUCENENET specific - compare bits rather than using equality operators to prevent these comparisons from failing in x86 in .NET Framework with optimizations enabled
             return this.m_end == other.m_end
                 && this.m_start == other.m_start

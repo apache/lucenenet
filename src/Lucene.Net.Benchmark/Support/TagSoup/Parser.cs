@@ -525,7 +525,7 @@ namespace TagSoup
                 {
                     i = GetInputStream(publicId, systemId);
                 }
-                if (!(i is BufferedStream))
+                if (i is not BufferedStream)
                 {
                     i = new BufferedStream(i);
                 }

@@ -17,9 +17,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
      * The ASF licenses this file to You under the Apache License, Version 2.0
      * (the "License"); you may not use this file except in compliance with
      * the License.  You may obtain a copy of the License at
-     * 
+     *
      *      http://www.apache.org/licenses/LICENSE-2.0
-     * 
+     *
      * Unless required by applicable law or agreed to in writing, software
      * distributed under the License is distributed on an "AS IS" BASIS,
      * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             hyphenChar = '-'; // default
         }
 
-        public PatternParser(IPatternConsumer consumer) 
+        public PatternParser(IPatternConsumer consumer)
             : this()
         {
             this.consumer = consumer;
@@ -127,8 +127,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="xmlStream">
         /// The stream containing the XML data.
         /// <para/>
-        /// The <see cref="PatternParser"/> scans the first bytes of the stream looking for a byte order mark 
-        /// or other sign of encoding. When encoding is determined, the encoding is used to continue reading 
+        /// The <see cref="PatternParser"/> scans the first bytes of the stream looking for a byte order mark
+        /// or other sign of encoding. When encoding is determined, the encoding is used to continue reading
         /// the stream, and processing continues parsing the input as a stream of (Unicode) characters.
         /// </param>
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
@@ -294,9 +294,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             for (int i = 0; i < ex.Count; i++)
             {
                 object item = ex[i];
-                if (item is string)
+                if (item is string str)
                 {
-                    string str = (string)item;
                     StringBuilder buf = new StringBuilder();
                     for (int j = 0; j < str.Length; j++)
                     {
@@ -335,9 +334,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             for (int i = 0; i < ex.Count; i++)
             {
                 object item = ex[i];
-                if (item is string)
+                if (item is string str)
                 {
-                    res.Append((string)item);
+                    res.Append(str);
                 }
                 else
                 {
@@ -396,9 +395,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Receive notification of the beginning of an element.
         /// <para/>
-        /// The Parser will invoke this method at the beginning of every element in the XML document; 
-        /// there will be a corresponding <see cref="EndElement"/> event for every <see cref="StartElement"/> event 
-        /// (even when the element is empty). All of the element's content will be reported, 
+        /// The Parser will invoke this method at the beginning of every element in the XML document;
+        /// there will be a corresponding <see cref="EndElement"/> event for every <see cref="StartElement"/> event
+        /// (even when the element is empty). All of the element's content will be reported,
         /// in order, before the corresponding endElement event.
         /// </summary>
         /// <param name="uri">the Namespace URI, or the empty string if the element has no Namespace URI or if Namespace processing is not being performed</param>
@@ -442,8 +441,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Receive notification of the end of an element.
         /// <para/>
-        /// The parser will invoke this method at the end of every element in the XML document; 
-        /// there will be a corresponding <see cref="StartElement"/> event for every 
+        /// The parser will invoke this method at the end of every element in the XML document;
+        /// there will be a corresponding <see cref="StartElement"/> event for every
         /// <see cref="EndElement"/> event (even when the element is empty).
         /// </summary>
         /// <param name="uri">the Namespace URI, or the empty string if the element has no Namespace URI or if Namespace processing is not being performed</param>
@@ -489,9 +488,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Receive notification of character data.
         /// <para/>
-        /// The Parser will call this method to report each chunk of character data. Parsers may 
-        /// return all contiguous character data in a single chunk, or they may split it into 
-        /// several chunks; however, all of the characters in any single event must come from 
+        /// The Parser will call this method to report each chunk of character data. Parsers may
+        /// return all contiguous character data in a single chunk, or they may split it into
+        /// several chunks; however, all of the characters in any single event must come from
         /// the same external entity so that the Locator provides useful information.
         /// <para/>
         /// The application must not attempt to read from the array outside of the specified range.

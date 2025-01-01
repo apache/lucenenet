@@ -107,7 +107,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is DualSingleFunction other))
+            if (o is not DualSingleFunction other)
             {
                 return false;
             }

@@ -28,44 +28,44 @@ namespace Lucene.Net.Search.Join
     /// <summary>
     /// This query requires that you index
     /// children and parent docs as a single block, using the
-    /// <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/> 
+    /// <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>
     /// or <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>
     /// API.  In each block, the
     /// child documents must appear first, ending with the parent
     /// document.  At search time you provide a <see cref="Filter"/>
     /// identifying the parents, however this <see cref="Filter"/> must provide
     /// an <see cref="FixedBitSet"/> per sub-reader.
-    /// 
+    ///
     /// <para>Once the block index is built, use this query to wrap
     /// any sub-query matching only child docs and join matches in that
     /// child document space up to the parent document space.
     /// You can then use this <see cref="Query"/> as a clause with
     /// other queries in the parent document space.</para>
-    /// 
+    ///
     /// <para>See <see cref="ToChildBlockJoinQuery"/> if you need to join
     /// in the reverse order.</para>
-    /// 
+    ///
     /// <para>The child documents must be orthogonal to the parent
     /// documents: the wrapped child query must never
     /// return a parent document.</para>
-    /// 
+    ///
     /// <para>If you'd like to retrieve <see cref="Lucene.Net.Search.Grouping.ITopGroups{T}"/> for the
     /// resulting query, use the <see cref="ToParentBlockJoinCollector"/>.
     /// Note that this is not necessary, ie, if you simply want
     /// to collect the parent documents and don't need to see
     /// which child documents matched under that parent, then
     /// you can use any collector.</para>
-    /// 
+    ///
     /// <para><b>NOTE</b>: If the overall query contains parent-only
     /// matches, for example you OR a parent-only query with a
     /// joined child-only query, then the resulting collected documents
     /// will be correct, however the <see cref="Lucene.Net.Search.Grouping.ITopGroups{T}"/> you get
     /// from <see cref="ToParentBlockJoinCollector"/> will not contain every
     /// child for parents that had matched.</para>
-    /// 
+    ///
     /// <para>See <a href="http://lucene.apache.org/core/4_8_0/join/">http://lucene.apache.org/core/4_8_0/join/</a> for an
     /// overview. </para>
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class ToParentBlockJoinQuery : Query
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Join
             _scoreMode = scoreMode;
         }
 
-        private ToParentBlockJoinQuery(Query origChildQuery, Query childQuery, Filter parentsFilter, ScoreMode scoreMode) 
+        private ToParentBlockJoinQuery(Query origChildQuery, Query childQuery, Filter parentsFilter, ScoreMode scoreMode)
             : base()
         {
             _origChildQuery = origChildQuery;
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Join
             _parentsFilter = parentsFilter;
             _scoreMode = scoreMode;
         }
-        
+
         public override Weight CreateWeight(IndexSearcher searcher)
         {
             return new BlockJoinWeight(this, _childQuery.CreateWeight(searcher), _parentsFilter, _scoreMode);
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Join
             private readonly Filter parentsFilter;
             private readonly ScoreMode scoreMode;
 
-            public BlockJoinWeight(Query joinQuery, Weight childWeight, Filter parentsFilter, ScoreMode scoreMode) 
+            public BlockJoinWeight(Query joinQuery, Weight childWeight, Filter parentsFilter, ScoreMode scoreMode)
                 : base()
             {
                 this.joinQuery = joinQuery;
@@ -172,14 +172,14 @@ namespace Lucene.Net.Search.Join
                     // No matches
                     return null;
                 }
-                if (!(parents is FixedBitSet))
+                if (parents is not FixedBitSet fixedBitSet)
                 {
                     throw IllegalStateException.Create("parentFilter must return FixedBitSet; got " + parents);
                 }
 
-                return new BlockJoinScorer(this, childScorer, (FixedBitSet)parents, firstChildDoc, scoreMode, acceptDocs);
+                return new BlockJoinScorer(this, childScorer, fixedBitSet, firstChildDoc, scoreMode, acceptDocs);
             }
-            
+
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
                 BlockJoinScorer scorer = (BlockJoinScorer)GetScorer(context, context.AtomicReader.LiveDocs);
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search.Join
                 }
                 return ret;
             }
-            
+
             public override int NextDoc()
             {
                 //System.out.println("Q.nextDoc() nextChildDoc=" + nextChildDoc);
@@ -421,7 +421,7 @@ namespace Lucene.Net.Search.Join
                 //System.out.println("  return nextParentDoc=" + nd);
                 return nd;
             }
-            
+
             public virtual Explanation Explain(int docBase)
             {
                 int start = docBase + _prevParentDoc + 1; // +1 b/c prevParentDoc is previous parent doc
@@ -451,7 +451,7 @@ namespace Lucene.Net.Search.Join
         {
             _childQuery.ExtractTerms(terms);
         }
-        
+
         public override Query Rewrite(IndexReader reader)
         {
             Query childRewrite = _childQuery.Rewrite(reader);

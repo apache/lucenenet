@@ -243,7 +243,7 @@ namespace Lucene.Net.Search.Join
 
             MultiTermQuery qc = NumericRangeQuery.NewInt32Range("year", 2007, 2007, true, true);
             // Hacky: this causes the query to need 2 rewrite
-            // iterations: 
+            // iterations:
             qc.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 
             Filter parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("docType", "resume"))));
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search.Join
             r.Dispose();
             dir.Dispose();
         }
-        
+
         protected QueryWrapperFilter Skill(string skill)
         {
             return new QueryWrapperFilter(new TermQuery(new Term("skill", skill)));
@@ -358,7 +358,7 @@ namespace Lucene.Net.Search.Join
             r.Dispose();
             dir.Dispose();
         }
-        
+
         private void AddSkillless(RandomIndexWriter w)
         {
             if (Random.NextBoolean())
@@ -366,7 +366,7 @@ namespace Lucene.Net.Search.Join
                 w.AddDocument(MakeResume("Skillless", Random.NextBoolean() ? "United Kingdom" : "United States"));
             }
         }
-        
+
         private Document GetParentDoc(IndexReader reader, Filter parents, int childDocID)
         {
             IList<AtomicReaderContext> leaves = reader.Leaves;
@@ -805,9 +805,9 @@ namespace Lucene.Net.Search.Join
                             Console.Write("    ");
                             foreach (object o in fd.Fields)
                             {
-                                if (o is BytesRef)
+                                if (o is BytesRef bytesRef)
                                 {
-                                    Console.Write(((BytesRef)o).Utf8ToString() + " ");
+                                    Console.Write(bytesRef.Utf8ToString() + " ");
                                 }
                                 else
                                 {
@@ -853,9 +853,9 @@ namespace Lucene.Net.Search.Join
                                 Console.Write("  ");
                                 foreach (object o in group.GroupSortValues)
                                 {
-                                    if (o is BytesRef)
+                                    if (o is BytesRef bytesRef)
                                     {
-                                        Console.Write(((BytesRef)o).Utf8ToString() + " ");
+                                        Console.Write(bytesRef.Utf8ToString() + " ");
                                     }
                                     else
                                     {
@@ -1063,7 +1063,7 @@ namespace Lucene.Net.Search.Join
             dir.Dispose();
             joinDir.Dispose();
         }
-        
+
         private void CompareChildHits(IndexReader r, IndexReader joinR, TopDocs results, TopDocs joinResults)
         {
             assertEquals(results.TotalHits, joinResults.TotalHits);
@@ -1087,7 +1087,7 @@ namespace Lucene.Net.Search.Join
                 assertArrayEquals(hit0.Fields, joinHit0.Fields);
             }
         }
-        
+
         private void CompareHits(IndexReader r, IndexReader joinR, TopDocs results, ITopGroups<int> joinResults)
         {
             // results is 'complete'; joinResults is a subset

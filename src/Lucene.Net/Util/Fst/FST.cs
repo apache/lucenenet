@@ -490,7 +490,7 @@ namespace Lucene.Net.Util.Fst
             {
                 throw IllegalStateException.Create("cannot save an FST pre-packed FST; it must first be packed");
             }
-            if (packed && !(nodeRefToAddress is PackedInt32s.Mutable))
+            if (packed && nodeRefToAddress is not PackedInt32s.Mutable)
             {
                 throw IllegalStateException.Create("cannot save a FST which has been loaded from disk ");
             }

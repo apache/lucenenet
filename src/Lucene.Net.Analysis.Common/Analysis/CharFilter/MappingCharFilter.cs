@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
         /// <summary>
         /// Default constructor that takes a <see cref="TextReader"/>. </summary>
-        public MappingCharFilter(NormalizeCharMap normMap, TextReader @in) 
+        public MappingCharFilter(NormalizeCharMap normMap, TextReader @in)
             : base(@in)
         {
             //LUCENENET support to reset the reader.
@@ -79,20 +79,20 @@ namespace Lucene.Net.Analysis.CharFilters
 
         /// <summary>
         /// LUCENENET: Copied this method from the <see cref="WordlistLoader"/> class - this class requires readers
-        /// with a Reset() method (which .NET readers don't support). So, we use the <see cref="BufferedCharFilter"/> 
-        /// (which is similar to Java BufferedReader) as a wrapper for whatever reader the user passes 
+        /// with a Reset() method (which .NET readers don't support). So, we use the <see cref="BufferedCharFilter"/>
+        /// (which is similar to Java BufferedReader) as a wrapper for whatever reader the user passes
         /// (unless it is already a <see cref="BufferedCharFilter"/>).
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
         private static BufferedCharFilter GetBufferedReader(TextReader reader)
         {
-            return (reader is BufferedCharFilter) ? (BufferedCharFilter)reader : new BufferedCharFilter(reader);
+            return reader as BufferedCharFilter ?? new BufferedCharFilter(reader);
         }
 
         public override void Reset()
         {
-            // LUCENENET: reset the BufferedCharFilter. 
+            // LUCENENET: reset the BufferedCharFilter.
             _input.Reset();
             buffer.Reset(_input);
             replacement = null;

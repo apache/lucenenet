@@ -170,7 +170,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         private static IQueryNode ApplyModifier(IQueryNode node, Modifier mod) // LUCENENET: CA1822: Mark members as static
         {
             // check if modifier is not already defined and is default
-            if (!(node is ModifierQueryNode modNode))
+            if (node is not ModifierQueryNode modNode)
             {
                 return new BooleanModifierNode(node, mod);
             }

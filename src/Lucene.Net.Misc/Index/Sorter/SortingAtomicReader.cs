@@ -463,11 +463,11 @@ namespace Lucene.Net.Index.Sorter
             // for testing
             internal virtual bool Reused(DocsEnum other)
             {
-                if (other is null || !(other is SortingDocsEnum))
+                if (other is not SortingDocsEnum sortingDocsEnum)
                 {
                     return false;
                 }
-                return docs == ((SortingDocsEnum)other).docs;
+                return docs == sortingDocsEnum.docs;
             }
 
             public override int Advance(int target)
@@ -635,11 +635,11 @@ namespace Lucene.Net.Index.Sorter
             // for testing
             internal virtual bool Reused(DocsAndPositionsEnum other)
             {
-                if (other is null || !(other is SortingDocsAndPositionsEnum))
+                if (other is not SortingDocsAndPositionsEnum sortingEnum)
                 {
                     return false;
                 }
-                return docs == ((SortingDocsAndPositionsEnum)other).docs;
+                return docs == sortingEnum.docs;
             }
 
             private void AddPositions(DocsAndPositionsEnum @in, IndexOutput @out)

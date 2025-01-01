@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
         public virtual Query Build(IQueryNode queryNode)
         {
             // validates node
-            if (!(queryNode is MatchAllDocsQueryNode))
+            if (queryNode is not MatchAllDocsQueryNode)
             {
                 // LUCENENET: Factored out NLS/Message/IMessage so end users can optionally utilize the built-in .NET localization.
                 throw new QueryNodeException(string.Format(

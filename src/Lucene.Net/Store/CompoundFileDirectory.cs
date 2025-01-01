@@ -122,7 +122,7 @@ namespace Lucene.Net.Store
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!(directory is CompoundFileDirectory),"compound file inside of compound file: {0}", fileName);
+                if (Debugging.AssertsEnabled) Debugging.Assert(directory is not CompoundFileDirectory,"compound file inside of compound file: {0}", fileName);
                 this.entries = SENTINEL;
                 this.IsOpen = true;
                 writer = new CompoundFileWriter(directory, fileName);

@@ -177,11 +177,11 @@ namespace Lucene.Net.Search
             ShardSearcher[] subSearchers;
             int[] docStarts;
 
-            if (ctx is AtomicReaderContext)
+            if (ctx is AtomicReaderContext atomicReaderContext)
             {
                 subSearchers = new ShardSearcher[1];
                 docStarts = new int[1];
-                subSearchers[0] = new ShardSearcher((AtomicReaderContext)ctx, ctx);
+                subSearchers[0] = new ShardSearcher(atomicReaderContext, ctx);
                 docStarts[0] = 0;
             }
             else

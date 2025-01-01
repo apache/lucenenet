@@ -264,14 +264,14 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 // clauses can be complex
                 // Booleans e.g. nots and ors etc
                 int numNegatives = 0;
-                if (!(contents is BooleanQuery))
+                if (contents is not BooleanQuery bq)
                 {
                     throw new ArgumentException("Unknown query type \""
                         + contents.GetType().Name
                         + "\" found in phrase query string \"" + phrasedQueryStringContents
                         + "\"");
                 }
-                BooleanQuery bq = (BooleanQuery)contents;
+
                 BooleanClause[] bclauses = bq.GetClauses();
                 SpanQuery[] allSpanClauses = new SpanQuery[bclauses.Length];
                 // For all clauses e.g. one* two~

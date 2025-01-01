@@ -890,7 +890,7 @@ namespace Lucene.Net.Store
             // this test backdoors the directory via the filesystem. so it must be an FSDir (for now)
             // TODO: figure a way to test this better/clean it up. E.g. we should be testing for FileSwitchDir,
             // if it's using two FSdirs and so on
-            if (!(fsdir is FSDirectory))
+            if (fsdir is not FSDirectory)
             {
                 AssumeTrue("test only works for FSDirectory subclasses", false);
                 return;

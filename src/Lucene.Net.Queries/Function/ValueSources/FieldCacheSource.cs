@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override bool Equals(object o)
         {
             if (o is null) return false;
-            if (!(o is FieldCacheSource other)) return false;
+            if (o is not FieldCacheSource other) return false;
             return m_field.Equals(other.m_field, StringComparison.Ordinal) && m_cache == other.m_cache;
         }
 

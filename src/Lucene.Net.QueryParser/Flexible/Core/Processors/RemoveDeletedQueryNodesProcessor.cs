@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             queryTree = base.Process(queryTree);
 
             if (queryTree is DeletedQueryNode
-                && !(queryTree is MatchNoDocsQueryNode))
+                && queryTree is not MatchNoDocsQueryNode)
             {
                 return new MatchNoDocsQueryNode();
             }
@@ -63,7 +63,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                     foreach (var child in children)
                     {
 
-                        if (!(child is DeletedQueryNode))
+                        if (child is not DeletedQueryNode)
                         {
                             removeBoolean = false;
                             break;

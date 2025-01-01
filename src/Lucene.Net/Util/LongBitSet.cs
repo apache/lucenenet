@@ -438,11 +438,11 @@ namespace Lucene.Net.Util
             {
                 return true;
             }
-            if (!(o is Int64BitSet))
+            if (o is not Int64BitSet other)
             {
                 return false;
             }
-            Int64BitSet other = (Int64BitSet)o;
+
             if (numBits != other.Length)
             {
                 return false;

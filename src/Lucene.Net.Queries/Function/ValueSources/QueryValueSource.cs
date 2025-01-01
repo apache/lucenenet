@@ -66,7 +66,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is QueryValueSource other))
+            if (o is not QueryValueSource other)
                 return false;
             return this.q.Equals(other.q) && this.defVal == other.defVal;
         }

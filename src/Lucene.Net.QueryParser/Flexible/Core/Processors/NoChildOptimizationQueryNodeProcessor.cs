@@ -48,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                 {
                     foreach (IQueryNode child in children)
                     {
-                        if (!(child is DeletedQueryNode))
+                        if (child is not DeletedQueryNode)
                         {
                             return node;
                         }
