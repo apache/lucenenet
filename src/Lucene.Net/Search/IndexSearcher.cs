@@ -539,7 +539,7 @@ namespace Lucene.Net.Search
 
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each sub
                 {
-                    runner.Submit(new SearcherCallableNoSort(@lock, this, m_leafSlices[i], weight, after, nDocs, hq).Call);
+                    runner.Submit(new SearcherCallableNoSort(@lock, this, m_leafSlices[i], weight, after, nDocs, hq, cancellationToken).Call);
                 }
 
                 int totalHits = 0;
@@ -649,7 +649,7 @@ namespace Lucene.Net.Search
 
                 for (int i = 0; i < m_leafSlices.Length; i++) // search each leaf slice
                 {
-                    runner.Submit(new SearcherCallableWithSort(@lock, this, m_leafSlices[i], weight, after, nDocs, topCollector, sort, doDocScores, doMaxScore).Call);
+                    runner.Submit(new SearcherCallableWithSort(@lock, this, m_leafSlices[i], weight, after, nDocs, topCollector, sort, doDocScores, doMaxScore, cancellationToken).Call);
                 }
 
                 int totalHits = 0;
@@ -756,6 +756,8 @@ namespace Lucene.Net.Search
                     }
                 }
             }
+
+            cancellationToken.ThrowIfCancellationRequested(); // LUCENENET specific - cancellation support
         }
 
         /// <summary>
@@ -859,8 +861,9 @@ namespace Lucene.Net.Search
             private readonly int nDocs;
             private readonly HitQueue hq;
             private readonly LeafSlice slice;
+            private readonly CancellationToken cancellationToken;
 
-            public SearcherCallableNoSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, ScoreDoc? after, int nDocs, HitQueue hq)
+            public SearcherCallableNoSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, ScoreDoc? after, int nDocs, HitQueue hq, CancellationToken cancellationToken)
             {
                 this.@lock = @lock;
                 this.searcher = searcher;
@@ -868,12 +871,13 @@ namespace Lucene.Net.Search
                 this.after = after;
                 this.nDocs = nDocs;
                 this.hq = hq;
+                this.cancellationToken = cancellationToken;
                 this.slice = slice;
             }
 
             public TopDocs Call()
             {
-                TopDocs docs = searcher.Search(slice.Leaves, weight, after, nDocs);
+                TopDocs docs = searcher.Search(slice.Leaves, weight, after, nDocs, cancellationToken);
                 ScoreDoc[] scoreDocs = docs.ScoreDocs;
                 //it would be so nice if we had a thread-safe insert
                 @lock.Lock();
@@ -911,8 +915,9 @@ namespace Lucene.Net.Search
             private readonly FieldDoc? after;
             private readonly bool doDocScores;
             private readonly bool doMaxScore;
+            private readonly CancellationToken cancellationToken;
 
-            public SearcherCallableWithSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, FieldDoc? after, int nDocs, TopFieldCollector hq, Sort sort, bool doDocScores, bool doMaxScore)
+            public SearcherCallableWithSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, FieldDoc? after, int nDocs, TopFieldCollector hq, Sort sort, bool doDocScores, bool doMaxScore, CancellationToken cancellationToken)
             {
                 this.@lock = @lock;
                 this.searcher = searcher;
@@ -924,6 +929,7 @@ namespace Lucene.Net.Search
                 this.after = after;
                 this.doDocScores = doDocScores;
                 this.doMaxScore = doMaxScore;
+                this.cancellationToken = cancellationToken;
             }
 
             private readonly FakeScorer fakeScorer = new FakeScorer();
@@ -931,7 +937,7 @@ namespace Lucene.Net.Search
             public TopFieldDocs Call()
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(slice.Leaves.Length == 1);
-                TopFieldDocs docs = searcher.Search(slice.Leaves, weight, after, nDocs, sort, true, doDocScores || sort.NeedsScores, doMaxScore);
+                TopFieldDocs docs = searcher.Search(slice.Leaves, weight, after, nDocs, sort, true, doDocScores || sort.NeedsScores, doMaxScore, cancellationToken);
                 @lock.Lock();
                 try
                 {
@@ -991,7 +997,7 @@ namespace Lucene.Net.Search
 
             public void Submit(Func<T> task)
             {
-                this.service.Submit(task);
+                this.service.Submit(task, cancellationToken);
                 ++numTasks;
             }
 
