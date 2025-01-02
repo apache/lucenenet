@@ -137,7 +137,7 @@ namespace Lucene
         /// Used to check whether <paramref name="e"/> corresponds to a RuntimeException
         /// in Java. RuntimeException in Java indicates an unchecked exception. Unchecked
         /// exceptions don't force the developer to make a decision whether to handle or re-throw
-        /// the excption, it can safely be ignored and allowed to propagate.
+        /// the exception, it can safely be ignored and allowed to propagate.
         /// </summary>
         /// <param name="e">This exception.</param>
         /// <returns><c>true</c> if <paramref name="e"/> corresponds to a RuntimeException type
@@ -152,7 +152,7 @@ namespace Lucene
                 // Some Java errors derive from SystemException in .NET, but we don't want to include them here
                 e.IsError() ||
 
-                // .NET made IOException a SystemExcpetion, but those should not be included here
+                // .NET made IOException a SystemException, but those should not be included here
                 e.IsIOException() ||
 
                 // .NET made System.Threading.ThreadInterruptedException a SystemException, but we need to ignore it
@@ -160,7 +160,7 @@ namespace Lucene
                 e is System.Threading.ThreadInterruptedException ||
 
                 // ObjectDisposedException is a special case because in Lucene the AlreadyClosedException derived
-                // from IOException and was therefore a checked excpetion type.
+                // from IOException and was therefore a checked exception type.
                 e is ObjectDisposedException ||
 
                 // These seem to correspond closely to java.lang.ReflectiveOperationException, which are not derived from RuntimeException
@@ -172,9 +172,9 @@ namespace Lucene
                 return false;
             }
 
-            // Known implemetnations of IRuntimeException
+            // Known implementations of IRuntimeException
 
-            // LuceneExcpetion
+            // LuceneException
             // BytesRefHash.MaxBytesLengthExceededException
             // CollectionTerminatedException
             // TimeLimitingCollector.TimeExceededException
@@ -229,8 +229,8 @@ namespace Lucene
         {
             if (e is null || e.IsAlwaysIgnored()) return false;
 
-            return e is ArgumentOutOfRangeException ||
-                e is IndexOutOfRangeException;
+            return e is ArgumentOutOfRangeException
+                or IndexOutOfRangeException;
         }
 
         /// <summary>
@@ -245,8 +245,8 @@ namespace Lucene
         {
             if (e is null || e.IsAlwaysIgnored()) return false;
 
-            return e is ArgumentOutOfRangeException ||
-                e is IndexOutOfRangeException;
+            return e is ArgumentOutOfRangeException
+                or IndexOutOfRangeException;
         }
 
         /// <summary>
@@ -261,13 +261,13 @@ namespace Lucene
         {
             if (e is null || e.IsAlwaysIgnored()) return false;
 
-            return e is ArgumentOutOfRangeException ||
-                e is IndexOutOfRangeException;
+            return e is ArgumentOutOfRangeException
+                or IndexOutOfRangeException;
         }
 
         /// <summary>
         /// Used to check whether <paramref name="e"/> corresponds to a NoSuchFileException
-        /// or a FileNotFoundExcpetion in Java.
+        /// or a FileNotFoundException in Java.
         /// <para/>
         /// NOTE: In Java, there is no distinction between file and directory, and FileNotFoundException is thrown
         /// in either case. Therefore, this handler also catches <see cref="System.IO.DirectoryNotFoundException"/>.
@@ -278,11 +278,11 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNoSuchFileExceptionOrFileNotFoundException(this Exception e)
         {
-            return e is FileNotFoundException ||
-                // Java doesn't have an equivalent to DirectoryNotFoundExcption, but
+            return e is FileNotFoundException
+                // Java doesn't have an equivalent to DirectoryNotFoundException, but
                 // Lucene added one that subclassed java.io.FileNotFoundException
                 // that we didn't add to the .NET port.
-                e is DirectoryNotFoundException;
+                or DirectoryNotFoundException;
         }
 
         /// <summary>
@@ -305,7 +305,7 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsParseException(this Exception e)
         {
-            // LUCENNET: Added this exception in J2N to cover this case because it is not a RuntimeException
+            // LUCENENET: Added this exception in J2N to cover this case because it is not a RuntimeException
             // which makes it different from NumberFormatException in Java and FormatException in .NET.
             return e is ParseException;
         }
@@ -348,8 +348,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIllegalAccessException(this Exception e)
         {
-            return e is MemberAccessException ||
-                e is TypeAccessException;
+            return e is MemberAccessException
+                or TypeAccessException;
         }
 
         /// <summary>
@@ -385,8 +385,8 @@ namespace Lucene
         {
             if (e is null || e.IsAlwaysIgnored()) return false;
 
-            return e is ArgumentNullException ||
-                e is NullReferenceException; // LUCENENET TODO: These could be real problems where excptions can be prevevented that our catch blocks are hiding
+            return e is ArgumentNullException
+                or NullReferenceException; // LUCENENET TODO: These could be real problems where exceptions can be prevented that our catch blocks are hiding
         }
 
         /// <summary>
@@ -407,10 +407,10 @@ namespace Lucene
             // described in the javadoc that the class might not be created when using Activator.CreateInstance().
             // The TestFactories class also seems to rule out that this is supposed to catch TargetInvocationException
             // or security exceptions such as MemberAccessException or TypeAccessException.
-            return e is MissingMethodException ||
-                e is TypeLoadException ||
-                e is ReflectionTypeLoadException ||
-                e is TypeInitializationException; // May happen due to a class initializer that throws an uncaught exception.
+            return e is MissingMethodException
+                or TypeLoadException
+                or ReflectionTypeLoadException
+                or TypeInitializationException; // May happen due to a class initializer that throws an uncaught exception.
         }
 
         /// <summary>
@@ -438,8 +438,8 @@ namespace Lucene
         {
             // According to the docs, this maps to 2 potential exceptions:
             // https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.getencoding?view=net-5.0
-            return e is ArgumentException ||
-                e is PlatformNotSupportedException;
+            return e is ArgumentException
+                or PlatformNotSupportedException;
         }
 
         /// <summary>
@@ -573,8 +573,8 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIllegalStateException(this Exception e)
         {
-            return e is InvalidOperationException &&
-                e is not ObjectDisposedException; // In .NET, ObjectDisposedException subclases InvalidOperationException, but Lucene decided to use IOException for AlreadyClosedException
+            return e is InvalidOperationException
+                and not ObjectDisposedException; // In .NET, ObjectDisposedException subclases InvalidOperationException, but Lucene decided to use IOException for AlreadyClosedException
         }
 
         /// <summary>
@@ -591,7 +591,7 @@ namespace Lucene
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsStackOverflowError(this Exception e)
         {
-            return e is StackOverflowException; // Uncatchable in .NET core, be sure to use with 
+            return e is StackOverflowException; // Uncatchable in .NET core, be sure to use with
         }
 
         /// <summary>

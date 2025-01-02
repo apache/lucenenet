@@ -309,7 +309,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: retrieve thread-private 
+        /// Expert: retrieve thread-private
         /// <see cref="StoredFieldsReader"/>
         /// <para/>
         /// @lucene.internal
@@ -376,7 +376,8 @@ namespace Lucene.Net.Index
         {
             if (docID < 0 || docID >= MaxDoc)
             {
-                throw new IndexOutOfRangeException("docID must be >= 0 and < maxDoc=" + MaxDoc + " (got docID=" + docID + ")");
+                throw new ArgumentOutOfRangeException(nameof(docID),
+                    $"docID must be >= 0 and < maxDoc={MaxDoc} (got docID={docID})");
             }
         }
 
@@ -590,10 +591,10 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public interface ICoreDisposedListener 
+        public interface ICoreDisposedListener
         {
             /// <summary>
-            /// Invoked when the shared core of the original 
+            /// Invoked when the shared core of the original
             /// <see cref="SegmentReader"/> has disposed.
             /// </summary>
             void OnDispose(object ownerCoreCacheKey);
