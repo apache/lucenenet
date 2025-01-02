@@ -178,8 +178,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 try
                 {
                     if (docId < 0 || docId >= _outerInstance.maxDoc)
-                        throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) +
-                                                           "; got " + docId);
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(docId),
+                            $"docID must be 0 .. {_outerInstance.maxDoc - 1}; got {docId}");
+                    }
 
                     _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * docId);
                     SimpleTextUtil.ReadLine(_input, _scratch);
@@ -273,8 +275,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 try
                 {
                     if (docId < 0 || docId >= _outerInstance.maxDoc)
-                        throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) +
-                                                           "; got " + docId);
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(docId),
+                            $"docID must be 0 .. {_outerInstance.maxDoc - 1}; got {docId}");
+                    }
 
                     _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * docId);
                     SimpleTextUtil.ReadLine(_input, _scratch);
@@ -396,8 +400,8 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (docId < 0 || docId >= _outerInstance.maxDoc)
                 {
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) + "; got " +
-                                                       docId);
+                    throw new ArgumentOutOfRangeException(nameof(docId),
+                        $"docID must be 0 .. {_outerInstance.maxDoc - 1}; got {docId}");
                 }
 
                 try
@@ -428,8 +432,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     if (ord < 0 || ord >= _field.NumValues)
                     {
-                        throw new IndexOutOfRangeException($"ord must be 0 .. {(_field.NumValues - 1)}; got {ord}");
+                        throw new ArgumentOutOfRangeException(nameof(ord),
+                            $"ord must be 0 .. {_field.NumValues - 1}; got {ord}");
                     }
+
                     _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
                     SimpleTextUtil.ReadLine(_input, _scratch);
                     // LUCENENET specific - use wrapper BytesRefFormatter struct to defer building the string unless string.Format() is called
@@ -505,8 +511,10 @@ namespace Lucene.Net.Codecs.SimpleText
             public override void SetDocument(int docID)
             {
                 if (docID < 0 || docID >= _outerInstance.maxDoc)
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) + "; got " +
-                                                        docID);
+                {
+                    throw new ArgumentOutOfRangeException(nameof(docID),
+                        $"docID must be 0 .. {_outerInstance.maxDoc - 1}; got {docID}");
+                }
 
                 try
                 {
@@ -529,7 +537,8 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     if (ord < 0 || ord >= _field.NumValues)
                     {
-                        throw new IndexOutOfRangeException("ord must be 0 .. " + (_field.NumValues - 1) + "; got " + ord);
+                        throw new ArgumentOutOfRangeException(nameof(ord),
+                            $"ord must be 0 .. {_field.NumValues - 1}; got {ord}");
                     }
 
                     _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));

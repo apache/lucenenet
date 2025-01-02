@@ -835,7 +835,7 @@ namespace Lucene.Net.Util
         /// <param name="count"> The number of code points. </param>
         /// <returns> a String representing the code points between offset and count. </returns>
         /// <exception cref="ArgumentException"> If an invalid code point is encountered. </exception>
-        /// <exception cref="IndexOutOfRangeException"> If the offset or count are out of bounds. </exception>
+        /// <exception cref="ArgumentOutOfRangeException"> If the offset or count are out of bounds. </exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string NewString(int[] codePoints, int offset, int count)
         {

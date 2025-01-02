@@ -19,13 +19,14 @@ namespace Lucene.Net.Index.Memory
      * limitations under the License.
      */
 
-    /// 
+    ///
     /// <summary>
     /// @lucene.internal
     /// </summary>
     internal class MemoryIndexNormDocValues : NumericDocValues
     {
         private readonly long value;
+
         public MemoryIndexNormDocValues(long value)
         {
             this.value = value;
@@ -35,7 +36,7 @@ namespace Lucene.Net.Index.Memory
         {
             if (docID != 0)
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(docID));
             }
             else
             {
