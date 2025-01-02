@@ -440,7 +440,6 @@ namespace Lucene.Net.Util
             public string[] Value { get; private set; }
         }
 
-        // LUCENENET TODO: Finish implementation
         /// <summary>
         /// Marks any suites which are known not to close all the temporary
         /// files. This may prevent temp files and folders from being cleaned
@@ -3086,10 +3085,11 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected string GetFullMethodName([CallerMemberName] string memberName = "")
         {
-            return string.Format("{0}+{1}", this.GetType().Name, memberName);
+            return $"{this.GetType().Name}+{memberName}";
         }
 
-        private static void CleanupTemporaryFiles()
+        // LUCENENET specific - this is equivalent to TemporaryFilesCleanupRule in Lucene
+        private void CleanupTemporaryFiles()
         {
             // Drain cleanup queue and clear it.
             FileSystemInfo[] everything;
@@ -3126,19 +3126,20 @@ namespace Lucene.Net.Util
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
-                    //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
-                    //                    {
-                    Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
-                    return;
-                    //                    }
+                    Type suiteClass = this.GetType();
+                    if (suiteClass.GetCustomAttribute<SuppressTempFileChecksAttribute>(inherit: true) is { } suppressAttr)
+                    {
+                        Console.Error.WriteLine($"WARNING: Leftover undeleted temporary files (bugUrl: {suppressAttr.BugUrl}): {e.Message}");
+                        return;
+                    }
+                    throw;
                 }
             }
             else
             {
                 if (tempDirBasePath != null)
                 {
-                    Console.Error.WriteLine("NOTE: leaving temporary files on disk at: " + tempDirBasePath);
+                    Console.Error.WriteLine($"NOTE: leaving temporary files on disk at: {tempDirBasePath}");
                 }
             }
         }
