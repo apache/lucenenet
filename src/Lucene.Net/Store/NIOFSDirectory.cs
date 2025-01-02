@@ -102,27 +102,27 @@ namespace Lucene.Net.Store
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
-            var path = new FileInfo(Path.Combine(Directory.FullName, name));
-            var fc = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            var path = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
+            var fc = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             return new NIOFSIndexInput("NIOFSIndexInput(path=\"" + path + "\")", fc, context);
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
-            var path = new FileInfo(Path.Combine(Directory.FullName, name));
-            var fc = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            var path = Path.Combine(Directory.FullName, name); // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
+            var fc = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             return new IndexInputSlicerAnonymousClass(context, path, fc);
         }
 
         private sealed class IndexInputSlicerAnonymousClass : IndexInputSlicer
         {
             private readonly IOContext context;
-            private readonly FileInfo path;
+            private readonly string path; // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
             private readonly FileStream descriptor;
             private int disposed = 0; // LUCENENET specific - allow double-dispose
 
-            public IndexInputSlicerAnonymousClass(IOContext context, FileInfo path, FileStream descriptor)
+            public IndexInputSlicerAnonymousClass(IOContext context, string path, FileStream descriptor)
             {
                 this.context = context;
                 this.path = path;
@@ -141,7 +141,7 @@ namespace Lucene.Net.Store
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                return new NIOFSIndexInput("NIOFSIndexInput(" + sliceDescription + " in path=\"" + path + "\" slice=" + offset + ":" + (offset + length) + ")", descriptor, offset, length, 
+                return new NIOFSIndexInput("NIOFSIndexInput(" + sliceDescription + " in path=\"" + path + "\" slice=" + offset + ":" + (offset + length) + ")", descriptor, offset, length,
                     BufferedIndexInput.GetBufferSize(context));
             }
 
