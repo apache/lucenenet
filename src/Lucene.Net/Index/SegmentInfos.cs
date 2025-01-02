@@ -120,11 +120,11 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// The file format version for the segments_N codec header, up to 4.5. </summary>
-        public static readonly int VERSION_40 = 0;
+        public const int VERSION_40 = 0;
 
         /// <summary>
         /// The file format version for the segments_N codec header, since 4.6+. </summary>
-        public static readonly int VERSION_46 = 1;
+        public const int VERSION_46 = 1;
 
         /// <summary>
         /// The file format version for the segments_N codec header, since 4.8+ </summary>
@@ -139,6 +139,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Current format of segments.gen </summary>
+        // ReSharper disable once ConvertToConstant.Global - should always be evaluated, not inlined
         public static readonly int FORMAT_SEGMENTS_GEN_CURRENT = FORMAT_SEGMENTS_GEN_CHECKSUM;
 
         /// <summary>
@@ -153,12 +154,7 @@ namespace Lucene.Net.Index
         /// System properties can also be injected by supplying a <see cref="Configuration.IConfigurationFactory"/> at application startup
         /// through <see cref="Configuration.ConfigurationSettings.SetConfigurationFactory(Configuration.IConfigurationFactory)"/>.
         /// </summary>
-        public static bool UseLegacySegmentNames
-        {
-            get => useLegacySegmentNames;
-            set => useLegacySegmentNames = value;
-        }
-        internal static bool useLegacySegmentNames = Util.SystemProperties.GetPropertyAsBoolean("useLegacySegmentNames", defaultValue: false);
+        public static bool UseLegacySegmentNames { get; set; } = Util.SystemProperties.GetPropertyAsBoolean("useLegacySegmentNames", defaultValue: false);
 
         /// <summary>
         /// Optimized version of <see cref="J2N.IntegralNumberExtensions.ToString(long, int)"/> with a radix of 36, that
@@ -183,7 +179,7 @@ namespace Lucene.Net.Index
                 case 9: return "9";
             }
 
-            if (!allowLegacyNames || !useLegacySegmentNames)
+            if (!allowLegacyNames || !UseLegacySegmentNames)
             {
                 return segment switch
                 {

@@ -69,6 +69,7 @@ namespace Lucene.Net.Analysis
         private readonly CharacterRunAutomaton runAutomaton;
         private readonly bool lowerCase;
         private readonly int maxTokenLength;
+        // ReSharper disable once ConvertToConstant.Global - changes to 255 in later versions of Lucene
         public static readonly int DEFAULT_MAX_TOKEN_LENGTH = int.MaxValue;
         private int state;
 
