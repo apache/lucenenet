@@ -28,7 +28,7 @@ on:
     - '.build/dependencies.props'
     - '.build/TestReferences.Common.*'
     - 'TestTargetFrameworks.*'
-    - 'test.runsettings'
+    - '.github/**/*.yml'
     - '*.sln'
     - 'src/Lucene.Net.Tests.Analysis.Stempel/Directory.Build.*'
     - 'src/Directory.Build.*'

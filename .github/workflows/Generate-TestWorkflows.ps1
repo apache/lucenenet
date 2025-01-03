@@ -232,7 +232,7 @@ on:
     - '.build/dependencies.props'
     - '.build/TestReferences.Common.*'
     - 'TestTargetFrameworks.*'
-    - 'test.runsettings'
+    - '.github/**/*.yml'
     - '*.sln'$directoryBuildPaths
     # Dependencies$dependencyPaths
     - '!**/*.md'
