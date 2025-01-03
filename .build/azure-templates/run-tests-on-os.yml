@@ -217,6 +217,7 @@ steps:
 
             $testExpression = "dotnet test ""$($testBinary.FullName)"" --framework ""$framework"" --blame --no-build --no-restore" + `
                 " --logger:""console;verbosity=normal"" --logger:""trx;LogFileName=$testResultsFileName""" + `
+                " --settings test.runsettings " + `
                 " --results-directory:""$testResultDirectory""" + `
                 " --blame-hang --blame-hang-dump-type mini $blameHangTimeout"
 

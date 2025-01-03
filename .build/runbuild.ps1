@@ -310,7 +310,7 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
 
             $testProjectPath = $testProject.FullName
             $testExpression = "dotnet test $testProjectPath --configuration $configuration --framework $framework --no-build"
-            $testExpression = "$testExpression --no-restore --blame  --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 15minutes --results-directory $testResultDirectory"
+            $testExpression = "$testExpression --no-restore --blame  --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 15minutes --results-directory $testResultDirectory --settings test.runsettings"
 
             # Breaking change: We need to explicitly set the logger for it to work with TeamCity.
             # See: https://github.com/microsoft/vstest/issues/1590#issuecomment-393460921
