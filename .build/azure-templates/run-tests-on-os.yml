@@ -172,6 +172,7 @@ steps:
     $tempDirectory = "$(Agent.TempDirectory)"
     $isNightly = if ($env:ISNIGHTLY -eq 'true') { 'true' } else { 'false' }
     $isWeekly = if ($env:ISWEEKLY -eq 'true') { 'true' } else { 'false' }
+    $displayFullName = if ($env:DISPLAYFULLNAME -eq 'false') { 'false' } else { 'true' }
 
     function IsSupportedFramework([string]$framework) {
         if ($IsWindows -eq $null) {
@@ -217,7 +218,6 @@ steps:
 
             $testExpression = "dotnet test ""$($testBinary.FullName)"" --framework ""$framework"" --blame --no-build --no-restore" + `
                 " --logger:""console;verbosity=normal"" --logger:""trx;LogFileName=$testResultsFileName""" + `
-                " --settings test.runsettings " + `
                 " --results-directory:""$testResultDirectory""" + `
                 " --blame-hang --blame-hang-dump-type mini $blameHangTimeout"
 
@@ -226,6 +226,10 @@ steps:
             }
 
             $testExpression = "$testExpression -- RunConfiguration.TargetPlatform=$testPlatform"
+
+            if ($displayFullName -eq 'true') {
+                $testExpression = "$testExpression NUnit.DisplayName=FullName"
+            }
 
             Write-Host "Testing '$($testBinary.FullName)' on framework '$framework' and outputting test results to '$testResultDirectory/$testResultsFileName'..."
             Write-Host $testExpression -ForegroundColor Magenta

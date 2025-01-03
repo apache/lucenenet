@@ -324,12 +324,15 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
             # doing release inspection and on the CI server.
             $testExpression = "$testExpression --logger:""trx;LogFileName=TestResults.trx"""
 
-            # Specify test.runsettings file for NUnit to use the correct settings
-            $testExpression = "$testExpression --settings $baseDirectory/test.runsettings"
-
             if (![string]::IsNullOrEmpty($where)) {
                 $testExpression = "$testExpression --TestCaseFilter:""$where"""
             }
+
+            # Anything after here is test run settings, following the "--" separator
+            $testExpression = "$testExpression --"
+
+            # Specify NUnit.DisplayName to get the full test class name in the output
+            $testExpression = "$testExpression NUnit.DisplayName=FullName"
 
             Write-Host $testExpression -ForegroundColor Magenta
 
