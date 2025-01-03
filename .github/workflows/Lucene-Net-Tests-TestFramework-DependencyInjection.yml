@@ -28,6 +28,7 @@ on:
     - '.build/dependencies.props'
     - '.build/TestReferences.Common.*'
     - 'TestTargetFrameworks.*'
+    - 'test.runsettings'
     - '*.sln'
     - 'src/Lucene.Net.Tests.TestFramework.DependencyInjection/Directory.Build.*'
     - 'src/Directory.Build.*'

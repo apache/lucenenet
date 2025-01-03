@@ -232,6 +232,7 @@ on:
     - '.build/dependencies.props'
     - '.build/TestReferences.Common.*'
     - 'TestTargetFrameworks.*'
+    - 'test.runsettings'
     - '*.sln'$directoryBuildPaths
     # Dependencies$dependencyPaths
     - '!**/*.md'
