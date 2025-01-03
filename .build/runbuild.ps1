@@ -310,7 +310,7 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
 
             $testProjectPath = $testProject.FullName
             $testExpression = "dotnet test $testProjectPath --configuration $configuration --framework $framework --no-build"
-            $testExpression = "$testExpression --no-restore --blame  --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 15minutes --results-directory $testResultDirectory --settings test.runsettings"
+            $testExpression = "$testExpression --no-restore --blame  --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 15minutes --results-directory $testResultDirectory"
 
             # Breaking change: We need to explicitly set the logger for it to work with TeamCity.
             # See: https://github.com/microsoft/vstest/issues/1590#issuecomment-393460921
@@ -323,6 +323,9 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
             # Also log to a file in TRX format, so we have a build artifact both when
             # doing release inspection and on the CI server.
             $testExpression = "$testExpression --logger:""trx;LogFileName=TestResults.trx"""
+
+            # Specify test.runsettings file for NUnit to use the correct settings
+            $testExpression = "$testExpression --settings $baseDirectory/test.runsettings"
 
             if (![string]::IsNullOrEmpty($where)) {
                 $testExpression = "$testExpression --TestCaseFilter:""$where"""
