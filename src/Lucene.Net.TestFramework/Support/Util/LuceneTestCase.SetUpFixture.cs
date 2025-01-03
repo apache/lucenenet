@@ -70,7 +70,6 @@ namespace Lucene.Net.Util
             [OneTimeSetUp]
             public void OneTimeSetUpWrapper()
             {
-                //var fixture = TestExecutionContext.CurrentContext.CurrentTest;
                 if (stackCount.GetAndIncrement() == 0)
                 {
                     // Set up for assembly
