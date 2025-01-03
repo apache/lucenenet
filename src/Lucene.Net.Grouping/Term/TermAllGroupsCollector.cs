@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Util;
-using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -28,7 +27,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// query. Only the group value is collected, and the order
     /// is undefined.  This collector does not determine
     /// the most relevant document of a group.
-    /// 
+    ///
     /// <para>
     /// Implementation detail: an int hash set (SentinelIntSet)
     /// is used to detect if a group is already added to the
@@ -97,7 +96,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        public override IEnumerable<BytesRef> Groups => groups;
+        public override ICollection<BytesRef> Groups => groups;
 
         public override void SetNextReader(AtomicReaderContext context)
         {
