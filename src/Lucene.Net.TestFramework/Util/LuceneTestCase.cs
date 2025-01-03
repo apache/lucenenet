@@ -505,6 +505,7 @@ namespace Lucene.Net.Util
                 TestSlow = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, true); // LUCENENET specific - made default true, as per the docs
                 TestThrottling = TestNightly ? Throttling.SOMETIMES : Throttling.NEVER;
                 LeaveTemporary = LoadLeaveTemorary();
+                FailOnTestFixtureOneTimeSetUpError = SystemProperties.GetPropertyAsBoolean("tests:failontestfixtureonetimesetuperror", true);
             }
 
 
@@ -583,6 +584,16 @@ namespace Lucene.Net.Util
                 }
                 return defaultValue;
             }
+
+            /// <summary>
+            /// Fail when <see cref="OneTimeSetUp()"/> throws an exception for a given test fixture (usually a class).
+            /// By default, NUnit swallows exceptions when they happen here. We explicitly report these errors
+            /// to standard error, but enabling this feature will also cause all tests in the fixture and nested
+            /// tests to fail. Defaults to <c>false</c>.
+            /// <para/>
+            /// LUCENENET specific.
+            /// </summary>
+            public bool FailOnTestFixtureOneTimeSetUpError { get; }
         }
 
 
@@ -658,6 +669,15 @@ namespace Lucene.Net.Util
         /// Leave temporary files on disk, even on successful runs. </summary>
         public static bool LeaveTemporary => TestProperties.LeaveTemporary;
 
+        /// <summary>
+        /// Fail when <see cref="OneTimeSetUp()"/> throws an exception for a given test fixture (usually a class).
+        /// By default, NUnit swallows exceptions when they happen here. We explicitly report these errors
+        /// to standard error, but enabling this feature will also cause all tests in the fixture and nested
+        /// tests to fail. Defaults to <c>false</c>.
+        /// <para/>
+        /// LUCENENET specific.
+        /// </summary>
+        public static bool FailOnTestFixtureOneTimeSetUpError => TestProperties.FailOnTestFixtureOneTimeSetUpError;
 
         // LUCENENET: Not Implemented
         /////// <summary>
@@ -1001,8 +1021,16 @@ namespace Lucene.Net.Util
             }
             catch (Exception ex)
             {
-                // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during OneTimeSetUp:\n{ex}", ex);
+                // This is a bug in the test framework that should be fixed and/or reported if it occurs.
+                if (FailOnTestFixtureOneTimeSetUpError)
+                {
+                    // LUCENENET: Patch NUnit so it will report all of the tests in the class as a failure if we got an exception.
+                    TestExecutionContext.CurrentContext.CurrentTest.MakeAllInvalid(ex, $"An exception occurred during OneTimeSetUp:\n{ex}");
+                }
+                else
+                {
+                    NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] An exception occurred during OneTimeSetUp:\n{ex}");
+                }
             }
         }
 
@@ -1019,12 +1047,20 @@ namespace Lucene.Net.Util
             try
             {
                 ClassEnvRule.After();
+            }
+            catch (Exception ex)
+            {
+                // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during ClassEnvRule.After():\n{ex}");
+            }
+            try
+            {
                 CleanupTemporaryFiles();
             }
             catch (Exception ex)
             {
-                // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during OneTimeTearDown:\n{ex}", ex);
+                // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during CleanupTemporaryFiles():\n{ex}");
             }
         }
 
