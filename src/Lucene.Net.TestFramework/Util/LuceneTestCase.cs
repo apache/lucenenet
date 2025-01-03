@@ -941,6 +941,7 @@ namespace Lucene.Net.Util
                 string message =
                     $$"""
                       {{result.Message}}
+                      (Test: {{result.FullName}})
 
                       To reproduce this test result:
 
