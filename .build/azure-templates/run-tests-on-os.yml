@@ -19,7 +19,7 @@
 # runs the tests for each project on a background job in parallel,
 # then uploads the results to Azure DevOps pipelines
 
-# NOTE: Depends on environment variables $(IsNightly) and $(IsWeekly)
+# NOTE: Depends on environment variables $(IsNightly), $(IsWeekly), and $(DisplayFullName)
 
 parameters:
   osName: 'Windows' # The name of the operating system for display purposes.
@@ -172,6 +172,7 @@ steps:
     $tempDirectory = "$(Agent.TempDirectory)"
     $isNightly = if ($env:ISNIGHTLY -eq 'true') { 'true' } else { 'false' }
     $isWeekly = if ($env:ISWEEKLY -eq 'true') { 'true' } else { 'false' }
+    $displayFullName = if ($env:DISPLAYFULLNAME -eq 'false') { 'false' } else { 'true' }
 
     function IsSupportedFramework([string]$framework) {
         if ($IsWindows -eq $null) {
@@ -225,6 +226,10 @@ steps:
             }
 
             $testExpression = "$testExpression -- RunConfiguration.TargetPlatform=$testPlatform"
+
+            if ($displayFullName -eq 'true') {
+                $testExpression = "$testExpression NUnit.DisplayName=FullName"
+            }
 
             Write-Host "Testing '$($testBinary.FullName)' on framework '$framework' and outputting test results to '$testResultDirectory/$testResultsFileName'..."
             Write-Host $testExpression -ForegroundColor Magenta
