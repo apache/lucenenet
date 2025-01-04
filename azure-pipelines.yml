@@ -120,8 +120,6 @@ stages:
         Write-Host "##vso[task.setvariable variable=IsWeekly;]$isWeekly"
         $runPack = if ($env:ISRELEASE -eq 'true' -or $env:ARTIFACTFEEDID -ne '' -or $env:GENERATEPACKAGES -ne 'false') { 'true' } else { 'false' }
         Write-Host "##vso[task.setvariable variable=RunPack;]$runPack"
-        $displayFullName = if ($env:DISPLAYFULLNAME -eq 'false') { 'false' } else { 'true' }
-        Write-Host "##vso[task.setvariable variable=DisplayFullName;]$displayFullName"
       displayName: 'Setup Default Variable Values'
 
     - template: '.build/azure-templates/install-dotnet-sdk.yml'

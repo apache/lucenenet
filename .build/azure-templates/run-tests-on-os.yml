@@ -19,7 +19,7 @@
 # runs the tests for each project on a background job in parallel,
 # then uploads the results to Azure DevOps pipelines
 
-# NOTE: Depends on environment variables $(IsNightly) and $(IsWeekly)
+# NOTE: Depends on environment variables $(IsNightly), $(IsWeekly), and $(DisplayFullName)
 
 parameters:
   osName: 'Windows' # The name of the operating system for display purposes.
