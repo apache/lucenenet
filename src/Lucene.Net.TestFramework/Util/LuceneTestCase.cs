@@ -886,12 +886,6 @@ namespace Lucene.Net.Util
         // Suite and test case setup/ cleanup.
         // -----------------------------------------------------------------
 
-        // LUCENENET specific: Temporary storage for random selections so they
-        // can be set once per OneTimeSetUp and reused multiple times in SetUp
-        // where they are written to the output.
-        private string codecType;
-        private string similarityName;
-
         /// <summary>
         /// For subclasses to override. Overrides must call <c>base.SetUp()</c>.
         /// </summary>
@@ -900,48 +894,6 @@ namespace Lucene.Net.Util
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
-
-            // LUCENENET: Printing out randomized context regardless
-            // of whether verbose is enabled (since we need it for debugging,
-            // but the verbose output can crash tests).
-            Console.Write("RandomSeed: ");
-            Console.WriteLine(RandomizedContext.CurrentContext.RandomSeedAsHex);
-
-            Console.Write("Culture: ");
-            Console.WriteLine(ClassEnvRule.locale.Name);
-
-            Console.Write("Time Zone: ");
-            Console.WriteLine(ClassEnvRule.timeZone.DisplayName);
-
-            Console.Write("Default Codec: ");
-            Console.Write(ClassEnvRule.codec.Name);
-            Console.Write(" (");
-            Console.Write(codecType);
-            Console.WriteLine(")");
-
-            Console.Write("Default Similarity: ");
-            Console.WriteLine(similarityName);
-
-            Console.Write("Nightly: ");
-            Console.WriteLine(TestNightly);
-
-            Console.Write("Weekly: ");
-            Console.WriteLine(TestWeekly);
-
-            Console.Write("Slow: ");
-            Console.WriteLine(TestSlow);
-
-            Console.Write("Awaits Fix: ");
-            Console.WriteLine(TestAwaitsFix);
-
-            Console.Write("Directory: ");
-            Console.WriteLine(TestDirectory);
-
-            Console.Write("Verbose: ");
-            Console.WriteLine(Verbose);
-
-            Console.Write("Random Multiplier: ");
-            Console.WriteLine(RandomMultiplier);
         }
 
         /// <summary>
@@ -994,6 +946,26 @@ namespace Lucene.Net.Util
                         }
                       }
 
+                      Fixture Test Values
+                      =================
+
+                       Random Seed:           {{RandomizedContext.CurrentContext.RandomSeedAsHex}}
+                       Culture:               {{ClassEnvRule.locale.Name}}
+                       Time Zone:             {{ClassEnvRule.timeZone.DisplayName}}
+                       Default Codec:         {{ClassEnvRule.codec.Name}} ({{ClassEnvRule.codec.GetType().Name}})
+                       Default Similarity:    {{ClassEnvRule.similarity}}
+
+                      System Properties
+                      =================
+
+                       Nightly:               {{TestNightly}}
+                       Weekly:                {{TestWeekly}}
+                       Slow:                  {{TestSlow}}
+                       Awaits Fix:            {{TestAwaitsFix}}
+                       Directory:             {{TestDirectory}}
+                       Verbose:               {{Verbose}}
+                       Random Multiplier:     {{RandomMultiplier}}
+
                       """;
 
                 result.SetResult(result.ResultState, message, result.StackTrace);
@@ -1014,10 +986,6 @@ namespace Lucene.Net.Util
             try
             {
                 ClassEnvRule.Before();
-
-                // LUCENENET: Generate the info once so it can be printed out for each test
-                codecType = ClassEnvRule.codec.GetType().Name;
-                similarityName = ClassEnvRule.similarity.ToString();
             }
             catch (Exception ex)
             {
