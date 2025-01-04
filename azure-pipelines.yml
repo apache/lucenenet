@@ -49,6 +49,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # Verbose: 'false' (Optional - set to true for verbose logging output)
 # Multiplier: '1' (Optional - the number of iterations to multiply applicable tests by)
 # DisplayFullName: 'true' (Optional - set to 'false' to display only the test name instead of the full name with class and method)
+# FailOnTestFixtureOneTimeSetUpError: 'true' (Optional - set to 'false' to allow tests to pass if the test fixture (class) has a OneTimeSetUp failure.)
 
 # RunX86Tests: 'false' (Optional - set to 'true' to enable x86 tests)
 
@@ -162,6 +163,7 @@ stages:
         $directory = if ($env:Directory -eq $null) { 'random' } else { $env:Directory }
         $verbose = if ($env:Verbose -eq 'true') { 'true' } else { 'false' }
         $multiplier = if ($env:Multiplier -eq $null) { '1' } else { $env:Multiplier }
+        $failOnTestFixtureOneTimeSetUpError = if ($env.FailOnTestFixtureOneTimeSetUpError -eq 'false') { 'false' } else { 'true' }
         $fileText = "{`n`t" +
             """assert"": ""$assert"",`n`t" +
             """tests"": {`n`t`t" +
@@ -174,7 +176,8 @@ stages:
                 """postingsformat"": ""$postingsFormat"",`n`t`t" +
                 """directory"": ""$directory"",`n`t`t" +
                 """verbose"": ""$verbose"",`n`t`t" +
-                """multiplier"": ""$multiplier""`n`t" +
+                """multiplier"": ""$multiplier"",`n`t`t" +
+                """failontestfixtureonetimesetuperror"": ""$failOnTestFixtureOneTimeSetUpError""`n`t" +
             "}`n" +
         "}"
         Out-File -filePath "$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)" -encoding UTF8 -inputObject $fileText
