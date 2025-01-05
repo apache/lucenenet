@@ -21,4 +21,4 @@ public record LibraryConfig(
     string LuceneName,
     string LuceneNetName,
     IReadOnlyDictionary<string, string> PackageNameMappings,
-    IReadOnlyDictionary<string, TypeOverride> TypeOverrides);
+    IList<TypeOverride> TypeOverrides);

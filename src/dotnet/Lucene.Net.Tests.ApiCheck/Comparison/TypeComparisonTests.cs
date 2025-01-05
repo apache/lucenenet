@@ -32,9 +32,15 @@ public class TypeComparisonTests
         {
             ["org.apache.lucene.document"] = "Lucene.Net.Documents",
         },
-        TypeOverrides: new Dictionary<string, TypeOverride>
+        TypeOverrides: new List<TypeOverride>
         {
-            ["org.apache.lucene.document.FloatDocValuesField"] = new TypeOverride("Lucene.Net.Documents.SingleDocValuesField", "Uses .NET numeric naming conventions"),
+            new TypeOverride(
+                Justification: "Uses .NET numeric naming conventions",
+                JavaToDotNetTypes: new Dictionary<string, string>
+                {
+                    ["org.apache.lucene.document.FloatDocValuesField"] = "Lucene.Net.Documents.SingleDocValuesField",
+                }
+            )
         });
 
     [InlineData(typeof(Analyzer), "class", "org.apache.lucene.analysis", "Analyzer")]
