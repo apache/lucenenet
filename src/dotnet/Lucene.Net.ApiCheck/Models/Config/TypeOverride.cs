@@ -17,4 +17,4 @@
 
 namespace Lucene.Net.ApiCheck.Models.Config;
 
-public record TypeOverride(string Type, string Justification);
+public record TypeOverride(string Justification, IDictionary<string, string> JavaToDotNetTypes);

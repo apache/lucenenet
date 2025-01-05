@@ -25,10 +25,13 @@ internal static class TypeComparison
 {
     public static bool TypesMatch(LibraryConfig libraryConfig, Type dotNetType, TypeMetadata javaType)
     {
-        if (libraryConfig.TypeOverrides.TryGetValue(javaType.FullName, out var typeOverride)
-            && typeOverride.Type == dotNetType.FullName)
+        foreach (var typeOverride in libraryConfig.TypeOverrides)
         {
-            return true;
+            if (typeOverride.JavaToDotNetTypes.TryGetValue(javaType.FullName, out var t)
+                && t == dotNetType.FullName)
+            {
+                return true;
+            }
         }
 
         var expectedNamespace = libraryConfig.PackageNameMappings.TryGetValue(javaType.PackageName, out var mappedNamespace)
