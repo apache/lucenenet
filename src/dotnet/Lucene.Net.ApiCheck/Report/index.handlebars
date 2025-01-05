@@ -49,6 +49,29 @@
             {{/each}}
             </tbody>
         </table>
+
+        <h3>Type Mapping Overrides</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Java Type</th>
+                <th>.NET Type</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each LibraryConfig.TypeOverrides}}
+                <tr>
+                    <td colspan="2"><strong>Justification:</strong> {{Justification}}</td>
+                </tr>
+            {{#each JavaToDotNetTypes}}
+                <tr>
+                    <td>{{@key}}</td>
+                    <td>{{Value}}</td>
+                </tr>
+            {{/each}}
+            {{/each}}
+            </tbody>
+        </table>
     {{/each}}
     <script type="text/javascript" src="index.js" defer></script>
 </body>
