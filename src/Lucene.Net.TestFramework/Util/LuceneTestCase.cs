@@ -722,11 +722,11 @@ namespace Lucene.Net.Util
         /// </summary>
         internal static TestRuleSetupAndRestoreClassEnv ClassEnvRule { get; } = new TestRuleSetupAndRestoreClassEnv();
 
-        // LUCENENET TODO
+        // LUCENENET TODO: Implement these rules
         /// <summary>
         /// Suite failure marker (any error in the test or suite scope).
         /// </summary>
-        public static readonly /*TestRuleMarkFailure*/ bool SuiteFailureMarker = true; // Means: was successful
+        public static /*TestRuleMarkFailure*/ bool SuiteFailureMarker = true; // Means: was successful
 
         ///// <summary>
         ///// Ignore tests after hitting a designated number of initial failures. This
@@ -937,6 +937,10 @@ namespace Lucene.Net.Util
 
             if (result.ResultState == ResultState.Failure || result.ResultState == ResultState.Error)
             {
+                // LUCENENET specific - Track that at least one test in the suite failed.
+                // LUCENENET TODO: finish implementation of RuleChains so this is not needed (#1088)
+                SuiteFailureMarker = false;
+
                 string message =
                     $$"""
                       {{result.Message}}
@@ -3089,7 +3093,7 @@ namespace Lucene.Net.Util
         }
 
         // LUCENENET specific - this is equivalent to TemporaryFilesCleanupRule in Lucene
-        private void CleanupTemporaryFiles()
+        private static void CleanupTemporaryFiles()
         {
             // Drain cleanup queue and clear it.
             FileSystemInfo[] everything;
@@ -3126,8 +3130,7 @@ namespace Lucene.Net.Util
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    Type suiteClass = this.GetType();
-                    if (suiteClass.GetCustomAttribute<SuppressTempFileChecksAttribute>(inherit: true) is { } suppressAttr)
+                    if (RandomizedContext.CurrentContext.CurrentTest.TypeInfo?.Type.GetCustomAttribute<SuppressTempFileChecksAttribute>(inherit: true) is { } suppressAttr)
                     {
                         Console.Error.WriteLine($"WARNING: Leftover undeleted temporary files (bugUrl: {suppressAttr.BugUrl}): {e.Message}");
                         return;
