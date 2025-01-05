@@ -310,6 +310,11 @@ steps:
         Write-Host "##vso[task.logissue type=error;]Test run failed due to too many failed tests. Maximum failures allowed: $maximumAllowedFailures, total failures: $($env:TOTALFAILURES)."
         $failed = $true
     }
+    if ([int]$maximumAllowedFailures -eq 0 -and $env:STDERRFAILURE -eq 'true') {
+        $runsExpanded = "$($env:STDERRFAILURERUNS)" -replace ',',"`r`n"
+        Write-Host "##vso[task.logissue type=error;]StdErr file(s) indicate test failures. Review the testresults artifacts for details. (click here to view the projects that failed)`r`n$runsExpanded"
+        $failed = $true
+    }
     if ($failed) {
         Write-Host "##vso[task.complete result=Failed;]"
     }
