@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Lucene.Net.ApiCheck.Models.Config;
+
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
 public class AssemblyDiff
@@ -26,6 +28,8 @@ public class AssemblyDiff
     public required string LuceneNetName { get; set; }
 
     public required string LuceneNetVersion { get; set; }
+
+    public required LibraryConfig LibraryConfig { get; set; }
 
     public required IList<MissingTypeDiff> LuceneNetTypesNotInLucene { get; set; }
 

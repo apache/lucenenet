@@ -98,6 +98,7 @@ public static class DiffUtility
             LuceneNetVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
                                ?? assembly.GetName().Version?.ToString()
                                ?? "unknown",
+            LibraryConfig = libraryConfig,
             LuceneNetTypesNotInLucene = netTypesNotInJava,
             LuceneTypesNotInLuceneNet = javaTypesNotInNet,
         };
