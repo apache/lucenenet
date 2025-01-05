@@ -28,6 +28,27 @@
                     </tr>
                 {{/each}}
             </tbody>
+        </table>
+
+        <h3>Lucene.NET Types Not in Lucene</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Type Kind</th>
+                <th>Modifiers</th>
+                <th>Type Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each LuceneNetTypesNotInLucene}}
+                <tr>
+                    <td>{{TypeKind}}</td>
+                    <td>{{ModifiersDisplay}}</td>
+                    <td>{{TypeName}}</td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
     {{/each}}
     <script type="text/javascript" src="index.js" defer></script>
 </body>
