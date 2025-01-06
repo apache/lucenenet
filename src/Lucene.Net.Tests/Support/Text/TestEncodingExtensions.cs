@@ -1,10 +1,9 @@
 using Lucene.Net.Attributes;
-using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Text;
 
-namespace Lucene.Net.Text
+namespace Lucene.Net.Support.Text
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

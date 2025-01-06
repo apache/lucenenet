@@ -35,8 +35,8 @@ namespace Lucene.Net.Support.Text
         /// Thus, to translate Java code that catches any of those exceptions, you can catch
         /// <see cref="DecoderFallbackException"/>.
         /// </summary>
-        /// <param name="encoding">The encoding to set the fallbacks on.</param>
-        /// <returns>A new <see cref="Encoding"/> instance with the fallbacks set to throw an exception.</returns>
+        /// <param name="encoding">The encoding to clone and set the fallback on.</param>
+        /// <returns>A new <see cref="Encoding"/> instance with the fallback set to throw an exception.</returns>
         /// <remarks>
         /// Note that it is necessary to return a new, cloned <see cref="Encoding"/> instance because
         /// the <see cref="Encoding.DecoderFallback"/> property is read-only without cloning.
