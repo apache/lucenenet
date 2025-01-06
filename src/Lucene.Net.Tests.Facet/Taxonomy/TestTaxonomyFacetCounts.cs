@@ -134,7 +134,7 @@ namespace Lucene.Net.Facet.Taxonomy
             string result;
             using (ByteArrayOutputStream bos = new ByteArrayOutputStream())
             {
-                using (StreamWriter w = new StreamWriter(bos, Encoding.UTF8, 2048, true) { AutoFlush = true })
+                using (StreamWriter w = new StreamWriter(bos, IOUtils.ENCODING_UTF_8_NO_BOM, 2048, true) { AutoFlush = true })
                 {
                     PrintTaxonomyStats.PrintStats(taxoReader, w, true);
                 }

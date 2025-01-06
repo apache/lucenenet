@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.10.4
 using J2N;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -35,25 +36,25 @@ namespace Lucene.Net.Analysis.Hunspell
             FileInfo affix = new FileInfo(System.IO.Path.Combine(tempDir.FullName, "64kaffixes.aff"));
             FileInfo dict = new FileInfo(System.IO.Path.Combine(tempDir.FullName, "64kaffixes.dic"));
 
-            using var affixWriter = new StreamWriter(
-                new FileStream(affix.FullName, FileMode.OpenOrCreate), Encoding.UTF8);
-
-            // 65k affixes with flag 1, then an affix with flag 2
-            affixWriter.Write("SET UTF-8\nFLAG num\nSFX 1 Y 65536\n");
-            for (int i = 0; i < 65536; i++)
+            using (var affixWriter = new StreamWriter(
+                       new FileStream(affix.FullName, FileMode.OpenOrCreate), StandardCharsets.UTF_8))
             {
-                affixWriter.Write("SFX 1 0 " + i.ToHexString() + " .\n");
-            }
-            affixWriter.Write("SFX 2 Y 1\nSFX 2 0 s\n");
-            affixWriter.Dispose();
+                // 65k affixes with flag 1, then an affix with flag 2
+                affixWriter.Write("SET UTF-8\nFLAG num\nSFX 1 Y 65536\n");
+                for (int i = 0; i < 65536; i++)
+                {
+                    affixWriter.Write("SFX 1 0 " + i.ToHexString() + " .\n");
+                }
 
-            using var dictWriter = new StreamWriter(
-                new FileStream(dict.FullName, FileMode.OpenOrCreate), Encoding.UTF8);
+                affixWriter.Write("SFX 2 Y 1\nSFX 2 0 s\n");
+            } // affixWriter.Dispose();
 
-
-            // drink signed with affix 2 (takes -s)
-            dictWriter.Write("1\ndrink/2\n");
-            dictWriter.Dispose();
+            using (var dictWriter = new StreamWriter(
+                       new FileStream(dict.FullName, FileMode.OpenOrCreate), StandardCharsets.UTF_8))
+            {
+                // drink signed with affix 2 (takes -s)
+                dictWriter.Write("1\ndrink/2\n");
+            } // dictWriter.Dispose();
 
             using Stream affStream = new FileStream(affix.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             using Stream dictStream = new FileStream(dict.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite);

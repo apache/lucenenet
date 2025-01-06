@@ -3,6 +3,7 @@ using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
@@ -49,8 +50,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     ///     <item><term>line.file.out</term><description>the name of the file to write the output to. That parameter is mandatory. <b>NOTE:</b> the file is re-created.</description></item>
     ///     <item><term>line.fields</term><description>which fields should be written in each line. (optional, default: <see cref="DEFAULT_FIELDS"/>).</description></item>
     ///     <item><term>sufficient.fields</term><description>
-    ///         list of field names, separated by comma, which, 
-    ///         if all of them are missing, the document will be skipped. For example, to require 
+    ///         list of field names, separated by comma, which,
+    ///         if all of them are missing, the document will be skipped. For example, to require
     ///         that at least one of f1,f2 is not empty, specify: "f1,f2" in this field. To specify
     ///         that no field is required, i.e. that even empty docs should be emitted, specify <b>","</b>
     ///         (optional, default: <see cref="DEFAULT_SUFFICIENT_FIELDS"/>).
@@ -112,10 +113,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 throw new ArgumentException("line.file.out must be set");
             }
             Stream @out = StreamUtils.GetOutputStream(new FileInfo(m_fname));
-            m_lineFileOut = new StreamWriter(@out, Encoding.UTF8);
+            m_lineFileOut = new StreamWriter(@out, StandardCharsets.UTF_8);
             docMaker = runData.DocMaker;
 
-            // init fields 
+            // init fields
             string f2r = config.Get("line.fields", null);
             if (f2r is null)
             {

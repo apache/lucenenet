@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -90,7 +91,7 @@ namespace Lucene.Net.Index
             IndexWriter writer;
             IndexWriterConfig c = new IndexWriterConfig(TEST_VERSION_CURRENT, new ThrowingAnalyzer());
             ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
-            StreamWriter infoPrintStream = new StreamWriter(infoBytes, Encoding.UTF8);
+            StreamWriter infoPrintStream = new StreamWriter(infoBytes, IOUtils.ENCODING_UTF_8_NO_BOM);
             TextWriterInfoStream printStreamInfoStream = new TextWriterInfoStream(infoPrintStream);
             c.SetInfoStream(printStreamInfoStream);
             writer = new IndexWriter(dir, c);
@@ -119,7 +120,7 @@ namespace Lucene.Net.Index
             IndexWriter writer;
             IndexWriterConfig c = new IndexWriterConfig(TEST_VERSION_CURRENT, new ThrowingAnalyzer());
             ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
-            StreamWriter infoPrintStream = new StreamWriter(infoBytes, Encoding.UTF8);
+            StreamWriter infoPrintStream = new StreamWriter(infoBytes, IOUtils.ENCODING_UTF_8_NO_BOM);
             TextWriterInfoStream printStreamInfoStream = new TextWriterInfoStream(infoPrintStream);
             c.SetInfoStream(printStreamInfoStream);
             writer = new IndexWriter(dir, c);
