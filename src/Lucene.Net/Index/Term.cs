@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Text;
 using System;
 using System.Text;
 
@@ -91,13 +92,12 @@ namespace Lucene.Net.Index
         public static string ToString(BytesRef termText)
         {
             // the term might not be text, but usually is. so we make a best effort
-            // LUCENENET TODO: determine if we should use DecoderFallback.ExceptionFallback here
-            Encoding decoder = StandardCharsets.UTF_8;
+            Encoding decoder = StandardCharsets.UTF_8.WithDecoderExceptionFallback();
             try
             {
                 return decoder.GetString(termText.Bytes, termText.Offset, termText.Length);
             }
-            catch
+            catch (DecoderFallbackException)
             {
                 return termText.ToString();
             }

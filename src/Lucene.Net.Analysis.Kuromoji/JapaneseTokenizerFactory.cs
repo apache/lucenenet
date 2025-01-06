@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -88,7 +89,7 @@ namespace Lucene.Net.Analysis.Ja
                 {
                     encoding = Encoding.UTF8.WebName;
                 }
-                Encoding decoder = Encoding.GetEncoding(encoding);
+                Encoding decoder = Encoding.GetEncoding(encoding).WithDecoderExceptionFallback();
                 TextReader reader = new StreamReader(stream, decoder);
                 userDictionary = new UserDictionary(reader);
             }

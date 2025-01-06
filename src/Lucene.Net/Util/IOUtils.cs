@@ -2,6 +2,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -378,7 +379,8 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextReader GetDecodingReader(Stream stream, Encoding charSet)
         {
-            return new StreamReader(stream, charSet);
+            var charSetDecoder = charSet.WithDecoderExceptionFallback();
+            return new StreamReader(stream, charSetDecoder);
         }
 
         /// <summary>
