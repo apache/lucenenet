@@ -1,5 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
-using J2N.Numerics;
+﻿using J2N.Numerics;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -38,6 +37,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
      * limitations under the License.
      */
 
+    /// <summary>
+    /// Tests <see cref="StandardQueryParser"/> with numeric range queries.
+    /// </summary>
+    /// <remarks>
+    /// LUCENENET NOTE: Several properties have been changed from static to instance,
+    /// so that the test can be run multiple times with different random values, such
+    /// as with the <see cref="RepeatAttribute"/>. This also helps with repeatability
+    /// of tests with a fixed seed.
+    /// <para />
+    /// However, note that test failures are not guaranteed to be repeatable across
+    /// different systems, since the set of available cultures may be different.
+    /// </remarks>
     public class TestNumericQueryParser : LuceneTestCase
     {
         public enum NumberType
@@ -48,30 +59,30 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         private readonly static DateFormat[] DATE_STYLES = {DateFormat.FULL, DateFormat.LONG,
             DateFormat.MEDIUM, DateFormat.SHORT};
 
-        private readonly static int PRECISION_STEP = 8;
-        private readonly static String FIELD_NAME = "field";
-        private static CultureInfo? LOCALE;
-        private static TimeZoneInfo? TIMEZONE;
-        private static IDictionary<String, J2N.Numerics.Number>? RANDOM_NUMBER_MAP;
+        // LUCENENET NOTE: Several fields changed from static to instance, see class remarks.
+        private const int PRECISION_STEP = 8;
+        private const string FIELD_NAME = "field";
+        private CultureInfo? LOCALE;
+        private TimeZoneInfo? TIMEZONE;
+        private IDictionary<string, J2N.Numerics.Number>? RANDOM_NUMBER_MAP;
         private readonly static IEscapeQuerySyntax ESCAPER = new Standard.Parser.EscapeQuerySyntax();
-        private readonly static String DATE_FIELD_NAME = "date";
-        private static DateFormat DATE_STYLE;
-        private static DateFormat TIME_STYLE;
+        private const string DATE_FIELD_NAME = "date";
+        private DateFormat DATE_STYLE;
+        private DateFormat TIME_STYLE;
 
-        private static Analyzer? ANALYZER;
+        private Analyzer? ANALYZER;
 
-        private static NumberFormat? NUMBER_FORMAT;
+        private NumberFormat? NUMBER_FORMAT;
 
+        private StandardQueryParser? qp;
 
-        private static StandardQueryParser? qp;
+        private NumberDateFormat? DATE_FORMAT;
 
-        private static NumberDateFormat? DATE_FORMAT;
+        private Directory? directory = null;
+        private IndexReader? reader = null;
+        private IndexSearcher? searcher = null;
 
-        private static Directory? directory = null;
-        private static IndexReader? reader = null;
-        private static IndexSearcher? searcher = null;
-
-        private static bool checkDateFormatSanity(NumberDateFormat dateFormat, long date, TimeZoneInfo timeZone)
+        private static bool CheckDateFormatSanity(NumberDateFormat dateFormat, long date, TimeZoneInfo timeZone)
         {
             IFormatProvider provider = dateFormat.FormatProvider ?? CultureInfo.CurrentCulture;
 
@@ -83,7 +94,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             offset = TimeZoneInfo.ConvertTime(offset, timeZone);
             string formattedDate = offset.ToString(format, provider);
 
-            return DateTimeOffset.TryParseExact(formattedDate, format, provider, DateTimeStyles.None, out DateTimeOffset _);
+            return DateTimeOffset.TryParseExact(formattedDate, format, provider, DateTimeStyles.None, out DateTimeOffset parsed)
+                && parsed.ToUnixTimeMilliseconds() == date;
         }
 
         // LUCENENET specific bounds check
@@ -129,11 +141,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             return dateTimeFormat.Calendar;
         }
 
-
-        [OneTimeSetUp]
-        public override void OneTimeSetUp()
+        // LUCENENET specific - changed from OneTimeSetUp to SetUp, see class remarks.
+        [SetUp]
+        public override void SetUp()
         {
-            base.OneTimeSetUp();
+            base.SetUp();
 
             ANALYZER = new MockAnalyzer(Random);
 
@@ -198,13 +210,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     randomDate = Math.Abs(randomDate);
                 } while (randomDate == 0L);
 
-                dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT, randomDate, TIMEZONE);
+                dateFormatSanityCheckPass &= CheckDateFormatSanity(DATE_FORMAT, randomDate, TIMEZONE);
 
-                dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT, 0, TIMEZONE);
+                // LUCENENET NOTE - issue #846: the zh-Hant-TW culture on net5.0-net8.0 does not include
+                // the "tt" AM/PM designator in the long time pattern, causing midnight at the unix epoch
+                // to be interpreted as an AM time the day before when the time zone has a negative offset,
+                // instead of PM as it should be. This "sanity" check also makes sure that the round trip
+                // from the unix epoch to a string and back to a date is consistent. If it is not, we will
+                // try again with a different locale/time zone. This was fixed in net9.0, so that culture
+                // with a negative offset should work as expected.
+                dateFormatSanityCheckPass &= CheckDateFormatSanity(DATE_FORMAT, 0, TIMEZONE);
 
-                dateFormatSanityCheckPass &= checkDateFormatSanity(DATE_FORMAT,
+                dateFormatSanityCheckPass &= CheckDateFormatSanity(DATE_FORMAT,
                           -randomDate, TIMEZONE);
-
                 count++;
             } while (!dateFormatSanityCheckPass);
 
@@ -249,9 +267,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     .SetMergePolicy(NewLogMergePolicy()));
 
             Document doc = new Document();
-            IDictionary<String, NumericConfig> numericConfigMap = new JCG.Dictionary<String, NumericConfig>();
-            IDictionary<String, Field> numericFieldMap = new JCG.Dictionary<String, Field>();
-            qp.NumericConfigMap = (numericConfigMap);
+            IDictionary<string, NumericConfig> numericConfigMap = new JCG.Dictionary<string, NumericConfig>();
+            IDictionary<string, Field> numericFieldMap = new JCG.Dictionary<string, Field>();
+            qp.NumericConfigMap = numericConfigMap;
 
             foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
             {
@@ -263,9 +281,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 numericConfigMap[type.ToString()] = new NumericConfig(PRECISION_STEP, NUMBER_FORMAT, type);
 
                 FieldType ft2 = new FieldType(Int32Field.TYPE_NOT_STORED);
-                ft2.NumericType = (type);
-                ft2.IsStored = (true);
-                ft2.NumericPrecisionStep = (PRECISION_STEP);
+                ft2.NumericType = type;
+                ft2.IsStored = true;
+                ft2.NumericPrecisionStep = PRECISION_STEP;
                 ft2.Freeze();
                 Field field;
 
@@ -294,15 +312,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             numericConfigMap[DATE_FIELD_NAME] = new NumericConfig(PRECISION_STEP, DATE_FORMAT, NumericType.INT64);
             FieldType ft = new FieldType(Int64Field.TYPE_NOT_STORED);
-            ft.IsStored = (true);
-            ft.NumericPrecisionStep = (PRECISION_STEP);
+            ft.IsStored = true;
+            ft.NumericPrecisionStep = PRECISION_STEP;
             Int64Field dateField = new Int64Field(DATE_FIELD_NAME, 0L, ft);
             numericFieldMap[DATE_FIELD_NAME] = dateField;
             doc.Add(dateField);
 
             foreach (NumberType numberType in (NumberType[])Enum.GetValues(typeof(NumberType)))
             {
-                setFieldValues(numberType, numericFieldMap);
+                SetFieldValues(numberType, numericFieldMap);
                 if (Verbose) Console.WriteLine("Indexing document: " + doc);
                 writer.AddDocument(doc);
             }
@@ -310,12 +328,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             reader = writer.GetReader();
             searcher = NewSearcher(reader);
             writer.Dispose();
-
         }
 
-        private static Number? GetNumberType(NumberType? numberType, String fieldName)
+        private Number? GetNumberType(NumberType? numberType, string fieldName)
         {
-
             if (numberType is null)
             {
                 return null;
@@ -361,13 +377,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
                 default:
                     return J2N.Numerics.Int32.GetInstance(0);
-
             }
-
         }
 
-        private static void setFieldValues(NumberType numberType,
-            IDictionary<String, Field> numericFieldMap)
+        private void SetFieldValues(NumberType numberType,
+            IDictionary<string, Field> numericFieldMap)
         {
 
             Number? number = GetNumberType(numberType, NumericType.DOUBLE
@@ -412,11 +426,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public void TestInclusiveNumericRange()
         {
-            assertRangeQuery(NumberType.ZERO, NumberType.ZERO, true, true, 1);
-            assertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, true, true, 2);
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.ZERO, true, true, 2);
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.POSITIVE, true, true, 3);
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.NEGATIVE, true, true, 1);
+            AssertRangeQuery(NumberType.ZERO, NumberType.ZERO, true, true, 1);
+            AssertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, true, true, 2);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.ZERO, true, true, 2);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.POSITIVE, true, true, 3);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.NEGATIVE, true, true, 1);
         }
 
         [Test]
@@ -424,10 +438,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         // exclusive at the same time
         public void TestInclusiveLowerNumericRange()
         {
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.ZERO, false, true, 1);
-            assertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, false, true, 1);
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.POSITIVE, false, true, 2);
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.NEGATIVE, false, true, 0);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.ZERO, false, true, 1);
+            AssertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, false, true, 1);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.POSITIVE, false, true, 2);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.NEGATIVE, false, true, 0);
         }
 
         [Test]
@@ -435,77 +449,75 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         // exclusive at the same time
         public void TestInclusiveUpperNumericRange()
         {
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.ZERO, true, false, 1);
-            assertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, true, false, 1);
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.POSITIVE, true, false, 2);
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.NEGATIVE, true, false, 0);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.ZERO, true, false, 1);
+            AssertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, true, false, 1);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.POSITIVE, true, false, 2);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.NEGATIVE, true, false, 0);
         }
 
         [Test]
         public void TestExclusiveNumericRange()
         {
-            assertRangeQuery(NumberType.ZERO, NumberType.ZERO, false, false, 0);
-            assertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, false, false, 0);
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.ZERO, false, false, 0);
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.POSITIVE, false, false, 1);
-            assertRangeQuery(NumberType.NEGATIVE, NumberType.NEGATIVE, false, false, 0);
+            AssertRangeQuery(NumberType.ZERO, NumberType.ZERO, false, false, 0);
+            AssertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, false, false, 0);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.ZERO, false, false, 0);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.POSITIVE, false, false, 1);
+            AssertRangeQuery(NumberType.NEGATIVE, NumberType.NEGATIVE, false, false, 0);
         }
 
         [Test]
         public void TestOpenRangeNumericQuery()
         {
-            assertOpenRangeQuery(NumberType.ZERO, "<", 1);
-            assertOpenRangeQuery(NumberType.POSITIVE, "<", 2);
-            assertOpenRangeQuery(NumberType.NEGATIVE, "<", 0);
+            AssertOpenRangeQuery(NumberType.ZERO, "<", 1);
+            AssertOpenRangeQuery(NumberType.POSITIVE, "<", 2);
+            AssertOpenRangeQuery(NumberType.NEGATIVE, "<", 0);
 
-            assertOpenRangeQuery(NumberType.ZERO, "<=", 2);
-            assertOpenRangeQuery(NumberType.POSITIVE, "<=", 3);
-            assertOpenRangeQuery(NumberType.NEGATIVE, "<=", 1);
+            AssertOpenRangeQuery(NumberType.ZERO, "<=", 2);
+            AssertOpenRangeQuery(NumberType.POSITIVE, "<=", 3);
+            AssertOpenRangeQuery(NumberType.NEGATIVE, "<=", 1);
 
-            assertOpenRangeQuery(NumberType.ZERO, ">", 1);
-            assertOpenRangeQuery(NumberType.POSITIVE, ">", 0);
-            assertOpenRangeQuery(NumberType.NEGATIVE, ">", 2);
+            AssertOpenRangeQuery(NumberType.ZERO, ">", 1);
+            AssertOpenRangeQuery(NumberType.POSITIVE, ">", 0);
+            AssertOpenRangeQuery(NumberType.NEGATIVE, ">", 2);
 
-            assertOpenRangeQuery(NumberType.ZERO, ">=", 2);
-            assertOpenRangeQuery(NumberType.POSITIVE, ">=", 1);
-            assertOpenRangeQuery(NumberType.NEGATIVE, ">=", 3);
+            AssertOpenRangeQuery(NumberType.ZERO, ">=", 2);
+            AssertOpenRangeQuery(NumberType.POSITIVE, ">=", 1);
+            AssertOpenRangeQuery(NumberType.NEGATIVE, ">=", 3);
 
-            assertOpenRangeQuery(NumberType.NEGATIVE, "=", 1);
-            assertOpenRangeQuery(NumberType.ZERO, "=", 1);
-            assertOpenRangeQuery(NumberType.POSITIVE, "=", 1);
+            AssertOpenRangeQuery(NumberType.NEGATIVE, "=", 1);
+            AssertOpenRangeQuery(NumberType.ZERO, "=", 1);
+            AssertOpenRangeQuery(NumberType.POSITIVE, "=", 1);
 
-            assertRangeQuery(NumberType.NEGATIVE, null, true, true, 3);
-            assertRangeQuery(NumberType.NEGATIVE, null, false, true, 2);
-            assertRangeQuery(NumberType.POSITIVE, null, true, false, 1);
-            assertRangeQuery(NumberType.ZERO, null, false, false, 1);
+            AssertRangeQuery(NumberType.NEGATIVE, null, true, true, 3);
+            AssertRangeQuery(NumberType.NEGATIVE, null, false, true, 2);
+            AssertRangeQuery(NumberType.POSITIVE, null, true, false, 1);
+            AssertRangeQuery(NumberType.ZERO, null, false, false, 1);
 
-            assertRangeQuery(null, NumberType.POSITIVE, true, true, 3);
-            assertRangeQuery(null, NumberType.POSITIVE, true, false, 2);
-            assertRangeQuery(null, NumberType.NEGATIVE, false, true, 1);
-            assertRangeQuery(null, NumberType.ZERO, false, false, 1);
+            AssertRangeQuery(null, NumberType.POSITIVE, true, true, 3);
+            AssertRangeQuery(null, NumberType.POSITIVE, true, false, 2);
+            AssertRangeQuery(null, NumberType.NEGATIVE, false, true, 1);
+            AssertRangeQuery(null, NumberType.ZERO, false, false, 1);
 
-            assertRangeQuery(null, null, false, false, 3);
-            assertRangeQuery(null, null, true, true, 3);
+            AssertRangeQuery(null, null, false, false, 3);
+            AssertRangeQuery(null, null, true, true, 3);
 
         }
 
         [Test]
         public void TestSimpleNumericQuery()
         {
-            assertSimpleQuery(NumberType.ZERO, 1);
-            assertSimpleQuery(NumberType.POSITIVE, 1);
-            assertSimpleQuery(NumberType.NEGATIVE, 1);
+            AssertSimpleQuery(NumberType.ZERO, 1);
+            AssertSimpleQuery(NumberType.POSITIVE, 1);
+            AssertSimpleQuery(NumberType.NEGATIVE, 1);
         }
 
-        public void assertRangeQuery(NumberType? lowerType, NumberType? upperType,
+        public void AssertRangeQuery(NumberType? lowerType, NumberType? upperType,
             bool lowerInclusive, bool upperInclusive, int expectedDocCount)
         {
-
-
             StringBuilder sb = new StringBuilder();
 
-            String lowerInclusiveStr = (lowerInclusive ? "[" : "{");
-            String upperInclusiveStr = (upperInclusive ? "]" : "}");
+            string lowerInclusiveStr = (lowerInclusive ? "[" : "{");
+            string upperInclusiveStr = (upperInclusive ? "]" : "}");
 
             foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
             {
@@ -514,8 +526,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     continue;
                 }
 
-                String lowerStr = NumberToString(GetNumberType(lowerType, type.ToString()));
-                String upperStr = NumberToString(GetNumberType(upperType, type.ToString()));
+                string lowerStr = NumberToString(GetNumberType(lowerType, type.ToString()));
+                string upperStr = NumberToString(GetNumberType(upperType, type.ToString()));
 
                 sb.append("+").append(type.ToString()).append(':').append(lowerInclusiveStr)
                   .append('"').append(lowerStr).append("\" TO \"").append(upperStr)
@@ -524,8 +536,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             Number? lowerDateNumber = GetNumberType(lowerType, DATE_FIELD_NAME);
             Number? upperDateNumber = GetNumberType(upperType, DATE_FIELD_NAME);
-            String lowerDateStr;
-            String upperDateStr;
+            string lowerDateStr;
+            string upperDateStr;
 
             if (lowerDateNumber != null)
             {
@@ -566,12 +578,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
 
             TestQuery(sb.toString(), expectedDocCount);
-
         }
 
-        public void assertOpenRangeQuery(NumberType boundType, String @operator, int expectedDocCount)
+        public void AssertOpenRangeQuery(NumberType boundType, string @operator, int expectedDocCount)
         {
-
             StringBuilder sb = new StringBuilder();
 
             foreach (NumericType type in (NumericType[])Enum.GetValues(typeof(NumericType)))
@@ -581,7 +591,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     continue;
                 }
 
-                String boundStr = NumberToString(GetNumberType(boundType, type.ToString()));
+                string boundStr = NumberToString(GetNumberType(boundType, type.ToString()));
 
                 sb.append("+").append(type.ToString()).append(@operator).append('"').append(boundStr).append('"').append(' ');
             }
@@ -601,7 +611,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             TestQuery(sb.toString(), expectedDocCount);
         }
 
-        public void assertSimpleQuery(NumberType numberType, int expectedDocCount)
+        public void AssertSimpleQuery(NumberType numberType, int expectedDocCount)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -612,7 +622,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     continue;
                 }
 
-                String numberStr = NumberToString(GetNumberType(numberType, type.ToString()));
+                string numberStr = NumberToString(GetNumberType(numberType, type.ToString()));
                 sb.append('+').append(type.ToString()).append(":\"").append(numberStr)
                           .append("\" ");
             }
@@ -631,10 +641,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
 
             TestQuery(sb.toString(), expectedDocCount);
-
         }
 
-        private void TestQuery(String queryStr, int expectedDocCount)
+        private void TestQuery(string queryStr, int expectedDocCount)
         {
             if (Verbose) Console.WriteLine("Parsing: " + queryStr);
 
@@ -642,28 +651,28 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             if (Verbose) Console.WriteLine("Querying: " + query);
             TopDocs topDocs = searcher!.Search(query, 1000);
 
-            String msg = "Query <" + queryStr + "> retrieved " + topDocs.TotalHits
-                + " document(s), " + expectedDocCount + " document(s) expected.";
+            string msg = $"Query <{queryStr}> retrieved {topDocs.TotalHits} document(s), {expectedDocCount} document(s) expected. " +
+                         $"[LOCALE: {LOCALE}, TIMEZONE: {TIMEZONE!.Id}, DATE_STYLE: {DATE_STYLE}, TIME_STYLE: {TIME_STYLE}]";
 
             if (Verbose) Console.WriteLine(msg);
-
 
             assertEquals(msg, expectedDocCount, topDocs.TotalHits);
         }
 
-        private static String NumberToString(/*Number*/ object? number)
+        private string NumberToString(Number? number)
         {
             return number is null ? "*" : ESCAPER.Escape(NUMBER_FORMAT!.Format(number),
                 LOCALE, EscapeQuerySyntaxType.STRING).toString();
         }
 
-        private static /*Number*/ object NormalizeNumber(/*Number*/ object number)
+        private Number NormalizeNumber(/*Number*/ object number)
         {
             return NUMBER_FORMAT!.Parse(NUMBER_FORMAT.Format(number));
         }
 
-        [OneTimeTearDown]
-        public override void OneTimeTearDown()
+        // LUCENENET specific - changed from OneTimeTearDown to TearDown, see class remarks.
+        [TearDown]
+        public override void TearDown()
         {
             searcher = null;
             reader?.Dispose();
@@ -672,7 +681,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             directory = null;
             qp = null;
 
-            base.OneTimeTearDown();
+            base.TearDown();
         }
     }
 }
