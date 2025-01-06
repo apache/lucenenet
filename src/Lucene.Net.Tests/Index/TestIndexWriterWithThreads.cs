@@ -502,7 +502,7 @@ namespace Lucene.Net.Index
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                    if (StackTraceHelper.DoesStackTraceContainMethod(typeof(DocFieldProcessor).Name, "Flush"))
+                    if (StackTraceHelper.DoesStackTraceContainMethod(nameof(DocFieldProcessor), "Flush"))
                     {
                         if (onlyOnce)
                         {

@@ -43,21 +43,21 @@ namespace Lucene.Net.Util
 
                 // LUCENENET: In .NET, we get a null when the class is not found, so we need to throw here for compatibility
                 if (clazz is null)
-                    throw new ArgumentException(typeof(FSDirectory).Name + " implementation not found: " + clazzName);
+                    throw new ArgumentException(nameof(FSDirectory) + " implementation not found: " + clazzName);
 
                 return NewFSDirectory(clazz, dir);
             }
             catch (Exception e) when (e.IsClassNotFoundException())
             {
-                throw new ArgumentException(typeof(FSDirectory).Name + " implementation not found: " + clazzName, e);
+                throw new ArgumentException(nameof(FSDirectory) + " implementation not found: " + clazzName, e);
             }
             catch (Exception e) when (e.IsClassCastException())
             {
-                throw new ArgumentException(clazzName + " is not a " + typeof(FSDirectory).Name + " implementation", e);
+                throw new ArgumentException(clazzName + " is not a " + nameof(FSDirectory) + " implementation", e);
             }
             catch (Exception e) when (e.IsNoSuchMethodException())
             {
-                throw new ArgumentException(clazzName + " constructor with " + typeof(FileInfo).Name + " as parameter not found", e);
+                throw new ArgumentException(clazzName + " constructor with " + nameof(FileInfo) + " as parameter not found", e);
             }
             catch (Exception e)
             {
@@ -91,7 +91,7 @@ namespace Lucene.Net.Util
         {
             if (clazzName is null || clazzName.Trim().Length == 0)
             {
-                throw new ArgumentException("The " + typeof(FSDirectory).Name + " implementation cannot be null or empty");
+                throw new ArgumentException("The " + nameof(FSDirectory) + " implementation cannot be null or empty");
             }
 
             // LUCENENET specific: Changed to use char rather than string so we get StringComparison.Ordinal,

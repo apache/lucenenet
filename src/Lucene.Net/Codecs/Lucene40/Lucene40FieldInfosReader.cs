@@ -137,8 +137,8 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        internal static readonly string LEGACY_DV_TYPE_KEY = typeof(Lucene40FieldInfosReader).Name + ".dvtype";
-        internal static readonly string LEGACY_NORM_TYPE_KEY = typeof(Lucene40FieldInfosReader).Name + ".normtype";
+        internal static readonly string LEGACY_DV_TYPE_KEY = nameof(Lucene40FieldInfosReader) + ".dvtype";
+        internal static readonly string LEGACY_NORM_TYPE_KEY = nameof(Lucene40FieldInfosReader) + ".normtype";
 
         // mapping of 4.0 types -> 4.2 types
         /*internal enum LegacyDocValuesType

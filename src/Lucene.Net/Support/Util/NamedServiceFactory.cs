@@ -129,7 +129,7 @@ namespace Lucene.Net.Util
                 genericSuffix = "Generic" + name.Substring(genericIndex + 1);
                 name = name.Substring(0, genericIndex);
             }
-            string serviceName = typeof(TService).Name;
+            string serviceName = nameof(TService);
             if (name.EndsWith(serviceName, StringComparison.Ordinal))
             {
                 name = name.Substring(0, name.Length - serviceName.Length);

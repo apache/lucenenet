@@ -24,7 +24,7 @@
 
 //    public class MessagesTestBundle : NLS
 //    {
-//        private static readonly string BUNDLE_NAME = typeof(MessagesTestBundle).Name;
+//        private static readonly string BUNDLE_NAME = nameof(MessagesTestBundle);
 
 //        private MessagesTestBundle()
 //        {

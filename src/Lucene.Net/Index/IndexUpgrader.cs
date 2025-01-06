@@ -71,12 +71,12 @@ namespace Lucene.Net.Index
             throw new ArgumentException("One or more arguments was invalid");
             //Console.Error.WriteLine("Upgrades an index so all segments created with a previous Lucene version are rewritten.");
             //Console.Error.WriteLine("Usage:");
-            //Console.Error.WriteLine("  java " + typeof(IndexUpgrader).Name + " [-delete-prior-commits] [-verbose] [-dir-impl X] indexDir");
+            //Console.Error.WriteLine("  java " + nameof(IndexUpgrader) + " [-delete-prior-commits] [-verbose] [-dir-impl X] indexDir");
             //Console.Error.WriteLine("this tool keeps only the last commit in an index; for this");
             //Console.Error.WriteLine("reason, if the incoming index has more than one commit, the tool");
             //Console.Error.WriteLine("refuses to run by default. Specify -delete-prior-commits to override");
             //Console.Error.WriteLine("this, allowing the tool to delete all but the last commit.");
-            //Console.Error.WriteLine("Specify a " + typeof(FSDirectory).Name + " implementation through the -dir-impl option to force its use. If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.");
+            //Console.Error.WriteLine("Specify a " + nameof(FSDirectory) + " implementation through the -dir-impl option to force its use. If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.");
             //Console.Error.WriteLine("WARNING: this tool may reorder document IDs!");
             //Environment.FailFast("1");
         }

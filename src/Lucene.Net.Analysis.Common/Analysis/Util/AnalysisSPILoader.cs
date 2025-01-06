@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Util
         private readonly string[] suffixes;
 
         public AnalysisSPILoader()
-            : this(new string[] { typeof(S).Name })
+            : this(new string[] { nameof(S) })
         {
         }
 
