@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
 
           public override void Run()
           {
-            const string systemClassName = typeof(System).Name, runtimeClassName = typeof(Runtime).Name;
+            const string systemClassName = nameof(System), runtimeClassName = nameof(Runtime);
             string exitMethodHit = null;
             foreach (StackTraceElement se in Thread.CurrentThread.StackTrace)
             {

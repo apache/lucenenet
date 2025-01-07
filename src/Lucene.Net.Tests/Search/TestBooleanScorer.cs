@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
             {
                 // Make sure we got BooleanScorer:
                 Type clazz = scorer.GetType();
-                Assert.AreEqual(typeof(FakeScorer).Name, clazz.Name, "Scorer is implemented by wrong class");
+                Assert.AreEqual(nameof(FakeScorer), clazz.Name, "Scorer is implemented by wrong class");
             }
 
             public void Collect(int doc)

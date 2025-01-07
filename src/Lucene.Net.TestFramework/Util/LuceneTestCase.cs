@@ -756,7 +756,7 @@ namespace Lucene.Net.Util
         ////        }
         ////        else
         ////        {
-        ////            Console.Out.Write(typeof(LuceneTestCase).Name + " WARNING: Property '" + SYSPROP_MAXFAILURES + "'=" + maxFailures + ", 'failfast' is" + " ignored.");
+        ////            Console.Out.Write(nameof(LuceneTestCase) + " WARNING: Property '" + SYSPROP_MAXFAILURES + "'=" + maxFailures + ", 'failfast' is" + " ignored.");
         ////        }
         ////    }
 
@@ -786,7 +786,7 @@ namespace Lucene.Net.Util
 
         /////// <summary>
         /////// By-name list of ignored types like loggers etc. </summary>
-        //////private static ISet<string> STATIC_LEAK_IGNORED_TYPES = new JCG.HashSet<string>(new string[] { "org.slf4j.Logger", "org.apache.solr.SolrLogFormatter", typeof(EnumSet).Name });
+        //////private static ISet<string> STATIC_LEAK_IGNORED_TYPES = new JCG.HashSet<string>(new string[] { "org.slf4j.Logger", "org.apache.solr.SolrLogFormatter", nameof(EnumSet) });
 
         /////// <summary>
         /////// this controls how suite-level rules are nested. It is important that _all_ rules declared
