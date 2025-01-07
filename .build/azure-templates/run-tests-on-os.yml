@@ -315,6 +315,11 @@ steps:
         Write-Host "##vso[task.logissue type=error;]StdErr file(s) indicate test failures. Review the testresults artifacts for details. (click here to view the projects that failed)`r`n$runsExpanded"
         $failed = $true
     }
+    if ([int]$maximumAllowedFailures -eq 0 -and $env:STDOUTFAILURE -eq 'true') {
+        $runsExpanded = "$($env:STDOUTFAILURERUNS)" -replace ',',"`r`n"
+        Write-Host "##vso[task.logissue type=error;]StdOut file(s) indicate test failures. Review the testresults artifacts for details. (click here to view the projects that failed)`r`n$runsExpanded"
+        $failed = $true
+    }
     if ($failed) {
         Write-Host "##vso[task.complete result=Failed;]"
     }

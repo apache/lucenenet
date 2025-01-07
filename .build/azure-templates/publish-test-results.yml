@@ -54,6 +54,7 @@ steps:
         $reader = [System.Xml.XmlReader]::Create($testResultsFileName)
         try {
             $countersFound = $false
+            $stdOutFound = $false
             $crashed = $false
             $inRunInfos = $false
             while ($reader.Read()) {
@@ -67,6 +68,17 @@ steps:
                         # Report a running total of failures
                         $totalFailures = ([int]$env:TOTALFAILURES + [int]$failed).ToString()
                         Write-Host "##vso[task.setvariable variable=TotalFailures;]$totalFailures"
+                        $countersFound = $true
+                    }
+                    if (!$stdOutFound -and $reader.Name -eq 'StdOut') {
+                        # Test for specific error messages - we may need to adjust this, as needed
+                        $innerXml = $reader.ReadInnerXml()
+                        if ($innerXml -and ($innerXml.Contains('[ERROR]'))) {
+                            Write-Host "##vso[task.setvariable variable=StdOutFailure;]true"
+                            # Report all of the test projects that had stdout failures
+                            $stdOutFailureRuns = "$env:STDOUTFAILURERUNS,$testProjectName".TrimStart(',')
+                            Write-Host "##vso[task.setvariable variable=StdOutFailureRuns;]$stdOutFailureRuns"
+                        }
                         $countersFound = $true
                     }
                     # Report a crash of the test runner
@@ -116,8 +128,8 @@ steps:
                     if ($line -match "Test Run Failed" -or $line -match "\[ERROR\]") {
                         Write-Host "##vso[task.setvariable variable=StdErrFailure;]true"
                         # Report all of the test projects that had stderr failures
-                        $stderrFailureRuns = "$env:STDERRFAILURERUNS,$testProjectName".TrimStart(',')
-                        Write-Host "##vso[task.setvariable variable=StdErrFailureRuns;]$stderrFailureRuns"
+                        $stdErrFailureRuns = "$env:STDERRFAILURERUNS,$testProjectName".TrimStart(',')
+                        Write-Host "##vso[task.setvariable variable=StdErrFailureRuns;]$stdErrFailureRuns"
                         break # No need to continue reading after detecting a failure
                     }
                 }
