@@ -43,21 +43,21 @@ namespace Lucene.Net.Util
 
                 // LUCENENET: In .NET, we get a null when the class is not found, so we need to throw here for compatibility
                 if (clazz is null)
-                    throw new ArgumentException(nameof(FSDirectory) + " implementation not found: " + clazzName);
+                    throw new ArgumentException($"{nameof(FSDirectory)} implementation not found: {clazzName}");
 
                 return NewFSDirectory(clazz, dir);
             }
             catch (Exception e) when (e.IsClassNotFoundException())
             {
-                throw new ArgumentException(nameof(FSDirectory) + " implementation not found: " + clazzName, e);
+                throw new ArgumentException($"{nameof(FSDirectory)} implementation not found: {clazzName}", e);
             }
             catch (Exception e) when (e.IsClassCastException())
             {
-                throw new ArgumentException(clazzName + " is not a " + nameof(FSDirectory) + " implementation", e);
+                throw new ArgumentException($"{clazzName} is not a {nameof(FSDirectory)} implementation", e);
             }
             catch (Exception e) when (e.IsNoSuchMethodException())
             {
-                throw new ArgumentException(clazzName + " constructor with " + nameof(FileInfo) + " as parameter not found", e);
+                throw new ArgumentException($"{clazzName} constructor with {nameof(FileInfo)} as parameter not found", e);
             }
             catch (Exception e)
             {

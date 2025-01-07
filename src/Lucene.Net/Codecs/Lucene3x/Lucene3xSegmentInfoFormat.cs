@@ -62,12 +62,12 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override SegmentInfoWriter SegmentInfoWriter => throw UnsupportedOperationException.Create("this codec can only be used for reading");
 
         // only for backwards compat
-        public static readonly string DS_OFFSET_KEY = nameof(Lucene3xSegmentInfoFormat) + ".dsoffset";
+        public const string DS_OFFSET_KEY = nameof(Lucene3xSegmentInfoFormat) + ".dsoffset";
 
-        public static readonly string DS_NAME_KEY = nameof(Lucene3xSegmentInfoFormat) + ".dsname";
-        public static readonly string DS_COMPOUND_KEY = nameof(Lucene3xSegmentInfoFormat) + ".dscompound";
-        public static readonly string NORMGEN_KEY = nameof(Lucene3xSegmentInfoFormat) + ".normgen";
-        public static readonly string NORMGEN_PREFIX = nameof(Lucene3xSegmentInfoFormat) + ".normfield";
+        public const string DS_NAME_KEY = nameof(Lucene3xSegmentInfoFormat) + ".dsname";
+        public const string DS_COMPOUND_KEY = nameof(Lucene3xSegmentInfoFormat) + ".dscompound";
+        public const string NORMGEN_KEY = nameof(Lucene3xSegmentInfoFormat) + ".normgen";
+        public const string NORMGEN_PREFIX = nameof(Lucene3xSegmentInfoFormat) + ".normfield";
 
         /// <returns> If this segment shares stored fields &amp; vectors, this
         ///         offset is where in that file this segment's docs begin.  </returns>

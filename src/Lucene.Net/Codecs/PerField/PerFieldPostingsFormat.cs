@@ -60,13 +60,13 @@ namespace Lucene.Net.Codecs.PerField
         /// <see cref="FieldInfo"/> attribute name used to store the
         /// format name for each field.
         /// </summary>
-        public static readonly string PER_FIELD_FORMAT_KEY = nameof(PerFieldPostingsFormat) + ".format";
+        public const string PER_FIELD_FORMAT_KEY = nameof(PerFieldPostingsFormat) + ".format";
 
         /// <summary>
         /// <see cref="FieldInfo"/> attribute name used to store the
         /// segment suffix name for each field.
         /// </summary>
-        public static readonly string PER_FIELD_SUFFIX_KEY = nameof(PerFieldPostingsFormat) + ".suffix";
+        public const string PER_FIELD_SUFFIX_KEY = nameof(PerFieldPostingsFormat) + ".suffix";
 
         /// <summary>
         /// Sole constructor. </summary>
