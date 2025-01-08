@@ -1,3 +1,5 @@
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -38,6 +40,62 @@ namespace Lucene.Net.Index
             Assert.IsFalse(@base.Equals(differentField));
             Assert.IsFalse(@base.Equals(differentText));
             Assert.IsFalse(@base.Equals(differentType));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestToString_ValidUtf8Data()
+        {
+            // Arrange
+            var validUtf8 = new byte[] { 0x48, 0x65, 0x6C, 0x6C, 0x6F }; // "Hello"
+            var bytesRef = new BytesRef(validUtf8, 0, validUtf8.Length);
+
+            // Act
+            string result = Term.ToString(bytesRef);
+
+            // Assert
+            Assert.AreEqual("Hello", result);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestToString_InvalidUtf8Data()
+        {
+            // Arrange
+            var invalidUtf8 = new byte[] { 0xC3, 0x28 }; // Invalid UTF-8 sequence
+            var bytesRef = new BytesRef(invalidUtf8, 0, invalidUtf8.Length);
+
+            // Act
+            string result = Term.ToString(bytesRef);
+
+            // Assert
+            Assert.AreEqual("[c3 28]", result); // Should match BytesRef.ToString()
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestToString_Utf8WithBom()
+        {
+            // Arrange
+            var utf8WithBom = new byte[] { 0xEF, 0xBB, 0xBF, 0x48, 0x69 }; // BOM + "Hi"
+            var bytesRef = new BytesRef(utf8WithBom, 0, utf8WithBom.Length);
+
+            // Act
+            string result = Term.ToString(bytesRef);
+
+            // Assert
+            Assert.AreEqual("\uFEFFHi", result); // BOM is preserved in the string
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestToString_Utf8WithoutBom()
+        {
+            // Arrange
+            var utf8WithoutBom = new byte[] { 0x48, 0x69 }; // "Hi"
+            var bytesRef = new BytesRef(utf8WithoutBom, 0, utf8WithoutBom.Length);
+
+            // Act
+            string result = Term.ToString(bytesRef);
+
+            // Assert
+            Assert.AreEqual("Hi", result);
         }
     }
 }
