@@ -937,10 +937,6 @@ namespace Lucene.Net.Util
 
             if (result.ResultState == ResultState.Failure || result.ResultState == ResultState.Error)
             {
-                // LUCENENET specific - Track that at least one test in the suite failed.
-                // LUCENENET TODO: finish implementation of RuleChains so this is not needed (#1088)
-                SuiteFailureMarker = false;
-
                 string message =
                     $$"""
                       {{result.Message}}
