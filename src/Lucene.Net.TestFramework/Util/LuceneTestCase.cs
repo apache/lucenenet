@@ -505,6 +505,7 @@ namespace Lucene.Net.Util
                 TestSlow = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, true); // LUCENENET specific - made default true, as per the docs
                 TestThrottling = TestNightly ? Throttling.SOMETIMES : Throttling.NEVER;
                 LeaveTemporary = LoadLeaveTemorary();
+                FailOnTestFixtureOneTimeSetUpError = SystemProperties.GetPropertyAsBoolean("tests:failontestfixtureonetimesetuperror", true);
             }
 
 
@@ -583,6 +584,16 @@ namespace Lucene.Net.Util
                 }
                 return defaultValue;
             }
+
+            /// <summary>
+            /// Fail when <see cref="OneTimeSetUp()"/> throws an exception for a given test fixture (usually a class).
+            /// By default, NUnit swallows exceptions when they happen here. We explicitly report these errors
+            /// to standard error, but enabling this feature will also cause all tests in the fixture and nested
+            /// tests to fail. Defaults to <c>false</c>.
+            /// <para/>
+            /// LUCENENET specific.
+            /// </summary>
+            public bool FailOnTestFixtureOneTimeSetUpError { get; }
         }
 
 
@@ -658,6 +669,15 @@ namespace Lucene.Net.Util
         /// Leave temporary files on disk, even on successful runs. </summary>
         public static bool LeaveTemporary => TestProperties.LeaveTemporary;
 
+        /// <summary>
+        /// Fail when <see cref="OneTimeSetUp()"/> throws an exception for a given test fixture (usually a class).
+        /// By default, NUnit swallows exceptions when they happen here. We explicitly report these errors
+        /// to standard error, but enabling this feature will also cause all tests in the fixture and nested
+        /// tests to fail. Defaults to <c>false</c>.
+        /// <para/>
+        /// LUCENENET specific.
+        /// </summary>
+        public static bool FailOnTestFixtureOneTimeSetUpError => TestProperties.FailOnTestFixtureOneTimeSetUpError;
 
         // LUCENENET: Not Implemented
         /////// <summary>
@@ -866,12 +886,6 @@ namespace Lucene.Net.Util
         // Suite and test case setup/ cleanup.
         // -----------------------------------------------------------------
 
-        // LUCENENET specific: Temporary storage for random selections so they
-        // can be set once per OneTimeSetUp and reused multiple times in SetUp
-        // where they are written to the output.
-        private string codecType;
-        private string similarityName;
-
         /// <summary>
         /// For subclasses to override. Overrides must call <c>base.SetUp()</c>.
         /// </summary>
@@ -880,48 +894,6 @@ namespace Lucene.Net.Util
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
-
-            // LUCENENET: Printing out randomized context regardless
-            // of whether verbose is enabled (since we need it for debugging,
-            // but the verbose output can crash tests).
-            Console.Write("RandomSeed: ");
-            Console.WriteLine(RandomizedContext.CurrentContext.RandomSeedAsHex);
-
-            Console.Write("Culture: ");
-            Console.WriteLine(ClassEnvRule.locale.Name);
-
-            Console.Write("Time Zone: ");
-            Console.WriteLine(ClassEnvRule.timeZone.DisplayName);
-
-            Console.Write("Default Codec: ");
-            Console.Write(ClassEnvRule.codec.Name);
-            Console.Write(" (");
-            Console.Write(codecType);
-            Console.WriteLine(")");
-
-            Console.Write("Default Similarity: ");
-            Console.WriteLine(similarityName);
-
-            Console.Write("Nightly: ");
-            Console.WriteLine(TestNightly);
-
-            Console.Write("Weekly: ");
-            Console.WriteLine(TestWeekly);
-
-            Console.Write("Slow: ");
-            Console.WriteLine(TestSlow);
-
-            Console.Write("Awaits Fix: ");
-            Console.WriteLine(TestAwaitsFix);
-
-            Console.Write("Directory: ");
-            Console.WriteLine(TestDirectory);
-
-            Console.Write("Verbose: ");
-            Console.WriteLine(Verbose);
-
-            Console.Write("Random Multiplier: ");
-            Console.WriteLine(RandomMultiplier);
         }
 
         /// <summary>
@@ -974,6 +946,26 @@ namespace Lucene.Net.Util
                         }
                       }
 
+                      Fixture Test Values
+                      =================
+
+                       Random Seed:           {{RandomizedContext.CurrentContext.RandomSeedAsHex}}
+                       Culture:               {{ClassEnvRule.locale.Name}}
+                       Time Zone:             {{ClassEnvRule.timeZone.DisplayName}}
+                       Default Codec:         {{ClassEnvRule.codec.Name}} ({{ClassEnvRule.codec.GetType().Name}})
+                       Default Similarity:    {{ClassEnvRule.similarity}}
+
+                      System Properties
+                      =================
+
+                       Nightly:               {{TestNightly}}
+                       Weekly:                {{TestWeekly}}
+                       Slow:                  {{TestSlow}}
+                       Awaits Fix:            {{TestAwaitsFix}}
+                       Directory:             {{TestDirectory}}
+                       Verbose:               {{Verbose}}
+                       Random Multiplier:     {{RandomMultiplier}}
+
                       """;
 
                 result.SetResult(result.ResultState, message, result.StackTrace);
@@ -994,15 +986,19 @@ namespace Lucene.Net.Util
             try
             {
                 ClassEnvRule.Before();
-
-                // LUCENENET: Generate the info once so it can be printed out for each test
-                codecType = ClassEnvRule.codec.GetType().Name;
-                similarityName = ClassEnvRule.similarity.ToString();
             }
             catch (Exception ex)
             {
-                // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during OneTimeSetUp:\n{ex}", ex);
+                // This is a bug in the test framework that should be fixed and/or reported if it occurs.
+                if (FailOnTestFixtureOneTimeSetUpError)
+                {
+                    // LUCENENET: Patch NUnit so it will report all of the tests in the class as a failure if we got an exception.
+                    TestExecutionContext.CurrentContext.CurrentTest.MakeAllInvalid(ex, $"An exception occurred during OneTimeSetUp:\n{ex}");
+                }
+                else
+                {
+                    NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] An exception occurred during OneTimeSetUp:\n{ex}");
+                }
             }
         }
 
@@ -1019,12 +1015,20 @@ namespace Lucene.Net.Util
             try
             {
                 ClassEnvRule.After();
+            }
+            catch (Exception ex)
+            {
+                // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during ClassEnvRule.After():\n{ex}");
+            }
+            try
+            {
                 CleanupTemporaryFiles();
             }
             catch (Exception ex)
             {
-                // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during OneTimeTearDown:\n{ex}", ex);
+                // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during CleanupTemporaryFiles():\n{ex}");
             }
         }
 

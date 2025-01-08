@@ -387,7 +387,7 @@ namespace Lucene.Net.Support.ExceptionHandling
                 catch (Exception e) when (extensionMethodExpression(e))
                 {
                     // expected
-                    Assert.Pass($"Expected: Caught exception {e.GetType().FullName}");
+                    Assert.Pass();
                 }
             }
             catch (Exception e) when (e is not NUnit.Framework.SuccessException)
@@ -410,7 +410,8 @@ namespace Lucene.Net.Support.ExceptionHandling
                     // Special case - need to suppress this from being thrown to the outer catch
                     // or we will get a false failure
                     Assert.IsFalse(extensionMethodExpression(e));
-                    Assert.Pass($"Expected: Did not catch exception {e.GetType().FullName}");
+                    // expected
+                    Assert.Pass();
                 }
                 catch (Exception e) when (extensionMethodExpression(e))
                 {
@@ -421,7 +422,7 @@ namespace Lucene.Net.Support.ExceptionHandling
             catch (Exception e) when (e is not NUnit.Framework.AssertionException)
             {
                 // expected
-                Assert.Pass($"Expected: Did not catch exception {e.GetType().FullName}");
+                Assert.Pass();
             }
         }
     }
