@@ -742,11 +742,11 @@ namespace Lucene.Net.Util
         /// </summary>
         internal static TestRuleSetupAndRestoreClassEnv ClassEnvRule { get; } = new TestRuleSetupAndRestoreClassEnv();
 
-        // LUCENENET TODO: Implement these rules
-        /// <summary>
-        /// Suite failure marker (any error in the test or suite scope).
-        /// </summary>
-        public static /*TestRuleMarkFailure*/ bool SuiteFailureMarker = true; // Means: was successful
+        // LUCENENET: Removed SuiteFailureMarker and TestFailureMarker because they are used for functionality that
+        // is redundant with NUnit.Framework.Internal.TestExecutionContext.CurrentContext.CurrentResult
+        //
+        // wasSuccessful() is the same as ResultState != ResultState.Error
+        // hadFailures() is the same as ResultState == ResultState.Error
 
         ///// <summary>
         ///// Ignore tests after hitting a designated number of initial failures. This
@@ -862,9 +862,11 @@ namespace Lucene.Net.Util
         /////// Save test thread and name. </summary>
         ////private TestRuleThreadAndTestName threadAndTestNameRule = new TestRuleThreadAndTestName();
 
-        /////// <summary>
-        /////// Taint suite result with individual test failures. </summary>
-        ////private TestRuleMarkFailure testFailureMarker = new TestRuleMarkFailure(SuiteFailureMarker);*/
+        // LUCENENET: Removed SuiteFailureMarker and TestFailureMarker because they are used for functionality that
+        // is redundant with NUnit.Framework.Internal.TestExecutionContext.CurrentContext.CurrentResult
+        //
+        // wasSuccessful() is the same as ResultState != ResultState.Error
+        // hadFailures() is the same as ResultState == ResultState.Error
 
         /////// <summary>
         /////// this controls how individual test rules are nested. It is important that
@@ -904,7 +906,6 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
-
             TestResult result = TestExecutionContext.CurrentContext.CurrentResult;
 
             if (result.ResultState == ResultState.Failure || result.ResultState == ResultState.Error)
@@ -969,6 +970,9 @@ namespace Lucene.Net.Util
 
                 result.SetResult(result.ResultState, message, result.StackTrace);
             }
+
+            // LUCENENET: DisposeAfterTest runs last
+            RandomizedContext.CurrentContext.DisposeResources();
         }
 
         /// <summary>
@@ -1029,6 +1033,17 @@ namespace Lucene.Net.Util
                 // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
                 NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during CleanupTemporaryFiles():\n{ex}");
             }
+
+            // LUCENENET: DisposeAfterSuite runs last
+            try
+            {
+                RandomizedContext.CurrentContext.DisposeResources();
+            }
+            catch (Exception ex)
+            {
+                // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during RandomizedContext.DisposeResources():\n{ex}");
+            }
         }
 
         // -----------------------------------------------------------------
@@ -1067,25 +1082,31 @@ namespace Lucene.Net.Util
             }
         }
 
-        /////// <summary>
-        /////// Registers a <see cref="IDisposable"/> resource that should be closed after the test
-        /////// completes.
-        /////// </summary>
-        /////// <returns> <c>resource</c> (for call chaining). </returns>
-        /////*public static T CloseAfterTest<T>(T resource)
-        ////{
-        ////    return RandomizedContext.Current.CloseAtEnd(resource, LifecycleScope.TEST);
-        ////}*/
+        /// <summary>
+        /// Registers a <see cref="IDisposable"/> resource that should be closed after the test
+        /// completes.
+        /// </summary>
+        /// <returns> <c>resource</c> (for call chaining). </returns>
+        public static T DisposeAfterTest<T>(T resource) where T : IDisposable
+        {
+            return RandomizedContext.CurrentContext.DisposeAtEnd(resource, LifecycleScope.TEST);
+        }
 
-        /////// <summary>
-        /////// Registers a <see cref="IDisposable"/> resource that should be closed after the suite
-        /////// completes.
-        /////// </summary>
-        /////// <returns> <c>resource</c> (for call chaining). </returns>
-        /////*public static T CloseAfterSuite<T>(T resource)
-        ////{
-        ////    return RandomizedContext.Current.CloseAtEnd(resource, LifecycleScope.SUITE);
-        ////}*/
+        /// <summary>
+        /// Registers a <see cref="IDisposable"/> resource that should be closed after the suite
+        /// completes.
+        /// </summary>
+        /// <returns> <c>resource</c> (for call chaining). </returns>
+        /// <remarks>
+        /// Due to limitations of NUnit, any exceptions or assertions raised
+        /// from the <paramref name="resource"/> will not be respected. However, if
+        /// you want to detect a failure, do note that the message from either one
+        /// will be printed to StdOut.
+        /// </remarks>
+        public static T DisposeAfterSuite<T>(T resource) where T : IDisposable
+        {
+            return RandomizedContext.CurrentContext.DisposeAtEnd(resource, LifecycleScope.SUITE);
+        }
 
         /// <summary>
         /// Gets the current type being tested.
@@ -1693,7 +1714,7 @@ namespace Lucene.Net.Util
             if (bare)
             {
                 BaseDirectoryWrapper @base = new BaseDirectoryWrapper(directory);
-                // LUCENENET TODO: CloseAfterSuite(new DisposableDirectory(@base, SuiteFailureMarker));
+                DisposeAfterSuite(new DisposableDirectory(@base /*, SuiteFailureMarker*/));
                 return @base;
             }
             else
@@ -1701,7 +1722,7 @@ namespace Lucene.Net.Util
                 MockDirectoryWrapper mock = new MockDirectoryWrapper(random, directory);
 
                 mock.Throttling = TestThrottling;
-                // LUCENENET TODO: CloseAfterSuite(new DisposableDirectory(mock, SuiteFailureMarker));
+                DisposeAfterSuite(new DisposableDirectory(mock /*, SuiteFailureMarker*/));
                 return mock;
             }
         }
@@ -3123,7 +3144,8 @@ namespace Lucene.Net.Util
             // Only check and throw an IOException on un-removable files if the test
             // was successful. Otherwise just report the path of temporary files
             // and leave them there.
-            if (LuceneTestCase.SuiteFailureMarker /*.WasSuccessful()*/)
+            //if (LuceneTestCase.SuiteFailureMarker.WasSuccessful)
+            if (TestExecutionContext.CurrentContext.CurrentResult.ResultState != ResultState.Failure)
             {
                 try
                 {

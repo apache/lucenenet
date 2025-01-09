@@ -1,4 +1,5 @@
-﻿using NUnit.Framework.Internal;
+﻿using NUnit.Framework.Interfaces;
+using NUnit.Framework.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,61 @@ namespace Lucene.Net.Util
     /// </summary>
     internal static class TestExtensions
     {
+        /// <summary>
+        /// Retrieves the <see cref="RandomizedContext"/> instance for a given <see cref="Test"/>.
+        /// <para/>
+        /// 
+        /// </summary>
+        /// <param name="test"></param>
+        /// <returns>The <see cref="RandomizedContext"/>. If the <paramref name="test"/> is <c>null</c>
+        /// or doesn't have a <see cref="RandomizedContext"/>
+        /// (it doesn't belong to our framework), then the return value is <c>null</c>.</returns>
+        public static RandomizedContext? GetRandomizedContext(this Test? test)
+        {
+            if (test is null)
+                return null;
+
+            if (test.Properties.ContainsKey(RandomizedContext.RandomizedContextPropertyName))
+                return (RandomizedContext?)test.Properties.Get(RandomizedContext.RandomizedContextPropertyName);
+
+            return null;
+        }
+
+        /// <summary>
+        /// Determines if the current <paramref name="test"/> is a
+        /// type of runnable test (for example, a [Test] or [TestCase()] as
+        /// opposed to a class or other container).
+        /// </summary>
+        /// <param name="test">This <see cref="Test"/>.</param>
+        /// <returns><c>true</c> if the current <paramref name="test"/> is a
+        /// type of runnable test; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="test"/> is <c>null</c>.</exception>
+        public static bool IsTest(this ITest test)
+        {
+            if (test is null)
+                throw new ArgumentNullException(nameof(test));
+            if (test is Test t)
+                return !t.IsSuite;
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if the current <paramref name="test"/> is a
+        /// test class (as opposed to a runnable test).
+        /// </summary>
+        /// <param name="test">This <see cref="Test"/>.</param>
+        /// <returns><c>true</c> if the current <paramref name="test"/> is a
+        /// test class; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static bool IsTestClass(this ITest test)
+        {
+            if (test is null)
+                throw new ArgumentNullException(nameof(test));
+            if (test is Test t)
+                return t.IsSuite && t.TypeInfo is not null;
+            return false;
+        }
+
         /// <summary>
         /// Mark the test and all descendents as Invalid (not runnable) specifying a reason and an exception.
         /// </summary>

@@ -1,8 +1,11 @@
-﻿using J2N;
+﻿using Lucene.Net.Support.Threading;
+using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+#nullable enable
 
 namespace Lucene.Net.Util
 {
@@ -37,6 +40,12 @@ namespace Lucene.Net.Util
         private readonly long randomSeed;
         private readonly string randomSeedAsHex;
         private readonly long testSeed;
+        private List<IDisposable>? toDisposeAtEnd = null;
+
+        /// <summary>
+        /// Coordination at context level.
+        /// </summary>
+        private readonly object contextLock = new object();
 
         /// <summary>
         /// Initializes the randomized context.
@@ -92,21 +101,106 @@ namespace Lucene.Net.Util
         /// random test data in these cases. Using the <see cref="LuceneTestCase.TestFixtureAttribute"/>
         /// will set the seed properly and make it possible to repeat the result.
         /// </summary>
-        public Random RandomGenerator => randomGenerator.Value;
+        public Random RandomGenerator => randomGenerator.Value!;
 
         /// <summary>
         /// Gets the randomized context for the current test or test fixture.
+        /// <para/>
+        /// If <c>null</c>, the call is being made out of context and the random test behavior
+        /// will not be repeatable.
         /// </summary>
-        public static RandomizedContext CurrentContext
+        public static RandomizedContext? CurrentContext => TestExecutionContext.CurrentContext.CurrentTest.GetRandomizedContext();
+
+        /// <summary>
+        /// Registers the given <paramref name="resource"/> at the end of a given
+        /// lifecycle <paramref name="scope"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of <see cref="IDisposable"/>.</typeparam>
+        /// <param name="resource">A resource to dispose.</param>
+        /// <param name="scope">The scope to dispose the resource in.</param>
+        /// <returns>The <paramref name="resource"/> (for chaining).</returns>
+        /// <remarks>
+        /// Due to limitations of NUnit, any exceptions or assertions raised
+        /// from the <paramref name="resource"/> will not be respected. However, if
+        /// you want to detect a failure, do note that the message from either one
+        /// will be printed to StdOut.
+        /// </remarks>
+        public T DisposeAtEnd<T>(T resource, LifecycleScope scope) where T : IDisposable
         {
-            get
+            if (currentTest.IsTest())
             {
-                var currentTest = TestExecutionContext.CurrentContext.CurrentTest;
+                if (scope == LifecycleScope.TEST)
+                {
+                    AddDisposableAtEnd(resource);
+                }
+                else
+                {
+                    var context = FindClassLevelTest(currentTest).GetRandomizedContext();
+                    if (context is null)
+                        throw new InvalidOperationException($"The provided {LifecycleScope.TEST} has no conceptual {LifecycleScope.SUITE} associated with it.");
+                    context.AddDisposableAtEnd(resource);
+                }
+            }
+            else if (currentTest.IsTestClass())
+            {
+                AddDisposableAtEnd(resource);
+            }
+            else
+            {
+                throw new NotSupportedException("Only runnable tests and test classes are supported.");
+            }
 
-                if (currentTest.Properties.ContainsKey(RandomizedContextPropertyName))
-                    return (RandomizedContext)currentTest.Properties.Get(RandomizedContextPropertyName);
+            return resource;
+        }
 
-                return null; // We are out of random context and cannot respond with results that are repeatable.
+        internal void AddDisposableAtEnd(IDisposable resource)
+        {
+            UninterruptableMonitor.Enter(contextLock);
+            try
+            {
+                if (toDisposeAtEnd is null)
+                    toDisposeAtEnd = new List<IDisposable>();
+
+                toDisposeAtEnd.Add(resource);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(contextLock);
+            }
+        }
+
+        private Test? FindClassLevelTest(Test test)
+        {
+            ITest? current = test;
+
+            while (current != null)
+            {
+                // Check if this test is at the class level
+                if (current.IsTestClass() && current is Test t)
+                {
+                    return t;
+                }
+
+                current = current.Parent;
+            }
+
+            return null;
+        }
+
+        internal void DisposeResources()
+        {
+            if (toDisposeAtEnd is not null)
+            {
+                UninterruptableMonitor.Enter(contextLock);
+                try
+                {
+
+                    IOUtils.Dispose(toDisposeAtEnd);
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(contextLock);
+                }
             }
         }
     }
