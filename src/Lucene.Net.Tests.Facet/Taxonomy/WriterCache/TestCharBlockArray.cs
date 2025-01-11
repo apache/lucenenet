@@ -47,7 +47,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int size = 1 + Random.Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                Encoding decoder = StandardCharsets.UTF_8; // LUCENENET specific: no need to set decoder fallback, because it already replaces by default
+                Encoding decoder = Encoding.UTF8; // LUCENENET specific: no need to set decoder fallback, because Encoding.UTF8 already replaces by default
                 string s = decoder.GetString(buffer, 0, size);
                 array.Append(s);
                 builder.Append(s);
@@ -59,7 +59,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int size = 1 + Random.Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                Encoding decoder = StandardCharsets.UTF_8; // LUCENENET specific: no need to set decoder fallback, because it already replaces by default
+                Encoding decoder = Encoding.UTF8; // LUCENENET specific: no need to set decoder fallback, because Encoding.UTF8 already replaces by default
                 string s = decoder.GetString(buffer, 0, size);
                 array.Append(s);
                 builder.Append(s);
@@ -71,7 +71,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int size = 1 + Random.Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                Encoding decoder = StandardCharsets.UTF_8; // LUCENENET specific: no need to set decoder fallback, because it already replaces by default
+                Encoding decoder = Encoding.UTF8; // LUCENENET specific: no need to set decoder fallback, because Encoding.UTF8 already replaces by default
                 string s = decoder.GetString(buffer, 0, size);
                 for (int j = 0; j < s.Length; j++)
                 {

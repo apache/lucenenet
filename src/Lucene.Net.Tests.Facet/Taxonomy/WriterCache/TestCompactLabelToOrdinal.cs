@@ -52,7 +52,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                Encoding decoder = StandardCharsets.UTF_8; // LUCENENET specific: no need to set decoder fallback, because it already replaces by default
+                Encoding decoder = Encoding.UTF8; // LUCENENET specific: no need to set decoder fallback, because Encoding.UTF8 already replaces by default
                 uniqueValues[i] = decoder.GetString(buffer, 0, size);
                 // we cannot have empty path components, so eliminate all prefix as well
                 // as middle consecutive delimiter chars.
