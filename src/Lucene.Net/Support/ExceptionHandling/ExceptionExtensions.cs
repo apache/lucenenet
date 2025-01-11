@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Security;
+using System.Text;
 using System.Threading;
 
 namespace Lucene
@@ -213,8 +214,11 @@ namespace Lucene
             if (e is null || e.IsAlwaysIgnored()) return false;
 
             return e is IOException ||
-                e.IsAlreadyClosedException() || // In Lucene, AlreadyClosedException subclass IOException instead of InvalidOperationException, so we need a special case here
-                e is UnauthorizedAccessException; // In Java, java.nio.file.AccessDeniedException subclasses IOException
+                   e.IsAlreadyClosedException() || // In Lucene, AlreadyClosedException subclass IOException instead of InvalidOperationException, so we need a special case here
+                   e is
+                       UnauthorizedAccessException // In Java, java.nio.file.AccessDeniedException subclasses IOException
+                       or DecoderFallbackException // In Java, CharacterCodingException subclasses IOException
+                       or EncoderFallbackException;
         }
 
         /// <summary>
@@ -368,9 +372,11 @@ namespace Lucene
             // LUCENENET: In production, there is a chance that we will upgrade to ArgumentNullExcpetion or ArgumentOutOfRangeException
             // and it is still important that those are caught. However, we have a copy of this method in the test environment
             // where this is done more strictly to catch ArgumentException without its known subclasses so we can be more explicit in tests.
-            return e is ArgumentException;
-                //!(e is ArgumentNullException) &&     // Corresponds to NullPointerException, so we don't catch it here.
-                //!(e is ArgumentOutOfRangeException); // Corresponds to IndexOutOfBoundsException (and subclasses), so we don't catch it here.
+            return e is ArgumentException
+                and not DecoderFallbackException // In Java, CharacterCodingException subclasses IOException, not ArgumentException
+                and not EncoderFallbackException;
+            //!(e is ArgumentNullException) &&     // Corresponds to NullPointerException, so we don't catch it here.
+            //!(e is ArgumentOutOfRangeException); // Corresponds to IndexOutOfBoundsException (and subclasses), so we don't catch it here.
         }
 
         /// <summary>
