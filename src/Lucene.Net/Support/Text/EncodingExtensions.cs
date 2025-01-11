@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Text;
+#nullable enable
 
 namespace Lucene.Net.Support.Text
 {
@@ -24,8 +26,10 @@ namespace Lucene.Net.Support.Text
     /// </summary>
     internal static class EncodingExtensions
     {
+        private static readonly ConcurrentDictionary<Encoding, Encoding> decoderExceptionFallbackCache = new();
+
         /// <summary>
-        /// Returns a new <see cref="Encoding"/> instance with the <see cref="DecoderFallback"/> set to throw
+        /// Returns an <see cref="Encoding"/> instance with the <see cref="DecoderFallback"/> set to throw
         /// an exception when an invalid byte sequence is encountered.
         /// <para />
         /// This is equivalent to Java's <c>CodingErrorAction.REPORT</c> for both <c>onMalformedInput</c> and
@@ -36,16 +40,19 @@ namespace Lucene.Net.Support.Text
         /// <see cref="DecoderFallbackException"/>.
         /// </summary>
         /// <param name="encoding">The encoding to clone and set the fallback on.</param>
-        /// <returns>A new <see cref="Encoding"/> instance with the fallback set to throw an exception.</returns>
+        /// <returns>An <see cref="Encoding"/> instance with the fallback set to throw an exception.</returns>
         /// <remarks>
-        /// Note that it is necessary to return a new, cloned <see cref="Encoding"/> instance because
+        /// Note that it is necessary to clone the <see cref="Encoding"/> instance because
         /// the <see cref="Encoding.DecoderFallback"/> property is read-only without cloning.
         /// </remarks>
         public static Encoding WithDecoderExceptionFallback(this Encoding encoding)
         {
-            Encoding newEncoding = (Encoding)encoding.Clone();
-            newEncoding.DecoderFallback = DecoderFallback.ExceptionFallback;
-            return newEncoding;
+            return decoderExceptionFallbackCache.GetOrAdd(encoding, static e =>
+            {
+                Encoding newEncoding = (Encoding)e.Clone();
+                newEncoding.DecoderFallback = DecoderFallback.ExceptionFallback;
+                return newEncoding;
+            });
         }
     }
 }
