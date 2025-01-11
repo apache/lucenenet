@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -43,15 +44,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             string[] uniqueValues = new string[numUniqueValues];
             byte[] buffer = new byte[50];
 
-            // This is essentially the equivalent of
-            // CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder()
-            //     .onUnmappableCharacter(CodingErrorAction.REPLACE)
-            //     .onMalformedInput(CodingErrorAction.REPLACE);
-            // 
-            // Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage, 
-            //     new EncoderReplacementFallback("?"), 
-            //     new DecoderReplacementFallback("?"));
-
             Random random = Random;
             for (int i = 0; i < numUniqueValues;)
             {
@@ -60,9 +52,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
-                    new EncoderReplacementFallback("?"),
-                    new DecoderReplacementFallback("?"));
+                Encoding decoder = StandardCharsets.UTF_8; // LUCENENET specific: no need to set decoder fallback, because it already replaces by default
                 uniqueValues[i] = decoder.GetString(buffer, 0, size);
                 // we cannot have empty path components, so eliminate all prefix as well
                 // as middle consecutive delimiter chars.
@@ -292,6 +282,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
                 return LabelToOrdinal.INVALID_ORDINAL;
             }
-        } 
+        }
     }
 }

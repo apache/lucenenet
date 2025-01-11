@@ -2,6 +2,7 @@
 using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -40,24 +41,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             byte[] buffer = new byte[50];
 
-            // This is essentially the equivalent of
-            // CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder()
-            //     .onUnmappableCharacter(CodingErrorAction.REPLACE)
-            //     .onMalformedInput(CodingErrorAction.REPLACE);
-            //
-            // Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
-            //     new EncoderReplacementFallback("?"),
-            //     new DecoderReplacementFallback("?"));
-
             for (int i = 0; i < n; i++)
             {
                 Random.NextBytes(buffer);
                 int size = 1 + Random.Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
-                    new EncoderReplacementFallback("?"),
-                    new DecoderReplacementFallback("?"));
+                Encoding decoder = StandardCharsets.UTF_8; // LUCENENET specific: no need to set decoder fallback, because it already replaces by default
                 string s = decoder.GetString(buffer, 0, size);
                 array.Append(s);
                 builder.Append(s);
@@ -69,9 +59,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int size = 1 + Random.Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
-                    new EncoderReplacementFallback("?"),
-                    new DecoderReplacementFallback("?"));
+                Encoding decoder = StandardCharsets.UTF_8; // LUCENENET specific: no need to set decoder fallback, because it already replaces by default
                 string s = decoder.GetString(buffer, 0, size);
                 array.Append(s);
                 builder.Append(s);
@@ -83,9 +71,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int size = 1 + Random.Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
-                    new EncoderReplacementFallback("?"),
-                    new DecoderReplacementFallback("?"));
+                Encoding decoder = StandardCharsets.UTF_8; // LUCENENET specific: no need to set decoder fallback, because it already replaces by default
                 string s = decoder.GetString(buffer, 0, size);
                 for (int j = 0; j < s.Length; j++)
                 {

@@ -366,8 +366,6 @@ namespace Lucene.Net.Support.ExceptionHandling
                 typeof(System.Runtime.Serialization.SerializationException),
                 typeof(System.Security.Cryptography.CryptographicException),
                 typeof(System.Security.VerificationException),
-                typeof(System.Text.DecoderFallbackException), // LUCENENET TODO: Need to be sure about this one
-                typeof(System.Text.EncoderFallbackException), // LUCENENET TODO: Need to be sure about this one
                 typeof(System.Threading.AbandonedMutexException),
                 typeof(System.Threading.SemaphoreFullException),
                 typeof(System.Threading.SynchronizationLockException),

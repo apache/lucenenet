@@ -1,5 +1,4 @@
-﻿using J2N.Text;
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -195,7 +194,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         }
 
         [Test]
-        [TestCaseSource("ThrowableTypeExpressions")]
+        [TestCaseSource(nameof(ThrowableTypeExpressions))]
         public void TestIsThrowable(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
         {
             static bool extensionMethod(Exception e) => e.IsThrowable();
@@ -211,7 +210,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         }
 
         [Test]
-        [TestCaseSource("ErrorTypeExpressions")]
+        [TestCaseSource(nameof(ErrorTypeExpressions))]
         public void TestIsError(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
         {
             static bool extensionMethod(Exception e) => e.IsError();
@@ -229,7 +228,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         // This test ensures that all known Error types from Java are not caught by
         // our IsException() handler.
         [Test]
-        [TestCaseSource("ExceptionTypeExpressions")]
+        [TestCaseSource(nameof(ExceptionTypeExpressions))]
         public void TestIsException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
         {
             static bool extensionMethod(Exception e) => e.IsException();
@@ -247,7 +246,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         // This test ensures that all known Error types from Java are not caught by
         // our IsRuntimeException() handler.
         [Test]
-        [TestCaseSource("RuntimeExceptionTypeExpressions")]
+        [TestCaseSource(nameof(RuntimeExceptionTypeExpressions))]
         public void TestIsRuntimeException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
         {
             static bool extensionMethod(Exception e) => e.IsRuntimeException();
@@ -263,7 +262,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         }
 
         [Test]
-        [TestCaseSource("IOExceptionTypeExpressions")]
+        [TestCaseSource(nameof(IOExceptionTypeExpressions))]
         public void TestIsIOException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
         {
             static bool extensionMethod(Exception e) => e.IsIOException();
@@ -282,7 +281,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         // NUnit's AssertionException and MultipleAssertException types are all treated as if they were AssertionError
         // in Java.
         [Test]
-        [TestCaseSource("AssertionErrorTypeExpressions")]
+        [TestCaseSource(nameof(AssertionErrorTypeExpressions))]
         public void TestIsAssertionError(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
         {
             static bool extensionMethod(Exception e) => e.IsAssertionError();
@@ -302,7 +301,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         // Java has 2 other types ArrayIndexOutOfBoundsException and StringIndexOutOfBoundsException, whose alias
         // exception types are also part of the test.
         [Test]
-        [TestCaseSource("IndexOutOfBoundsExceptionTypeExpressions")]
+        [TestCaseSource(nameof(IndexOutOfBoundsExceptionTypeExpressions))]
         public void TestIsIndexOutOfBoundsException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
         {
             static bool extensionMethod(Exception e) => e.IsIndexOutOfBoundsException();
@@ -320,7 +319,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         // This test ensures that ArgumentNullException and NullReferenceException are both caught by our
         // NullPointerException handler, because they both correspond to NullPointerException in Java
         [Test]
-        [TestCaseSource("NullPointerExceptionTypeExpressions")]
+        [TestCaseSource(nameof(NullPointerExceptionTypeExpressions))]
         public void TestIsNullPointerException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
         {
             static bool extensionMethod(Exception e) => e.IsNullPointerException();
@@ -339,7 +338,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         // We do it this way in production to ensure that if we "upgrade" to a .NET
         // ArgumentNullException or ArgumentOutOfRangeException it won't break the code.
         [Test]
-        [TestCaseSource("IllegalArgumentExceptionTypeExpressions")]
+        [TestCaseSource(nameof(IllegalArgumentExceptionTypeExpressions))]
         public void TestIsIllegalArgumentException(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
         {
             // Make sure we are testing the production code
@@ -360,7 +359,7 @@ namespace Lucene.Net.Support.ExceptionHandling
         // in the test environment to ensure that if a test is specified wrong it will fail and should be updated
         // and commented to indicate we diverged from Lucene.
         [Test]
-        [TestCaseSource("IllegalArgumentExceptionTypeExpressions_TestEnvironment")]
+        [TestCaseSource(nameof(IllegalArgumentExceptionTypeExpressions_TestEnvironment))]
         public void TestIsIllegalArgumentException_TestEnvironment(Type exceptionType, bool expectedToThrow, Action expression) // LUCENENET NOTE: exceptionType is only here to make NUnit display them all
         {
             // Make sure we are testing the test environment code
@@ -376,7 +375,7 @@ namespace Lucene.Net.Support.ExceptionHandling
             }
         }
 
-        private void AssertCatches(Action action, Func<Exception, bool> extensionMethodExpression)
+        private static void AssertCatches(Action action, Func<Exception, bool> extensionMethodExpression)
         {
             try
             {
@@ -397,7 +396,7 @@ namespace Lucene.Net.Support.ExceptionHandling
             }
         }
 
-        private void AssertDoesNotCatch(Action action, Func<Exception, bool> extensionMethodExpression)
+        private static void AssertDoesNotCatch(Action action, Func<Exception, bool> extensionMethodExpression)
         {
             try
             {
