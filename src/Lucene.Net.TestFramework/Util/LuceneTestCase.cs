@@ -1022,7 +1022,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
-                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during ClassEnvRule.After():\n{ex}");
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during ClassEnvRule.After() in {GetType().FullName}:\n{ex}");
             }
             try
             {
@@ -1031,7 +1031,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
-                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during CleanupTemporaryFiles():\n{ex}");
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during CleanupTemporaryFiles() in {GetType().FullName}:\n{ex}");
             }
 
             // LUCENENET: DisposeAfterSuite runs last
@@ -1042,7 +1042,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
-                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during RandomizedContext.DisposeResources():\n{ex}");
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during RandomizedContext.DisposeResources() in {GetType().FullName}:\n{ex}");
             }
         }
 
