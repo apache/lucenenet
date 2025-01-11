@@ -77,10 +77,13 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
             string fieldSpec = args.Length == 5 ? args[4] : "T"; // default to Title-only if not specified.
             IndexSearcher searcher = new IndexSearcher(reader);
 
-            int maxResults = 1000;
-            string docNameField = "docname";
+            const int maxResults = 1000;
+            const string docNameField = "docname";
 
-            TextWriter logger = Console.Out; //new StreamWriter(Console, Encoding.GetEncoding(0));
+            using TextWriter logger = new StreamWriter(System.Console.OpenStandardOutput(), Encoding.Default)
+            {
+                AutoFlush = true,
+            };
 
             // use trec utilities to read trec topics into quality queries
             TrecTopicsReader qReader = new TrecTopicsReader();

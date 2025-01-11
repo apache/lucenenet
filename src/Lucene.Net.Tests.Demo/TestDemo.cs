@@ -33,8 +33,7 @@ namespace Lucene.Net.Demo
             try
             {
                 MemoryStream bytes = new MemoryStream();
-                // .NET NOTE: GetEncoding(0) returns the current system's default encoding
-                var fakeSystemOut = new StreamWriter(bytes, Encoding.GetEncoding(0));
+                var fakeSystemOut = new StreamWriter(bytes, Encoding.Default);
                 Console.SetOut(fakeSystemOut);
                 // LUCENENET specific: changed the arguments to act more like the dotnet.exe commands.
                 // * only optional arguments start with -
@@ -44,8 +43,7 @@ namespace Lucene.Net.Demo
                 // it consistent with the lucene-cli utility.
                 SearchFiles.Main(new string[] { indexPath.FullName, "--query", query });
                 fakeSystemOut.Flush();
-                // .NET NOTE: GetEncoding(0) returns the current system's default encoding
-                string output = Encoding.GetEncoding(0).GetString(bytes.ToArray()); // intentionally use default encoding
+                string output = Encoding.Default.GetString(bytes.ToArray()); // intentionally use default encoding
                 assertTrue("output=" + output, output.Contains(expectedHitCount + " total matching documents"));
             }
             finally

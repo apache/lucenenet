@@ -56,7 +56,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
             TextWriter curOut = Console.Out;
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Console.Out = new StreamWriter(baos, Encoding.GetEncoding(0));
+            Console.Out = new StreamWriter(baos, Encoding.Default);
             try
             {
                 PerfRunData runData = createPerfRunData("SystemOut");
@@ -72,7 +72,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
             TextWriter curErr = Console.Error;
             baos = new ByteArrayOutputStream();
-            Console.Error = new StreamWriter(baos, Encoding.GetEncoding(0));
+            Console.Error = new StreamWriter(baos, Encoding.Default);
             try
             {
                 PerfRunData runData = createPerfRunData("SystemErr");
