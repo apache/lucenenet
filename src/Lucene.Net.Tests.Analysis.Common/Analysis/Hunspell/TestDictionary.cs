@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 set => @delegate.Position = value;
             }
 
-            public CloseCheckInputStream(TestDictionary outerInstance, System.IO.Stream @delegate) 
+            public CloseCheckInputStream(TestDictionary outerInstance, System.IO.Stream @delegate)
             {
                 this.@delegate = @delegate;
                 this.outerInstance = outerInstance;
@@ -164,16 +164,9 @@ namespace Lucene.Net.Analysis.Hunspell
 
             protected override void Dispose(bool disposing)
             {
+                disposed = true;
                 @delegate.Dispose();
             }
-
-
-            new public void Dispose()
-            {
-                this.disposed = true;
-                base.Dispose();
-            }
-            
 
             public virtual bool Disposed => this.disposed;
 
@@ -209,7 +202,7 @@ namespace Lucene.Net.Analysis.Hunspell
             CloseCheckInputStream affixStream = new CloseCheckInputStream(this, this.GetType().getResourceAsStream("compressed.aff"));
             CloseCheckInputStream dictStream = new CloseCheckInputStream(this, this.GetType().getResourceAsStream("compressed.dic"));
 
-            new Dictionary(affixStream, dictStream);
+            _ = new Dictionary(affixStream, dictStream);
 
             assertFalse(affixStream.Disposed);
             assertFalse(dictStream.Disposed);

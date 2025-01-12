@@ -910,7 +910,8 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 foreach (Stream dictionary in dictionaries)
                 {
-                    using var lines = new StreamReader(dictionary, decoder); // LUCENENET specific - CA2000: Use using pattern to ensure reader is disposed
+                    // LUCENENET specific - CA2000: Use using pattern to ensure reader is disposed, although we want to leave the dictionary stream open. See: TestDictionary.TestResourceCleanup
+                    using var lines = new StreamReader(dictionary, decoder, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true);
                     string line = lines.ReadLine(); // first line is number of entries (approximately, sometimes)
 
                     while ((line = lines.ReadLine()) != null)
