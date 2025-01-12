@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void InitTermVectorsWriter()
+        internal void InitTermVectorsWriter()
         {
             if (writer is null)
             {

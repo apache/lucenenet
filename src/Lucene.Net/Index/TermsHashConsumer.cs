@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -22,15 +21,12 @@ namespace Lucene.Net.Index
 
     internal abstract class TermsHashConsumer
     {
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state);
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
 
         internal abstract void StartDocument();
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void FinishDocument(TermsHash termsHash);
 
         public abstract TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo);

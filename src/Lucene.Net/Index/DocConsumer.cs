@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -23,13 +21,10 @@ namespace Lucene.Net.Index
     {
         public abstract void ProcessDocument(FieldInfos.Builder fieldInfos);
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void FinishDocument();
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Flush(SegmentWriteState state);
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
     }
 }

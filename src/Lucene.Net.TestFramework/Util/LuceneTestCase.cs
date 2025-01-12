@@ -3087,7 +3087,6 @@ namespace Lucene.Net.Util
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         protected string GetFullMethodName([CallerMemberName] string memberName = "")
         {
             return $"{this.GetType().Name}+{memberName}";

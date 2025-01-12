@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -25,7 +23,6 @@ namespace Lucene.Net.Index
         /// Processes all occurrences of a single field </summary>
         public abstract void ProcessFields(IIndexableField[] fields, int count);
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void Abort();
 
         internal abstract FieldInfo FieldInfo { get; }

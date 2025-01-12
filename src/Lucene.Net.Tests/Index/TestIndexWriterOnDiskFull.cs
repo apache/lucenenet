@@ -573,7 +573,7 @@ namespace Lucene.Net.Index
 
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (StackTraceHelper.DoesStackTraceContainMethod(nameof(SegmentMerger), "MergeTerms") && !didFail1)
+                if (StackTraceHelper.DoesStackTraceContainMethod(nameof(SegmentMerger), nameof(SegmentMerger.MergeTerms)) && !didFail1)
                 {
                     didFail1 = true;
                     throw new IOException("fake disk full during mergeTerms");
@@ -581,7 +581,7 @@ namespace Lucene.Net.Index
 
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (StackTraceHelper.DoesStackTraceContainMethod(nameof(LiveDocsFormat), "WriteLiveDocs") && !didFail2)
+                if (StackTraceHelper.DoesStackTraceContainMethod(nameof(LiveDocsFormat), nameof(LiveDocsFormat.WriteLiveDocs)) && !didFail2)
                 {
                     didFail2 = true;
                     throw new IOException("fake disk full while writing LiveDocs");

@@ -74,10 +74,8 @@ namespace Lucene.Net.Index
 
         internal bool IsEmpty => consumer is null;
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Abort()
         {
-            //
         }
     }
 }

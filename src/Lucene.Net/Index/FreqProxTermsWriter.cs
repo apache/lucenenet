@@ -29,9 +29,9 @@ namespace Lucene.Net.Index
 
     internal sealed class FreqProxTermsWriter : TermsHashConsumer
     {
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
-        { }
+        {
+        }
 
         // TODO: would be nice to factor out more of this, eg the
         // FreqProxFieldMergeState, and code to visit all Fields
@@ -124,7 +124,6 @@ namespace Lucene.Net.Index
             return new FreqProxTermsWriterPerField(termsHashPerField, this, fieldInfo);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument(TermsHash termsHash)
         {
         }
