@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Lucene.Net
 {
@@ -53,12 +54,9 @@ namespace Lucene.Net
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIllegalArgumentException(this Exception e)
         {
-            // If our exception implements IError and subclasses ArgumentException, we will ignore it.
-            if (e is null || e.IsError() || e.IsAlwaysIgnored()) return false;
-
-            return e is ArgumentException &&
-                e is not ArgumentNullException &&     // Corresponds to NullPointerException, so we don't catch it here.
-                e is not ArgumentOutOfRangeException; // Corresponds to IndexOutOfBoundsException (and subclasses), so we don't catch it here.
+            return Lucene.ExceptionExtensions.IsIllegalArgumentException(e)
+                && e is not ArgumentNullException // Corresponds to NullPointerException, so we don't catch it here.
+                and not ArgumentOutOfRangeException; // Corresponds to IndexOutOfBoundsException (and subclasses), so we don't catch it here.
         }
     }
 }

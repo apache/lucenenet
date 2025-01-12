@@ -746,7 +746,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             if ("ISO8859-14".Equals(encoding, StringComparison.OrdinalIgnoreCase))
             {
-                return new ISO8859_14Encoding();
+                return ISO8859_14Encoding.Default;
             }
             // .NET doesn't recognize the encoding without a dash between ISO and the number
             // https://msdn.microsoft.com/en-us/library/system.text.encodinginfo.getencoding(v=vs.110).aspx

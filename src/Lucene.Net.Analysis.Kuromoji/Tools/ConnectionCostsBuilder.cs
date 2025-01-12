@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.Text;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -31,7 +32,8 @@ namespace Lucene.Net.Analysis.Ja.Util
         public static ConnectionCostsWriter Build(string filename)
         {
             using Stream inputStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
-            using StreamReader streamReader = new StreamReader(inputStream, Encoding.ASCII, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true); // LUCENENET: CA2000: Use using statement
+            Encoding decoder = Encoding.ASCII.WithDecoderExceptionFallback();
+            using StreamReader streamReader = new StreamReader(inputStream, decoder, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true); // LUCENENET: CA2000: Use using statement
 
             string line = streamReader.ReadLine();
             string[] dimensions = whiteSpaceRegex.Split(line).TrimEnd();

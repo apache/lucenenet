@@ -37,6 +37,13 @@
 
   </PropertyGroup>
 
+  <!-- Features in .NET 8.x and .NET 9.x only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
+
+    <DefineConstants>$(DefineConstants);FEATURE_UTF8_TOUTF16</DefineConstants>
+
+  </PropertyGroup>
+
   <!-- Features in .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 

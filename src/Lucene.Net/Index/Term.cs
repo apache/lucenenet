@@ -1,6 +1,9 @@
 ﻿using J2N.Text;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Buffers;
+using Lucene.Net.Support.Text;
 using System;
+using System.Buffers;
 using System.Text;
 
 namespace Lucene.Net.Index
@@ -34,6 +37,8 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class Term : IComparable<Term>, IEquatable<Term> // LUCENENET specific - class implements IEquatable<T>
     {
+        private const int CharStackBufferSize = 64;
+
         /// <summary>
         /// Constructs a <see cref="Term"/> with the given field and bytes.
         /// <para/>Note that a null field or null bytes value results in undefined
@@ -84,24 +89,65 @@ namespace Lucene.Net.Index
         /// </summary>
         public string Text => ToString(Bytes); // LUCENENET: Changed to a property. While this calls a method internally, its expected usage is that it will return a deterministic value.
 
+#nullable enable
         /// <summary>
         /// Returns human-readable form of the term text. If the term is not unicode,
         /// the raw bytes will be printed instead.
         /// </summary>
         public static string ToString(BytesRef termText)
         {
+            if (termText is null)
+                throw new ArgumentNullException(nameof(termText)); // LUCENENET: Added guard clause
+#if FEATURE_UTF8_TOUTF16
+            // View the relevant portion of the byte array
+            ReadOnlySpan<byte> utf8Span = new ReadOnlySpan<byte>(termText.Bytes, termText.Offset, termText.Length);
+
+            // Allocate a buffer for the maximum possible UTF-16 output
+            int maxChars = utf8Span.Length; // Worst case: 1 byte -> 1 char (ASCII)
+            char[]? arrayToReturnToPool = null;
+
+            Span<char> charBuffer = maxChars > CharStackBufferSize
+                ? (arrayToReturnToPool = ArrayPool<char>.Shared.Rent(maxChars))
+                : stackalloc char[CharStackBufferSize];
+            try
+            {
+                // Decode the UTF-8 bytes to UTF-16 chars
+                OperationStatus status = System.Text.Unicode.Utf8.ToUtf16(
+                    utf8Span,
+                    charBuffer,
+                    out int bytesConsumed,
+                    out int charsWritten,
+                    replaceInvalidSequences: false); // Causes OperationStatus.InvalidData to occur rather than replace
+
+                // NOTE: We handle OperationStatus.InvalidData below in the fallback path.
+                if (status == OperationStatus.Done)
+                {
+                    // Successfully decoded the UTF-8 input
+                    return charBuffer.Slice(0, charsWritten).ToString();
+                }
+            }
+            finally
+            {
+                // Return the buffer to the pool
+                ArrayPool<char>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+            }
+
+            // Fallback to the default string representation if decoding fails
+            return termText.ToString();
+#else
             // the term might not be text, but usually is. so we make a best effort
-            // LUCENENET TODO: determine if we should use DecoderFallback.ExceptionFallback here
-            Encoding decoder = StandardCharsets.UTF_8;
+            Encoding decoder = StandardCharsets.UTF_8.WithDecoderExceptionFallback();
             try
             {
                 return decoder.GetString(termText.Bytes, termText.Offset, termText.Length);
             }
-            catch
+            catch (DecoderFallbackException)
             {
                 return termText.ToString();
             }
+#endif
         }
+#nullable restore
 
         /// <summary>
         /// Returns the bytes of this term.

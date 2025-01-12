@@ -32,7 +32,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// Base class for source of data for benchmarking.
     /// </summary>
     /// <remarks>
-    /// Keeps track of various statistics, such as how many data items were generated, 
+    /// Keeps track of various statistics, such as how many data items were generated,
     /// size in bytes etc.
     /// <para/>
     /// Supports the following configuration parameters:
@@ -40,7 +40,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     ///     <item><term>content.source.forever</term><description>specifies whether to generate items forever (<b>default=true</b>).</description></item>
     ///     <item><term>content.source.verbose</term><description>specifies whether messages should be output by the content source (<b>default=false</b>).</description></item>
     ///     <item><term>content.source.encoding</term><description>
-    ///         specifies which encoding to use when 
+    ///         specifies which encoding to use when
     ///         reading the files of that content source. Certain implementations may define
     ///         a default value if this parameter is not specified. (<b>default=null</b>).
     ///     </description></item>
@@ -199,7 +199,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             }
             else
             {
-                m_encoding = Encoding.GetEncoding(0); // Default system encoding
+                m_encoding = Encoding.Default; // Default system encoding
             }
         }
 

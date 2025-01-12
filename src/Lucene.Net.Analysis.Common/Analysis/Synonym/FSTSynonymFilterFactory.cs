@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -117,7 +118,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// </summary>
         private SynonymMap LoadSynonyms(IResourceLoader loader, string cname, bool dedup, Analyzer analyzer)
         {
-            Encoding decoder = Encoding.UTF8;
+            Encoding decoder = Encoding.UTF8.WithDecoderExceptionFallback();
 
             SynonymMap.Parser parser;
             Type clazz = loader.FindType(cname /*, typeof(SynonymMap.Parser) */);

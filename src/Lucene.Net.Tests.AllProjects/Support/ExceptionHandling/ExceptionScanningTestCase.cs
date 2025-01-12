@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support.ExceptionHandling
@@ -184,6 +185,8 @@ namespace Lucene.Net.Support.ExceptionHandling
                 typeof(UnauthorizedAccessException),
                 typeof(ObjectDisposedException),
                 typeof(Lucene.AlreadyClosedException),
+                typeof(EncoderFallbackException), // In Java, CharacterCodingException subclasses IOException
+                typeof(DecoderFallbackException),
             }.Union(AllIOExceptionTypes)
             // .NET Framework only - Subclasses UnauthorizedAccessException
             .Union(new[] { PrivilegeNotHeldExceptionType });
@@ -221,8 +224,6 @@ namespace Lucene.Net.Support.ExceptionHandling
             // Subclasses
             typeof(System.DuplicateWaitObjectException),
             typeof(System.Globalization.CultureNotFoundException),
-            typeof(System.Text.DecoderFallbackException),
-            typeof(System.Text.EncoderFallbackException),
         };
 
         public static readonly IEnumerable<Type> KnownIllegalArgumentExceptionTypes_TestEnvironment = new Type[] {
@@ -234,8 +235,6 @@ namespace Lucene.Net.Support.ExceptionHandling
             // Subclasses
             typeof(System.DuplicateWaitObjectException),
             typeof(System.Globalization.CultureNotFoundException),
-            typeof(System.Text.DecoderFallbackException),
-            typeof(System.Text.EncoderFallbackException),
         };
 
         public static readonly IEnumerable<Type> KnownRuntimeExceptionTypes = LoadKnownRuntimeExceptionTypes();
@@ -367,8 +366,6 @@ namespace Lucene.Net.Support.ExceptionHandling
                 typeof(System.Runtime.Serialization.SerializationException),
                 typeof(System.Security.Cryptography.CryptographicException),
                 typeof(System.Security.VerificationException),
-                typeof(System.Text.DecoderFallbackException), // LUCENENET TODO: Need to be sure about this one
-                typeof(System.Text.EncoderFallbackException), // LUCENENET TODO: Need to be sure about this one
                 typeof(System.Threading.AbandonedMutexException),
                 typeof(System.Threading.SemaphoreFullException),
                 typeof(System.Threading.SynchronizationLockException),
