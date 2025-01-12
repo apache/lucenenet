@@ -29,7 +29,8 @@ namespace Lucene.Net.Support.IO
         public void TestToString()
         {
             ByteArrayOutputStream s = new ByteArrayOutputStream();
-            s.Write(Encoding.UTF8.GetBytes("hello, world"));
+            var bytes = Encoding.UTF8.GetBytes("hello, world");
+            s.Write(bytes, 0, bytes.Length);
             Assert.AreEqual("hello, world", s.ToString());
         }
     }
