@@ -9,7 +9,7 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Lifecycle stages for tracking resources.
     /// </summary>
-    public enum LifecycleScope // From randomizedtesing
+    internal enum LifecycleScope // From randomizedtesing
     {
         /// <summary>
         /// A single test case.
