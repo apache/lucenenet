@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
 {
@@ -54,11 +53,10 @@ namespace Lucene.Net.Codecs
         public abstract IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context);
 
         /// <summary>
-        /// Persist live docs bits.  Use 
+        /// Persist live docs bits.  Use
         /// <see cref="SegmentCommitInfo.NextDelGen"/> to determine the
         /// generation of the deletes file you should write to.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void WriteLiveDocs(IMutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount, IOContext context);
 
         /// <summary>

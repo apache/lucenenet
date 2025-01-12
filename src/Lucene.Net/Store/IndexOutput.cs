@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -33,7 +32,6 @@ namespace Lucene.Net.Store
     {
         /// <summary>
         /// Forces any buffered output to be written. </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Flush();
 
         /// <summary>
@@ -71,7 +69,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Gets or Sets the file length. By default, this property's setter does
         /// nothing (it's optional for a <see cref="Directory"/> to implement
-        /// it).  But, certain <see cref="Directory"/> implementations (for 
+        /// it).  But, certain <see cref="Directory"/> implementations (for
         /// example <see cref="FSDirectory"/>) can use this to inform the
         /// underlying IO system to pre-allocate the file to the
         /// specified size.  If the length is longer than the

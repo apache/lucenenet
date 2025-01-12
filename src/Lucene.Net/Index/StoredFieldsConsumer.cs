@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -23,15 +21,12 @@ namespace Lucene.Net.Index
     {
         public abstract void AddField(int docID, IIndexableField field, FieldInfo fieldInfo);
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Flush(SegmentWriteState state);
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
 
         public abstract void StartDocument();
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void FinishDocument();
     }
 }

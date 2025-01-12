@@ -696,7 +696,10 @@ namespace Lucene.Net.Index
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                    bool sawAppend = StackTraceHelper.DoesStackTraceContainMethod(nameof(FreqProxTermsWriterPerField), "Flush");
+                    // LUCENENET NOTE: This code seems incorrect in Lucene, as it checks for "Flush" regardless of type in the sawFlush case,
+                    // which will always be true if the first case is true. The name of the variable implies it checking for "Append"
+                    // but that is not a method on FreqProxTermsWriterPerField.
+                    bool sawAppend = StackTraceHelper.DoesStackTraceContainMethod(nameof(FreqProxTermsWriterPerField), nameof(FreqProxTermsWriterPerField.Flush));
                     bool sawFlush = StackTraceHelper.DoesStackTraceContainMethod("Flush");
 
                     if (sawAppend && sawFlush && count++ >= 30)
@@ -1017,7 +1020,7 @@ namespace Lucene.Net.Index
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                    bool foundMethod = StackTraceHelper.DoesStackTraceContainMethod(nameof(MockDirectoryWrapper), "Sync");
+                    bool foundMethod = StackTraceHelper.DoesStackTraceContainMethod(nameof(MockDirectoryWrapper), nameof(MockDirectoryWrapper.Sync));
 
                     if (m_doFail && foundMethod)
                     {
@@ -1088,8 +1091,8 @@ namespace Lucene.Net.Index
         {
             internal bool failOnCommit, failOnDeleteFile;
             internal readonly bool dontFailDuringGlobalFieldMap;
-            internal const string PREPARE_STAGE = "PrepareCommit";
-            internal const string FINISH_STAGE = "FinishCommit";
+            internal const string PREPARE_STAGE = nameof(SegmentInfos.PrepareCommit);
+            internal const string FINISH_STAGE = nameof(SegmentInfos.FinishCommit);
             internal readonly string stage;
 
             public FailOnlyInCommit(bool dontFailDuringGlobalFieldMap, string stage)
@@ -1103,7 +1106,8 @@ namespace Lucene.Net.Index
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 bool isCommit = StackTraceHelper.DoesStackTraceContainMethod(nameof(SegmentInfos), stage);
-                bool isDelete = StackTraceHelper.DoesStackTraceContainMethod(nameof(MockDirectoryWrapper), "DeleteFile");
+                bool isDelete = StackTraceHelper.DoesStackTraceContainMethod(nameof(MockDirectoryWrapper), nameof(MockDirectoryWrapper.DeleteFile));
+                // LUCENENET NOTE: this method does not appear to exist anywhere, and is likely always false. It certainly doesn't exist on SegmentInfos.
                 bool isInGlobalFieldMap = StackTraceHelper.DoesStackTraceContainMethod(nameof(SegmentInfos), "WriteGlobalFieldMap");
 
                 if (isInGlobalFieldMap && dontFailDuringGlobalFieldMap)
@@ -1618,8 +1622,8 @@ namespace Lucene.Net.Index
 
         private class FailOnTermVectors : Failure
         {
-            internal const string INIT_STAGE = "InitTermVectorsWriter";
-            internal const string AFTER_INIT_STAGE = "FinishDocument";
+            internal const string INIT_STAGE = nameof(TermVectorsConsumer.InitTermVectorsWriter);
+            internal const string AFTER_INIT_STAGE = nameof(TermVectorsConsumer.FinishDocument);
             internal const string EXC_MSG = "FOTV";
             internal readonly string stage;
 

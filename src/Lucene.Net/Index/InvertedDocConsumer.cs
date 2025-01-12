@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -24,19 +23,16 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Abort (called after hitting AbortException) </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
 
         /// <summary>
         /// Flush a new segment </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void Flush(IDictionary<string, InvertedDocConsumerPerField> fieldsToFlush, SegmentWriteState state);
 
         internal abstract InvertedDocConsumerPerField AddField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo);
 
         internal abstract void StartDocument();
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void FinishDocument();
     }
 }
