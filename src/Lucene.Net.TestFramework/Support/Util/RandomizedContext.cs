@@ -1,9 +1,9 @@
-﻿using Lucene.Net.Support.Threading;
-using NUnit.Framework.Interfaces;
+﻿using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 #nullable enable
 
@@ -40,12 +40,7 @@ namespace Lucene.Net.Util
         private readonly long randomSeed;
         private readonly string randomSeedAsHex;
         private readonly long testSeed;
-        private List<IDisposable>? toDisposeAtEnd = null;
-
-        /// <summary>
-        /// Coordination at context level.
-        /// </summary>
-        private readonly object contextLock = new object();
+        private Lazy<ConcurrentQueue<IDisposable>>? toDisposeAtEnd = null;
 
         /// <summary>
         /// Initializes the randomized context.
@@ -109,7 +104,14 @@ namespace Lucene.Net.Util
         /// If <c>null</c>, the call is being made out of context and the random test behavior
         /// will not be repeatable.
         /// </summary>
-        public static RandomizedContext? CurrentContext => TestExecutionContext.CurrentContext.CurrentTest.GetRandomizedContext();
+        public static RandomizedContext? CurrentContext
+            => TestExecutionContext.CurrentContext.CurrentTest.GetRandomizedContext();
+
+        /// <summary>
+        /// Gets a lazily-initialized concurrent queue to use for resources that will be disposed at the end of the test or suite.
+        /// </summary>
+        internal ConcurrentQueue<IDisposable> ToDisposeAtEnd
+            => (toDisposeAtEnd ??= new Lazy<ConcurrentQueue<IDisposable>>(() => new ConcurrentQueue<IDisposable>())).Value;
 
         /// <summary>
         /// Registers the given <paramref name="resource"/> at the end of a given
@@ -133,7 +135,7 @@ namespace Lucene.Net.Util
                 {
                     AddDisposableAtEnd(resource);
                 }
-                else
+                else // LifecycleScope.SUITE
                 {
                     var context = FindClassLevelTest(currentTest).GetRandomizedContext();
                     if (context is null)
@@ -153,20 +155,13 @@ namespace Lucene.Net.Util
             return resource;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void AddDisposableAtEnd(IDisposable resource)
         {
-            UninterruptableMonitor.Enter(contextLock);
-            try
-            {
-                if (toDisposeAtEnd is null)
-                    toDisposeAtEnd = new List<IDisposable>();
-
-                toDisposeAtEnd.Add(resource);
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(contextLock);
-            }
+            // LUCENENET: ConcurrentQueue handles thread-safety internally, so no explicit locking is needed.
+            // Note that if we port more of randomizedtesting later, we may need to change this to a List<T> and
+            // a lock, but for now it will suit our needs without locking.
+            ToDisposeAtEnd.Enqueue(resource);
         }
 
         private Test? FindClassLevelTest(Test test)
@@ -189,19 +184,11 @@ namespace Lucene.Net.Util
 
         internal void DisposeResources()
         {
-            if (toDisposeAtEnd is not null)
+            Lazy<ConcurrentQueue<IDisposable>>? toDispose = Interlocked.Exchange(ref toDisposeAtEnd, null);
+            if (toDispose?.IsValueCreated == true) // Does null check on toDispose
             {
-                UninterruptableMonitor.Enter(contextLock);
-                try
-                {
-
-                    IOUtils.Dispose(toDisposeAtEnd);
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(contextLock);
-                }
+                IOUtils.Dispose(toDispose.Value);
             }
-        }
+        } // toDispose goes out of scope here - no need to Clear().
     }
 }
