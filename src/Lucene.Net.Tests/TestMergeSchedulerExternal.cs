@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Util;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.IO;

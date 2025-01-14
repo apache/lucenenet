@@ -130,8 +130,7 @@ namespace Lucene.Net.Util
             }
             catch (Exception e) when (e.IsNumberFormatException())
             {
-                Console.WriteLine(e.ToString());
-                Console.Write(e.StackTrace);
+                e.PrintStackTrace();
                 Assert.IsTrue(false);
             }
         }

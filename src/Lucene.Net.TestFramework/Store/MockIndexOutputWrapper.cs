@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Threading;
@@ -97,7 +98,7 @@ namespace Lucene.Net.Store
                 if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": MDW: now throw fake disk full");
-                    Console.WriteLine(Environment.StackTrace);
+                    StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                 }
                 throw new IOException(message);
             }

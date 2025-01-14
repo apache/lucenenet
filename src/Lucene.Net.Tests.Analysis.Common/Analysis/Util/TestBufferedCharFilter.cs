@@ -429,7 +429,7 @@ namespace Lucene.Net.Analysis.Util
 
             //char[] contents = new char[size];
 
-            //public int read() 
+            //public int read()
             //{
             //				if (pos >= size)
             //					throw new IOException("Read past end of data");
@@ -453,7 +453,7 @@ namespace Lucene.Net.Analysis.Util
             //				return size - pos > 0;
             //}
 
-            //public void close() 
+            //public void close()
             //{
             //}
             //		});
@@ -713,6 +713,8 @@ namespace Lucene.Net.Analysis.Util
         /**
          * @tests java.io.BufferedReader#ready()
          */
+        [Test, LuceneNetSpecific]
+        [Ignore("Test was previously ignored by missing Test attribute, does not work")] // LUCENENET TODO: fix test
         public void Test_Ready()
         {
             // Test for method boolean java.io.BufferedReader.ready()
@@ -730,6 +732,7 @@ namespace Lucene.Net.Analysis.Util
         /**
          * @tests java.io.BufferedReader#reset()
          */
+        [Test, LuceneNetSpecific]
         public void Test_Reset()
         {
             // Test for method void java.io.BufferedReader.reset()

@@ -506,7 +506,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception r) when (r.IsThrowable())
                 {
-                    Console.WriteLine(r.StackTrace);
+                    r.PrintStackTrace(Console.Out);
                     this.error = r;
                 }
             }

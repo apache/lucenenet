@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
 using System.Threading;
+using PublicExceptionExtensions = Lucene.Net.Util.ExceptionExtensions;
 
 namespace Lucene
 {
@@ -697,6 +698,69 @@ namespace Lucene
             // Since it is possible that AnalysisSPILoader will someday be factored out in favor of true dependency injection,
             // it is not sensible to make a public exception that will be factored out along with it.
             return e is ServiceConfigurationError;
+        }
+
+        /// <summary>
+        /// Prints the stack trace of the exception to the console's standard error output stream.
+        /// <para />
+        /// This method mimics Java's behavior of printing the exception type and message first before the stack trace.
+        /// In .NET, this is done by calling <see cref="Exception.ToString()"/>.
+        /// Additionally, it will print any suppressed exceptions stored in <see cref="Exception.Data"/>
+        /// via <see cref="Net.Util.ExceptionExtensions.AddSuppressed"/>.
+        /// </summary>
+        /// <param name="e">The exception to print.</param>
+        public static void PrintStackTrace(this Exception e)
+        {
+            Console.Error.WriteLine(FormatStackTrace(e));
+        }
+
+        /// <summary>
+        /// Prints the stack trace of the exception to the specified <paramref name="destination"/>.
+        /// <para />
+        /// This method mimics Java's behavior of printing the exception type and message first before the stack trace.
+        /// In .NET, this is done by calling <see cref="Exception.ToString()"/>.
+        /// Additionally, it will print any suppressed exceptions stored in <see cref="Exception.Data"/>
+        /// via <see cref="Net.Util.ExceptionExtensions.AddSuppressed"/>.
+        /// </summary>
+        /// <param name="e">The exception to print.</param>
+        /// <param name="destination">The destination to write the stack trace to.</param>
+        public static void PrintStackTrace(this Exception e, TextWriter destination)
+        {
+            destination.WriteLine(FormatStackTrace(e));
+        }
+
+        private static string FormatStackTrace(this Exception e)
+        {
+            var suppressed = PublicExceptionExtensions.GetSuppressedAsListOrDefault(e);
+
+            if (suppressed == null)
+            {
+                return e.ToString();
+            }
+
+            StringBuilder sb = new();
+            sb.AppendLine(e.ToString());
+
+            foreach (var suppressedException in suppressed)
+            {
+                sb.Append("Suppressed: ").AppendLine(suppressedException.ToString());
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Gets a string representation of the exception, including the exception type and message.
+        /// <para />
+        /// In Java, calling <c>toString()</c> on an exception returns the exception type and message,
+        /// without the stack trace. This method mimics that behavior.
+        /// </summary>
+        /// <param name="e">The exception to get the string representation of.</param>
+        /// <returns>A string representation of the exception, including the exception type and message.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToTypeMessageString(this Exception e)
+        {
+            return $"{e.GetType().FullName}: {e.Message}";
         }
     }
 }

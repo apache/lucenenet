@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -190,7 +191,7 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: now crash");
-                        Console.WriteLine(new Exception().StackTrace);
+                        StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                     }
                     throw new CrashingException("crashAfterCreateOutput " + crashAfterCreateOutput);
                 }

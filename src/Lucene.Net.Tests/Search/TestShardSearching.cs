@@ -294,7 +294,7 @@ namespace Lucene.Net.Search
                             if (Verbose)
                             {
                                 Console.WriteLine("  searcher expired during search: " + see);
-                                Console.Out.Write(see.StackTrace);
+                                see.PrintStackTrace(Console.Out);
                             }
                             // We can't do this in general: on a very slow
                             // computer it's possible the local searcher

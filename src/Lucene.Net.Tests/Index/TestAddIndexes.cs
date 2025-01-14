@@ -831,7 +831,7 @@ namespace Lucene.Net.Index
 
             internal override void Handle(Exception t)
             {
-                t.printStackTrace(Console.Out);
+                t.PrintStackTrace(Console.Out);
                 UninterruptableMonitor.Enter(failures);
                 try
                 {
@@ -936,7 +936,7 @@ namespace Lucene.Net.Index
             {
                 if (!t.IsAlreadyClosedException() && !t.IsNullPointerException())
                 {
-                    t.printStackTrace(Console.Out);
+                    t.PrintStackTrace(Console.Out);
                     UninterruptableMonitor.Enter(failures);
                     try
                     {
@@ -1046,7 +1046,7 @@ namespace Lucene.Net.Index
                 }
                 if (report)
                 {
-                    t.printStackTrace(Console.Out);
+                    t.PrintStackTrace(Console.Out);
                     UninterruptableMonitor.Enter(failures);
                     try
                     {

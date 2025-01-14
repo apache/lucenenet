@@ -382,7 +382,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    e.printStackTrace(Console.Error);
+                    e.PrintStackTrace(Console.Error);
                     Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Exception while filling {0}: valueCount={1}, bitsPerValue={2}", packedInt.GetType().Name, valueCount, bitsPerValue));
                 }
             }

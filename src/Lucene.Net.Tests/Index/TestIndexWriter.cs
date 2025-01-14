@@ -1329,7 +1329,7 @@ namespace Lucene.Net.Index
                         // Jenkins hits a fail we need to study where the
                         // interrupts struck!
                         Console.WriteLine("TEST: got interrupt");
-                        Console.WriteLine(GetToStringFrom(re));
+                        Console.WriteLine(LockSafeGetToStringFrom(re));
 
                         Exception e = re.InnerException;
                         Assert.IsTrue(e is System.Threading.ThreadInterruptedException);
@@ -1356,7 +1356,7 @@ namespace Lucene.Net.Index
                     catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine("FAILED; unexpected exception");
-                        Console.WriteLine(GetToStringFrom(t));
+                        Console.WriteLine(LockSafeGetToStringFrom(t));
                         failed = true;
                         break;
                     }
@@ -1406,7 +1406,7 @@ namespace Lucene.Net.Index
                     {
                         failed = true;
                         Console.WriteLine("CheckIndex FAILED: unexpected exception");
-                        Console.WriteLine(e.ToString());
+                        e.PrintStackTrace(Console.Out);
                     }
                     try
                     {
@@ -1417,7 +1417,7 @@ namespace Lucene.Net.Index
                     {
                         failed = true;
                         Console.WriteLine("DirectoryReader.open FAILED: unexpected exception");
-                        Console.WriteLine(e.ToString());
+                        e.PrintStackTrace(Console.Out);
                     }
                 }
                 try
@@ -1438,12 +1438,14 @@ namespace Lucene.Net.Index
                 }
             }
 
-            // LUCENENET specific - since the lock statement can potentially throw System.Threading.ThreadInterruptedException in .NET,
-            // we need to be vigilant about getting stack trace info from the errors during tests and retry if we get an interrupt exception.
             /// <summary>
             /// Safely gets the ToString() of an exception while ignoring any System.Threading.ThreadInterruptedException and retrying.
             /// </summary>
-            private static string GetToStringFrom(Exception exception)
+            /// <remarks>
+            /// LUCENENET specific - since the lock statement can potentially throw System.Threading.ThreadInterruptedException in .NET,
+            /// we need to be vigilant about getting stack trace info from the errors during tests and retry if we get an interrupt exception.
+            /// </remarks>
+            private static string LockSafeGetToStringFrom(Exception exception)
             {
                 // Clear interrupt state:
                 try
@@ -1460,7 +1462,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception ie) when (ie.IsInterruptedException())
                 {
-                    return GetToStringFrom(exception);
+                    return LockSafeGetToStringFrom(exception);
                 }
             }
         }

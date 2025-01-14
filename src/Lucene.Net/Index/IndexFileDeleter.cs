@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    throw new CorruptIndexException("failed to locate current segments_N file \"" + currentSegmentsFile + "\"" + e.ToString(), e);
+                    throw new CorruptIndexException("failed to locate current segments_N file \"" + currentSegmentsFile + "\"" + e, e); // LUCENENET specific: add exception logging and inner exception
                 }
                 if (infoStream.IsEnabled("IFD"))
                 {
@@ -694,7 +694,7 @@ namespace Lucene.Net.Index
                 if (infoStream.IsEnabled("IFD"))
                 {
                     infoStream.Message("IFD",
-                        "unable to remove file \"" + fileName + "\": " + e.ToString() + "; Will re-try later.");
+                        "unable to remove file \"" + fileName + "\": " + e.ToTypeMessageString() + "; Will re-try later."); // LUCENENET specific: use ToTypeMessageString to mimic Java behavior
                 }
                 if (deletable is null)
                 {

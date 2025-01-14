@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Console = Lucene.Net.Util.SystemConsole;
 

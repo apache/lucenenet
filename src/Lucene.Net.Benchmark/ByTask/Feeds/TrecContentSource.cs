@@ -38,7 +38,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// <list type="bullet">
     ///     <item><term>work.dir</term><description>specifies the working directory. Required if "docs.dir"
     ///         denotes a relative path (<b>default=work</b>).</description></item>
-    ///     <item><term>docs.dir</term><description>specifies the directory where the TREC files reside. 
+    ///     <item><term>docs.dir</term><description>specifies the directory where the TREC files reside.
     ///         Can be set to a relative path if "work.dir" is also specified
     ///         (<b>default=trec</b>).
     ///     </description></item>
@@ -161,7 +161,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         internal virtual void OpenNextFile()
         {
             DoClose();
-            //currPathType = null; 
+            //currPathType = null;
             while (true)
             {
                 if (nextFile >= inputFiles.Count)
@@ -181,7 +181,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 try
                 {
-                    Stream inputStream = StreamUtils.GetInputStream(f); // support either gzip, bzip2, or regular text file, by extension  
+                    Stream inputStream = StreamUtils.GetInputStream(f); // support either gzip, bzip2, or regular text file, by extension
                     reader = new StreamReader(inputStream, m_encoding);
                     currPathType = TrecDocParser.PathType(f);
                     return;
@@ -234,7 +234,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 if (m_verbose)
                 {
                     Console.WriteLine("failed to dispose reader !");
-                    Console.WriteLine(e.ToString());
+                    e.PrintStackTrace(Console.Out);
                 }
             }
             reader = null;
@@ -275,7 +275,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 docBuf.Length = 0;
                 Read(docBuf, DOC, false, false);
 
-                // save parsedFile for passing trecDataParser after the sync block, in 
+                // save parsedFile for passing trecDataParser after the sync block, in
                 // case another thread will open another file in between.
                 parsedPathType = currPathType;
 
@@ -302,7 +302,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // count char length of text to be parsed (may be larger than the resulted plain doc body text).
             AddBytes(docBuf.Length);
 
-            // This code segment relies on HtmlParser being thread safe. When we get 
+            // This code segment relies on HtmlParser being thread safe. When we get
             // here, everything else is already private to that thread, so we're safe.
             docData = trecDocParser.Parse(docData, name, this, docBuf, parsedPathType);
             AddItem();
@@ -367,7 +367,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             {
                 m_encoding = Encoding.GetEncoding("iso-8859-1"); //StandardCharsets.ISO_8859_1.name();
             }
-            // iteration exclusion in doc name 
+            // iteration exclusion in doc name
             excludeDocnameIteration = config.Get("content.source.excludeIteration", false);
         }
     }

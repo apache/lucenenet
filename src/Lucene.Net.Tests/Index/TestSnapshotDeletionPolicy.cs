@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception t) when (t.IsThrowable())
                         {
-                            Console.WriteLine(t.StackTrace);
+                            t.PrintStackTrace(Console.Out);
                             Assert.Fail("addDocument failed");
                         }
                         if (i % 2 == 0)

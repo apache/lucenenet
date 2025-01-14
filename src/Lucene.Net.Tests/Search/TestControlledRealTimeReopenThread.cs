@@ -475,7 +475,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    e.printStackTrace();
+                    e.PrintStackTrace();
                 }
                 finally
                 {

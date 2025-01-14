@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
 
-namespace Lucene.Net.Util
+namespace Lucene.Net.Support
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,14 +24,14 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// LUCENENET specific class to normalize stack trace behavior between different .NET Framework and .NET Standard 1.x,
-    /// which did not support the StackTrace class.
+    /// which did not support the StackTrace class, and provide some additional functionality.
     /// </summary>
-    public static class StackTraceHelper
+    internal static class StackTraceHelper
     {
         /// <summary>
         /// Matches the StackTrace for a method name.
         /// <para/>
-        /// IMPORTANT: To make the tests pass in release mode, the method(s) named here 
+        /// IMPORTANT: To make the tests pass in release mode, the method(s) named here
         /// must be decorated with <c>[MethodImpl(MethodImplOptions.NoInlining)]</c>.
         /// </summary>
         public static bool DoesStackTraceContainMethod(string methodName)
@@ -48,10 +50,10 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Matches the StackTrace for a particular class (not fully-qualified) and method name.
         /// <para/>
-        /// IMPORTANT: To make the tests pass in release mode, the method(s) named here 
+        /// IMPORTANT: To make the tests pass in release mode, the method(s) named here
         /// must be decorated with <c>[MethodImpl(MethodImplOptions.NoInlining)]</c>.
         /// </summary>
-        public static bool DoesStackTraceContainMethod(string className, string methodName) 
+        public static bool DoesStackTraceContainMethod(string className, string methodName)
         {
             StackTrace trace = new StackTrace();
             foreach (var frame in trace.GetFrames())
@@ -63,6 +65,31 @@ namespace Lucene.Net.Util
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Prints the current stack trace to the console's standard error output stream.
+        /// <para />
+        /// This is equivalent to Java's <c>new Throwable().printStackTrace()</c>
+        /// or <c>new Exception().printStackTrace()</c>.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)] // Top frame is skipped, so we don't want to inline
+        public static void PrintCurrentStackTrace()
+        {
+            Console.Error.WriteLine(new StackTrace(skipFrames: 1).ToString());
+        }
+
+        /// <summary>
+        /// Prints the current stack trace to the specified <paramref name="destination"/>.
+        /// <para />
+        /// This is equivalent to Java's <c>new Throwable().printStackTrace(destination)</c>
+        /// or <c>new Exception().printStackTrace(destination)</c>.
+        /// </summary>
+        /// <param name="destination">The destination to write the stack trace to.</param>
+        [MethodImpl(MethodImplOptions.NoInlining)] // Top frame is skipped, so we don't want to inline
+        public static void PrintCurrentStackTrace(TextWriter destination)
+        {
+            destination.WriteLine(new StackTrace(skipFrames: 1).ToString());
         }
     }
 }

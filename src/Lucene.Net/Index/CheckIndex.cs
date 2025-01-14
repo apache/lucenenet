@@ -520,11 +520,10 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR: could not read any segments file in directory");
                 result.MissingSegments = true;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(t.ToString());
-                //infoStream.WriteLine(t.StackTrace);
+                if (infoStream != null)
+                {
+                    t.PrintStackTrace(infoStream);
+                }
 
                 return result;
             }
@@ -568,11 +567,10 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR: could not open segments file in directory");
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(t.ToString());
-                //infoStream.WriteLine(t.StackTrace);
+                if (infoStream != null)
+                {
+                    t.PrintStackTrace(infoStream);
+                }
 
                 result.CantOpenSegments = true;
                 return result;
@@ -586,11 +584,10 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR: could not read segment file version in directory");
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(t.ToString());
-                //infoStream.WriteLine(t.StackTrace);
+                if (infoStream != null)
+                {
+                    t.PrintStackTrace(infoStream);
+                }
 
                 result.MissingSegmentVersion = true;
                 return result;
@@ -874,10 +871,10 @@ namespace Lucene.Net.Index
                     comment = "fixIndex() would remove reference to this segment";
                     Msg(infoStream, "    WARNING: " + comment + "; full exception:");
 
-                    // LUCENENET NOTE: Some tests rely on the error type being in
-                    // the message. We can't get the error type with StackTrace, we
-                    // need ToString() for that.
-                    infoStream?.WriteLine(t.ToString());
+                    if (infoStream != null)
+                    {
+                        t.PrintStackTrace(infoStream);
+                    }
 
                     Msg(infoStream, "");
                     result.TotLoseDocCount += toLoseDocCount;
@@ -960,11 +957,10 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(e.ToString());
-                //infoStream.WriteLine(e.StackTrace);
+                if (infoStream != null)
+                {
+                    e.PrintStackTrace(infoStream);
+                }
             }
 
             return status;
@@ -1666,11 +1662,10 @@ namespace Lucene.Net.Index
                 status = new Status.TermIndexStatus();
                 status.Error = e;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(e.ToString());
-                //infoStream.WriteLine(e.StackTrace);
+                if (infoStream != null)
+                {
+                    e.PrintStackTrace(infoStream);
+                }
             }
 
             return status;
@@ -1716,11 +1711,10 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(e.ToString());
-                //infoStream.WriteLine(e.StackTrace);
+                if (infoStream != null)
+                {
+                    e.PrintStackTrace(infoStream);
+                }
             }
 
             return status;
@@ -1761,11 +1755,10 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(e.ToString());
-                //infoStream.WriteLine(e.StackTrace);
+                if (infoStream != null)
+                {
+                    e.PrintStackTrace(infoStream);
+                }
             }
             return status;
         }
@@ -2284,11 +2277,10 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(e.ToString());
-                //infoStream.WriteLine(e.StackTrace);
+                if (infoStream != null)
+                {
+                    e.PrintStackTrace(infoStream);
+                }
             }
 
             return status;

@@ -1042,8 +1042,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsThrowable())
                 {
-                    Console.WriteLine(e.ToString());
-                    Console.Write(e.StackTrace);
+                    e.PrintStackTrace();
                     Assert.Fail(e.ToString());
                 }
 

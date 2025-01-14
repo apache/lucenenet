@@ -1,7 +1,9 @@
 ﻿using Lucene.Net.Attributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -373,6 +375,73 @@ namespace Lucene.Net.Support.ExceptionHandling
             {
                 AssertCatches(expression, extensionMethod);
             }
+        }
+
+        private class MyException : Exception
+        {
+            public MyException(string message) : base(message)
+            {
+            }
+        }
+
+        private class MyException2 : Exception
+        {
+            public MyException2(string message) : base(message)
+            {
+            }
+        }
+
+        [Test]
+        public void TestPrintStackTrace()
+        {
+            using var sw = new StringWriter();
+
+            try
+            {
+                throw new MyException("Test exception");
+            }
+            catch (Exception e)
+            {
+                e.PrintStackTrace(sw);
+            }
+
+            var str = sw.ToString();
+
+            Assert.IsTrue(str.Contains(typeof(MyException).FullName ?? throw new InvalidOperationException("Type name is null")));
+            Assert.IsTrue(str.Contains("Test exception"));
+            Assert.IsTrue(str.Contains(nameof(TestPrintStackTrace)));
+        }
+
+        [Test]
+        public void TestPrintStackTrace_WithSuppressed()
+        {
+            using var sw = new StringWriter();
+
+            try
+            {
+                throw new MyException("Test exception");
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    throw new MyException2("Suppressed exception");
+                }
+                catch (Exception suppressed)
+                {
+                    e.AddSuppressed(suppressed);
+                }
+
+                e.PrintStackTrace(sw);
+            }
+
+            var str = sw.ToString();
+
+            Assert.IsTrue(str.Contains(typeof(MyException).FullName ?? throw new InvalidOperationException("Type name is null")));
+            Assert.IsTrue(str.Contains("Test exception"));
+            Assert.IsTrue(str.Contains(nameof(TestPrintStackTrace)));
+            Assert.IsTrue(str.Contains(typeof(MyException2).FullName ?? throw new InvalidOperationException("Type name is null")));
+            Assert.IsTrue(str.Contains("Suppressed exception"));
         }
 
         private static void AssertCatches(Action action, Func<Exception, bool> extensionMethodExpression)

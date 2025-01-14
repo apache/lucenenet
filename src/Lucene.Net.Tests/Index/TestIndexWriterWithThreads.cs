@@ -3,8 +3,8 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
-using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
@@ -102,10 +102,10 @@ namespace Lucene.Net.Index
                         if (Verbose)
                         {
                             Console.WriteLine("TEST: expected exc:");
-                            Console.WriteLine(ioe.StackTrace);
+                            ioe.PrintStackTrace(Console.Out);
                         }
-                        //System.out.println(Thread.currentThread().getName() + ": hit exc");
-                        //ioConsole.WriteLine(e.StackTrace);
+                        //Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
+                        //ioe.PrintStackTrace(Console.Out);
                         if (ioe.Message.StartsWith("fake disk full at", StringComparison.Ordinal) || ioe.Message.Equals("now failing on purpose", StringComparison.Ordinal))
                         {
                             diskFull = true;
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
                             if (noErrors)
                             {
                                 Console.WriteLine(Thread.CurrentThread.Name + ": ERROR: unexpected IOException:");
-                                Console.WriteLine(ioe.StackTrace);
+                                ioe.PrintStackTrace(Console.Out);
                                 error = ioe;
                             }
                             break;
@@ -137,11 +137,11 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception t) when (t.IsThrowable())
                     {
-                        //Console.WriteLine(t.StackTrace);
+                        //t.PrintStackTrace(Console.Out);
                         if (noErrors)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": ERROR: unexpected Throwable:");
-                            Console.WriteLine(t.StackTrace);
+                            t.PrintStackTrace(Console.Out);
                             error = t;
                         }
                         break;
@@ -626,7 +626,7 @@ namespace Lucene.Net.Index
                 {
                     failed = true;
                     failure = e;
-                    Console.WriteLine(e.ToString());
+                    failure.PrintStackTrace(Console.Out);
                     // return; // LUCENENET: redundant return
                 }
             }
