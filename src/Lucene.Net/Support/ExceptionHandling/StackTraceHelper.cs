@@ -68,18 +68,6 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Prints the current stack trace to the console's standard error output stream.
-        /// <para />
-        /// This is equivalent to Java's <c>new Throwable().printStackTrace()</c>
-        /// or <c>new Exception().printStackTrace()</c>.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)] // Top frame is skipped, so we don't want to inline
-        public static void PrintCurrentStackTrace()
-        {
-            Console.Error.WriteLine(new StackTrace(skipFrames: 1).ToString());
-        }
-
-        /// <summary>
         /// Prints the current stack trace to the specified <paramref name="destination"/>.
         /// <para />
         /// This is equivalent to Java's <c>new Throwable().printStackTrace(destination)</c>
