@@ -42,7 +42,13 @@ namespace Lucene.Net.Support.ExceptionHandling
         {
             using var sw = new StringWriter();
             StackTraceHelper.PrintCurrentStackTrace(sw);
-            Assert.IsTrue(sw.ToString().Contains(nameof(TestPrintCurrentStackTrace)));
+
+            string str = sw.ToString();
+
+            using var sr = new StringReader(str);
+            string topLine = sr.ReadLine();
+            Assert.NotNull(topLine);
+            Assert.IsTrue(topLine.Contains(nameof(TestPrintCurrentStackTrace)));
         }
     }
 }
