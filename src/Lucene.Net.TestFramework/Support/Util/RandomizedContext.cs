@@ -2,8 +2,12 @@
 using NUnit.Framework.Internal;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
+using System.Text;
 using System.Threading;
 #nullable enable
 
@@ -33,6 +37,9 @@ namespace Lucene.Net.Util
     {
         // LUCENENET NOTE: Using an underscore to prefix the name hides it from "traits" in Test Explorer
         internal const string RandomizedContextPropertyName = "_RandomizedContext";
+        internal const string RandomizedContextScopeKeyName = "_RandomizedContext_Scope";
+        internal const string RandomizedContextThreadNameKeyName = "_RandomizedContext_ThreadName";
+        internal const string RandomizedContextStackTraceKeyName = "_RandomizedContext_StackTrace";
 
         private readonly ThreadLocal<Random> randomGenerator;
         private readonly Test currentTest;
@@ -40,7 +47,7 @@ namespace Lucene.Net.Util
         private readonly long randomSeed;
         private readonly string randomSeedAsHex;
         private readonly long testSeed;
-        private Lazy<ConcurrentQueue<IDisposable>>? toDisposeAtEnd = null;
+        private Lazy<ConcurrentQueue<DisposableResourceInfo>>? disposableResources = null;
 
         /// <summary>
         /// Initializes the randomized context.
@@ -110,8 +117,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets a lazily-initialized concurrent queue to use for resources that will be disposed at the end of the test or suite.
         /// </summary>
-        internal ConcurrentQueue<IDisposable> ToDisposeAtEnd
-            => (toDisposeAtEnd ??= new Lazy<ConcurrentQueue<IDisposable>>(() => new ConcurrentQueue<IDisposable>())).Value;
+        internal ConcurrentQueue<DisposableResourceInfo> DisposableResources
+            => (disposableResources ??= new Lazy<ConcurrentQueue<DisposableResourceInfo>>(() => new ConcurrentQueue<DisposableResourceInfo>())).Value;
 
         /// <summary>
         /// Registers the given <paramref name="resource"/> at the end of a given
@@ -133,19 +140,19 @@ namespace Lucene.Net.Util
             {
                 if (scope == LifecycleScope.TEST)
                 {
-                    AddDisposableAtEnd(resource);
+                    AddDisposableAtEnd(resource, scope);
                 }
                 else // LifecycleScope.SUITE
                 {
                     var context = FindClassLevelTest(currentTest).GetRandomizedContext();
                     if (context is null)
                         throw new InvalidOperationException($"The provided {LifecycleScope.TEST} has no conceptual {LifecycleScope.SUITE} associated with it.");
-                    context.AddDisposableAtEnd(resource);
+                    context.AddDisposableAtEnd(resource, scope);
                 }
             }
             else if (currentTest.IsTestClass())
             {
-                AddDisposableAtEnd(resource);
+                AddDisposableAtEnd(resource, scope);
             }
             else
             {
@@ -156,12 +163,12 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void AddDisposableAtEnd(IDisposable resource)
+        internal void AddDisposableAtEnd(IDisposable resource, LifecycleScope scope)
         {
             // LUCENENET: ConcurrentQueue handles thread-safety internally, so no explicit locking is needed.
             // Note that if we port more of randomizedtesting later, we may need to change this to a List<T> and
             // a lock, but for now it will suit our needs without locking.
-            ToDisposeAtEnd.Enqueue(resource);
+            DisposableResources.Enqueue(new DisposableResourceInfo(resource, scope, Thread.CurrentThread.Name, new StackTrace(skipFrames: 3)));
         }
 
         private Test? FindClassLevelTest(Test test)
@@ -184,11 +191,98 @@ namespace Lucene.Net.Util
 
         internal void DisposeResources()
         {
-            Lazy<ConcurrentQueue<IDisposable>>? toDispose = Interlocked.Exchange(ref toDisposeAtEnd, null);
+            Lazy<ConcurrentQueue<DisposableResourceInfo>>? toDispose = Interlocked.Exchange(ref disposableResources, null);
             if (toDispose?.IsValueCreated == true) // Does null check on toDispose
             {
-                IOUtils.Dispose(toDispose.Value);
+                Exception? th = null;
+
+                foreach (DisposableResourceInfo disposable in toDispose.Value)
+                {
+                    try
+                    {
+                        disposable.Resource.Dispose();
+                    }
+                    catch (Exception t) when (t.IsThrowable())
+                    {
+                        // Add details about the source of the exception, so they can be printed out later.
+                        t.Data[RandomizedContextScopeKeyName]      = disposable.Scope.ToString(); // string
+                        t.Data[RandomizedContextThreadNameKeyName] = disposable.ThreadName;       // string
+                        t.Data[RandomizedContextStackTraceKeyName] = disposable.StackTrace;       // System.Diagnostics.StackTrace
+
+                        if (th is not null)
+                        {
+                            th.AddSuppressed(t);
+                        }
+                        else
+                        {
+                            th = t;
+                        }
+                    }
+                }
+
+                if (th is not null)
+                {
+                    ExceptionDispatchInfo.Capture(th).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
+                }
             }
         } // toDispose goes out of scope here - no need to Clear().
+
+        /// <summary>
+        /// Prints a stack trace of the <paramref name="exception"/> to the destination <see cref="TextWriter"/>.
+        /// The message will show additional stack details relevant to <see cref="DisposeAtEnd{T}(T, LifecycleScope)"/>
+        /// to identify the calling method, <see cref="LifecycleScope"/>, and name of the calling thread.
+        /// </summary>
+        /// <param name="exception">The exception to print. This may contain additional details in <see cref="Exception.Data"/>.</param>
+        /// <param name="destination">A <see cref="TextWriter"/> to write the output to.</param>
+        internal static void PrintStackTrace(Exception exception, TextWriter destination)
+        {
+            destination.WriteLine(FormatStackTrace(exception));
+        }
+
+        private static string FormatStackTrace(Exception exception)
+        {
+            StringBuilder sb = new StringBuilder(256);
+            FormatException(exception, sb);
+
+            foreach (var suppressedException in exception.GetSuppressedAsList())
+            {
+                sb.AppendLine("Suppressed: ");
+                FormatException(suppressedException, sb);
+            }
+
+            return sb.ToString();
+        }
+
+        private static void FormatException(Exception exception, StringBuilder destination)
+        {
+            destination.AppendLine(exception.ToString());
+
+            string? scope = (string?)exception.Data[RandomizedContextScopeKeyName];
+            string? threadName = (string?)exception.Data[RandomizedContextThreadNameKeyName];
+            StackTrace? stackTrace = (StackTrace?)exception.Data[RandomizedContextStackTraceKeyName];
+
+            bool hasData = scope != null || threadName != null || stackTrace != null;
+            if (!hasData)
+            {
+                return;
+            }
+
+            destination.AppendLine("Caller Details:");
+            if (scope != null) 
+            {
+                destination.Append("Scope: ");
+                destination.AppendLine(scope);
+            }
+            if (threadName != null)
+            {
+                destination.Append("Thread Name: ");
+                destination.AppendLine(threadName);
+            }
+            if (stackTrace != null)
+            {
+                destination.Append("Stack Trace:");
+                destination.AppendLine(stackTrace.ToString());
+            }
+        }
     }
 }
