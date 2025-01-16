@@ -407,9 +407,9 @@ namespace Lucene.Net.Support.ExceptionHandling
 
             var str = sw.ToString();
 
-            Assert.IsTrue(str.Contains(typeof(MyException).FullName ?? throw new InvalidOperationException("Type name is null")));
-            Assert.IsTrue(str.Contains("Test exception"));
-            Assert.IsTrue(str.Contains(nameof(TestPrintStackTrace)));
+            Assert.IsTrue(str.Contains(typeof(MyException).FullName!, StringComparison.Ordinal));
+            Assert.IsTrue(str.Contains("Test exception", StringComparison.Ordinal));
+            Assert.IsTrue(str.Contains(nameof(TestPrintStackTrace), StringComparison.Ordinal));
         }
 
         [Test]
@@ -437,11 +437,11 @@ namespace Lucene.Net.Support.ExceptionHandling
 
             var str = sw.ToString();
 
-            Assert.IsTrue(str.Contains(typeof(MyException).FullName ?? throw new InvalidOperationException("Type name is null")));
-            Assert.IsTrue(str.Contains("Test exception"));
-            Assert.IsTrue(str.Contains(nameof(TestPrintStackTrace)));
-            Assert.IsTrue(str.Contains(typeof(MyException2).FullName ?? throw new InvalidOperationException("Type name is null")));
-            Assert.IsTrue(str.Contains("Suppressed exception"));
+            Assert.IsTrue(str.Contains(typeof(MyException).FullName!, StringComparison.Ordinal));
+            Assert.IsTrue(str.Contains("Test exception", StringComparison.Ordinal));
+            Assert.IsTrue(str.Contains(nameof(TestPrintStackTrace), StringComparison.Ordinal));
+            Assert.IsTrue(str.Contains(typeof(MyException2).FullName!, StringComparison.Ordinal));
+            Assert.IsTrue(str.Contains("Suppressed exception", StringComparison.Ordinal));
         }
 
         private static void AssertCatches(Action action, Func<Exception, bool> extensionMethodExpression)

@@ -100,7 +100,7 @@ namespace Lucene.Net.Store
             }
             catch (Exception e) when (e.IsException())
             {
-                e.PrintStackTrace();
+                e.PrintStackTrace(Console.Out);
                 Assert.Fail("Should not have hit an IOException with no locking");
             }
 

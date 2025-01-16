@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: iter=" + iter + ": exception");
-                        ioe.PrintStackTrace(Console.Out);
+                        ioe.PrintStackTrace();
                     }
                     if (w != null)
                     {

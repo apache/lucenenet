@@ -26,15 +26,20 @@ namespace Lucene.Net.Support.ExceptionHandling
     public class TestStackTraceHelper : LuceneTestCase
     {
         [Test]
-        public void TestDoesStackTraceContainMethod()
+        [TestCase(true, nameof(TestDoesStackTraceContainMethod))]
+        [TestCase(false, nameof(GetHashCode))]
+        public void TestDoesStackTraceContainMethod(bool expected, string methodName)
         {
-            Assert.IsTrue(StackTraceHelper.DoesStackTraceContainMethod(nameof(TestDoesStackTraceContainMethod)));
+            Assert.AreEqual(expected, StackTraceHelper.DoesStackTraceContainMethod(methodName));
         }
 
         [Test]
-        public void TestDoesStackTraceContainMethodWithClassName()
+        [TestCase(true, nameof(TestStackTraceHelper), nameof(TestDoesStackTraceContainMethodWithClassName))]
+        [TestCase(false, nameof(TestStackTraceHelper), nameof(GetHashCode))]
+        [TestCase(false, nameof(LuceneTestCase), nameof(TestDoesStackTraceContainMethodWithClassName))]
+        public void TestDoesStackTraceContainMethodWithClassName(bool expected, string className, string methodName)
         {
-            Assert.IsTrue(StackTraceHelper.DoesStackTraceContainMethod(nameof(TestStackTraceHelper), nameof(TestDoesStackTraceContainMethodWithClassName)));
+            Assert.AreEqual(expected, StackTraceHelper.DoesStackTraceContainMethod(className, methodName));
         }
 
         [Test]

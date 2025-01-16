@@ -714,7 +714,7 @@ namespace Lucene.Net.Analysis.Util
          * @tests java.io.BufferedReader#ready()
          */
         [Test, LuceneNetSpecific]
-        [Ignore("Test was previously ignored by missing Test attribute, does not work")] // LUCENENET TODO: fix test
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/1102")] // LUCENENET TODO: fix test
         public void Test_Ready()
         {
             // Test for method boolean java.io.BufferedReader.ready()

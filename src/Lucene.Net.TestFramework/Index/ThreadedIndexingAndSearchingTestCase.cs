@@ -378,8 +378,8 @@ namespace Lucene.Net.Index
                     catch (Exception t) when (t.IsThrowable())
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
-                        t.PrintStackTrace();
                         outerInstance.m_failed.Value = true;
+                        t.PrintStackTrace();
                         throw RuntimeException.Create(t);
                     }
                 }

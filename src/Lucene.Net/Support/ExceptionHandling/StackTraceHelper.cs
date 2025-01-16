@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+#nullable enable
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,8 +24,7 @@ namespace Lucene.Net.Support
      */
 
     /// <summary>
-    /// LUCENENET specific class to normalize stack trace behavior between different .NET Framework and .NET Standard 1.x,
-    /// which did not support the StackTrace class, and provide some additional functionality.
+    /// LUCENENET specific class to provide some additional functionality around stack traces.
     /// </summary>
     internal static class StackTraceHelper
     {
@@ -36,14 +36,23 @@ namespace Lucene.Net.Support
         /// </summary>
         public static bool DoesStackTraceContainMethod(string methodName)
         {
-            StackTrace trace = new StackTrace();
-            foreach (var frame in trace.GetFrames())
+            if (methodName == null)
             {
-                if (frame.GetMethod().Name.Equals(methodName, StringComparison.Ordinal))
+                throw new ArgumentNullException(nameof(methodName));
+            }
+
+            StackTrace trace = new StackTrace();
+            // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
+            StackFrame[] frames = trace.GetFrames() ?? Array.Empty<StackFrame>(); // NOTE: .NET Framework can return null here
+
+            foreach (var frame in frames)
+            {
+                if (frame.GetMethod()?.Name.Equals(methodName, StringComparison.Ordinal) == true)
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -55,15 +64,29 @@ namespace Lucene.Net.Support
         /// </summary>
         public static bool DoesStackTraceContainMethod(string className, string methodName)
         {
+            if (className == null)
+            {
+                throw new ArgumentNullException(nameof(className));
+            }
+            if (methodName == null)
+            {
+                throw new ArgumentNullException(nameof(methodName));
+            }
+
             StackTrace trace = new StackTrace();
-            foreach (var frame in trace.GetFrames())
+            // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
+            StackFrame[] frames = trace.GetFrames() ?? Array.Empty<StackFrame>(); // NOTE: .NET Framework can return null here
+
+            foreach (var frame in frames)
             {
                 var method = frame.GetMethod();
-                if (method.DeclaringType.Name.Equals(className, StringComparison.Ordinal) && method.Name.Equals(methodName, StringComparison.Ordinal))
+                if (method?.DeclaringType?.Name.Equals(className, StringComparison.Ordinal) == true
+                    && method.Name.Equals(methodName, StringComparison.Ordinal))
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -77,6 +100,11 @@ namespace Lucene.Net.Support
         [MethodImpl(MethodImplOptions.NoInlining)] // Top frame is skipped, so we don't want to inline
         public static void PrintCurrentStackTrace(TextWriter destination)
         {
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
             destination.WriteLine(new StackTrace(skipFrames: 1).ToString());
         }
     }
