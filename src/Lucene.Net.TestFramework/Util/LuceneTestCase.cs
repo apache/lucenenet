@@ -22,10 +22,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.ExceptionServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using static Lucene.Net.Search.FieldCache;
@@ -981,7 +979,7 @@ namespace Lucene.Net.Util
             {
                 NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] An exception occurred during TearDown:");
                 RandomizedContext.PrintStackTrace(ex, NUnit.Framework.TestContext.Error);
-                ExceptionDispatchInfo.Capture(ex).Throw();
+                throw; // LUCENENET: Throw to preserve stack details of original throw.
             }
         }
 
@@ -1054,6 +1052,7 @@ namespace Lucene.Net.Util
                 // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
                 NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during RandomizedContext.DisposeResources() in {GetType().FullName}:");
                 RandomizedContext.PrintStackTrace(ex, NUnit.Framework.TestContext.Error);
+                throw; // LUCENENET: Throw to preserve stack details of original throw.
             }
         }
 
