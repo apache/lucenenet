@@ -204,8 +204,8 @@ namespace Lucene.Net.Util
             UninterruptableMonitor.Enter(contextLock);
             try
             {
-                resources = disposableResources;
-                disposableResources = null;
+                resources = disposableResources; // Set the resources to a local variable
+                disposableResources = null; // Set disposableResources field to null so our local list will go out of scope when we are done
             }
             finally
             {
@@ -245,7 +245,7 @@ namespace Lucene.Net.Util
                     ExceptionDispatchInfo.Capture(th).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
                 }
             }
-        } // toDispose goes out of scope here - no need to Clear().
+        } // resources goes out of scope here - no need to Clear().
 
         /// <summary>
         /// Prints a stack trace of the <paramref name="exception"/> to the destination <see cref="TextWriter"/>.
