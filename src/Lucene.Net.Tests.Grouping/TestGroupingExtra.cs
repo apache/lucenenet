@@ -60,11 +60,11 @@ namespace Lucene.Net.Search.Grouping
         {
             string[,] carData = GetCarData();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int carCount = carData.GetLength(0);
             Document doc = new Document();
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Grouping
             groupingSearch.SetFillSortFields(true);
             groupingSearch.SetCachingInMB(10, cacheScores: true);
 
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
             ITopGroups<BytesRef> topGroups = groupingSearch.SearchByField(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
@@ -154,11 +154,11 @@ namespace Lucene.Net.Search.Grouping
         {
             int[,] numericData = GetNumbers();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
 
             //Normally we can not group on a Int32Field when using fieldCache because the Int32Field is stored
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search.Grouping
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
             groupingSearch.SetSortWithinGroup(new Sort(new SortField("minor", SortFieldType.INT32)));
 
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
             ITopGroups<MutableValueStr> topGroups = groupingSearch.SearchByFunction<MutableValueStr>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
@@ -266,11 +266,11 @@ namespace Lucene.Net.Search.Grouping
         {
             string[,] carData = GetCarData();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int carCount = carData.GetLength(0);
             Document doc = new Document();
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search.Grouping
             groupingSearch.SetFillSortFields(true);
             groupingSearch.SetCachingInMB(10, cacheScores: true);
 
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
             ITopGroups<object> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
@@ -359,11 +359,11 @@ namespace Lucene.Net.Search.Grouping
         {
             string[,] carData = GetCarData();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int carCount = carData.GetLength(0);
             Document doc = new Document();
@@ -387,7 +387,7 @@ namespace Lucene.Net.Search.Grouping
             groupingSearch.SetFillSortFields(true);
             groupingSearch.SetCachingInMB(10, cacheScores: true);
 
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
             ITopGroups<object> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
@@ -454,11 +454,11 @@ namespace Lucene.Net.Search.Grouping
         {
             int[,] numericData = GetNumbers();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             //Normally we can not group on a Int32Field when using fieldCache because the Int32Field is stored
             //as a 8 term trie structure by default.  But by specifying int.MaxValue as the NumericPrecisionStep
@@ -496,7 +496,7 @@ namespace Lucene.Net.Search.Grouping
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
             groupingSearch.SetSortWithinGroup(new Sort(new SortField("minor", SortFieldType.INT32)));
 
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
             ITopGroups<BytesRef> topGroups = groupingSearch.Search<BytesRef>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
@@ -563,11 +563,11 @@ namespace Lucene.Net.Search.Grouping
         {
             int[,] numericData = GetNumbers();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
 
             //Normally we can not group on a Int32Field when using fieldCache because the Int32Field is stored
@@ -607,7 +607,7 @@ namespace Lucene.Net.Search.Grouping
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
             groupingSearch.SetSortWithinGroup(new Sort(new SortField("minor", SortFieldType.INT32)));
 
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
             ITopGroups<MutableValue> topGroups = groupingSearch.Search<MutableValue>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
@@ -674,11 +674,11 @@ namespace Lucene.Net.Search.Grouping
         {
             int[,] numericData = GetNumbers();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
 
             int rowCount = numericData.GetLength(0);
@@ -702,7 +702,7 @@ namespace Lucene.Net.Search.Grouping
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
             groupingSearch.SetSortWithinGroup(new Sort(new SortField("minor", SortFieldType.INT32)));
 
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
 
@@ -769,11 +769,11 @@ namespace Lucene.Net.Search.Grouping
         {
             int[,] numericData = GetNumbers();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int rowCount = numericData.GetLength(0);
             Document doc = new Document();
@@ -796,7 +796,7 @@ namespace Lucene.Net.Search.Grouping
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
             groupingSearch.SetSortWithinGroup(new Sort(new SortField("minor", SortFieldType.INT32)));
 
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
 
@@ -860,11 +860,11 @@ namespace Lucene.Net.Search.Grouping
         {
             string[,] carData = GetCarData();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int carCount = carData.GetLength(0);
             Document doc = new Document();
@@ -883,7 +883,7 @@ namespace Lucene.Net.Search.Grouping
 
 
             //Begin work to do grouping search manually without use of GroupingSearch class.
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query query = new MatchAllDocsQuery();
             Filter filter = null;
@@ -973,11 +973,11 @@ namespace Lucene.Net.Search.Grouping
         {
             int[,] numericData = GetNumbers();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             //Normally we can not group on a Int32Field because it's stored as a 8 term trie structure
             //by default.  But by specifying int.MaxValue as the NumericPrecisionStep we force the inverted
@@ -1010,7 +1010,7 @@ namespace Lucene.Net.Search.Grouping
 
 
             //Begin work to do grouping search manually without use of GroupingSearch class.
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query query = new MatchAllDocsQuery();
             Filter filter = null;
@@ -1096,11 +1096,11 @@ namespace Lucene.Net.Search.Grouping
         {
             int[,] numericData = GetNumbers();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             //Normally we can not group on a Int32Field because it's stored as a 8 term trie structure
             //by default.  But by specifying int.MaxValue as the NumericPrecisionStep we force the inverted
@@ -1133,7 +1133,7 @@ namespace Lucene.Net.Search.Grouping
 
 
             //Begin work to do grouping search manually without use of GroupingSearch class.
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query query = new MatchAllDocsQuery();
             Filter filter = null;
@@ -1224,11 +1224,11 @@ namespace Lucene.Net.Search.Grouping
         {
             int[,] numericData = GetNumbers();
 
-            Directory indexDir = NewDirectory();
+            using Directory indexDir = NewDirectory();
             Analyzer standardAnalyzer = new StandardAnalyzer(TEST_VERSION_CURRENT);
 
             IndexWriterConfig indexConfig = new IndexWriterConfig(TEST_VERSION_CURRENT, standardAnalyzer);
-            IndexWriter writer = new IndexWriter(indexDir, indexConfig);
+            using IndexWriter writer = new IndexWriter(indexDir, indexConfig);
 
             int rowCount = numericData.GetLength(0);
             Document doc = new Document();
@@ -1246,7 +1246,7 @@ namespace Lucene.Net.Search.Grouping
 
 
             //Begin work to do grouping search manually without use of GroupingSearch class.
-            IndexReader reader = writer.GetReader(applyAllDeletes: true);
+            using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query query = new MatchAllDocsQuery();
             Filter filter = null;
