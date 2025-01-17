@@ -1,7 +1,8 @@
-﻿using NUnit.Framework.Interfaces;
+﻿using Lucene.Net.Support.Threading;
+using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -47,7 +48,16 @@ namespace Lucene.Net.Util
         private readonly long randomSeed;
         private readonly string randomSeedAsHex;
         private readonly long testSeed;
-        private Lazy<ConcurrentQueue<DisposableResourceInfo>>? disposableResources = null;
+
+        /// <summary>
+        /// Disposable resources.
+        /// </summary>
+        private List<DisposableResourceInfo>? disposableResources = null;
+
+        /// <summary>
+        /// Coordination at context level.
+        /// </summary>
+        private readonly object contextLock = new object();
 
         /// <summary>
         /// Initializes the randomized context.
@@ -115,12 +125,6 @@ namespace Lucene.Net.Util
             => TestExecutionContext.CurrentContext.CurrentTest.GetRandomizedContext();
 
         /// <summary>
-        /// Gets a lazily-initialized concurrent queue to use for resources that will be disposed at the end of the test or suite.
-        /// </summary>
-        internal ConcurrentQueue<DisposableResourceInfo> DisposableResources
-            => (disposableResources ??= new Lazy<ConcurrentQueue<DisposableResourceInfo>>(() => new ConcurrentQueue<DisposableResourceInfo>())).Value;
-
-        /// <summary>
         /// Registers the given <paramref name="resource"/> at the end of a given
         /// lifecycle <paramref name="scope"/>.
         /// </summary>
@@ -165,10 +169,16 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void AddDisposableAtEnd(IDisposable resource, LifecycleScope scope)
         {
-            // LUCENENET: ConcurrentQueue handles thread-safety internally, so no explicit locking is needed.
-            // Note that if we port more of randomizedtesting later, we may need to change this to a List<T> and
-            // a lock, but for now it will suit our needs without locking.
-            DisposableResources.Enqueue(new DisposableResourceInfo(resource, scope, Thread.CurrentThread.Name, new StackTrace(skipFrames: 3)));
+            UninterruptableMonitor.Enter(contextLock);
+            try
+            {
+                disposableResources ??= new List<DisposableResourceInfo>();
+                disposableResources.Add(new DisposableResourceInfo(resource, scope, Thread.CurrentThread.Name, new StackTrace(skipFrames: 3)));
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(contextLock);
+            }
         }
 
         private Test? FindClassLevelTest(Test test)
@@ -191,12 +201,23 @@ namespace Lucene.Net.Util
 
         internal void DisposeResources()
         {
-            Lazy<ConcurrentQueue<DisposableResourceInfo>>? toDispose = Interlocked.Exchange(ref disposableResources, null);
-            if (toDispose?.IsValueCreated == true) // Does null check on toDispose
+            List<DisposableResourceInfo>? resources;
+            UninterruptableMonitor.Enter(contextLock);
+            try
+            {
+                resources = disposableResources;
+                disposableResources = null;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(contextLock);
+            }
+
+            if (resources is not null)
             {
                 Exception? th = null;
 
-                foreach (DisposableResourceInfo disposable in toDispose.Value)
+                foreach (DisposableResourceInfo disposable in resources)
                 {
                     try
                     {
