@@ -920,7 +920,7 @@ namespace Lucene.Net.Util
 
                        Apply the following assembly-level attributes:
 
-                      [assembly: Lucene.Net.Util.RandomSeed("{{RandomizedContext.CurrentContext.RandomSeedAsHex}}")]
+                      [assembly: Lucene.Net.Util.RandomSeed("{{RandomizedContext.CurrentContext.RandomSeedAsString}}")]
                       [assembly: NUnit.Framework.SetCulture("{{Thread.CurrentThread.CurrentCulture.Name}}")]
 
                       Option 2:
@@ -929,7 +929,7 @@ namespace Lucene.Net.Util
 
                       <RunSettings>
                         <TestRunParameters>
-                          <Parameter name="tests:seed" value="{{RandomizedContext.CurrentContext.RandomSeedAsHex}}" />
+                          <Parameter name="tests:seed" value="{{RandomizedContext.CurrentContext.RandomSeedAsString}}" />
                           <Parameter name="tests:culture" value="{{Thread.CurrentThread.CurrentCulture.Name}}" />
                         </TestRunParameters>
                       </RunSettings>
@@ -940,7 +940,7 @@ namespace Lucene.Net.Util
 
                       {
                         "tests": {
-                           "seed": "{{RandomizedContext.CurrentContext.RandomSeedAsHex}}",
+                           "seed": "{{RandomizedContext.CurrentContext.RandomSeedAsString}}",
                            "culture": "{{Thread.CurrentThread.CurrentCulture.Name}}"
                         }
                       }
@@ -948,7 +948,7 @@ namespace Lucene.Net.Util
                       Fixture Test Values
                       =================
 
-                       Random Seed:           {{RandomizedContext.CurrentContext.RandomSeedAsHex}}
+                       Random Seed:           {{RandomizedContext.CurrentContext.RandomSeedAsString}}
                        Culture:               {{ClassEnvRule.locale.Name}}
                        Time Zone:             {{ClassEnvRule.timeZone.DisplayName}}
                        Default Codec:         {{ClassEnvRule.codec.Name}} ({{ClassEnvRule.codec.GetType().Name}})

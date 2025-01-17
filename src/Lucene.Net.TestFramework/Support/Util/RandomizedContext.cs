@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
         private readonly Test currentTest;
         private readonly Assembly currentTestAssembly;
         private readonly long randomSeed;
-        private readonly string randomSeedAsHex;
+        private volatile string? randomSeedAsString;
         private readonly long testSeed;
 
         /// <summary>
@@ -71,7 +71,6 @@ namespace Lucene.Net.Util
             this.currentTest = currentTest ?? throw new ArgumentNullException(nameof(currentTest));
             this.currentTestAssembly = currentTestAssembly ?? throw new ArgumentNullException(nameof(currentTestAssembly));
             this.randomSeed = randomSeed;
-            this.randomSeedAsHex = SeedUtils.FormatSeed(randomSeed);
             this.testSeed = testSeed;
             this.randomGenerator = new ThreadLocal<Random>(() => new J2N.Randomizer(this.testSeed));
         }
@@ -84,7 +83,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets the initial seed as a hexadecimal string for display/configuration purposes.
         /// </summary>
-        public string RandomSeedAsHex => randomSeedAsHex;
+        public string RandomSeedAsString => randomSeedAsString ??= SeedUtils.FormatSeed(randomSeed);
 
         /// <summary>
         /// The current test for this context.
