@@ -557,7 +557,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    e.printStackTrace();
+                    e.PrintStackTrace();
                     Assert.Fail(e.ToString());
                 }
             }

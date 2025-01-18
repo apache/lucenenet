@@ -101,8 +101,7 @@ namespace Lucene.Net.Search
                     }
                     catch (Exception ioe) when (ioe.IsIOException())
                     {
-                        Console.WriteLine(ioe.ToString());
-                        Console.Write(ioe.StackTrace);
+                        ioe.PrintStackTrace();
                     }
                 }
             }
@@ -187,7 +186,7 @@ namespace Lucene.Net.Search
             }
             catch (Exception e) when (e.IsException())
             {
-                e.printStackTrace();
+                e.PrintStackTrace();
             }
             return;
         }

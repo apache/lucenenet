@@ -100,7 +100,7 @@ namespace Lucene.Net.Store
             }
             catch (Exception e) when (e.IsException())
             {
-                e.printStackTrace();
+                e.PrintStackTrace(Console.Out);
                 Assert.Fail("Should not have hit an IOException with no locking");
             }
 
@@ -316,8 +316,8 @@ namespace Lucene.Net.Store
                         if (e.ToString().IndexOf(" timed out:", StringComparison.Ordinal) == -1)
                         {
                             HitException = true;
-                            Console.WriteLine("Stress Test Index Writer: creation hit unexpected IOException: " + e.ToString());
-                            Console.Out.Write(e.StackTrace);
+                            Console.WriteLine("Stress Test Index Writer: creation hit unexpected IOException: " + e.ToTypeMessageString()); // LUCENENET specific: use ToTypeMessageString to mimic Java behavior
+                            e.PrintStackTrace(Console.Out);
                         }
                         else
                         {
@@ -332,8 +332,8 @@ namespace Lucene.Net.Store
                     catch (Exception e) when (e.IsException())
                     {
                         HitException = true;
-                        Console.WriteLine("Stress Test Index Writer: creation hit unexpected exception: " + e.ToString());
-                        e.printStackTrace(Console.Out);
+                        Console.WriteLine("Stress Test Index Writer: creation hit unexpected exception: " + e.ToTypeMessageString()); // LUCENENET specific: use ToTypeMessageString to mimic Java behavior
+                        e.PrintStackTrace(Console.Out);
                         break;
                     }
                     if (writer != null)
@@ -345,8 +345,8 @@ namespace Lucene.Net.Store
                         catch (Exception e) when (e.IsIOException())
                         {
                             HitException = true;
-                            Console.WriteLine("Stress Test Index Writer: addDoc hit unexpected exception: " + e.ToString());
-                            Console.Out.Write(e.StackTrace);
+                            Console.WriteLine("Stress Test Index Writer: addDoc hit unexpected exception: " + e.ToTypeMessageString()); // LUCENENET specific: use ToTypeMessageString to mimic Java behavior
+                            e.PrintStackTrace(Console.Out);
                             break;
                         }
                         try
@@ -356,8 +356,8 @@ namespace Lucene.Net.Store
                         catch (Exception e) when (e.IsIOException())
                         {
                             HitException = true;
-                            Console.WriteLine("Stress Test Index Writer: close hit unexpected exception: " + e.ToString());
-                            Console.Out.Write(e.StackTrace);
+                            Console.WriteLine("Stress Test Index Writer: close hit unexpected exception: " + e.ToTypeMessageString()); // LUCENENET specific: use ToTypeMessageString to mimic Java behavior
+                            e.PrintStackTrace(Console.Out);
                             break;
                         }
                         writer = null;
@@ -393,8 +393,8 @@ namespace Lucene.Net.Store
                     catch (Exception e) when (e.IsException())
                     {
                         HitException = true;
-                        Console.WriteLine("Stress Test Index Searcher: create hit unexpected exception: " + e.ToString());
-                        e.printStackTrace(Console.Out);
+                        Console.WriteLine("Stress Test Index Searcher: create hit unexpected exception: " + e.ToTypeMessageString()); // LUCENENET specific: use ToTypeMessageString to mimic Java behavior
+                        e.PrintStackTrace(Console.Out);
                         break;
                     }
                     try
@@ -404,8 +404,8 @@ namespace Lucene.Net.Store
                     catch (Exception e) when (e.IsIOException())
                     {
                         HitException = true;
-                        Console.WriteLine("Stress Test Index Searcher: search hit unexpected exception: " + e.ToString());
-                        Console.Out.Write(e.StackTrace);
+                        Console.WriteLine("Stress Test Index Searcher: search hit unexpected exception: " + e.ToTypeMessageString()); // LUCENENET specific: use ToTypeMessageString to mimic Java behavior
+                        e.PrintStackTrace(Console.Out);
                         break;
                     }
                     // System.out.println(hits.Length() + " total results");
@@ -416,8 +416,8 @@ namespace Lucene.Net.Store
                     catch (Exception e) when (e.IsIOException())
                     {
                         HitException = true;
-                        Console.WriteLine("Stress Test Index Searcher: close hit unexpected exception: " + e.ToString());
-                        Console.Out.Write(e.StackTrace);
+                        Console.WriteLine("Stress Test Index Searcher: close hit unexpected exception: " + e.ToTypeMessageString()); // LUCENENET specific: use ToTypeMessageString to mimic Java behavior
+                        e.PrintStackTrace(Console.Out);
                         break;
                     }
                 }

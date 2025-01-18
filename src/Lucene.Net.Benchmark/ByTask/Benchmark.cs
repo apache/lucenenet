@@ -58,8 +58,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             }
             catch (Exception e) when (e.IsException())
             {
-                //e.printStackTrace();
-                Console.Error.WriteLine(e.ToString());
+                e.PrintStackTrace();
                 throw new Exception("Error: cannot init PerfRunData!", e);
             }
 
@@ -145,7 +144,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             }
             catch (Exception e) when (e.IsException())
             {
-                Console.Error.WriteLine(e.ToString());
+                e.PrintStackTrace();
                 Environment.Exit(1);
             }
 
@@ -160,7 +159,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             catch (Exception e) when (e.IsException())
             {
                 Console.Error.WriteLine("Error: cannot execute the algorithm! " + e.Message);
-                Console.Error.WriteLine(e.ToString());
+                e.PrintStackTrace();
             }
 
             Console.WriteLine("####################");

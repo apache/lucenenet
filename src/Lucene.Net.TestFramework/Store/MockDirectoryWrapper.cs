@@ -494,6 +494,7 @@ namespace Lucene.Net.Store
                 if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message is null ? "" : " (" + message + ")"));
+                    StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                 }
                 throw new IOException("a random IOException" + (message is null ? "" : " (" + message + ")"));
             }
@@ -505,7 +506,8 @@ namespace Lucene.Net.Store
             {
                 if (LuceneTestCase.Verbose)
                 {
-                  Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
+                    Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
+                    StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                 }
                 if (allowRandomFileNotFoundException == false || randomState.NextBoolean())
                 {
@@ -513,7 +515,7 @@ namespace Lucene.Net.Store
                 }
                 else
                 {
-                    throw randomState.NextBoolean() ? (IOException)new FileNotFoundException("a random IOException (" + name + ")") : new DirectoryNotFoundException("a random IOException (" + name + ")");
+                    throw randomState.NextBoolean() ? new FileNotFoundException("a random IOException (" + name + ")") : new DirectoryNotFoundException("a random IOException (" + name + ")");
                 }
             }
         }
@@ -1038,7 +1040,7 @@ namespace Lucene.Net.Store
                                         catch (Exception t) when (t.IsThrowable())
                                         {
                                             Console.Error.WriteLine("ERROR processing leftover segments file " + file + ":");
-                                            Console.WriteLine(t.ToString());
+                                            t.PrintStackTrace();
                                         }
                                     }
                                 }

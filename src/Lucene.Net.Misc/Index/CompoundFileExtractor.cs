@@ -144,8 +144,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception ioe) when (ioe.IsIOException())
             {
-                Console.Error.WriteLine(ioe.ToString());
-                //Console.Write(ioe.StackTrace);
+                ioe.PrintStackTrace();
             }
             finally
             {
@@ -162,8 +161,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    Console.Error.WriteLine(ioe.ToString());
-                    //Console.Write(ioe.StackTrace);
+                    ioe.PrintStackTrace();
                 }
             }
         }

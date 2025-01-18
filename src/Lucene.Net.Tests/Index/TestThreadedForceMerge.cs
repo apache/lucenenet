@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
                 {
                     outerInstance.SetFailed();
                     Console.WriteLine(Thread.CurrentThread.Name + ": hit exception");
-                    Console.WriteLine(t.StackTrace);
+                    t.PrintStackTrace(Console.Out);
                 }
             }
         }

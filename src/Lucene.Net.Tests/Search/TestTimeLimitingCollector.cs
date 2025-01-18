@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
             }
             catch (Exception e) when (e.IsException())
             {
-                e.printStackTrace();
+                e.PrintStackTrace();
                 assertTrue("Unexpected exception: " + e, false); //==fail
             }
             assertEquals("Wrong number of results!", totalResults, totalTLCResults);

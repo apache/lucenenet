@@ -488,7 +488,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception e) when (e.IsThrowable())
                         {
-                            Console.WriteLine(e.StackTrace);
+                            e.PrintStackTrace(Console.Out);
                             failure.Add(e);
                             done = true;
                             break;

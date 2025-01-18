@@ -933,7 +933,7 @@ namespace Lucene.Net.Analysis.Core
                         if (Verbose)
                         {
                             Console.WriteLine("Ignoring IAE/UOE from ctor:");
-                            //cause.printStackTrace(System.err);
+                            ite.InnerException.PrintStackTrace(Console.Error);
                         }
                     }
                     else

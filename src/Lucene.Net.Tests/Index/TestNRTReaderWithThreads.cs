@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception ex) when (ex.IsThrowable())
                 {
-                    Console.WriteLine(ex.StackTrace);
+                    ex.PrintStackTrace(Console.Out);
                     this.ex = ex;
                     run = false;
                 }

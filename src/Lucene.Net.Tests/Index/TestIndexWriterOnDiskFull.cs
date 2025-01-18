@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
                         if (Verbose)
                         {
                             Console.WriteLine("TEST: exception on addDoc");
-                            Console.WriteLine(e.StackTrace);
+                            e.PrintStackTrace(Console.Out);
                         }
                         hitError = true;
                     }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
                                 if (Verbose)
                                 {
                                     Console.WriteLine("TEST: exception on close; retry w/ no disk space limit");
-                                    Console.WriteLine(e.StackTrace);
+                                    e.PrintStackTrace(Console.Out);
                                 }
                                 dir.MaxSizeInBytes = 0;
                                 writer.Dispose();
@@ -427,12 +427,12 @@ namespace Lucene.Net.Index
                             if (Verbose)
                             {
                                 Console.WriteLine("  hit IOException: " + e);
-                                Console.WriteLine(e.StackTrace);
+                                e.PrintStackTrace(Console.Out);
                             }
 
                             if (1 == x)
                             {
-                                Console.WriteLine(e.StackTrace);
+                                e.PrintStackTrace(Console.Out);
                                 Assert.Fail(methodName + " hit IOException after disk space was freed up");
                             }
                         }
@@ -457,7 +457,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception e) when (e.IsIOException())
                         {
-                            Console.WriteLine(e.StackTrace);
+                            e.PrintStackTrace(Console.Out);
                             Assert.Fail(testName + ": exception when creating IndexReader: " + e);
                         }
                         int result = reader.DocFreq(searchTerm);
@@ -474,7 +474,7 @@ namespace Lucene.Net.Index
                             // all docs:
                             if (result != START_COUNT && result != END_COUNT)
                             {
-                                Console.WriteLine(err.StackTrace);
+                                err.PrintStackTrace(Console.Out);
                                 Assert.Fail(testName + ": method did throw exception but docFreq('aaa') is " + result + " instead of expected " + START_COUNT + " or " + END_COUNT);
                             }
                         }
@@ -486,7 +486,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception e) when (e.IsIOException())
                         {
-                            Console.WriteLine(e.StackTrace);
+                            e.PrintStackTrace(Console.Out);
                             Assert.Fail(testName + ": exception when searching: " + e);
                         }
                         int result2 = hits.Length;
@@ -503,7 +503,7 @@ namespace Lucene.Net.Index
                             // all docs:
                             if (result2 != result)
                             {
-                                Console.WriteLine(err.StackTrace);
+                                err.PrintStackTrace(Console.Out);
                                 Assert.Fail(testName + ": method did throw exception but hits.Length for search on term 'aaa' is " + result2 + " instead of expected " + result);
                             }
                         }

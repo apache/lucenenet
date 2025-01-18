@@ -273,7 +273,7 @@ namespace Lucene.Net.Replicator
             }
 
             // disable errors -- maybe randomness didn't exhaust all allowed failures,
-            // and we don't want e.g. CheckIndex to hit false errors. 
+            // and we don't want e.g. CheckIndex to hit false errors.
             handlerDir.MaxSizeInBytes = 0;
             handlerDir.RandomIOExceptionRate = 0.0;
             handlerDir.RandomIOExceptionRateOnOpen = 0.0;
@@ -352,7 +352,8 @@ namespace Lucene.Net.Replicator
                 {
                     if (Verbose)
                     {
-                        Console.WriteLine("hit exception during update: " + exception);
+                        Console.WriteLine("hit exception during update: " + exception.ToTypeMessageString()); // LUCENENET specific - use ToTypeMessageString to mimic Java behavior
+                        exception.PrintStackTrace(Console.Out);
                     }
 
                     try

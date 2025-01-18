@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: got expected exc:");
-                        Console.WriteLine(e.StackTrace);
+                        e.PrintStackTrace(Console.Out);
                     }
                     // Make sure exc message includes a path=
                     Assert.IsTrue(e.Message.IndexOf("path=\"", StringComparison.Ordinal) != -1, "got exc message: " + e.Message);

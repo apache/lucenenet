@@ -165,7 +165,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /**
-         * Create <see cref="Lookup"/> instance and populate it. 
+         * Create <see cref="Lookup"/> instance and populate it.
          */
         internal Lookup BuildLookup(Type cls, Input[] input)
         {
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /**
-         * Run the actual benchmark. 
+         * Run the actual benchmark.
          */
         public void RunPerformanceTest(int minPrefixLen, int maxPrefixLen,
             int num, bool onlyMorePopular)
@@ -290,7 +290,7 @@ namespace Lucene.Net.Search.Suggest
          */
         private BenchmarkResult Measure(Func<int> callable)
         {
-            double NANOS_PER_MS = 1000000;
+            const double NANOS_PER_MS = 1000000;
 
             try
             {
@@ -305,9 +305,8 @@ namespace Lucene.Net.Search.Suggest
             }
             catch (Exception e) when (e.IsException())
             {
-                e.printStackTrace();
+                e.PrintStackTrace();
                 throw RuntimeException.Create(e);
-
             }
         }
 

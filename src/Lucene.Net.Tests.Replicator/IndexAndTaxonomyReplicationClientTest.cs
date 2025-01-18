@@ -445,7 +445,8 @@ namespace Lucene.Net.Replicator
                     {
                         if (Verbose)
                         {
-                            Console.WriteLine("hit exception during update: " + exception);
+                            Console.WriteLine("hit exception during update: " + exception.ToTypeMessageString()); // LUCENENET specific - use ToTypeMessageString to mimic Java behavior
+                            exception.PrintStackTrace(Console.Out);
                         }
 
                         // test that the index can be read and also some basic statistics

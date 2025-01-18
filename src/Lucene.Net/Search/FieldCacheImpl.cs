@@ -427,7 +427,7 @@ namespace Lucene.Net.Search
                             // OK this insanity involves our entry
                             infoStream.WriteLine("WARNING: new FieldCache insanity created\nDetails: " + insanity.ToString());
                             infoStream.WriteLine("\nStack:\n");
-                            infoStream.WriteLine(new Exception().StackTrace);
+                            StackTraceHelper.PrintCurrentStackTrace(infoStream);
                             break;
                         }
                     }
@@ -486,7 +486,7 @@ namespace Lucene.Net.Search
         // LUCENENET specific - Added generic parameter to eliminate casting/boxing
         internal class CacheKey<TCustom> : CacheKey
         {
-            internal readonly TCustom custom; // which custom comparer or parser 
+            internal readonly TCustom custom; // which custom comparer or parser
 
             /// <summary>
             /// Creates one of these objects for a custom comparer/parser. </summary>
@@ -775,7 +775,7 @@ namespace Lucene.Net.Search
         /// Checks the internal cache for an appropriate entry, and if none is
         /// found, reads the terms in <paramref name="field"/> as <see cref="short"/>s and returns an array
         /// of size <c>reader.MaxDoc</c> of the value each document
-        /// has in the given field. 
+        /// has in the given field.
         /// <para/>
         /// NOTE: this was getShorts() in Lucene
         /// </summary>
@@ -795,7 +795,7 @@ namespace Lucene.Net.Search
         /// Checks the internal cache for an appropriate entry, and if none is found,
         /// reads the terms in <paramref name="field"/> as shorts and returns an array of
         /// size <c>reader.MaxDoc</c> of the value each document has in the
-        /// given field. 
+        /// given field.
         /// <para/>
         /// NOTE: this was getShorts() in Lucene
         /// </summary>

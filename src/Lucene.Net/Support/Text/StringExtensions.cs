@@ -48,5 +48,26 @@ namespace Lucene.Net.Support.Text
             }
             return false;
         }
+
+#if !FEATURE_STRING_CONTAINS_STRINGCOMPARISON
+        /// <summary>
+        /// Returns <c>true</c> if <paramref name="input"/> contains <paramref name="value"/>
+        /// using the specified <paramref name="comparison"/>.
+        /// </summary>
+        /// <param name="input">The string in which to seek <paramref name="value"/>.</param>
+        /// <param name="value">The string to check for.</param>
+        /// <param name="comparison">The <see cref="StringComparison"/> to use.</param>
+        /// <returns><c>true</c> if <paramref name="value"/> is found, otherwise; <c>false</c>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Contains(this string input, string value, StringComparison comparison)
+        {
+            if (input is null)
+                throw new ArgumentNullException(nameof(input));
+            if (value is null)
+                throw new ArgumentNullException(nameof(value));
+
+            return input.AsSpan().Contains(value.AsSpan(), comparison);
+        }
+#endif
     }
 }

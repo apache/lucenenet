@@ -736,7 +736,7 @@ namespace Lucene.Net.Search
                 catch (Exception t) when (t.IsThrowable())
                 {
                     Console.WriteLine("FAILED:");
-                    Console.Out.WriteLine(t.StackTrace);
+                    t.PrintStackTrace(Console.Out);
                     throw RuntimeException.Create(t);
                 }
             }

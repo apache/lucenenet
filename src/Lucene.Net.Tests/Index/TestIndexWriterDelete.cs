@@ -5,6 +5,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -722,14 +723,13 @@ namespace Lucene.Net.Index
                     {
                         if (Verbose)
                         {
-                            Console.WriteLine("  hit IOException: " + e);
-                            Console.WriteLine(e.StackTrace);
+                            Console.WriteLine("  hit IOException: " + e.ToTypeMessageString()); // LUCENENET specific: ToTypeMessageString() mimics Java behavior
+                            e.PrintStackTrace(Console.Out);
                         }
                         err = e;
                         if (1 == x)
                         {
-                            Console.WriteLine(e.ToString());
-                            Console.Write(e.StackTrace);
+                            e.PrintStackTrace();
                             Assert.Fail(testName + " hit IOException after disk space was freed up");
                         }
                     }
@@ -771,8 +771,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception e) when (e.IsIOException())
                     {
-                        Console.WriteLine(e.ToString());
-                        Console.Write(e.StackTrace);
+                        e.PrintStackTrace();
                         Assert.Fail(testName + ":exception when creating IndexReader after disk full during close: " + e);
                     }
 
@@ -784,8 +783,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception e) when (e.IsIOException())
                     {
-                        Console.WriteLine(e.ToString());
-                        Console.Write(e.StackTrace);
+                        e.PrintStackTrace();
                         Assert.Fail(testName + ": exception when searching: " + e);
                     }
                     int result2 = hits.Length;
@@ -812,8 +810,7 @@ namespace Lucene.Net.Index
                         // all docs:
                         if (result2 != START_COUNT && result2 != END_COUNT)
                         {
-                            Console.WriteLine(err.ToString());
-                            Console.Write(err.StackTrace);
+                            err.PrintStackTrace();
                             Assert.Fail(testName + ": method did throw exception but hits.Length for search on term 'aaa' is " + result2 + " instead of expected " + START_COUNT + " or " + END_COUNT);
                         }
                     }
@@ -989,7 +986,7 @@ namespace Lucene.Net.Index
                         if (Verbose)
                         {
                             Console.WriteLine("TEST: mock failure: now fail");
-                            Console.WriteLine(Environment.StackTrace);
+                            StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                         }
                         throw new IOException("fail after applyDeletes");
                     }
@@ -1003,7 +1000,7 @@ namespace Lucene.Net.Index
                         if (Verbose)
                         {
                             Console.WriteLine("TEST: mock failure: saw applyDeletes");
-                            Console.WriteLine(Environment.StackTrace);
+                            StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                         }
                         sawMaybe = true;
                     }
@@ -1048,7 +1045,7 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: got expected exc:");
-                        Console.WriteLine(io.StackTrace);
+                        io.PrintStackTrace(Console.Out);
                     }
                     break;
                 }

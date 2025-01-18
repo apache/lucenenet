@@ -173,9 +173,10 @@ namespace Lucene.Net.Search
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: reopen thread hit exc");
-                        Console.Out.Write(t.StackTrace);
+                        t.PrintStackTrace(Console.Out);
                     }
-                    outerInstance.m_failed.Value = (true);
+
+                    outerInstance.m_failed.Value = true;
                     throw RuntimeException.Create(t);
                 }
             }
@@ -400,7 +401,7 @@ namespace Lucene.Net.Search
                     if (Verbose)
                     {
                         Console.WriteLine("FAIL: unexpected exc");
-                        Console.Out.Write(e.StackTrace);
+                        e.PrintStackTrace(Console.Out);
                     }
                     exc[0] = e;
                     // use success as the barrier here to make sure we see the write
