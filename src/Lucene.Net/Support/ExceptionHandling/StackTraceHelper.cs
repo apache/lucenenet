@@ -36,7 +36,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static bool DoesStackTraceContainMethod(string methodName)
         {
-            if (methodName == null)
+            if (methodName is null)
             {
                 throw new ArgumentNullException(nameof(methodName));
             }
@@ -64,11 +64,11 @@ namespace Lucene.Net.Util
         /// </summary>
         public static bool DoesStackTraceContainMethod(string className, string methodName)
         {
-            if (className == null)
+            if (className is null)
             {
                 throw new ArgumentNullException(nameof(className));
             }
-            if (methodName == null)
+            if (methodName is null)
             {
                 throw new ArgumentNullException(nameof(methodName));
             }
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.NoInlining)] // Top frame is skipped, so we don't want to inline
         public static void PrintCurrentStackTrace(TextWriter destination)
         {
-            if (destination == null)
+            if (destination is null)
             {
                 throw new ArgumentNullException(nameof(destination));
             }
