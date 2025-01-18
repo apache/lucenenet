@@ -7,6 +7,10 @@ using System.IO;
 using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 
+#if !FEATURE_STRING_CONTAINS_STRINGCOMPARISON
+using Lucene.Net.Support.Text;
+#endif
+
 namespace Lucene.Net.Support.ExceptionHandling
 {
     /*
@@ -405,7 +409,7 @@ namespace Lucene.Net.Support.ExceptionHandling
                 e.PrintStackTrace(sw);
             }
 
-            var str = sw.ToString().AsSpan();
+            var str = sw.ToString();
 
             Assert.IsTrue(str.Contains(typeof(MyException).FullName!, StringComparison.Ordinal));
             Assert.IsTrue(str.Contains("Test exception", StringComparison.Ordinal));
@@ -435,7 +439,7 @@ namespace Lucene.Net.Support.ExceptionHandling
                 e.PrintStackTrace(sw);
             }
 
-            var str = sw.ToString().AsSpan();
+            var str = sw.ToString();
 
             Assert.IsTrue(str.Contains(typeof(MyException).FullName!, StringComparison.Ordinal));
             Assert.IsTrue(str.Contains("Test exception", StringComparison.Ordinal));
