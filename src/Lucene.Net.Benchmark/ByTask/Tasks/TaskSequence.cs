@@ -33,11 +33,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </summary>
     public class TaskSequence : PerfTask
     {
-        // LUCENENET specific - changed from a mutable static field to a constant.
-        // While the original Java code uses a mutable static field, it is only
-        // intended to be used as a sentinel value, so we are changing it to a
-        // constant to prevent accidental modification.
-        public const int REPEAT_EXHAUST = -2;
+        /// <summary>
+        /// A sentinel value to be used with <see cref="SetRepetitions"/> that indicates
+        /// that it should run until exhaustion.
+        /// </summary>
+        /// <remarks>
+        /// These docs are LUCENENET specific. In the original Java code, this value is
+        /// mutable, so we are leaving this as mutable to match. Note, however, that
+        /// mutating this during execution could result in unexpected behavior.
+        /// </remarks>
+        public static int REPEAT_EXHAUST = -2;
+
         private IList<PerfTask> tasks;
         private int repetitions = 1;
         private readonly bool parallel;
@@ -124,6 +130,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// Sets the repetitions.
         /// </summary>
         /// <param name="repetitions">The repetitions to set.</param>
+        /// <seealso cref="REPEAT_EXHAUST"/>
         public virtual void SetRepetitions(int repetitions)
         {
             fixedTime = false;
