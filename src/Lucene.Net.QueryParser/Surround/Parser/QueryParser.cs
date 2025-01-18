@@ -69,10 +69,10 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /* CHECKME: These should be the same as for the tokenizer. How? */
         internal const char truncator = '*';
         internal const char anyChar = '?';
-        // internal const char quote = '"'; /* LUCENENET: not used */
+        // internal const char quote = '"'; // LUCENENET: not used
         internal const char fieldOperator = ':';
-        // internal const char comma = ','; /* LUCENENET: not used; prefix list separator */
-        // internal const char carat = '^'; /* LUCENENET: not used; weight operator */
+        // internal const char comma = ','; /* prefix list separator */ // LUCENENET: not used
+        // internal const char carat = '^'; /* weight operator */ // LUCENENET: not used
 
         public static SrndQuery Parse(string query)
         {
