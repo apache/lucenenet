@@ -97,7 +97,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public string Namespace
         {
-            get { return null; } // LUCENENET: Force this type to be the
+            get { return null; } // LUCENENET: Force this type to be the default
         }
 
         /// <summary>
