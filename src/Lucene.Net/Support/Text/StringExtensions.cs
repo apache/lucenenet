@@ -66,7 +66,7 @@ namespace Lucene.Net.Support.Text
             if (value is null)
                 throw new ArgumentNullException(nameof(value));
 
-            return input.IndexOf(value, comparison) >= 0;
+            return input.AsSpan().Contains(value.AsSpan(), comparison);
         }
 #endif
     }
