@@ -7,6 +7,10 @@ using System.IO;
 using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 
+#if !FEATURE_STRING_CONTAINS_STRINGCOMPARISON
+using Lucene.Net.Support.Text;
+#endif
+
 namespace Lucene.Net.Support.ExceptionHandling
 {
     /*
