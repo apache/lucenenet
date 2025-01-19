@@ -210,7 +210,7 @@ namespace Lucene.Net.Search.Payloads
         {
             private readonly PayloadNearQuery outerInstance;
 
-            internal Spans spans;
+            internal readonly Spans spans; // LUCENENET: marked readonly
             protected internal float m_payloadScore;
             internal int payloadsSeen;
 
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Payloads
             }
 
             // TODO change the whole spans api to use bytesRef, or nuke spans
-            internal BytesRef scratch = new BytesRef();
+            internal readonly BytesRef scratch = new BytesRef(); // LUCENENET: marked readonly
 
             /// <summary>
             /// By default, uses the <see cref="PayloadFunction"/> to score the payloads, but

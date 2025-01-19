@@ -290,7 +290,7 @@ namespace Lucene.Net.Search
 
             internal readonly FieldCacheImpl wrapper;
 
-            internal ConditionalWeakTable<object, IDictionary<TKey, object>> readerCache = new ConditionalWeakTable<object, IDictionary<TKey, object>>();
+            internal readonly ConditionalWeakTable<object, IDictionary<TKey, object>> readerCache = new ConditionalWeakTable<object, IDictionary<TKey, object>>(); // LUCENENET: marked readonly
 
             protected abstract TValue CreateValue(AtomicReader reader, TKey key, bool setDocsWithField);
 

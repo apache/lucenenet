@@ -191,7 +191,7 @@ namespace Lucene.Net.Codecs.Lucene40
         internal int lastOffset = 0;
         internal int lastPayloadLength = -1; // force first payload to write its length
 
-        internal BytesRef scratch = new BytesRef(); // used only by this optimized flush below
+        internal readonly BytesRef scratch = new BytesRef(); // used only by this optimized flush below // LUCENENET: marked readonly
 
         public override void AddProx(int numProx, DataInput positions, DataInput offsets)
         {

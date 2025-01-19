@@ -138,7 +138,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 // NOTE: not private so we don't pay access check at runtime:
                 internal int docCount;
-                internal RAMOutputStream buffer = new RAMOutputStream();
+                internal readonly RAMOutputStream buffer = new RAMOutputStream(); // LUCENENET: marked readonly
 
                 private int lastOffsetLength;
                 private int lastOffset;

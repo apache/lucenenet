@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
         /// conjunction with <see cref="Message(String)"/>, like that:
         ///
         /// <code>
-        /// if (IsVerbose) 
+        /// if (IsVerbose)
         /// {
         ///     Message(&quot;your message&quot;);
         /// }
@@ -571,8 +571,8 @@ namespace Lucene.Net.Index
         {
             private readonly ConcurrentMergeScheduler outerInstance;
 
-            internal IndexWriter tWriter;
-            internal MergePolicy.OneMerge startMerge;
+            internal readonly IndexWriter tWriter; // LUCENENET: marked readonly
+            internal readonly MergePolicy.OneMerge startMerge; // LUCENENET: marked readonly
             internal MergePolicy.OneMerge runningMerge;
             private volatile bool done;
 
@@ -616,7 +616,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Return the current merge, or <c>null</c> if this 
+            /// Return the current merge, or <c>null</c> if this
             /// <see cref="MergeThread"/> is done.
             /// </summary>
             public virtual MergePolicy.OneMerge CurrentMerge

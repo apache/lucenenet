@@ -34,11 +34,11 @@ namespace Lucene.Net.Search.VectorHighlight
 
         // fieldMatch==true,  Map<fieldName,QueryPhraseMap>
         // fieldMatch==false, Map<null,QueryPhraseMap>
-        internal IDictionary<string, QueryPhraseMap> rootMaps = new JCG.Dictionary<string, QueryPhraseMap>();
+        internal readonly IDictionary<string, QueryPhraseMap> rootMaps = new JCG.Dictionary<string, QueryPhraseMap>(); // LUCENENET: marked readonly
 
         // fieldMatch==true,  Map<fieldName,setOfTermsInQueries>
         // fieldMatch==false, Map<null,setOfTermsInQueries>
-        internal IDictionary<string, ISet<string>> termSetMap = new JCG.Dictionary<string, ISet<string>>();
+        internal readonly IDictionary<string, ISet<string>> termSetMap = new JCG.Dictionary<string, ISet<string>>(); // LUCENENET: marked readonly
 
         internal int termOrPhraseNumber; // used for colored tag support
 
@@ -428,8 +428,8 @@ namespace Lucene.Net.Search.VectorHighlight
             internal int slop;   // valid if terminal == true and phraseHighlight == true
             internal float boost;  // valid if terminal == true
             internal int termOrPhraseNumber;   // valid if terminal == true
-            internal FieldQuery fieldQuery;
-            internal IDictionary<string, QueryPhraseMap> subMap = new Dictionary<string, QueryPhraseMap>();
+            internal readonly FieldQuery fieldQuery; // LUCENENET: marked readonly
+            internal readonly IDictionary<string, QueryPhraseMap> subMap = new Dictionary<string, QueryPhraseMap>(); // LUCENENET: marked readonly
 
             public QueryPhraseMap(FieldQuery fieldQuery)
             {

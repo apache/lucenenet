@@ -379,8 +379,8 @@ namespace Lucene.Net.Codecs.Lucene42
         internal sealed class SortedSetEnumerator : IEnumerator<BytesRef>
         {
             internal byte[] buffer = new byte[10];
-            internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
-            internal BytesRef @ref = new BytesRef();
+            internal readonly ByteArrayDataOutput @out = new ByteArrayDataOutput(); // LUCENENET: marked readonly
+            internal readonly BytesRef @ref = new BytesRef(); // LUCENENET: marked readonly
 
             internal readonly IEnumerator<long?> counts;
             internal readonly IEnumerator<long?> ords;

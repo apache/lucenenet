@@ -22,7 +22,7 @@ namespace Lucene.Net.Util.Packed
      */
 
     /// <summary>
-    /// Common functionality shared by <see cref="AppendingDeltaPackedInt64Buffer"/> and <see cref="MonotonicAppendingInt64Buffer"/>. 
+    /// Common functionality shared by <see cref="AppendingDeltaPackedInt64Buffer"/> and <see cref="MonotonicAppendingInt64Buffer"/>.
     /// <para/>
     /// NOTE: This was AbstractAppendingLongBuffer in Lucene
     /// </summary>
@@ -40,7 +40,7 @@ namespace Lucene.Net.Util.Packed
         internal int valuesOff;
         internal long[] pending;
         internal int pendingOff;
-        internal float acceptableOverheadRatio;
+        internal readonly float acceptableOverheadRatio; // LUCENENET: marked readonly
 
         private protected AbstractAppendingInt64Buffer(int initialBlockCount, int pageSize, float acceptableOverheadRatio) // LUCENENET: Changed from internal to private protected
         {
@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Packed
         internal abstract int Get(int block, int element, long[] arr, int off, int len);
 
         /// <summary>
-        /// Return an iterator over the values of this buffer. 
+        /// Return an iterator over the values of this buffer.
         /// </summary>
         public virtual Iterator GetIterator()
         {
@@ -220,11 +220,11 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual long BaseRamBytesUsed()
         {
-            return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
-                + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF 
-                + 2 * RamUsageEstimator.NUM_BYTES_INT32 
-                + 2 * RamUsageEstimator.NUM_BYTES_INT32 
-                + RamUsageEstimator.NUM_BYTES_SINGLE 
+            return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
+                + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF
+                + 2 * RamUsageEstimator.NUM_BYTES_INT32
+                + 2 * RamUsageEstimator.NUM_BYTES_INT32
+                + RamUsageEstimator.NUM_BYTES_SINGLE
                 + RamUsageEstimator.NUM_BYTES_INT64; // valuesBytes -  acceptable overhead -  pageShift, pageMask -  the 2 offsets -  the 2 arrays
         }
 

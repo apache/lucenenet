@@ -150,8 +150,8 @@ namespace Lucene.Net.Documents
         {
             private readonly LazyDocument outerInstance;
 
-            internal string name;
-            internal int fieldNum;
+            internal readonly string name; // LUCENENET: marked readonly
+            internal readonly int fieldNum; // LUCENENET: marked readonly
             internal volatile IIndexableField realValue = null;
 
             internal LazyField(LazyDocument outerInstance, string name, int fieldNum)

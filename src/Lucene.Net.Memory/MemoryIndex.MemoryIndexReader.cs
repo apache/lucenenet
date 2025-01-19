@@ -409,7 +409,7 @@ namespace Lucene.Net.Index.Memory
                 internal bool hasNext;
                 internal IBits liveDocs;
                 internal int doc = -1;
-                internal Int32BlockPool.SliceReader sliceReader;
+                internal readonly Int32BlockPool.SliceReader sliceReader; // LUCENENET: marked readonly
                 internal int freq;
                 internal int startOffset;
                 internal int endOffset;

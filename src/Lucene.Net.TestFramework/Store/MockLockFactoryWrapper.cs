@@ -23,8 +23,8 @@ namespace Lucene.Net.Store
     /// </summary>
     public class MockLockFactoryWrapper : LockFactory
     {
-        internal MockDirectoryWrapper dir;
-        internal LockFactory @delegate;
+        internal readonly MockDirectoryWrapper dir; // LUCENENET: marked readonly
+        internal readonly LockFactory @delegate; // LUCENENET: marked readonly
 
         public MockLockFactoryWrapper(MockDirectoryWrapper dir, LockFactory @delegate)
         {
@@ -58,8 +58,8 @@ namespace Lucene.Net.Store
         {
             private readonly MockLockFactoryWrapper outerInstance;
 
-            internal Lock delegateLock;
-            internal string name;
+            internal readonly Lock delegateLock; // LUCENENET: marked readonly
+            internal readonly string name; // LUCENENET: marked readonly
 
             internal MockLock(MockLockFactoryWrapper outerInstance, Lock @delegate, string name)
             {

@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
         /// <summary>Terms, in sorted order:</summary>
         internal readonly PrefixCodedTerms terms;
 
-        internal int termCount; // just for debugging
+        internal readonly int termCount; // just for debugging // LUCENENET: marked readonly
 
         /// <summary>Parallel array of deleted query, and the docIDUpto for each</summary>
         internal readonly Query[] queries;

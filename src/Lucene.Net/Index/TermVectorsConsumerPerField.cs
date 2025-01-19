@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
         /// Called once per field per document if term vectors
         /// are enabled, to write the vectors to
         /// RAMOutputStream, which is then quickly flushed to
-        /// the real term vectors files in the Directory. 	  
+        /// the real term vectors files in the Directory.
         /// </summary>
         internal override void Finish()
         {
@@ -330,9 +330,9 @@ namespace Lucene.Net.Index
                 lastPositions = new int[size];
             }
 
-            internal int[] freqs; // How many times this term occurred in the current doc
-            internal int[] lastOffsets; // Last offset we saw
-            internal int[] lastPositions; // Last position where this term occurred
+            internal readonly int[] freqs; // How many times this term occurred in the current doc // LUCENENET: marked readonly
+            internal readonly int[] lastOffsets; // Last offset we saw // LUCENENET: marked readonly
+            internal readonly int[] lastPositions; // Last position where this term occurred // LUCENENET: marked readonly
 
             internal override ParallelPostingsArray NewInstance(int size)
             {

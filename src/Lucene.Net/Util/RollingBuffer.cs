@@ -72,7 +72,7 @@ namespace Lucene.Net.Util
         // How many valid Position are held in the
         // array:
         private int count;
-        private IRollingBufferItemFactory<T> itemFactory;
+        private readonly IRollingBufferItemFactory<T> itemFactory; // LUCENENET: marked readonly
 
         protected RollingBuffer(IRollingBufferItemFactory<T> itemFactory)
         {

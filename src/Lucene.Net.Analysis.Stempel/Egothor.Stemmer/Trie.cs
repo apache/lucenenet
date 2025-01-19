@@ -71,9 +71,9 @@ namespace Egothor.Stemmer
     /// </summary>
     public class Trie
     {
-        internal IList<Row> rows = new JCG.List<Row>();
-        internal IList<string> cmds = new JCG.List<string>();
-        internal int root;
+        internal readonly IList<Row> rows = new JCG.List<Row>(); // LUCENENET: marked readonly
+        internal readonly IList<string> cmds = new JCG.List<string>(); // LUCENENET: marked readonly
+        internal readonly int root; // LUCENENET: marked readonly
 
         internal bool forward = false;
 

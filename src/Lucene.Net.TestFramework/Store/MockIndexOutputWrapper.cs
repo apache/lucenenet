@@ -37,7 +37,7 @@ namespace Lucene.Net.Store
         private bool first = true;
         internal readonly string name;
 
-        internal byte[] singleByte = new byte[1];
+        internal readonly byte[] singleByte = new byte[1]; // LUCENENET: marked readonly
 
         /// <summary>
         /// Construct an empty output buffer. </summary>

@@ -80,7 +80,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
             }
 
-            internal BytesRef termBytes = new BytesRef();
+            internal readonly BytesRef termBytes = new BytesRef(); // LUCENENET: marked readonly
             internal Cell? nextCell;//see getLeafDocs
 
             /// <remarks>This is the primary algorithm; recursive.  Returns null if finds none.</remarks>

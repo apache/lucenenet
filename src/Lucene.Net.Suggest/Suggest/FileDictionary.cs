@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Suggest
 
     /// <summary>
     /// Dictionary represented by a text file.
-    /// 
+    ///
     /// <para>Format allowed: 1 entry per line:</para>
     /// <para>An entry can be: </para>
     /// <list type="number">
@@ -38,12 +38,12 @@ namespace Lucene.Net.Search.Suggest
     /// </list>
     /// where the default <see cref="fieldDelimiter"/> is <see cref="DEFAULT_FIELD_DELIMITER"/> (a tab)
     /// <para>
-    /// <b>NOTE:</b> 
+    /// <b>NOTE:</b>
     /// <list type="number">
     /// <item><description>In order to have payload enabled, the first entry has to have a payload</description></item>
     /// <item><description>If the weight for an entry is not specified then a value of 1 is used</description></item>
     /// <item><description>A payload cannot be specified without having the weight specified for an entry</description></item>
-    /// <item><description>If the payload for an entry is not specified (assuming payload is enabled) 
+    /// <item><description>If the payload for an entry is not specified (assuming payload is enabled)
     ///  then an empty payload is returned</description></item>
     /// <item><description>An entry cannot have more than two <see cref="fieldDelimiter"/>s</description></item>
     /// </list>
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a dictionary based on an inputstream.
-        /// Using <see cref="DEFAULT_FIELD_DELIMITER"/> as the 
+        /// Using <see cref="DEFAULT_FIELD_DELIMITER"/> as the
         /// field seperator in a line.
         /// <para>
         /// NOTE: content is treated as UTF-8
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a dictionary based on a reader.
-        /// Using <see cref="DEFAULT_FIELD_DELIMITER"/> as the 
+        /// Using <see cref="DEFAULT_FIELD_DELIMITER"/> as the
         /// field seperator in a line.
         /// </summary>
         public FileDictionary(TextReader reader)
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Creates a dictionary based on a reader. 
+        /// Creates a dictionary based on a reader.
         /// Using <paramref name="fieldDelimiter"/> to seperate out the
         /// fields in a line.
         /// </summary>
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search.Suggest
             internal readonly BytesRef spare = new BytesRef();
             internal BytesRef curPayload = new BytesRef();
             internal bool isFirstLine = true;
-            internal bool hasPayloads = false;
+            internal readonly bool hasPayloads /*= false*/; // LUCENENET: marked readonly
             private BytesRef current;
 
             internal FileEnumerator(FileDictionary outerInstance)

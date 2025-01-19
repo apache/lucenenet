@@ -36,36 +36,36 @@ namespace Lucene.Net.Index.Memory
             internal readonly SliceByteStartArray sliceArray;
 
             /// <summary>
-            /// Terms sorted ascending by term text; computed on demand 
+            /// Terms sorted ascending by term text; computed on demand
             /// </summary>
             internal int[] sortedTerms;
 
             /// <summary>
-            /// Number of added tokens for this field 
+            /// Number of added tokens for this field
             /// </summary>
             internal readonly int numTokens;
 
             /// <summary>
-            /// Number of overlapping tokens for this field 
+            /// Number of overlapping tokens for this field
             /// </summary>
             internal readonly int numOverlapTokens;
 
             /// <summary>
-            /// Boost factor for hits for this field 
+            /// Boost factor for hits for this field
             /// </summary>
             internal readonly float boost;
 
             internal readonly long sumTotalTermFreq;
 
             /// <summary>
-            /// the last position encountered in this field for multi field support 
+            /// the last position encountered in this field for multi field support
             /// </summary>
-            internal int lastPosition;
+            internal readonly int lastPosition; // LUCENENET: marked readonly
 
             /// <summary>
-            /// the last offset encountered in this field for multi field support 
+            /// the last offset encountered in this field for multi field support
             /// </summary>
-            internal int lastOffset;
+            internal readonly int lastOffset; // LUCENENET: marked readonly
 
             public Info(BytesRefHash terms, SliceByteStartArray sliceArray, int numTokens, int numOverlapTokens, float boost, int lastPosition, int lastOffset, long sumTotalTermFreq)
             {

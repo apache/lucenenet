@@ -121,6 +121,6 @@ namespace Lucene.Net.Analysis
             corrections[off] = cumulativeDiff;
         }
 
-        internal JCG.SortedDictionary<int, int> corrections = new JCG.SortedDictionary<int, int>();
+        internal readonly JCG.SortedDictionary<int, int> corrections = new JCG.SortedDictionary<int, int>(); // LUCENENET: marked readonly
     }
 }

@@ -27,13 +27,13 @@ namespace Lucene.Net.Analysis.Payloads
     /// </summary>
     public class NumericPayloadTokenFilter : TokenFilter
     {
-        private string typeMatch;
-        private BytesRef thePayload;
+        private readonly string typeMatch; // LUCENENET: marked readonly
+        private readonly BytesRef thePayload; // LUCENENET: marked readonly
 
         private readonly IPayloadAttribute payloadAtt;
         private readonly ITypeAttribute typeAtt;
 
-        public NumericPayloadTokenFilter(TokenStream input, float payload, string typeMatch) 
+        public NumericPayloadTokenFilter(TokenStream input, float payload, string typeMatch)
             : base(input)
         {
             if (typeMatch is null)

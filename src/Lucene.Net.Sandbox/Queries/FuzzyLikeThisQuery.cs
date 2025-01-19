@@ -122,10 +122,10 @@ namespace Lucene.Net.Sandbox.Queries
 
         internal class FieldVals
         {
-            internal string queryString;
-            internal string fieldName;
-            internal float minSimilarity;
-            internal int prefixLength;
+            internal readonly string queryString; // LUCENENET: marked readonly
+            internal readonly string fieldName; // LUCENENET: marked readonly
+            internal readonly float minSimilarity; // LUCENENET: marked readonly
+            internal readonly int prefixLength; // LUCENENET: marked readonly
             public FieldVals(string name, float similarity, int length, string queryString)
             {
                 fieldName = name;

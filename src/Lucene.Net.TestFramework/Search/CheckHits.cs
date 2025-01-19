@@ -485,10 +485,10 @@ namespace Lucene.Net.Search
     /// <seealso cref="CheckHits.VerifyExplanation(string, int, float, bool, Explanation)"/>
     public class ExplanationAsserter : ICollector
     {
-        internal Query q;
-        internal IndexSearcher s;
-        internal string d;
-        internal bool deep;
+        internal readonly Query q; // LUCENENET: marked readonly
+        internal readonly IndexSearcher s; // LUCENENET: marked readonly
+        internal readonly string d; // LUCENENET: marked readonly
+        internal readonly bool deep; // LUCENENET: marked readonly
 
         internal Scorer scorer;
         internal int @base = 0;

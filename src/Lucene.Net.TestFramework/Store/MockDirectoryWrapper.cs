@@ -102,7 +102,7 @@ namespace Lucene.Net.Store
 
         internal double randomIOExceptionRate;
         internal double randomIOExceptionRateOnOpen;
-        internal Random randomState;
+        internal readonly Random randomState; // LUCENENET: marked readonly
         internal bool noDeleteOpenFile = true;
         internal bool assertNoDeleteOpenFile = false;
         internal bool preventDoubleWrite = true;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Store
         private ISet<string> unSyncedFiles;
         private ISet<string> createdFiles;
         private ISet<string> openFilesForWrite = new JCG.HashSet<string>(StringComparer.Ordinal);
-        internal ISet<string> openLocks = new ConcurrentHashSet<string>(StringComparer.Ordinal);
+        internal readonly ISet<string> openLocks = new ConcurrentHashSet<string>(StringComparer.Ordinal); // LUCENENET: marked readonly
         internal volatile bool crashed;
         private readonly ThrottledIndexOutput throttledOutput; // LUCENENET: marked readonly
         private Throttling throttling = Throttling.SOMETIMES;

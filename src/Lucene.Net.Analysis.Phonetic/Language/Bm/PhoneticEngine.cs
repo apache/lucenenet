@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
     /// </remarks>
     public class PhoneticEngine
     {
-        internal Regex WHITESPACE = new Regex("\\s+", RegexOptions.Compiled);
+        internal static readonly Regex WHITESPACE = new Regex("\\s+", RegexOptions.Compiled);  // LUCENENET: marked static readonly
 
         /// <summary>
         /// Utility for manipulating a set of phonemes as they are being built up. Not intended for use outside

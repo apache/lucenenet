@@ -25,14 +25,14 @@ namespace Lucene.Net.Search.Suggest.Tst
      */
 
     /// <summary>
-    /// Suggest implementation based on a 
+    /// Suggest implementation based on a
     /// <a href="http://en.wikipedia.org/wiki/Ternary_search_tree">Ternary Search Tree</a>
     /// </summary>
     /// <seealso cref="TSTAutocomplete"/>
     public class TSTLookup : Lookup
     {
         internal TernaryTreeNode root = new TernaryTreeNode();
-        internal TSTAutocomplete autocomplete = new TSTAutocomplete();
+        internal readonly TSTAutocomplete autocomplete = new TSTAutocomplete(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Number of entries the lookup was built with
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search.Suggest.Tst
             }
             return true;
         }
-       
+
         public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (contexts != null)

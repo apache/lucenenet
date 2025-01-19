@@ -27,10 +27,10 @@ namespace Lucene.Net.Search.Spell
     /// HighFrequencyDictionary: terms taken from the given field
     /// of a Lucene index, which appear in a number of documents
     /// above a given threshold.
-    /// 
+    ///
     /// Threshold is a value in [0..1] representing the minimum
     /// number of documents (of the total) where a term should appear.
-    /// 
+    ///
     /// Based on <see cref="LuceneDictionary"/>.
     /// </summary>
     public class HighFrequencyDictionary : IDictionary
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.Spell
         {
             internal readonly BytesRef spare = new BytesRef();
             internal readonly TermsEnum termsEnum;
-            internal int minNumDocs;
+            internal readonly int minNumDocs; // LUCENENET: marked readonly
             internal long freq;
             private BytesRef current;
 

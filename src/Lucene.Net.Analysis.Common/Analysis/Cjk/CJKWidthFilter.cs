@@ -35,13 +35,13 @@ namespace Lucene.Net.Analysis.Cjk
     /// </summary>
     public sealed class CJKWidthFilter : TokenFilter
     {
-        private ICharTermAttribute termAtt;
+        private readonly ICharTermAttribute termAtt; // LUCENENET: marked readonly
 
         /// <summary>
-        /// halfwidth kana mappings: 0xFF65-0xFF9D 
+        /// halfwidth kana mappings: 0xFF65-0xFF9D
         /// <para/>
         /// note: 0xFF9C and 0xFF9D are only mapped to 0x3099 and 0x309A
-        /// as a fallback when they cannot properly combine with a preceding 
+        /// as a fallback when they cannot properly combine with a preceding
         /// character into a composed form.
         /// </summary>
         private static readonly char[] KANA_NORM = new char[] {

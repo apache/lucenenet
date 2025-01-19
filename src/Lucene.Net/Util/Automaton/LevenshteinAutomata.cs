@@ -48,9 +48,9 @@ namespace Lucene.Net.Util.Automaton
         /* the ranges outside of alphabet */
         internal readonly int[] rangeLower;
         internal readonly int[] rangeUpper;
-        internal int numRanges = 0;
+        internal readonly int numRanges /*= 0*/; // LUCENENET: marked readonly
 
-        internal ParametricDescription[] descriptions;
+        internal readonly ParametricDescription[] descriptions; // LUCENENET: marked readonly
 
         /// <summary>
         /// Create a new <see cref="LevenshteinAutomata"/> for some <paramref name="input"/> string.
