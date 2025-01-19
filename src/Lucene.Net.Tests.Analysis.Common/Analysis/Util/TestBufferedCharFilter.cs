@@ -714,19 +714,43 @@ namespace Lucene.Net.Analysis.Util
          * @tests java.io.BufferedReader#ready()
          */
         [Test, LuceneNetSpecific]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/1102")] // LUCENENET TODO: fix test
         public void Test_Ready()
         {
             // Test for method boolean java.io.BufferedReader.ready()
             try
             {
-                br = new BufferedCharFilter(new StringReader(testString));
+                // LUCENENET specific: use TestStringReaderCharFilterAdapter to adapt StringReader to be IsReady-aware.
+                br = new BufferedCharFilter(new TestStringReaderCharFilterAdapter(new StringReader(testString)));
                 assertTrue("IsReady returned false", br.IsReady);
             }
             catch (Exception e) when (e.IsIOException())
             {
                 fail("Exception during ready test" + e.toString());
             }
+        }
+
+        /// <summary>
+        /// LUCENENET specific class for <see cref="TestBufferedCharFilter.Test_Ready"/> to test that
+        /// <see cref="BufferedCharFilter.IsReady"/> cascades its call to the underlying
+        /// <see cref="CharFilter.IsReady"/>. Rationale: IsReady indicates that a call to
+        /// <see cref="TextReader.Read()"/> is guaranteed not to block. <see cref="StringReader"/> does not block,
+        /// because there is no I/O. Therefore, if the underlying reader is a <see cref="StringReader"/>, then
+        /// <see cref="CharFilter.IsReady"/> must return true.
+        /// </summary>
+        private class TestStringReaderCharFilterAdapter : CharFilter
+        {
+            public TestStringReaderCharFilterAdapter(StringReader input) // Enforces the input reader is a StringReader
+                : base(input)
+            {
+            }
+
+            protected override int Correct(int currentOff)
+                => throw new NotImplementedException();
+
+            public override int Read(char[] buffer, int index, int count)
+                => m_input.Read(buffer, index, count);
+
+            public override bool IsReady => true; // StringReaders do not block
         }
 
         /**
