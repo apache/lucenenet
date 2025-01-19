@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
         internal int doc; // current doc
         internal int position; // position in doc
         internal int count; // remaining pos in this doc
-        internal int offset; // position in phrase
+        internal readonly int offset; // position in phrase // LUCENENET: marked readonly
         internal readonly int ord; // unique across all PhrasePositions instances
         internal readonly DocsAndPositionsEnum postings; // stream of docs & positions
         internal PhrasePositions next; // used to make lists

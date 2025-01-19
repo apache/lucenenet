@@ -41,7 +41,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     ///     <item><term>doc.body.tokenized</term><description>specifies whether the body field should be tokenized (default = <b>doc.tokenized</b>).</description></item>
     ///     <item><term>doc.tokenized.norms</term><description>specifies whether norms should be stored in the index or not. (default <b>false</b>).</description></item>
     ///     <item><term>doc.body.tokenized.norms</term><description>
-    ///         specifies whether norms should be stored in the index for the body field. 
+    ///         specifies whether norms should be stored in the index for the body field.
     ///         This can be set to true, while <c>doc.tokenized.norms</c> is set to false, to allow norms storing just
     ///         for the body field. (default <b>true</b>).
     ///         </description></item>
@@ -80,7 +80,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             private readonly IDictionary<string, Field> numericFields;
             private readonly bool reuseFields;
             internal readonly Document doc;
-            internal DocData docData = new DocData();
+            internal readonly DocData docData = new DocData(); // LUCENENET: marked readonly
 
             public DocState(bool reuseFields, FieldType ft, FieldType bodyFt)
             {
@@ -275,7 +275,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             if (date is null)
             {
                 // just set to right now
-                date = DateTime.Now; 
+                date = DateTime.Now;
             }
 
             Field dateField = ds.GetNumericField(DATE_MSEC_FIELD, NumericType.INT64);

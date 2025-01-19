@@ -57,12 +57,12 @@ namespace Lucene.Net.Search.Highlight
 
         internal sealed class StoredTokenStream : TokenStream
         {
-            internal Token[] tokens;
+            internal readonly Token[] tokens; // LUCENENET: marked readonly
             internal int currentToken = 0;
-            internal ICharTermAttribute termAtt;
-            internal IOffsetAttribute offsetAtt;
-            internal IPositionIncrementAttribute posincAtt;
-            internal IPayloadAttribute payloadAtt;
+            internal readonly ICharTermAttribute termAtt; // LUCENENET: marked readonly
+            internal readonly IOffsetAttribute offsetAtt; // LUCENENET: marked readonly
+            internal readonly IPositionIncrementAttribute posincAtt; // LUCENENET: marked readonly
+            internal readonly IPayloadAttribute payloadAtt; // LUCENENET: marked readonly
 
             internal StoredTokenStream(Token[] tokens)
             {

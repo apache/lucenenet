@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private class CloneableTerm : DoubleBarrelLRUCache.CloneableKey
         {
-            internal Term term;
+            internal readonly Term term; // LUCENENET: marked readonly
 
             public CloneableTerm(Term t)
             {

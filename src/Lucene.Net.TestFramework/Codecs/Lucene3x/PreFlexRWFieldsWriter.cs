@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            skipListWriter = new PreFlexRWSkipListWriter(termsOut.skipInterval, termsOut.maxSkipLevels, totalNumDocs, freqOut, proxOut);
+            skipListWriter = new PreFlexRWSkipListWriter(TermInfosWriter.skipInterval, TermInfosWriter.maxSkipLevels, totalNumDocs, freqOut, proxOut);
             //System.out.println("\nw start seg=" + segment);
         }
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         throw new CorruptIndexException("docs out of order (" + docID + " <= " + lastDocID + " )");
                     }
 
-                    if ((++df % outerInstance.outerInstance.termsOut.skipInterval) == 0)
+                    if ((++df % TermInfosWriter.skipInterval) == 0)
                     {
                         outerInstance.outerInstance.skipListWriter.SetSkipData(lastDocID, outerInstance.storePayloads, lastPayloadLength);
                         outerInstance.outerInstance.skipListWriter.BufferSkip(df);

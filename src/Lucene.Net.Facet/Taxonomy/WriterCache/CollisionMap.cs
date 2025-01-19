@@ -25,7 +25,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// <summary>
     /// HashMap to store colliding labels. See <see cref="CompactLabelToOrdinal"/> for
     /// details.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class CollisionMap
@@ -37,10 +37,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal class Entry
         {
-            internal int offset;
-            internal int cid;
+            internal readonly int offset; // LUCENENET: marked readonly
+            internal readonly int cid; // LUCENENET: marked readonly
             internal Entry next;
-            internal int hash;
+            internal readonly int hash; // LUCENENET: marked readonly
 
             internal Entry(int offset, int cid, int h, Entry e)
             {
@@ -81,7 +81,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         public virtual int Count => this.size;
 
         /// <summary>
-        /// How many slots are allocated. 
+        /// How many slots are allocated.
         /// </summary>
         public virtual int Capacity => this.capacity;
 
@@ -115,8 +115,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Return the mapping, or <see cref="LabelToOrdinal.INVALID_ORDINAL"/> 
-        /// if the label isn't recognized. 
+        /// Return the mapping, or <see cref="LabelToOrdinal.INVALID_ORDINAL"/>
+        /// if the label isn't recognized.
         /// </summary>
         public virtual int Get(FacetLabel label, int hash)
         {
@@ -136,7 +136,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Add another mapping. 
+        /// Add another mapping.
         /// </summary>
         public virtual int AddLabel(FacetLabel label, int hash, int cid)
         {
@@ -183,7 +183,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Returns index for hash code h. 
+        /// Returns index for hash code h.
         /// </summary>
         internal static int IndexFor(int h, int length)
         {
@@ -217,7 +217,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             internal Entry next; // next entry to return
             internal int index; // current slot
-            internal Entry[] ents;
+            internal readonly Entry[] ents; // LUCENENET: marked readonly
 
             internal EntryEnumerator(Entry[] entries, int size)
             {

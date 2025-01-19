@@ -26,8 +26,8 @@ namespace Lucene.Net.Search.Highlight
         private const string DEFAULT_PRE_TAG = "<B>";
         private const string DEFAULT_POST_TAG = "</B>";
 
-        internal string preTag;
-        internal string postTag;
+        internal readonly string preTag; // LUCENENET: marked readonly
+        internal readonly string postTag; // LUCENENET: marked readonly
 
         public SimpleHTMLFormatter(string preTag, string postTag)
         {
@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Highlight
             this.postTag = postTag;
         }
 
-        /// <summary> 
+        /// <summary>
         /// Default constructor uses HTML: &lt;B&gt; tags to markup terms
         /// </summary>
         public SimpleHTMLFormatter() : this(DEFAULT_PRE_TAG, DEFAULT_POST_TAG) { }
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Highlight
 
             // Allocate StringBuilder with the right number of characters from the
             // beginning, to avoid char[] allocations in the middle of appends.
-            StringBuilder returnBuffer = new StringBuilder(preTag.Length + originalText.Length + postTag.Length);           
+            StringBuilder returnBuffer = new StringBuilder(preTag.Length + originalText.Length + postTag.Length);
             returnBuffer.Append(preTag);
             returnBuffer.Append(originalText);
             returnBuffer.Append(postTag);

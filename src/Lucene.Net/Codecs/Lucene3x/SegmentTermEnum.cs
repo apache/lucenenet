@@ -35,8 +35,8 @@ namespace Lucene.Net.Codecs.Lucene3x
     internal sealed class SegmentTermEnum : IDisposable // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
         private IndexInput input;
-        internal FieldInfos fieldInfos;
-        internal long size;
+        internal readonly FieldInfos fieldInfos; // LUCENENET: marked readonly
+        internal readonly long size; // LUCENENET: marked readonly
         internal long position = -1;
 
         // Changed strings to true utf8 with length-in-bytes not
@@ -59,10 +59,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly int format; // LUCENENET: marked readonly
         private readonly bool isIndex = false; // LUCENENET: marked readonly
         internal long indexPointer = 0;
-        internal int indexInterval; // LUCENENET NOTE: Changed from public field to internal (class is internal anyway)
-        internal int skipInterval;
+        internal readonly int indexInterval; // LUCENENET NOTE: Changed from public field to internal (class is internal anyway), marked readonly
+        internal readonly int skipInterval; // LUCENENET: marked readonly
         internal int newSuffixStart;
-        internal int maxSkipLevels;
+        internal readonly int maxSkipLevels; // LUCENENET: marked readonly
         private bool first = true;
 
         public SegmentTermEnum(IndexInput i, FieldInfos fis, bool isi)

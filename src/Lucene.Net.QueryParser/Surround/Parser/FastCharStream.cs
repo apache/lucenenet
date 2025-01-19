@@ -23,7 +23,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
      */
 
     /// <summary>
-    /// An efficient implementation of JavaCC's <see cref="ICharStream"/> interface.  
+    /// An efficient implementation of JavaCC's <see cref="ICharStream"/> interface.
     /// <para/>
     /// Note that
     /// this does not do line-number counting, but instead keeps track of the
@@ -40,10 +40,10 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         internal int tokenStart = 0; // offset in buffer
         internal int bufferStart = 0; // position in file of buffer
 
-        internal System.IO.TextReader input; // source of chars
+        internal readonly System.IO.TextReader input; // source of chars // LUCENENET: marked readonly
 
         /// <summary>
-        /// Constructs from a <see cref="System.IO.TextReader"/>. 
+        /// Constructs from a <see cref="System.IO.TextReader"/>.
         /// </summary>
         public FastCharStream(System.IO.TextReader r)
         {

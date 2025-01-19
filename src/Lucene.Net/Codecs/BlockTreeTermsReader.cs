@@ -557,7 +557,7 @@ namespace Lucene.Net.Codecs
         }
 
         internal readonly Outputs<BytesRef> fstOutputs = ByteSequenceOutputs.Singleton;
-        internal BytesRef NO_OUTPUT;
+        internal readonly BytesRef NO_OUTPUT; // LUCENENET: marked readonly
 
         /// <summary>
         /// BlockTree's implementation of <see cref="GetTerms(string)"/>. </summary>

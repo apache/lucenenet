@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 
         private string field;
         private SortFieldType type; // defaults to determining type dynamically
-        internal bool reverse = false; // defaults to natural order
+        internal readonly bool reverse /*= false*/; // defaults to natural order // LUCENENET: marked readonly
         private readonly FieldCache.IParser parser; // LUCENENET: marked readonly
 
         // Used for CUSTOM sort

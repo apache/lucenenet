@@ -254,7 +254,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 /// <summary>Current term stats + undecoded metadata (long[] &amp; byte[]).</summary>
                 internal FSTTermOutputs.TermData meta;
-                internal ByteArrayDataInput bytesReader;
+                internal readonly ByteArrayDataInput bytesReader; // LUCENENET: marked readonly
 
                 /// <summary>
                 /// Decodes metadata into customized term state. </summary>

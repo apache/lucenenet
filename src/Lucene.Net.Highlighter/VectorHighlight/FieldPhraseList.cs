@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <summary>
         /// List of non-overlapping <see cref="WeightedPhraseInfo"/> objects.
         /// </summary>
-        internal IList<WeightedPhraseInfo> phraseList = new JCG.List<WeightedPhraseInfo>();
+        internal readonly IList<WeightedPhraseInfo> phraseList = new JCG.List<WeightedPhraseInfo>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// create a <see cref="FieldPhraseList"/> that has no limit on the number of phrases to analyze

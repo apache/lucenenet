@@ -74,14 +74,14 @@ namespace Lucene.Net.Analysis.Hunspell
 
         // all condition checks used by prefixes and suffixes. these are typically re-used across
         // many affix stripping rules. so these are deduplicated, to save RAM.
-        internal IList<CharacterRunAutomaton> patterns = new JCG.List<CharacterRunAutomaton>();
+        internal readonly IList<CharacterRunAutomaton> patterns = new JCG.List<CharacterRunAutomaton>(); // LUCENENET: marked readonly
 
         // the entries in the .dic file, mapping to their set of flags.
         // the fst output is the ordinal list for flagLookup
-        internal FST<Int32sRef> words;
+        internal readonly FST<Int32sRef> words; // LUCENENET: marked readonly
         // the list of unique flagsets (wordforms). theoretically huge, but practically
         // small (e.g. for polish this is 756), otherwise humans wouldn't be able to deal with it either.
-        internal BytesRefHash flagLookup = new BytesRefHash();
+        internal readonly BytesRefHash flagLookup = new BytesRefHash(); // LUCENENET: marked readonly
 
         // the list of unique strip affixes.
         internal char[] stripData;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Hunspell
         // LUCENENET specific - changed from DirectoryInfo to string
         private readonly string tempDir = OfflineSorter.DefaultTempDir; // TODO: make this configurable?
 
-        internal bool ignoreCase;
+        internal readonly bool ignoreCase; // LUCENENET: marked readonly
         internal bool complexPrefixes;
         internal bool twoStageAffix; // if no affixes have continuation classes, no need to do 2-level affix stripping
 

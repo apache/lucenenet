@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Cn
      */
 
     /// <summary>
-    /// A <see cref="TokenFilter"/> with a stop word table.  
+    /// A <see cref="TokenFilter"/> with a stop word table.
     /// <list type="bullet">
     ///     <item><description>Numeric tokens are removed.</description></item>
     ///     <item><description>English tokens must be larger than 1 character.</description></item>
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Cn
     /// </list>
     /// </summary>
     /// @deprecated (3.1) Use <see cref="Core.StopFilter"/> instead, which has the same functionality.
-    /// This filter will be removed in Lucene 5.0 
+    /// This filter will be removed in Lucene 5.0
     [Obsolete("(3.1) Use StopFilter instead, which has the same functionality.")]
     public sealed class ChineseFilter : TokenFilter
     {
@@ -52,9 +52,9 @@ namespace Lucene.Net.Analysis.Cn
             "they", "this", "to", "was", "will", "with"
         };
 
-        private CharArraySet stopTable;
+        private readonly CharArraySet stopTable; // LUCENENET: marked readonly
 
-        private ICharTermAttribute termAtt;
+        private readonly ICharTermAttribute termAtt; // LUCENENET: marked readonly
 
         public ChineseFilter(TokenStream @in)
             : base(@in)

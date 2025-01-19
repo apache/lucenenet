@@ -108,7 +108,7 @@ namespace Lucene.Net.Util.Automaton
     ///         <term></term>
     ///         <term></term>
     ///     </item>
-    ///     
+    ///
     ///     <item>
     ///         <term><i>unionexp</i></term>
     ///         <term>::=</term>
@@ -123,7 +123,7 @@ namespace Lucene.Net.Util.Automaton
     ///         <term></term>
     ///         <term></term>
     ///     </item>
-    ///     
+    ///
     ///     <item>
     ///         <term><i>interexp</i></term>
     ///         <term>::=</term>
@@ -138,7 +138,7 @@ namespace Lucene.Net.Util.Automaton
     ///         <term></term>
     ///         <term></term>
     ///     </item>
-    ///     
+    ///
     ///     <item>
     ///         <term><i>concatexp</i></term>
     ///         <term>::=</term>
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util.Automaton
     ///         <term></term>
     ///         <term></term>
     ///     </item>
-    ///     
+    ///
     ///     <item>
     ///         <term><i>repeatexp</i></term>
     ///         <term>::=</term>
@@ -203,7 +203,7 @@ namespace Lucene.Net.Util.Automaton
     ///         <term></term>
     ///         <term></term>
     ///     </item>
-    ///     
+    ///
     ///     <item>
     ///         <term><i>complexp</i></term>
     ///         <term>::=</term>
@@ -218,7 +218,7 @@ namespace Lucene.Net.Util.Automaton
     ///         <term></term>
     ///         <term></term>
     ///     </item>
-    ///     
+    ///
     ///     <item>
     ///         <term><i>charclassexp</i></term>
     ///         <term>::=</term>
@@ -240,7 +240,7 @@ namespace Lucene.Net.Util.Automaton
     ///         <term></term>
     ///         <term></term>
     ///     </item>
-    ///     
+    ///
     ///     <item>
     ///         <term><i>charclasses</i></term>
     ///         <term>::=</term>
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util.Automaton
     ///         <term></term>
     ///         <term></term>
     ///     </item>
-    ///     
+    ///
     ///     <item>
     ///         <term><i>charclass</i></term>
     ///         <term>::=</term>
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util.Automaton
     ///         <term></term>
     ///         <term></term>
     ///     </item>
-    ///     
+    ///
     ///     <item>
     ///         <term><i>simpleexp</i></term>
     ///         <term>::=</term>
@@ -334,7 +334,7 @@ namespace Lucene.Net.Util.Automaton
     ///         <term>(numerical interval)</term>
     ///         <term><small>[OPTIONAL]</small></term>
     ///     </item>
-    ///     
+    ///
     ///     <item>
     ///         <term><i>charexp</i></term>
     ///         <term>::=</term>
@@ -349,9 +349,9 @@ namespace Lucene.Net.Util.Automaton
     ///         <term>(a single character)</term>
     ///         <term></term>
     ///     </item>
-    ///     
+    ///
     /// </list>
-    /// 
+    ///
     /// <para/>
     /// The productions marked <small>[OPTIONAL]</small> are only allowed if
     /// specified by the syntax flags passed to the <see cref="RegExp"/> constructor.
@@ -402,8 +402,8 @@ namespace Lucene.Net.Util.Automaton
         internal int min, max, digits;
         internal int from, to;
 
-        internal string b;
-        internal RegExpSyntax flags;
+        internal readonly string b; // LUCENENET: marked readonly
+        internal readonly RegExpSyntax flags; // LUCENENET: marked readonly
         internal int pos;
 
         internal RegExp()

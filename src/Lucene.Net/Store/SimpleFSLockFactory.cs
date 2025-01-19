@@ -22,8 +22,8 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// <para>Implements <see cref="LockFactory"/> using 
-    /// <see cref="File.WriteAllText(string, string, Encoding)"/> 
+    /// <para>Implements <see cref="LockFactory"/> using
+    /// <see cref="File.WriteAllText(string, string, Encoding)"/>
     /// (writes the file with UTF8 encoding and no byte order mark).</para>
     ///
     /// <para>Special care needs to be taken if you change the locking
@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
     ///
     /// <para>If you suspect that this or any other <see cref="LockFactory"/> is
     /// not working properly in your environment, you can easily
-    /// test it by using <see cref="VerifyingLockFactory"/>, 
+    /// test it by using <see cref="VerifyingLockFactory"/>,
     /// <see cref="LockVerifyServer"/> and <see cref="LockStressTest"/>.</para>
     /// </summary>
     /// <seealso cref="LockFactory"/>
@@ -103,8 +103,8 @@ namespace Lucene.Net.Store
 
     internal class SimpleFSLock : Lock
     {
-        internal FileInfo lockFile;
-        internal DirectoryInfo lockDir;
+        internal readonly FileInfo lockFile; // LUCENENET: marked readonly
+        internal readonly DirectoryInfo lockDir; // LUCENENET: marked readonly
 
         public SimpleFSLock(DirectoryInfo lockDir, string lockFileName)
         {

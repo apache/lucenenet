@@ -857,7 +857,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         }
 
         internal int curLexState = 2;
-        internal int defaultLexState = 2;
+        internal const int defaultLexState = 2; // LUCENENET: marked const
         internal int jjnewStateCnt;
         internal uint jjround;
         internal int jjmatchedPos;

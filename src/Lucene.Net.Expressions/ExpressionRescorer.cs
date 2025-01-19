@@ -52,7 +52,7 @@ namespace Lucene.Net.Expressions
         {
             internal float score;
             internal int doc = -1;
-            internal int freq = 1;
+            internal const int freq = 1; // LUCENENET: marked const
 
             public FakeScorer()
                 : base(null)

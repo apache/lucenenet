@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Lv
     /// <list type="bullet">
     ///   <item><description>Only explicitly stems noun and adjective morphology</description></item>
     ///   <item><description>Stricter length/vowel checks for the resulting stems (verb etc suffix stripping is removed)</description></item>
-    ///   <item><description>Removes only the primary inflectional suffixes: case and number for nouns ; 
+    ///   <item><description>Removes only the primary inflectional suffixes: case and number for nouns ;
     ///       case, number, gender, and definitiveness for adjectives.</description></item>
     ///   <item><description>Palatalization is only handled when a declension II,V,VI noun suffix is removed.</description></item>
     /// </list>
@@ -80,9 +80,9 @@ namespace Lucene.Net.Analysis.Lv
 
         internal class Affix
         {
-            internal char[] affix; // suffix
-            internal int vc; // vowel count of the suffix
-            internal bool palatalizes; // true if we should fire palatalization rules.
+            internal readonly char[] affix; // suffix // LUCENENET: marked readonly
+            internal readonly int vc; // vowel count of the suffix // LUCENENET: marked readonly
+            internal readonly bool palatalizes; // true if we should fire palatalization rules. // LUCENENET: marked readonly
 
             internal Affix(string affix, int vc, bool palatalizes)
             {
@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis.Lv
         /// </summary>
         private static int Unpalatalize(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
-            // we check the character removed: if its -u then 
+            // we check the character removed: if its -u then
             // its 2,5, or 6 gen pl., and these two can only apply then.
             if (s[len] == 'u')
             {

@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Creates a new <see cref="WordDelimiterFilterFactory"/> </summary>
-        public WordDelimiterFilterFactory(IDictionary<string, string> args) 
+        public WordDelimiterFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             AssureMatchVersion();
@@ -213,7 +213,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
         }
 
-        internal char[] @out = new char[256];
+        internal readonly char[] @out = new char[256]; // LUCENENET: marked readonly
 
         private string ParseString(string s)
         {

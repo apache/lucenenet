@@ -65,7 +65,7 @@ namespace Egothor.Stemmer
     /// </summary>
     public class Row
     {
-        internal IDictionary<char, Cell> cells = new JCG.SortedDictionary<char, Cell>();
+        internal readonly IDictionary<char, Cell> cells = new JCG.SortedDictionary<char, Cell>(); // LUCENENET: marked readonly
         internal int uniformCnt = 0;
         internal int uniformSkip = 0;
 

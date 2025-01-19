@@ -106,7 +106,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         /// </summary>
         private class QRelJudgement
         {
-            internal string queryID;
+            internal readonly string queryID; // LUCENENET: marked readonly
             private readonly IDictionary<string, string> relevantDocs; // LUCENENET: marked readonly
 
             internal QRelJudgement(string queryID)

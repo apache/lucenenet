@@ -750,12 +750,12 @@ namespace Lucene.Net.Index
 
         private sealed class CommitPoint : IndexCommit
         {
-            internal ICollection<string> files;
-            internal string segmentsFileName;
+            internal readonly ICollection<string> files; // LUCENENET: marked readonly
+            internal readonly string segmentsFileName; // LUCENENET: marked readonly
             internal bool deleted;
-            internal Directory directory;
-            internal ICollection<CommitPoint> commitsToDelete;
-            internal long generation;
+            internal readonly Directory directory; // LUCENENET: marked readonly
+            internal readonly ICollection<CommitPoint> commitsToDelete; // LUCENENET: marked readonly
+            internal readonly long generation; // LUCENENET: marked readonly
             internal readonly IDictionary<string, string> userData;
             internal readonly int segmentCount;
 

@@ -15,9 +15,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
      * The ASF licenses this file to You under the Apache License, Version 2.0
      * (the "License"); you may not use this file except in compliance with
      * the License.  You may obtain a copy of the License at
-     * 
+     *
      *      http://www.apache.org/licenses/LICENSE-2.0
-     * 
+     *
      * Unless required by applicable law or agreed to in writing, software
      * distributed under the License is distributed on an "AS IS" BASIS,
      * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
     /// <summary>
     /// <h2>Ternary Search Tree.</h2>
-    /// 
+    ///
     /// <para>
     /// A ternary search tree is a hybrid between a binary tree and a digital search
     /// tree (trie). Keys are limited to strings. A data value of type char is stored
@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// trie. Performance is comparable with a hash table, sometimes it outperforms a
     /// hash function (most of the time can determine a miss faster than a hash).
     /// </para>
-    /// 
+    ///
     /// <para>
     /// The main purpose of this java port is to serve as a base for implementing
     /// TeX's hyphenation algorithm (see The TeXBook, appendix H). Each language
@@ -56,15 +56,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// tests the english patterns took 7694 nodes and the german patterns 10055
     /// nodes, so I think we are safe.
     /// </para>
-    /// 
+    ///
     /// <para>
     /// All said, this is a map with strings as keys and char as value. Pretty
     /// limited!. It can be extended to a general map by using the string
     /// representation of an object and using the char value as an index to an array
     /// that contains the object values.
     /// </para>
-    /// 
-    /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified. 
+    ///
+    /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified.
     /// </summary>
 
     public class TernaryTree // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
@@ -475,7 +475,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// tree is traversed to find the key substrings actually used. In addition,
         /// duplicate substrings are removed using a map (implemented with a
         /// TernaryTree!).
-        /// 
+        ///
         /// </summary>
         public virtual void TrimToSize()
         {
@@ -560,7 +560,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             private class Item // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
             {
-                internal char parent;
+                internal readonly char parent; // LUCENENET: marked readonly
                 internal char child;
 
                 // LUCENENET: This constructor is unnecessary

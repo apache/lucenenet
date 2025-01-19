@@ -146,8 +146,8 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
 
         private class TermDf
         {
-            internal string word;
-            internal int df;
+            internal readonly string word; // LUCENENET: marked readonly
+            internal readonly int df; // LUCENENET: marked readonly
             internal TermDf(string word, int freq)
             {
                 this.word = word;

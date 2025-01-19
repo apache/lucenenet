@@ -328,11 +328,11 @@ namespace Lucene.Net.Index
                 //System.out.println("PA init freqs=" + writeFreqs + " pos=" + writeProx + " offs=" + writeOffsets);
             }
 
-            internal int[] termFreqs; // # times this term occurs in the current doc
-            internal int[] lastDocIDs; // Last docID where this term occurred
-            internal int[] lastDocCodes; // Code for prior doc
-            internal int[] lastPositions; // Last position where this term occurred
-            internal int[] lastOffsets; // Last endOffset where this term occurred
+            internal readonly int[] termFreqs; // # times this term occurs in the current doc // LUCENENET: marked readonly
+            internal readonly int[] lastDocIDs; // Last docID where this term occurred // LUCENENET: marked readonly
+            internal readonly int[] lastDocCodes; // Code for prior doc // LUCENENET: marked readonly
+            internal readonly int[] lastPositions; // Last position where this term occurred // LUCENENET: marked readonly
+            internal readonly int[] lastOffsets; // Last endOffset where this term occurred // LUCENENET: marked readonly
 
             internal override ParallelPostingsArray NewInstance(int size)
             {
