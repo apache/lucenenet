@@ -209,8 +209,6 @@ namespace Lucene.Net.Util
                     test.Properties.Set(PropertyNames.SkipReason, SkipReason);
                 }
 
-                context.CurrentResult = test.MakeTestResult();
-
                 if (!skip)
                 {
                     try
@@ -219,8 +217,13 @@ namespace Lucene.Net.Util
                     }
                     catch (Exception ex)
                     {
+                        if (context.CurrentResult is null) context.CurrentResult = context.CurrentTest.MakeTestResult();
                         context.CurrentResult.RecordException(ex);
                     }
+                }
+                else if (context.CurrentResult is null)
+                {
+                    context.CurrentResult = context.CurrentTest.MakeTestResult();
                 }
 
                 return context.CurrentResult;
