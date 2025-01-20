@@ -436,7 +436,7 @@ namespace Lucene.Net.Util.Events
         }
 
         [Test]
-        [Ignore("This test has been flakey since it was brought over from Prism")]
+        [Ignore("This test has been flakey since it was brought over from Prism (see https://github.com/apache/lucenenet/issues/998#issuecomment-2438994483)")]
         public void CanAddSubscriptionWhileEventIsFiring()
         {
             var PubSubEvent = new TestablePubSubEvent<string>();
@@ -459,6 +459,7 @@ namespace Lucene.Net.Util.Events
         }
 
         [Test]
+        [Ignore("This test has been flakey since it was brought over from Prism (see https://github.com/apache/lucenenet/issues/998#issuecomment-2438994483)")]
         public void CanAddSubscriptionWhileEventIsFiringNonGeneric()
         {
             var pubSubEvent = new TestablePubSubEvent();
