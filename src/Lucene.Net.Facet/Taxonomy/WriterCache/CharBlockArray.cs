@@ -34,10 +34,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    // LUCENENET NOTE: The serialization features here are strictly for testing purposes,
-    // therefore it doesn't make any difference what type of serialization is used.
-    // To make things simpler, we are using BinaryReader and BinaryWriter since
-    // BinaryFormatter is not implemented in .NET Standard 1.x.
     internal class CharBlockArray : IAppendable, ICharSequence,
         ISpanAppendable /* LUCENENET specific */
     {
