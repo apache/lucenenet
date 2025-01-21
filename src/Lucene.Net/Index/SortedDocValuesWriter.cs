@@ -130,7 +130,6 @@ namespace Lucene.Net.Index
                                       GetOrdsEnumberable(maxDoc, ordMap));
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
         }

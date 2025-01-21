@@ -80,7 +80,6 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Called after a doc and all its fields have been added. </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void FinishDocument()
         {
         }
@@ -119,7 +118,6 @@ namespace Lucene.Net.Codecs
         /// Aborts writing entirely, implementation should remove
         /// any partially-written files, etc.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
 
         /// <summary>

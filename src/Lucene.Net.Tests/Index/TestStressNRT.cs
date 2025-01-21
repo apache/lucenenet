@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -419,7 +418,7 @@ namespace Lucene.Net.Index
                 catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
-                    Console.WriteLine(e.StackTrace);
+                    e.PrintStackTrace(Console.Out);
                     throw RuntimeException.Create(e);
                 }
             }
@@ -546,7 +545,7 @@ namespace Lucene.Net.Index
                 {
                     operations.Value = (int)-1L;
                     Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
-                    Console.WriteLine(e.StackTrace);
+                    e.PrintStackTrace(Console.Out);
                     throw RuntimeException.Create(e);
                 }
             }

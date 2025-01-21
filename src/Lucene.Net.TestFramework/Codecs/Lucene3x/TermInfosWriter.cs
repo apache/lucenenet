@@ -72,13 +72,13 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// smaller values result in bigger indexes, less acceleration and more
         /// accelerable cases. More detailed experiments would be useful here.
         /// </summary>
-        internal int skipInterval = 16;
+        internal const int skipInterval = 16; // LUCENENET: marked const
 
         /// <summary>
         /// Expert: The maximum number of skip levels. Smaller values result in
         /// slightly smaller indexes, but slower skipping in big posting lists.
         /// </summary>
-        internal int maxSkipLevels = 10;
+        internal const int maxSkipLevels = 10; // LUCENENET: marked const
 
         private long lastIndexPointer;
         private bool isIndex;

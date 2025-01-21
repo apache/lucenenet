@@ -3,7 +3,6 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util
 {
@@ -130,8 +129,7 @@ namespace Lucene.Net.Util
             }
             catch (Exception e) when (e.IsNumberFormatException())
             {
-                Console.WriteLine(e.ToString());
-                Console.Write(e.StackTrace);
+                e.PrintStackTrace();
                 Assert.IsTrue(false);
             }
         }

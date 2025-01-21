@@ -10,7 +10,6 @@ using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -300,7 +299,7 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: got expected exc:");
-                        Console.WriteLine(e.StackTrace);
+                        e.PrintStackTrace(Console.Out);
                     }
                     // Make sure exc message includes a path=
                     Assert.IsTrue(e.Message.IndexOf("path=\"", StringComparison.Ordinal) != -1, "got exc message: " + e.Message);

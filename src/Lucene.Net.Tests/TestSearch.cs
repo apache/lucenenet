@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 using Occur = Lucene.Net.Search.Occur;
 using StringWriter = System.IO.StringWriter;
 

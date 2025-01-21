@@ -87,6 +87,13 @@ steps:
                             Write-Host "##vso[task.setvariable variable=CrashedRuns;]$crashedRuns"
                             $crashed = $true
                         }
+                        if ($innerXml -and ($innerXml.Contains('[ERROR]'))) {
+                            Write-Host "##vso[task.setvariable variable=StdOutFailure;]true"
+                            # Report all of the test projects that had stdout failures
+                            $stdOutFailureRuns = "$env:STDOUTFAILURERUNS,$testProjectName".TrimStart(',')
+                            Write-Host "##vso[task.setvariable variable=StdOutFailureRuns;]$stdOutFailureRuns"
+                            $crashed = $true
+                        }
                     }
                 }
                 if ($reader.NodeType -eq [System.Xml.XmlNodeType]::EndElement -and $reader.Name -eq 'RunInfos') {
@@ -101,6 +108,34 @@ steps:
     }
     Write-Host "##vso[task.setvariable variable=TestResultsFileExists;]$testResultsFileExists"
   displayName: 'Parse Test Results File'
+
+- pwsh: |
+    $testProjectName = "${{ parameters.testProjectName }}"
+    $testStdErrFileName = "$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}/${{ parameters.osName }}/${{ parameters.framework }}/${{ parameters.vsTestPlatform }}/$testProjectName/dotnet-test-error.log"
+    $testStdErrFileExists = Test-Path $testStdErrFileName
+    if ($testStdErrFileExists) {
+        $fileLength = (Get-Item $testStdErrFileName).Length
+        if ($fileLength -gt 0) {
+            $stream = [System.IO.StreamReader]::new($testStdErrFileName)
+            try {
+                while (-not $stream.EndOfStream) {
+                    $line = $stream.ReadLine()
+                    if ($line -match "Test Run Failed" -or $line -match "\[ERROR\]") {
+                        Write-Host "##vso[task.setvariable variable=StdErrFailure;]true"
+                        # Report all of the test projects that had stderr failures
+                        $stdErrFailureRuns = "$env:STDERRFAILURERUNS,$testProjectName".TrimStart(',')
+                        Write-Host "##vso[task.setvariable variable=StdErrFailureRuns;]$stdErrFailureRuns"
+                        break # No need to continue reading after detecting a failure
+                    }
+                }
+            } finally {
+                $stream.Dispose()
+            }
+        }
+    } else {
+        Write-Host "WARNING: File not found: $testStdErrFileName"
+    }
+  displayName: 'Parse StdErr File'
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results ${{ parameters.testProjectName }},${{ parameters.framework }},${{ parameters.vsTestPlatform }}'

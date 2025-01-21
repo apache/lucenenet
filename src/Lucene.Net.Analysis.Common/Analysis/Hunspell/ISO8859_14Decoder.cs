@@ -28,6 +28,11 @@ namespace Lucene.Net.Analysis.Hunspell
     [ExceptionToClassNameConvention]
     internal sealed class ISO8859_14Encoding : Encoding
     {
+        /// <summary>
+        /// The default singleton instance of the <see cref="ISO8859_14Encoding"/> class.
+        /// </summary>
+        public static new ISO8859_14Encoding Default { get; } = new ISO8859_14Encoding();
+
         private static readonly Decoder decoder = new ISO8859_14Decoder();
         public override Decoder GetDecoder()
         {

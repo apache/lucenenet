@@ -32,6 +32,9 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
     /// </summary>
     internal abstract class AbstractDictionary
     {
+        // LUCENENET specific: cached GB2312 encoding to avoid repeated calls to Encoding.GetEncoding("GB2312")
+        protected static readonly Encoding gb2312Encoding = Encoding.GetEncoding("GB2312");
+
         /// <summary>
         /// First Chinese Character in GB2312 (15 * 94)
         /// Characters in GB2312 are arranged in a grid of 94 * 94, 0-14 are unassigned or punctuation.
@@ -39,7 +42,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         public const int GB2312_FIRST_CHAR = 1410;
 
         /// <summary>
-        /// Last Chinese Character in GB2312 (87 * 94). 
+        /// Last Chinese Character in GB2312 (87 * 94).
         /// Characters in GB2312 are arranged in a grid of 94 * 94, 88-94 are unassigned.
         /// </summary>
         public const int GB2312_CHAR_NUM = 87 * 94;
@@ -98,7 +101,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             try
             {
                 //String cchar = new String(buffer, "GB2312");
-                string cchar = Encoding.GetEncoding("GB2312").GetString(buffer);
+                string cchar = gb2312Encoding.GetString(buffer); // LUCENENET specific: use cached encoding instance
                 return cchar;
             }
             catch (Exception e) when (e.IsUnsupportedEncodingException()) // Encoding is not supported by the platform
@@ -117,7 +120,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             try
             {
                 //byte[] buffer = Character.ToString(ch).getBytes("GB2312");
-                byte[] buffer = Encoding.GetEncoding("GB2312").GetBytes(ch.ToString());
+                byte[] buffer = gb2312Encoding.GetBytes(ch.ToString()); // LUCENENET specific: use cached encoding instance
                 //byte[] buffer = Encoding.GetEncoding("hz-gb-2312").GetBytes(ch.ToString());
                 if (buffer.Length != 2)
                 {
@@ -125,7 +128,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     return -1;
                 }
                 int b0 = (buffer[0] & 0x0FF) - 161; // Code starts from A1, therefore subtract 0xA1=161
-                int b1 = (buffer[1] & 0x0FF) - 161; // There is no Chinese char for the first and last symbol. 
+                int b1 = (buffer[1] & 0x0FF) - 161; // There is no Chinese char for the first and last symbol.
                                                     // Therefore, each code page only has 16*6-2=94 characters.
                 return (short)(b0 * 94 + b1);
             }

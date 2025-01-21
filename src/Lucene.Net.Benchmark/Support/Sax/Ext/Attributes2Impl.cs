@@ -74,8 +74,10 @@ namespace Sax.Ext
         public bool IsDeclared(int index)
         {
             if (index < 0 || index >= Length)
-                throw new IndexOutOfRangeException(
-                "No attribute at index: " + index);
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), $"No attribute at index: {index}");
+            }
+
             return declared[index];
         }
 
@@ -114,12 +116,14 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="index">The attribute index (zero-based).</param>
         /// <returns>current flag value</returns>
-        /// <exception cref="IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">When the supplied index does not identify an attribute.</exception>
         public bool IsSpecified(int index)
         {
             if (index < 0 || index >= Length)
-                throw new IndexOutOfRangeException(
-                "No attribute at index: " + index);
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), $"No attribute at index: {index}");
+            }
+
             return specified[index];
         }
 
@@ -128,7 +132,7 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="uri">The Namespace URI, or the empty string if the name has no Namespace URI.</param>
         /// <param name="localName">The attribute's local name.</param>
-        /// <returns>current flag value</returns>      
+        /// <returns>current flag value</returns>
         /// <exception cref="ArgumentException">When the supplied names do not identify an attribute.</exception>
         public bool IsSpecified(string uri, string localName)
         {
@@ -146,7 +150,7 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="qName">The XML qualified (prefixed) name.</param>
         /// <returns>current flag value</returns>
-        /// <exception cref="ArgumentException">When the supplied name does not identify an attribute.</exception>          
+        /// <exception cref="ArgumentException">When the supplied name does not identify an attribute.</exception>
         public bool IsSpecified(string qName)
         {
             int index = GetIndex(qName);
@@ -253,12 +257,14 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="index">The index of the attribute (zero-based).</param>
         /// <param name="value">The desired flag value.</param>
-        /// <exception cref="IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">When the supplied index does not identify an attribute.</exception>
         public virtual void SetDeclared(int index, bool value)
         {
             if (index < 0 || index >= Length)
-                throw new IndexOutOfRangeException(
-                "No attribute at index: " + index);
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), $"No attribute at index: {index}");
+            }
+
             declared[index] = value;
         }
 
@@ -269,12 +275,14 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="index">The index of the attribute (zero-based).</param>
         /// <param name="value">The desired flag value.</param>
-        /// <exception cref="IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">When the supplied index does not identify an attribute.</exception>
         public virtual void SetSpecified(int index, bool value)
         {
             if (index < 0 || index >= Length)
-                throw new IndexOutOfRangeException(
-                "No attribute at index: " + index);
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), $"No attribute at index: {index}");
+            }
+
             specified[index] = value;
         }
     }

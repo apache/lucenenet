@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using Lucene.Net.Util.Packed;
@@ -7,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 using Int64 = J2N.Numerics.Int64;
 
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             foreach (string file in csvFiles)
             {
                 using Stream inputStream = new FileStream(file, FileMode.Open, FileAccess.Read);
-                Encoding decoder = Encoding.GetEncoding(encoding);
+                Encoding decoder = Encoding.GetEncoding(encoding).WithDecoderExceptionFallback();
                 using TextReader reader = new StreamReader(inputStream, decoder, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true); // LUCENENET: CA2000: Use using statement
 
                 string line = null;

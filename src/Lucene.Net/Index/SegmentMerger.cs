@@ -438,7 +438,7 @@ namespace Lucene.Net.Index
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void MergeTerms(SegmentWriteState segmentWriteState)
+        internal void MergeTerms(SegmentWriteState segmentWriteState)
         {
             IList<Fields> fields = new JCG.List<Fields>();
             IList<ReaderSlice> slices = new JCG.List<ReaderSlice>();

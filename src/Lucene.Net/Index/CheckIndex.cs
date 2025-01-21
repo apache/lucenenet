@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 using Integer = J2N.Numerics.Int32;
 using JCG = J2N.Collections.Generic;
 
@@ -520,11 +519,10 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR: could not read any segments file in directory");
                 result.MissingSegments = true;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(t.ToString());
-                //infoStream.WriteLine(t.StackTrace);
+                if (infoStream != null)
+                {
+                    t.PrintStackTrace(infoStream);
+                }
 
                 return result;
             }
@@ -568,11 +566,10 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR: could not open segments file in directory");
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(t.ToString());
-                //infoStream.WriteLine(t.StackTrace);
+                if (infoStream != null)
+                {
+                    t.PrintStackTrace(infoStream);
+                }
 
                 result.CantOpenSegments = true;
                 return result;
@@ -586,11 +583,10 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR: could not read segment file version in directory");
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(t.ToString());
-                //infoStream.WriteLine(t.StackTrace);
+                if (infoStream != null)
+                {
+                    t.PrintStackTrace(infoStream);
+                }
 
                 result.MissingSegmentVersion = true;
                 return result;
@@ -874,10 +870,10 @@ namespace Lucene.Net.Index
                     comment = "fixIndex() would remove reference to this segment";
                     Msg(infoStream, "    WARNING: " + comment + "; full exception:");
 
-                    // LUCENENET NOTE: Some tests rely on the error type being in
-                    // the message. We can't get the error type with StackTrace, we
-                    // need ToString() for that.
-                    infoStream?.WriteLine(t.ToString());
+                    if (infoStream != null)
+                    {
+                        t.PrintStackTrace(infoStream);
+                    }
 
                     Msg(infoStream, "");
                     result.TotLoseDocCount += toLoseDocCount;
@@ -960,11 +956,10 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(e.ToString());
-                //infoStream.WriteLine(e.StackTrace);
+                if (infoStream != null)
+                {
+                    e.PrintStackTrace(infoStream);
+                }
             }
 
             return status;
@@ -1666,11 +1661,10 @@ namespace Lucene.Net.Index
                 status = new Status.TermIndexStatus();
                 status.Error = e;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(e.ToString());
-                //infoStream.WriteLine(e.StackTrace);
+                if (infoStream != null)
+                {
+                    e.PrintStackTrace(infoStream);
+                }
             }
 
             return status;
@@ -1716,11 +1710,10 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(e.ToString());
-                //infoStream.WriteLine(e.StackTrace);
+                if (infoStream != null)
+                {
+                    e.PrintStackTrace(infoStream);
+                }
             }
 
             return status;
@@ -1761,11 +1754,10 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(e.ToString());
-                //infoStream.WriteLine(e.StackTrace);
+                if (infoStream != null)
+                {
+                    e.PrintStackTrace(infoStream);
+                }
             }
             return status;
         }
@@ -2284,11 +2276,10 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
 
-                // LUCENENET NOTE: Some tests rely on the error type being in
-                // the message. We can't get the error type with StackTrace, we
-                // need ToString() for that.
-                infoStream?.WriteLine(e.ToString());
-                //infoStream.WriteLine(e.StackTrace);
+                if (infoStream != null)
+                {
+                    e.PrintStackTrace(infoStream);
+                }
             }
 
             return status;
@@ -2449,7 +2440,7 @@ namespace Lucene.Net.Index
                 // LUCENENET specific - we only output from our CLI wrapper
                 throw new ArgumentException("\nERROR: index path not specified");
                 //Console.WriteLine("\nERROR: index path not specified");
-                //Console.WriteLine("\nUsage: java Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-crossCheckTermVectors] [-segment X] [-segment Y] [-dir-impl X]\n" + "\n" + "  -fix: actually write a new segments_N file, removing any problematic segments\n" + "  -crossCheckTermVectors: verifies that term vectors match postings; this IS VERY SLOW!\n" + "  -codec X: when fixing, codec to write the new segments_N file with\n" + "  -verbose: print additional details\n" + "  -segment X: only check the specified segments.  this can be specified multiple\n" + "              times, to check more than one segment, eg '-segment _2 -segment _a'.\n" + "              You can't use this with the -fix option\n" + "  -dir-impl X: use a specific " + typeof(FSDirectory).Name + " implementation. " + "If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.\n" + "\n" + "**WARNING**: -fix should only be used on an emergency basis as it will cause\n" + "documents (perhaps many) to be permanently removed from the index.  Always make\n" + "a backup copy of your index before running this!  Do not run this tool on an index\n" + "that is actively being written to.  You have been warned!\n" + "\n" + "Run without -fix, this tool will open the index, report version information\n" + "and report any exceptions it hits and what action it would take if -fix were\n" + "specified.  With -fix, this tool will remove any segments that have issues and\n" + "write a new segments_N file.  this means all documents contained in the affected\n" + "segments will be removed.\n" + "\n" + "this tool exits with exit code 1 if the index cannot be opened or has any\n" + "corruption, else 0.\n");
+                //Console.WriteLine("\nUsage: java Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-crossCheckTermVectors] [-segment X] [-segment Y] [-dir-impl X]\n" + "\n" + "  -fix: actually write a new segments_N file, removing any problematic segments\n" + "  -crossCheckTermVectors: verifies that term vectors match postings; this IS VERY SLOW!\n" + "  -codec X: when fixing, codec to write the new segments_N file with\n" + "  -verbose: print additional details\n" + "  -segment X: only check the specified segments.  this can be specified multiple\n" + "              times, to check more than one segment, eg '-segment _2 -segment _a'.\n" + "              You can't use this with the -fix option\n" + "  -dir-impl X: use a specific " + nameof(FSDirectory) + " implementation. " + "If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.\n" + "\n" + "**WARNING**: -fix should only be used on an emergency basis as it will cause\n" + "documents (perhaps many) to be permanently removed from the index.  Always make\n" + "a backup copy of your index before running this!  Do not run this tool on an index\n" + "that is actively being written to.  You have been warned!\n" + "\n" + "Run without -fix, this tool will open the index, report version information\n" + "and report any exceptions it hits and what action it would take if -fix were\n" + "specified.  With -fix, this tool will remove any segments that have issues and\n" + "write a new segments_N file.  this means all documents contained in the affected\n" + "segments will be removed.\n" + "\n" + "this tool exits with exit code 1 if the index cannot be opened or has any\n" + "corruption, else 0.\n");
                 //Environment.Exit(1);
             }
 

@@ -3,7 +3,6 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
@@ -11,7 +10,6 @@ using System;
 using System.IO;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -129,7 +127,7 @@ namespace Lucene.Net.Index
                     {
                         if (Verbose)
                         {
-                            Console.WriteLine(ioe.StackTrace);
+                            ioe.PrintStackTrace(Console.Out);
                         }
                         failure.ClearDoFail();
                         break;

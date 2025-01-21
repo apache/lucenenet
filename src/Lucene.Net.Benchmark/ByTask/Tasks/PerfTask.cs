@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -145,7 +144,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public virtual object Clone()
         {
             // tasks having non primitive data structures should override this.
-            // otherwise parallel running of a task sequence might not run correctly. 
+            // otherwise parallel running of a task sequence might not run correctly.
             return (PerfTask)base.MemberwiseClone();
         }
 
@@ -233,7 +232,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             set => depth = value;
         }
 
-        // compute a blank string padding for printing this task indented by its depth  
+        // compute a blank string padding for printing this task indented by its depth
         internal string GetPadding()
         {
             char[] c = new char[4 * Depth];
@@ -279,7 +278,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         protected virtual bool ShouldNeverLogAtStart => false;
 
         /// <summary>
-        /// Tasks that should not record statistics can override this. 
+        /// Tasks that should not record statistics can override this.
         /// Returns <c>true</c> if this task should never record its statistics.
         /// </summary>
         protected virtual bool ShouldNotRecordStats => false;
@@ -301,7 +300,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// default it does nothing, but tasks can implement this, moving work from
         /// <see cref="DoLogic()"/> to this method. Only the work done in <see cref="DoLogic()"/>
         /// is measured for this task. Notice that higher level (sequence) tasks
-        /// containing this task would then measure larger time than the sum of their        
+        /// containing this task would then measure larger time than the sum of their
         /// contained tasks.
         /// </summary>
         public virtual void TearDown()

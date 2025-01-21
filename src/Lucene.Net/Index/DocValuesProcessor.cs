@@ -3,7 +3,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Documents.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -49,7 +48,6 @@ namespace Lucene.Net.Index
         {
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()
         {
         }

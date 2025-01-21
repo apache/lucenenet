@@ -5,7 +5,6 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -215,7 +214,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 else
                 {
                     FileInfo f = new FileInfo(infoStreamVal);
-                    iwc.SetInfoStream(new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.GetEncoding(0)));
+                    iwc.SetInfoStream(new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.Default));
                 }
             }
             IndexWriter writer = new IndexWriter(runData.Directory, iwc);

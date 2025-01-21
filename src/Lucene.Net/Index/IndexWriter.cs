@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
         internal readonly AtomicInt32 flushCount = new AtomicInt32();
         internal readonly AtomicInt32 flushDeletesCount = new AtomicInt32();
 
-        internal ReaderPool readerPool;
+        internal readonly ReaderPool readerPool; // LUCENENET: marked readonly
         internal readonly BufferedUpdatesStream bufferedUpdatesStream;
 
         // this is a "write once" variable (like the organic dye

@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Benchmarks.ByTask.Utils;
+using System;
 using System.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Programmatic
 {

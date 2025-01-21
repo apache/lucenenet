@@ -1,8 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -104,7 +102,7 @@ namespace Lucene.Net.Index
 
             public override string ToString()
             {
-                return "numericDVUpdates=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", numericDVUpdates) + 
+                return "numericDVUpdates=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", numericDVUpdates) +
                     " binaryDVUpdates=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", binaryDVUpdates);
             }
         }
@@ -147,7 +145,6 @@ namespace Lucene.Net.Index
         /// segment which received updates while it was being merged. The given updates
         /// should override whatever updates are in that instance.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Merge(DocValuesFieldUpdates other);
 
         /// <summary>

@@ -5,7 +5,6 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -169,7 +168,7 @@ namespace Lucene.Net.Index
                 {
                     outerInstance.SetFailed();
                     Console.WriteLine(Thread.CurrentThread.Name + ": hit exception");
-                    Console.WriteLine(t.StackTrace);
+                    t.PrintStackTrace(Console.Out);
                 }
             }
         }

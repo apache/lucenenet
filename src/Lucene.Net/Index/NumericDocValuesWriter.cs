@@ -133,7 +133,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
         }

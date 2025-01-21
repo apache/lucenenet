@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// A base implementation of <see cref="AbstractAllGroupHeadsCollector{GH}"/> for retrieving the most relevant groups when grouping
     /// on a string based group field. More specifically this all concrete implementations of this base implementation
     /// use <see cref="Index.SortedDocValues"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="GH"></typeparam>
@@ -382,9 +382,9 @@ namespace Lucene.Net.Search.Grouping.Terms
             public BytesRef GroupValue => groupValue;
             private readonly BytesRef groupValue;
 
-            internal BytesRef[] sortValues;
-            internal int[] sortOrds;
-            internal float[] scores;
+            internal readonly BytesRef[] sortValues; // LUCENENET: marked readonly
+            internal readonly int[] sortOrds; // LUCENENET: marked readonly
+            internal readonly float[] scores; // LUCENENET: marked readonly
 
             internal GroupHead(OrdScoreAllGroupHeadsCollector outerInstance, int doc, BytesRef groupValue)
                 : base(doc + outerInstance.readerContext.DocBase)
@@ -596,8 +596,8 @@ namespace Lucene.Net.Search.Grouping.Terms
             // need to reference the generic closing type BytesRef.
             public BytesRef GroupValue => groupValue;
             private readonly BytesRef groupValue;
-            internal BytesRef[] sortValues;
-            internal int[] sortOrds;
+            internal readonly BytesRef[] sortValues; // LUCENENET: marked readonly
+            internal readonly int[] sortOrds; // LUCENENET: marked readonly
 
             internal GroupHead(OrdAllGroupHeadsCollector outerInstance, int doc, BytesRef groupValue)
                 : base(doc + outerInstance.readerContext.DocBase)
@@ -758,7 +758,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             // need to reference the generic closing type BytesRef.
             public BytesRef GroupValue => groupValue;
             private readonly BytesRef groupValue;
-            internal float[] scores;
+            internal readonly float[] scores; // LUCENENET: marked readonly
 
             internal GroupHead(ScoreAllGroupHeadsCollector outerInstance, int doc, BytesRef groupValue)
                 : base(doc + outerInstance.readerContext.DocBase)

@@ -1,8 +1,8 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Util
 {
@@ -46,10 +46,18 @@ namespace Lucene.Net.Util
             }
             else
             {
-                suppressed = e.Data[SUPPRESSED_EXCEPTIONS_KEY] as IList<Exception>;
+                suppressed = e.Data[SUPPRESSED_EXCEPTIONS_KEY] as IList<Exception>
+                    ?? throw new InvalidOperationException($"Unexpected type for suppressed exceptions list: {e.Data[SUPPRESSED_EXCEPTIONS_KEY]?.GetType()}");
             }
 
             return suppressed;
+        }
+
+        public static IList<Exception>? GetSuppressedAsListOrDefault(this Exception e)
+        {
+            return e.Data.Contains(SUPPRESSED_EXCEPTIONS_KEY)
+                ? e.Data[SUPPRESSED_EXCEPTIONS_KEY] as IList<Exception>
+                : null;
         }
 
         public static void AddSuppressed(this Exception e, Exception exception)

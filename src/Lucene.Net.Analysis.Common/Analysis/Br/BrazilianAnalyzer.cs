@@ -28,13 +28,13 @@ namespace Lucene.Net.Analysis.Br
      */
 
     /// <summary>
-    /// <see cref="Analyzer"/> for Brazilian Portuguese language. 
+    /// <see cref="Analyzer"/> for Brazilian Portuguese language.
     /// <para>
     /// Supports an external list of stopwords (words that
     /// will not be indexed at all) and an external list of exclusions (words that will
     /// not be stemmed, but indexed).
     /// </para>
-    /// 
+    ///
     /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
     /// dependent settings as <see cref="StandardAnalyzer"/>.</para>
     /// </summary>
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Br
         /// <summary>
         /// Contains words that should be indexed but not stemmed.
         /// </summary>
-        private CharArraySet excltable = CharArraySet.Empty;
+        private readonly CharArraySet excltable = CharArraySet.Empty; // LUCENENET: marked readonly
 
         /// <summary>
         /// Builds an analyzer with the default stop words (<see cref="DefaultStopSet"/>).

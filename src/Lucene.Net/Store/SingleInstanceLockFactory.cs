@@ -61,7 +61,7 @@ namespace Lucene.Net.Store
 
     internal class SingleInstanceLock : Lock
     {
-        internal string lockName;
+        internal readonly string lockName; // LUCENENET: marked readonly
         private readonly JCG.HashSet<string> locks;
 
         public SingleInstanceLock(JCG.HashSet<string> locks, string lockName)

@@ -65,7 +65,6 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Called when a document and all its fields have been added. </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void FinishDocument()
         {
         }
@@ -78,7 +77,6 @@ namespace Lucene.Net.Codecs
         /// Aborts writing entirely, implementation should remove
         /// any partially-written files, etc.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
 
         /// <summary>
@@ -132,7 +130,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Sugar method for <see cref="StartDocument(int)"/> + <see cref="WriteField(FieldInfo, IIndexableField)"/> 
+        /// Sugar method for <see cref="StartDocument(int)"/> + <see cref="WriteField(FieldInfo, IIndexableField)"/>
         /// for every stored field in the document. </summary>
         protected void AddDocument<T1>(IEnumerable<T1> doc, FieldInfos fieldInfos) where T1 : Lucene.Net.Index.IIndexableField
         {

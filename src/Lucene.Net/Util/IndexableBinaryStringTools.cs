@@ -299,8 +299,8 @@ namespace Lucene.Net.Util
 
         internal class CodingCase
         {
-            internal int numBytes, initialShift, middleShift, finalShift, advanceBytes = 2;
-            internal short middleMask, finalMask;
+            internal readonly int numBytes, initialShift, middleShift, finalShift, advanceBytes = 2; // LUCENENET: marked readonly
+            internal readonly short middleMask, finalMask; // LUCENENET: marked readonly
 
             internal CodingCase(int initialShift, int middleShift, int finalShift)
             {

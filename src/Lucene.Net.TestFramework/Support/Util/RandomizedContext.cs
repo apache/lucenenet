@@ -1,8 +1,16 @@
-﻿using J2N;
+﻿using Lucene.Net.Support.Threading;
+using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
+using System.Text;
 using System.Threading;
+#nullable enable
 
 namespace Lucene.Net.Util
 {
@@ -30,13 +38,26 @@ namespace Lucene.Net.Util
     {
         // LUCENENET NOTE: Using an underscore to prefix the name hides it from "traits" in Test Explorer
         internal const string RandomizedContextPropertyName = "_RandomizedContext";
+        internal const string RandomizedContextScopeKeyName = "_RandomizedContext_Scope";
+        internal const string RandomizedContextThreadNameKeyName = "_RandomizedContext_ThreadName";
+        internal const string RandomizedContextStackTraceKeyName = "_RandomizedContext_StackTrace";
 
         private readonly ThreadLocal<Random> randomGenerator;
         private readonly Test currentTest;
         private readonly Assembly currentTestAssembly;
         private readonly long randomSeed;
-        private readonly string randomSeedAsHex;
+        private volatile string? randomSeedAsString;
         private readonly long testSeed;
+
+        /// <summary>
+        /// Disposable resources.
+        /// </summary>
+        private List<DisposableResourceInfo>? disposableResources = null;
+
+        /// <summary>
+        /// Coordination at context level.
+        /// </summary>
+        private readonly object contextLock = new object();
 
         /// <summary>
         /// Initializes the randomized context.
@@ -50,7 +71,6 @@ namespace Lucene.Net.Util
             this.currentTest = currentTest ?? throw new ArgumentNullException(nameof(currentTest));
             this.currentTestAssembly = currentTestAssembly ?? throw new ArgumentNullException(nameof(currentTestAssembly));
             this.randomSeed = randomSeed;
-            this.randomSeedAsHex = SeedUtils.FormatSeed(randomSeed);
             this.testSeed = testSeed;
             this.randomGenerator = new ThreadLocal<Random>(() => new J2N.Randomizer(this.testSeed));
         }
@@ -63,7 +83,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets the initial seed as a hexadecimal string for display/configuration purposes.
         /// </summary>
-        public string RandomSeedAsHex => randomSeedAsHex;
+        public string RandomSeedAsString => randomSeedAsString ??= SeedUtils.FormatSeed(randomSeed);
 
         /// <summary>
         /// The current test for this context.
@@ -92,21 +112,196 @@ namespace Lucene.Net.Util
         /// random test data in these cases. Using the <see cref="LuceneTestCase.TestFixtureAttribute"/>
         /// will set the seed properly and make it possible to repeat the result.
         /// </summary>
-        public Random RandomGenerator => randomGenerator.Value;
+        public Random RandomGenerator => randomGenerator.Value!;
 
         /// <summary>
         /// Gets the randomized context for the current test or test fixture.
+        /// <para/>
+        /// If <c>null</c>, the call is being made out of context and the random test behavior
+        /// will not be repeatable.
         /// </summary>
-        public static RandomizedContext CurrentContext
+        public static RandomizedContext? CurrentContext
+            => TestExecutionContext.CurrentContext.CurrentTest.GetRandomizedContext();
+
+        /// <summary>
+        /// Registers the given <paramref name="resource"/> at the end of a given
+        /// lifecycle <paramref name="scope"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of <see cref="IDisposable"/>.</typeparam>
+        /// <param name="resource">A resource to dispose.</param>
+        /// <param name="scope">The scope to dispose the resource in.</param>
+        /// <returns>The <paramref name="resource"/> (for chaining).</returns>
+        /// <remarks>
+        /// Due to limitations of NUnit, any exceptions or assertions raised
+        /// from the <paramref name="resource"/> will not be respected. However, if
+        /// you want to detect a failure, do note that the message from either one
+        /// will be printed to StdOut.
+        /// </remarks>
+        public T DisposeAtEnd<T>(T resource, LifecycleScope scope) where T : IDisposable
         {
-            get
+            if (currentTest.IsTest())
             {
-                var currentTest = TestExecutionContext.CurrentContext.CurrentTest;
+                if (scope == LifecycleScope.TEST)
+                {
+                    AddDisposableAtEnd(resource, scope);
+                }
+                else // LifecycleScope.SUITE
+                {
+                    var context = FindClassLevelTest(currentTest).GetRandomizedContext();
+                    if (context is null)
+                        throw new InvalidOperationException($"The provided {LifecycleScope.TEST} has no conceptual {LifecycleScope.SUITE} associated with it.");
+                    context.AddDisposableAtEnd(resource, scope);
+                }
+            }
+            else if (currentTest.IsTestClass())
+            {
+                AddDisposableAtEnd(resource, scope);
+            }
+            else
+            {
+                throw new NotSupportedException("Only runnable tests and test classes are supported.");
+            }
 
-                if (currentTest.Properties.ContainsKey(RandomizedContextPropertyName))
-                    return (RandomizedContext)currentTest.Properties.Get(RandomizedContextPropertyName);
+            return resource;
+        }
 
-                return null; // We are out of random context and cannot respond with results that are repeatable.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void AddDisposableAtEnd(IDisposable resource, LifecycleScope scope)
+        {
+            UninterruptableMonitor.Enter(contextLock);
+            try
+            {
+                disposableResources ??= new List<DisposableResourceInfo>();
+                disposableResources.Add(new DisposableResourceInfo(resource, scope, Thread.CurrentThread.Name, new StackTrace(skipFrames: 3)));
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(contextLock);
+            }
+        }
+
+        private Test? FindClassLevelTest(Test test)
+        {
+            ITest? current = test;
+
+            while (current != null)
+            {
+                // Check if this test is at the class level
+                if (current.IsTestClass() && current is Test t)
+                {
+                    return t;
+                }
+
+                current = current.Parent;
+            }
+
+            return null;
+        }
+
+        internal void DisposeResources()
+        {
+            List<DisposableResourceInfo>? resources;
+            UninterruptableMonitor.Enter(contextLock);
+            try
+            {
+                resources = disposableResources; // Set the resources to a local variable
+                disposableResources = null; // Set disposableResources field to null so our local list will go out of scope when we are done
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(contextLock);
+            }
+
+            if (resources is not null)
+            {
+                Exception? th = null;
+
+                foreach (DisposableResourceInfo disposable in resources)
+                {
+                    try
+                    {
+                        disposable.Resource.Dispose();
+                    }
+                    catch (Exception t) when (t.IsThrowable())
+                    {
+                        // Add details about the source of the exception, so they can be printed out later.
+                        t.Data[RandomizedContextScopeKeyName]      = disposable.Scope.ToString(); // string
+                        t.Data[RandomizedContextThreadNameKeyName] = disposable.ThreadName;       // string
+                        t.Data[RandomizedContextStackTraceKeyName] = disposable.StackTrace;       // System.Diagnostics.StackTrace
+
+                        if (th is not null)
+                        {
+                            th.AddSuppressed(t);
+                        }
+                        else
+                        {
+                            th = t;
+                        }
+                    }
+                }
+
+                if (th is not null)
+                {
+                    ExceptionDispatchInfo.Capture(th).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
+                }
+            }
+        } // resources goes out of scope here - no need to Clear().
+
+        /// <summary>
+        /// Prints a stack trace of the <paramref name="exception"/> to the destination <see cref="TextWriter"/>.
+        /// The message will show additional stack details relevant to <see cref="DisposeAtEnd{T}(T, LifecycleScope)"/>
+        /// to identify the calling method, <see cref="LifecycleScope"/>, and name of the calling thread.
+        /// </summary>
+        /// <param name="exception">The exception to print. This may contain additional details in <see cref="Exception.Data"/>.</param>
+        /// <param name="destination">A <see cref="TextWriter"/> to write the output to.</param>
+        internal static void PrintStackTrace(Exception exception, TextWriter destination)
+        {
+            destination.WriteLine(FormatStackTrace(exception));
+        }
+
+        private static string FormatStackTrace(Exception exception)
+        {
+            StringBuilder sb = new StringBuilder(256);
+            FormatException(exception, sb);
+
+            foreach (var suppressedException in exception.GetSuppressedAsList())
+            {
+                sb.AppendLine("Suppressed: ");
+                FormatException(suppressedException, sb);
+            }
+
+            return sb.ToString();
+        }
+
+        private static void FormatException(Exception exception, StringBuilder destination)
+        {
+            destination.AppendLine(exception.ToString());
+
+            string? scope = (string?)exception.Data[RandomizedContextScopeKeyName];
+            string? threadName = (string?)exception.Data[RandomizedContextThreadNameKeyName];
+            StackTrace? stackTrace = (StackTrace?)exception.Data[RandomizedContextStackTraceKeyName];
+
+            bool hasData = scope != null || threadName != null || stackTrace != null;
+            if (!hasData)
+            {
+                return;
+            }
+
+            destination.AppendLine("Caller Details:");
+            if (scope != null) 
+            {
+                destination.Append("Scope: ");
+                destination.AppendLine(scope);
+            }
+            if (threadName != null)
+            {
+                destination.Append("Thread Name: ");
+                destination.AppendLine(threadName);
+            }
+            if (stackTrace != null)
+            {
+                destination.Append("Stack Trace:");
+                destination.AppendLine(stackTrace.ToString());
             }
         }
     }

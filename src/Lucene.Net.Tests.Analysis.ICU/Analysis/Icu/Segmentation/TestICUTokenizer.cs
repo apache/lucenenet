@@ -157,7 +157,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         }
 
         [Test]
-        public void TestMyanmar() 
+        public void TestMyanmar()
         {
             AssertAnalyzesTo(a, "သက်ဝင်လှုပ်ရှားစေပြီး", new String[] { "သက်ဝင်", "လှုပ်ရှား", "စေ", "ပြီး" });
         }
@@ -383,7 +383,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
                         if (Verbose)
                         {
-                            SystemConsole.Out.WriteLine(tokenCount);
+                            Console.Out.WriteLine(tokenCount);
                         }
                     }
                 }

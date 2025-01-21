@@ -1,6 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -385,8 +386,9 @@ namespace Lucene.Net.Analysis.Util
                 words = new CharArraySet(m_luceneMatchVersion, files.Count * 10, ignoreCase);
                 foreach (string file in files)
                 {
+                    Encoding decoder = Encoding.UTF8.WithDecoderExceptionFallback();
                     using (Stream stream = loader.OpenResource(file.Trim()))
-                    using (TextReader reader = new StreamReader(stream, Encoding.UTF8))
+                    using (TextReader reader = new StreamReader(stream, decoder))
                     {
                         WordlistLoader.GetSnowballWordSet(reader, words);
                     }

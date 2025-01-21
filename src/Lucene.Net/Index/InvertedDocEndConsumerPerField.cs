@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -23,7 +21,6 @@ namespace Lucene.Net.Index
     {
         internal abstract void Finish();
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void Abort();
     }
 }

@@ -2,7 +2,6 @@
 using Lucene.Net.Util;
 using System;
 using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -144,8 +143,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception ioe) when (ioe.IsIOException())
             {
-                Console.Error.WriteLine(ioe.ToString());
-                //Console.Write(ioe.StackTrace);
+                ioe.PrintStackTrace();
             }
             finally
             {
@@ -162,8 +160,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception ioe) when (ioe.IsIOException())
                 {
-                    Console.Error.WriteLine(ioe.ToString());
-                    //Console.Write(ioe.StackTrace);
+                    ioe.PrintStackTrace();
                 }
             }
         }

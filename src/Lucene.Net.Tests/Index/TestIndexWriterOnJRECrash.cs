@@ -14,7 +14,6 @@ using System.Reflection;
 using System.Threading;
 using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -286,7 +285,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception e) when (e.IsIOException())
                     {
-                        Console.Error.WriteLine("Couldn't pipe from the forked process: " + e.ToString());
+                        Console.Error.WriteLine("Couldn't pipe from the forked process: " + e.ToTypeMessageString()); // LUCENENET specific - use ToTypeMessageString to mimic Java behavior
                     }
                 }
             }

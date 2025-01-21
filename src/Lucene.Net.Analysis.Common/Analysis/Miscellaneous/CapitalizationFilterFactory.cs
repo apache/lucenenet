@@ -42,17 +42,17 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// assumed to be correct.<para/>
     /// "culture" - the culture to use to apply the capitalization rules. If not supplied or the string
     /// "invariant" is supplied, the invariant culture is used.<para/>
-    /// 
+    ///
     /// <code>
     /// &lt;fieldType name="text_cptlztn" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.CapitalizationFilterFactory" onlyFirstWord="true"
     ///           keep="java solr lucene" keepIgnoreCase="false"
-    ///           okPrefix="McK McD McA"/&gt;   
+    ///           okPrefix="McK McD McA"/&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
-    /// 
+    ///
     /// @since solr 1.3
     /// </summary>
     public class CapitalizationFilterFactory : TokenFilterFactory
@@ -67,9 +67,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public const string FORCE_FIRST_LETTER = "forceFirstLetter";
         public const string CULTURE = "culture"; // LUCENENET specific
 
-        internal CharArraySet keep;
+        internal readonly CharArraySet keep; // LUCENENET: marked readonly
 
-        internal ICollection<char[]> okPrefix = Collections.EmptyList<char[]>(); // for Example: McK
+        internal readonly ICollection<char[]> okPrefix = Collections.EmptyList<char[]>(); // for Example: McK // LUCENENET: marked readonly
 
         internal readonly int minWordLength; // don't modify capitalization for words shorter then this
         internal readonly int maxWordCount;

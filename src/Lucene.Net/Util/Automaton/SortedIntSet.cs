@@ -264,9 +264,9 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public struct FrozenInt32Set : IEquatable<FrozenInt32Set>
         {
-            internal int[] values;
-            internal int hashCode;
-            internal State state;
+            internal readonly int[] values; // LUCENENET: marked readonly
+            internal readonly int hashCode; // LUCENENET: marked readonly
+            internal readonly State state; // LUCENENET: marked readonly
 
             public FrozenInt32Set(int[] values, int hashCode, State state)
             {

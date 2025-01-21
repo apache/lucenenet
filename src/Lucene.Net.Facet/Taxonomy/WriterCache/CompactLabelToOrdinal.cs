@@ -484,10 +484,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private sealed class HashArray
         {
-            internal int[] offsets;
-            internal int[] cids;
+            internal readonly int[] offsets; // LUCENENET: marked readonly
+            internal readonly int[] cids; // LUCENENET: marked readonly
 
-            internal int capacity;
+            internal readonly int capacity; // LUCENENET: marked readonly
 
             internal HashArray(int c)
             {

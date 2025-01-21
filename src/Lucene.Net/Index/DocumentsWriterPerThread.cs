@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
         {
             internal readonly DocumentsWriterPerThread docWriter;
             internal Analyzer analyzer;
-            internal InfoStream infoStream;
+            internal readonly InfoStream infoStream; // LUCENENET: marked readonly
             internal Similarity similarity;
             internal int docID;
             internal IEnumerable<IIndexableField> doc;

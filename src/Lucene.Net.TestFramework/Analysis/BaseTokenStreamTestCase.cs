@@ -5,7 +5,6 @@ using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
@@ -17,7 +16,6 @@ using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Attribute = Lucene.Net.Util.Attribute;
 using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
-using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
 
@@ -545,7 +543,7 @@ namespace Lucene.Net.Analysis
             }
             catch (Exception unexpected) when (unexpected.IsException())
             {
-                unexpected.printStackTrace(Console.Error);
+                unexpected.PrintStackTrace(Console.Error);
                 Assert.Fail("Got wrong exception when Reset() not called: " + unexpected);
             }
             finally

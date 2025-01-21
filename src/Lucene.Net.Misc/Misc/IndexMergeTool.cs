@@ -2,7 +2,6 @@
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Misc
 {

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Attributes;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 #if FEATURE_INDEXWRITER_TESTS
 using J2N.Threading;
@@ -17,7 +18,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 #endif
 
 namespace Lucene.Net.Index
@@ -529,7 +529,7 @@ namespace Lucene.Net.Index
 
             internal virtual void Handle(Exception t)
             {
-                Console.WriteLine(t.StackTrace);
+                t.PrintStackTrace(Console.Out);
                 UninterruptableMonitor.Enter(failures);
                 try
                 {
@@ -1384,7 +1384,7 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: now fail; exc:");
-                        Console.WriteLine(new Exception().StackTrace);
+                        StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                     }
                     shouldFail.Value = false;
                     throw new FakeIOException();

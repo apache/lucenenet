@@ -138,13 +138,13 @@ namespace Lucene.Net.Search
                 Query csqbq = new ConstantScoreQuery(bq);
                 csqbq.Boost = 17.0f;
 
-                CheckHits(searcher, csq1, csq1.Boost, typeof(ConstantScoreQuery.ConstantScorer).Name, null);
-                CheckHits(searcher, csq2, csq2.Boost, typeof(ConstantScoreQuery.ConstantScorer).Name, typeof(ConstantScoreQuery.ConstantScorer).Name);
+                CheckHits(searcher, csq1, csq1.Boost, nameof(ConstantScoreQuery.ConstantScorer), null);
+                CheckHits(searcher, csq2, csq2.Boost, nameof(ConstantScoreQuery.ConstantScorer), nameof(ConstantScoreQuery.ConstantScorer));
 
                 // for the combined BQ, the scorer should always be BooleanScorer's BucketScorer, because our scorer supports out-of order collection!
-                string bucketScorerClass = typeof(FakeScorer).Name;
+                string bucketScorerClass = nameof(FakeScorer);
                 CheckHits(searcher, bq, csq1.Boost + csq2.Boost, bucketScorerClass, null);
-                CheckHits(searcher, csqbq, csqbq.Boost, typeof(ConstantScoreQuery.ConstantScorer).Name, bucketScorerClass);
+                CheckHits(searcher, csqbq, csqbq.Boost, nameof(ConstantScoreQuery.ConstantScorer), bucketScorerClass);
             }
             finally
             {

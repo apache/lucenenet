@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Analysis.Ja.Dict;
+using Lucene.Net.Support.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -55,7 +56,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             UnknownDictionaryWriter dictionary = new UnknownDictionaryWriter(5 * 1024 * 1024);
 
             JCG.List<string[]> lines = new JCG.List<string[]>();
-            Encoding decoder = Encoding.GetEncoding(encoding);
+            Encoding decoder = Encoding.GetEncoding(encoding).WithDecoderExceptionFallback();
             using (Stream inputStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
             using (TextReader reader = new StreamReader(inputStream, decoder))
             {

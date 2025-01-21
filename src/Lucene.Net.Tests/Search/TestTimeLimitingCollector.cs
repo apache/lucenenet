@@ -11,7 +11,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Text.RegularExpressions;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
@@ -158,7 +157,7 @@ namespace Lucene.Net.Search
             }
             catch (Exception e) when (e.IsException())
             {
-                e.printStackTrace();
+                e.PrintStackTrace();
                 assertTrue("Unexpected exception: " + e, false); //==fail
             }
             assertEquals("Wrong number of results!", totalResults, totalTLCResults);

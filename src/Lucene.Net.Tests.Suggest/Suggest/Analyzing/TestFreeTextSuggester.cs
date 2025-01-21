@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
@@ -602,7 +601,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             //Integer count = model.get(ngram);
                             if (model.TryGetValue(ngram, out int count))
                             {
-                                // LUCENENET NOTE: We need to calculate this as decimal because when using double it can sometimes 
+                                // LUCENENET NOTE: We need to calculate this as decimal because when using double it can sometimes
                                 // return numbers that are greater than long.MaxValue, which results in a negative long number.
                                 // This is also the way it is being done in the FreeTextSuggester to work around the issue.
 

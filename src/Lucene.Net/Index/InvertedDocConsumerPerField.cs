@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -38,7 +36,6 @@ namespace Lucene.Net.Index
         internal abstract void Finish();
 
         // Called on hitting an aborting exception
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
     }
 }

@@ -52,7 +52,7 @@ namespace Lucene.Net.Util
         internal int minRun;
         internal int to;
         internal int stackSize;
-        internal int[] runEnds;
+        internal readonly int[] runEnds; // LUCENENET: marked readonly
 
         /// <summary>
         /// Create a new <see cref="TimSorter"/>. </summary>
@@ -219,7 +219,6 @@ namespace Lucene.Net.Util
             --stackSize;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal virtual void Merge(int lo, int mid, int hi)
         {
             if (Compare(mid - 1, mid) <= 0)

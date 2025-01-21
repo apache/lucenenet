@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -87,7 +86,7 @@ namespace Lucene.Net.Index
                 catch (Exception e) when (e.IsThrowable())
                 {
                     Console.WriteLine(Thread.CurrentThread + ": exc");
-                    Console.Error.WriteLine(e.StackTrace);
+                    e.PrintStackTrace(Console.Out);
                     failed = true;
                 }
             }

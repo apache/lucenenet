@@ -12,7 +12,6 @@ using Lucene.Net.Util.Mutable;
 using NUnit.Framework;
 using System;
 using System.Collections;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search.Grouping
 {

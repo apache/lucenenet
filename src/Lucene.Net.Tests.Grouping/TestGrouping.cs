@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -41,7 +41,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using BytesRef = Lucene.Net.Util.BytesRef;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping

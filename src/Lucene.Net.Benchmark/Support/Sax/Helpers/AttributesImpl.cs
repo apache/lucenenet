@@ -30,9 +30,9 @@ namespace Sax.Helpers
     /// <item><description>to construct or modify an Attributes object in a SAX2 driver or filter.</description></item>
     /// </list>
     /// <para/>
-    /// This class replaces the now-deprecated SAX1 AttributeListImpl 
+    /// This class replaces the now-deprecated SAX1 AttributeListImpl
     /// class; in addition to supporting the updated Attributes
-    /// interface rather than the deprecated IAttributeList 
+    /// interface rather than the deprecated IAttributeList
     /// interface, it also includes a much more efficient
     /// implementation using a single array rather than a set of Vectors.
     /// </remarks>
@@ -322,7 +322,7 @@ namespace Sax.Helpers
         /// Clear the attribute list for reuse.
         /// <para/>
         /// Note that little memory is freed by this call:
-        /// the current array is kept so it can be 
+        /// the current array is kept so it can be
         /// reused.
         /// </summary>
         public virtual void Clear()
@@ -391,7 +391,7 @@ namespace Sax.Helpers
 
         /// <summary>
         /// Set an attribute in the list.
-        /// 
+        ///
         /// <para/>For the sake of speed, this method does no checking
         /// for name conflicts or well-formedness: such checks are the
         /// responsibility of the application.
@@ -406,9 +406,9 @@ namespace Sax.Helpers
         /// if qualified names are not available.</param>
         /// <param name="type">The attribute type as a string.</param>
         /// <param name="value">The attribute value.</param>
-        /// <exception cref="IndexOutOfRangeException">When the
+        /// <exception cref="ArgumentOutOfRangeException">When the
         /// supplied index does not point to an attribute
-        /// in the list.</exception>    
+        /// in the list.</exception>
         public virtual void SetAttribute(int index, string uri, string localName,
                       string qName, string type, string value)
         {
@@ -430,7 +430,7 @@ namespace Sax.Helpers
         /// Remove an attribute from the list.
         /// </summary>
         /// <param name="index">The index of the attribute (zero-based).</param>
-        /// <exception cref="IndexOutOfRangeException">When the supplied index does not point to an attribute in the list.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">When the supplied index does not point to an attribute in the list.</exception>
         public virtual void RemoveAttribute(int index)
         {
             if (index >= 0 && index < length)
@@ -460,9 +460,9 @@ namespace Sax.Helpers
         /// <param name="index">The index of the attribute (zero-based).</param>
         /// <param name="uri">The attribute's Namespace URI, or the empty
         /// string for none.</param>
-        /// <exception cref="IndexOutOfRangeException">When the
+        /// <exception cref="ArgumentOutOfRangeException">When the
         /// supplied index does not point to an attribute
-        /// in the list.</exception>      
+        /// in the list.</exception>
         public virtual void SetURI(int index, string uri)
         {
             if (index >= 0 && index < length)
@@ -481,9 +481,9 @@ namespace Sax.Helpers
         /// <param name="index">The index of the attribute (zero-based).</param>
         /// <param name="localName">The attribute's local name, or the empty
         /// string for none.</param>
-        /// <exception cref="IndexOutOfRangeException">When the
+        /// <exception cref="ArgumentOutOfRangeException">When the
         /// supplied index does not point to an attribute
-        /// in the list.</exception>         
+        /// in the list.</exception>
         public virtual void SetLocalName(int index, string localName)
         {
             if (index >= 0 && index < length)
@@ -502,9 +502,9 @@ namespace Sax.Helpers
         /// <param name="index">The index of the attribute (zero-based).</param>
         /// <param name="qName">The attribute's qualified name, or the empty
         /// string for none.</param>
-        /// <exception cref="IndexOutOfRangeException">When the
+        /// <exception cref="ArgumentOutOfRangeException">When the
         /// supplied index does not point to an attribute
-        /// in the list.</exception>    
+        /// in the list.</exception>
         public virtual void SetQName(int index, string qName)
         {
             if (index >= 0 && index < length)
@@ -522,9 +522,9 @@ namespace Sax.Helpers
         /// </summary>
         /// <param name="index">The index of the attribute (zero-based).</param>
         /// <param name="type">The attribute's type.</param>
-        /// <exception cref="IndexOutOfRangeException">When the
+        /// <exception cref="ArgumentOutOfRangeException">When the
         /// supplied index does not point to an attribute
-        /// in the list.</exception>         
+        /// in the list.</exception>
         public virtual void SetType(int index, string type)
         {
             if (index >= 0 && index < length)
@@ -542,9 +542,9 @@ namespace Sax.Helpers
         /// </summary>
         /// <param name="index">The index of the attribute (zero-based).</param>
         /// <param name="value">The attribute's value.</param>
-        /// <exception cref="IndexOutOfRangeException">When the
+        /// <exception cref="ArgumentOutOfRangeException">When the
         /// supplied index does not point to an attribute
-        /// in the list.</exception>   
+        /// in the list.</exception>
         public virtual void SetValue(int index, string value)
         {
             if (index >= 0 && index < length)
@@ -601,12 +601,12 @@ namespace Sax.Helpers
         /// Report a bad array index in a manipulator.
         /// </summary>
         /// <param name="index">The index to report.</param>
-        /// <exception cref="IndexOutOfRangeException">Always.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Always.</exception>
+        [DoesNotReturn]
         private static void BadIndex(int index) // LUCENENET: CA1822: Mark members as static
         {
-            string msg =
-                "Attempt to modify attribute at illegal index: " + index;
-            throw new IndexOutOfRangeException(msg);
+            string msg = $"Attempt to modify attribute at illegal index: {index}";
+            throw new ArgumentOutOfRangeException(nameof(index), msg);
         }
 
 

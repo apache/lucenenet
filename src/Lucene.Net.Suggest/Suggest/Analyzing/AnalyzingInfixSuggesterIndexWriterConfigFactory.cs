@@ -34,14 +34,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     {
         IndexWriterConfig Get(LuceneVersion matchVersion, Analyzer indexAnalyzer, OpenMode openMode);
     }
-    
+
     /// <summary>
     /// Default <see cref="IndexWriterConfig"/> factory for <see cref="AnalyzingInfixSuggester"/>.
     /// <para/>
     /// </summary>
     public class AnalyzingInfixSuggesterIndexWriterConfigFactory : IAnalyzingInfixSuggesterIndexWriterConfigFactory
     {
-        private Sort sort;
+        private readonly Sort sort; // LUCENENET: marked readonly
 
         /// <summary>
         /// Creates a new config factory that uses the given <see cref="Sort"/> in the sorting merge policy
@@ -50,10 +50,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             this.sort = sort;
         }
-        
+
         /// <summary>
         /// Override this to customize index settings, e.g. which
-        /// codec to use. 
+        /// codec to use.
         /// </summary>
         public virtual IndexWriterConfig Get(LuceneVersion matchVersion, Analyzer indexAnalyzer, OpenMode openMode)
         {

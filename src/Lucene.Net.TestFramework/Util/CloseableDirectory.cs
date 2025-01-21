@@ -1,15 +1,11 @@
-#if TESTFRAMEWORK
-// LUCENENET NOTE: This is incomplete
+﻿using Lucene.Net.Store;
+using NUnit.Framework;
+using NUnit.Framework.Interfaces;
+using NUnit.Framework.Internal;
+using System;
 
 namespace Lucene.Net.Util
 {
-
-    using NUnit.Framework;
-    using System;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    //using Assert = org.junit.Assert;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -30,36 +26,36 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Attempts to close a <seealso cref="BaseDirectoryWrapper"/>.
     /// </summary>
-    /// <seealso> cref= LuceneTestCase#newDirectory(java.util.Random) </seealso>
-    internal sealed class IDisposableDirectory : IDisposable
+    /// <seealso cref="LuceneTestCase.NewDirectory(Random)"/>
+    internal sealed class DisposableDirectory : IDisposable
     {
-      private readonly BaseDirectoryWrapper Dir;
-      private readonly TestRuleMarkFailure FailureMarker;
+        private readonly BaseDirectoryWrapper dir;
 
-      public IDisposableDirectory(BaseDirectoryWrapper dir, TestRuleMarkFailure failureMarker)
-      {
-        this.Dir = dir;
-        this.FailureMarker = failureMarker;
-      }
+        public DisposableDirectory(BaseDirectoryWrapper dir)
+        {
+            this.dir = dir ?? throw new ArgumentNullException(nameof(dir));
+        }
 
-      public void Dispose()
-      {
-        // We only attempt to check open/closed state if there were no other test
-        // failures.
-        try
+        public void Dispose()
         {
-          if (FailureMarker.WasSuccessful() && Dir.Open)
-          {
-            Assert.Fail("Directory not closed: " + Dir);
-          }
+            // We only attempt to check open/closed state if there were no other test
+            // failures.
+            try
+            {
+                //if (FailureMarker.WasSuccessful() && dir.Open)
+                // LUCENENET NOTE: Outcome is context sensitive and only exists after a test run.
+                ResultState outcome = TestContext.CurrentContext.Result.Outcome;
+                if (outcome != ResultState.Failure && outcome != ResultState.Inconclusive && dir.IsOpen)
+                {
+                    Assert.Fail($"Directory not disposed: {dir}");
+                }
+            }
+            finally
+            {
+                // TODO: perform real close of the delegate: LUCENE-4058
+                // dir.Dispose();
+            }
         }
-        finally
-        {
-          // TODO: perform real close of the delegate: LUCENE-4058
-          // dir.close();
-        }
-      }
     }
 
 }
-#endif

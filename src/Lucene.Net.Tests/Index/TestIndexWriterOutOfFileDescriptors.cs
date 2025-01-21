@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 using RandomizedTesting.Generators;
 
 namespace Lucene.Net.Index
@@ -146,8 +145,7 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: iter=" + iter + ": exception");
-                        Console.WriteLine(ioe.ToString());
-                        Console.Write(ioe.StackTrace);
+                        ioe.PrintStackTrace();
                     }
                     if (w != null)
                     {

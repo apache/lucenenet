@@ -148,7 +148,6 @@ namespace Lucene.Net.Util.Packed
         /// Return the number of values which have been added. </summary>
         public virtual long Ord => m_ord;
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         protected abstract void Flush();
 
         protected void WriteValues(int bitsRequired)

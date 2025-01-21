@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask
@@ -103,7 +102,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             config,
             performReinit: true,
             logQueries: string.Equals(config?.Get("log.queries", "false") ?? "false", "true", StringComparison.OrdinalIgnoreCase))
-        {    
+        {
         }
 
         // LUCENENET specific - added performReinit parameter to allow subclasses to skip reinit
@@ -114,7 +113,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         protected PerfRunData(Config config, bool performReinit, bool logQueries)
         {
             this.config = config ?? throw new ArgumentNullException(nameof(config));
-            
+
             // analyzer (default is standard analyzer)
             analyzer = NewAnalyzerTask.CreateAnalyzer(config.Get("analyzer",
                 typeof(Lucene.Net.Analysis.Standard.StandardAnalyzer).AssemblyQualifiedName));
@@ -178,7 +177,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             }
         }
 
-        // clean old stuff, reopen 
+        // clean old stuff, reopen
         public virtual void Reinit(bool eraseIndex)
         {
             // cleanup index
@@ -290,9 +289,9 @@ namespace Lucene.Net.Benchmarks.ByTask
 
         /// <summary>
         /// Set the taxonomy reader. Takes ownership of that taxonomy reader, that is,
-        /// internally performs taxoReader.IncRef() (If caller no longer needs that 
-        /// reader it should DecRef()/Dispose() it after calling this method, otherwise, 
-        /// the reader will remain open). 
+        /// internally performs taxoReader.IncRef() (If caller no longer needs that
+        /// reader it should DecRef()/Dispose() it after calling this method, otherwise,
+        /// the reader will remain open).
         /// </summary>
         /// <param name="taxoReader">The taxonomy reader to set.</param>
         public virtual void SetTaxonomyReader(TaxonomyReader taxoReader)
@@ -399,9 +398,9 @@ namespace Lucene.Net.Benchmarks.ByTask
 
         /// <summary>
         /// Set the index reader. Takes ownership of that index reader, that is,
-        /// internally performs indexReader.incRef() (If caller no longer needs that 
+        /// internally performs indexReader.incRef() (If caller no longer needs that
         /// reader it should decRef()/close() it after calling this method, otherwise,
-        /// the reader will remain open). 
+        /// the reader will remain open).
         /// </summary>
         /// <param name="indexReader">The indexReader to set.</param>
         public virtual void SetIndexReader(DirectoryReader indexReader)

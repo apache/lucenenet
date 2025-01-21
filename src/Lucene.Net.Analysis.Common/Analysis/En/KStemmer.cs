@@ -329,8 +329,8 @@ namespace Lucene.Net.Analysis.En
 
         internal class DictEntry
         {
-            internal bool exception;
-            internal string root;
+            internal readonly bool exception; // LUCENENET: marked readonly
+            internal readonly string root; // LUCENENET: marked readonly
 
             internal DictEntry(string root, bool isException)
             {
@@ -341,8 +341,8 @@ namespace Lucene.Net.Analysis.En
 
         private static readonly CharArrayDictionary<DictEntry> dict_ht = InitializeDictHash();
 
-        // caching off 
-        // 
+        // caching off
+        //
         // private int maxCacheSize; private CharArrayDictionary{String} cache =
         // null; private static final String SAME = "SAME"; // use if stemmed form is
         // the same
@@ -809,9 +809,9 @@ namespace Lucene.Net.Analysis.En
                 k = j + 1;
 
                 DictEntry entry = WordInDict();
-                if (entry != null) 
+                if (entry != null)
                 {
-                    if (!entry.exception) 
+                    if (!entry.exception)
                     {
                         // if it's in the dictionary and
                         // not an exception
@@ -1882,7 +1882,7 @@ namespace Lucene.Net.Analysis.En
 
             //*
             // caching off is normally faster if (cache is null) initializeStemHash();
-            // 
+            //
             // // now check the cache, before we copy chars to "word" if (cache != null)
             // { String val = cache.get(term, 0, len); if (val != null) { if (val !=
             // SAME) { result = val; return true; } return false; } }
@@ -2026,7 +2026,7 @@ namespace Lucene.Net.Analysis.En
             // if (entry is null) { if (!word.toString().equals(new String(term,0,len), StringComparison.Ordinal))
             // { System.out.println("CASE:" + word.toString() + "," + new
             // String(term,0,len));
-            // 
+            //
             // } }
             // **
 

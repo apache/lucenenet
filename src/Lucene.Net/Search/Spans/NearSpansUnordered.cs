@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Spans
         {
             private readonly NearSpansUnordered outerInstance;
 
-            internal Spans spans;
+            internal readonly Spans spans; // LUCENENET: marked readonly
             internal SpansCell next;
             private int length = -1;
             private readonly int index; // LUCENENET: marked readonly

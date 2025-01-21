@@ -2,6 +2,7 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Support.Threading;
 using RandomizedTesting.Generators;
 using System;
@@ -10,7 +11,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util
 {
@@ -236,7 +236,8 @@ namespace Lucene.Net.Util
                     } while (b >= 0 && b != 13 && b != 10);
                 }
 
-                reader = new StreamReader(@is, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: BUFFER_SIZE);
+                Encoding decoder = Encoding.UTF8.WithDecoderExceptionFallback();
+                reader = new StreamReader(@is, decoder, detectEncodingFromByteOrderMarks: false, bufferSize: BUFFER_SIZE);
 
                 if (seekTo > 0L)
                 {

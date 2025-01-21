@@ -1,7 +1,6 @@
 ﻿using J2N.Text;
 using System;
 using System.Globalization;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {

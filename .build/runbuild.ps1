@@ -328,6 +328,12 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
                 $testExpression = "$testExpression --TestCaseFilter:""$where"""
             }
 
+            # Anything after here is test run settings, following the "--" separator
+            $testExpression = "$testExpression --"
+
+            # Specify NUnit.DisplayName to get the full test class name in the output
+            $testExpression = "$testExpression NUnit.DisplayName=FullName"
+
             Write-Host $testExpression -ForegroundColor Magenta
 
             $scriptBlock = {

@@ -27,20 +27,20 @@ namespace Lucene.Net.Analysis.Pattern
     /// <summary>
     /// CaptureGroup uses .NET regexes to emit multiple tokens - one for each capture
     /// group in one or more patterns.
-    /// 
+    ///
     /// <para>
     /// For example, a pattern like:
     /// </para>
-    /// 
+    ///
     /// <para>
     /// <c>"(https?://([a-zA-Z\-_0-9.]+))"</c>
     /// </para>
-    /// 
+    ///
     /// <para>
     /// when matched against the string "http://www.foo.com/index" would return the
     /// tokens "https://www.foo.com" and "www.foo.com".
     /// </para>
-    /// 
+    ///
     /// <para>
     /// If none of the patterns match, or if preserveOriginal is true, the original
     /// token will be preserved.
@@ -55,9 +55,9 @@ namespace Lucene.Net.Analysis.Pattern
     /// </para>
     /// <para>
     /// <code>
-    ///   "([A-Z]{2,})",                                 
-    ///   "(?&lt;![A-Z])([A-Z][a-z]+)",                     
-    ///   "(?:^|\\b|(?&lt;=[0-9_])|(?&lt;=[A-Z]{2}))([a-z]+)", 
+    ///   "([A-Z]{2,})",
+    ///   "(?&lt;![A-Z])([A-Z][a-z]+)",
+    ///   "(?:^|\\b|(?&lt;=[0-9_])|(?&lt;=[A-Z]{2}))([a-z]+)",
     ///   "([0-9]+)"
     /// </code>
     /// </para>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Pattern
         private readonly CharsRef spare = new CharsRef();
         private readonly int[] groupCounts;
         private readonly bool preserveOriginal;
-        private int[] currentGroup;
+        private readonly int[] currentGroup; // LUCENENET: marked readonly
         private int currentMatcher;
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Pattern
         ///          patterns matches </param>
         /// <param name="patterns">
         ///          an array of <see cref="Pattern"/> objects to match against each token </param>
-        public PatternCaptureGroupTokenFilter(TokenStream input, bool preserveOriginal, params Regex[] patterns) 
+        public PatternCaptureGroupTokenFilter(TokenStream input, bool preserveOriginal, params Regex[] patterns)
             : base(input)
         {
             this.preserveOriginal = preserveOriginal;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Pattern
                 if (currentGroup[i] == -1)
                 {
                     if (matchers[i] is null)
-                        matchers[i] = patterns[i].Match(new string(spare.Chars, spare.Offset, spare.Length)); 
+                        matchers[i] = patterns[i].Match(new string(spare.Chars, spare.Offset, spare.Length));
                     else
                         matchers[i] = matchers[i].NextMatch();
                     currentGroup[i] = matchers[i].Success ? 1 : 0;
@@ -160,7 +160,7 @@ namespace Lucene.Net.Analysis.Pattern
                 ClearAttributes();
                 RestoreState(state);
                 int start = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index;
-                int end = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index + 
+                int end = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index +
                     matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Length;
 
                 posAttr.PositionIncrement = 0;
@@ -192,7 +192,7 @@ namespace Lucene.Net.Analysis.Pattern
             else if (NextCapture())
             {
                 int start = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index;
-                int end = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index + 
+                int end = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index +
                     matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Length;
 
                 // if we start at 0 we can simply set the length and save the copy

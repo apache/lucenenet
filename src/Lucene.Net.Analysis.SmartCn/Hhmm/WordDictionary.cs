@@ -395,7 +395,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         {
                             byte[] lchBuffer = new byte[length];
                             dctFile.Read(lchBuffer, 0, lchBuffer.Length);
-                            tmpword = Encoding.GetEncoding("GB2312").GetString(lchBuffer);
+                            tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET specific: use cached encoding instance from base class
                             wordItem_charArrayTable[i][j] = tmpword.ToCharArray();
                         }
                         else

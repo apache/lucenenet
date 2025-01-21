@@ -302,7 +302,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         byte[] lchBuffer = new byte[length];
                         dctFile.Read(lchBuffer, 0, lchBuffer.Length);
                         //tmpword = new String(lchBuffer, "GB2312");
-                        tmpword = Encoding.GetEncoding("GB2312").GetString(lchBuffer);
+                        tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET specific: use cached encoding instance from base class
                         //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
                         if (i != 3755 + GB2312_FIRST_CHAR)
                         {

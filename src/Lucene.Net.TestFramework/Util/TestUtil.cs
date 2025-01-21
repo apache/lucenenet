@@ -18,7 +18,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
@@ -167,7 +166,7 @@ namespace Lucene.Net.Util
             ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             CheckIndex checker = new CheckIndex(dir);
             checker.CrossCheckTermVectors = crossCheckTermVectors;
-            checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
+            checker.InfoStream = new StreamWriter(bos, IOUtils.ENCODING_UTF_8_NO_BOM);
             CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
             if (indexStatus is null || indexStatus.Clean == false)
             {
@@ -203,7 +202,7 @@ namespace Lucene.Net.Util
         {
             // LUCENENET: dispose the StreamWriter and ByteArrayOutputStream when done
             using ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
-            using StreamWriter infoStream = new StreamWriter(bos, Encoding.UTF8, leaveOpen: true, bufferSize: 1024);
+            using StreamWriter infoStream = new StreamWriter(bos, IOUtils.ENCODING_UTF_8_NO_BOM, leaveOpen: true, bufferSize: 1024);
 
             reader.CheckIntegrity();
             CheckIndex.Status.FieldNormStatus fieldNormStatus = Index.CheckIndex.TestFieldNorms(reader, infoStream);

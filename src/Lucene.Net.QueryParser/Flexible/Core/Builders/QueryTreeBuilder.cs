@@ -216,6 +216,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         /// This tag is used to tag the nodes in a query tree with the built objects
         /// produced from their own associated builder.
         /// </summary>
-        public static readonly string QUERY_TREE_BUILDER_TAGID = typeof(QueryTreeBuilder).Name;
+        public static readonly string QUERY_TREE_BUILDER_TAGID = nameof(QueryTreeBuilder);
     }
 }

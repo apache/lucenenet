@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Replicator
 {
@@ -132,14 +133,13 @@ namespace Lucene.Net.Replicator
         private volatile bool disposed = false;
 
         private readonly AtomicInt32 sessionToken = new AtomicInt32(0);
-        private readonly IDictionary<string, ReplicationSession> sessions = new Dictionary<string, ReplicationSession>();
+        private readonly JCG.Dictionary<string, ReplicationSession> sessions = new JCG.Dictionary<string, ReplicationSession>();
 
         /// <exception cref="InvalidOperationException"></exception>
         private void CheckExpiredSessions()
         {
-            // .NET NOTE: .ToArray() so we don't modify a collection we are enumerating...
-            //            I am wondering if it would be overall more practical to switch to a concurrent dictionary...
-            foreach (ReplicationSession token in sessions.Values.Where(token => token.IsExpired(ExpirationThreshold)).ToArray())
+            // LUCENENET NOTE: JCG.Dictionary<TKey, TValue> required for deleting while iterating forward prior to .NET Core
+            foreach (ReplicationSession token in sessions.Values.Where(token => token.IsExpired(ExpirationThreshold)))
             {
                 ReleaseSession(token.Session.Id);
             }

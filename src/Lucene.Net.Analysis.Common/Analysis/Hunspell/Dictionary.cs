@@ -74,14 +74,14 @@ namespace Lucene.Net.Analysis.Hunspell
 
         // all condition checks used by prefixes and suffixes. these are typically re-used across
         // many affix stripping rules. so these are deduplicated, to save RAM.
-        internal IList<CharacterRunAutomaton> patterns = new JCG.List<CharacterRunAutomaton>();
+        internal readonly IList<CharacterRunAutomaton> patterns = new JCG.List<CharacterRunAutomaton>(); // LUCENENET: marked readonly
 
         // the entries in the .dic file, mapping to their set of flags.
         // the fst output is the ordinal list for flagLookup
-        internal FST<Int32sRef> words;
+        internal readonly FST<Int32sRef> words; // LUCENENET: marked readonly
         // the list of unique flagsets (wordforms). theoretically huge, but practically
         // small (e.g. for polish this is 756), otherwise humans wouldn't be able to deal with it either.
-        internal BytesRefHash flagLookup = new BytesRefHash();
+        internal readonly BytesRefHash flagLookup = new BytesRefHash(); // LUCENENET: marked readonly
 
         // the list of unique strip affixes.
         internal char[] stripData;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Hunspell
         // LUCENENET specific - changed from DirectoryInfo to string
         private readonly string tempDir = OfflineSorter.DefaultTempDir; // TODO: make this configurable?
 
-        internal bool ignoreCase;
+        internal readonly bool ignoreCase; // LUCENENET: marked readonly
         internal bool complexPrefixes;
         internal bool twoStageAffix; // if no affixes have continuation classes, no need to do 2-level affix stripping
 
@@ -746,7 +746,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             if ("ISO8859-14".Equals(encoding, StringComparison.OrdinalIgnoreCase))
             {
-                return new ISO8859_14Encoding();
+                return ISO8859_14Encoding.Default;
             }
             // .NET doesn't recognize the encoding without a dash between ISO and the number
             // https://msdn.microsoft.com/en-us/library/system.text.encodinginfo.getencoding(v=vs.110).aspx
@@ -910,7 +910,8 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 foreach (Stream dictionary in dictionaries)
                 {
-                    using var lines = new StreamReader(dictionary, decoder); // LUCENENET specific - CA2000: Use using pattern to ensure reader is disposed
+                    // LUCENENET specific - CA2000: Use using pattern to ensure reader is disposed, although we want to leave the dictionary stream open. See: TestDictionary.TestResourceCleanup
+                    using var lines = new StreamReader(dictionary, decoder, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true);
                     string line = lines.ReadLine(); // first line is number of entries (approximately, sometimes)
 
                     while ((line = lines.ReadLine()) != null)

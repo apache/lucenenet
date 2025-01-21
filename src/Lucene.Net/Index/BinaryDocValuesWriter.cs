@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -131,7 +130,6 @@ namespace Lucene.Net.Index
             dvConsumer.AddBinaryField(fieldInfo, GetBytesIterator(maxDoc));
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
         }

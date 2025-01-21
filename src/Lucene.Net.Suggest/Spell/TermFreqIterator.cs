@@ -39,10 +39,10 @@ namespace Lucene.Net.Search.Spell
     /// </summary>
     public class TermFreqEnumeratorWrapper : ITermFreqEnumerator
     {
-        internal IBytesRefEnumerator wrapped;
+        internal readonly IBytesRefEnumerator wrapped; // LUCENENET: marked readonly
 
         /// <summary>
-        /// Creates a new wrapper, wrapping the specified iterator and 
+        /// Creates a new wrapper, wrapping the specified iterator and
         /// specifying a weight value of <code>1</code> for all terms.
         /// </summary>
         public TermFreqEnumeratorWrapper(IBytesRefEnumerator wrapped)

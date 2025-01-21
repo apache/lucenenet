@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Pattern
 {
@@ -224,7 +223,7 @@ namespace Lucene.Net.Analysis.Pattern
         }
 
         /// <summary>
-        /// A demonstration of how backtracking regular expressions can lead to relatively 
+        /// A demonstration of how backtracking regular expressions can lead to relatively
         /// easy DoS attacks.
         /// </summary>
         /// <seealso cref= "http://swtch.com/~rsc/regexp/regexp1.html" </seealso>

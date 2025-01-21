@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (StackTraceHelper.DoesStackTraceContainMethod(nameof(PersistentSnapshotDeletionPolicy), "Persist"))
+                if (StackTraceHelper.DoesStackTraceContainMethod(nameof(PersistentSnapshotDeletionPolicy), nameof(PersistentSnapshotDeletionPolicy.Persist)))
                 {
                     throw new IOException("now fail on purpose");
                 }

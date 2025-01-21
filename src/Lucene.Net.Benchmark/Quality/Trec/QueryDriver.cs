@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.Quality.Trec
@@ -71,16 +70,19 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
 
             FileInfo topicsFile = new FileInfo(args[0]);
             FileInfo qrelsFile = new FileInfo(args[1]);
-            SubmissionReport submitLog = new SubmissionReport(new StreamWriter(new FileStream(args[2], FileMode.Create, FileAccess.Write), Encoding.UTF8 /* huh, no nio.Charset ctor? */), "lucene");
+            SubmissionReport submitLog = new SubmissionReport(new StreamWriter(new FileStream(args[2], FileMode.Create, FileAccess.Write), IOUtils.ENCODING_UTF_8_NO_BOM /* huh, no nio.Charset ctor? */), "lucene");
             using Store.FSDirectory dir = Store.FSDirectory.Open(new DirectoryInfo(args[3]));
             using IndexReader reader = DirectoryReader.Open(dir);
             string fieldSpec = args.Length == 5 ? args[4] : "T"; // default to Title-only if not specified.
             IndexSearcher searcher = new IndexSearcher(reader);
 
-            int maxResults = 1000;
-            string docNameField = "docname";
+            const int maxResults = 1000;
+            const string docNameField = "docname";
 
-            TextWriter logger = Console.Out; //new StreamWriter(Console, Encoding.GetEncoding(0));
+            using TextWriter logger = new StreamWriter(System.Console.OpenStandardOutput(), Encoding.Default)
+            {
+                AutoFlush = true,
+            };
 
             // use trec utilities to read trec topics into quality queries
             TrecTopicsReader qReader = new TrecTopicsReader();

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -22,17 +21,14 @@ namespace Lucene.Net.Index
 
     internal abstract class InvertedDocEndConsumer
     {
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void Flush(IDictionary<string, InvertedDocEndConsumerPerField> fieldsToFlush, SegmentWriteState state);
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void Abort();
 
         internal abstract InvertedDocEndConsumerPerField AddField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo);
 
         internal abstract void StartDocument();
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void FinishDocument();
     }
 }

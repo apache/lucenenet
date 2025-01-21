@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -33,7 +32,6 @@ using After = NUnit.Framework.TearDownAttribute;
 using Assert = Lucene.Net.TestFramework.Assert;
 using AssumptionViolatedException = NUnit.Framework.InconclusiveException;
 using Before = NUnit.Framework.SetUpAttribute;
-using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
 using FieldInfo = Lucene.Net.Index.FieldInfo;
 using JCG = J2N.Collections.Generic;
@@ -440,7 +438,6 @@ namespace Lucene.Net.Util
             public string[] Value { get; private set; }
         }
 
-        // LUCENENET TODO: Finish implementation
         /// <summary>
         /// Marks any suites which are known not to close all the temporary
         /// files. This may prevent temp files and folders from being cleaned
@@ -505,6 +502,7 @@ namespace Lucene.Net.Util
                 TestSlow = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, true); // LUCENENET specific - made default true, as per the docs
                 TestThrottling = TestNightly ? Throttling.SOMETIMES : Throttling.NEVER;
                 LeaveTemporary = LoadLeaveTemorary();
+                FailOnTestFixtureOneTimeSetUpError = SystemProperties.GetPropertyAsBoolean("tests:failontestfixtureonetimesetuperror", true);
             }
 
 
@@ -583,6 +581,16 @@ namespace Lucene.Net.Util
                 }
                 return defaultValue;
             }
+
+            /// <summary>
+            /// Fail when <see cref="OneTimeSetUp()"/> throws an exception for a given test fixture (usually a class).
+            /// By default, NUnit swallows exceptions when they happen here. We explicitly report these errors
+            /// to standard error, but enabling this feature will also cause all tests in the fixture and nested
+            /// tests to fail. Defaults to <c>false</c>.
+            /// <para/>
+            /// LUCENENET specific.
+            /// </summary>
+            public bool FailOnTestFixtureOneTimeSetUpError { get; }
         }
 
 
@@ -658,6 +666,15 @@ namespace Lucene.Net.Util
         /// Leave temporary files on disk, even on successful runs. </summary>
         public static bool LeaveTemporary => TestProperties.LeaveTemporary;
 
+        /// <summary>
+        /// Fail when <see cref="OneTimeSetUp()"/> throws an exception for a given test fixture (usually a class).
+        /// By default, NUnit swallows exceptions when they happen here. We explicitly report these errors
+        /// to standard error, but enabling this feature will also cause all tests in the fixture and nested
+        /// tests to fail. Defaults to <c>false</c>.
+        /// <para/>
+        /// LUCENENET specific.
+        /// </summary>
+        public static bool FailOnTestFixtureOneTimeSetUpError => TestProperties.FailOnTestFixtureOneTimeSetUpError;
 
         // LUCENENET: Not Implemented
         /////// <summary>
@@ -723,11 +740,11 @@ namespace Lucene.Net.Util
         /// </summary>
         internal static TestRuleSetupAndRestoreClassEnv ClassEnvRule { get; } = new TestRuleSetupAndRestoreClassEnv();
 
-        // LUCENENET TODO
-        /// <summary>
-        /// Suite failure marker (any error in the test or suite scope).
-        /// </summary>
-        public static readonly /*TestRuleMarkFailure*/ bool SuiteFailureMarker = true; // Means: was successful
+        // LUCENENET: Removed SuiteFailureMarker and TestFailureMarker because they are used for functionality that
+        // is redundant with NUnit.Framework.Internal.TestExecutionContext.CurrentContext.CurrentResult
+        //
+        // wasSuccessful() is the same as ResultState != ResultState.Error
+        // hadFailures() is the same as ResultState == ResultState.Error
 
         ///// <summary>
         ///// Ignore tests after hitting a designated number of initial failures. This
@@ -756,7 +773,7 @@ namespace Lucene.Net.Util
         ////        }
         ////        else
         ////        {
-        ////            Console.Out.Write(typeof(LuceneTestCase).Name + " WARNING: Property '" + SYSPROP_MAXFAILURES + "'=" + maxFailures + ", 'failfast' is" + " ignored.");
+        ////            Console.Out.Write(nameof(LuceneTestCase) + " WARNING: Property '" + SYSPROP_MAXFAILURES + "'=" + maxFailures + ", 'failfast' is" + " ignored.");
         ////        }
         ////    }
 
@@ -786,7 +803,7 @@ namespace Lucene.Net.Util
 
         /////// <summary>
         /////// By-name list of ignored types like loggers etc. </summary>
-        //////private static ISet<string> STATIC_LEAK_IGNORED_TYPES = new JCG.HashSet<string>(new string[] { "org.slf4j.Logger", "org.apache.solr.SolrLogFormatter", typeof(EnumSet).Name });
+        //////private static ISet<string> STATIC_LEAK_IGNORED_TYPES = new JCG.HashSet<string>(new string[] { "org.slf4j.Logger", "org.apache.solr.SolrLogFormatter", nameof(EnumSet) });
 
         /////// <summary>
         /////// this controls how suite-level rules are nested. It is important that _all_ rules declared
@@ -843,9 +860,11 @@ namespace Lucene.Net.Util
         /////// Save test thread and name. </summary>
         ////private TestRuleThreadAndTestName threadAndTestNameRule = new TestRuleThreadAndTestName();
 
-        /////// <summary>
-        /////// Taint suite result with individual test failures. </summary>
-        ////private TestRuleMarkFailure testFailureMarker = new TestRuleMarkFailure(SuiteFailureMarker);*/
+        // LUCENENET: Removed SuiteFailureMarker and TestFailureMarker because they are used for functionality that
+        // is redundant with NUnit.Framework.Internal.TestExecutionContext.CurrentContext.CurrentResult
+        //
+        // wasSuccessful() is the same as ResultState != ResultState.Error
+        // hadFailures() is the same as ResultState == ResultState.Error
 
         /////// <summary>
         /////// this controls how individual test rules are nested. It is important that
@@ -866,12 +885,6 @@ namespace Lucene.Net.Util
         // Suite and test case setup/ cleanup.
         // -----------------------------------------------------------------
 
-        // LUCENENET specific: Temporary storage for random selections so they
-        // can be set once per OneTimeSetUp and reused multiple times in SetUp
-        // where they are written to the output.
-        private string codecType;
-        private string similarityName;
-
         /// <summary>
         /// For subclasses to override. Overrides must call <c>base.SetUp()</c>.
         /// </summary>
@@ -880,48 +893,6 @@ namespace Lucene.Net.Util
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
-
-            // LUCENENET: Printing out randomized context regardless
-            // of whether verbose is enabled (since we need it for debugging,
-            // but the verbose output can crash tests).
-            Console.Write("RandomSeed: ");
-            Console.WriteLine(RandomizedContext.CurrentContext.RandomSeedAsHex);
-
-            Console.Write("Culture: ");
-            Console.WriteLine(ClassEnvRule.locale.Name);
-
-            Console.Write("Time Zone: ");
-            Console.WriteLine(ClassEnvRule.timeZone.DisplayName);
-
-            Console.Write("Default Codec: ");
-            Console.Write(ClassEnvRule.codec.Name);
-            Console.Write(" (");
-            Console.Write(codecType);
-            Console.WriteLine(")");
-
-            Console.Write("Default Similarity: ");
-            Console.WriteLine(similarityName);
-
-            Console.Write("Nightly: ");
-            Console.WriteLine(TestNightly);
-
-            Console.Write("Weekly: ");
-            Console.WriteLine(TestWeekly);
-
-            Console.Write("Slow: ");
-            Console.WriteLine(TestSlow);
-
-            Console.Write("Awaits Fix: ");
-            Console.WriteLine(TestAwaitsFix);
-
-            Console.Write("Directory: ");
-            Console.WriteLine(TestDirectory);
-
-            Console.Write("Verbose: ");
-            Console.WriteLine(Verbose);
-
-            Console.Write("Random Multiplier: ");
-            Console.WriteLine(RandomMultiplier);
         }
 
         /// <summary>
@@ -933,7 +904,6 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
-
             TestResult result = TestExecutionContext.CurrentContext.CurrentResult;
 
             if (result.ResultState == ResultState.Failure || result.ResultState == ResultState.Error)
@@ -941,6 +911,7 @@ namespace Lucene.Net.Util
                 string message =
                     $$"""
                       {{result.Message}}
+                      (Test: {{result.FullName}})
 
                       To reproduce this test result:
 
@@ -948,7 +919,7 @@ namespace Lucene.Net.Util
 
                        Apply the following assembly-level attributes:
 
-                      [assembly: Lucene.Net.Util.RandomSeed("{{RandomizedContext.CurrentContext.RandomSeedAsHex}}")]
+                      [assembly: Lucene.Net.Util.RandomSeed("{{RandomizedContext.CurrentContext.RandomSeedAsString}}")]
                       [assembly: NUnit.Framework.SetCulture("{{Thread.CurrentThread.CurrentCulture.Name}}")]
 
                       Option 2:
@@ -957,7 +928,7 @@ namespace Lucene.Net.Util
 
                       <RunSettings>
                         <TestRunParameters>
-                          <Parameter name="tests:seed" value="{{RandomizedContext.CurrentContext.RandomSeedAsHex}}" />
+                          <Parameter name="tests:seed" value="{{RandomizedContext.CurrentContext.RandomSeedAsString}}" />
                           <Parameter name="tests:culture" value="{{Thread.CurrentThread.CurrentCulture.Name}}" />
                         </TestRunParameters>
                       </RunSettings>
@@ -968,14 +939,46 @@ namespace Lucene.Net.Util
 
                       {
                         "tests": {
-                           "seed": "{{RandomizedContext.CurrentContext.RandomSeedAsHex}}",
+                           "seed": "{{RandomizedContext.CurrentContext.RandomSeedAsString}}",
                            "culture": "{{Thread.CurrentThread.CurrentCulture.Name}}"
                         }
                       }
 
+                      Fixture Test Values
+                      =================
+
+                       Random Seed:           {{RandomizedContext.CurrentContext.RandomSeedAsString}}
+                       Culture:               {{ClassEnvRule.locale.Name}}
+                       Time Zone:             {{ClassEnvRule.timeZone.DisplayName}}
+                       Default Codec:         {{ClassEnvRule.codec.Name}} ({{ClassEnvRule.codec.GetType().Name}})
+                       Default Similarity:    {{ClassEnvRule.similarity}}
+
+                      System Properties
+                      =================
+
+                       Nightly:               {{TestNightly}}
+                       Weekly:                {{TestWeekly}}
+                       Slow:                  {{TestSlow}}
+                       Awaits Fix:            {{TestAwaitsFix}}
+                       Directory:             {{TestDirectory}}
+                       Verbose:               {{Verbose}}
+                       Random Multiplier:     {{RandomMultiplier}}
+
                       """;
 
                 result.SetResult(result.ResultState, message, result.StackTrace);
+            }
+
+            // LUCENENET: DisposeAfterTest runs last
+            try
+            {
+                RandomizedContext.CurrentContext.DisposeResources();
+            }
+            catch (Exception ex) when (ex.IsThrowable())
+            {
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] An exception occurred during TearDown:");
+                RandomizedContext.PrintStackTrace(ex, NUnit.Framework.TestContext.Error);
+                throw; // LUCENENET: Throw to preserve stack details of original throw.
             }
         }
 
@@ -993,15 +996,19 @@ namespace Lucene.Net.Util
             try
             {
                 ClassEnvRule.Before();
-
-                // LUCENENET: Generate the info once so it can be printed out for each test
-                codecType = ClassEnvRule.codec.GetType().Name;
-                similarityName = ClassEnvRule.similarity.ToString();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex.IsThrowable())
             {
-                // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during OneTimeSetUp:\n{ex}", ex);
+                // This is a bug in the test framework that should be fixed and/or reported if it occurs.
+                if (FailOnTestFixtureOneTimeSetUpError)
+                {
+                    // LUCENENET: Patch NUnit so it will report all of the tests in the class as a failure if we got an exception.
+                    TestExecutionContext.CurrentContext.CurrentTest.MakeAllInvalid(ex, $"An exception occurred during OneTimeSetUp:\n{ex}");
+                }
+                else
+                {
+                    NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] An exception occurred during OneTimeSetUp:\n{ex}");
+                }
             }
         }
 
@@ -1018,12 +1025,33 @@ namespace Lucene.Net.Util
             try
             {
                 ClassEnvRule.After();
+            }
+            catch (Exception ex) when (ex.IsThrowable())
+            {
+                // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during ClassEnvRule.After() in {GetType().FullName}:\n{ex}");
+            }
+            try
+            {
                 CleanupTemporaryFiles();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex.IsThrowable())
             {
-                // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during OneTimeTearDown:\n{ex}", ex);
+                // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during CleanupTemporaryFiles() in {GetType().FullName}:\n{ex}");
+            }
+
+            // LUCENENET: DisposeAfterSuite runs last
+            try
+            {
+                RandomizedContext.CurrentContext.DisposeResources();
+            }
+            catch (Exception ex) when (ex.IsThrowable())
+            {
+                // LUCENENET: Patch NUnit so it will report a failure in stderr if there was an exception during teardown.
+                NUnit.Framework.TestContext.Error.WriteLine($"[ERROR] OneTimeTearDown: An exception occurred during RandomizedContext.DisposeResources() in {GetType().FullName}:");
+                RandomizedContext.PrintStackTrace(ex, NUnit.Framework.TestContext.Error);
+                throw; // LUCENENET: Throw to preserve stack details of original throw.
             }
         }
 
@@ -1063,25 +1091,31 @@ namespace Lucene.Net.Util
             }
         }
 
-        /////// <summary>
-        /////// Registers a <see cref="IDisposable"/> resource that should be closed after the test
-        /////// completes.
-        /////// </summary>
-        /////// <returns> <c>resource</c> (for call chaining). </returns>
-        /////*public static T CloseAfterTest<T>(T resource)
-        ////{
-        ////    return RandomizedContext.Current.CloseAtEnd(resource, LifecycleScope.TEST);
-        ////}*/
+        /// <summary>
+        /// Registers a <see cref="IDisposable"/> resource that should be closed after the test
+        /// completes.
+        /// </summary>
+        /// <returns> <c>resource</c> (for call chaining). </returns>
+        public static T DisposeAfterTest<T>(T resource) where T : IDisposable
+        {
+            return RandomizedContext.CurrentContext.DisposeAtEnd(resource, LifecycleScope.TEST);
+        }
 
-        /////// <summary>
-        /////// Registers a <see cref="IDisposable"/> resource that should be closed after the suite
-        /////// completes.
-        /////// </summary>
-        /////// <returns> <c>resource</c> (for call chaining). </returns>
-        /////*public static T CloseAfterSuite<T>(T resource)
-        ////{
-        ////    return RandomizedContext.Current.CloseAtEnd(resource, LifecycleScope.SUITE);
-        ////}*/
+        /// <summary>
+        /// Registers a <see cref="IDisposable"/> resource that should be closed after the suite
+        /// completes.
+        /// </summary>
+        /// <returns> <c>resource</c> (for call chaining). </returns>
+        /// <remarks>
+        /// Due to limitations of NUnit, any exceptions or assertions raised
+        /// from the <paramref name="resource"/> will not be respected. However, if
+        /// you want to detect a failure, do note that the message from either one
+        /// will be printed to StdOut.
+        /// </remarks>
+        public static T DisposeAfterSuite<T>(T resource) where T : IDisposable
+        {
+            return RandomizedContext.CurrentContext.DisposeAtEnd(resource, LifecycleScope.SUITE);
+        }
 
         /// <summary>
         /// Gets the current type being tested.
@@ -1689,7 +1723,7 @@ namespace Lucene.Net.Util
             if (bare)
             {
                 BaseDirectoryWrapper @base = new BaseDirectoryWrapper(directory);
-                // LUCENENET TODO: CloseAfterSuite(new DisposableDirectory(@base, SuiteFailureMarker));
+                DisposeAfterSuite(new DisposableDirectory(@base /*, SuiteFailureMarker*/));
                 return @base;
             }
             else
@@ -1697,7 +1731,7 @@ namespace Lucene.Net.Util
                 MockDirectoryWrapper mock = new MockDirectoryWrapper(random, directory);
 
                 mock.Throttling = TestThrottling;
-                // LUCENENET TODO: CloseAfterSuite(new DisposableDirectory(mock, SuiteFailureMarker));
+                DisposeAfterSuite(new DisposableDirectory(mock /*, SuiteFailureMarker*/));
                 return mock;
             }
         }
@@ -3083,12 +3117,12 @@ namespace Lucene.Net.Util
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         protected string GetFullMethodName([CallerMemberName] string memberName = "")
         {
-            return string.Format("{0}+{1}", this.GetType().Name, memberName);
+            return $"{this.GetType().Name}+{memberName}";
         }
 
+        // LUCENENET specific - this is equivalent to TemporaryFilesCleanupRule in Lucene
         private static void CleanupTemporaryFiles()
         {
             // Drain cleanup queue and clear it.
@@ -3118,7 +3152,8 @@ namespace Lucene.Net.Util
             // Only check and throw an IOException on un-removable files if the test
             // was successful. Otherwise just report the path of temporary files
             // and leave them there.
-            if (LuceneTestCase.SuiteFailureMarker /*.WasSuccessful()*/)
+            //if (LuceneTestCase.SuiteFailureMarker.WasSuccessful)
+            if (TestExecutionContext.CurrentContext.CurrentResult.ResultState != ResultState.Failure)
             {
                 try
                 {
@@ -3126,19 +3161,19 @@ namespace Lucene.Net.Util
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
-                    //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
-                    //                    {
-                    Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
-                    return;
-                    //                    }
+                    if (RandomizedContext.CurrentContext.CurrentTest.TypeInfo?.Type.GetCustomAttribute<SuppressTempFileChecksAttribute>(inherit: true) is { } suppressAttr)
+                    {
+                        Console.Error.WriteLine($"WARNING: Leftover undeleted temporary files (bugUrl: {suppressAttr.BugUrl}): {e.Message}");
+                        return;
+                    }
+                    throw;
                 }
             }
             else
             {
                 if (tempDirBasePath != null)
                 {
-                    Console.Error.WriteLine("NOTE: leaving temporary files on disk at: " + tempDirBasePath);
+                    Console.Error.WriteLine($"NOTE: leaving temporary files on disk at: {tempDirBasePath}");
                 }
             }
         }
@@ -3147,9 +3182,9 @@ namespace Lucene.Net.Util
         {
             // LUCENENET specific - log the current locking strategy used and HResult values
             // for assistance troubleshooting problems on Linux/macOS
-            SystemConsole.WriteLine($"Locking Strategy: {NativeFSLockFactory.LockingStrategy}");
-            SystemConsole.WriteLine($"Share Violation HResult: {(NativeFSLockFactory.HRESULT_FILE_SHARE_VIOLATION.HasValue ? NativeFSLockFactory.HRESULT_FILE_SHARE_VIOLATION.ToString() : "null")}");
-            SystemConsole.WriteLine($"Lock Violation HResult: {(NativeFSLockFactory.HRESULT_FILE_LOCK_VIOLATION.HasValue ? NativeFSLockFactory.HRESULT_FILE_LOCK_VIOLATION.ToString() : "null")}");
+            Console.WriteLine($"Locking Strategy: {NativeFSLockFactory.LockingStrategy}");
+            Console.WriteLine($"Share Violation HResult: {(NativeFSLockFactory.HRESULT_FILE_SHARE_VIOLATION.HasValue ? NativeFSLockFactory.HRESULT_FILE_SHARE_VIOLATION.ToString() : "null")}");
+            Console.WriteLine($"Lock Violation HResult: {(NativeFSLockFactory.HRESULT_FILE_LOCK_VIOLATION.HasValue ? NativeFSLockFactory.HRESULT_FILE_LOCK_VIOLATION.ToString() : "null")}");
 
             string fileName;
             try
@@ -3159,7 +3194,7 @@ namespace Lucene.Net.Util
             }
             catch (Exception e)
             {
-                SystemConsole.WriteLine($"Error while creating temp file: {e}");
+                Console.WriteLine($"Error while creating temp file: {e}");
                 return;
             }
 
@@ -3170,8 +3205,8 @@ namespace Lucene.Net.Util
             }
             catch (Exception e)
             {
-                SystemConsole.WriteLine($"Error while opening initial share stream: {e}");
-                SystemConsole.WriteLine($"******* HResult: {e.HResult}");
+                Console.WriteLine($"Error while opening initial share stream: {e}");
+                Console.WriteLine($"******* HResult: {e.HResult}");
                 return;
             }
             finally
@@ -3185,9 +3220,9 @@ namespace Lucene.Net.Util
             }
             catch (IOException io) when (io.HResult != 0)
             {
-                SystemConsole.WriteLine($"Successfully retrieved sharing violation.");
-                SystemConsole.WriteLine($"******* HResult: {io.HResult}");
-                SystemConsole.WriteLine($"Exception: {io}");
+                Console.WriteLine($"Successfully retrieved sharing violation.");
+                Console.WriteLine($"******* HResult: {io.HResult}");
+                Console.WriteLine($"Exception: {io}");
             }
             finally
             {

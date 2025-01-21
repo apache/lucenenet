@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net
@@ -288,16 +287,6 @@ namespace Lucene.Net
                 if (!other.Contains(e))
                     s.Remove(e);
             }
-        }
-
-        public static void printStackTrace(this Exception e)
-        {
-            Console.Error.WriteLine(e.StackTrace);
-        }
-
-        public static void printStackTrace(this Exception e, TextWriter destination)
-        {
-            destination.WriteLine(e.StackTrace);
         }
 
         /// <summary>

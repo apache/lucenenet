@@ -101,14 +101,14 @@ namespace Lucene.Net.Index
 
             public override void LookupOrd(long ord, BytesRef result)
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(ord));
             }
 
             public override long ValueCount => 0;
 
             public override long OrdAt(int index)
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(index));
             }
 
             public override int Cardinality => 0;

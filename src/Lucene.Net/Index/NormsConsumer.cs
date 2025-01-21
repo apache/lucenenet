@@ -35,7 +35,6 @@ namespace Lucene.Net.Index
 
     internal sealed class NormsConsumer : InvertedDocEndConsumer
     {
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Abort()
         {
         }
@@ -87,7 +86,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()
         {
         }

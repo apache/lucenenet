@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
 {

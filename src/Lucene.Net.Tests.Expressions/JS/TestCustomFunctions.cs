@@ -63,19 +63,19 @@ namespace Lucene.Net.Expressions.JS
         public virtual void TestNoArgMethod()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod("ZeroArgMethod");
+            functions["foo"] = GetType().GetMethod(nameof(ZeroArgMethod));
             var expr = JavascriptCompiler.Compile("foo()", functions);
             Assert.AreEqual(5, expr.Evaluate(0, null), DELTA);
         }
 
-        public static double OneArgMethod(double arg1) => 3 + arg1; 
+        public static double OneArgMethod(double arg1) => 3 + arg1;
 
         /// <summary>tests a method with one arguments</summary>
         [Test]
         public virtual void TestOneArgMethod()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod("OneArgMethod", new []{ typeof(double)});
+            functions["foo"] = GetType().GetMethod(nameof(OneArgMethod), new []{ typeof(double)});
             var expr = JavascriptCompiler.Compile("foo(3)", functions);
             Assert.AreEqual(6, expr.Evaluate(0, null), DELTA);
         }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Expressions.JS
         public virtual void TestThreeArgMethod()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod("ThreeArgMethod", new []{ typeof(double), typeof(double), typeof(double)});
+            functions["foo"] = GetType().GetMethod(nameof(ThreeArgMethod), new []{ typeof(double), typeof(double), typeof(double)});
             var expr = JavascriptCompiler.Compile("foo(3, 4, 5)", functions);
             Assert.AreEqual(12, expr.Evaluate(0, null), DELTA);
         }
@@ -97,20 +97,20 @@ namespace Lucene.Net.Expressions.JS
         public virtual void TestTwoMethods()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod("ZeroArgMethod");
-            functions["bar"] = GetType().GetMethod("OneArgMethod", new []{typeof(double)});
+            functions["foo"] = GetType().GetMethod(nameof(ZeroArgMethod));
+            functions["bar"] = GetType().GetMethod(nameof(OneArgMethod), new[] { typeof(double) });
             var expr = JavascriptCompiler.Compile("foo() + bar(3)", functions);
             Assert.AreEqual(11, expr.Evaluate(0, null), DELTA);
         }
 
-        public static string BogusReturnType() => "bogus!"; 
+        public static string BogusReturnType() => "bogus!";
 
         /// <summary>wrong return type: must be double</summary>
         [Test]
         public virtual void TestWrongReturnType()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod("BogusReturnType");
+            functions["foo"] = GetType().GetMethod(nameof(BogusReturnType));
             try
             {
                 JavascriptCompiler.Compile("foo()", functions);
@@ -122,14 +122,14 @@ namespace Lucene.Net.Expressions.JS
             }
         }
 
-        public static double BogusParameterType(string s) => 0; 
+        public static double BogusParameterType(string s) => 0;
 
         /// <summary>wrong param type: must be doubles</summary>
         [Test]
         public virtual void TestWrongParameterType()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod("BogusParameterType", new []{ typeof(string)});
+            functions["foo"] = GetType().GetMethod(nameof(BogusParameterType), new[] { typeof(string) });
             try
             {
                 JavascriptCompiler.Compile("foo(2)", functions);
@@ -141,14 +141,14 @@ namespace Lucene.Net.Expressions.JS
             }
         }
 
-        public virtual double NonStaticMethod() => 0; 
+        public virtual double NonStaticMethod() => 0;
 
         /// <summary>wrong modifiers: must be static</summary>
         [Test]
         public virtual void TestWrongNotStatic()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod("NonStaticMethod");
+            functions["foo"] = GetType().GetMethod(nameof(NonStaticMethod));
             try
             {
                 JavascriptCompiler.Compile("foo()", functions);
@@ -167,8 +167,8 @@ namespace Lucene.Net.Expressions.JS
         public virtual void TestWrongNotPublic()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod("NonPublicMethod",BindingFlags.NonPublic|BindingFlags.Static);
-                
+            functions["foo"] = GetType().GetMethod(nameof(NonPublicMethod), BindingFlags.NonPublic | BindingFlags.Static);
+
             try
             {
                 JavascriptCompiler.Compile("foo()", functions);
@@ -190,7 +190,7 @@ namespace Lucene.Net.Expressions.JS
         public virtual void TestWrongNestedNotPublic()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = typeof(NestedNotPublic).GetMethod("Method");
+            functions["foo"] = typeof(NestedNotPublic).GetMethod(nameof(NestedNotPublic.Method));
             try
             {
                 JavascriptCompiler.Compile("foo()", functions);
@@ -204,8 +204,8 @@ namespace Lucene.Net.Expressions.JS
 
 
         //LUCENENET: testClassLoader() was not ported.  (May not apply to Lucene.Net)
-        
-        
+
+
         internal static string MESSAGE = "This should not happen but it happens";
 
         public static class StaticThrowingException // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
@@ -223,8 +223,8 @@ namespace Lucene.Net.Expressions.JS
         public virtual void TestThrowingException()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = typeof(StaticThrowingException).GetMethod("Method");
-            string source = "3 * foo() / 5";
+            functions["foo"] = typeof(StaticThrowingException).GetMethod(nameof(StaticThrowingException.Method));
+            const string source = "3 * foo() / 5";
             var expr = JavascriptCompiler.Compile(source, functions);
             try
             {
@@ -234,14 +234,16 @@ namespace Lucene.Net.Expressions.JS
             catch (Exception e) when (e.IsArithmeticException())
             {
                 Assert.AreEqual(MESSAGE, e.Message);
-                StringWriter sw = new StringWriter();
-                e.printStackTrace();
+                using StringWriter sw = new StringWriter();
+                e.PrintStackTrace(sw);
+                sw.Flush();
                 //.NET Port
+                var swString = sw.ToString();
                 Assert.IsTrue(
                     // LUCENENET: Apparently in .NET 7, they finally fixed this weird display issue with spaces before the comma
                     // and closing parenthesis. It is a pass.
-                    e.StackTrace.Contains("Lucene.Net.Expressions.CompiledExpression.Evaluate(Int32, FunctionValues[])") ||
-                    e.StackTrace.Contains("Lucene.Net.Expressions.CompiledExpression.Evaluate(Int32 , FunctionValues[] )")
+                    swString.Contains("Lucene.Net.Expressions.CompiledExpression.Evaluate(Int32, FunctionValues[])") ||
+                    swString.Contains("Lucene.Net.Expressions.CompiledExpression.Evaluate(Int32 , FunctionValues[] )")
                     );
             }
         }
@@ -252,7 +254,7 @@ namespace Lucene.Net.Expressions.JS
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
             functions["foo.bar"] = GetType().GetMethod("ZeroArgMethod");
-            string source = "foo.bar()";
+            const string source = "foo.bar()";
             var expr = JavascriptCompiler.Compile(source, functions);
             Assert.AreEqual(5, expr.Evaluate(0, null), DELTA);
         }

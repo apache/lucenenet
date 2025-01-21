@@ -25,10 +25,6 @@ namespace Lucene.Net.Cli
     {
         public static int Main(string[] args)
         {
-            // Enable console output
-            SystemConsole.Out = Console.Out;
-            SystemConsole.Error = Console.Error;
-
             var configuration = new ConfigurationBuilder()
                 .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings
                 .AddJsonFile("appsettings.json", optional: true)

@@ -322,7 +322,7 @@ namespace Lucene.Net.Support.Threading
         public void threadUnexpectedException(Exception ex)
         {
             threadFailed = true;
-            ex.printStackTrace();
+            ex.PrintStackTrace();
             fail("Unexpected exception: " + ex);
         }
 

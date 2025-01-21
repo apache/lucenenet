@@ -9,7 +9,6 @@ using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Tests.Queries.Function
 {

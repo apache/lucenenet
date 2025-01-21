@@ -3,7 +3,6 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
@@ -95,7 +94,7 @@ namespace Lucene.Net.Analysis
     public abstract class LookaheadTokenFilter<T> : LookaheadTokenFilter
         where T : LookaheadTokenFilter.Position
     {
-        protected readonly static bool DEBUG = 
+        protected readonly static bool DEBUG =
 #if VERBOSE_TEST_LOGGING
             true
 #else

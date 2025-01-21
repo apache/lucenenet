@@ -66,3 +66,4 @@ svn-*/
 
 # vscode files
 .vscode/
+.idea/**/misc.xml

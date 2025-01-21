@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -66,16 +65,14 @@ namespace Lucene.Net.Index
             bool failed = writerThread.failed != null;
             if (failed)
             {
-                Console.WriteLine(writerThread.failed.ToString());
-                Console.Write(writerThread.failed.StackTrace);
+                writerThread.failed.PrintStackTrace();
             }
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i].Join();
                 if (threads[i].failed != null)
                 {
-                    Console.WriteLine(threads[i].failed.ToString());
-                    Console.Write(threads[i].failed.StackTrace);
+                    threads[i].failed.PrintStackTrace();
                     failed = true;
                 }
             }

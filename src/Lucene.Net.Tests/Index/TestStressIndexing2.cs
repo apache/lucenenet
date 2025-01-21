@@ -16,7 +16,6 @@ using System.Globalization;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -1042,8 +1041,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsThrowable())
                 {
-                    Console.WriteLine(e.ToString());
-                    Console.Write(e.StackTrace);
+                    e.PrintStackTrace();
                     Assert.Fail(e.ToString());
                 }
 

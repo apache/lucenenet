@@ -1,8 +1,5 @@
-﻿using Lucene.Net.Support.IO;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System;
-using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 {
@@ -30,12 +27,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 	[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
     public class StandardSyntaxParserTokenManager /*: StandardSyntaxParserConstants*/
     {
-        /// <summary>Debug output.</summary>
-#pragma warning disable IDE0052 // Remove unread private members
-        private TextWriter debugStream = Console.Out; // LUCENENET specific - made private, since we already have a setter
-#pragma warning restore IDE0052 // Remove unread private members
-        /// <summary>Set debug output.</summary>
-        public void SetDebugStream(TextWriter ds) { debugStream = new SafeTextWriterWrapper(ds); }
+        /** Debug output. */
+        // LUCENENET: debugStream/SetDebugStream() omitted, since it is unused and has been omitted in later versions of Lucene
+
         private int JjStopStringLiteralDfa_2(int pos, long active0)
         {
             switch (pos)
@@ -857,7 +851,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         }
 
         internal int curLexState = 2;
-        internal int defaultLexState = 2;
+        internal const int defaultLexState = 2; // LUCENENET: marked const
         internal int jjnewStateCnt;
         internal uint jjround;
         internal int jjmatchedPos;

@@ -36,12 +36,12 @@ namespace Lucene.Net.Search
     /// </summary>
     public class RandomSimilarityProvider : PerFieldSimilarityWrapper
     {
-        internal readonly DefaultSimilarity defaultSim = new DefaultSimilarity();
-        internal readonly IList<Similarity> knownSims;
-        internal IDictionary<string, Similarity> previousMappings = new Dictionary<string, Similarity>();
-        internal readonly int perFieldSeed;
-        internal readonly int coordType; // 0 = no coord, 1 = coord, 2 = crazy coord
-        internal readonly bool shouldQueryNorm;
+        private readonly DefaultSimilarity defaultSim = new DefaultSimilarity();
+        private readonly IList<Similarity> knownSims;
+        private readonly JCG.Dictionary<string, Similarity> previousMappings = new JCG.Dictionary<string, Similarity>();
+        private readonly int perFieldSeed;
+        private readonly int coordType; // 0 = no coord, 1 = coord, 2 = crazy coord
+        private readonly bool shouldQueryNorm;
 
         public RandomSimilarityProvider(Random random)
         {
@@ -162,7 +162,7 @@ namespace Lucene.Net.Search
                 else
                     sb.Append("crazy");
                 sb.Append("): ");
-                sb.AppendFormat(J2N.Text.StringFormatter.InvariantCulture, "{0}", previousMappings);
+                sb.Append(previousMappings);
                 return sb.ToString();
             }
             finally

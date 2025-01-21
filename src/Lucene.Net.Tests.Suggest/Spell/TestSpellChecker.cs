@@ -15,7 +15,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -448,7 +447,7 @@ namespace Lucene.Net.Search.Spell
         }
 
         /*
-         * tests if the internally shared indexsearcher is correctly closed 
+         * tests if the internally shared indexsearcher is correctly closed
          * when the spellchecker is concurrently accessed and closed.
          */
         [Test]
@@ -490,7 +489,7 @@ namespace Lucene.Net.Search.Spell
                 Thread.Sleep(100);
                 // concurrently reset the spell index
                 spellChecker.SetSpellIndex(this.spellindex);
-                // for debug - prints the internal open searchers 
+                // for debug - prints the internal open searchers
                 // showSearchersOpen();
             }
 
@@ -559,7 +558,7 @@ namespace Lucene.Net.Search.Spell
         //    for (IndexSearcher searcher : searchers) {
         //      if(searcher.getIndexReader().getRefCount() > 0)
         //        ++count;
-        //    } 
+        //    }
         //    System.out.println(count);
         //  }
 
@@ -578,7 +577,7 @@ namespace Lucene.Net.Search.Spell
             {
                 this.outerInstance = outerInstance;
                 this.reader = reader;
-                
+
                 this.stop = stop;
                 this.cancellationToken = cancellationToken;
                 this.taskNum = taskNum;
@@ -611,7 +610,7 @@ namespace Lucene.Net.Search.Spell
                         }
                         catch (Exception e) when (e.IsThrowable())
                         {
-                            e.printStackTrace();
+                            e.PrintStackTrace();
                             error = e;
                             return;
                         }
@@ -628,21 +627,6 @@ namespace Lucene.Net.Search.Spell
                     terminated = true;
                 }
             }
-        }
-
-        /// <summary>
-        /// Grab the stack trace into a string since the exception was thrown in a thread and we want the assert 
-        /// outside the thread to show the stack trace in case of failure.   
-        /// </summary>
-        private string stackTraceStr(Exception error)
-        {
-            if (error is null)
-            {
-                return "";
-            }
-
-            error.printStackTrace();
-            return error.StackTrace;
         }
 
         internal class SpellCheckerMock : SpellChecker

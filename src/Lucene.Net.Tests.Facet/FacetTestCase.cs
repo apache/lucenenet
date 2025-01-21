@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Facet
 {
@@ -170,7 +169,7 @@ namespace Lucene.Net.Facet
                 i++;
             }
         }
-        
+
         protected internal virtual void SortLabelValues(JCG.List<LabelAndValue> labelValues)
         {
             labelValues.Sort(Comparer<LabelAndValue>.Create((a,b) => {
@@ -189,7 +188,7 @@ namespace Lucene.Net.Facet
             }));
         }
 
-       
+
         protected internal virtual void SortFacetResults(JCG.List<FacetResult> results)
         {
             results.Sort(Comparer<FacetResult>.Create((a, b) =>

@@ -376,11 +376,11 @@ namespace Lucene.Net.Codecs.Lucene42
         }
 
         // per-document vint-encoded byte[]
-        internal class SortedSetEnumerator : IEnumerator<BytesRef>
+        internal sealed class SortedSetEnumerator : IEnumerator<BytesRef>
         {
             internal byte[] buffer = new byte[10];
-            internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
-            internal BytesRef @ref = new BytesRef();
+            internal readonly ByteArrayDataOutput @out = new ByteArrayDataOutput(); // LUCENENET: marked readonly
+            internal readonly BytesRef @ref = new BytesRef(); // LUCENENET: marked readonly
 
             internal readonly IEnumerator<long?> counts;
             internal readonly IEnumerator<long?> ords;
@@ -426,7 +426,7 @@ namespace Lucene.Net.Codecs.Lucene42
             object IEnumerator.Current => Current;
 
             // encodes count values to buffer
-            internal virtual void EncodeValues(int count)
+            internal void EncodeValues(int count)
             {
                 @out.Reset(buffer);
                 long lastOrd = 0;

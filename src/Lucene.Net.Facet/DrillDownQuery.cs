@@ -158,7 +158,6 @@ namespace Lucene.Net.Facet
         /// Merges (ORs) a new path into an existing AND'd
         /// clause.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private void Merge(string dim, string[] path)
         {
             int index = 0;

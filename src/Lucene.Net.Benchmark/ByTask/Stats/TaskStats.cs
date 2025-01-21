@@ -24,9 +24,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
      */
 
     /// <summary>
-    /// Statistics for a task run. 
+    /// Statistics for a task run.
     /// <para/>
-    /// The same task can run more than once, but, if that task records statistics, 
+    /// The same task can run more than once, but, if that task records statistics,
     /// each run would create its own TaskStats.
     /// </summary>
     public class TaskStats // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
@@ -38,7 +38,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         private int round;
 
         /// <summary>Task start time.</summary>
-        private long start;
+        private readonly long start; // LUCENENET: marked readonly
 
         /// <summary>Task elapsed time.  elapsed >= 0 indicates run completion!</summary>
         private long elapsed = -1;
@@ -58,13 +58,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         /// <summary>
         /// Number of work items done by this task.
         /// For indexing that can be number of docs added.
-        /// For warming that can be number of scanned items, etc. 
+        /// For warming that can be number of scanned items, etc.
         /// For repeating tasks, this is a sum over repetitions.
         /// </summary>
         private int count;
 
         /// <summary>
-        /// Number of similar tasks aggregated into this record.   
+        /// Number of similar tasks aggregated into this record.
         /// Used when summing up on few runs/instances of similar tasks.
         /// </summary>
         private int numRuns = 1;
@@ -115,7 +115,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         [WritableArray]
         public virtual int[] GetCountsByTime()
         {
-            return countsByTime; 
+            return countsByTime;
         }
 
         public virtual long CountsByTimeStepMSec => countsByTimeStepMSec;
@@ -168,7 +168,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             count += stat2.Count;
             if (round != stat2.round)
             {
-                round = -1; // no meaning if aggregating tasks of different round. 
+                round = -1; // no meaning if aggregating tasks of different round.
             }
 
             if (countsByTime != null && stat2.countsByTime != null)

@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 internal bool includeOrig;
                 // we could sort for better sharing ultimately, but it could confuse people
-                internal JCG.List<int> ords = new JCG.List<int>();
+                internal readonly JCG.List<int> ords = new JCG.List<int>(); // LUCENENET: marked readonly
             }
 
             /// <summary>

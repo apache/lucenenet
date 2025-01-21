@@ -17,7 +17,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 using Lucene.Net.Attributes;
 
 namespace Lucene.Net.Search
@@ -475,7 +474,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    e.printStackTrace();
+                    e.PrintStackTrace();
                 }
                 finally
                 {

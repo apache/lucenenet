@@ -14,7 +14,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.ComponentModel;
@@ -102,7 +101,7 @@ namespace Lucene.Net.Store
 
         internal double randomIOExceptionRate;
         internal double randomIOExceptionRateOnOpen;
-        internal Random randomState;
+        internal readonly Random randomState; // LUCENENET: marked readonly
         internal bool noDeleteOpenFile = true;
         internal bool assertNoDeleteOpenFile = false;
         internal bool preventDoubleWrite = true;
@@ -113,7 +112,7 @@ namespace Lucene.Net.Store
         private ISet<string> unSyncedFiles;
         private ISet<string> createdFiles;
         private ISet<string> openFilesForWrite = new JCG.HashSet<string>(StringComparer.Ordinal);
-        internal ISet<string> openLocks = new ConcurrentHashSet<string>(StringComparer.Ordinal);
+        internal readonly ISet<string> openLocks = new ConcurrentHashSet<string>(StringComparer.Ordinal); // LUCENENET: marked readonly
         internal volatile bool crashed;
         private readonly ThrottledIndexOutput throttledOutput; // LUCENENET: marked readonly
         private Throttling throttling = Throttling.SOMETIMES;
@@ -494,6 +493,7 @@ namespace Lucene.Net.Store
                 if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message is null ? "" : " (" + message + ")"));
+                    StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                 }
                 throw new IOException("a random IOException" + (message is null ? "" : " (" + message + ")"));
             }
@@ -505,7 +505,8 @@ namespace Lucene.Net.Store
             {
                 if (LuceneTestCase.Verbose)
                 {
-                  Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
+                    Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
+                    StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                 }
                 if (allowRandomFileNotFoundException == false || randomState.NextBoolean())
                 {
@@ -513,7 +514,7 @@ namespace Lucene.Net.Store
                 }
                 else
                 {
-                    throw randomState.NextBoolean() ? (IOException)new FileNotFoundException("a random IOException (" + name + ")") : new DirectoryNotFoundException("a random IOException (" + name + ")");
+                    throw randomState.NextBoolean() ? new FileNotFoundException("a random IOException (" + name + ")") : new DirectoryNotFoundException("a random IOException (" + name + ")");
                 }
             }
         }
@@ -1038,7 +1039,7 @@ namespace Lucene.Net.Store
                                         catch (Exception t) when (t.IsThrowable())
                                         {
                                             Console.Error.WriteLine("ERROR processing leftover segments file " + file + ":");
-                                            Console.WriteLine(t.ToString());
+                                            t.PrintStackTrace();
                                         }
                                     }
                                 }

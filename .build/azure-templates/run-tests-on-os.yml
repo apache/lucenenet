@@ -19,7 +19,7 @@
 # runs the tests for each project on a background job in parallel,
 # then uploads the results to Azure DevOps pipelines
 
-# NOTE: Depends on environment variables $(IsNightly) and $(IsWeekly)
+# NOTE: Depends on environment variables $(IsNightly), $(IsWeekly), and $(DisplayFullName)
 
 parameters:
   osName: 'Windows' # The name of the operating system for display purposes.
@@ -172,6 +172,7 @@ steps:
     $tempDirectory = "$(Agent.TempDirectory)"
     $isNightly = if ($env:ISNIGHTLY -eq 'true') { 'true' } else { 'false' }
     $isWeekly = if ($env:ISWEEKLY -eq 'true') { 'true' } else { 'false' }
+    $displayFullName = if ($env:DISPLAYFULLNAME -eq 'false') { 'false' } else { 'true' }
 
     function IsSupportedFramework([string]$framework) {
         if ($IsWindows -eq $null) {
@@ -225,6 +226,10 @@ steps:
             }
 
             $testExpression = "$testExpression -- RunConfiguration.TargetPlatform=$testPlatform"
+
+            if ($displayFullName -eq 'true') {
+                $testExpression = "$testExpression NUnit.DisplayName=FullName"
+            }
 
             Write-Host "Testing '$($testBinary.FullName)' on framework '$framework' and outputting test results to '$testResultDirectory/$testResultsFileName'..."
             Write-Host $testExpression -ForegroundColor Magenta
@@ -303,6 +308,16 @@ steps:
     $maximumAllowedFailures = '${{ parameters.maximumAllowedFailures }}'
     if ([int]$env:TOTALFAILURES -gt [int]$maximumAllowedFailures) {
         Write-Host "##vso[task.logissue type=error;]Test run failed due to too many failed tests. Maximum failures allowed: $maximumAllowedFailures, total failures: $($env:TOTALFAILURES)."
+        $failed = $true
+    }
+    if ([int]$maximumAllowedFailures -eq 0 -and $env:STDERRFAILURE -eq 'true') {
+        $runsExpanded = "$($env:STDERRFAILURERUNS)" -replace ',',"`r`n"
+        Write-Host "##vso[task.logissue type=error;]StdErr file(s) indicate test failures. Review the testresults artifacts for details. (click here to view the projects that failed)`r`n$runsExpanded"
+        $failed = $true
+    }
+    if ([int]$maximumAllowedFailures -eq 0 -and $env:STDOUTFAILURE -eq 'true') {
+        $runsExpanded = "$($env:STDOUTFAILURERUNS)" -replace ',',"`r`n"
+        Write-Host "##vso[task.logissue type=error;]StdOut file(s) indicate test failures. Review the testresults artifacts for details. (click here to view the projects that failed)`r`n$runsExpanded"
         $failed = $true
     }
     if ($failed) {

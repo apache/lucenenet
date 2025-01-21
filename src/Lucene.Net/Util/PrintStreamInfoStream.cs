@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util
 {

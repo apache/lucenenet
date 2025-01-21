@@ -153,8 +153,8 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
-            using FileStream tempInput = FileSupport.CreateTempFileAsStream(typeof(FSTCompletionLookup).Name, ".input", OfflineSorter.DefaultTempDir);
-            using FileStream tempSorted = FileSupport.CreateTempFileAsStream(typeof(FSTCompletionLookup).Name, ".sorted", OfflineSorter.DefaultTempDir);
+            using FileStream tempInput = FileSupport.CreateTempFileAsStream(nameof(FSTCompletionLookup), ".input", OfflineSorter.DefaultTempDir);
+            using FileStream tempSorted = FileSupport.CreateTempFileAsStream(nameof(FSTCompletionLookup), ".sorted", OfflineSorter.DefaultTempDir);
 
             OfflineSorter.ByteSequencesWriter writer = new OfflineSorter.ByteSequencesWriter(tempInput);
             OfflineSorter.ByteSequencesReader reader = null;

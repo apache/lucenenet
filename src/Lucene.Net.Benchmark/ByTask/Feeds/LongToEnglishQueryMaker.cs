@@ -78,7 +78,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         public virtual void SetConfig(Config config)
         {
-            Analyzer anlzr = NewAnalyzerTask.CreateAnalyzer(config.Get("analyzer", typeof(StandardAnalyzer).Name));
+            Analyzer anlzr = NewAnalyzerTask.CreateAnalyzer(config.Get("analyzer", nameof(StandardAnalyzer)));
             m_parser = new QueryParser(
 #pragma warning disable 612, 618
                 LuceneVersion.LUCENE_CURRENT,
