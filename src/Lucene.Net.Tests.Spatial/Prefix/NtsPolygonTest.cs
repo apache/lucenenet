@@ -9,7 +9,6 @@ using Spatial4n.Context.Nts;
 using Spatial4n.Shapes;
 using System;
 using System.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Spatial.Prefix
 {

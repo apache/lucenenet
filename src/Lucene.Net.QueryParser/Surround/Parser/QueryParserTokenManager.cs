@@ -1,7 +1,5 @@
-﻿using Lucene.Net.Support.IO;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 
 namespace Lucene.Net.QueryParsers.Surround.Parser
 {
@@ -31,15 +29,9 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This class is based on generated code")]
     public class QueryParserTokenManager //: QueryParserConstants
     {
-        /// <summary>Debug output. </summary>
-#pragma warning disable IDE0052 // Remove unread private members
-        private TextWriter debugStream; // LUCENENET specific - made private, since we already have a setter
-#pragma warning restore IDE0052 // Remove unread private members
-        /// <summary>Set debug output. </summary>
-        public virtual void SetDebugStream(TextWriter ds)
-        {
-            debugStream = new SafeTextWriterWrapper(ds);
-        }
+        /** Debug output. */
+        // LUCENENET: debugStream/SetDebugStream() omitted, since it is unused and has been omitted in later versions of Lucene
+
         private int JjStopStringLiteralDfa_1(int pos, long active0)
         {
             switch (pos)

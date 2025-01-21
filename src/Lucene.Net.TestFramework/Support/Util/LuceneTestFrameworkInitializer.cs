@@ -334,10 +334,6 @@ namespace Lucene.Net.Util
         /// </summary>
         internal void InitializeStaticState()
         {
-            // Enable console output
-            SystemConsole.Out = Console.Out;
-            SystemConsole.Error = Console.Error;
-
             // Setup the factories
             ConfigurationSettings.SetConfigurationFactory(ConfigurationFactory);
             Codec.SetCodecFactory(CodecFactory);

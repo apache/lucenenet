@@ -3,11 +3,11 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Core
             reader = new StringReader(sb.ToString());
             typeTokenFilter =
 #pragma warning disable 612, 618
-                new TypeTokenFilter(LuceneVersion.LUCENE_43, 
+                new TypeTokenFilter(LuceneVersion.LUCENE_43,
 #pragma warning restore 612, 618
                     false, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopSet);
             TestPositons(typeTokenFilter);

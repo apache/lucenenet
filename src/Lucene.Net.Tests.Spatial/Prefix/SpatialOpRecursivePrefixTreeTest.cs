@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Spatial.Prefix
 {

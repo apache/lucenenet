@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 using Integer = J2N.Numerics.Int32;
 using JCG = J2N.Collections.Generic;
 

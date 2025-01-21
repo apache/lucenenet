@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -56,7 +55,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
             TextWriter curOut = Console.Out;
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Console.Out = new StreamWriter(baos, Encoding.Default);
+            Console.SetOut(new StreamWriter(baos, Encoding.Default));
             try
             {
                 PerfRunData runData = createPerfRunData("SystemOut");
@@ -67,12 +66,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
             finally
             {
-                Console.Out = curOut;
+                Console.SetOut(curOut);
             }
 
             TextWriter curErr = Console.Error;
             baos = new ByteArrayOutputStream();
-            Console.Error = new StreamWriter(baos, Encoding.Default);
+            Console.SetError(new StreamWriter(baos, Encoding.Default));
             try
             {
                 PerfRunData runData = createPerfRunData("SystemErr");
@@ -83,7 +82,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
             finally
             {
-                Console.Error = curErr;
+                Console.SetError(curErr);
             }
 
         }

@@ -3,7 +3,6 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.Quality.Utils
 {

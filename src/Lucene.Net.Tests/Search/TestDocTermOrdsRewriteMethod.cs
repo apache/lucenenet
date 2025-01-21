@@ -6,7 +6,6 @@ using RandomizedTesting.Generators;
 using System;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {

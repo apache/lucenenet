@@ -34,7 +34,6 @@ using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Globalization;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.QueryParsers.Util
 {

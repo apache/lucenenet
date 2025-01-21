@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 using System.Diagnostics;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 {

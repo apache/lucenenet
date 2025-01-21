@@ -10,7 +10,6 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index

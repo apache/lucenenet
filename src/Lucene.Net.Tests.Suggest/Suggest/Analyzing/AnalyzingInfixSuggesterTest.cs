@@ -16,7 +16,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using static Lucene.Net.Search.Suggest.Lookup;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
@@ -117,7 +116,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         /// <summary>
-        /// Used to return highlighted result; see 
+        /// Used to return highlighted result; see
         /// <see cref = "Lookup.LookupResult.HighlightKey" />
         /// </summary>
         private sealed class LookupHighlightFragment
@@ -445,7 +444,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestEmptyAtStart()
         {
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
-            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);                       //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0              
+            using AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3);                       //LUCENENET UPGRADE TODO: add extra false param at version 4.11.0
             suggester.Build(new InputArrayEnumerator(new Input[0]));
             suggester.Add(new BytesRef("a penny saved is a penny earned"), null, 10, new BytesRef("foobaz"));
             suggester.Add(new BytesRef("lend me your ear"), null, 8, new BytesRef("foobar"));

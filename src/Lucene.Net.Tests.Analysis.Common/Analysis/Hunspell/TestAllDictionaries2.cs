@@ -6,7 +6,6 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Hunspell
 {
@@ -31,9 +30,9 @@ namespace Lucene.Net.Analysis.Hunspell
     /// These thunderbird dictionaries can be retrieved via:
     /// https://addons.mozilla.org/en-US/thunderbird/language-tools/
     /// You must click and download every file: sorry!
-    /// 
+    ///
     /// To retrieve these exact versions, you can search for the
-    /// file name at: 
+    /// file name at:
     /// http://www.filewatcher.com/
     /// </summary>
 

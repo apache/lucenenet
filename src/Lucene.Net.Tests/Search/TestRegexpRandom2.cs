@@ -5,7 +5,6 @@ using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {

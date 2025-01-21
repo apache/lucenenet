@@ -10,7 +10,6 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using TimeZoneConverter;
 using NUnit.Framework;
-using Console = Lucene.Net.Util.SystemConsole;
 
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Config

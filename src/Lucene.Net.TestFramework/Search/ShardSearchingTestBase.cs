@@ -12,7 +12,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.ComponentModel;
 using System.Runtime.Serialization;

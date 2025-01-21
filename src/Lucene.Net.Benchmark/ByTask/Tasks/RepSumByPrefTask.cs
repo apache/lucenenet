@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Stats;
 using System;
 using System.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
@@ -72,7 +71,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     }
                 }
             }
-            // now generate report from secondary list p2    
+            // now generate report from secondary list p2
             return GenPartialReport(reported, p2, taskStats.Count);
         }
 

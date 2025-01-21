@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Utils
@@ -90,7 +89,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             ms.Position = 0;
             props.LoadProperties(ms);
 
-            // make sure work dir is set properly 
+            // make sure work dir is set properly
             if (!props.TryGetValue("work.dir", out string temp) || temp is null)
             {
                 // LUCENENET specific - reformatted with :
@@ -229,7 +228,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 vals = (int[])temp;
                 return vals[roundNumber % vals.Length];
             }
-            // done if not by round 
+            // done if not by round
             if (!props.TryGetValue(name, out string sval))
             {
                 sval = dflt.ToString(CultureInfo.InvariantCulture);
@@ -267,7 +266,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 vals = (double[])temp;
                 return vals[roundNumber % vals.Length];
             }
-            // done if not by round 
+            // done if not by round
             if (!props.TryGetValue(name, out string sval))
             {
                 sval = dflt.ToString(CultureInfo.InvariantCulture);
@@ -304,7 +303,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 vals = (bool[])temp;
                 return vals[roundNumber % vals.Length];
             }
-            // done if not by round 
+            // done if not by round
             if (!props.TryGetValue(name, out string sval))
             {
                 sval = dflt.ToString(); // LUCENENET NOTE: bool ignores the IFormatProvider argument, it returns the values of constants
@@ -313,7 +312,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             {
                 return bool.Parse(sval);
             }
-            // first time this prop is extracted by round 
+            // first time this prop is extracted by round
             int k = sval.IndexOf(':');
             string colName = sval.Substring(0, k - 0);
             sval = sval.Substring(k + 1);
@@ -392,7 +391,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             return a.ToArray();
         }
 
-        // extract properties to array, e.g. for "10:100:5" return int[]{10,100,5}. 
+        // extract properties to array, e.g. for "10:100:5" return int[]{10,100,5}.
         private static int[] PropToInt32Array(string s) // LUCENENET: CA1822: Mark members as static
         {
             if (s.IndexOf(':') < 0)
@@ -415,7 +414,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             return res;
         }
 
-        // extract properties to array, e.g. for "10.7:100.4:-2.3" return int[]{10.7,100.4,-2.3}. 
+        // extract properties to array, e.g. for "10.7:100.4:-2.3" return int[]{10.7,100.4,-2.3}.
         private static double[] PropToDoubleArray(string s) // LUCENENET: CA1822: Mark members as static
         {
             if (s.IndexOf(':') < 0)
@@ -438,7 +437,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             return res;
         }
 
-        // extract properties to array, e.g. for "true:true:false" return boolean[]{true,false,false}. 
+        // extract properties to array, e.g. for "true:true:false" return boolean[]{true,false,false}.
         private static bool[] PropToBooleanArray(string s) // LUCENENET: CA1822: Mark members as static
         {
             if (s.IndexOf(':') < 0)

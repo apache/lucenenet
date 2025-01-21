@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Collections = Lucene.Net.Support.Collections;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 
@@ -602,7 +601,7 @@ namespace Lucene.Net.Search.Grouping
                     return a.CompareToOrdinal(b);
                 }
             }));
-                
+
             // LUCENENET NOTE: Need JCG.Dictionary here because of null keys
             IDictionary<string, JCG.Dictionary<string, ISet<string>>> searchTermToFacetToGroups = new Dictionary<string, JCG.Dictionary<string, ISet<string>>>();
             int facetWithMostGroups = 0;

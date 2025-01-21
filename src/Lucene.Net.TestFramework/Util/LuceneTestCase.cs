@@ -32,7 +32,6 @@ using After = NUnit.Framework.TearDownAttribute;
 using Assert = Lucene.Net.TestFramework.Assert;
 using AssumptionViolatedException = NUnit.Framework.InconclusiveException;
 using Before = NUnit.Framework.SetUpAttribute;
-using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
 using FieldInfo = Lucene.Net.Index.FieldInfo;
 using JCG = J2N.Collections.Generic;
@@ -3183,9 +3182,9 @@ namespace Lucene.Net.Util
         {
             // LUCENENET specific - log the current locking strategy used and HResult values
             // for assistance troubleshooting problems on Linux/macOS
-            SystemConsole.WriteLine($"Locking Strategy: {NativeFSLockFactory.LockingStrategy}");
-            SystemConsole.WriteLine($"Share Violation HResult: {(NativeFSLockFactory.HRESULT_FILE_SHARE_VIOLATION.HasValue ? NativeFSLockFactory.HRESULT_FILE_SHARE_VIOLATION.ToString() : "null")}");
-            SystemConsole.WriteLine($"Lock Violation HResult: {(NativeFSLockFactory.HRESULT_FILE_LOCK_VIOLATION.HasValue ? NativeFSLockFactory.HRESULT_FILE_LOCK_VIOLATION.ToString() : "null")}");
+            Console.WriteLine($"Locking Strategy: {NativeFSLockFactory.LockingStrategy}");
+            Console.WriteLine($"Share Violation HResult: {(NativeFSLockFactory.HRESULT_FILE_SHARE_VIOLATION.HasValue ? NativeFSLockFactory.HRESULT_FILE_SHARE_VIOLATION.ToString() : "null")}");
+            Console.WriteLine($"Lock Violation HResult: {(NativeFSLockFactory.HRESULT_FILE_LOCK_VIOLATION.HasValue ? NativeFSLockFactory.HRESULT_FILE_LOCK_VIOLATION.ToString() : "null")}");
 
             string fileName;
             try
@@ -3195,7 +3194,7 @@ namespace Lucene.Net.Util
             }
             catch (Exception e)
             {
-                SystemConsole.WriteLine($"Error while creating temp file: {e}");
+                Console.WriteLine($"Error while creating temp file: {e}");
                 return;
             }
 
@@ -3206,8 +3205,8 @@ namespace Lucene.Net.Util
             }
             catch (Exception e)
             {
-                SystemConsole.WriteLine($"Error while opening initial share stream: {e}");
-                SystemConsole.WriteLine($"******* HResult: {e.HResult}");
+                Console.WriteLine($"Error while opening initial share stream: {e}");
+                Console.WriteLine($"******* HResult: {e.HResult}");
                 return;
             }
             finally
@@ -3221,9 +3220,9 @@ namespace Lucene.Net.Util
             }
             catch (IOException io) when (io.HResult != 0)
             {
-                SystemConsole.WriteLine($"Successfully retrieved sharing violation.");
-                SystemConsole.WriteLine($"******* HResult: {io.HResult}");
-                SystemConsole.WriteLine($"Exception: {io}");
+                Console.WriteLine($"Successfully retrieved sharing violation.");
+                Console.WriteLine($"******* HResult: {io.HResult}");
+                Console.WriteLine($"Exception: {io}");
             }
             finally
             {

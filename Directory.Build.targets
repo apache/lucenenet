@@ -64,7 +64,6 @@
   <!-- Features in .NET Core 3.x, .NET 5.x, .NET 6.x, .NET 7.x, .NET 8.x, and .NET 9.x only -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp3.')) Or $(TargetFramework.StartsWith('net5.')) Or $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
-    <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_PROCESS_KILL_ENTIREPROCESSTREE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STRING_CONCAT_READONLYSPAN</DefineConstants>
 
@@ -144,7 +143,6 @@
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
 
     <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
     <!-- Although code access security is available in .NET Standard 2.0+ via platform extensions, we are excluding
     it due to the fact it is not a primary feature of Lucene.NET and it is supported in .NET Framework -->
     <DefineConstants>$(DefineConstants);FEATURE_CODE_ACCESS_SECURITY</DefineConstants>

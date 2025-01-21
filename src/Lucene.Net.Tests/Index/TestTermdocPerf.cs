@@ -5,7 +5,6 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 
 #if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
 using RandomizedTesting.Generators;

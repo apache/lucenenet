@@ -11,7 +11,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Text.RegularExpressions;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {

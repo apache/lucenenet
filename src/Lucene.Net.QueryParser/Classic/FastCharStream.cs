@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.QueryParsers.Classic
 {

@@ -13,7 +13,6 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Join

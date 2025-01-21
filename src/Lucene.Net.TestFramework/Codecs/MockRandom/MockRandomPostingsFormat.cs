@@ -12,7 +12,6 @@ using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.MockRandom

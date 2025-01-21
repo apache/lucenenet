@@ -6,7 +6,6 @@ using NUnit.Framework;
 using System;
 using System.Text;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
