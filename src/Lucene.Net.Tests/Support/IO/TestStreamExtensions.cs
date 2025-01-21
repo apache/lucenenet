@@ -117,7 +117,9 @@ namespace Lucene.Net.Support.IO
 
         private void OpenDataInputStream()
         {
-            // LUCENENET specific - we'll just reuse the same stream, but set its position to 0 for reading
+            // LUCENENET specific - in the Harmony tests, there were separate streams
+            // for input and output. Here, we'll just reuse the same stream, but reset
+            // its position to 0 so it's ready to read.
             stream.Position = 0;
         }
 
