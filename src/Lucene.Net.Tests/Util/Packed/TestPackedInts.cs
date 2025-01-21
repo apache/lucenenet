@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 namespace Lucene.Net.Util.Packed

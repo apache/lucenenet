@@ -12,7 +12,6 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 using Int64 = J2N.Numerics.Int64;
 

@@ -4,7 +4,6 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -62,7 +61,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     public class NewCollationAnalyzerTask : PerfTask
     {
         /// <summary>
-        /// Different Collation implementations: currently 
+        /// Different Collation implementations: currently
         /// limited to what is provided in ICU.
         /// <para/>
         /// See <a href="http://site.icu-project.org/charts/collation-icu4j-sun">Comparison of implementations</a>

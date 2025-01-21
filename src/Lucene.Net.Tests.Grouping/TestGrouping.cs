@@ -39,7 +39,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -252,7 +251,7 @@ namespace Lucene.Net.Search.Grouping
         {
             if (firstPassGroupingCollector.GetType().IsAssignableFrom(typeof(TermFirstPassGroupingCollector)))
             {
-                return new TermSecondPassGroupingCollector(groupField, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields) 
+                return new TermSecondPassGroupingCollector(groupField, searchGroups, groupSort, sortWithinGroup, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
                     as IAbstractSecondPassGroupingCollector<T>;
             }
             else
@@ -340,7 +339,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else if (typeof(FunctionFirstPassGroupingCollector<MutableValue>).IsAssignableFrom(c.GetType()))        // LUCENENET Specific type for generic must be specified.
             {
-                // LUCENENET NOTE: This is IEnumerable instead of ICollection because it 
+                // LUCENENET NOTE: This is IEnumerable instead of ICollection because it
                 // needs to be covariant to mimic the wildcard generics in Java
                 IEnumerable<ISearchGroup<MutableValue>> mutableValueGroups = ((FunctionFirstPassGroupingCollector<MutableValue>)c).GetTopGroups(groupOffset, fillFields);        // LUCENENET Specific type for generic must be specified.
                 if (mutableValueGroups is null)
@@ -551,7 +550,7 @@ namespace Lucene.Net.Search.Grouping
             // when the values differ.
             //Arrays.Sort(groupDocs, groupSortComp);
             ArrayUtil.TimSort(groupDocs, groupSortComp);
-            
+
             IDictionary<BytesRef, IList<GroupDoc>> groups = new JCG.Dictionary<BytesRef, IList<GroupDoc>>();
             IList<BytesRef> sortedGroups = new JCG.List<BytesRef>();
             IList<IComparable[]> sortedGroupFields = new JCG.List<IComparable[]>();

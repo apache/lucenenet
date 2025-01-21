@@ -15,7 +15,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search.Spell
 {

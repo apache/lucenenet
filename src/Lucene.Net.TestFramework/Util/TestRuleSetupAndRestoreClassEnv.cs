@@ -21,7 +21,6 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using RandomizedTesting.Generators;
 using AssumptionViolatedException = NUnit.Framework.InconclusiveException;
 
@@ -129,7 +128,7 @@ namespace Lucene.Net.Util
             }
 
             savedInfoStream = InfoStream.Default;
-            Random random = LuceneTestCase.Random; 
+            Random random = LuceneTestCase.Random;
             bool v = random.NextBoolean();
             if (LuceneTestCase.UseInfoStream)
             {
@@ -203,7 +202,7 @@ namespace Lucene.Net.Util
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
                 if (Debugging.AssertsEnabled) Debugging.Assert((codec is Lucene45RWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
             }
-            else if (("random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) == false) 
+            else if (("random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) == false)
                 || ("random".Equals(LuceneTestCase.TestDocValuesFormat, StringComparison.Ordinal) == false))
             {
                 // the user wired postings or DV: this is messy
@@ -235,23 +234,23 @@ namespace Lucene.Net.Util
 
                 codec = new Lucene46CodecAnonymousClass(format, dvFormat);
             }
-            else if ("SimpleText".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) 
+            else if ("SimpleText".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal)
                 || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 9 && LuceneTestCase.Rarely(random) && !ShouldAvoidCodec("SimpleText")))
             {
                 codec = new SimpleTextCodec();
             }
-            else if ("CheapBastard".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) 
+            else if ("CheapBastard".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal)
                 || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 8 && !ShouldAvoidCodec("CheapBastard") && !ShouldAvoidCodec("Lucene41")))
             {
                 // we also avoid this codec if Lucene41 is avoided, since thats the postings format it uses.
                 codec = new CheapBastardCodec();
             }
-            else if ("Asserting".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) 
+            else if ("Asserting".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal)
                 || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 6 && !ShouldAvoidCodec("Asserting")))
             {
                 codec = new AssertingCodec();
             }
-            else if ("Compressing".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) 
+            else if ("Compressing".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal)
                 || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 5 && !ShouldAvoidCodec("Compressing")))
             {
                 codec = CompressingCodec.RandomInstance(random);
@@ -271,7 +270,7 @@ namespace Lucene.Net.Util
             Codec.Default = codec;
 
             // Initialize locale/ timezone.
-            
+
             string testTimeZone = SystemProperties.GetProperty("tests:timezone", "random");  // LUCENENET specific - reformatted with :
 
             // LUCENENET: We need to ensure our random generator stays consistent here so we can repeat the session exactly,
@@ -292,7 +291,7 @@ namespace Lucene.Net.Util
 
                 // Always pick a random one for consistency (whether tests.locale was specified or not).
                 savedLocale = CultureInfo.CurrentCulture;
-                
+
                 locale = testLocale.Equals("random", StringComparison.Ordinal) ? randomLocale : LuceneTestCase.CultureForName(testLocale);
 #if FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER
                 CultureInfo.CurrentCulture = locale;

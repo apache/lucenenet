@@ -16,7 +16,6 @@ using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Attribute = Lucene.Net.Util.Attribute;
 using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
-using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
 

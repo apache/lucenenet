@@ -4,7 +4,6 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask
 {

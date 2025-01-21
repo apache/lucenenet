@@ -3,7 +3,6 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Store
 {

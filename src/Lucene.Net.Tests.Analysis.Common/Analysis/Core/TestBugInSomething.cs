@@ -9,7 +9,6 @@ using Lucene.Net.Analysis.Wikipedia;
 using NUnit.Framework;
 using System;
 using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
@@ -57,7 +56,7 @@ namespace Lucene.Net.Analysis.Core
             {
                 reader = new MockCharFilter(reader, 0);
                 reader = new MappingCharFilter(map, reader);
-                return reader;            
+                return reader;
             });
             CheckAnalysisConsistency(Random, a, false, "wmgddzunizdomqyj");
         }

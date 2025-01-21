@@ -8,7 +8,6 @@ using Spatial4n.Shapes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -126,12 +125,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             void ICollection<KeyValuePair<string, string>>.Add(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
             void ICollection<KeyValuePair<string, string>>.Clear() => throw UnsupportedOperationException.Create();
             bool ICollection<KeyValuePair<string, string>>.Contains(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
-            
+
             void ICollection<KeyValuePair<string, string>>.CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) => throw UnsupportedOperationException.Create();
             IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator() => throw UnsupportedOperationException.Create();
             bool IDictionary<string, string>.Remove(string key) => throw UnsupportedOperationException.Create();
             bool ICollection<KeyValuePair<string, string>>.Remove(KeyValuePair<string, string> item) => throw UnsupportedOperationException.Create();
-            
+
             IEnumerator IEnumerable.GetEnumerator() => throw UnsupportedOperationException.Create();
 
             #endregion IDictionary<string, string> members

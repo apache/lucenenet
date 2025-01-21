@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Fst
@@ -96,7 +95,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         [Test]
         public void TestExactMatchReordering()
         {
-            // Check reordering of exact matches. 
+            // Check reordering of exact matches.
             AssertMatchEquals(completion.DoLookup(StringToCharSequence("four").ToString(), 4),
                 "four/0.0",
                 "fourblah/1.0",
@@ -112,12 +111,12 @@ namespace Lucene.Net.Search.Suggest.Fst
                 "one/0.0",
                 "oneness/1.0");
 
-            // 'four' is collected in a bucket and then again as an exact match. 
+            // 'four' is collected in a bucket and then again as an exact match.
             AssertMatchEquals(completion.DoLookup(StringToCharSequence("four").ToString(), 2),
                 "four/0.0",
                 "fourblah/1.0");
 
-            // Check reordering of exact matches. 
+            // Check reordering of exact matches.
             AssertMatchEquals(completion.DoLookup(StringToCharSequence("four").ToString(), 4),
                 "four/0.0",
                 "fourblah/1.0",
@@ -135,7 +134,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 "oneness/1.0",
                 "onerous/1.0");
 
-            // 'one' is at the top after collecting all alphabetical results. 
+            // 'one' is at the top after collecting all alphabetical results.
             AssertMatchEquals(completionAlphabetical.DoLookup(StringToCharSequence("one").ToString(), 2),
                 "one/0.0",
                 "oneness/1.0");

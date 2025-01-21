@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Index;
-using Console = Lucene.Net.Util.SystemConsole;
+using System;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -25,7 +25,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// <para/>
     /// Other side effects: index reader in perfRunData is nullified.
     /// <para/>
-    /// This would cause read related tasks to reopen their own reader. 
+    /// This would cause read related tasks to reopen their own reader.
     /// </summary>
     public class CloseReaderTask : PerfTask
     {

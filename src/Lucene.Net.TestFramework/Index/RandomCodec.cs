@@ -21,7 +21,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using J2N.Collections.Generic.Extensions;
 
 namespace Lucene.Net.Index
@@ -141,32 +140,32 @@ namespace Lucene.Net.Index
                 new FSTPostingsFormat(),
                 new FSTOrdPostingsFormat(),
                 new FSTPulsing41PostingsFormat(1 + random.Next(20)), new FSTOrdPulsing41PostingsFormat(1 + random.Next(20)),
-                new DirectPostingsFormat(LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : maxItemsPerBlock), 
+                new DirectPostingsFormat(LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : maxItemsPerBlock),
                                         LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : lowFreqCutoff)),
                 new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock),
                 // add pulsing again with (usually) different parameters
                 new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock),
-                //TODO as a PostingsFormat which wraps others, we should allow TestBloomFilteredLucene41Postings to be constructed 
-                //with a choice of concrete PostingsFormats. Maybe useful to have a generic means of marking and dealing 
+                //TODO as a PostingsFormat which wraps others, we should allow TestBloomFilteredLucene41Postings to be constructed
+                //with a choice of concrete PostingsFormats. Maybe useful to have a generic means of marking and dealing
                 //with such "wrapper" classes?
-                new TestBloomFilteredLucene41Postings(), 
-                new MockSepPostingsFormat(), 
+                new TestBloomFilteredLucene41Postings(),
+                new MockSepPostingsFormat(),
                 new MockFixedInt32BlockPostingsFormat(TestUtil.NextInt32(random, 1, 2000)),
-                new MockVariableInt32BlockPostingsFormat(TestUtil.NextInt32(random, 1, 127)), 
+                new MockVariableInt32BlockPostingsFormat(TestUtil.NextInt32(random, 1, 127)),
                 new MockRandomPostingsFormat(random),
-                new NestedPulsingPostingsFormat(), 
-                new Lucene41WithOrds(), 
+                new NestedPulsingPostingsFormat(),
+                new Lucene41WithOrds(),
                 new SimpleTextPostingsFormat(),
                 new AssertingPostingsFormat(),
-                new MemoryPostingsFormat(true, random.NextSingle()), 
+                new MemoryPostingsFormat(true, random.NextSingle()),
                 new MemoryPostingsFormat(false, random.NextSingle())
             );
 
-            AddDocValues(avoidCodecs, 
-                new Lucene45DocValuesFormat(), 
-                new DiskDocValuesFormat(), 
-                new MemoryDocValuesFormat(), 
-                new SimpleTextDocValuesFormat(), 
+            AddDocValues(avoidCodecs,
+                new Lucene45DocValuesFormat(),
+                new DiskDocValuesFormat(),
+                new MemoryDocValuesFormat(),
+                new SimpleTextDocValuesFormat(),
                 new AssertingDocValuesFormat());
 
             formats.Shuffle(random);

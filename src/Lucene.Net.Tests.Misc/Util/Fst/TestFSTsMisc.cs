@@ -5,7 +5,6 @@ using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 using Int64 = J2N.Numerics.Int64;
 
@@ -128,7 +127,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         Console.WriteLine("TEST: now test OneOrMoreOutputs");
                     }
-                    PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton; 
+                    PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton;
                     ListOfOutputs<Int64> outputs2 = new ListOfOutputs<Int64>(_outputs);
                     IList<InputOutput<object>> pairs2 = new JCG.List<InputOutput<object>>(terms.Length);
                     long lastOutput2 = 0;

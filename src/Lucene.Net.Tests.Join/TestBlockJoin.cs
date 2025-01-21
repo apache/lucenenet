@@ -16,7 +16,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search.Join
 {

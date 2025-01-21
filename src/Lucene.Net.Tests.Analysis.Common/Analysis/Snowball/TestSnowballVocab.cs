@@ -2,7 +2,7 @@
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using Console = Lucene.Net.Util.SystemConsole;
+using System;
 
 namespace Lucene.Net.Analysis.Snowball
 {
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Snowball
             AssertCorrectOutput("Danish", "danish");
             AssertCorrectOutput("Dutch", "dutch");
             AssertCorrectOutput("English", "english");
-            // disabled due to snowball java code generation bug: 
+            // disabled due to snowball java code generation bug:
             // see http://article.gmane.org/gmane.comp.search.snowball/1139
             // assertCorrectOutput("Finnish", "finnish");
             AssertCorrectOutput("French", "french");
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Snowball
             AssertCorrectOutput("Hungarian", "hungarian");
             AssertCorrectOutput("Italian", "italian");
             AssertCorrectOutput("Kp", "kraaij_pohlmann");
-            // disabled due to snowball java code generation bug: 
+            // disabled due to snowball java code generation bug:
             // see http://article.gmane.org/gmane.comp.search.snowball/1139
             // assertCorrectOutput("Lovins", "lovins");
             AssertCorrectOutput("Norwegian", "norwegian");

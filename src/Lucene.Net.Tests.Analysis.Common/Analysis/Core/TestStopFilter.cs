@@ -7,7 +7,6 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 using Version = Lucene.Net.Util.LuceneVersion;
 

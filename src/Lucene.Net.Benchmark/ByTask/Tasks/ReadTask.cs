@@ -8,7 +8,6 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
@@ -51,7 +50,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private readonly IQueryMaker? queryMaker;
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
-        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]    
+        [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Required for continuity with Lucene's design")]
         protected ReadTask(PerfRunData runData) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(runData, queryMaker: null)
         {

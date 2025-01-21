@@ -11,7 +11,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util
 {

@@ -6,7 +6,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -167,7 +166,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             suggester.Dispose();
         }
-        
+
         /**
         * Handle trailing spaces that result in no prefix token LUCENE-6093
         */

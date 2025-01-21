@@ -2,8 +2,8 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
+using System;
 using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -45,9 +45,9 @@ namespace Lucene.Net.Analysis.Util
 
             var random = LuceneTestCase.Random;
             for (var iter = 0; iter < ITERS; iter++)
-            {   
+            {
                 var stringLen = random.NextBoolean() ? random.Next(50) : random.Next(20000);
-                
+
                 string s;
                 if (stringLen == 0)
                 {

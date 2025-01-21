@@ -14,7 +14,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Sandbox.Queries
 {
@@ -35,26 +34,26 @@ namespace Lucene.Net.Sandbox.Queries
      * limitations under the License.
      */
 
-    /** 
-     * Tests the results of fuzzy against pre-recorded output 
+    /**
+     * Tests the results of fuzzy against pre-recorded output
      * The format of the file is the following:
-     * 
-     * Header Row: # of bits: generate 2^n sequential documents 
+     *
+     * Header Row: # of bits: generate 2^n sequential documents
      * with a value of Integer.toBinaryString
-     * 
+     *
      * Entries: an entry is a param spec line, a resultCount line, and
      * then 'resultCount' results lines. The results lines are in the
      * expected order.
-     * 
+     *
      * param spec line: a comma-separated list of params to FuzzyQuery
      *   (query, prefixLen, pqSize, minScore)
      * query = query text as a number (expand with Integer.toBinaryString)
      * prefixLen = prefix length
      * pqSize = priority queue maximum size for TopTermsBoostOnlyBooleanQueryRewrite
      * minScore = minimum similarity
-     * 
+     *
      * resultCount line: total number of expected hits.
-     * 
+     *
      * results line: comma-separated docID, score pair
      **/
     public class TestSlowFuzzyQuery2 : LuceneTestCase

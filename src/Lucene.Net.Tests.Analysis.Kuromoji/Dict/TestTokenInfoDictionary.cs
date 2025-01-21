@@ -3,7 +3,6 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using NUnit.Framework;
 using System;
-using Console = Lucene.Net.Util.SystemConsole;
 using Int64 = J2N.Numerics.Int64;
 
 namespace Lucene.Net.Analysis.Ja.Dict

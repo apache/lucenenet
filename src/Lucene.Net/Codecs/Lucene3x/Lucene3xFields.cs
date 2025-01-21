@@ -5,7 +5,6 @@ using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -48,7 +47,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// <summary>
     /// Exposes flex API on a pre-flex index, as a codec.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [Obsolete("(4.0)")]
     internal class Lucene3xFields : FieldsProducer
@@ -777,7 +776,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 //System.out.println("pff.reset te=" + termEnum);
                 this.fieldInfo = fieldInfo;
-                
+
                 internedFieldName = fieldInfo.Name.Intern();
 
                 Term term = new Term(internedFieldName);

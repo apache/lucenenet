@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
@@ -210,7 +209,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             suggester.Build(new InputArrayEnumerator(keys));
             // TODO: would be nice if "ab " would allow the test to
             // pass, and more generally if the analyzer can know
-            // that the user's current query has ended at a word, 
+            // that the user's current query has ended at a word,
             // but, analyzers don't produce SEP tokens!
             IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence("ab c", Random).ToString(), false, 2);
             assertEquals(2, r.size());
@@ -386,8 +385,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             //  final SynonymMap map = b.build();
 
             //  The Analyzer below mimics the functionality of the SynonymAnalyzer
-            //  using the above map, so that the suggest module does not need a dependency on the 
-            //  synonym module 
+            //  using the above map, so that the suggest module does not need a dependency on the
+            //  synonym module
 
             Analyzer analyzer = new TestInputPathRequiredAnalyzer(this);
 
@@ -420,11 +419,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
           while(ts.incrementToken()) {
             termBytesAtt.fillBytesRef();
-            Console.WriteLine(String.format("%s,%s,%s", termBytesAtt.getBytesRef().utf8ToString(), posIncAtt.getPositionIncrement(), posLengthAtt.getPositionLength()));      
+            Console.WriteLine(String.format("%s,%s,%s", termBytesAtt.getBytesRef().utf8ToString(), posIncAtt.getPositionIncrement(), posLengthAtt.getPositionLength()));
           }
           ts.end();
           ts.close();
-        } 
+        }
         */
 
         internal class UsualTokenStreamComponents : TokenStreamComponents
@@ -1334,10 +1333,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int n;
             int[][] d; // cost array
 
-            // NOTE: if we cared, we could 3*m space instead of m*n space, similar to 
-            // what LevenshteinDistance does, except cycling thru a ring of three 
-            // horizontal cost arrays... but this comparer is never actually used by 
-            // DirectSpellChecker, its only used for merging results from multiple shards 
+            // NOTE: if we cared, we could 3*m space instead of m*n space, similar to
+            // what LevenshteinDistance does, except cycling thru a ring of three
+            // horizontal cost arrays... but this comparer is never actually used by
+            // DirectSpellChecker, its only used for merging results from multiple shards
             // in "distributed spellcheck", and its inefficient in other ways too...
 
             // cheaper to do this up front once

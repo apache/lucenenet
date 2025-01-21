@@ -12,7 +12,6 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Sinks
 {
@@ -84,7 +83,7 @@ namespace Lucene.Net.Analysis.Sinks
         }
 
         // LUCENE-1448
-        // TODO: instead of testing it this way, we can test 
+        // TODO: instead of testing it this way, we can test
         // with BaseTokenStreamTestCase now...
         [Test]
         public virtual void TestEndOffsetPositionWithTeeSinkTokenFilter()
