@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
         private sealed class ListIntroSorter<T> : IntroSorter
         {
             internal T pivot;
-            internal IList<T> list;
+            internal readonly IList<T> list; // LUCENENET: marked readonly
             internal readonly IComparer<T> comp;
 
             internal ListIntroSorter(IList<T> list, IComparer<T> comp)
@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
                 //{
                 //  throw new ArgumentException("CollectionUtil can only sort random access lists in-place.");
                 //}
-                
+
                 this.list = list;
                 this.comp = comp;
             }
@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
 
         private sealed class ListTimSorter<T> : TimSorter
         {
-            internal IList<T> list;
+            internal readonly IList<T> list; // LUCENENET: marked readonly
             internal readonly IComparer<T> comp;
             internal readonly T[] tmp;
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
         /// This method uses the intro sort
-        /// algorithm, but falls back to insertion sort for small lists. 
+        /// algorithm, but falls back to insertion sort for small lists.
         /// </summary>
         /// <param name="list">This <see cref="IList{T}"/></param>
         /// <param name="comp">The <see cref="IComparer{T}"/> to use for the sort.</param>
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sorts the given random access <see cref="IList{T}"/> in natural order.
         /// This method uses the intro sort
-        /// algorithm, but falls back to insertion sort for small lists. 
+        /// algorithm, but falls back to insertion sort for small lists.
         /// </summary>
         /// <param name="list">This <see cref="IList{T}"/></param>
         public static void IntroSort<T>(IList<T> list)

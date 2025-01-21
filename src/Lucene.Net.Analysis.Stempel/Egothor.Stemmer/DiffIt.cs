@@ -3,7 +3,6 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 using Integer = J2N.Numerics.Int32;
 using JCG = J2N.Collections.Generic;
 

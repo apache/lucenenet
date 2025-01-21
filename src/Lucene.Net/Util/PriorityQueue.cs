@@ -128,6 +128,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
+    [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
     public ref struct ValuePriorityQueue<T>
     {
         private int size;

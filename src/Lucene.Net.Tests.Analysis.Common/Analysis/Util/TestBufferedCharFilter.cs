@@ -429,7 +429,7 @@ namespace Lucene.Net.Analysis.Util
 
             //char[] contents = new char[size];
 
-            //public int read() 
+            //public int read()
             //{
             //				if (pos >= size)
             //					throw new IOException("Read past end of data");
@@ -453,7 +453,7 @@ namespace Lucene.Net.Analysis.Util
             //				return size - pos > 0;
             //}
 
-            //public void close() 
+            //public void close()
             //{
             //}
             //		});
@@ -713,12 +713,14 @@ namespace Lucene.Net.Analysis.Util
         /**
          * @tests java.io.BufferedReader#ready()
          */
+        [Test, LuceneNetSpecific]
         public void Test_Ready()
         {
             // Test for method boolean java.io.BufferedReader.ready()
             try
             {
-                br = new BufferedCharFilter(new StringReader(testString));
+                // LUCENENET specific: use TestStringReaderCharFilterAdapter to adapt StringReader to be IsReady-aware.
+                br = new BufferedCharFilter(new TestStringReaderCharFilterAdapter(new StringReader(testString)));
                 assertTrue("IsReady returned false", br.IsReady);
             }
             catch (Exception e) when (e.IsIOException())
@@ -727,9 +729,34 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
+        /// <summary>
+        /// LUCENENET specific class for <see cref="TestBufferedCharFilter.Test_Ready"/> to test that
+        /// <see cref="BufferedCharFilter.IsReady"/> cascades its call to the underlying
+        /// <see cref="CharFilter.IsReady"/>. Rationale: IsReady indicates that a call to
+        /// <see cref="TextReader.Read()"/> is guaranteed not to block. <see cref="StringReader"/> does not block,
+        /// because there is no I/O. Therefore, if the underlying reader is a <see cref="StringReader"/>, then
+        /// <see cref="CharFilter.IsReady"/> must return true.
+        /// </summary>
+        private class TestStringReaderCharFilterAdapter : CharFilter
+        {
+            public TestStringReaderCharFilterAdapter(StringReader input) // Enforces the input reader is a StringReader
+                : base(input)
+            {
+            }
+
+            protected override int Correct(int currentOff)
+                => throw new NotImplementedException();
+
+            public override int Read(char[] buffer, int index, int count)
+                => m_input.Read(buffer, index, count);
+
+            public override bool IsReady => true; // StringReaders do not block
+        }
+
         /**
          * @tests java.io.BufferedReader#reset()
          */
+        [Test, LuceneNetSpecific]
         public void Test_Reset()
         {
             // Test for method void java.io.BufferedReader.reset()

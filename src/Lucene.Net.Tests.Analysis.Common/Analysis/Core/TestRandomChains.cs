@@ -35,7 +35,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
@@ -933,7 +932,7 @@ namespace Lucene.Net.Analysis.Core
                         if (Verbose)
                         {
                             Console.WriteLine("Ignoring IAE/UOE from ctor:");
-                            //cause.printStackTrace(System.err);
+                            ite.InnerException.PrintStackTrace(Console.Error);
                         }
                     }
                     else

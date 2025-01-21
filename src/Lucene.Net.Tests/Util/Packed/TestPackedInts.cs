@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 
 namespace Lucene.Net.Util.Packed
@@ -382,7 +381,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    e.printStackTrace(Console.Error);
+                    e.PrintStackTrace(Console.Error);
                     Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Exception while filling {0}: valueCount={1}, bitsPerValue={2}", packedInt.GetType().Name, valueCount, bitsPerValue));
                 }
             }

@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
         {
             private readonly BooleanScorer2 outerInstance;
 
-            internal Scorer scorer;
+            internal readonly Scorer scorer; // LUCENENET: marked readonly
             internal int lastScoredDoc = -1;
 
             // Save the score of lastScoredDoc, so that we don't compute it more than
@@ -274,7 +274,7 @@ namespace Lucene.Net.Search
         /// </summary>
         private Scorer MakeCountingSumScorer(/* bool disableCoord // LUCENENET: Not Referenced */) // each scorer counted as a single matcher
         {
-            return (requiredScorers.Count == 0) 
+            return (requiredScorers.Count == 0)
                 ? MakeCountingSumScorerNoReq(/* disableCoord // LUCENENET: Not Referenced */)
                 : MakeCountingSumScorerSomeReq(/* disableCoord // LUCENENET: Not Referenced */);
         }

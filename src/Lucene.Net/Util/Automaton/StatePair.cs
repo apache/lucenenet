@@ -39,8 +39,8 @@ namespace Lucene.Net.Util.Automaton
     public class StatePair
     {
         internal State s;
-        internal State s1;
-        internal State s2;
+        internal readonly State s1; // LUCENENET: marked readonly
+        internal readonly State s2; // LUCENENET: marked readonly
 
         internal StatePair(State s, State s1, State s2)
         {

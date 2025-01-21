@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -831,7 +830,7 @@ namespace Lucene.Net.Index
 
             internal override void Handle(Exception t)
             {
-                t.printStackTrace(Console.Out);
+                t.PrintStackTrace(Console.Out);
                 UninterruptableMonitor.Enter(failures);
                 try
                 {
@@ -936,7 +935,7 @@ namespace Lucene.Net.Index
             {
                 if (!t.IsAlreadyClosedException() && !t.IsNullPointerException())
                 {
-                    t.printStackTrace(Console.Out);
+                    t.PrintStackTrace(Console.Out);
                     UninterruptableMonitor.Enter(failures);
                     try
                     {
@@ -1046,7 +1045,7 @@ namespace Lucene.Net.Index
                 }
                 if (report)
                 {
-                    t.printStackTrace(Console.Out);
+                    t.PrintStackTrace(Console.Out);
                     UninterruptableMonitor.Enter(failures);
                     try
                     {

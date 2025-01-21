@@ -1,13 +1,11 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -160,8 +158,7 @@ namespace Lucene.Net.Index
                     {
                         foreach (Exception throwable in exceptions)
                         {
-                            Console.WriteLine(throwable.ToString());
-                            Console.Write(throwable.StackTrace);
+                            throwable.PrintStackTrace();
                         }
                         Assert.Fail("got exceptions in threads");
                     }
@@ -283,8 +280,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsThrowable())
                 {
-                    Console.WriteLine(e.ToString());
-                    Console.Write(e.StackTrace);
+                    e.PrintStackTrace();
                     exceptions.Add(e);
                 }
             }
@@ -351,8 +347,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e) when (e.IsThrowable())
                 {
-                    Console.WriteLine(e.ToString());
-                    Console.Write(e.StackTrace);
+                    e.PrintStackTrace();
                     exceptions.Add(e);
                 }
 

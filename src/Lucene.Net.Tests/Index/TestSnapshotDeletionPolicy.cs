@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -206,7 +205,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception t) when (t.IsThrowable())
                         {
-                            Console.WriteLine(t.StackTrace);
+                            t.PrintStackTrace(Console.Out);
                             Assert.Fail("addDocument failed");
                         }
                         if (i % 2 == 0)

@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index

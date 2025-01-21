@@ -30,8 +30,8 @@ namespace Lucene.Net.Search.Highlight
     {
         private const int MAX_NUM_TOKENS_PER_GROUP = 50;
 
-        internal Token[] tokens = new Token[MAX_NUM_TOKENS_PER_GROUP];
-        internal float[] scores = new float[MAX_NUM_TOKENS_PER_GROUP];
+        internal readonly Token[] tokens = new Token[MAX_NUM_TOKENS_PER_GROUP]; // LUCENENET: marked readonly
+        internal readonly float[] scores = new float[MAX_NUM_TOKENS_PER_GROUP]; // LUCENENET: marked readonly
 
         internal int MatchStartOffset { get; set; }
         internal int MatchEndOffset { get; set; }

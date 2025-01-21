@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         internal IPatternConsumer consumer;
 
-        internal StringBuilder token;
+        internal readonly StringBuilder token; // LUCENENET: marked readonly
 
         internal IList<object> exception;
 

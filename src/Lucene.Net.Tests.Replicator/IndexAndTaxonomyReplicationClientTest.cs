@@ -17,7 +17,6 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Replicator
@@ -445,7 +444,8 @@ namespace Lucene.Net.Replicator
                     {
                         if (Verbose)
                         {
-                            Console.WriteLine("hit exception during update: " + exception);
+                            Console.WriteLine("hit exception during update: " + exception.ToTypeMessageString()); // LUCENENET specific - use ToTypeMessageString to mimic Java behavior
+                            exception.PrintStackTrace(Console.Out);
                         }
 
                         // test that the index can be read and also some basic statistics

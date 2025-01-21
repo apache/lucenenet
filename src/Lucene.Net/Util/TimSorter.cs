@@ -52,7 +52,7 @@ namespace Lucene.Net.Util
         internal int minRun;
         internal int to;
         internal int stackSize;
-        internal int[] runEnds;
+        internal readonly int[] runEnds; // LUCENENET: marked readonly
 
         /// <summary>
         /// Create a new <see cref="TimSorter"/>. </summary>

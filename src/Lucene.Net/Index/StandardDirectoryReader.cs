@@ -506,10 +506,10 @@ namespace Lucene.Net.Index
 
         internal sealed class ReaderCommit : IndexCommit
         {
-            internal string segmentsFileName;
-            internal ICollection<string> files;
-            internal Directory dir;
-            internal long generation;
+            internal readonly string segmentsFileName; // LUCENENET: marked readonly
+            internal readonly ICollection<string> files; // LUCENENET: marked readonly
+            internal readonly Directory dir; // LUCENENET: marked readonly
+            internal readonly long generation; // LUCENENET: marked readonly
             internal readonly IDictionary<string, string> userData;
             internal readonly int segmentCount;
 

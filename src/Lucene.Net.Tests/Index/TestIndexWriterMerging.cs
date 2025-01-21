@@ -10,7 +10,6 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -488,7 +487,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception e) when (e.IsThrowable())
                         {
-                            Console.WriteLine(e.StackTrace);
+                            e.PrintStackTrace(Console.Out);
                             failure.Add(e);
                             done = true;
                             break;

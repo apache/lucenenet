@@ -3,7 +3,6 @@ using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis
 {

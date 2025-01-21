@@ -12,9 +12,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
      * The ASF licenses this file to You under the Apache License, Version 2.0
      * (the "License"); you may not use this file except in compliance with
      * the License.  You may obtain a copy of the License at
-     * 
+     *
      *      http://www.apache.org/licenses/LICENSE-2.0
-     * 
+     *
      * Unless required by applicable law or agreed to in writing, software
      * distributed under the License is distributed on an "AS IS" BASIS,
      * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +25,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// <summary>
     /// This class implements a simple char vector with access to the underlying
     /// array.
-    /// 
-    /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified. 
+    ///
+    /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified.
     /// </summary>
     public class CharVector // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         private const int DEFAULT_BLOCK_SIZE = 2048;
 
-        private int blockSize;
+        private readonly int blockSize; // LUCENENET: marked readonly
 
         /// <summary>
         /// The encapsulated array
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// </summary>
         private int n;
 
-        public CharVector() 
+        public CharVector()
             : this(DEFAULT_BLOCK_SIZE)
         {
         }

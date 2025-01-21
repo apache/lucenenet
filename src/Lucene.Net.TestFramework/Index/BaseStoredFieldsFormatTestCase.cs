@@ -20,7 +20,6 @@ using System.Globalization;
 using System.Runtime.ExceptionServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
 using RandomInts = RandomizedTesting.Generators.RandomNumbers;
 using Number = J2N.Numerics.Number;

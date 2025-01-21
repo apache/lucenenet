@@ -30792,19 +30792,19 @@ namespace Lucene.Net.Analysis.CharFilters
         private static readonly char STYLE_REPLACEMENT = '\n';
         private static readonly char REPLACEMENT_CHARACTER = '\uFFFD';
 
-        private CharArraySet escapedTags = null;
+        private readonly CharArraySet escapedTags = null; // LUCENENET: marked readonly
         private int inputStart;
         private int cumulativeDiff;
-        private bool escapeBR = false;
-        private bool escapeSCRIPT = false;
-        private bool escapeSTYLE = false;
+        private readonly bool escapeBR = false; // LUCENENET: marked readonly
+        private readonly bool escapeSCRIPT = false; // LUCENENET: marked readonly
+        private readonly bool escapeSTYLE = false; // LUCENENET: marked readonly
         private int restoreState;
         private int previousRestoreState;
         private int outputCharCount;
         private int eofReturnValue;
-        private TextSegment inputSegment = new TextSegment(INITIAL_INPUT_SEGMENT_SIZE);
+        private readonly TextSegment inputSegment = new TextSegment(INITIAL_INPUT_SEGMENT_SIZE); // LUCENENET: marked readonly
         private TextSegment outputSegment;
-        private TextSegment entitySegment = new TextSegment(2);
+        private readonly TextSegment entitySegment = new TextSegment(2); // LUCENENET: marked readonly
 
         /// <summary>
         /// Creates a new HTMLStripCharFilter over the provided TextReader.

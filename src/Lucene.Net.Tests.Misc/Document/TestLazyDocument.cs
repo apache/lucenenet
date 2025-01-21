@@ -29,7 +29,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Documents
 {

@@ -7,7 +7,6 @@ using Lucene.Net.Search.Spans;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
@@ -103,7 +102,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 catch (Exception e) when (e.IsException())
                 {
-                    Console.Error.WriteLine(e.ToString());
+                    e.PrintStackTrace();
                 }
             }
 

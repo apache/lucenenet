@@ -97,9 +97,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        internal IList<Block> blocks;
+        internal readonly IList<Block> blocks; // LUCENENET: marked readonly
         internal Block current;
-        internal int blockSize;
+        internal readonly int blockSize; // LUCENENET: marked readonly
         internal int length;
 
         public CharBlockArray()

@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
 using Int64 = J2N.Numerics.Int64;

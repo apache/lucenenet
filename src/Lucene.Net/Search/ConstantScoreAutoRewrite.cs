@@ -178,7 +178,7 @@ namespace Lucene.Net.Search
 
             internal readonly int docCountCutoff, termCountLimit;
             internal readonly TermStateByteStart array = new TermStateByteStart(16);
-            internal BytesRefHash pendingTerms;
+            internal readonly BytesRefHash pendingTerms; // LUCENENET: marked readonly
         }
 
         public override int GetHashCode()

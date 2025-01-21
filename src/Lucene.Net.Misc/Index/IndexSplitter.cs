@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -55,9 +54,9 @@ namespace Lucene.Net.Index
     {
         public SegmentInfos Infos { get; set; }
 
-        internal FSDirectory fsDir;
+        internal readonly FSDirectory fsDir; // LUCENENET: marked readonly
 
-        internal DirectoryInfo dir;
+        internal readonly DirectoryInfo dir; // LUCENENET: marked readonly
 
         /// <summary>
         /// LUCENENET specific: In the Java implementation, this Main method

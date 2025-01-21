@@ -1,8 +1,8 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Store
 {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
         private bool first = true;
         internal readonly string name;
 
-        internal byte[] singleByte = new byte[1];
+        internal readonly byte[] singleByte = new byte[1]; // LUCENENET: marked readonly
 
         /// <summary>
         /// Construct an empty output buffer. </summary>
@@ -97,7 +97,7 @@ namespace Lucene.Net.Store
                 if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": MDW: now throw fake disk full");
-                    Console.WriteLine(Environment.StackTrace);
+                    StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                 }
                 throw new IOException(message);
             }

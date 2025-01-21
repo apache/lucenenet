@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Phonetic
     ///         </description>
     ///     </item>
     /// </list>
-    /// 
+    ///
     /// <code>
     /// &lt;fieldType name="text_phonetic" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Phonetic
             { "ColognePhonetic".ToUpperInvariant(), typeof(ColognePhonetic) },
         };
 
-        internal bool inject; //accessed by the test
+        internal readonly bool inject; //accessed by the test // LUCENENET: marked readonly
         private readonly string name;
         private readonly int? maxCodeLength;
         private Type clazz = null;

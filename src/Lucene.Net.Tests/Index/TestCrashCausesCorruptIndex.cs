@@ -1,9 +1,9 @@
 ﻿using Lucene.Net.Documents;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
                     if (Verbose)
                     {
                         Console.WriteLine("TEST: now crash");
-                        Console.WriteLine(new Exception().StackTrace);
+                        StackTraceHelper.PrintCurrentStackTrace(Console.Out);
                     }
                     throw new CrashingException("crashAfterCreateOutput " + crashAfterCreateOutput);
                 }

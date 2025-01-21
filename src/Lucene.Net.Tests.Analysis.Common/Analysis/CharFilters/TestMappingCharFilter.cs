@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.CharFilters
@@ -217,7 +216,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, tokenizer);
             }, initReader: (fieldName, reader) =>
-            { 
+            {
                 return new MappingCharFilter(normMap, reader);
             });
 

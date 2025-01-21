@@ -5,6 +5,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -860,7 +861,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             stop.Value = true;
             thread.Join();
-            Assert.IsNull(error[0], "Unexpcted exception at retry " + retry + " retrieval " + retrieval[0] + ": \n" + stackTraceStr(error[0]));
+            Assert.IsNull(error[0], "Unexpcted exception at retry " + retry + " retrieval " + retrieval[0] + ": \n" + StackTraceStr(error[0]));
 
             tr.Dispose();
         }
@@ -926,15 +927,20 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Grab the stack trace into a string since the exception was thrown in a thread and we want the assert
         /// outside the thread to show the stack trace in case of failure.
         /// </summary>
-        private string stackTraceStr(Exception error)
+        // LUCENENET specific - made static
+        private static string StackTraceStr(Exception error)
         {
             if (error is null)
             {
                 return "";
             }
 
-            error.printStackTrace();
-            return error.StackTrace;
+            // LUCENENET specific - we can just return e.ToString() here to get the Java equivalent with less allocations. would otherwise be:
+            // using var sw = new StringWriter();
+            // error.PrintStackTrace(sw);
+            // sw.Flush();
+            // return sw.ToString();
+            return error.ToString();
         }
 
         /// <summary>

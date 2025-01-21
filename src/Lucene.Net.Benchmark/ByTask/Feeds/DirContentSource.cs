@@ -82,7 +82,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             internal int count = 0;
 
-            internal Stack<FileInfo> stack = new Stack<FileInfo>();
+            internal readonly Stack<FileInfo> stack = new Stack<FileInfo>(); // LUCENENET: marked readonly
 
             /* this seems silly ... there must be a better way ...
                not that this is good, but can it matter? */

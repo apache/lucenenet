@@ -3,7 +3,6 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.IO;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.Quality.Utils
 {
@@ -146,8 +145,8 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
 
         private class TermDf
         {
-            internal string word;
-            internal int df;
+            internal readonly string word; // LUCENENET: marked readonly
+            internal readonly int df; // LUCENENET: marked readonly
             internal TermDf(string word, int freq)
             {
                 this.word = word;

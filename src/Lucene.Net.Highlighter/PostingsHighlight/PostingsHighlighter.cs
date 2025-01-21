@@ -804,9 +804,9 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         internal class OffsetsEnum : IComparable<OffsetsEnum>
         {
-            internal DocsAndPositionsEnum dp;
+            internal readonly DocsAndPositionsEnum dp; // LUCENENET: marked readonly
             internal int pos;
-            internal int id;
+            internal readonly int id; // LUCENENET: marked readonly
 
             internal OffsetsEnum(DocsAndPositionsEnum dp, int id)
             {

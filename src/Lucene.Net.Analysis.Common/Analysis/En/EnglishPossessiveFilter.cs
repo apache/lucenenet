@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.En
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="EnglishPossessiveFilter"/>:
     /// <list type="bullet">
-    ///    <item><description> As of 3.6, U+2019 RIGHT SINGLE QUOTATION MARK and 
+    ///    <item><description> As of 3.6, U+2019 RIGHT SINGLE QUOTATION MARK and
     ///         U+FF07 FULLWIDTH APOSTROPHE are also treated as
     ///         quotation marks.</description></item>
     /// </list>
@@ -36,16 +36,16 @@ namespace Lucene.Net.Analysis.En
     public sealed class EnglishPossessiveFilter : TokenFilter
     {
         private readonly ICharTermAttribute termAtt;
-        private LuceneVersion matchVersion;
+        private readonly LuceneVersion matchVersion; // LUCENENET: marked readonly
 
-        /// @deprecated Use <see cref="EnglishPossessiveFilter(LuceneVersion, TokenStream)"/> instead. 
+        /// @deprecated Use <see cref="EnglishPossessiveFilter(LuceneVersion, TokenStream)"/> instead.
         [Obsolete(@"Use <see cref=""#EnglishPossessiveFilter(org.apache.lucene.util.Version, org.apache.lucene.analysis.TokenStream)""/> instead.")]
-        public EnglishPossessiveFilter(TokenStream input) 
+        public EnglishPossessiveFilter(TokenStream input)
             : this(LuceneVersion.LUCENE_35, input)
         {
         }
 
-        public EnglishPossessiveFilter(LuceneVersion version, TokenStream input) 
+        public EnglishPossessiveFilter(LuceneVersion version, TokenStream input)
             : base(input)
         {
             this.matchVersion = version;

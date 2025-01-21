@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
@@ -379,7 +378,7 @@ namespace Lucene.Net.Index
                 catch (Exception ex) when (ex.IsThrowable())
                 {
                     Console.WriteLine("FAILED exc:");
-                    ex.printStackTrace(Console.Out);
+                    ex.PrintStackTrace(Console.Out);
                     throw RuntimeException.Create(ex);
                 }
             }

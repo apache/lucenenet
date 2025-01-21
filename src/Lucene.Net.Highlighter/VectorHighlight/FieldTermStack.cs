@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.VectorHighlight
     public class FieldTermStack
     {
         private readonly string fieldName;
-        internal IList<TermInfo> termList = new JCG.List<TermInfo>();
+        internal readonly IList<TermInfo> termList = new JCG.List<TermInfo>(); // LUCENENET: marked readonly
 
         //public static void main( string[] args ) throws Exception {
         //  Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_CURRENT);

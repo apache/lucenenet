@@ -4,7 +4,6 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Threading;
-using Console = Lucene.Net.Util.SystemConsole;
 
 #if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE
 using RandomizedTesting.Generators;
@@ -140,7 +139,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception ex) when (ex.IsThrowable())
                 {
-                    Console.WriteLine(ex.StackTrace);
+                    ex.PrintStackTrace(Console.Out);
                     this.ex = ex;
                     run = false;
                 }

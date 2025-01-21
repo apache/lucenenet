@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
-using Console = Lucene.Net.Util.SystemConsole;
+using System;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {

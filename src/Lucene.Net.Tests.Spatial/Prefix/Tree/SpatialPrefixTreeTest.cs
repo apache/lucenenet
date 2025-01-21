@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Spatial.Prefix.Tree
 {

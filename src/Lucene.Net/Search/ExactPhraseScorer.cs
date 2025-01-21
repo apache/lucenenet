@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
         private readonly int[] counts = new int[CHUNK];
         private readonly int[] gens = new int[CHUNK];
 
-        internal bool noDocs;
+        internal readonly bool noDocs; // LUCENENET: marked readonly
         private readonly long cost;
 
         private sealed class ChunkState

@@ -291,7 +291,8 @@ namespace Lucene.Net.Replicator
         /// </remarks>
         protected virtual void HandleUpdateException(Exception exception)
         {
-            WriteToInfoStream(string.Format("an error occurred during revision update: {0}", exception));
+            // LUCENENET specific - use utility method, and print full exception to be equivalent to printStackTrace in Java
+            WriteToInfoStream($"an error occurred during revision update: {exception}");
         }
 
         /// <summary>

@@ -1127,7 +1127,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public sealed class DiskOrdinalMap : IOrdinalMap
         {
-            internal string tmpfile;
+            internal readonly string tmpfile; // LUCENENET: marked readonly
             internal OutputStreamDataOutput @out;
 
             /// <summary>

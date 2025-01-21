@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Util;
 using System;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Ja.Util
 {

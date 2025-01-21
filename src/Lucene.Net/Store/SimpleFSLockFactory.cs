@@ -103,8 +103,8 @@ namespace Lucene.Net.Store
 
     internal class SimpleFSLock : Lock
     {
-        internal string lockFile; // LUCENENET specific: changed to use string file name instead of allocating a FileInfo (#832)
-        internal DirectoryInfo lockDir;
+        internal readonly string lockFile; // LUCENENET specific: marked readonly, changed to use string file name instead of allocating a FileInfo (#832)
+        internal readonly DirectoryInfo lockDir; // LUCENENET: marked readonly
 
         public SimpleFSLock(DirectoryInfo lockDir, string lockFileName)
         {

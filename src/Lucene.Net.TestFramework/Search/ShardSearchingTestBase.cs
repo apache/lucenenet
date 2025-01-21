@@ -12,7 +12,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -736,7 +735,7 @@ namespace Lucene.Net.Search
                 catch (Exception t) when (t.IsThrowable())
                 {
                     Console.WriteLine("FAILED:");
-                    Console.Out.WriteLine(t.StackTrace);
+                    t.PrintStackTrace(Console.Out);
                     throw RuntimeException.Create(t);
                 }
             }

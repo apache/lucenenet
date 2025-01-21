@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Pattern
      */
 
     /// <summary>
-    /// Factory for <see cref="PatternCaptureGroupTokenFilter"/>. 
+    /// Factory for <see cref="PatternCaptureGroupTokenFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_ptncapturegroup" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -35,10 +35,10 @@ namespace Lucene.Net.Analysis.Pattern
     /// <seealso cref="PatternCaptureGroupTokenFilter"/>
     public class PatternCaptureGroupFilterFactory : TokenFilterFactory
     {
-        private Regex pattern;
-        private bool preserveOriginal = true;
+        private readonly Regex pattern; // LUCENENET: marked readonly
+        private readonly bool preserveOriginal /*= true*/; // LUCENENET: marked readonly, removed overwritten initializer
 
-        public PatternCaptureGroupFilterFactory(IDictionary<string, string> args) 
+        public PatternCaptureGroupFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             pattern = GetPattern(args, "pattern");

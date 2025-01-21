@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Facet.Taxonomy;
-using Console = Lucene.Net.Util.SystemConsole;
+using System;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {

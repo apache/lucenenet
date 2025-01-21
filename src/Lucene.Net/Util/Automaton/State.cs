@@ -57,7 +57,7 @@ namespace Lucene.Net.Util.Automaton
 
         internal int number;
 
-        internal int id;
+        internal readonly int id; // LUCENENET: marked readonly
         internal static int next_id;
 
         /// <summary>

@@ -10,7 +10,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Facet.Taxonomy
 {

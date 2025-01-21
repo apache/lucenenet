@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Nl
         /// <summary>
         /// Contains words that should be indexed but not stemmed.
         /// </summary>
-        private CharArraySet excltable = CharArraySet.Empty;
+        private readonly CharArraySet excltable = CharArraySet.Empty; // LUCENENET: marked readonly
 
         private readonly StemmerOverrideFilter.StemmerOverrideMap stemdict;
 

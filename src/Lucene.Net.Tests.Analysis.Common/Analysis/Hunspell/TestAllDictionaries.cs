@@ -6,7 +6,6 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Hunspell
 {
@@ -31,12 +30,12 @@ namespace Lucene.Net.Analysis.Hunspell
     /// Can be retrieved via:
     /// wget --mirror -np http://archive.services.openoffice.org/pub/mirror/OpenOffice.org/contrib/dictionaries/
     /// Note some of the files differ only in case. This may be a problem on your operating system!
-    /// 
+    ///
     /// LUCENENET NOTE: The above URL is no longer valid. These dictionaries can be retreived via FTP at one of these URLs
     /// ftp://ftp.us.horde.org/pub/software/openoffice/contrib/dictionaries/
     /// ftp://mirror.nl.leaseweb.net/openoffice/contrib/dictionaries/
     /// ftp://mirror.aptus.co.tz/openoffice/contrib/dictionaries/
-    /// 
+    ///
     /// Or you can search by file name at:
     /// http://www.filewatcher.com/
     /// </summary>
@@ -50,7 +49,7 @@ namespace Lucene.Net.Analysis.Hunspell
             System.IO.Path.Combine(new DirectoryInfo(typeof(TestAllDictionaries2).Assembly.Location).Parent.Parent.Parent.Parent.Parent.Parent.FullName,
                 @"test-files\analysis\data\dictionaries"));
 
-        internal readonly string[] tests = new string[] 
+        internal readonly string[] tests = new string[]
         {
             /* zip file */               /* dictionary */       /* affix */
             "af_ZA.zip",                 "af_ZA.dic",           "af_ZA.aff",
