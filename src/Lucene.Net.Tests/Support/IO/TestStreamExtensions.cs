@@ -42,7 +42,7 @@ namespace Lucene.Net.Support.IO
             byte[] bytes = Encoding.UTF8.GetBytes(fileString);
             stream.Write(bytes, 0, bytes.Length);
             // stream.Dispose(); // LUCENENET - we will reuse stream
-            OpenDataInputStream();
+            ResetStreamForReading();
             var buffer = ByteBuffer.Allocate((int)stream.Length);
             stream.Read(buffer, 0);
             Assert.IsTrue(Encoding.UTF8.GetString(buffer.Array).Equals(fileString));
@@ -54,7 +54,7 @@ namespace Lucene.Net.Support.IO
         {
             stream.Write("Test String".ToCharArray());
             // stream.Dispose(); // LUCENENET - we will reuse stream
-            OpenDataInputStream();
+            ResetStreamForReading();
             char[] chars = stream.ReadChars((int)stream.Length / 2); // LUCENENET note: we don't have/need a ReadChar method, so reusing ReadChars here
             Assert.AreEqual("Test String", new string(chars, 0, chars.Length), "Incorrect chars written");
         }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Support.IO
             byte[] bytes = Encoding.Unicode.GetBytes(fileString); // NOTE: ReadChars reads UTF-16 chars
             stream.Write(bytes, 0, bytes.Length);
             // stream.Dispose(); // LUCENENET - we will reuse stream
-            OpenDataInputStream();
+            ResetStreamForReading();
             var chars = stream.ReadChars(fileString.Length);
             Assert.IsTrue(new string(chars).Equals(fileString));
         }
@@ -77,7 +77,7 @@ namespace Lucene.Net.Support.IO
         {
             stream.Write(9087589);
             // stream.Dispose(); // LUCENENET - we will reuse stream
-            OpenDataInputStream();
+            ResetStreamForReading();
             int c = stream.ReadInt32();
             // dis.close();
             Assert.AreEqual(9087589, c, "Incorrect int written");
@@ -89,7 +89,7 @@ namespace Lucene.Net.Support.IO
         {
             stream.Write(768347202);
             // stream.Dispose(); // LUCENENET - we will reuse stream
-            OpenDataInputStream();
+            ResetStreamForReading();
             Assert.AreEqual(768347202, stream.ReadInt32(), "Incorrect int read");
         }
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Support.IO
         {
             stream.Write(908755555456L);
             // stream.Dispose(); // LUCENENET - we will reuse stream
-            OpenDataInputStream();
+            ResetStreamForReading();
             long c = stream.ReadInt64();
             // dis.close();
             Assert.AreEqual(908755555456L, c, "Incorrect long written");
@@ -111,11 +111,11 @@ namespace Lucene.Net.Support.IO
         {
             stream.Write(9875645283333L);
             // stream.Dispose(); // LUCENENET - we will reuse stream
-            OpenDataInputStream();
+            ResetStreamForReading();
             Assert.AreEqual(9875645283333L, stream.ReadInt64(), "Incorrect long read");
         }
 
-        private void OpenDataInputStream()
+        private void ResetStreamForReading() // LUCENENET - was "OpenDataInputStream" in Harmony tests
         {
             // LUCENENET specific - in the Harmony tests, there were separate streams
             // for input and output. Here, we'll just reuse the same stream, but reset
