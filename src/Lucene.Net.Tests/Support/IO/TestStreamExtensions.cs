@@ -39,7 +39,8 @@ namespace Lucene.Net.Support.IO
         // LUCENENET note: adapted from test_read$BII() for ByteBuffer-based Read extension method
         public void TestRead()
         {
-            stream.Write(Encoding.UTF8.GetBytes(fileString));
+            byte[] bytes = Encoding.UTF8.GetBytes(fileString);
+            stream.Write(bytes, 0, bytes.Length);
             // stream.Dispose(); // LUCENENET - we will reuse stream
             OpenDataInputStream();
             var buffer = ByteBuffer.Allocate((int)stream.Length);
@@ -62,7 +63,8 @@ namespace Lucene.Net.Support.IO
         // LUCENENET note: adapted from test_read$BII() for ReadChars extension method
         public void TestReadChars()
         {
-            stream.Write(Encoding.Unicode.GetBytes(fileString)); // NOTE: ReadChars reads UTF-16 chars
+            byte[] bytes = Encoding.Unicode.GetBytes(fileString); // NOTE: ReadChars reads UTF-16 chars
+            stream.Write(bytes, 0, bytes.Length);
             // stream.Dispose(); // LUCENENET - we will reuse stream
             OpenDataInputStream();
             var chars = stream.ReadChars(fileString.Length);
