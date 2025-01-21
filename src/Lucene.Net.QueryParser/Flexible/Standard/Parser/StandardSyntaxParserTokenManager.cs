@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     {
         /// <summary>Debug output.</summary>
 #pragma warning disable IDE0052 // Remove unread private members
-        private TextWriter debugStream = Console.Out; // LUCENENET specific - made private, since we already have a setter
+        private TextWriter debugStream = TextWriter.Null; // LUCENENET specific - made private, since we already have a setter
 #pragma warning restore IDE0052 // Remove unread private members
         /// <summary>Set debug output.</summary>
         public void SetDebugStream(TextWriter ds) { debugStream = new SafeTextWriterWrapper(ds); }
