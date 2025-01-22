@@ -112,7 +112,6 @@
     <DefineConstants>$(DefineConstants);FEATURE_ASSEMBLY_GETCALLINGASSEMBLY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_CLOSE</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_TYPE_GETMETHOD__BINDINGFLAGS_PARAMS</DefineConstants>
 
   </PropertyGroup>
