@@ -406,13 +406,19 @@ namespace Lucene.Net.Support.Threading
         }
 
         // LUCENENET TODO: Complete port
+    }
 
+    /// <summary>
+    /// LUCENENET specific - fake support for an API that feels like ThreadPoolExecutor.
+    /// </summary>
+    internal static class JSR166TestCaseExtensions
+    {
         /// <summary>
         /// LUCENENET specific - state to keep track of tasks.
         /// <see cref="LimitedConcurrencyLevelTaskScheduler"/> removes tasks from the list when they complete,
         /// so this class is needed to keep track of them.
         /// </summary>
-        internal class TaskState
+        private class TaskState
         {
             private readonly TaskFactory _factory;
             private readonly List<Task> _tasks = new();
@@ -438,20 +444,14 @@ namespace Lucene.Net.Support.Threading
 
             public bool JoinAll(TimeSpan timeout) => Task.WhenAll(_tasks).Wait(timeout);
         }
-    }
 
-    /// <summary>
-    /// LUCENENET specific - fake support for an API that feels like ThreadPoolExecutor.
-    /// </summary>
-    internal static class JSR166TestCaseExtensions
-    {
-        private static readonly ConditionalWeakTable<TaskScheduler, JSR166TestCase.TaskState> _taskFactories = new();
+        private static readonly ConditionalWeakTable<TaskScheduler, TaskState> _taskFactories = new();
 
         public static void Execute(this TaskScheduler scheduler, Action action)
         {
-            if (!_taskFactories.TryGetValue(scheduler, out JSR166TestCase.TaskState? state))
+            if (!_taskFactories.TryGetValue(scheduler, out TaskState? state))
             {
-                state = new JSR166TestCase.TaskState(scheduler);
+                state = new TaskState(scheduler);
                 _taskFactories.Add(scheduler, state);
             }
 
@@ -460,7 +460,7 @@ namespace Lucene.Net.Support.Threading
 
         public static bool AwaitTermination(this TaskScheduler scheduler, TimeSpan timeout)
         {
-            if (_taskFactories.TryGetValue(scheduler, out JSR166TestCase.TaskState? state))
+            if (_taskFactories.TryGetValue(scheduler, out TaskState? state))
             {
                 return state.JoinAll(timeout);
             }
@@ -470,7 +470,7 @@ namespace Lucene.Net.Support.Threading
 
         public static int GetActiveCount(this TaskScheduler scheduler)
         {
-            if (_taskFactories.TryGetValue(scheduler, out JSR166TestCase.TaskState? state))
+            if (_taskFactories.TryGetValue(scheduler, out TaskState? state))
             {
                 // Approximate the number of running threads, which shouldn't exceed the concurrency level
                 return Math.Min(scheduler.MaximumConcurrencyLevel, state.ActiveCount);
@@ -481,7 +481,7 @@ namespace Lucene.Net.Support.Threading
 
         public static int GetCompletedTaskCount(this TaskScheduler scheduler)
         {
-            if (_taskFactories.TryGetValue(scheduler, out JSR166TestCase.TaskState? state))
+            if (_taskFactories.TryGetValue(scheduler, out TaskState? state))
             {
                 return state.CompletedCount;
             }
@@ -491,7 +491,7 @@ namespace Lucene.Net.Support.Threading
 
         public static int GetTaskCount(this TaskScheduler scheduler)
         {
-            if (_taskFactories.TryGetValue(scheduler, out JSR166TestCase.TaskState? state))
+            if (_taskFactories.TryGetValue(scheduler, out TaskState? state))
             {
                 return state.TaskCount;
             }
@@ -510,7 +510,7 @@ namespace Lucene.Net.Support.Threading
         public static bool IsTerminated(this TaskScheduler scheduler)
         {
             if (scheduler is LimitedConcurrencyLevelTaskScheduler lcl
-                && _taskFactories.TryGetValue(scheduler, out JSR166TestCase.TaskState? state))
+                && _taskFactories.TryGetValue(scheduler, out TaskState? state))
             {
                 return lcl.IsShutdown && state.AllCompleted;
             }
