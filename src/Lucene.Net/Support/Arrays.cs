@@ -624,34 +624,5 @@ namespace Lucene.Net.Support
             sb.Append(']');
             return sb.ToString();
         }
-
-        /// <summary>
-        /// Creates a <see cref="string"/> representation of the array passed.
-        /// The result is surrounded by brackets <c>"[]"</c>, each
-        /// element is converted to a <see cref="string"/> via the
-        /// <paramref name="provider"/> and separated by <c>", "</c>. If
-        /// the array is <c>null</c>, then <c>"null"</c> is returned.
-        /// </summary>
-        /// <typeparam name="T">The type of array element.</typeparam>
-        /// <param name="array">The array to convert.</param>
-        /// <param name="provider">A <see cref="IFormatProvider"/> instance that supplies the culture formatting information.</param>
-        /// <returns>The converted array string.</returns>
-        public static string ToString<T>(T[] array, IFormatProvider provider)
-        {
-            if (array is null)
-                return "null"; //$NON-NLS-1$
-            if (array.Length == 0)
-                return "[]"; //$NON-NLS-1$
-            StringBuilder sb = new StringBuilder(2 + array.Length * 4);
-            sb.Append('[');
-            sb.AppendFormat(provider, "{0}", array[0]);
-            for (int i = 1; i < array.Length; i++)
-            {
-                sb.Append(", "); //$NON-NLS-1$
-                sb.AppendFormat(provider, "{0}", array[i]);
-            }
-            sb.Append(']');
-            return sb.ToString();
-        }
     }
 }
