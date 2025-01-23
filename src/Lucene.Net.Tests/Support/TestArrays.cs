@@ -3,6 +3,7 @@
 
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Support
 {
@@ -67,11 +68,11 @@ namespace Lucene.Net.Support
                 Arrays.Fill(new byte[2], 2, 1, (byte)27);
                 result = 0;
             }
-            catch (ArrayIndexOutOfBoundsException)
+            catch (Exception e) when (e.IsArrayIndexOutOfBoundsException())
             {
                 result = 1;
             }
-            catch (IllegalArgumentException)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 result = 2;
             }
@@ -82,11 +83,11 @@ namespace Lucene.Net.Support
                 Arrays.Fill(new byte[2], -1, 1, (byte)27);
                 result = 0;
             }
-            catch (ArrayIndexOutOfBoundsException)
+            catch (Exception e) when (e.IsArrayIndexOutOfBoundsException())
             {
                 result = 1;
             }
-            catch (IllegalArgumentException)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 result = 2;
             }
@@ -97,11 +98,11 @@ namespace Lucene.Net.Support
                 Arrays.Fill(new byte[2], 1, 4, (byte)27);
                 result = 0;
             }
-            catch (ArrayIndexOutOfBoundsException e)
+            catch (Exception e) when (e.IsArrayIndexOutOfBoundsException())
             {
                 result = 1;
             }
-            catch (IllegalArgumentException e)
+            catch (Exception e) when (e.IsIllegalArgumentException())
             {
                 result = 2;
             }
@@ -416,6 +417,165 @@ namespace Lucene.Net.Support
             {
                 assertNull("Failed to fill Object array correctly with nulls", d[i]);
             }
+        }
+
+        /// <summary>
+        /// Adapted from test_equals$B$B() in Harmony
+        /// </summary>
+        [Test]
+        public void TestEquals_ByteArrays()
+        {
+            // Test for method bool Arrays.Equals(byte[], byte[])
+            byte[] d = new byte[1000];
+            byte[] x = new byte[1000];
+            Arrays.Fill(d, byte.MaxValue);
+            Arrays.Fill(x, byte.MinValue);
+            assertTrue("Inequal arrays returned true", !Arrays.Equals(d, x));
+            Arrays.Fill(x, byte.MaxValue);
+            assertTrue("equal arrays returned false", Arrays.Equals(d, x));
+        }
+
+        /// <summary>
+        /// Adapted from test_equals$S$S() in Harmony
+        /// </summary>
+        [Test]
+        public void TestEquals_ShortArrays()
+        {
+            // Test for method bool Arrays.Equals(short[], short[])
+            short[] d = new short[1000];
+            short[] x = new short[1000];
+            Arrays.Fill(d, short.MaxValue);
+            Arrays.Fill(x, short.MinValue);
+            assertTrue("Inequal arrays returned true", !Arrays.Equals(d, x));
+            Arrays.Fill(x, short.MaxValue);
+            assertTrue("equal arrays returned false", Arrays.Equals(d, x));
+        }
+
+        /// <summary>
+        /// Adapted from test_equals$C$C() in Harmony
+        /// </summary>
+        [Test]
+        public void TestEquals_CharArrays()
+        {
+            // Test for method bool Arrays.Equals(char[], char[])
+            char[] d = new char[1000];
+            char[] x = new char[1000];
+            const char c = 'T';
+            Arrays.Fill(d, c);
+            Arrays.Fill(x, 'L');
+            assertTrue("Inequal arrays returned true", !Arrays.Equals(d, x));
+            Arrays.Fill(x, c);
+            assertTrue("equal arrays returned false", Arrays.Equals(d, x));
+        }
+
+        /// <summary>
+        /// Adapted from test_equals$I$I() in Harmony
+        /// </summary>
+        [Test]
+        public void TestEquals_IntArrays()
+        {
+            // Test for method bool Arrays.Equals(int[], int[])
+            int[] d = new int[1000];
+            int[] x = new int[1000];
+            Arrays.Fill(d, int.MaxValue);
+            Arrays.Fill(x, int.MinValue);
+            assertTrue("Inequal arrays returned true", !Arrays.Equals(d, x));
+            Arrays.Fill(x, int.MaxValue);
+            assertTrue("equal arrays returned false", Arrays.Equals(d, x));
+
+            assertTrue("wrong result for null array1", !Arrays.Equals(new int[2], null));
+            assertTrue("wrong result for null array2", !Arrays.Equals(null, new int[2]));
+        }
+
+        /// <summary>
+        /// Adapted from test_equals$J$J() in Harmony
+        /// </summary>
+        [Test]
+        public void TestEquals_LongArrays()
+        {
+            // Test for method bool Arrays.Equals(long[], long[])
+            long[] d = new long[1000];
+            long[] x = new long[1000];
+            Arrays.Fill(d, long.MaxValue);
+            Arrays.Fill(x, long.MinValue);
+            assertTrue("Inequal arrays returned true", !Arrays.Equals(d, x));
+            Arrays.Fill(x, long.MaxValue);
+            assertTrue("equal arrays returned false", Arrays.Equals(d, x));
+
+            assertTrue("should be false", !Arrays.Equals(new[] { 0x100000000L }, new[] { 0x200000000L }));
+        }
+
+        /// <summary>
+        /// Adapted from test_equals$F$F() in Harmony
+        /// </summary>
+        [Test]
+        public void TestEquals_FloatArrays()
+        {
+            // Test for method bool Arrays.Equals(float[], float[])
+            float[] d = new float[1000];
+            float[] x = new float[1000];
+            Arrays.Fill(d, float.MaxValue);
+            Arrays.Fill(x, float.MinValue);
+            assertTrue("Inequal arrays returned true", !Arrays.Equals(d, x));
+            Arrays.Fill(x, float.MaxValue);
+            assertTrue("equal arrays returned false", Arrays.Equals(d, x));
+
+            assertTrue("NaN not equals", Arrays.Equals(new[] { float.NaN }, new[] { float.NaN }));
+            assertTrue("0f equals -0f", !Arrays.Equals(new[] { 0f }, new[] { -0f }));
+        }
+
+        /// <summary>
+        /// Adapted from test_equals$D$D() in Harmony
+        /// </summary>
+        [Test]
+        public void TestEquals_DoubleArrays()
+        {
+            // Test for method bool Arrays.Equals(double[], double[])
+            double[] d = new double[1000];
+            double[] x = new double[1000];
+            Arrays.Fill(d, double.MaxValue);
+            Arrays.Fill(x, double.MinValue);
+            assertTrue("Inequal arrays returned true", !Arrays.Equals(d, x));
+            Arrays.Fill(x, double.MaxValue);
+            assertTrue("equal arrays returned false", Arrays.Equals(d, x));
+
+            assertTrue("NaN not equals", Arrays.Equals(new[] { double.NaN }, new[] { double.NaN }));
+            assertTrue("0f equals -0f", !Arrays.Equals(new[] { 0d }, new[] { -0d }));
+        }
+
+        /// <summary>
+        /// Adapted from test_equals$Z$Z() in Harmony
+        /// </summary>
+        [Test]
+        public void TestEquals_BoolArrays()
+        {
+            // Test for method bool Arrays.Equals(bool[], bool[])
+            bool[] d = new bool[1000];
+            bool[] x = new bool[1000];
+            Arrays.Fill(d, true);
+            Arrays.Fill(x, false);
+            assertTrue("Inequal arrays returned true", !Arrays.Equals(d, x));
+            Arrays.Fill(x, true);
+            assertTrue("equal arrays returned false", Arrays.Equals(d, x));
+        }
+
+        /// <summary>
+        /// Adapted from test_equals$Ljava_lang_Object$Ljava_lang_Object() in Harmony
+        /// </summary>
+        [Test]
+        public void TestEquals_ObjectArrays()
+        {
+            // Test for method bool Arrays.Equals(object[], object[])
+            object[] d = new object[1000];
+            object[] x = new object[1000];
+            object o = new object();
+            Arrays.Fill(d, o);
+            Arrays.Fill(x, new object());
+            assertTrue("Inequal arrays returned true", !Arrays.Equals(d, x));
+            Arrays.Fill(x, o);
+            d[50] = null;
+            x[50] = null;
+            assertTrue("equal arrays returned false", Arrays.Equals(d, x));
         }
     }
 }
