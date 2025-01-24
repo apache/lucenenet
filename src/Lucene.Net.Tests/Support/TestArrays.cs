@@ -271,8 +271,8 @@ namespace Lucene.Net.Support
             Arrays.Fill(d, float.MaxValue);
             for (int i = 0; i < d.Length; i++)
             {
-                // ReSharper disable once CompareOfFloatsByEqualityOperator - we're looking for exactly this value
-                assertTrue("Failed to fill float array correctly", d[i] == float.MaxValue);
+                // LUCENENET specific - compare using ints to avoid floating-point errors
+                assertTrue("Failed to fill float array correctly", NumericUtils.SingleToSortableInt32(d[i]) == NumericUtils.SingleToSortableInt32(float.MaxValue));
             }
         }
 
@@ -289,14 +289,14 @@ namespace Lucene.Net.Support
 
             for (int i = 0; i < 400; i++)
             {
-                // ReSharper disable once CompareOfFloatsByEqualityOperator - we're looking for exactly not this value
-                assertTrue("Filled elements not in range", d[i] != val);
+                // LUCENENET specific - compare using ints to avoid floating-point errors
+                assertTrue("Filled elements not in range", NumericUtils.SingleToSortableInt32(d[i]) != NumericUtils.SingleToSortableInt32(val));
             }
 
             for (int i = 400; i < d.Length; i++)
             {
-                // ReSharper disable once CompareOfFloatsByEqualityOperator - we're looking for exactly this value
-                assertTrue("Failed to fill float array correctly", d[i] == val);
+                // LUCENENET specific - compare using ints to avoid floating-point errors
+                assertTrue("Failed to fill float array correctly", NumericUtils.SingleToSortableInt32(d[i]) == NumericUtils.SingleToSortableInt32(val));
             }
         }
 
@@ -311,8 +311,8 @@ namespace Lucene.Net.Support
             Arrays.Fill(d, double.MaxValue);
             for (int i = 0; i < d.Length; i++)
             {
-                // ReSharper disable once CompareOfFloatsByEqualityOperator - we're looking for exactly this value
-                assertTrue("Failed to fill double array correctly", d[i] == double.MaxValue);
+                // LUCENENET specific - compare using ints to avoid floating-point errors
+                assertTrue("Failed to fill double array correctly", NumericUtils.DoubleToSortableInt64(d[i]) == NumericUtils.DoubleToSortableInt64(double.MaxValue));
             }
         }
 
@@ -329,14 +329,14 @@ namespace Lucene.Net.Support
 
             for (int i = 0; i < 400; i++)
             {
-                // ReSharper disable once CompareOfFloatsByEqualityOperator - we're looking for exactly not this value
-                assertTrue("Filled elements not in range", d[i] != val);
+                // LUCENENET specific - compare using ints to avoid floating-point errors
+                assertTrue("Filled elements not in range", NumericUtils.DoubleToSortableInt64(d[i]) != NumericUtils.DoubleToSortableInt64(val));
             }
 
             for (int i = 400; i < d.Length; i++)
             {
-                // ReSharper disable once CompareOfFloatsByEqualityOperator - we're looking for exactly this value
-                assertTrue("Failed to fill double array correctly", d[i] == val);
+                // LUCENENET specific - compare using ints to avoid floating-point errors
+                assertTrue("Failed to fill double array correctly", NumericUtils.DoubleToSortableInt64(d[i]) == NumericUtils.DoubleToSortableInt64(val));
             }
         }
 
