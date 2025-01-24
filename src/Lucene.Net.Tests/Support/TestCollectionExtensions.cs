@@ -45,7 +45,7 @@ namespace Lucene.Net.Support
         public void RetainAll_Set()
         {
             ISet<int> set = new JCG.HashSet<int> { 1, 2, 3, 4, 5 };
-            bool result = set.RetainAll(new[] { 1, 2, 3 });
+            bool result = set.RetainAll(new[] { 1, 2, 3, 100, 101 });
             Assert.IsTrue(result);
             Assert.AreEqual(3, set.Count);
             Assert.IsTrue(set.Contains(1));
@@ -59,7 +59,7 @@ namespace Lucene.Net.Support
         public void RetainAll_List()
         {
             IList<int> list = new JCG.List<int> { 1, 2, 3, 4, 5 };
-            bool result = list.RetainAll(new[] { 1, 2, 3 });
+            bool result = list.RetainAll(new[] { 1, 2, 3, 100, 101 });
             Assert.IsTrue(result);
             Assert.AreEqual(3, list.Count);
             Assert.AreEqual(1, list[0]);
@@ -71,7 +71,7 @@ namespace Lucene.Net.Support
         public void RetainAll_Collection()
         {
             ICollection<int> collection = new TestCollection<int> { 1, 2, 3, 4, 5 };
-            bool result = collection.RetainAll(new[] { 1, 2, 3 });
+            bool result = collection.RetainAll(new[] { 1, 2, 3, 100, 101 });
             Assert.IsTrue(result);
             Assert.AreEqual(3, collection.Count);
             Assert.IsTrue(collection.Contains(1));
@@ -94,7 +94,7 @@ namespace Lucene.Net.Support
         public void RemoveAll_Set()
         {
             ISet<int> set = new JCG.HashSet<int> { 1, 2, 3, 4, 5 };
-            bool result = set.RemoveAll(new[] { 1, 2, 3 });
+            bool result = set.RemoveAll(new[] { 1, 2, 3, 100, 101 });
             Assert.IsTrue(result);
             Assert.AreEqual(2, set.Count);
             Assert.IsFalse(set.Contains(1));
@@ -108,7 +108,7 @@ namespace Lucene.Net.Support
         public void RemoveAll_List()
         {
             IList<int> list = new JCG.List<int> { 1, 2, 3, 4, 5 };
-            bool result = list.RemoveAll(new[] { 1, 2, 3 });
+            bool result = list.RemoveAll(new[] { 1, 2, 3, 100, 101 });
             Assert.IsTrue(result);
             Assert.AreEqual(2, list.Count);
             Assert.AreEqual(4, list[0]);
@@ -119,7 +119,7 @@ namespace Lucene.Net.Support
         public void RemoveAll_Collection()
         {
             ICollection<int> collection = new TestCollection<int> { 1, 2, 3, 4, 5 };
-            bool result = collection.RemoveAll(new[] { 1, 2, 3 });
+            bool result = collection.RemoveAll(new[] { 1, 2, 3, 100, 101 });
             Assert.IsTrue(result);
             Assert.AreEqual(2, collection.Count);
             Assert.IsFalse(collection.Contains(1));
