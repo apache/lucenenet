@@ -976,7 +976,7 @@ namespace Lucene.Net.Util
             // LUCENENET: DisposeAfterTest runs last
             try
             {
-                RandomizedContext.CurrentContext.DisposeResources();
+                RandomizedContext.CurrentContext?.DisposeResources();
             }
             catch (Exception ex) when (ex.IsThrowable())
             {
