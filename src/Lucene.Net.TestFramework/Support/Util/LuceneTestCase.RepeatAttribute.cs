@@ -86,13 +86,13 @@ namespace Lucene.Net.Util
                 {
                     if (context.CurrentTest.TypeInfo is null || !context.CurrentTest.TypeInfo.Type.IsSubclassOf(typeof(LuceneTestCase)))
                     {
-                        return SetResultErrorNonLuceneNetTestCaseSubclass(context);
+                        return SetResultErrorNonLuceneTestCaseSubclass(context);
                     }
 
                     RandomizedContext? randomizedContext = context.CurrentTest.GetRandomizedContext();
                     if (randomizedContext is null)
                     {
-                        return SetResultErrorNonLuceneNetTestCaseSubclass(context);
+                        return SetResultErrorNonLuceneTestCaseSubclass(context);
                     }
 
                     var random = new J2N.Randomizer(randomizedContext.RandomSeed);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Util
                     return context.CurrentResult;
                 }
 
-                private static TestResult SetResultErrorNonLuceneNetTestCaseSubclass(TestExecutionContext context)
+                private static TestResult SetResultErrorNonLuceneTestCaseSubclass(TestExecutionContext context)
                 {
                     if (context.CurrentResult is null) context.CurrentResult = context.CurrentTest.MakeTestResult();
                     // We only want this attribute to be used on subclasses of LuceneTestCase. This is an error.
