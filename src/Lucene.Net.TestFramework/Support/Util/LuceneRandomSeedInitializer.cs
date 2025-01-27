@@ -78,11 +78,6 @@ namespace Lucene.Net.Util
                     return false;
                 }
 
-                // LUCENENET TODO: For now, we are ignoring anything after a colon in the string, but logically it seems like
-                // a second seed would be to set the a test so the RandomAttribute fails on the first iteration. Lucene uses a compound
-                // seed, but it isn't clear from analyzing the source how it is used, just that it can contain any number of colon delimited
-                // values. If we ignore now, we leave the door open for adding a compound seed in the most sensible way later without breaking
-                // the current version when the change is introduced.
                 if (!J2N.Numerics.Int64.TryParse(seedAsString.AsSpan(colonIndex + 1, seedAsString.Length - (colonIndex + 1)), radix: 16, out long testSeedValue))
                 {
                     test.MakeInvalid(RANDOM_SEED_PARAMS_MSG);
