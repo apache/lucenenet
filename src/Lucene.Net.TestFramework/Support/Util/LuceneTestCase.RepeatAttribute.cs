@@ -84,15 +84,15 @@ namespace Lucene.Net.Util
                 /// <returns>A <see cref="TestResult"/>.</returns>
                 public override TestResult Execute(TestExecutionContext context)
                 {
+                    if (context.CurrentTest.TypeInfo is null || !context.CurrentTest.TypeInfo.Type.IsSubclassOf(typeof(LuceneTestCase)))
+                    {
+                        return SetResultErrorNonLuceneNetTestCaseSubclass(context);
+                    }
+
                     RandomizedContext? randomizedContext = context.CurrentTest.GetRandomizedContext();
                     if (randomizedContext is null)
                     {
-                        if (context.CurrentResult is null) context.CurrentResult = context.CurrentTest.MakeTestResult();
-                        // We only want this attribute to be used on subclasses of LuceneTestCase. This is a failure.
-                        context.CurrentResult.SetResult(ResultState.Failure,
-                            $"{typeof(RepeatAttribute).FullName} must be used on a subclass of {nameof(LuceneTestCase)}.");
-
-                        return context.CurrentResult;
+                        return SetResultErrorNonLuceneNetTestCaseSubclass(context);
                     }
 
                     var random = new J2N.Randomizer(randomizedContext.RandomSeed);
@@ -126,6 +126,16 @@ namespace Lucene.Net.Util
 
                         context.CurrentRepeatCount++;
                     }
+
+                    return context.CurrentResult;
+                }
+
+                private static TestResult SetResultErrorNonLuceneNetTestCaseSubclass(TestExecutionContext context)
+                {
+                    if (context.CurrentResult is null) context.CurrentResult = context.CurrentTest.MakeTestResult();
+                    // We only want this attribute to be used on subclasses of LuceneTestCase. This is an error.
+                    context.CurrentResult.SetResult(ResultState.Error,
+                        $"{typeof(RepeatAttribute).FullName} may only be used on a test in a subclass of {nameof(LuceneTestCase)}.");
 
                     return context.CurrentResult;
                 }

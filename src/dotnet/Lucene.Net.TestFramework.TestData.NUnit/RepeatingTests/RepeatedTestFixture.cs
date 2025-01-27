@@ -183,4 +183,13 @@ namespace Lucene.Net.TestData.RepeatingTests
             Count++;
         }
     }
+
+    public class RepeatFailedOnNonLuceneTestCaseSubclass
+    {
+        [Test, Lucene.Net.Util.LuceneTestCase.Repeat(3)]
+        public void AlwaysFails()
+        {
+            // Intentionally empty
+        }
+    }
 }

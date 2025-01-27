@@ -64,6 +64,18 @@ namespace Lucene.Net.Attributes
         }
 
         [Test]
+        public void RepeatOnNonLuceneTestCaseSubclass_ShouldFail()
+        {
+            RepeatFailedOnNonLuceneTestCaseSubclass fixture = (RepeatFailedOnNonLuceneTestCaseSubclass)Reflect.Construct(typeof(RepeatFailedOnNonLuceneTestCaseSubclass));
+            ITestResult result = TestBuilder.RunTestFixture(fixture);
+            Assert.AreEqual(1, result.FailCount);
+            Assert.IsTrue(result.HasChildren);
+            Assert.AreEqual(1, result.Children.Count());
+            Assert.That(result.Children.Single().Message, Is.EqualTo("Lucene.Net.Util.LuceneTestCase+RepeatAttribute may only be used on a test in a subclass of LuceneTestCase."));
+            Assert.AreEqual(1, result.Children.Single().FailCount);
+        }
+
+        [Test]
         public void RepeatUpdatesCurrentRepeatCountPropertyOnEachAttempt()
         {
             RepeatingTestsFixtureBase fixture = (RepeatingTestsFixtureBase)Reflect.Construct(typeof(RepeatedTestVerifyAttempt));
