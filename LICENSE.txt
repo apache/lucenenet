@@ -735,6 +735,8 @@ Some code in
 src/Lucene.Net.TestFramework/Support/Util/DefaultNamespaceTypeWrapper.cs
 src/Lucene.Net.TestFramework/Support/Util/LuceneTestCase.TestFixtureAttribute.cs
 src/Lucene.Net.TestFramework/Support/Util/NUnitTestFixtureBuilder.cs
+src/dotnet/Lucene.Net.TestFramework.TestData.NUnit/*
+src/Lucene.Net.Tests.TestFramework.NUnitExtensions/*
 falls under the following license:
 
 // Copyright (c) 2021 Charlie Poole, Rob Prouse
