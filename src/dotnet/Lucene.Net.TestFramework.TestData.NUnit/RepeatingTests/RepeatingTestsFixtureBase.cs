@@ -3,6 +3,7 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.TestData.RepeatingTests
 {
@@ -38,6 +39,8 @@ namespace Lucene.Net.TestData.RepeatingTests
         private int setupCount;
         private int teardownCount;
         private readonly List<string> tearDownResults = new List<string>();
+        private long randomSeed;
+        private long testSeed;
 
         [OneTimeSetUp]
         public override void OneTimeSetUp()
@@ -58,6 +61,12 @@ namespace Lucene.Net.TestData.RepeatingTests
         {
             base.SetUp();
             setupCount++;
+            var randomizedContext = RandomizedContext.CurrentContext;
+            Assert.IsNotNull(randomizedContext);
+            Assert.AreNotEqual(testSeed, randomizedContext.TestSeed, "RandomizedContext.TestSeed must change for each iteration.");
+            randomSeed = randomizedContext.RandomSeed;
+            testSeed = randomizedContext.TestSeed;
+            Assert.AreEqual(testSeed, ((J2N.Randomizer)randomizedContext.RandomGenerator).Seed, "RandomizedContext.RandomGenerator must have the same seed as RandomizedContext.TestSeed.");
         }
 
         [TearDown]
@@ -65,6 +74,11 @@ namespace Lucene.Net.TestData.RepeatingTests
         {
             tearDownResults.Add(TestContext.CurrentContext.Result.Outcome.ToString());
             teardownCount++;
+            var randomizedContext = RandomizedContext.CurrentContext;
+            Assert.IsNotNull(randomizedContext);
+            Assert.AreEqual(randomSeed, randomizedContext.RandomSeed, "RandomizedContext.RandomSeed must be the same between StartUp() and TearDown().");
+            Assert.AreEqual(testSeed, randomizedContext.TestSeed, "RandomizedContext.TestSeed must be the same between StartUp() and TearDown().");
+            Assert.AreEqual(testSeed, ((J2N.Randomizer)randomizedContext.RandomGenerator).Seed, "RandomizedContext.RandomGenerator must have the same seed as RandomizedContext.TestSeed.");
             base.TearDown();
         }
 
