@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Source: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/LifecycleScope.java
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

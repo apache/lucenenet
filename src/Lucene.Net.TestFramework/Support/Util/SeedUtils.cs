@@ -1,4 +1,6 @@
-﻿using J2N;
+﻿// Based on: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/SeedUtils.java
+
+using J2N;
 using System;
 using System.Collections.Generic;
 using System.Linq;

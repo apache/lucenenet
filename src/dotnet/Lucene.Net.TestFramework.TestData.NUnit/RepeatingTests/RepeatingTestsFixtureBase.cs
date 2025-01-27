@@ -1,4 +1,6 @@
-﻿using Lucene.Net.Util;
+﻿// Source: https://github.com/nunit/nunit/blob/v3.14.0/src/NUnitFramework/testdata/RepeatingTestsFixtureBase.cs
+
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
 

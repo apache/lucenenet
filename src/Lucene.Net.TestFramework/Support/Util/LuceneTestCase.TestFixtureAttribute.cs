@@ -1,4 +1,6 @@
-﻿using Lucene.Net.Support;
+﻿// Based on: https://github.com/nunit/nunit/blob/v3.14.0/src/NUnitFramework/framework/Attributes/TestFixtureAttribute.cs
+
+using Lucene.Net.Support;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;

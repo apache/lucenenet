@@ -1,4 +1,6 @@
-﻿using Lucene.Net.Support.Threading;
+﻿// Rougly similar to: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/RandomizedContext.java
+
+using Lucene.Net.Support.Threading;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
