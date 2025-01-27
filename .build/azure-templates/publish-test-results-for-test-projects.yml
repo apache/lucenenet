@@ -437,6 +437,16 @@ steps:
 
 - template: publish-test-results.yml
   parameters:
+    testProjectName: 'Lucene.Net.Tests.TestFramework.NUnitExtensions'
+    osName: '${{ parameters.osName }}'
+    framework: '${{ parameters.framework }}'
+    vsTestPlatform: '${{ parameters.vsTestPlatform }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results.yml
+  parameters:
     testProjectName: 'Lucene.Net.Tests.TestFramework'
     osName: '${{ parameters.osName }}'
     framework: '${{ parameters.framework }}'
