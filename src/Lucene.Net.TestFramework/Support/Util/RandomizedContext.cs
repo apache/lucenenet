@@ -1,4 +1,6 @@
-﻿using Lucene.Net.Support.Threading;
+﻿// Rougly similar to: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/RandomizedContext.java
+
+using Lucene.Net.Support.Threading;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
@@ -42,12 +44,12 @@ namespace Lucene.Net.Util
         internal const string RandomizedContextThreadNameKeyName = "_RandomizedContext_ThreadName";
         internal const string RandomizedContextStackTraceKeyName = "_RandomizedContext_StackTrace";
 
-        private readonly ThreadLocal<Random> randomGenerator;
+        private readonly ThreadLocal<J2N.Randomizer> randomGenerator;
         private readonly Test currentTest;
         private readonly Assembly currentTestAssembly;
         private readonly long randomSeed;
         private volatile string? randomSeedAsString;
-        private readonly long testSeed;
+        private long testSeed;
 
         /// <summary>
         /// Disposable resources.
@@ -72,7 +74,7 @@ namespace Lucene.Net.Util
             this.currentTestAssembly = currentTestAssembly ?? throw new ArgumentNullException(nameof(currentTestAssembly));
             this.randomSeed = randomSeed;
             this.testSeed = testSeed;
-            this.randomGenerator = new ThreadLocal<Random>(() => new J2N.Randomizer(this.testSeed));
+            this.randomGenerator = new ThreadLocal<J2N.Randomizer>(() => new J2N.Randomizer(this.testSeed));
         }
 
         /// <summary>
@@ -83,7 +85,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets the initial seed as a hexadecimal string for display/configuration purposes.
         /// </summary>
-        public string RandomSeedAsString => randomSeedAsString ??= SeedUtils.FormatSeed(randomSeed);
+        public string RandomSeedAsString => randomSeedAsString ??= SeedUtils.FormatSeed(randomSeed, testSeed);
 
         /// <summary>
         /// The current test for this context.
@@ -98,7 +100,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// The random seed for this test's <see cref="RandomGenerator"/>.
         /// </summary>
-        public long TestSeed => testSeed;
+        public long TestSeed => Interlocked.Read(ref this.testSeed);
 
         /// <summary>
         /// Gets the RandomGenerator specific to this Test and thread. This random generator implementatation
@@ -112,7 +114,25 @@ namespace Lucene.Net.Util
         /// random test data in these cases. Using the <see cref="LuceneTestCase.TestFixtureAttribute"/>
         /// will set the seed properly and make it possible to repeat the result.
         /// </summary>
-        public Random RandomGenerator => randomGenerator.Value!;
+        public Random RandomGenerator
+        {
+            get
+            {
+                var random = randomGenerator.Value!;
+                UninterruptableMonitor.Enter(random.SyncRoot);
+                try
+                {
+                    // Ensure the current thread is using the latest test seed.
+                    if (random.Seed != testSeed)
+                        random.Seed = testSeed;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(random.SyncRoot);
+                }
+                return random;
+            }
+        }
 
         /// <summary>
         /// Gets the randomized context for the current test or test fixture.
@@ -302,6 +322,37 @@ namespace Lucene.Net.Util
             {
                 destination.Append("Stack Trace:");
                 destination.AppendLine(stackTrace.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Resets the local <see cref="testSeed"/> field so it can be
+        /// used to update each thread that uses <see cref="randomGenerator"/> if
+        /// the seed doesn't match.
+        /// <para/>
+        /// Although calling this method is threadsafe, it should not be
+        /// called in the middle of a test. Instead, it should be called
+        /// between test runs to prevent non-repeatable random conditions
+        /// from occurring during a test.
+        /// </summary>
+        /// <param name="testSeed">The new test seed. This value will be
+        /// used to initialize the random generator for the test run.</param>
+        internal void ResetSeed(long testSeed)
+        {
+            var random = this.randomGenerator.Value!;
+            UninterruptableMonitor.Enter(random.SyncRoot);
+            try
+            {
+                this.randomSeedAsString = null;
+                this.testSeed = testSeed;
+                // Note that this resets the current thread only.
+                // That is why we have to check in the RandomGenerator
+                // property getter that the Seed is up-to-date.
+                random.Seed = testSeed;
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(random.SyncRoot);
             }
         }
     }

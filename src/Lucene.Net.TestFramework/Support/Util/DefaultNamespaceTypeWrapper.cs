@@ -1,4 +1,6 @@
-﻿using NUnit.Framework.Interfaces;
+﻿// Based on: https://github.com/nunit/nunit/blob/v3.14.0/src/NUnitFramework/framework/Internal/TypeWrapper.cs
+
+using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
 using System.Linq;

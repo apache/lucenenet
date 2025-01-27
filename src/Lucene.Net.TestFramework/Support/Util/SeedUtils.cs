@@ -1,4 +1,6 @@
-﻿using J2N;
+﻿// Based on: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/SeedUtils.java
+
+using J2N;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +38,13 @@ namespace Lucene.Net.Util
         /// </summary>
         // LUCENENET: Our format deviates from the Java randomizedtesting implementation
         public static string FormatSeed(long seed)
-            => string.Concat("0x", seed.ToHexString());
+            => $"0x{seed:x16}";
+
+        /// <summary>
+        /// Format a <paramref name="seed"/> and <paramref name="testSeed"/>.
+        /// </summary>
+        // LUCENENET: Our format deviates from the Java randomizedtesting implementation
+        public static string FormatSeed(long seed, long testSeed)
+            => $"0x{seed:x16}:0x{testSeed:x16}";
     }
 }

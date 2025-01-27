@@ -114,6 +114,8 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests.Suggest" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework.DependencyInjection" />
+
+    <InternalsVisibleTo Include="Lucene.Net.TestFramework.TestData.NUnit" />
   </ItemGroup>
 
 </Project>
