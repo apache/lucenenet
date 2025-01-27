@@ -1,14 +1,13 @@
 using J2N;
 using J2N.Collections.Generic.Extensions;
 using J2N.Collections.ObjectModel;
-using J2N.Globalization;
 using Lucene.Net.Diagnostics;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using JCG = J2N.Collections.Generic;
+#nullable enable
 
 namespace Lucene.Net.Support
 {
@@ -72,10 +71,10 @@ namespace Lucene.Net.Support
 
         public static IComparer<T> ReverseOrder<T>()
         {
-            return (IComparer<T>)ReverseComparer<T>.REVERSE_ORDER;
+            return ReverseComparer<T>.REVERSE_ORDER;
         }
 
-        public static IComparer<T> ReverseOrder<T>(IComparer<T> cmp)
+        public static IComparer<T> ReverseOrder<T>(IComparer<T>? cmp)
         {
             if (cmp is null)
                 return ReverseOrder<T>();
@@ -87,16 +86,16 @@ namespace Lucene.Net.Support
         }
 
         public static IDictionary<TKey, TValue> SingletonMap<TKey, TValue>(TKey key, TValue value)
+            where TKey : notnull
         {
             return AsReadOnly(new Dictionary<TKey, TValue> { { key, value } });
         }
-
 
         /// <summary>
         /// This is the same implementation of ToString from Java's AbstractCollection
         /// (the default implementation for all sets and lists)
         /// </summary>
-        public static string ToString<T>(ICollection<T> collection)
+        public static string ToString<T>(ICollection<T>? collection)
         {
             if (collection is null)
                 return "null";
@@ -114,7 +113,7 @@ namespace Lucene.Net.Support
             while (true)
             {
                 T e = it.Current;
-                sb.Append(object.ReferenceEquals(e, collection) ? "(this Collection)" : (isValueType ? e.ToString() : ToString(e)));
+                sb.Append(ReferenceEquals(e, collection) ? "(this Collection)" : (isValueType ? Convert.ToString(e, CultureInfo.InvariantCulture) : ToString(e)));
                 if (!it.MoveNext())
                 {
                     return sb.Append(']').ToString();
@@ -124,22 +123,10 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// This is the same implementation of ToString from Java's AbstractCollection
-        /// (the default implementation for all sets and lists), plus the ability
-        /// to specify culture for formatting of nested numbers and dates. Note that
-        /// this overload will change the culture of the current thread.
-        /// </summary>
-        public static string ToString<T>(ICollection<T> collection, CultureInfo culture)
-        {
-            using var context = new CultureContext(culture);
-            return ToString(collection);
-        }
-
-        /// <summary>
         /// This is the same implementation of ToString from Java's AbstractMap
         /// (the default implementation for all dictionaries)
         /// </summary>
-        public static string ToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
+        public static string ToString<TKey, TValue>(IDictionary<TKey, TValue>? dictionary)
         {
             if (dictionary is null)
                 return "null";
@@ -160,9 +147,9 @@ namespace Lucene.Net.Support
                 KeyValuePair<TKey, TValue> e = i.Current;
                 TKey key = e.Key;
                 TValue value = e.Value;
-                sb.Append(object.ReferenceEquals(key, dictionary) ? "(this Dictionary)" : (keyIsValueType ? key.ToString() : ToString(key)));
+                sb.Append(ReferenceEquals(key, dictionary) ? "(this Dictionary)" : (keyIsValueType ? Convert.ToString(key, CultureInfo.InvariantCulture) : ToString(key)));
                 sb.Append('=');
-                sb.Append(object.ReferenceEquals(value, dictionary) ? "(this Dictionary)" : (valueIsValueType ? value.ToString() : ToString(value)));
+                sb.Append(ReferenceEquals(value, dictionary) ? "(this Dictionary)" : (valueIsValueType ? Convert.ToString(value, CultureInfo.InvariantCulture) : ToString(value)));
                 if (!i.MoveNext())
                 {
                     return sb.Append('}').ToString();
@@ -172,23 +159,16 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// This is the same implementation of ToString from Java's AbstractMap
-        /// (the default implementation for all dictionaries), plus the ability
-        /// to specify culture for formatting of nested numbers and dates. Note that
-        /// this overload will change the culture of the current thread.
-        /// </summary>
-        public static string ToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary, CultureInfo culture)
-        {
-            using var context = new CultureContext(culture);
-            return ToString(dictionary);
-        }
-
-        /// <summary>
         /// This is a helper method that assists with recursively building
         /// a string of the current collection and all nested collections.
         /// </summary>
-        public static string ToString(object obj)
+        public static string? ToString(object? obj)
         {
+            if (obj is null)
+            {
+                return "null";
+            }
+
             Type t = obj.GetType();
             if (t.IsGenericType
                 && (t.ImplementsGenericInterface(typeof(ICollection<>)))
@@ -198,19 +178,7 @@ namespace Lucene.Net.Support
                 return ToString(genericType);
             }
 
-            return obj.ToString();
-        }
-
-        /// <summary>
-        /// This is a helper method that assists with recursively building
-        /// a string of the current collection and all nested collections, plus the ability
-        /// to specify culture for formatting of nested numbers and dates. Note that
-        /// this overload will change the culture of the current thread.
-        /// </summary>
-        public static string ToString(object obj, CultureInfo culture)
-        {
-            using var context = new CultureContext(culture);
-            return ToString(obj);
+            return Convert.ToString(obj, CultureInfo.InvariantCulture);
         }
 
         public static ReadOnlyList<T> AsReadOnly<T>(IList<T> list)
@@ -227,14 +195,14 @@ namespace Lucene.Net.Support
 
         #region ReverseComparer
 
-        private class ReverseComparer<T> : IComparer<T>
+        private class ReverseComparer<T> : IComparer<T?>
         {
             internal static readonly ReverseComparer<T> REVERSE_ORDER = new ReverseComparer<T>();
 
-            public int Compare(T x, T y)
+            public int Compare(T? x, T? y)
             {
                 // LUCENENET specific: Use J2N's Comparer<T> to mimic Java comparison behavior
-                return JCG.Comparer<T>.Default.Compare(y, x);
+                return JCG.Comparer<T?>.Default.Compare(y, x);
             }
         }
 
@@ -242,7 +210,7 @@ namespace Lucene.Net.Support
 
         #region ReverseComparer2
 
-        private class ReverseComparer2<T> : IComparer<T>
+        private class ReverseComparer2<T> : IComparer<T?>
 
         {
             /**
@@ -252,20 +220,21 @@ namespace Lucene.Net.Support
              *
              * @serial
              */
-            internal readonly IComparer<T> cmp;
+            internal readonly IComparer<T?> cmp;
 
             public ReverseComparer2(IComparer<T> cmp)
             {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (Debugging.AssertsEnabled) Debugging.Assert(cmp != null);
-                this.cmp = cmp;
+                this.cmp = cmp!;
             }
 
-            public int Compare(T t1, T t2)
+            public int Compare(T? t1, T? t2)
             {
                 return cmp.Compare(t2, t1);
             }
 
-            public override bool Equals(object o)
+            public override bool Equals(object? o)
             {
                 return (o == this) ||
                     (o is ReverseComparer2<T> reverseComparer2 &&
