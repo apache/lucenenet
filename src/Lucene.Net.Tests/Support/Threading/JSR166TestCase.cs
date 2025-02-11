@@ -381,6 +381,24 @@ namespace Lucene.Net.Support.Threading
             fail("Unexpected exception");
         }
 
+        protected static readonly int zero = 0;
+        protected static readonly int one = 1;
+        protected static readonly int two = 2;
+        protected static readonly int three  = 3;
+        protected static readonly int four  = 4;
+        protected static readonly int five  = 5;
+        protected static readonly int six = 6;
+        protected static readonly int seven = 7;
+        protected static readonly int eight = 8;
+        protected static readonly int nine = 9;
+        protected static readonly int m1 = -1;
+        protected static readonly int m2 = -2;
+        protected static readonly int m3 = -3;
+        protected static readonly int m4 = -4;
+        protected static readonly int m5 = -5;
+        protected static readonly int m6 = -6;
+        protected static readonly int m10 = -10;
+
         internal void ShortRunnable()
         {
             try

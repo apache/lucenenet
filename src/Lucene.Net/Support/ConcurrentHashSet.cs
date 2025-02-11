@@ -30,6 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+#nullable enable
 
 namespace Lucene.Net.Support
 {
@@ -42,7 +43,8 @@ namespace Lucene.Net.Support
     /// concurrently from multiple threads.
     /// </remarks>
     [DebuggerDisplay("Count = {Count}")]
-    internal class ConcurrentHashSet<T> : ISet<T>, IReadOnlyCollection<T>, ICollection<T>
+    internal class ConcurrentHashSet<T> : ISet<T>, IReadOnlyCollection<T>
+        where T : notnull
     {
         private const int DefaultCapacity = 31;
         private const int MaxLockNumber = 1024;
@@ -188,7 +190,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="comparer">The <see cref="T:System.Collections.Generic.IEqualityComparer{T}"/>
         /// implementation to use when comparing items.</param>
-        public ConcurrentHashSet(IEqualityComparer<T> comparer)
+        public ConcurrentHashSet(IEqualityComparer<T>? comparer)
             : this(DefaultConcurrencyLevel, DefaultCapacity, true, comparer)
         {
         }
@@ -209,7 +211,7 @@ namespace Lucene.Net.Support
         /// <exception cref="ArgumentNullException"><paramref name="collection"/> is a null reference
         /// (Nothing in Visual Basic).
         /// </exception>
-        public ConcurrentHashSet(IEnumerable<T> collection, IEqualityComparer<T> comparer)
+        public ConcurrentHashSet(IEnumerable<T> collection, IEqualityComparer<T>? comparer)
             : this(comparer)
         {
             if (collection is null) throw new ArgumentNullException(nameof(collection));
@@ -265,7 +267,7 @@ namespace Lucene.Net.Support
         {
         }
 
-        private ConcurrentHashSet(int concurrencyLevel, int capacity, bool growLockArray, IEqualityComparer<T> comparer)
+        private ConcurrentHashSet(int concurrencyLevel, int capacity, bool growLockArray, IEqualityComparer<T>? comparer)
         {
             if (concurrencyLevel < 1) throw new ArgumentOutOfRangeException(nameof(concurrencyLevel));
             if (capacity < 0) throw new ArgumentOutOfRangeException(nameof(capacity));
@@ -300,8 +302,8 @@ namespace Lucene.Net.Support
         /// successfully; false if it already exists.</returns>
         /// <exception cref="T:OverflowException">The <see cref="ConcurrentHashSet{T}"/>
         /// contains too many items.</exception>
-        public bool Add(T item) =>
-            AddInternal(item, _comparer.GetHashCode(item), true);
+        public bool Add(T item)
+            => AddInternal(item, _comparer.GetHashCode(item), true);
 
         /// <summary>
         /// Removes all items from the <see cref="ConcurrentHashSet{T}"/>.
@@ -393,10 +395,10 @@ namespace Lucene.Net.Support
                         continue;
                     }
 
-                    Node previous = null;
+                    Node? previous = null;
                     for (var current = tables.Buckets[bucketNo]; current != null; current = current.Next)
                     {
-                        Debug.Assert((previous is null && current == tables.Buckets[bucketNo]) || previous.Next == current);
+                        Debug.Assert((previous is null && current == tables.Buckets[bucketNo]) || previous?.Next == current);
 
                         if (hashcode == current.Hashcode && _comparer.Equals(current.Item, item))
                         {
@@ -525,10 +527,10 @@ namespace Lucene.Net.Support
                     }
 
                     // Try to find this item in the bucket
-                    Node previous = null;
+                    Node? previous = null;
                     for (var current = tables.Buckets[bucketNo]; current != null; current = current.Next)
                     {
-                        Debug.Assert(previous is null && current == tables.Buckets[bucketNo] || previous.Next == current);
+                        Debug.Assert(previous is null && current == tables.Buckets[bucketNo] || previous?.Next == current);
                         if (hashcode == current.Hashcode && _comparer.Equals(current.Item, item))
                         {
                             return false;
@@ -835,7 +837,28 @@ namespace Lucene.Net.Support
 
         public bool IsSupersetOf(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            var locksAcquired = 0;
+            try
+            {
+                AcquireAllLocks(ref locksAcquired);
+
+                foreach (var item in other)
+                {
+                    if (!Contains(item))
+                    {
+                        return false;
+                    }
+                }
+            }
+            finally
+            {
+                ReleaseLocks(0, locksAcquired);
+            }
+
+            return true;
         }
 
         public bool Overlaps(IEnumerable<T> other)
@@ -874,12 +897,12 @@ namespace Lucene.Net.Support
 
         private class Tables
         {
-            public readonly Node[] Buckets;
+            public readonly Node?[] Buckets;
             public readonly object[] Locks;
 
             public volatile int[] CountPerLock;
 
-            public Tables(Node[] buckets, object[] locks, int[] countPerLock)
+            public Tables(Node?[] buckets, object[] locks, int[] countPerLock)
             {
                 Buckets = buckets;
                 Locks = locks;
@@ -892,9 +915,9 @@ namespace Lucene.Net.Support
             public readonly T Item;
             public readonly int Hashcode;
 
-            public volatile Node Next;
+            public volatile Node? Next;
 
-            public Node(T item, int hashcode, Node next)
+            public Node(T item, int hashcode, Node? next)
             {
                 Item = item;
                 Hashcode = hashcode;
