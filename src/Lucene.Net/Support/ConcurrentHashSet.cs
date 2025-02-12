@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 #nullable enable
 
@@ -44,7 +45,6 @@ namespace Lucene.Net.Support
     /// </remarks>
     [DebuggerDisplay("Count = {Count}")]
     internal class ConcurrentHashSet<T> : ISet<T>, IReadOnlyCollection<T>
-        where T : notnull
     {
         private const int DefaultCapacity = 31;
         private const int MaxLockNumber = 1024;
@@ -303,7 +303,7 @@ namespace Lucene.Net.Support
         /// <exception cref="T:OverflowException">The <see cref="ConcurrentHashSet{T}"/>
         /// contains too many items.</exception>
         public bool Add(T item)
-            => AddInternal(item, _comparer.GetHashCode(item), true);
+            => AddInternal(item, GetItemHashCode(item), true);
 
         /// <summary>
         /// Removes all items from the <see cref="ConcurrentHashSet{T}"/>.
@@ -338,7 +338,7 @@ namespace Lucene.Net.Support
         /// <returns>true if the <see cref="ConcurrentHashSet{T}"/> contains the item; otherwise, false.</returns>
         public bool Contains(T item)
         {
-            var hashcode = _comparer.GetHashCode(item);
+            var hashcode = GetItemHashCode(item);
 
             // We must capture the _buckets field in a local variable. It is set to a new table on each table resize.
             var tables = _tables;
@@ -368,7 +368,7 @@ namespace Lucene.Net.Support
         /// <returns>true if an item was removed successfully; otherwise, false.</returns>
         public bool TryRemove(T item)
         {
-            var hashcode = _comparer.GetHashCode(item);
+            var hashcode = GetItemHashCode(item);
             return TryRemoveInternal(item, hashcode, acquireLock: true);
         }
 
@@ -495,7 +495,7 @@ namespace Lucene.Net.Support
         {
             foreach (var item in collection)
             {
-                AddInternal(item, _comparer.GetHashCode(item), false);
+                AddInternal(item, GetItemHashCode(item), false);
             }
 
             if (_budget == 0)
@@ -806,7 +806,7 @@ namespace Lucene.Net.Support
 
                 foreach (var item in other)
                 {
-                    TryRemoveInternal(item, _comparer.GetHashCode(item), acquireLock: false);
+                    TryRemoveInternal(item, GetItemHashCode(item), acquireLock: false);
                 }
             }
             finally
@@ -887,13 +887,16 @@ namespace Lucene.Net.Support
                 AcquireAllLocks(ref locksAcquired);
 
                 foreach (var item in other)
-                    AddInternal(item, _comparer.GetHashCode(item), acquireLock: false);
+                    AddInternal(item, GetItemHashCode(item), acquireLock: false);
             }
             finally
             {
                 ReleaseLocks(0, locksAcquired);
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int GetItemHashCode(T item) => item is not null ? _comparer.GetHashCode(item) : 0;
 
         private class Tables
         {

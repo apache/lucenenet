@@ -69,7 +69,7 @@ namespace Lucene.Net
         // Ported from https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/util/CollectionsTest.java#L88-L159
         public class SynchCollectionChecker : ThreadJob
         {
-            private ISet<object> col; // LUCENENET: was Collection, but we need to use ISet to access the containsAll method
+            private ISet<object> col; // LUCENENET: was Collection, but we need to use ISet to access the IsSupersetOf method
 
             // private int colSize; // LUCENENET: converted to local variable
 
@@ -95,8 +95,8 @@ namespace Lucene.Net
                     try
                     {
                         if (!(col.Count == 0
-                              || col.containsAll(normalCountingList)
-                              || col.containsAll(offsetCountingList)))
+                              || col.IsSupersetOf(normalCountingList)
+                              || col.IsSupersetOf(offsetCountingList)))
                             result = false;
                         col.clear();
                     }
@@ -105,9 +105,9 @@ namespace Lucene.Net
                         UninterruptableMonitor.Exit(col);
                     }
                     if (offset)
-                        col.addAll(offsetCountingList);
+                        col.UnionWith(offsetCountingList);
                     else
-                        col.addAll(normalCountingList);
+                        col.UnionWith(normalCountingList);
                     Interlocked.Increment(ref numberOfChecks); // was: numberOfChecks++;
                 }
             }
@@ -128,9 +128,9 @@ namespace Lucene.Net
                     offsetCountingList.Add(counter + colSize);
                 col.clear();
                 if (offset)
-                    col.addAll(offsetCountingList);
+                    col.UnionWith(offsetCountingList);
                 else
-                    col.addAll(normalCountingList);
+                    col.UnionWith(normalCountingList);
                 this.offset = offset; // LUCENENET - this line was missing from the original code
             }
 
@@ -232,8 +232,8 @@ namespace Lucene.Net
         public void TestContains()
         {
             ConcurrentHashSet<object> map = Map5();
-            assertTrue(map.contains(one));
-            assertFalse(map.contains(zero));
+            assertTrue(map.Contains(one));
+            assertFalse(map.Contains(zero));
         }
 
         /// <summary>
@@ -368,8 +368,30 @@ namespace Lucene.Net
         }
 
         // LUCENENET - testConstructor3 omitted, we don't have a single-int-argument constructor
-        // LUCENENET - omitted testGet_NullPointerException, testContainsKey_NullPointerException, testContainsValue_NullPointerException, etc.
-        // LUCENENET - omitted testPut_NullPointerException, etc. due to nullable reference type checking making them unnecessary
+        // LUCENENET - omitted *_NullPointerException tests that are not relevant
+
+        /// <summary>
+        /// Contains(null) should not throw.
+        /// </summary>
+        /// <remarks>
+        /// This differs from the ConcurrentHashMap tests in that we support null values.
+        /// </remarks>
+        [Test, LuceneNetSpecific]
+        public void TestNullSupport()
+        {
+            ConcurrentHashSet<object?> c = new ConcurrentHashSet<object?>
+            {
+                null // implicitly calls Add which should not throw on null
+            };
+            Assert.IsTrue(c.Contains(null));
+            c.Add(null); // should keep set the same
+            Assert.IsTrue(c.Contains(null));
+            Assert.AreEqual(1, c.Count);
+            Assert.IsTrue(c.TryRemove(null));
+            Assert.IsFalse(c.Contains(null));
+            Assert.AreEqual(0, c.Count);
+        }
+
         // LUCENENET - omitted testSerialization due to lack of serialization support
         // LUCENENET - omitted testSetValueWriteThrough as that is not applicable to a set
 
@@ -425,10 +447,9 @@ namespace Lucene.Net
                 fail("join() interrupted");
             }
 
-            ISet<object> mySet; // = new ConcurrentHashSet<object>(smallSet); // was: Collections.synchronizedSet(smallSet);
-            // LUCENENET: our type does not allow nulls
-            // mySet.add(null);
-            // assertTrue("Trying to use nulls in list failed", mySet.contains(null));
+            ISet<object?> mySet = new ConcurrentHashSet<object?>(smallSet); // was: Collections.synchronizedSet(smallSet);
+            mySet.Add(null);
+            assertTrue("Trying to use nulls in list failed", mySet.Contains(null));
 
             smallSet = new HashSet<object>();
             for (int i = 0; i < 100; i++)
@@ -440,7 +461,7 @@ namespace Lucene.Net
             //     .RunTest();
 
             //Test self reference
-            mySet = new ConcurrentHashSet<object>(smallSet); // was: Collections.synchronizedSet(smallSet);
+            mySet = new ConcurrentHashSet<object?>(smallSet); // was: Collections.synchronizedSet(smallSet);
             mySet.add(mySet); // LUCENENET specific - references are not the same when wrapping via constructor, so adding mySet instead of smallSet
             assertTrue("should contain self ref", Collections.ToString(mySet).IndexOf("(this", StringComparison.Ordinal) > -1);
         }
