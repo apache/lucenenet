@@ -817,7 +817,38 @@ namespace Lucene.Net.Support
 
         public void IntersectWith(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            var locksAcquired = 0;
+            try
+            {
+                AcquireAllLocks(ref locksAcquired);
+
+                if (CountInternal == 0)
+                {
+                    return;
+                }
+
+                if (ReferenceEquals(this, other))
+                {
+                    return;
+                }
+
+                var otherSet = new HashSet<T>(other, _comparer);
+
+                foreach (var item in this)
+                {
+                    if (!otherSet.Contains(item))
+                    {
+                        TryRemoveInternal(item, GetItemHashCode(item), acquireLock: false);
+                    }
+                }
+            }
+            finally
+            {
+                ReleaseLocks(0, locksAcquired);
+            }
         }
 
         public bool IsProperSubsetOf(IEnumerable<T> other)

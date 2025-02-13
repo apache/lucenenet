@@ -405,7 +405,7 @@ namespace Lucene.Net
             HashSet<object> smallSet = new HashSet<object>();
             for (int i = 0; i < 50; i++)
             {
-                smallSet.add(objArray[i]);
+                smallSet.Add(objArray[i]);
             }
 
             const int numberOfLoops = 200;
@@ -454,15 +454,14 @@ namespace Lucene.Net
             smallSet = new HashSet<object>();
             for (int i = 0; i < 100; i++)
             {
-                smallSet.add(objArray[i]);
+                smallSet.Add(objArray[i]);
             }
-            // LUCENENET TODO: could port this class and all of the classes it uses
-            // new Support_SetTest(new ConcurrentHashSet<object>(smallSet))
-            //     .RunTest();
+            new Support_SetTest(new ConcurrentHashSet<int>(smallSet.Cast<int>())) // LUCENENET: add cast to int
+                .RunTest();
 
             //Test self reference
             mySet = new ConcurrentHashSet<object?>(smallSet); // was: Collections.synchronizedSet(smallSet);
-            mySet.add(mySet); // LUCENENET specific - references are not the same when wrapping via constructor, so adding mySet instead of smallSet
+            mySet.Add(mySet); // LUCENENET specific - references are not the same when wrapping via constructor, so adding mySet instead of smallSet
             assertTrue("should contain self ref", Collections.ToString(mySet).IndexOf("(this", StringComparison.Ordinal) > -1);
         }
     }
