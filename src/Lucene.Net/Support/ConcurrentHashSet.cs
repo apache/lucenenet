@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
+// ReSharper disable RedundantExtendsListEntry
 #nullable enable
 
 namespace Lucene.Net.Support
@@ -45,8 +46,10 @@ namespace Lucene.Net.Support
     /// concurrently from multiple threads.
     /// </remarks>
     [DebuggerDisplay("Count = {Count}")]
-    // ReSharper disable once RedundantExtendsListEntry
     internal class ConcurrentHashSet<T> : ISet<T>, IReadOnlyCollection<T>, ICollection<T>
+#if FEATURE_READONLYSET
+        , IReadOnlySet<T>
+#endif
     {
         private const int DefaultCapacity = 31;
         private const int MaxLockNumber = 1024;
