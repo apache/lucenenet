@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 #nullable enable
 
 namespace Lucene.Net.Support
@@ -44,7 +45,8 @@ namespace Lucene.Net.Support
     /// concurrently from multiple threads.
     /// </remarks>
     [DebuggerDisplay("Count = {Count}")]
-    internal class ConcurrentHashSet<T> : ISet<T>, IReadOnlyCollection<T>
+    // ReSharper disable once RedundantExtendsListEntry
+    internal class ConcurrentHashSet<T> : ISet<T>, IReadOnlyCollection<T>, ICollection<T>
     {
         private const int DefaultCapacity = 31;
         private const int MaxLockNumber = 1024;
@@ -291,7 +293,7 @@ namespace Lucene.Net.Support
 
             _growLockArray = growLockArray;
             _budget = buckets.Length / locks.Length;
-            _comparer = comparer ?? EqualityComparer<T>.Default;
+            _comparer = comparer ?? JCG.EqualityComparer<T>.Default;
         }
 
         /// <summary>
