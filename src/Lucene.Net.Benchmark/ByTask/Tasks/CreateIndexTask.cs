@@ -213,8 +213,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 else
                 {
-                    FileInfo f = new FileInfo(infoStreamVal);
-                    iwc.SetInfoStream(new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.Default));
+                    // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+                    iwc.SetInfoStream(new StreamWriter(new FileStream(infoStreamVal, FileMode.Create, FileAccess.Write), Encoding.Default));
                 }
             }
             IndexWriter writer = new IndexWriter(runData.Directory, iwc);

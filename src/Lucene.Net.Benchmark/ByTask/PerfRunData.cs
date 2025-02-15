@@ -209,8 +209,8 @@ namespace Lucene.Net.Benchmarks.ByTask
         {
             if ("FSDirectory".Equals(config.Get(dirParam, "RAMDirectory"), StringComparison.Ordinal))
             {
-                DirectoryInfo workDir = new DirectoryInfo(config.Get("work.dir", "work"));
-                DirectoryInfo indexDir = new DirectoryInfo(System.IO.Path.Combine(workDir.FullName, dirName));
+                string workDir = config.Get("work.dir", "work"); // LUCENENET specific: changed to use string directory name instead of allocating a DirectoryInfo (#832)
+                DirectoryInfo indexDir = new DirectoryInfo(Path.Combine(workDir, dirName));
                 if (eraseIndex && indexDir.Exists)
                 {
                     FileUtils.FullyDelete(indexDir);

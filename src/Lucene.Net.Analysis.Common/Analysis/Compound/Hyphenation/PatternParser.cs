@@ -80,9 +80,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="path">The complete file path to be read.</param>
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(string path)
-        {
-            Parse(path, Encoding.UTF8);
-        }
+            => Parse(path, Encoding.UTF8);
 
         /// <summary>
         /// Parses a hyphenation pattern file.
@@ -103,9 +101,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="file">  a <see cref="FileInfo"/> object representing the file  </param>
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(FileInfo file)
-        {
-            Parse(file, Encoding.UTF8);
-        }
+            => Parse(file.FullName, Encoding.UTF8);
 
         /// <summary>
         /// Parses a hyphenation pattern file.
@@ -114,12 +110,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="encoding">The character encoding to use</param>
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(FileInfo file, Encoding encoding)
-        {
-            var xmlReaderSettings = GetXmlReaderSettings();
-
-            using var src = XmlReader.Create(new StreamReader(file.OpenRead(), encoding), xmlReaderSettings);
-            Parse(src);
-        }
+            => Parse(file.FullName, encoding);
 
         /// <summary>
         /// Parses a hyphenation pattern file.
