@@ -229,8 +229,7 @@ namespace Lucene.Net
         /// Sets with same contents are equal
         /// </summary>
         [Test]
-        [Ignore("ConcurrentHashSet does not currently implement structural Equals")]
-        public void TestEquals()
+        public virtual void TestEquals()
         {
             ISet<object> map1 = Map5();
             ISet<object> map2 = Map5();
@@ -386,7 +385,7 @@ namespace Lucene.Net
 
         // Ported from https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/util/CollectionsTest.java#L1474-L1532
         /// <summary>
-        /// Apache Harmony test for java.util.Collections#synchronizedSet(java.util.Set), adapted for <see cref="ConcurrentHashSet{T}"/>.
+        /// Apache Harmony test for java.util.Collections#synchronizedSet(java.util.Set), adapted for <see cref="ConcurrentHashSet{T}"/> and <see cref="ConcurrentSet{T}"/>.
         /// </summary>
         [Test]
         public void TestSynchronizedSet()
