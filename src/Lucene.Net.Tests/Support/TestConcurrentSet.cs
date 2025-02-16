@@ -28,10 +28,10 @@ namespace Lucene.Net
     /// Tests for <see cref="ConcurrentSet{T}"/>.
     /// </summary>
     /// <remarks>
-    /// See the <see cref="TestConcurrentSetBase"/> class for most of the test cases.
+    /// See the <see cref="BaseConcurrentSetTestCase"/> class for most of the test cases.
     /// This class specializes the tests for the <see cref="ConcurrentSet{T}"/> class.
     /// </remarks>
-    public class TestConcurrentSet : TestConcurrentSetBase
+    public class TestConcurrentSet : BaseConcurrentSetTestCase
     {
         protected override ISet<T> NewSet<T>()
             => new ConcurrentSet<T>(new HashSet<T>());

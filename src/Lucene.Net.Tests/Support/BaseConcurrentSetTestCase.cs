@@ -42,7 +42,7 @@ namespace Lucene.Net
     /// tests ConcurrentHashMap, which is a dictionary, but the key behavior is
     /// similar to <see cref="ConcurrentHashSet{T}"/> and <see cref="ConcurrentSet{T}"/>.
     /// </remarks>
-    public abstract class TestConcurrentSetBase : JSR166TestCase
+    public abstract class BaseConcurrentSetTestCase : JSR166TestCase
     {
 
 #region Factory Methods
