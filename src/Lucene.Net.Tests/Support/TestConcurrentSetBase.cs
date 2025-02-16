@@ -139,7 +139,7 @@ namespace Lucene.Net
                 // size or not, and the min number of iterations to run
                 totalToRun = totalChecks;
                 col = c;
-                int colSize = c.size();
+                int colSize = c.Count;
                 normalCountingList = new List<object>(colSize);
                 offsetCountingList = new List<object>(colSize);
                 for (int counter = 0; counter < colSize; counter++)
