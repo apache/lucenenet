@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
       <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
     </ItemGroup>
 
