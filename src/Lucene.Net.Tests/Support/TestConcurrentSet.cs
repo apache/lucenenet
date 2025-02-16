@@ -3,8 +3,6 @@
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/util/CollectionsTest.java
 
 using Lucene.Net.Support;
-using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net
@@ -27,49 +25,18 @@ namespace Lucene.Net
      */
 
     /// <summary>
-    /// Tests for <see cref="ConcurrentHashSet{T}"/>.
+    /// Tests for <see cref="ConcurrentSet{T}"/>.
     /// </summary>
     /// <remarks>
     /// See the <see cref="TestConcurrentSetBase"/> class for most of the test cases.
-    /// This class specializes the tests for the <see cref="ConcurrentHashSet{T}"/> class.
+    /// This class specializes the tests for the <see cref="ConcurrentSet{T}"/> class.
     /// </remarks>
-    public class TestConcurrentHashSet : TestConcurrentSetBase
+    public class TestConcurrentSet : TestConcurrentSetBase
     {
         protected override ISet<T> NewSet<T>()
-            => new ConcurrentHashSet<T>();
+            => new ConcurrentSet<T>(new HashSet<T>());
 
         protected override ISet<T> NewSet<T>(IEnumerable<T> collection)
-            => new ConcurrentHashSet<T>(collection);
-
-        /// <summary>
-        /// Cannot create with negative capacity
-        /// </summary>
-        [Test]
-        public void TestConstructor1() {
-            try
-            {
-                _ = new ConcurrentHashSet<object>(8, -1);
-                shouldThrow();
-            }
-            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException
-            {
-            }
-        }
-
-        /// <summary>
-        /// Cannot create with negative concurrency level
-        /// </summary>
-        [Test]
-        public void TestConstructor2()
-        {
-            try
-            {
-                _ = new ConcurrentHashSet<object>(-1, 100);
-                shouldThrow();
-            }
-            catch (ArgumentOutOfRangeException) // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException
-            {
-            }
-        }
+            => new ConcurrentSet<T>(new HashSet<T>(collection));
     }
 }
