@@ -22,6 +22,17 @@
                     }
                 }
             ]
+        },
+        {
+            "luceneName": "analyzers-common",
+            "luceneNetName": "Lucene.Net.Analysis.Common",
+            "packageNameMappings": {
+                "org.apache.lucene.analysis": "Lucene.Net.Analysis",
+                "org.apache.lucene.analysis.charfilter": "Lucene.Net.Analysis.CharFilters",
+                "org.tartarus.snowball": "Lucene.Net.Tartarus.Snowball",
+                "org.tartarus.snowball.ext": "Lucene.Net.Tartarus.Snowball.Ext"
+            },
+            "typeOverrides": []
         }
     ]
 }
