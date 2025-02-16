@@ -33,6 +33,14 @@
                 "org.tartarus.snowball.ext": "Lucene.Net.Tartarus.Snowball.Ext"
             },
             "typeOverrides": []
+        },
+        {
+            "luceneName": "analyzers-kuromoji",
+            "luceneNetName": "Lucene.Net.Analysis.Kuromoji",
+            "packageNameMappings": {
+                "org.apache.lucene.analysis.ja": "Lucene.Net.Analysis.Ja"
+            },
+            "typeOverrides": []
         }
     ]
 }
