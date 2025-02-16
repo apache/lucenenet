@@ -38,8 +38,8 @@ namespace Lucene.Net
         protected override ISet<T> NewSet<T>()
             => new ConcurrentHashSet<T>();
 
-        protected override ISet<T> NewSet<T>(IEnumerable<T> collection)
-            => new ConcurrentHashSet<T>(collection);
+        protected override ISet<T> NewSet<T>(ISet<T> set)
+            => new ConcurrentHashSet<T>(set);
 
         /// <summary>
         /// Cannot create with negative capacity

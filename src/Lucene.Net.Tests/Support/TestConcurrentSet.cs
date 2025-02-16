@@ -4,6 +4,7 @@
 
 using Lucene.Net.Support;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net
 {
@@ -34,9 +35,9 @@ namespace Lucene.Net
     public class TestConcurrentSet : BaseConcurrentSetTestCase
     {
         protected override ISet<T> NewSet<T>()
-            => new ConcurrentSet<T>(new HashSet<T>());
+            => new ConcurrentSet<T>(new JCG.LinkedHashSet<T>());
 
-        protected override ISet<T> NewSet<T>(IEnumerable<T> collection)
-            => new ConcurrentSet<T>(new HashSet<T>(collection));
+        protected override ISet<T> NewSet<T>(ISet<T> set)
+            => new ConcurrentSet<T>(set);
     }
 }

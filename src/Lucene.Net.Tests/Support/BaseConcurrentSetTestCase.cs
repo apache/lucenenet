@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using JCG = J2N.Collections.Generic;
 #nullable enable
 
 namespace Lucene.Net
@@ -55,12 +56,14 @@ namespace Lucene.Net
         protected abstract ISet<T> NewSet<T>();
 
         /// <summary>
-        /// Creates a new instance of a set type with the specified initial contents.
+        /// Creates a new instance of a set type with the specified wrapped set.
         /// </summary>
-        /// <param name="collection">The initial contents of the set.</param>
+        /// <param name="set">The set to wrap.</param>
         /// <typeparam name="T">The type of items in the set.</typeparam>
-        /// <returns>Returns a new instance of the set type with the specified initial contents.</returns>
-        protected abstract ISet<T> NewSet<T>(IEnumerable<T> collection);
+        /// <returns>Returns a new instance of the set type with the specified wrapped set.</returns>
+        protected abstract ISet<T> NewSet<T>(ISet<T> set);
+
+
 
 #endregion
 
@@ -89,7 +92,7 @@ namespace Lucene.Net
         // Ported from https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/util/CollectionsTest.java#L88-L159
         public class SynchCollectionChecker : ThreadJob
         {
-            private ISet<object> col; // LUCENENET: was Collection, but we need to use ISet to access the IsSupersetOf method
+            private ISet<object?> col; // LUCENENET: was Collection, but we need to use ISet to access the IsSupersetOf method
 
             // private int colSize; // LUCENENET: converted to local variable
 
@@ -132,7 +135,7 @@ namespace Lucene.Net
                 }
             }
 
-            public SynchCollectionChecker(ISet<object> c, bool offset,
+            public SynchCollectionChecker(ISet<object?> c, bool offset,
                 int totalChecks)
             {
                 // The collection to test, whether to offset the filler values by
@@ -176,9 +179,10 @@ namespace Lucene.Net
             var initialSet = Enumerable.Range(1, 8)
                 .Concat(Enumerable.Range(1, 8).Select(i => i * 10))
                 .Append(99)
-                .Append(0);
+                .Append(0)
+                .ToHashSet();
 
-            var hashSet = NewSet<int>(initialSet);
+            var hashSet = NewSet(initialSet);
 
             Parallel.ForEach(Enumerable.Range(1, 8), i =>
             {
@@ -385,19 +389,34 @@ namespace Lucene.Net
 
         // Ported from https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/util/CollectionsTest.java#L1474-L1532
         /// <summary>
-        /// Apache Harmony test for java.util.Collections#synchronizedSet(java.util.Set), adapted for <see cref="ConcurrentHashSet{T}"/> and <see cref="ConcurrentSet{T}"/>.
+        /// Apache Harmony test for java.util.Collections#synchronizedSet(java.util.Set), adapted for <see cref="ConcurrentHashSet{T}"/> and <see cref="ConcurrentSet{T}"/>,
+        /// using <see cref="HashSet{T}"/> as the inner set.
         /// </summary>
         [Test]
         public void TestSynchronizedSet()
         {
-            HashSet<object> smallSet = new HashSet<object>();
+            BaseTestSynchronizedSet(() => new HashSet<object?>());
+        }
+
+        /// <summary>
+        /// Runs the synchronized set tests using <see cref="J2N.Collections.Generic.LinkedHashSet{T}"/> as the inner set type.
+        /// </summary>
+        [Test]
+        public void TestSynchronizedSet_LinkedHashSet()
+        {
+            BaseTestSynchronizedSet(() => new JCG.LinkedHashSet<object?>());
+        }
+
+        protected void BaseTestSynchronizedSet(Func<ISet<object?>> innerSetFactory)
+        {
+            ISet<object?> smallSet = innerSetFactory();
             for (int i = 0; i < 50; i++)
             {
                 smallSet.Add(objArray[i]);
             }
 
             const int numberOfLoops = 200;
-            ISet<object> synchSet = NewSet<object>(smallSet); // was: Collections.synchronizedSet(smallSet);
+            ISet<object?> synchSet = NewSet(smallSet); // was: Collections.synchronizedSet(smallSet);
             // Replacing the previous line with the line below should cause the test
             // to fail--the set below isn't synchronized
             // ISet<object> synchSet = smallSet;
@@ -435,20 +454,20 @@ namespace Lucene.Net
                 fail("join() interrupted");
             }
 
-            ISet<object?> mySet = NewSet<object?>(smallSet); // was: Collections.synchronizedSet(smallSet);
+            ISet<object?> mySet = NewSet(smallSet); // was: Collections.synchronizedSet(smallSet);
             mySet.Add(null);
             assertTrue("Trying to use nulls in list failed", mySet.Contains(null));
 
-            smallSet = new HashSet<object>();
+            smallSet = innerSetFactory();
             for (int i = 0; i < 100; i++)
             {
                 smallSet.Add(objArray[i]);
             }
-            new Support_SetTest(NewSet<int>(smallSet.Cast<int>())) // LUCENENET: add cast to int
+            new Support_SetTest(NewSet(smallSet.Cast<int>().ToHashSet())) // LUCENENET: add cast to int
                 .RunTest();
 
             //Test self reference
-            mySet = NewSet<object?>(smallSet); // was: Collections.synchronizedSet(smallSet);
+            mySet = NewSet(smallSet); // was: Collections.synchronizedSet(smallSet);
             mySet.Add(mySet); // LUCENENET specific - references are not the same when wrapping via constructor, so adding mySet instead of smallSet
             assertTrue("should contain self ref", Collections.ToString(mySet).IndexOf("(this", StringComparison.Ordinal) > -1);
         }
