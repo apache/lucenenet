@@ -2,8 +2,12 @@
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/concurrent/src/test/java/ConcurrentHashMapTest.java
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/util/CollectionsTest.java
 
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net
@@ -39,5 +43,81 @@ namespace Lucene.Net
 
         protected override ISet<T> NewSet<T>(ISet<T> set)
             => new ConcurrentSet<T>(set);
+
+        /// <summary>
+        /// Tests the <see cref="ConcurrentSet{T}.SyncRoot"/> property to ensure it is
+        /// synchronized via the same sync root as the <see cref="ConcurrentSet{T}"/> uses internally.
+        /// </summary>
+        [Test, LuceneNetSpecific]
+        public async Task TestSyncRoot()
+        {
+            var innerSet = new JCG.LinkedHashSet<int>();
+            var set = new ConcurrentSet<int>(innerSet);
+            Assert.IsNotNull(set.SyncRoot);
+
+            var tasks = new List<Task>();
+
+            for (int i = 0; i < 100; i++)
+            {
+                var capturedIndex = i; // Capture the index so it doesn't change in the closure
+                tasks.Add(Task.Run(() =>
+                {
+                    // Alternate between using the SyncRoot and letting the ConcurrentSet handle synchronization
+                    if (capturedIndex % 2 == 0)
+                    {
+                        UninterruptableMonitor.Enter(set.SyncRoot);
+                        try
+                        {
+                            for (int j = capturedIndex * 100; j < (capturedIndex + 1) * 100; j++)
+                            {
+                                innerSet.Add(j);
+                            }
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(set.SyncRoot);
+                        }
+                    }
+                    else
+                    {
+                        for (int j = capturedIndex * 100; j < (capturedIndex + 1) * 100; j++)
+                        {
+                            set.Add(j);
+                        }
+                    }
+                }));
+            }
+
+            await Task.WhenAll(tasks);
+
+            Assert.AreEqual(10000, set.Count);
+            Assert.AreEqual(10000, innerSet.Count);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestGetEnumerator()
+        {
+            var innerSet = new JCG.LinkedHashSet<int>();
+            var set = new ConcurrentSet<int>(innerSet);
+            for (int i = 0; i < 100; i++)
+            {
+                set.Add(i);
+            }
+
+            using var enumerator = set.GetEnumerator();
+            var list = new List<int>();
+            while (enumerator.MoveNext())
+            {
+                list.Add(enumerator.Current);
+                // modify set while iterating
+                set.Add(100 + enumerator.Current);
+            }
+
+            Assert.AreEqual(100, list.Count);
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.IsTrue(list.Contains(i));
+            }
+        }
     }
 }
