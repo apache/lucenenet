@@ -48,6 +48,13 @@ public class Main {
             .desc("Directory to download the jar files to (default: ./downloads)")
             .build();
 
+    private static final Option dependency = Option.builder("dep")
+            .longOpt("dependency")
+            .required(false)
+            .desc("Additional Maven dependencies to include in the classpath. Should be in the format groupId:artifactId:version")
+            .numberOfArgs(Option.UNLIMITED_VALUES)
+            .build();
+
     public static void main(String[] args) {
         if (args.length == 0) {
             printUsage();
@@ -110,8 +117,14 @@ public class Main {
         var forceValue = cmd.hasOption(force);
         var downloadDirValue = cmd.getOptionValue(downloadDir, "download");
         var outputValue = cmd.getOptionValue(output);
+        var dependencyValues = cmd.getOptionValues(dependency);
 
-        var context = new ExtractContext(downloadDirValue, luceneVersionValue, librariesValue.split(","), forceValue, outputValue);
+        var context = new ExtractContext(downloadDirValue,
+                luceneVersionValue,
+                librariesValue.split(","),
+                forceValue,
+                outputValue,
+                dependencyValues);
 
         try {
             ExtractRunner.extract(context);
@@ -141,8 +154,14 @@ public class Main {
         var librariesValue = cmd.getOptionValue(libraries);
         var forceValue = cmd.hasOption(force);
         var downloadDirValue = cmd.getOptionValue(downloadDir, "download");
+        var dependencyValues = cmd.getOptionValues(dependency);
 
-        var context = new ExtractContext(downloadDirValue, luceneVersionValue, librariesValue.split(","), forceValue, null);
+        var context = new ExtractContext(downloadDirValue,
+                luceneVersionValue,
+                librariesValue.split(","),
+                forceValue,
+                null,
+                dependencyValues);
 
         try {
             ExtractRunner.printHash(context);
@@ -157,7 +176,8 @@ public class Main {
         options.addOption(luceneVersion);
         options.addOption(libraries);
         options.addOption(force);
-        options.addOption(force);
+        options.addOption(downloadDir);
+        options.addOption(dependency);
 
         return options;
     }

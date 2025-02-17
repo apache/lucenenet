@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.ApiCheck.Models.Config;
 using Lucene.Net.ApiCheck.Models.JavaApi;
 using System.Diagnostics;
 using System.Text;
@@ -26,7 +27,7 @@ public static class JarToolIntegration
     public static async Task<IReadOnlyList<LibraryResult>> ExtractApi(FileInfo jarToolPath,
         FileInfo outputPath,
         string luceneVersion,
-        IReadOnlyList<string> luceneLibraries)
+        IReadOnlyList<LibraryConfig> luceneLibraries)
     {
         var arguments = new List<string>
         {
@@ -36,10 +37,25 @@ public static class JarToolIntegration
             "-lv", // lucene version
             luceneVersion,
             "-libs",
-            string.Join(",", luceneLibraries),
+            string.Join(",", luceneLibraries.Select(i => i.LuceneName)),
             "-o",
-            outputPath.FullName
+            outputPath.FullName,
         };
+
+        var mavenDependencies = luceneLibraries
+            .SelectMany(i => i.MavenDependencies ?? Array.Empty<string>())
+            .Distinct()
+            .ToList();
+
+        if (mavenDependencies.Count > 0)
+        {
+            arguments.Add("-dep");
+
+            foreach (string mavenDependency in mavenDependencies)
+            {
+                arguments.Add(mavenDependency);
+            }
+        }
 
         var process = new Process
         {

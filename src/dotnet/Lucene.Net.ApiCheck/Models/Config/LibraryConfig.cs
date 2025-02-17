@@ -21,4 +21,5 @@ public record LibraryConfig(
     string LuceneName,
     string LuceneNetName,
     IReadOnlyDictionary<string, string> PackageNameMappings,
-    IList<TypeOverride> TypeOverrides);
+    IReadOnlyList<string>? MavenDependencies,
+    IReadOnlyList<TypeOverride> TypeOverrides);

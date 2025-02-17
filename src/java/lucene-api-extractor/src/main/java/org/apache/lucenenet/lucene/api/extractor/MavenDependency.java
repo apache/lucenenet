@@ -17,26 +17,14 @@
 
 package org.apache.lucenenet.lucene.api.extractor;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.stream.Stream;
+import java.io.File;
 
-public class JarLoader {
-    public static ClassLoader loadJars(ExtractContext context) throws Exception {
-        var jarUrls = Stream.concat(
-                        Stream.of(context.getLibraries())
-                                .map(Library::toMavenDependency),
-                        Stream.of(context.getDependencies()))
-                .map(library -> {
-                    try {
-                        return library.getFullJarPath(context).toURI().toURL();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .toArray(URL[]::new);
+public record MavenDependency(String groupId, String artifactId, String version) {
+    public String getJarName() {
+        return "%s-%s.jar".formatted(artifactId, version);
+    }
 
-        return new URLClassLoader(jarUrls, JarLoader.class.getClassLoader());
+    public File getFullJarPath(ExtractContext context) {
+        return new File(context.getDownloadsDir(), getJarName());
     }
 }
-
