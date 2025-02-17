@@ -16,6 +16,7 @@
  */
 
 using Lucene.Net.ApiCheck.Comparison;
+using Lucene.Net.ApiCheck.Extensions;
 using Lucene.Net.ApiCheck.Models.Config;
 using Lucene.Net.ApiCheck.Models.Diff;
 using Lucene.Net.ApiCheck.Models.JavaApi;
@@ -55,7 +56,7 @@ public static class DiffUtility
 
         return new ApiDiffResult
         {
-            Assemblies = assemblyDiffs
+            Assemblies = assemblyDiffs.OrderBy(i => i.LuceneNetName).ToList()
         };
     }
 
@@ -73,6 +74,7 @@ public static class DiffUtility
             {
                 TypeKind = GetKindForType(t),
                 TypeName = t.FullName ?? t.Name,
+                DisplayName = t.FormatDisplayName(),
                 Modifiers = GetModifiersForType(t),
             })
             .OrderBy(t => t.TypeName)
@@ -85,6 +87,7 @@ public static class DiffUtility
             {
                 TypeKind = jt.Kind,
                 TypeName = jt.FullName,
+                DisplayName = jt.FullName,
                 Modifiers = jt.Modifiers,
             })
             .OrderBy(jt => jt.TypeName)

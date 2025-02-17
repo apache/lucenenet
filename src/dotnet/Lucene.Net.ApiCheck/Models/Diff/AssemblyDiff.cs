@@ -34,4 +34,6 @@ public class AssemblyDiff
     public required IList<MissingTypeDiff> LuceneNetTypesNotInLucene { get; set; }
 
     public required IList<MissingTypeDiff> LuceneTypesNotInLuceneNet { get; set; }
+
+    public string LuceneMavenUrl => $"https://mvnrepository.com/artifact/org.apache.lucene/{LibraryConfig.MavenArtifactId}/{LuceneVersion}";
 }

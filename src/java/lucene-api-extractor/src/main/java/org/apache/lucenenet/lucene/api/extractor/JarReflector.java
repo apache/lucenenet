@@ -118,6 +118,8 @@ public class JarReflector {
                     );
 
                     types.add(type);
+                } catch (UnsatisfiedLinkError e) {
+                    System.err.println("UnsatisfiedLinkError loading class: " + fullClassName + " - " + e.getMessage());
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
                     throw new RuntimeException("Failed to load class: " + fullClassName, e);
                 }

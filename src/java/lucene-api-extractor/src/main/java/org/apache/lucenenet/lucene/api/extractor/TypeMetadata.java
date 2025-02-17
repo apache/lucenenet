@@ -36,7 +36,7 @@ public record TypeMetadata(
 
         if (packageCompare == 0) {
             if (kindCompare == 0) {
-                if (nameCompare == 0) {
+                if (nameCompare == 0 && this.baseType != null) {
                     return this.baseType.compareTo(other.baseType);
                 }
                 return nameCompare;

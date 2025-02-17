@@ -23,6 +23,8 @@ public class MissingTypeDiff
 
     public required string TypeName { get; set; }
 
+    public required string DisplayName { get; set; }
+
     public required IReadOnlyList<string> Modifiers { get; set; }
 
     public string ModifiersDisplay => string.Join(" ", Modifiers);

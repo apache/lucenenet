@@ -22,4 +22,9 @@ public record LibraryConfig(
     string LuceneNetName,
     IReadOnlyDictionary<string, string> PackageNameMappings,
     IReadOnlyList<string>? MavenDependencies,
-    IReadOnlyList<TypeOverride> TypeOverrides);
+    IReadOnlyList<TypeOverride> TypeOverrides)
+{
+    public string MavenArtifactId => $"lucene-{LuceneName.ToLower()}";
+
+    public int TypeOverridesCount => TypeOverrides.SelectMany(i => i.JavaToDotNetTypes).Count();
+}

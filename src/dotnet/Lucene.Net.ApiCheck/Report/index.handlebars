@@ -6,73 +6,102 @@
     <link rel="stylesheet" href="index.css" />
 </head>
 <body>
-    <h1>Lucene.NET API Diff Report</h1>
-    {{#each Assemblies}}
-        <h2>{{LuceneNetName}} {{LuceneNetVersion}} / lucene-{{LuceneName}} {{LuceneVersion}}</h2>
+    <main>
+        <h1>Lucene.NET API Diff Report</h1>
+        <nav>
+            <h2>Index</h2>
+            <ul>
+                {{#each Assemblies}}
+                    <li><a href="#{{LuceneNetName}}">{{LuceneNetName}}</a></li>
+                {{/each}}
+            </ul>
+        </nav>
+        {{#each Assemblies}}
+        <section id="{{LuceneNetName}}" class="assembly">
+            <h2>{{LuceneNetName}} {{LuceneNetVersion}} / <a href="{{LuceneMavenUrl}}" target="_blank">lucene-{{LuceneName}} {{LuceneVersion}}</a></h2>
 
-        <h3>Lucene Types Missing in Lucene.NET</h3>
-        <table>
-            <thead>
+            <h3>Lucene Types Missing in Lucene.NET</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type Kind</th>
+                        <th>Modifiers</th>
+                        <th>Type Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#if LuceneTypesNotInLuceneNet.Count}}
+                        {{#each LuceneTypesNotInLuceneNet}}
+                            <tr>
+                                <td>{{TypeKind}}</td>
+                                <td>{{ModifiersDisplay}}</td>
+                                <td>{{DisplayName}}</td>
+                            </tr>
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <td colspan="3">✅ No types missing</td>
+                        </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+
+            <h3>Lucene.NET Types Not in Lucene</h3>
+            <table>
+                <thead>
                 <tr>
                     <th>Type Kind</th>
                     <th>Modifiers</th>
                     <th>Type Name</th>
                 </tr>
-            </thead>
-            <tbody>
-                {{#each LuceneTypesNotInLuceneNet}}
+                </thead>
+                <tbody>
+                    {{#if LuceneNetTypesNotInLucene.Count}}
+                        {{#each LuceneNetTypesNotInLucene}}
+                            <tr>
+                                <td>{{TypeKind}}</td>
+                                <td>{{ModifiersDisplay}}</td>
+                                <td>{{DisplayName}}</td>
+                            </tr>
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <td colspan="3">✅ No types missing</td>
+                        </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+
+            {{#if LibraryConfig.TypeOverridesCount}}
+            <details>
+                <summary>Type Mapping Overrides ({{LibraryConfig.TypeOverridesCount}})</summary>
+
+                <table>
+                    <thead>
                     <tr>
-                        <td>{{TypeKind}}</td>
-                        <td>{{ModifiersDisplay}}</td>
-                        <td>{{TypeName}}</td>
+                        <th>Java Type</th>
+                        <th>.NET Type</th>
                     </tr>
-                {{/each}}
-            </tbody>
-        </table>
-
-        <h3>Lucene.NET Types Not in Lucene</h3>
-        <table>
-            <thead>
-            <tr>
-                <th>Type Kind</th>
-                <th>Modifiers</th>
-                <th>Type Name</th>
-            </tr>
-            </thead>
-            <tbody>
-            {{#each LuceneNetTypesNotInLucene}}
-                <tr>
-                    <td>{{TypeKind}}</td>
-                    <td>{{ModifiersDisplay}}</td>
-                    <td>{{TypeName}}</td>
-                </tr>
-            {{/each}}
-            </tbody>
-        </table>
-
-        <h3>Type Mapping Overrides</h3>
-        <table>
-            <thead>
-            <tr>
-                <th>Java Type</th>
-                <th>.NET Type</th>
-            </tr>
-            </thead>
-            <tbody>
-            {{#each LibraryConfig.TypeOverrides}}
-                <tr>
-                    <td colspan="2"><strong>Justification:</strong> {{Justification}}</td>
-                </tr>
-            {{#each JavaToDotNetTypes}}
-                <tr>
-                    <td>{{@key}}</td>
-                    <td>{{Value}}</td>
-                </tr>
-            {{/each}}
-            {{/each}}
-            </tbody>
-        </table>
-    {{/each}}
+                    </thead>
+                    <tbody>
+                    {{#each LibraryConfig.TypeOverrides}}
+                        <tr>
+                            <td colspan="2"><strong>Justification:</strong> {{Justification}}</td>
+                        </tr>
+                    {{#each JavaToDotNetTypes}}
+                        <tr>
+                            <td>{{@key}}</td>
+                            <td>{{Value}}</td>
+                        </tr>
+                    {{/each}}
+                    {{/each}}
+                    </tbody>
+                </table>
+            </details>
+            {{/if}}
+        </section>
+        {{/each}}
+    </main>
     <script type="text/javascript" src="index.js" defer></script>
 </body>
 </html>
