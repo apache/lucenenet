@@ -5,7 +5,7 @@ param (
 $mvnPomPath = "src/java/lucene-api-extractor/pom.xml"
 $targetPath = "src/java/lucene-api-extractor/target"
 $dotnetProjectPath = "src/dotnet/Lucene.Net.ApiCheck/Lucene.Net.ApiCheck.csproj"
-$configFilePath = "apicheck-config.json"
+$configFilePath = "apicheck-config.json5"
 $artifactId = "lucene-api-extractor"
 $downloadPath = "_artifacts/lucene-api-extractor/download"
 $outputPath = "_artifacts/lucene-api-extractor/output"
