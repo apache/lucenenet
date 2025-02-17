@@ -62,6 +62,14 @@
                     }
                 }
             ]
+        },
+        {
+            "luceneName": "analyzers-phonetic",
+            "luceneNetName": "Lucene.Net.Analysis.Phonetic",
+            "packageNameMappings": {
+                "org.apache.lucene.analysis.phonetic": "Lucene.Net.Analysis.Phonetic"
+            },
+            "typeOverrides": []
         }
     ]
 }

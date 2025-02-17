@@ -17,6 +17,7 @@
       <ProjectReference Include="..\..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
       <ProjectReference Include="..\..\Lucene.Net.Analysis.Kuromoji\Lucene.Net.Analysis.Kuromoji.csproj" />
       <ProjectReference Include="..\..\Lucene.Net.Analysis.Morfologik\Lucene.Net.Analysis.Morfologik.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Analysis.Phonetic\Lucene.Net.Analysis.Phonetic.csproj" />
       <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
     </ItemGroup>
 
