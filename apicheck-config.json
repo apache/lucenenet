@@ -70,6 +70,22 @@
                 "org.apache.lucene.analysis.phonetic": "Lucene.Net.Analysis.Phonetic"
             },
             "typeOverrides": []
+        },
+        {
+            "luceneName": "analyzers-smartcn",
+            "luceneNetName": "Lucene.Net.Analysis.SmartCn",
+            "packageNameMappings": {
+                "org.apache.lucene.analysis.cn.smart": "Lucene.Net.Analysis.Cn.Smart"
+            },
+            "typeOverrides": []
+        },
+        {
+            "luceneName": "analyzers-stempel",
+            "luceneNetName": "Lucene.Net.Analysis.Stempel",
+            "packageNameMappings": {
+                "org.egothor.stemmer": "Egothor.Stemmer"
+            },
+            "typeOverrides": []
         }
     ]
 }
