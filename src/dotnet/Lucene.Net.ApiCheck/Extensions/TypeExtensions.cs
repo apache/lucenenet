@@ -15,16 +15,21 @@
  * limitations under the License.
  */
 
-namespace Lucene.Net.ApiCheck.Models.Config;
+namespace Lucene.Net.ApiCheck.Extensions;
 
-public record LibraryConfig(
-    string LuceneName,
-    string LuceneNetName,
-    IReadOnlyDictionary<string, string> PackageNameMappings,
-    IReadOnlyList<string>? MavenDependencies,
-    IReadOnlyList<TypeOverride> TypeOverrides)
+public static class TypeExtensions
 {
-    public string MavenArtifactId => $"lucene-{LuceneName.ToLower()}";
+    public static string FormatDisplayName(this Type type)
+    {
+        var fullName = type.FullName ?? type.Name;
 
-    public int TypeOverridesCount => TypeOverrides.SelectMany(i => i.JavaToDotNetTypes).Count();
+        if (type.IsGenericType)
+        {
+            var genericArguments = type.GetGenericArguments();
+            var genericArgumentsDisplay = string.Join(", ", genericArguments.Select(a => a.Name));
+            return $"{fullName.Split('`')[0]}<{genericArgumentsDisplay}>";
+        }
+
+        return fullName;
+    }
 }

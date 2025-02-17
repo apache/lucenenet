@@ -21,6 +21,13 @@
       <ProjectReference Include="..\..\Lucene.Net.Analysis.SmartCn\Lucene.Net.Analysis.SmartCn.csproj" />
       <ProjectReference Include="..\..\Lucene.Net.Analysis.Stempel\Lucene.Net.Analysis.Stempel.csproj" />
       <ProjectReference Include="..\..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Classification\Lucene.Net.Classification.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Demo\Lucene.Net.Demo.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Misc\Lucene.Net.Misc.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Replicator\Lucene.Net.Replicator.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Suggest\Lucene.Net.Suggest.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
       <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
     </ItemGroup>
 

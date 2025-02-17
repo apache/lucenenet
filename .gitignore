@@ -69,3 +69,6 @@ svn-*/
 # Visual Studio Code/Rider files
 .vscode/
 .idea/
+
+# macOS
+.DS_Store
