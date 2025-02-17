@@ -31,6 +31,7 @@ public static class JarToolIntegration
     {
         var arguments = new List<string>
         {
+            "-Danalysis.data.dir=./analysis", // to bypass smartcn static init error
             "-jar",
             jarToolPath.FullName,
             "extract",
