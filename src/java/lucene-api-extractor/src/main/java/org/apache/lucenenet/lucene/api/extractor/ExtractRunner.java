@@ -71,6 +71,10 @@ public class ExtractRunner {
             JarDownloader.downloadLuceneJar(context, library, context.isForce());
         }
 
+        for (var dependency : context.getDependencies()) {
+            JarDownloader.downloadMavenDependency(context, dependency, context.isForce());
+        }
+
         var loadedLibraries = JarReflector.reflectOverJars(context);
 
         return JsonSerializer.serialize(loadedLibraries);

@@ -44,11 +44,12 @@ public class JarReflector {
     }
 
     public static List<TypeMetadata> reflectOverJar(ExtractContext context, ClassLoader classLoader, Library library) throws Exception {
+        var mavenLibrary = library.toMavenDependency();
         if (!context.isStandardOutput()) {
-            System.out.println("Reflecting over jar: " + library.getJarName());
+            System.out.println("Reflecting over jar: " + mavenLibrary.getJarName());
         }
 
-        JarFile jarFile = new JarFile(library.getFullJarPath(context));
+        JarFile jarFile = new JarFile(mavenLibrary.getFullJarPath(context));
         Enumeration<JarEntry> entries = jarFile.entries();
         var types = new ArrayList<TypeMetadata>();
 

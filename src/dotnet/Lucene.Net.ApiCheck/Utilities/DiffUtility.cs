@@ -34,7 +34,7 @@ public static class DiffUtility
         var javaLibraries = await JarToolIntegration.ExtractApi(extractorJarPath,
             new FileInfo(Path.Combine(outputPath.FullName, "lucene-api.json")),
             config.LuceneVersion,
-            config.Libraries.Select(i => i.LuceneName).ToList());
+            config.Libraries.ToList());
 
         var assemblyDiffs = new List<AssemblyDiff>();
 

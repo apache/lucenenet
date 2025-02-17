@@ -17,14 +17,18 @@
 
 package org.apache.lucenenet.lucene.api.extractor;
 
-import java.io.File;
-
 public record Library(String libraryName, String version) {
+
+    /**
+     * Gets the name of the jar file. Used by JSON serialization.
+     * @return the name of the jar file
+     */
+    @SuppressWarnings("unused")
     public String getJarName() {
-        return "lucene-%s-%s.jar".formatted(libraryName, version);
+        return this.toMavenDependency().getJarName();
     }
 
-    public File getFullJarPath(ExtractContext context) {
-        return new File(context.getDownloadsDir(), getJarName());
+    public MavenDependency toMavenDependency() {
+        return new MavenDependency("org.apache.lucene", "lucene-%s".formatted(libraryName), version);
     }
 }

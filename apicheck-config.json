@@ -41,6 +41,27 @@
                 "org.apache.lucene.analysis.ja": "Lucene.Net.Analysis.Ja"
             },
             "typeOverrides": []
+        },
+        {
+            "luceneName": "analyzers-morfologik",
+            "luceneNetName": "Lucene.Net.Analysis.Morfologik",
+            "mavenDependencies": [
+                "org.carrot2:morfologik-stemming:1.7.1",
+                "org.carrot2:morfologik-fsa:1.7.1",
+                "org.carrot2:morfologik-polish:1.7.1"
+            ],
+            "packageNameMappings": {
+                "org.apache.lucene.analysis.morfologik": "Lucene.Net.Analysis.Morfologik"
+            },
+            "typeOverrides": [
+                {
+                    "justification": "Namespace mismatch + .NET naming conventions",
+                    "javaToDotNetTypes": {
+                        "org.apache.lucene.analysis.morfologik.MorphosyntacticTagsAttributeImpl": "Lucene.Net.Analysis.Morfologik.TokenAttributes.MorphosyntacticTagsAttribute",
+                        "org.apache.lucene.analysis.morfologik.MorphosyntacticTagsAttribute": "Lucene.Net.Analysis.Morfologik.TokenAttributes.IMorphosyntacticTagsAttribute"
+                    }
+                }
+            ]
         }
     ]
 }

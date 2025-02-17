@@ -25,8 +25,14 @@ public class ExtractContext {
     private final Library[] libraries;
     private final boolean force;
     private final String outputFile;
+    private final MavenDependency[] dependencies;
 
-    public ExtractContext(String downloadsDir, String luceneVersion, String[] libraryNames, boolean force, String outputFile) {
+    public ExtractContext(String downloadsDir,
+                          String luceneVersion,
+                          String[] libraryNames,
+                          boolean force,
+                          String outputFile,
+                          String[] dependencies) {
         this.downloadsDir = downloadsDir;
         this.luceneVersion = luceneVersion;
         this.libraries = Stream.of(libraryNames)
@@ -34,6 +40,12 @@ public class ExtractContext {
                 .toArray(Library[]::new);
         this.force = force;
         this.outputFile = outputFile;
+        this.dependencies = Stream.of(dependencies)
+                .map(dependency -> {
+                    var parts = dependency.split(":");
+                    return new MavenDependency(parts[0], parts[1], parts[2]);
+                })
+                .toArray(MavenDependency[]::new);
     }
 
     public String getDownloadsDir() {
@@ -58,5 +70,9 @@ public class ExtractContext {
 
     public boolean isStandardOutput() {
         return outputFile == null;
+    }
+
+    public MavenDependency[] getDependencies() {
+        return dependencies;
     }
 }

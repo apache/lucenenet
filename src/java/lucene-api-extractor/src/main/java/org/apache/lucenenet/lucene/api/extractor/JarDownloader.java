@@ -25,6 +25,10 @@ import java.io.IOException;
 
 public class JarDownloader {
     public static void downloadLuceneJar(ExtractContext context, Library library, boolean force) {
+        downloadMavenDependency(context, library.toMavenDependency(), force);
+    }
+
+    public static void downloadMavenDependency(ExtractContext context, MavenDependency dependency, boolean force) {
         // check if download directory exists
         var downloadDir = new File(context.getDownloadsDir());
         if (!downloadDir.exists()) {
@@ -33,15 +37,17 @@ public class JarDownloader {
             }
         }
 
-        var jarFile = new File(downloadDir, library.getJarName());
+        var jarName = dependency.getJarName();
+        var jarFile = new File(downloadDir, jarName);
         if (jarFile.exists() && !force) {
             if (!context.isStandardOutput()) {
-                System.out.printf("File %s already exists. Skipping download.%n", library.getJarName());
+                System.out.printf("File %s already exists. Skipping download.%n", jarName);
             }
             return;
         }
 
-        var url = "https://repo1.maven.org/maven2/org/apache/lucene/lucene-%s/%s/%s".formatted(library.libraryName(), library.version(), library.getJarName());
+        var groupUrl = dependency.groupId().replace(".", "/");
+        var url = "https://repo1.maven.org/maven2/%s/%s/%s/%s".formatted(groupUrl, dependency.artifactId(), dependency.version(), jarName);
         if (!context.isStandardOutput()) {
             System.out.printf("Downloading %s%n", url);
         }

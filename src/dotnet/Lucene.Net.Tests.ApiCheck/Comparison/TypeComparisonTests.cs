@@ -32,6 +32,7 @@ public class TypeComparisonTests
         {
             ["org.apache.lucene.document"] = "Lucene.Net.Documents",
         },
+        MavenDependencies: new List<string>(),
         TypeOverrides: new List<TypeOverride>
         {
             new TypeOverride(
