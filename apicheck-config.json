@@ -86,6 +86,136 @@
                 "org.egothor.stemmer": "Egothor.Stemmer"
             },
             "typeOverrides": []
+        },
+        {
+            "luceneName": "facet",
+            "luceneNetName": "Lucene.Net.Facet",
+            "packageNameMappings": {
+                "org.apache.lucene.facet": "Lucene.Net.Facet"
+            },
+            "typeOverrides": []
+        },
+        {
+            "luceneName": "queryparser",
+            "luceneNetName": "Lucene.Net.QueryParser",
+            "packageNameMappings": {
+                "org.apache.lucene.queryparser": "Lucene.Net.QueryParsers",
+                "org.apache.lucene.queryparser.analyzing": "Lucene.Net.QueryParsers.Analyzing",
+                "org.apache.lucene.queryparser.classic": "Lucene.Net.QueryParsers.Classic",
+                "org.apache.lucene.queryparser.complexPhrase": "Lucene.Net.QueryParsers.ComplexPhrase",
+                "org.apache.lucene.queryparser.ext": "Lucene.Net.QueryParsers.Ext",
+                "org.apache.lucene.queryparser.flexible": "Lucene.Net.QueryParsers.Flexible",
+                "org.apache.lucene.queryparser.flexible.core": "Lucene.Net.QueryParsers.Flexible.Core",
+                "org.apache.lucene.queryparser.flexible.core.builders": "Lucene.Net.QueryParsers.Flexible.Core.Builders",
+                "org.apache.lucene.queryparser.flexible.core.config": "Lucene.Net.QueryParsers.Flexible.Core.Config",
+                "org.apache.lucene.queryparser.flexible.core.messages": "Lucene.Net.QueryParsers.Flexible.Core.Messages",
+                "org.apache.lucene.queryparser.flexible.core.nodes": "Lucene.Net.QueryParsers.Flexible.Core.Nodes",
+                "org.apache.lucene.queryparser.flexible.core.parser": "Lucene.Net.QueryParsers.Flexible.Core.Parser",
+                "org.apache.lucene.queryparser.flexible.core.processors": "Lucene.Net.QueryParsers.Flexible.Core.Processors",
+                "org.apache.lucene.queryparser.flexible.core.util": "Lucene.Net.QueryParsers.Flexible.Core.Util",
+                "org.apache.lucene.queryparser.flexible.messages": "Lucene.Net.QueryParsers.Flexible.Messages",
+                "org.apache.lucene.queryparser.flexible.precedence": "Lucene.Net.QueryParsers.Flexible.Precedence",
+                "org.apache.lucene.queryparser.flexible.precedence.processors": "Lucene.Net.QueryParsers.Flexible.Precedence.Processors",
+                "org.apache.lucene.queryparser.simple": "Lucene.Net.QueryParsers.Simple",
+                "org.apache.lucene.queryparser.flexible.standard": "Lucene.Net.QueryParsers.Flexible.Standard",
+                "org.apache.lucene.queryparser.flexible.standard.builders": "Lucene.Net.QueryParsers.Flexible.Standard.Builders",
+                "org.apache.lucene.queryparser.flexible.standard.config": "Lucene.Net.QueryParsers.Flexible.Standard.Config",
+                "org.apache.lucene.queryparser.flexible.standard.nodes": "Lucene.Net.QueryParsers.Flexible.Standard.Nodes",
+                "org.apache.lucene.queryparser.flexible.standard.parser": "Lucene.Net.QueryParsers.Flexible.Standard.Parser",
+                "org.apache.lucene.queryparser.flexible.standard.processors": "Lucene.Net.QueryParsers.Flexible.Standard.Processors",
+                "org.apache.lucene.queryparser.surround.parser": "Lucene.Net.QueryParsers.Surround.Parser",
+                "org.apache.lucene.queryparser.surround.query": "Lucene.Net.QueryParsers.Surround.Query",
+                "org.apache.lucene.queryparser.xml": "Lucene.Net.QueryParsers.Xml",
+                "org.apache.lucene.queryparser.xml.builders": "Lucene.Net.QueryParsers.Xml.Builders"
+            },
+            "typeOverrides": []
+        },
+        {
+            "luceneName": "queries",
+            "luceneNetName": "Lucene.Net.Queries",
+            "packageNameMappings": {
+                "org.apache.lucene.queries": "Lucene.Net.Queries",
+                "org.apache.lucene.queries.function.valuesource": "Lucene.Net.Queries.Function.ValueSources"
+            },
+            "typeOverrides": [
+                {
+                    "justification": "Use .NET numeric type naming conventions",
+                    "javaToDotNetTypes": {
+                        "org.apache.lucene.queries.function.docvalues.FloatDocValues": "Lucene.Net.Queries.Function.DocValues.SingleDocValues",
+                        "org.apache.lucene.queries.function.docvalues.IntDocValues": "Lucene.Net.Queries.Function.DocValues.Int32DocValues",
+                        "org.apache.lucene.queries.function.docvalues.LongDocValues": "Lucene.Net.Queries.Function.DocValues.Int64DocValues",
+                        "org.apache.lucene.queries.function.valuesource.DivFloatFunction": "Lucene.Net.Queries.Function.ValueSources.DivSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.DualFloatFunction": "Lucene.Net.Queries.Function.ValueSources.DualSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.FloatFieldSource": "Lucene.Net.Queries.Function.ValueSources.SingleFieldSource",
+                        "org.apache.lucene.queries.function.valuesource.IntFieldSource": "Lucene.Net.Queries.Function.ValueSources.Int32FieldSource",
+                        "org.apache.lucene.queries.function.valuesource.LinearFloatFunction": "Lucene.Net.Queries.Function.ValueSources.LinearSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.LongFieldSource": "Lucene.Net.Queries.Function.ValueSources.Int64FieldSource",
+                        "org.apache.lucene.queries.function.valuesource.MaxFloatFunction": "Lucene.Net.Queries.Function.ValueSources.MaxSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.MinFloatFunction": "Lucene.Net.Queries.Function.ValueSources.MinSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.MultiFloatFunction": "Lucene.Net.Queries.Function.ValueSources.MultiSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.PowFloatFunction": "Lucene.Net.Queries.Function.ValueSources.PowSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.ProductFloatFunction": "Lucene.Net.Queries.Function.ValueSources.ProductSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.RangeMapFloatFunction": "Lucene.Net.Queries.Function.ValueSources.RangeMapSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.ReciprocalFloatFunction": "Lucene.Net.Queries.Function.ValueSources.ReciprocalSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.ScaleFloatFunction": "Lucene.Net.Queries.Function.ValueSources.ScaleSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.ShortFieldSource": "Lucene.Net.Queries.Function.ValueSources.Int16FieldSource",
+                        "org.apache.lucene.queries.function.valuesource.SimpleFloatFunction": "Lucene.Net.Queries.Function.ValueSources.SimpleSingleFunction",
+                        "org.apache.lucene.queries.function.valuesource.SingleFunction": "Lucene.Net.Queries.Function.ValueSources.SingularFunction", // Note type rename due to conflict with System.Single
+                        "org.apache.lucene.queries.function.valuesource.SumFloatFunction": "Lucene.Net.Queries.Function.ValueSources.SumSingleFunction",
+                    }
+                }
+            ]
+        },
+        {
+            "luceneName": "sandbox",
+            "luceneNetName": "Lucene.Net.Sandbox",
+            "packageNameMappings": {
+                "org.apache.lucene.sandbox": "Lucene.Net.Sandbox"
+            },
+            "typeOverrides": [],
+            "mavenDependencies": [
+                "jakarta-regexp:jakarta-regexp:1.4"
+            ]
+        },
+        {
+            "luceneName": "spatial",
+            "luceneNetName": "Lucene.Net.Spatial",
+            "packageNameMappings": {
+                "org.apache.lucene.spatial": "Lucene.Net.Spatial"
+            },
+            "typeOverrides": [],
+            "mavenDependencies": [
+                "com.spatial4j:spatial4j:0.4.1"
+            ]
+        },
+        {
+            "luceneName": "highlighter",
+            "luceneNetName": "Lucene.Net.Highlighter",
+            "packageNameMappings": {
+                "org.apache.lucene.search.highlight": "Lucene.Net.Search.Highlight"
+            },
+            "typeOverrides": []
+        },
+        {
+            "luceneName": "benchmark",
+            "luceneNetName": "Lucene.Net.Benchmark",
+            "packageNameMappings": {
+                "org.apache.lucene.benchmark": "Lucene.Net.Benchmarks",
+                "org.apache.lucene.benchmark.byTask": "Lucene.Net.Benchmarks.ByTask",
+                "org.apache.lucene.benchmark.byTask.feeds": "Lucene.Net.Benchmarks.ByTask.Feeds",
+                "org.apache.lucene.benchmark.byTask.programmatic": "Lucene.Net.Benchmarks.ByTask.Programmatic",
+                "org.apache.lucene.benchmark.byTask.stats": "Lucene.Net.Benchmarks.ByTask.Stats",
+                "org.apache.lucene.benchmark.byTask.tasks": "Lucene.Net.Benchmarks.ByTask.Tasks",
+                "org.apache.lucene.benchmark.byTask.utils": "Lucene.Net.Benchmarks.ByTask.Utils",
+                "org.apache.lucene.benchmark.quality": "Lucene.Net.Benchmarks.Quality",
+                "org.apache.lucene.benchmark.quality.trec": "Lucene.Net.Benchmarks.Quality.Trec",
+                "org.apache.lucene.benchmark.quality.utils": "Lucene.Net.Benchmarks.Quality.Utils"
+            },
+            "typeOverrides": [],
+            "mavenDependencies": [
+                "com.ibm.icu:icu4j:53.1",
+                "org.apache.commons:commons-compress:1.7"
+            ]
         }
     ]
 }

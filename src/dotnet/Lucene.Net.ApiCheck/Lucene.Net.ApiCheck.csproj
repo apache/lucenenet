@@ -20,6 +20,7 @@
       <ProjectReference Include="..\..\Lucene.Net.Analysis.Phonetic\Lucene.Net.Analysis.Phonetic.csproj" />
       <ProjectReference Include="..\..\Lucene.Net.Analysis.SmartCn\Lucene.Net.Analysis.SmartCn.csproj" />
       <ProjectReference Include="..\..\Lucene.Net.Analysis.Stempel\Lucene.Net.Analysis.Stempel.csproj" />
+      <ProjectReference Include="..\..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj" />
       <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
     </ItemGroup>
 

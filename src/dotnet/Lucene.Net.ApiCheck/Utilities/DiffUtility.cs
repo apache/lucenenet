@@ -75,6 +75,7 @@ public static class DiffUtility
                 TypeName = t.FullName ?? t.Name,
                 Modifiers = GetModifiersForType(t),
             })
+            .OrderBy(t => t.TypeName)
             .ToList();
 
         var javaTypesNotInNet = javaLib.Types
@@ -86,6 +87,7 @@ public static class DiffUtility
                 TypeName = jt.FullName,
                 Modifiers = jt.Modifiers,
             })
+            .OrderBy(jt => jt.TypeName)
             .ToList();
 
         // TODO: compare types that are in both assemblies
