@@ -34,4 +34,48 @@ public static class TypeExtensions
 
         return fullName;
     }
+
+    public static IReadOnlyList<string> GetModifiers(this Type type)
+    {
+        var modifiers = new List<string>();
+
+        if (type.IsAbstract)
+        {
+            modifiers.Add(type.IsSealed ? "static" : "abstract");
+        }
+
+        if (type.IsSealed && !type.IsAbstract && !type.IsValueType)
+        {
+            modifiers.Add("sealed");
+        }
+
+        if (type.IsPublic || type.IsNestedPublic)
+        {
+            modifiers.Add("public");
+        }
+
+        // TODO: other modifiers?
+
+        return modifiers;
+    }
+
+    public static string GetTypeKind(this Type t)
+    {
+        if (t.IsInterface)
+        {
+            return "interface";
+        }
+
+        if (t.IsEnum)
+        {
+            return "enum";
+        }
+
+        if (t.IsValueType)
+        {
+            return "struct";
+        }
+
+        return t.IsClass ? "class" : "unknown";
+    }
 }

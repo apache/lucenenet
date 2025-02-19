@@ -33,9 +33,11 @@ public class AssemblyDiff
 
     public required LibraryConfig LibraryConfig { get; set; }
 
-    public required IList<MissingTypeDiff> LuceneNetTypesNotInLucene { get; set; }
+    public required IReadOnlyList<MissingTypeDiff> LuceneNetTypesNotInLucene { get; set; }
 
-    public required IList<MissingTypeDiff> LuceneTypesNotInLuceneNet { get; set; }
+    public required IReadOnlyList<MissingTypeDiff> LuceneTypesNotInLuceneNet { get; set; }
+
+    public required IReadOnlyList<MismatchedModifierDiff> MismatchedModifiers { get; set; }
 
     public string LuceneMavenUrl => $"https://mvnrepository.com/artifact/org.apache.lucene/{LuceneMavenCoordinates.ArtifactId}/{LuceneMavenCoordinates.Version}";
 }
