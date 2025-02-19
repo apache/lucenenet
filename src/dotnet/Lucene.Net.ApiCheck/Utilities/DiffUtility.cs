@@ -62,7 +62,6 @@ public static class DiffUtility
 
         var javaLibraries = await JarToolIntegration.ExtractApi(extractorJarPath,
             new FileInfo(Path.Combine(outputPath.FullName, "lucene-api.json")),
-            config.LuceneVersion,
             libraries.Select(i => i.MavenCoordinates).ToList(),
             mavenDependencies);
 
@@ -70,11 +69,11 @@ public static class DiffUtility
 
         foreach (var javaLib in javaLibraries)
         {
-            Console.WriteLine($"Processing {javaLib.Library.JarName}...");
+            Console.WriteLine($"Processing {javaLib.Library}...");
 
-            var libraryToDiff = libraries.FirstOrDefault(i => i.MavenCoordinates.ArtifactId == $"lucene-{javaLib.Library.LibraryName}")
+            var libraryToDiff = libraries.FirstOrDefault(i => i.MavenCoordinates == javaLib.Library)
                                 ?? throw new InvalidOperationException(
-                                    $"Library {javaLib.Library.LibraryName} not found in config.");
+                                    $"Library {javaLib.Library.ArtifactId} not found in config.");
 
             var assembly = Assembly.Load(libraryToDiff.LibraryConfig.LuceneNetName)
                            ?? throw new InvalidOperationException($"Assembly {libraryToDiff.LibraryConfig.LuceneNetName} not found.");
@@ -129,7 +128,7 @@ public static class DiffUtility
 
         var diff = new AssemblyDiff
         {
-            LuceneName = javaLib.Library.LibraryName,
+            LuceneName = javaLib.Library.ArtifactId.Replace("lucene-", ""),
             LuceneMavenCoordinates = libraryToDiff.MavenCoordinates,
             LuceneNetName = libraryConfig.LuceneNetName,
             LuceneNetVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()

@@ -33,4 +33,6 @@ public record MavenCoordinates(
     }
 
     public override string ToString() => $"{GroupId}:{ArtifactId}:{Version}";
+
+    public string JarName => $"{ArtifactId}-{Version}.jar";
 }

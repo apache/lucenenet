@@ -21,42 +21,38 @@ import java.util.stream.Stream;
 
 public class ExtractContext {
     private final String downloadsDir;
-    private final String luceneVersion;
-    private final Library[] libraries;
+    private final MavenCoordinates[] libraries;
     private final boolean force;
     private final String outputFile;
-    private final MavenDependency[] dependencies;
+    private final MavenCoordinates[] dependencies;
 
     public ExtractContext(String downloadsDir,
-                          String luceneVersion,
                           String[] libraryNames,
                           boolean force,
                           String outputFile,
                           String[] dependencies) {
         this.downloadsDir = downloadsDir;
-        this.luceneVersion = luceneVersion;
         this.libraries = Stream.of(libraryNames)
-                .map(libraryName -> new Library(libraryName, luceneVersion))
-                .toArray(Library[]::new);
+                .map(libraryName -> {
+                    var parts = libraryName.split(":");
+                    return new MavenCoordinates(parts[0], parts[1], parts[2]);
+                })
+                .toArray(MavenCoordinates[]::new);
         this.force = force;
         this.outputFile = outputFile;
         this.dependencies = Stream.of(dependencies)
                 .map(dependency -> {
                     var parts = dependency.split(":");
-                    return new MavenDependency(parts[0], parts[1], parts[2]);
+                    return new MavenCoordinates(parts[0], parts[1], parts[2]);
                 })
-                .toArray(MavenDependency[]::new);
+                .toArray(MavenCoordinates[]::new);
     }
 
     public String getDownloadsDir() {
         return downloadsDir;
     }
 
-    public String getLuceneVersion() {
-        return luceneVersion;
-    }
-
-    public Library[] getLibraries() {
+    public MavenCoordinates[] getLibraries() {
         return libraries;
     }
 
@@ -72,7 +68,7 @@ public class ExtractContext {
         return outputFile == null;
     }
 
-    public MavenDependency[] getDependencies() {
+    public MavenCoordinates[] getDependencies() {
         return dependencies;
     }
 }

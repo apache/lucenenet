@@ -20,20 +20,13 @@ package org.apache.lucenenet.lucene.api.extractor;
 import org.apache.commons.cli.*;
 
 public class Main {
-    private static final Option luceneVersion = Option.builder("lv")
-            .longOpt("lucene-version")
+    private static final Option library = Option.builder("lib")
+            .longOpt("library")
             .required()
             .hasArg()
-            .argName("version")
-            .desc("(Required) Lucene version to use")
-            .build();
-
-    private static final Option libraries = Option.builder("libs")
-            .longOpt("libraries")
-            .required()
-            .hasArg()
-            .argName("libraries")
-            .desc("(Required) Comma-delimited list of Lucene libraries to extract")
+            .argName("library")
+            .numberOfArgs(Option.UNLIMITED_VALUES)
+            .desc("(Required) Lucene library to extract. Should be in the Maven Coordinates format groupId:artifactId:version")
             .build();
 
     private static final Option force = Option.builder("f")
@@ -51,7 +44,7 @@ public class Main {
     private static final Option dependency = Option.builder("dep")
             .longOpt("dependency")
             .required(false)
-            .desc("Additional Maven dependencies to include in the classpath. Should be in the format groupId:artifactId:version")
+            .desc("Additional Maven dependencies to include in the classpath. Should be in the Maven Coordinates format groupId:artifactId:version")
             .numberOfArgs(Option.UNLIMITED_VALUES)
             .build();
 
@@ -112,16 +105,14 @@ public class Main {
             return;
         }
 
-        var luceneVersionValue = cmd.getOptionValue(luceneVersion);
-        var librariesValue = cmd.getOptionValue(libraries);
+        var librariesValue = cmd.getOptionValues(library);
         var forceValue = cmd.hasOption(force);
         var downloadDirValue = cmd.getOptionValue(downloadDir, "download");
         var outputValue = cmd.getOptionValue(output);
         var dependencyValues = cmd.getOptionValues(dependency);
 
         var context = new ExtractContext(downloadDirValue,
-                luceneVersionValue,
-                librariesValue.split(","),
+                librariesValue,
                 forceValue,
                 outputValue,
                 dependencyValues);
@@ -150,15 +141,13 @@ public class Main {
             return;
         }
 
-        var luceneVersionValue = cmd.getOptionValue(luceneVersion);
-        var librariesValue = cmd.getOptionValue(libraries);
+        var librariesValue = cmd.getOptionValues(library);
         var forceValue = cmd.hasOption(force);
         var downloadDirValue = cmd.getOptionValue(downloadDir, "download");
         var dependencyValues = cmd.getOptionValues(dependency);
 
         var context = new ExtractContext(downloadDirValue,
-                luceneVersionValue,
-                librariesValue.split(","),
+                librariesValue,
                 forceValue,
                 null,
                 dependencyValues);
@@ -173,8 +162,7 @@ public class Main {
     private static Options getCommonOptions() {
         var options = new Options();
 
-        options.addOption(luceneVersion);
-        options.addOption(libraries);
+        options.addOption(library);
         options.addOption(force);
         options.addOption(downloadDir);
         options.addOption(dependency);

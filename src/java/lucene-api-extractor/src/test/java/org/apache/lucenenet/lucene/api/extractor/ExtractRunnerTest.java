@@ -8,9 +8,9 @@ class ExtractRunnerTest {
 
     @Test
     void testHashIsStable() throws Exception {
-        var context1 = new ExtractContext("download", "4.8.1", new String[] { "core", "analyzers-common" }, false, null, new String[0]);
+        var context1 = new ExtractContext("download", new String[] { "org.apache.lucene:lucene-core:4.8.1", "org.apache.lucene:lucene-analyzers-common:4.8.1" }, false, null, new String[0]);
         var hash1 = ExtractRunner.getHash(context1);
-        var context2 = new ExtractContext("download", "4.8.1", new String[] { "core", "analyzers-common" }, false, null, new String[0]);
+        var context2 = new ExtractContext("download", new String[] { "org.apache.lucene:lucene-core:4.8.1", "org.apache.lucene:lucene-analyzers-common:4.8.1" }, false, null, new String[0]);
         var hash2 = ExtractRunner.getHash(context2);
         System.out.println(hash1);
         System.out.println(hash2);

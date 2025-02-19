@@ -24,11 +24,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class JarDownloader {
-    public static void downloadLuceneJar(ExtractContext context, Library library, boolean force) {
-        downloadMavenDependency(context, library.toMavenDependency(), force);
-    }
-
-    public static void downloadMavenDependency(ExtractContext context, MavenDependency dependency, boolean force) {
+    public static void downloadMavenDependency(ExtractContext context, MavenCoordinates dependency, boolean force) {
         // check if download directory exists
         var downloadDir = new File(context.getDownloadsDir());
         if (!downloadDir.exists()) {
@@ -56,6 +52,11 @@ public class JarDownloader {
         try (var client = HttpClientBuilder.create().build()) {
             var request = new HttpGet(url);
             var response = client.execute(request);
+
+            if (response.getStatusLine().getStatusCode() != 200) {
+                throw new RuntimeException("Failed to download jar file: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+            }
+
             var entity = response.getEntity();
             if (entity != null) {
                 var content = entity.getContent();

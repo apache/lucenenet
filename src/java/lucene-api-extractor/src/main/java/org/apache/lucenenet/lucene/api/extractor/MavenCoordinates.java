@@ -19,12 +19,23 @@ package org.apache.lucenenet.lucene.api.extractor;
 
 import java.io.File;
 
-public record MavenDependency(String groupId, String artifactId, String version) {
+public record MavenCoordinates(String groupId, String artifactId, String version) {
     public String getJarName() {
         return "%s-%s.jar".formatted(artifactId, version);
     }
 
     public File getFullJarPath(ExtractContext context) {
         return new File(context.getDownloadsDir(), getJarName());
+    }
+
+    public int compareTo(MavenCoordinates other) {
+        int result = this.groupId.compareTo(other.groupId);
+        if (result == 0) {
+            result = this.artifactId.compareTo(other.artifactId);
+            if (result == 0) {
+                result = this.version.compareTo(other.version);
+            }
+        }
+        return result;
     }
 }

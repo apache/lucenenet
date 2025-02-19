@@ -24,8 +24,7 @@ import java.util.stream.Stream;
 public class JarLoader {
     public static ClassLoader loadJars(ExtractContext context) throws Exception {
         var jarUrls = Stream.concat(
-                        Stream.of(context.getLibraries())
-                                .map(Library::toMavenDependency),
+                        Stream.of(context.getLibraries()),
                         Stream.of(context.getDependencies()))
                 .map(library -> {
                     try {
