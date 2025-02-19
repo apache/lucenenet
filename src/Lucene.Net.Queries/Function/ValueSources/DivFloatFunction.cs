@@ -1,5 +1,7 @@
 // Lucene version compatibility level 4.8.1
 
+using Lucene.Net.Reflection;
+
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /*
@@ -24,6 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <para/>
     /// NOTE: This was DivFloatFunction in Lucene
     /// </summary>
+    [LuceneType("org.apache.lucene.queries.function.valuesource", "DivFloatFunction")]
     public class DivSingleFunction : DualSingleFunction
     {
         /// <param name="a">  the numerator. </param>

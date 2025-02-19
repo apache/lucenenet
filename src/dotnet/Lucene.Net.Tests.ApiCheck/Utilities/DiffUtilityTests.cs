@@ -15,23 +15,21 @@
  * limitations under the License.
  */
 
-namespace Lucene.Net.ApiCheck.Extensions;
+using Lucene.Net.ApiCheck.Utilities;
+using Lucene.Net.Util.Fst;
 
-public static class TypeExtensions
+namespace Lucene.Net.Tests.ApiCheck.Utilities;
+
+public class DiffUtilityTests
 {
-    public static string FormatDisplayName(this Type type)
+    [InlineData(typeof(UpToTwoPositiveInt64Outputs), typeof(UpToTwoPositiveInt64Outputs))]
+    // ensure nested types are included in the comparison
+    [InlineData(typeof(UpToTwoPositiveInt64Outputs), typeof(UpToTwoPositiveInt64Outputs.TwoInt64s))]
+    [Theory]
+    public void GetAssemblyTypesForComparison_ContainsExpectedTypes(Type someTypeInAssembly, Type expectedType)
     {
-        var fullName = type.FullName ?? type.Name;
-        fullName = fullName.Replace("+", "."); // format nested types
-
-        if (type.IsGenericType)
-        {
-            var genericArguments = type.GetGenericArguments();
-            var genericArgumentsDisplay = string.Join(", ", genericArguments.Select(a => a.Name));
-            // LUCENENET TODO: this is likely buggy in some cases like nested types
-            return $"{fullName.Split('`')[0]}<{genericArgumentsDisplay}>";
-        }
-
-        return fullName;
+        var assembly = someTypeInAssembly.Assembly;
+        var types = DiffUtility.GetAssemblyTypesForComparison(assembly);
+        Assert.Contains(expectedType, types);
     }
 }

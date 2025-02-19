@@ -23,7 +23,9 @@ public class AssemblyDiff
 {
     public required string LuceneName { get; set; }
 
-    public required string LuceneVersion { get; set; }
+    public string LuceneVersion => LuceneMavenCoordinates.Version;
+
+    public required MavenCoordinates LuceneMavenCoordinates { get; set; }
 
     public required string LuceneNetName { get; set; }
 
@@ -35,5 +37,5 @@ public class AssemblyDiff
 
     public required IList<MissingTypeDiff> LuceneTypesNotInLuceneNet { get; set; }
 
-    public string LuceneMavenUrl => $"https://mvnrepository.com/artifact/org.apache.lucene/{LibraryConfig.MavenArtifactId}/{LuceneVersion}";
+    public string LuceneMavenUrl => $"https://mvnrepository.com/artifact/org.apache.lucene/{LuceneMavenCoordinates.ArtifactId}/{LuceneMavenCoordinates.Version}";
 }

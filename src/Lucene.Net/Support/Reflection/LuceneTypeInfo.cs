@@ -1,8 +1,4 @@
-// Lucene version compatibility level 4.8.1
-
-using Lucene.Net.Reflection;
-
-namespace Lucene.Net.Queries.Function.ValueSources
+namespace Lucene.Net.Reflection
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,28 +18,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="ProductSingleFunction"/> returns the product of its components.
-    /// <para/>
-    /// NOTE: This was ProductFloatFunction in Lucene
+    /// Information about a Lucene type in Java that has an equivalent in Lucene.NET.
     /// </summary>
-    [LuceneType("org.apache.lucene.queries.function.valuesource", "ProductFloatFunction")]
-    public class ProductSingleFunction : MultiSingleFunction
+    [NoLuceneEquivalent]
+    public class LuceneTypeInfo
     {
-        public ProductSingleFunction(ValueSource[] sources)
-            : base(sources)
+        public LuceneTypeInfo(string packageName, string typeName)
         {
+            PackageName = packageName;
+            TypeName = typeName;
         }
 
-        protected override string Name => "product";
+        public string PackageName { get; }
 
-        protected override float Func(int doc, FunctionValues[] valsArr)
-        {
-            float val = 1.0f;
-            foreach (FunctionValues vals in valsArr)
-            {
-                val *= vals.SingleVal(doc);
-            }
-            return val;
-        }
+        public string TypeName { get; }
     }
 }

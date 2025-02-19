@@ -1,5 +1,6 @@
 using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Reflection;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System.Diagnostics.CodeAnalysis;
@@ -41,6 +42,7 @@ namespace Lucene.Net.Codecs.IntBlock
     /// expected to give poor performance; it's really only for
     /// testing the pluggability.  One should typically use pfor instead.
     /// </remarks>
+    [LuceneType("org.apache.lucene.codecs.intblock", "VariableIntBlockIndexInput")]
     public abstract class VariableInt32BlockIndexInput : Int32IndexInput
     {
         private readonly IndexInput input;

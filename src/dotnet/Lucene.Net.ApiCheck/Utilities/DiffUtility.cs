@@ -17,25 +17,54 @@
 
 using Lucene.Net.ApiCheck.Comparison;
 using Lucene.Net.ApiCheck.Extensions;
+using Lucene.Net.ApiCheck.Models;
 using Lucene.Net.ApiCheck.Models.Config;
 using Lucene.Net.ApiCheck.Models.Diff;
 using Lucene.Net.ApiCheck.Models.JavaApi;
+using Lucene.Net.Reflection;
 using System.Reflection;
 
 namespace Lucene.Net.ApiCheck.Utilities;
 
 public static class DiffUtility
 {
+    private record LibraryToDiff(LibraryConfig LibraryConfig, MavenCoordinates MavenCoordinates, Assembly Assembly);
+
     public static async Task<ApiDiffResult> GenerateDiff(ApiCheckConfig config,
         FileInfo extractorJarPath,
         DirectoryInfo outputPath)
     {
         Console.WriteLine("Generating diff...");
 
+        var libraries = config.Libraries
+            .Select(i =>
+            {
+                var assembly = Assembly.Load(i.LuceneNetName)
+                               ?? throw new InvalidOperationException($"Assembly {i.LuceneNetName} not found.");
+
+                var mavenMapping = assembly.GetCustomAttribute<LuceneMavenMappingAttribute>()
+                                   ?? throw new InvalidOperationException(
+                                       $"Assembly {assembly.GetName().Name} is missing {nameof(LuceneMavenMappingAttribute)}.");
+
+                return new LibraryToDiff(i,
+                    new MavenCoordinates(mavenMapping.GroupId, mavenMapping.ArtifactId, mavenMapping.Version),
+                    assembly);
+            })
+            .ToList();
+
+        var mavenDependencies = libraries
+            .Select(i => i.LibraryConfig.MavenDependencies)
+            .OfType<IReadOnlyList<string>>() // filter out nulls
+            .SelectMany(i => i)
+            .Select(MavenCoordinates.Parse)
+            .Distinct()
+            .ToList();
+
         var javaLibraries = await JarToolIntegration.ExtractApi(extractorJarPath,
             new FileInfo(Path.Combine(outputPath.FullName, "lucene-api.json")),
             config.LuceneVersion,
-            config.Libraries.ToList());
+            libraries.Select(i => i.MavenCoordinates).ToList(),
+            mavenDependencies);
 
         var assemblyDiffs = new List<AssemblyDiff>();
 
@@ -43,13 +72,14 @@ public static class DiffUtility
         {
             Console.WriteLine($"Processing {javaLib.Library.JarName}...");
 
-            var libraryConfig = config.Libraries.FirstOrDefault(i => i.LuceneName == javaLib.Library.LibraryName)
-                ?? throw new InvalidOperationException($"Library {javaLib.Library.LibraryName} not found in config.");
+            var libraryToDiff = libraries.FirstOrDefault(i => i.MavenCoordinates.ArtifactId == $"lucene-{javaLib.Library.LibraryName}")
+                                ?? throw new InvalidOperationException(
+                                    $"Library {javaLib.Library.LibraryName} not found in config.");
 
-            var assembly = Assembly.Load(libraryConfig.LuceneNetName)
-                ?? throw new InvalidOperationException($"Assembly {libraryConfig.LuceneNetName} not found.");
+            var assembly = Assembly.Load(libraryToDiff.LibraryConfig.LuceneNetName)
+                           ?? throw new InvalidOperationException($"Assembly {libraryToDiff.LibraryConfig.LuceneNetName} not found.");
 
-            var diff = DiffAssembly(javaLib, libraryConfig, assembly);
+            var diff = DiffAssembly(javaLib, libraryToDiff, assembly);
 
             assemblyDiffs.Add(diff);
         }
@@ -60,15 +90,17 @@ public static class DiffUtility
         };
     }
 
-    private static AssemblyDiff DiffAssembly(LibraryResult javaLib, LibraryConfig libraryConfig, Assembly assembly)
+    private static AssemblyDiff DiffAssembly(LibraryResult javaLib, LibraryToDiff libraryToDiff, Assembly assembly)
     {
         // strategy:
         // 1. get types in .NET that are not in Java library
         // 2. get types in Java library that are not in .NET
         // 3. get types that are in both, but have different members
 
-        var netTypesNotInJava = assembly.GetTypes()
-            .Where(t => t.IsPublic)
+        var assemblyTypes = GetAssemblyTypesForComparison(assembly);
+        var libraryConfig = libraryToDiff.LibraryConfig;
+
+        var netTypesNotInJava = assemblyTypes
             .Where(t => !javaLib.Types.Any(jt => TypeComparison.TypesMatch(libraryConfig, t, jt)))
             .Select(t => new MissingTypeDiff
             {
@@ -87,7 +119,7 @@ public static class DiffUtility
             {
                 TypeKind = jt.Kind,
                 TypeName = jt.FullName,
-                DisplayName = jt.FullName,
+                DisplayName = jt.FullName.Replace("$", "."),
                 Modifiers = jt.Modifiers,
             })
             .OrderBy(jt => jt.TypeName)
@@ -98,9 +130,10 @@ public static class DiffUtility
         var diff = new AssemblyDiff
         {
             LuceneName = javaLib.Library.LibraryName,
-            LuceneVersion = javaLib.Library.Version,
+            LuceneMavenCoordinates = libraryToDiff.MavenCoordinates,
             LuceneNetName = libraryConfig.LuceneNetName,
-            LuceneNetVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+            LuceneNetVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                                   ?.InformationalVersion
                                ?? assembly.GetName().Version?.ToString()
                                ?? "unknown",
             LibraryConfig = libraryConfig,
@@ -109,6 +142,13 @@ public static class DiffUtility
         };
 
         return diff;
+    }
+
+    internal static IReadOnlyList<Type> GetAssemblyTypesForComparison(Assembly assembly)
+    {
+        return assembly.GetTypes()
+            .Where(t => (t.IsPublic || t.IsNestedPublic) && t.GetCustomAttribute<NoLuceneEquivalentAttribute>() == null)
+            .ToList();
     }
 
     private static IReadOnlyList<string> GetModifiersForType(Type type)

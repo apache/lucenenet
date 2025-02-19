@@ -1,8 +1,9 @@
-// Lucene version compatibility level 4.8.1
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
-using Lucene.Net.Reflection;
-
-namespace Lucene.Net.Queries.Function.ValueSources
+namespace Lucene.Net.Reflection
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,28 +23,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="ProductSingleFunction"/> returns the product of its components.
-    /// <para/>
-    /// NOTE: This was ProductFloatFunction in Lucene
+    /// Extension methods for <see cref="Assembly"/>.
     /// </summary>
-    [LuceneType("org.apache.lucene.queries.function.valuesource", "ProductFloatFunction")]
-    public class ProductSingleFunction : MultiSingleFunction
+    [NoLuceneEquivalent]
+    public static class ReflectionAssemblyExtensions
     {
-        public ProductSingleFunction(ValueSource[] sources)
-            : base(sources)
-        {
-        }
+        private static readonly ConcurrentDictionary<Assembly, IReadOnlyList<LucenePackageMappingAttribute>> packageMappingCache = new();
 
-        protected override string Name => "product";
-
-        protected override float Func(int doc, FunctionValues[] valsArr)
-        {
-            float val = 1.0f;
-            foreach (FunctionValues vals in valsArr)
-            {
-                val *= vals.SingleVal(doc);
-            }
-            return val;
-        }
+        public static IReadOnlyList<LucenePackageMappingAttribute> GetLucenePackageMappings(this Assembly assembly)
+            => packageMappingCache.GetOrAdd(assembly,
+                a => a.GetCustomAttributes<LucenePackageMappingAttribute>().ToList());
     }
 }

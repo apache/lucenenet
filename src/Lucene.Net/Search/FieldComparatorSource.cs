@@ -1,3 +1,4 @@
+using Lucene.Net.Reflection;
 using System.IO;
 
 namespace Lucene.Net.Search
@@ -24,6 +25,7 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @lucene.experimental
     /// </summary>
+    [LuceneType("org.apache.lucene.search", "FieldComparatorSource", Justification = ".NET naming conventions")]
     public abstract class FieldComparerSource
     {
         /// <summary>

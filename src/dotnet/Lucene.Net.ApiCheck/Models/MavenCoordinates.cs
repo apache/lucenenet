@@ -15,6 +15,22 @@
  * limitations under the License.
  */
 
-namespace Lucene.Net.ApiCheck.Models.Config;
+namespace Lucene.Net.ApiCheck.Models;
 
-public record TypeOverride(string Justification, IDictionary<string, string> JavaToDotNetTypes);
+public record MavenCoordinates(
+    string GroupId,
+    string ArtifactId,
+    string Version)
+{
+    public static MavenCoordinates Parse(string mavenCoordinates)
+    {
+        string[] parts = mavenCoordinates.Split(':');
+        if (parts.Length != 3)
+        {
+            throw new ArgumentException("Invalid Maven coordinates. Expected format: groupId:artifactId:version");
+        }
+        return new MavenCoordinates(parts[0], parts[1], parts[2]);
+    }
+
+    public override string ToString() => $"{GroupId}:{ArtifactId}:{Version}";
+}

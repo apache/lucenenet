@@ -1,8 +1,7 @@
-// Lucene version compatibility level 4.8.1
+using System;
+#nullable enable
 
-using Lucene.Net.Reflection;
-
-namespace Lucene.Net.Queries.Function.ValueSources
+namespace Lucene.Net.Reflection
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,28 +21,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// <see cref="ProductSingleFunction"/> returns the product of its components.
-    /// <para/>
-    /// NOTE: This was ProductFloatFunction in Lucene
+    /// Indicates that the target of this attribute has no equivalent in Lucene.
     /// </summary>
-    [LuceneType("org.apache.lucene.queries.function.valuesource", "ProductFloatFunction")]
-    public class ProductSingleFunction : MultiSingleFunction
+    [NoLuceneEquivalent] // This recursive attribute usage is intentional, as this attribute does not exist in Lucene
+    [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
+    public sealed class NoLuceneEquivalentAttribute : Attribute
     {
-        public ProductSingleFunction(ValueSource[] sources)
-            : base(sources)
-        {
-        }
-
-        protected override string Name => "product";
-
-        protected override float Func(int doc, FunctionValues[] valsArr)
-        {
-            float val = 1.0f;
-            foreach (FunctionValues vals in valsArr)
-            {
-                val *= vals.SingleVal(doc);
-            }
-            return val;
-        }
+        /// <summary>
+        /// Gets or sets a justification for why the discrepancy exists.
+        /// </summary>
+        public string? Justification { get; set; }
     }
 }
