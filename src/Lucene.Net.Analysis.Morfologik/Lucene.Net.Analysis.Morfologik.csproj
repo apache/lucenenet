@@ -39,18 +39,8 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-
-
-  <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Uk/**/*" Exclude="*.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>

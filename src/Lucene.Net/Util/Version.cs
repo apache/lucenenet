@@ -1,3 +1,4 @@
+using Lucene.Net.Reflection;
 using System;
 using System.Text.RegularExpressions;
 
@@ -29,6 +30,7 @@ namespace Lucene.Net.Util
     /// change the version at search-time, but instead also adjust
     /// your indexing code to match, and re-index.</para>
     /// </summary>
+    [LuceneType("org.apache.lucene.util", "Version", Justification = "Avoids confusion with System.Version")]
     public enum LuceneVersion
     {
         /// <summary>

@@ -18,13 +18,7 @@
 namespace Lucene.Net.ApiCheck.Models.Config;
 
 public record LibraryConfig(
-    string LuceneName,
     string LuceneNetName,
-    IReadOnlyDictionary<string, string> PackageNameMappings,
-    IReadOnlyList<string>? MavenDependencies,
-    IReadOnlyList<TypeOverride> TypeOverrides)
+    IReadOnlyList<string>? MavenDependencies)
 {
-    public string MavenArtifactId => $"lucene-{LuceneName.ToLower()}";
-
-    public int TypeOverridesCount => TypeOverrides.SelectMany(i => i.JavaToDotNetTypes).Count();
 }

@@ -17,7 +17,8 @@
 
 using Lucene.Net.ApiCheck.Models.Config;
 using Lucene.Net.ApiCheck.Models.JavaApi;
-using System.Text;
+using Lucene.Net.Reflection;
+using System.Reflection;
 
 namespace Lucene.Net.ApiCheck.Comparison;
 
@@ -25,19 +26,23 @@ internal static class TypeComparison
 {
     public static bool TypesMatch(LibraryConfig libraryConfig, Type dotNetType, TypeMetadata javaType)
     {
-        foreach (var typeOverride in libraryConfig.TypeOverrides)
+        if (dotNetType.GetCustomAttribute<LuceneTypeAttribute>() is { } luceneEquivalent
+            && luceneEquivalent.PackageName == javaType.PackageName
+            && luceneEquivalent.TypeName == javaType.Name.Replace("$", "."))
         {
-            if (typeOverride.JavaToDotNetTypes.TryGetValue(javaType.FullName, out var t)
-                && t == dotNetType.FullName)
-            {
-                return true;
-            }
+            return true;
         }
 
-        var expectedNamespace = libraryConfig.PackageNameMappings.TryGetValue(javaType.PackageName, out var mappedNamespace)
-            ? mappedNamespace
-            : GetExpectedDotNetNamespace(javaType.PackageName);
+        var luceneTypeInfo = dotNetType.GetLuceneTypeInfo();
+
+        if (luceneTypeInfo is null)
+        {
+            return false;
+        }
+
+        var expectedPackage = luceneTypeInfo.PackageName;
         var cleanJavaName = javaType.Name.EndsWith("Impl") ? javaType.Name[..^4] : javaType.Name;
+        cleanJavaName = cleanJavaName.Replace("$", ".");
 
         var expectedDotNetName = javaType.Kind == "interface"
             ? $"I{cleanJavaName}"
@@ -47,34 +52,7 @@ internal static class TypeComparison
             ? dotNetType.Name[..genericIndex]
             : dotNetType.Name;
 
-        return string.Equals(dotNetType.Namespace, expectedNamespace, StringComparison.OrdinalIgnoreCase)
+        return string.Equals(javaType.PackageName, expectedPackage, StringComparison.OrdinalIgnoreCase)
             && cleanDotNetName == expectedDotNetName;
-    }
-
-    public static string? GetExpectedDotNetNamespace(string packageName)
-    {
-        if (!packageName.StartsWith("org.apache.lucene"))
-        {
-            return null;
-        }
-
-        var parts = packageName.Split('.');
-        var sb = new StringBuilder();
-
-        sb.Append("Lucene.Net");
-
-        for (int i = 3; i < parts.Length; i++)
-        {
-            sb.Append('.');
-
-            var dashParts = parts[i].Split('-');
-            foreach (var dashPart in dashParts)
-            {
-                sb.Append(char.ToUpper(dashPart[0]));
-                sb.Append(dashPart[1..]);
-            }
-        }
-
-        return sb.ToString();
     }
 }

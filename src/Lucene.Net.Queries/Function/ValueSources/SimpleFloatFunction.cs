@@ -1,6 +1,7 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
+using Lucene.Net.Reflection;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -27,6 +28,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <para/>
     /// NOTE: This was SimpleFloatFunction in Lucene
     /// </summary>
+    [LuceneType("org.apache.lucene.queries.function.valuesource", "SimpleFloatFunction")]
     public abstract class SimpleSingleFunction : SingularFunction
     {
         protected SimpleSingleFunction(ValueSource source) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)

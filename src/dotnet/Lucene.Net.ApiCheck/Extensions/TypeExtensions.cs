@@ -22,11 +22,13 @@ public static class TypeExtensions
     public static string FormatDisplayName(this Type type)
     {
         var fullName = type.FullName ?? type.Name;
+        fullName = fullName.Replace("+", "."); // format nested types
 
         if (type.IsGenericType)
         {
             var genericArguments = type.GetGenericArguments();
             var genericArgumentsDisplay = string.Join(", ", genericArguments.Select(a => a.Name));
+            // LUCENENET TODO: this is likely buggy in some cases like nested types
             return $"{fullName.Split('`')[0]}<{genericArgumentsDisplay}>";
         }
 

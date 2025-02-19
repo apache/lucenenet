@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Reflection;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -30,6 +31,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
+    [LuceneType("org.apache.lucene.util", "IntBlockPool")]
     public sealed class Int32BlockPool
     {
         /// <summary>

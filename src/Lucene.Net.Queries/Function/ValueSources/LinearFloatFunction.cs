@@ -1,6 +1,7 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
+using Lucene.Net.Reflection;
 using Lucene.Net.Search;
 using System.Collections;
 
@@ -31,6 +32,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <para/>
     /// NOTE: This was LinearFloatFunction in Lucene
     /// </summary>
+    [LuceneType("org.apache.lucene.queries.function.valuesource", "LinearFloatFunction")]
     public class LinearSingleFunction : ValueSource
     {
         protected readonly ValueSource m_source;

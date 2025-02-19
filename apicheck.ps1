@@ -17,8 +17,8 @@ if ($clean)
 }
 
 # create download and output paths recursively
-New-Item -ItemType Directory -Force -Path $downloadPath -InformationAction SilentlyContinue -ErrorAction SilentlyContinue
-New-Item -ItemType Directory -Force -Path $outputPath -InformationAction SilentlyContinue -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force -Path $downloadPath -InformationAction SilentlyContinue -ErrorAction SilentlyContinue | Out-Null
+New-Item -ItemType Directory -Force -Path $outputPath -InformationAction SilentlyContinue -ErrorAction SilentlyContinue | Out-Null
 
 if ($clean)
 {
@@ -39,9 +39,9 @@ Write-Host "Jar file: $jarFile"
 if ($clean) {
     # Clean the API Check project
     Write-Host "Cleaning API Check project..."
-    dotnet clean --project $dotnetProjectPath
+    dotnet clean $dotnetProjectPath
 }
 
 # Run the API check
 Write-Host "Running API check..."
-dotnet run --project $dotnetProjectPath -- -j $jarFile -c $configFilePath report -o $outputPath
+dotnet run --project $dotnetProjectPath -- report -j $jarFile -c $configFilePath -o $outputPath -d $downloadPath

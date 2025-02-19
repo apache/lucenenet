@@ -1,4 +1,5 @@
 using J2N;
+using Lucene.Net.Reflection;
 using System;
 
 namespace Lucene.Net.Documents
@@ -35,6 +36,7 @@ namespace Lucene.Net.Documents
     /// NOTE: This was FloatDocValuesField in Lucene
     /// </para>
     /// </summary>
+    [LuceneType("org.apache.lucene.document", "FloatDocValuesField")]
     public class SingleDocValuesField : NumericDocValuesField
     {
         /// <summary>

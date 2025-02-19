@@ -15,6 +15,7 @@
 * limitations under the License.
 */
 
+using Lucene.Net.Reflection;
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -34,3 +35,5 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("1f70d2db-c1b3-4f78-9598-3e04e0c7eb06")]
+
+[assembly: LuceneMavenMapping("org.apache.lucene", "lucene-replicator", "4.8.1")]

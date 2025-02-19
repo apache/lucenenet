@@ -1,3 +1,4 @@
+using Lucene.Net.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
@@ -32,6 +33,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
+    [LuceneType("org.apache.lucene.util", "LongValues")]
     public abstract class Int64Values : NumericDocValues
     {
         /// <summary>

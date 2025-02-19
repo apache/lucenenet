@@ -2,148 +2,46 @@
     "luceneVersion": "4.8.1",
     "libraries": [
         {
-            "luceneName": "core",
             "luceneNetName": "Lucene.Net",
-            "packageNameMappings": {
-                "org.apache.lucene.document": "Lucene.Net.Documents"
-            },
-            "typeOverrides": [
-                {
-                    "justification": "Use .NET numeric type naming conventions",
-                    "javaToDotNetTypes": {
-                        "org.apache.lucene.document.FloatDocValuesField": "Lucene.Net.Documents.SingleDocValuesField",
-                        "org.apache.lucene.document.FloatField": "Lucene.Net.Documents.SingleField",
-                        "org.apache.lucene.document.IntDocValuesField": "Lucene.Net.Documents.Int32DocValuesField",
-                        "org.apache.lucene.document.IntField": "Lucene.Net.Documents.Int32Field",
-                        "org.apache.lucene.document.LongDocValuesField": "Lucene.Net.Documents.Int64DocValuesField",
-                        "org.apache.lucene.document.LongField": "Lucene.Net.Documents.Int64Field",
-                        "org.apache.lucene.document.PackedLongDocValuesField": "Lucene.Net.Documents.PackedInt64DocValuesField",
-                        "org.apache.lucene.document.ShortDocValuesField": "Lucene.Net.Documents.Int16DocValuesField"
-                    }
-                }
-            ]
         },
         {
-            "luceneName": "analyzers-common",
             "luceneNetName": "Lucene.Net.Analysis.Common",
-            "packageNameMappings": {
-                "org.apache.lucene.analysis": "Lucene.Net.Analysis",
-                "org.apache.lucene.analysis.charfilter": "Lucene.Net.Analysis.CharFilters",
-                "org.tartarus.snowball": "Lucene.Net.Tartarus.Snowball",
-                "org.tartarus.snowball.ext": "Lucene.Net.Tartarus.Snowball.Ext"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "analyzers-kuromoji",
             "luceneNetName": "Lucene.Net.Analysis.Kuromoji",
-            "packageNameMappings": {
-                "org.apache.lucene.analysis.ja": "Lucene.Net.Analysis.Ja"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "analyzers-morfologik",
             "luceneNetName": "Lucene.Net.Analysis.Morfologik",
             "mavenDependencies": [
                 "org.carrot2:morfologik-stemming:1.7.1",
                 "org.carrot2:morfologik-fsa:1.7.1",
                 "org.carrot2:morfologik-polish:1.7.1"
-            ],
-            "packageNameMappings": {
-                "org.apache.lucene.analysis.morfologik": "Lucene.Net.Analysis.Morfologik"
-            },
-            "typeOverrides": [
-                {
-                    "justification": "Namespace mismatch + .NET naming conventions",
-                    "javaToDotNetTypes": {
-                        "org.apache.lucene.analysis.morfologik.MorphosyntacticTagsAttributeImpl": "Lucene.Net.Analysis.Morfologik.TokenAttributes.MorphosyntacticTagsAttribute",
-                        "org.apache.lucene.analysis.morfologik.MorphosyntacticTagsAttribute": "Lucene.Net.Analysis.Morfologik.TokenAttributes.IMorphosyntacticTagsAttribute"
-                    }
-                }
             ]
         },
         {
-            "luceneName": "analyzers-phonetic",
             "luceneNetName": "Lucene.Net.Analysis.Phonetic",
-            "packageNameMappings": {
-                "org.apache.lucene.analysis.phonetic": "Lucene.Net.Analysis.Phonetic"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "analyzers-smartcn",
             "luceneNetName": "Lucene.Net.Analysis.SmartCn",
-            "packageNameMappings": {
-                "org.apache.lucene.analysis.cn.smart": "Lucene.Net.Analysis.Cn.Smart"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "analyzers-stempel",
             "luceneNetName": "Lucene.Net.Analysis.Stempel",
-            "packageNameMappings": {
-                "org.egothor.stemmer": "Egothor.Stemmer"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "benchmark",
             "luceneNetName": "Lucene.Net.Benchmark",
-            "packageNameMappings": {
-                "org.apache.lucene.benchmark": "Lucene.Net.Benchmarks",
-                "org.apache.lucene.benchmark.byTask": "Lucene.Net.Benchmarks.ByTask",
-                "org.apache.lucene.benchmark.byTask.feeds": "Lucene.Net.Benchmarks.ByTask.Feeds",
-                "org.apache.lucene.benchmark.byTask.programmatic": "Lucene.Net.Benchmarks.ByTask.Programmatic",
-                "org.apache.lucene.benchmark.byTask.stats": "Lucene.Net.Benchmarks.ByTask.Stats",
-                "org.apache.lucene.benchmark.byTask.tasks": "Lucene.Net.Benchmarks.ByTask.Tasks",
-                "org.apache.lucene.benchmark.byTask.utils": "Lucene.Net.Benchmarks.ByTask.Utils",
-                "org.apache.lucene.benchmark.quality": "Lucene.Net.Benchmarks.Quality",
-                "org.apache.lucene.benchmark.quality.trec": "Lucene.Net.Benchmarks.Quality.Trec",
-                "org.apache.lucene.benchmark.quality.utils": "Lucene.Net.Benchmarks.Quality.Utils"
-            },
-            "typeOverrides": [],
             "mavenDependencies": [
                 "com.ibm.icu:icu4j:53.1",
                 "org.apache.commons:commons-compress:1.7"
             ]
         },
         {
-            "luceneName": "classification",
             "luceneNetName": "Lucene.Net.Classification",
-            "packageNameMappings": {
-                "org.apache.lucene.classification": "Lucene.Net.Classification"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "codecs",
             "luceneNetName": "Lucene.Net.Codecs",
-            "packageNameMappings": {
-                "org.apache.lucene.codecs": "Lucene.Net.Codecs",
-            },
-            "typeOverrides": [
-                {
-                    "justification": "Use .NET numeric type naming conventions",
-                    "javaToDotNetTypes": {
-                        "org.apache.lucene.codecs.intblock.FixedIntBlockIndexInput": "Lucene.Net.Codecs.IntBlock.FixedInt32BlockIndexInput",
-                        "org.apache.lucene.codecs.intblock.FixedIntBlockIndexOutput": "Lucene.Net.Codecs.IntBlock.FixedInt32BlockIndexOutput",
-                        "org.apache.lucene.codecs.intblock.VariableIntBlockIndexInput": "Lucene.Net.Codecs.IntBlock.VariableInt32BlockIndexInput",
-                        "org.apache.lucene.codecs.intblock.VariableIntBlockIndexOutput": "Lucene.Net.Codecs.IntBlock.VariableInt32BlockIndexOutput",
-                        "org.apache.lucene.codecs.sep.IntIndexInput": "Lucene.Net.Codecs.Sep.Int32IndexInput",
-                        "org.apache.lucene.codecs.sep.IntIndexOutput": "Lucene.Net.Codecs.Sep.Int32IndexOutput",
-                        "org.apache.lucene.codecs.sep.IntStreamFactory": "Lucene.Net.Codecs.Sep.Int32StreamFactory",
-                    }
-                }
-            ]
         },
         {
-            "luceneName": "demo",
             "luceneNetName": "Lucene.Net.Demo",
-            "packageNameMappings": {
-                "org.apache.lucene.demo": "Lucene.Net.Demo"
-            },
-            "typeOverrides": [],
             "mavenDependencies": [
                 "javax.servlet:servlet-api:2.4",
                 "org.antlr:antlr-runtime:3.5",
@@ -152,116 +50,30 @@
             ]
         },
         {
-            "luceneName": "expressions",
             "luceneNetName": "Lucene.Net.Expressions",
-            "packageNameMappings": {
-                "org.apache.lucene.expressions": "Lucene.Net.Expressions"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "facet",
             "luceneNetName": "Lucene.Net.Facet",
-            "packageNameMappings": {
-                "org.apache.lucene.facet": "Lucene.Net.Facet"
-            },
-            "typeOverrides": [
-                {
-                    "justification": "Use .NET numeric type naming conventions",
-                    "javaToDotNetTypes": {
-                        "org.apache.lucene.facet.range.LongRange": "Lucene.Net.Facet.Range.Int64Range",
-                        "org.apache.lucene.facet.range.LongRangeFacetCounts": "Lucene.Net.Facet.Range.Int64RangeFacetCounts",
-                        "org.apache.lucene.facet.taxonomy.FloatAssociationFacetField": "Lucene.Net.Facet.Taxonomy.SingleAssociationFacetField",
-                        "org.apache.lucene.facet.taxonomy.FloatTaxonomyFacets": "Lucene.Net.Facet.Taxonomy.SingleTaxonomyFacets",
-                        "org.apache.lucene.facet.taxonomy.IntAssociationFacetField": "Lucene.Net.Facet.Taxonomy.Int32AssociationFacetField",
-                        "org.apache.lucene.facet.taxonomy.IntTaxonomyFacets": "Lucene.Net.Facet.Taxonomy.Int32TaxonomyFacets",
-                        "org.apache.lucene.facet.taxonomy.TaxonomyFacetSumFloatAssociations": "Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumSingleAssociations",
-                        "org.apache.lucene.facet.taxonomy.TaxonomyFacetSumIntAssociations": "Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumInt32Associations",
-                        "org.apache.lucene.facet.taxonomy.writercache.NameHashIntCacheLRU": "Lucene.Net.Facet.Taxonomy.WriterCache.NameHashInt32CacheLru",
-                        "org.apache.lucene.facet.TopOrdAndFloatQueue": "Lucene.Net.Facet.TopOrdAndSingleQueue",
-                        "org.apache.lucene.facet.TopOrdAndIntQueue": "Lucene.Net.Facet.TopOrdAndInt32Queue",
-                    }
-                }
-            ]
         },
         {
-            "luceneName": "grouping",
             "luceneNetName": "Lucene.Net.Grouping",
-            "packageNameMappings": {
-                "org.apache.lucene.search.grouping": "Lucene.Net.Search.Grouping"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "highlighter",
             "luceneNetName": "Lucene.Net.Highlighter",
-            "packageNameMappings": {
-                "org.apache.lucene.search.highlight": "Lucene.Net.Search.Highlight"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "join",
             "luceneNetName": "Lucene.Net.Join",
-            "packageNameMappings": {
-                "org.apache.lucene.search.join": "Lucene.Net.Search.Join"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "memory",
             "luceneNetName": "Lucene.Net.Memory",
-            "packageNameMappings": {
-                "org.apache.lucene.index.memory": "Lucene.Net.Index.Memory"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "misc",
             "luceneNetName": "Lucene.Net.Misc",
-            "packageNameMappings": {
-                "org.apache.lucene.misc": "Lucene.Net.Misc"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "queries",
             "luceneNetName": "Lucene.Net.Queries",
-            "packageNameMappings": {
-                "org.apache.lucene.queries": "Lucene.Net.Queries",
-                "org.apache.lucene.queries.function.valuesource": "Lucene.Net.Queries.Function.ValueSources"
-            },
-            "typeOverrides": [
-                {
-                    "justification": "Use .NET numeric type naming conventions",
-                    "javaToDotNetTypes": {
-                        "org.apache.lucene.queries.function.docvalues.FloatDocValues": "Lucene.Net.Queries.Function.DocValues.SingleDocValues",
-                        "org.apache.lucene.queries.function.docvalues.IntDocValues": "Lucene.Net.Queries.Function.DocValues.Int32DocValues",
-                        "org.apache.lucene.queries.function.docvalues.LongDocValues": "Lucene.Net.Queries.Function.DocValues.Int64DocValues",
-                        "org.apache.lucene.queries.function.valuesource.DivFloatFunction": "Lucene.Net.Queries.Function.ValueSources.DivSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.DualFloatFunction": "Lucene.Net.Queries.Function.ValueSources.DualSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.FloatFieldSource": "Lucene.Net.Queries.Function.ValueSources.SingleFieldSource",
-                        "org.apache.lucene.queries.function.valuesource.IntFieldSource": "Lucene.Net.Queries.Function.ValueSources.Int32FieldSource",
-                        "org.apache.lucene.queries.function.valuesource.LinearFloatFunction": "Lucene.Net.Queries.Function.ValueSources.LinearSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.LongFieldSource": "Lucene.Net.Queries.Function.ValueSources.Int64FieldSource",
-                        "org.apache.lucene.queries.function.valuesource.MaxFloatFunction": "Lucene.Net.Queries.Function.ValueSources.MaxSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.MinFloatFunction": "Lucene.Net.Queries.Function.ValueSources.MinSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.MultiFloatFunction": "Lucene.Net.Queries.Function.ValueSources.MultiSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.PowFloatFunction": "Lucene.Net.Queries.Function.ValueSources.PowSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.ProductFloatFunction": "Lucene.Net.Queries.Function.ValueSources.ProductSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.RangeMapFloatFunction": "Lucene.Net.Queries.Function.ValueSources.RangeMapSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.ReciprocalFloatFunction": "Lucene.Net.Queries.Function.ValueSources.ReciprocalSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.ScaleFloatFunction": "Lucene.Net.Queries.Function.ValueSources.ScaleSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.ShortFieldSource": "Lucene.Net.Queries.Function.ValueSources.Int16FieldSource",
-                        "org.apache.lucene.queries.function.valuesource.SimpleFloatFunction": "Lucene.Net.Queries.Function.ValueSources.SimpleSingleFunction",
-                        "org.apache.lucene.queries.function.valuesource.SingleFunction": "Lucene.Net.Queries.Function.ValueSources.SingularFunction", // Note type rename due to conflict with System.Single
-                        "org.apache.lucene.queries.function.valuesource.SumFloatFunction": "Lucene.Net.Queries.Function.ValueSources.SumSingleFunction",
-                    }
-                }
-            ]
         },
         {
-            "luceneName": "queryparser",
             "luceneNetName": "Lucene.Net.QueryParser",
             "packageNameMappings": {
                 "org.apache.lucene.queryparser": "Lucene.Net.QueryParsers",
@@ -296,50 +108,25 @@
             "typeOverrides": []
         },
         {
-            "luceneName": "replicator",
             "luceneNetName": "Lucene.Net.Replicator",
-            "packageNameMappings": {
-                "org.apache.lucene.replicator": "Lucene.Net.Replicator"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "sandbox",
             "luceneNetName": "Lucene.Net.Sandbox",
-            "packageNameMappings": {
-                "org.apache.lucene.sandbox": "Lucene.Net.Sandbox"
-            },
-            "typeOverrides": [],
             "mavenDependencies": [
                 "jakarta-regexp:jakarta-regexp:1.4"
             ]
         },
         {
-            "luceneName": "spatial",
             "luceneNetName": "Lucene.Net.Spatial",
-            "packageNameMappings": {
-                "org.apache.lucene.spatial": "Lucene.Net.Spatial"
-            },
-            "typeOverrides": [],
             "mavenDependencies": [
                 "com.spatial4j:spatial4j:0.4.1"
             ]
         },
         {
-            "luceneName": "suggest",
             "luceneNetName": "Lucene.Net.Suggest",
-            "packageNameMappings": {
-                "org.apache.lucene.search.suggest": "Lucene.Net.Search.Suggest"
-            },
-            "typeOverrides": []
         },
         {
-            "luceneName": "test-framework",
             "luceneNetName": "Lucene.Net.TestFramework",
-            "packageNameMappings": {
-                "org.apache.lucene.util": "Lucene.Net.Util"
-            },
-            "typeOverrides": [],
             "mavenDependencies": [
                 "junit:junit:4.10",
                 "com.carrotsearch.randomizedtesting:randomizedtesting-runner:2.1.3",
