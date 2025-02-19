@@ -17,4 +17,4 @@
 
 namespace Lucene.Net.ApiCheck.Models.JavaApi;
 
-public record LibraryResult(Library Library, IReadOnlyList<TypeMetadata> Types);
+public record LibraryResult(MavenCoordinates Library, IReadOnlyList<TypeMetadata> Types);

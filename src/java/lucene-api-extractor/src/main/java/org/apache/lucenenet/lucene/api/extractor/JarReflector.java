@@ -34,7 +34,7 @@ public class JarReflector {
         var libraries = context.getLibraries();
         var results = new ArrayList<LibraryResult>();
 
-        for (Library library : libraries) {
+        for (MavenCoordinates library : libraries) {
             var types = reflectOverJar(context, classLoader, library);
             results.add(new LibraryResult(library, types));
         }
@@ -43,13 +43,12 @@ public class JarReflector {
         return results;
     }
 
-    public static List<TypeMetadata> reflectOverJar(ExtractContext context, ClassLoader classLoader, Library library) throws Exception {
-        var mavenLibrary = library.toMavenDependency();
+    public static List<TypeMetadata> reflectOverJar(ExtractContext context, ClassLoader classLoader, MavenCoordinates library) throws Exception {
         if (!context.isStandardOutput()) {
-            System.out.println("Reflecting over jar: " + mavenLibrary.getJarName());
+            System.out.println("Reflecting over jar: " + library.getJarName());
         }
 
-        JarFile jarFile = new JarFile(mavenLibrary.getFullJarPath(context));
+        JarFile jarFile = new JarFile(library.getFullJarPath(context));
         Enumeration<JarEntry> entries = jarFile.entries();
         var types = new ArrayList<TypeMetadata>();
 

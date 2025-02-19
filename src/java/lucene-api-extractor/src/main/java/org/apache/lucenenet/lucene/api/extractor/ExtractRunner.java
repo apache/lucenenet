@@ -62,13 +62,13 @@ public class ExtractRunner {
 
     private static String extractJson(ExtractContext context) throws Exception {
         if (context.getOutputFile() != null) {
-            System.out.println(MessageFormat.format("Extracting API for Lucene version: {0}", context.getLuceneVersion()));
+            System.out.println("Extracting API");
             System.out.println(MessageFormat.format("Libraries: {0}",
-                    Stream.of(context.getLibraries()).map(Library::libraryName).collect(Collectors.joining(", "))));
+                    Stream.of(context.getLibraries()).map(MavenCoordinates::artifactId).collect(Collectors.joining(", "))));
         }
 
         for (var library : context.getLibraries()) {
-            JarDownloader.downloadLuceneJar(context, library, context.isForce());
+            JarDownloader.downloadMavenDependency(context, library, context.isForce());
         }
 
         for (var dependency : context.getDependencies()) {

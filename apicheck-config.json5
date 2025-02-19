@@ -1,5 +1,4 @@
 {
-    "luceneVersion": "4.8.1",
     "libraries": [
         {
             "luceneNetName": "Lucene.Net",
@@ -18,6 +17,13 @@
                 "org.carrot2:morfologik-polish:1.7.1"
             ]
         },
+// OpenNLP not currently supported due to version difference
+//        {
+//            "luceneNetName": "Lucene.Net.Analysis.OpenNLP",
+//            "mavenDependencies": [
+//                "org.apache.opennlp:opennlp-tools:1.9.1",
+//            ]
+//        },
         {
             "luceneNetName": "Lucene.Net.Analysis.Phonetic",
         },
@@ -75,37 +81,6 @@
         },
         {
             "luceneNetName": "Lucene.Net.QueryParser",
-            "packageNameMappings": {
-                "org.apache.lucene.queryparser": "Lucene.Net.QueryParsers",
-                "org.apache.lucene.queryparser.analyzing": "Lucene.Net.QueryParsers.Analyzing",
-                "org.apache.lucene.queryparser.classic": "Lucene.Net.QueryParsers.Classic",
-                "org.apache.lucene.queryparser.complexPhrase": "Lucene.Net.QueryParsers.ComplexPhrase",
-                "org.apache.lucene.queryparser.ext": "Lucene.Net.QueryParsers.Ext",
-                "org.apache.lucene.queryparser.flexible": "Lucene.Net.QueryParsers.Flexible",
-                "org.apache.lucene.queryparser.flexible.core": "Lucene.Net.QueryParsers.Flexible.Core",
-                "org.apache.lucene.queryparser.flexible.core.builders": "Lucene.Net.QueryParsers.Flexible.Core.Builders",
-                "org.apache.lucene.queryparser.flexible.core.config": "Lucene.Net.QueryParsers.Flexible.Core.Config",
-                "org.apache.lucene.queryparser.flexible.core.messages": "Lucene.Net.QueryParsers.Flexible.Core.Messages",
-                "org.apache.lucene.queryparser.flexible.core.nodes": "Lucene.Net.QueryParsers.Flexible.Core.Nodes",
-                "org.apache.lucene.queryparser.flexible.core.parser": "Lucene.Net.QueryParsers.Flexible.Core.Parser",
-                "org.apache.lucene.queryparser.flexible.core.processors": "Lucene.Net.QueryParsers.Flexible.Core.Processors",
-                "org.apache.lucene.queryparser.flexible.core.util": "Lucene.Net.QueryParsers.Flexible.Core.Util",
-                "org.apache.lucene.queryparser.flexible.messages": "Lucene.Net.QueryParsers.Flexible.Messages",
-                "org.apache.lucene.queryparser.flexible.precedence": "Lucene.Net.QueryParsers.Flexible.Precedence",
-                "org.apache.lucene.queryparser.flexible.precedence.processors": "Lucene.Net.QueryParsers.Flexible.Precedence.Processors",
-                "org.apache.lucene.queryparser.simple": "Lucene.Net.QueryParsers.Simple",
-                "org.apache.lucene.queryparser.flexible.standard": "Lucene.Net.QueryParsers.Flexible.Standard",
-                "org.apache.lucene.queryparser.flexible.standard.builders": "Lucene.Net.QueryParsers.Flexible.Standard.Builders",
-                "org.apache.lucene.queryparser.flexible.standard.config": "Lucene.Net.QueryParsers.Flexible.Standard.Config",
-                "org.apache.lucene.queryparser.flexible.standard.nodes": "Lucene.Net.QueryParsers.Flexible.Standard.Nodes",
-                "org.apache.lucene.queryparser.flexible.standard.parser": "Lucene.Net.QueryParsers.Flexible.Standard.Parser",
-                "org.apache.lucene.queryparser.flexible.standard.processors": "Lucene.Net.QueryParsers.Flexible.Standard.Processors",
-                "org.apache.lucene.queryparser.surround.parser": "Lucene.Net.QueryParsers.Surround.Parser",
-                "org.apache.lucene.queryparser.surround.query": "Lucene.Net.QueryParsers.Surround.Query",
-                "org.apache.lucene.queryparser.xml": "Lucene.Net.QueryParsers.Xml",
-                "org.apache.lucene.queryparser.xml.builders": "Lucene.Net.QueryParsers.Xml.Builders"
-            },
-            "typeOverrides": []
         },
         {
             "luceneNetName": "Lucene.Net.Replicator",

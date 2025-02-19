@@ -27,7 +27,6 @@ public static class JarToolIntegration
 {
     public static async Task<IReadOnlyList<LibraryResult>> ExtractApi(FileInfo jarToolPath,
         FileInfo outputPath,
-        string luceneVersion,
         IReadOnlyList<MavenCoordinates> luceneLibraries,
         IReadOnlyList<MavenCoordinates> mavenDependencies)
     {
@@ -37,13 +36,12 @@ public static class JarToolIntegration
             "-jar",
             jarToolPath.FullName,
             "extract",
-            "-lv", // lucene version
-            luceneVersion,
-            "-libs",
-            string.Join(",", luceneLibraries.Select(i => i.ArtifactId.Replace("lucene-", ""))),
             "-o",
             outputPath.FullName,
+            "-lib",
         };
+
+        arguments.AddRange(luceneLibraries.Select(i => i.ToString()));
 
         if (mavenDependencies.Count > 0)
         {

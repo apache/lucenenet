@@ -18,5 +18,4 @@
 namespace Lucene.Net.ApiCheck.Models.Config;
 
 public record ApiCheckConfig(
-    string LuceneVersion,
     IReadOnlyList<LibraryConfig> Libraries);

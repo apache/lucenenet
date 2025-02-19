@@ -19,8 +19,8 @@ package org.apache.lucenenet.lucene.api.extractor;
 
 import java.util.List;
 
-public record LibraryResult(Library library, List<TypeMetadata> types) {
+public record LibraryResult(MavenCoordinates library, List<TypeMetadata> types) {
     public int compareTo(LibraryResult other) {
-        return this.library.libraryName().compareTo(other.library.libraryName());
+        return this.library.compareTo(other.library);
     }
 }
