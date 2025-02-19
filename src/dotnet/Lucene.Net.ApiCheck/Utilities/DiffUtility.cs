@@ -30,6 +30,8 @@ public static class DiffUtility
 {
     private record LibraryToDiff(LibraryConfig LibraryConfig, MavenCoordinates MavenCoordinates, Assembly Assembly);
 
+    private record MatchingType(TypeMetadata JavaType, Type DotNetType);
+
     public static async Task<ApiDiffResult> GenerateDiff(ApiCheckConfig config,
         FileInfo extractorJarPath,
         DirectoryInfo outputPath)
@@ -94,37 +96,17 @@ public static class DiffUtility
         // strategy:
         // 1. get types in .NET that are not in Java library
         // 2. get types in Java library that are not in .NET
-        // 3. get types that are in both, but have different members
+        // 3. get types that are in both, but have different modifiers or base types
+        // 4. get types that are in both, but have different members
 
         var assemblyTypes = GetAssemblyTypesForComparison(assembly);
         var libraryConfig = libraryToDiff.LibraryConfig;
 
-        var netTypesNotInJava = assemblyTypes
-            .Where(t => !javaLib.Types.Any(jt => TypeComparison.TypesMatch(libraryConfig, t, jt)))
-            .Select(t => new MissingTypeDiff
-            {
-                TypeKind = GetKindForType(t),
-                TypeName = t.FullName ?? t.Name,
-                DisplayName = t.FormatDisplayName(),
-                Modifiers = GetModifiersForType(t),
-            })
-            .OrderBy(t => t.TypeName)
-            .ToList();
+        var netTypesNotInJava = GetDotNetTypesNotInJava(javaLib, assemblyTypes);
+        var javaTypesNotInNet = GetJavaTypesNotInDotNet(javaLib, assemblyTypes);
+        var matchingTypes = GetMatchingTypes(javaLib, assemblyTypes);
 
-        var javaTypesNotInNet = javaLib.Types
-            .Where(jt => jt.Modifiers.Contains("public"))
-            .Where(jt => !assembly.GetTypes().Any(t => TypeComparison.TypesMatch(libraryConfig, t, jt)))
-            .Select(jt => new MissingTypeDiff
-            {
-                TypeKind = jt.Kind,
-                TypeName = jt.FullName,
-                DisplayName = jt.FullName.Replace("$", "."),
-                Modifiers = jt.Modifiers,
-            })
-            .OrderBy(jt => jt.TypeName)
-            .ToList();
-
-        // TODO: compare types that are in both assemblies
+        var mismatchedModifiers = GetMismatchedModifiers(matchingTypes);
 
         var diff = new AssemblyDiff
         {
@@ -138,9 +120,76 @@ public static class DiffUtility
             LibraryConfig = libraryConfig,
             LuceneNetTypesNotInLucene = netTypesNotInJava,
             LuceneTypesNotInLuceneNet = javaTypesNotInNet,
+            MismatchedModifiers = mismatchedModifiers,
         };
 
         return diff;
+    }
+
+    private static IReadOnlyList<MismatchedModifierDiff> GetMismatchedModifiers(IReadOnlyList<MatchingType> matchingTypes)
+    {
+        return matchingTypes
+            .Where(i => !ModifierComparison.ModifiersAreEquivalent(ModifierComparison.ModifierUsage.Type,
+                i.JavaType.Modifiers,
+                i.DotNetType.GetModifiers()))
+            .Select(i => new MismatchedModifierDiff
+            {
+                JavaTypeKind = i.JavaType.Kind,
+                JavaTypeName = i.JavaType.FullName,
+                JavaDisplayName = i.JavaType.FullName.Replace("$", "."),
+                DotNetTypeKind = i.DotNetType.GetTypeKind(),
+                DotNetTypeName = i.DotNetType.FullName ?? i.DotNetType.Name,
+                DotNetDisplayName = i.DotNetType.FormatDisplayName(),
+                JavaModifiers = i.JavaType.Modifiers.SortJavaModifiers().ToList(),
+                DotNetModifiers = i.DotNetType.GetModifiers().SortDotNetModifiers().ToList(),
+            })
+            .OrderBy(i => i.JavaTypeName)
+            .ToList();
+    }
+
+    private static IReadOnlyList<MatchingType> GetMatchingTypes(LibraryResult javaLib, IReadOnlyList<Type> assemblyTypes)
+    {
+        return javaLib.Types
+            .Where(jt => jt.Modifiers.Contains("public"))
+            .Select(t => new
+            {
+                JavaType = t,
+                DotNetType = assemblyTypes.FirstOrDefault(d => TypeComparison.TypesMatch(d, t))
+            })
+            .Where(i => i.DotNetType != null)
+            .Select(i => new MatchingType(i.JavaType, i.DotNetType!))
+            .ToList();
+    }
+
+    private static IReadOnlyList<MissingTypeDiff> GetJavaTypesNotInDotNet(LibraryResult javaLib, IReadOnlyList<Type> assemblyTypes)
+    {
+        return javaLib.Types
+            .Where(jt => jt.Modifiers.Contains("public"))
+            .Where(jt => !assemblyTypes.Any(t => TypeComparison.TypesMatch(t, jt)))
+            .Select(jt => new MissingTypeDiff
+            {
+                TypeKind = jt.Kind,
+                TypeName = jt.FullName,
+                DisplayName = jt.FullName.Replace("$", "."),
+                Modifiers = jt.Modifiers.SortJavaModifiers().ToList(),
+            })
+            .OrderBy(jt => jt.TypeName)
+            .ToList();
+    }
+
+    private static IReadOnlyList<MissingTypeDiff> GetDotNetTypesNotInJava(LibraryResult javaLib, IReadOnlyList<Type> assemblyTypes)
+    {
+        return assemblyTypes
+            .Where(t => !javaLib.Types.Any(jt => TypeComparison.TypesMatch(t, jt)))
+            .Select(t => new MissingTypeDiff
+            {
+                TypeKind = t.GetTypeKind(),
+                TypeName = t.FullName ?? t.Name,
+                DisplayName = t.FormatDisplayName(),
+                Modifiers = t.GetModifiers().SortDotNetModifiers().ToList(),
+            })
+            .OrderBy(t => t.TypeName)
+            .ToList();
     }
 
     internal static IReadOnlyList<Type> GetAssemblyTypesForComparison(Assembly assembly)
@@ -148,49 +197,5 @@ public static class DiffUtility
         return assembly.GetTypes()
             .Where(t => (t.IsPublic || t.IsNestedPublic) && t.GetCustomAttribute<NoLuceneEquivalentAttribute>() == null)
             .ToList();
-    }
-
-    private static IReadOnlyList<string> GetModifiersForType(Type type)
-    {
-        var modifiers = new List<string>();
-
-        if (type.IsAbstract)
-        {
-            modifiers.Add("abstract");
-        }
-
-        if (type.IsSealed)
-        {
-            modifiers.Add("sealed");
-        }
-
-        if (type.IsPublic)
-        {
-            modifiers.Add("public");
-        }
-
-        // TODO: other modifiers
-
-        return modifiers;
-    }
-
-    private static string GetKindForType(Type t)
-    {
-        if (t.IsInterface)
-        {
-            return "interface";
-        }
-
-        if (t.IsEnum)
-        {
-            return "enum";
-        }
-
-        if (t.IsValueType)
-        {
-            return "struct";
-        }
-
-        return t.IsClass ? "class" : "unknown";
     }
 }

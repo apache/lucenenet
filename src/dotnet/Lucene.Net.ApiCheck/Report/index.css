@@ -32,3 +32,8 @@ th, td {
 th {
     background-color: #f0f0f0;
 }
+
+div.subtext {
+    font-size: 0.8rem;
+    color: #666;
+}

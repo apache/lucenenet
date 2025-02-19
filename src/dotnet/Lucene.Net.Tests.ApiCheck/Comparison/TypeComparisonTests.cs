@@ -19,7 +19,6 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Morfologik.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.ApiCheck.Comparison;
-using Lucene.Net.ApiCheck.Models.Config;
 using Lucene.Net.ApiCheck.Models.JavaApi;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
@@ -29,9 +28,6 @@ namespace Lucene.Net.Tests.ApiCheck.Comparison;
 
 public class TypeComparisonTests
 {
-    private static readonly LibraryConfig _coreLibraryConfig = new LibraryConfig("Lucene.Net",
-        MavenDependencies: new List<string>());
-
     [InlineData(typeof(Analyzer), "class", "org.apache.lucene.analysis", "Analyzer")]
     [InlineData(typeof(TokenStream), "class", "org.apache.lucene.analysis", "TokenStream")]
     [InlineData(typeof(ICharTermAttribute), "interface", "org.apache.lucene.analysis.tokenattributes", "CharTermAttribute")]
@@ -47,6 +43,6 @@ public class TypeComparisonTests
     public void TypesMatchTests(Type dotNetType, string javaTypeKind, string javaPackage, string javaTypeName)
     {
         var javaType = new TypeMetadata(javaPackage, javaTypeKind, javaTypeName, $"{javaPackage}.{javaTypeName}", null, [], [], [], []);
-        Assert.True(TypeComparison.TypesMatch(_coreLibraryConfig, dotNetType, javaType));
+        Assert.True(TypeComparison.TypesMatch(dotNetType, javaType));
     }
 }

@@ -15,16 +15,15 @@
  * limitations under the License.
  */
 
-using Lucene.Net.ApiCheck.Models.Config;
 using Lucene.Net.ApiCheck.Models.JavaApi;
 using Lucene.Net.Reflection;
 using System.Reflection;
 
 namespace Lucene.Net.ApiCheck.Comparison;
 
-internal static class TypeComparison
+public static class TypeComparison
 {
-    public static bool TypesMatch(LibraryConfig libraryConfig, Type dotNetType, TypeMetadata javaType)
+    public static bool TypesMatch(Type dotNetType, TypeMetadata javaType)
     {
         if (dotNetType.GetCustomAttribute<LuceneTypeAttribute>() is { } luceneEquivalent
             && luceneEquivalent.PackageName == javaType.PackageName
