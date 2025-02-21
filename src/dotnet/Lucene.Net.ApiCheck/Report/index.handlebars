@@ -16,11 +16,44 @@
                 {{/each}}
             </ul>
         </nav>
+        <section id="stats">
+            <h2>Stats</h2>
+
+            <table class="stats-table">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th>Lucene types not in Lucene.NET</th>
+                    <td>{{TotalLuceneTypesNotInLuceneNet}}</td>
+                </tr>
+                <tr>
+                    <th>Lucene.NET types not in Lucene</th>
+                    <td>{{TotalLuceneNetTypesNotInLucene}}</td>
+                </tr>
+                <tr>
+                    <th>Mismatched modifiers</th>
+                    <td>{{TotalMismatchedModifiers}}</td>
+                </tr>
+                <tr>
+                    <th>Mismatched base types</th>
+                    <td>{{TotalMismatchedBaseTypes}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
         {{#each Assemblies}}
         <section id="{{LuceneNetName}}" class="assembly">
             <h2>{{LuceneNetName}} {{LuceneNetVersion}} / <a href="{{LuceneMavenUrl}}" target="_blank">lucene-{{LuceneName}} {{LuceneVersion}}</a></h2>
 
-            <h3>Lucene Types Missing in Lucene.NET</h3>
+            <h3>
+                Lucene Types Missing in Lucene.NET
+                <span class="count">{{LuceneTypesNotInLuceneNet.Count}}</span>
+            </h3>
             <table>
                 <thead>
                     <tr>
@@ -34,8 +67,8 @@
                         {{#each LuceneTypesNotInLuceneNet}}
                             <tr>
                                 <td>{{ModifiersDisplay}}</td>
-                                <td>{{TypeKind}}</td>
-                                <td>{{DisplayName}}</td>
+                                <td>{{Type.TypeKind}}</td>
+                                <td>{{Type.DisplayName}}</td>
                             </tr>
                         {{/each}}
                     {{else}}
@@ -46,7 +79,10 @@
                 </tbody>
             </table>
 
-            <h3>Lucene.NET Types Not in Lucene</h3>
+            <h3>
+                Lucene.NET Types Not in Lucene
+                <span class="count">{{LuceneNetTypesNotInLucene.Count}}</span>
+            </h3>
             <table>
                 <thead>
                 <tr>
@@ -60,8 +96,8 @@
                         {{#each LuceneNetTypesNotInLucene}}
                             <tr>
                                 <td>{{ModifiersDisplay}}</td>
-                                <td>{{TypeKind}}</td>
-                                <td>{{DisplayName}}</td>
+                                <td>{{Type.TypeKind}}</td>
+                                <td>{{Type.DisplayName}}</td>
                             </tr>
                         {{/each}}
                     {{else}}
@@ -72,7 +108,10 @@
                 </tbody>
             </table>
 
-            <h3>Mismatched Modifiers</h3>
+            <h3>
+                Mismatched Modifiers
+                <span class="count">{{MismatchedModifiers.Count}}</span>
+            </h3>
             <table>
                 <thead>
                 <tr>
@@ -86,8 +125,8 @@
                         {{#each MismatchedModifiers}}
                             <tr>
                                 <td>
-                                    {{DotNetDisplayName}}
-                                    <div class="subtext">{{JavaDisplayName}}</div>
+                                    {{DotNetType.DisplayName}}
+                                    <div class="subtext">{{JavaType.DisplayName}}</div>
                                 </td>
                                 <td>{{JavaModifiersDisplay}}</td>
                                 <td>{{DotNetModifiersDisplay}}</td>
@@ -96,6 +135,47 @@
                     {{else}}
                         <tr>
                             <td colspan="3">✅ No mismatched modifiers</td>
+                        </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+
+            <h3>
+                Mismatched Base Types
+                <span class="count">{{MismatchedBaseTypes.Count}}</span>
+            </h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Java Type</th>
+                    <th>.NET Type</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {{#if MismatchedBaseTypes.Count}}
+                        {{#each MismatchedBaseTypes}}
+                            <tr>
+                                <td>
+                                    {{JavaType.TypeKind}} {{JavaType.DisplayName}}
+                                    {{#if JavaBaseType}}
+                                        <div>
+                                            :&nbsp;{{JavaBaseType.DisplayName}}
+                                        </div>
+                                    {{/if}}
+                                </td>
+                                <td>
+                                    {{DotNetType.TypeKind}} {{DotNetType.DisplayName}}
+                                    {{#if DotNetBaseType}}
+                                        <div>
+                                        :&nbsp;{{DotNetBaseType.DisplayName}}
+                                        </div>
+                                    {{/if}}
+                                </td>
+                            </tr>
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <td colspan="2">✅ No mismatched base types</td>
                         </tr>
                     {{/if}}
                 </tbody>

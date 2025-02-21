@@ -20,4 +20,12 @@ namespace Lucene.Net.ApiCheck.Models.Diff;
 public class ApiDiffResult
 {
     public required IList<AssemblyDiff> Assemblies { get; set; }
+
+    public int TotalLuceneTypesNotInLuceneNet => Assemblies.Sum(a => a.LuceneTypesNotInLuceneNet.Count);
+
+    public int TotalLuceneNetTypesNotInLucene => Assemblies.Sum(a => a.LuceneNetTypesNotInLucene.Count);
+
+    public int TotalMismatchedModifiers => Assemblies.Sum(a => a.MismatchedModifiers.Count);
+
+    public int TotalMismatchedBaseTypes => Assemblies.Sum(a => a.MismatchedBaseTypes.Count);
 }

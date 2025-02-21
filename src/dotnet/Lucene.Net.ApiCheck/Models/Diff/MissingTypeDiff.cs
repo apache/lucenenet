@@ -19,11 +19,7 @@ namespace Lucene.Net.ApiCheck.Models.Diff;
 
 public class MissingTypeDiff
 {
-    public required string TypeKind { get; set; }
-
-    public required string TypeName { get; set; }
-
-    public required string DisplayName { get; set; }
+    public required TypeReference Type { get; set; }
 
     public required IReadOnlyList<string> Modifiers { get; set; }
 

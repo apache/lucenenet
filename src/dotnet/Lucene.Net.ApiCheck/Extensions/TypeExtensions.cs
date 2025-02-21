@@ -39,12 +39,12 @@ public static class TypeExtensions
     {
         var modifiers = new List<string>();
 
-        if (type.IsAbstract)
+        if (type is { IsAbstract: true, IsInterface: false })
         {
             modifiers.Add(type.IsSealed ? "static" : "abstract");
         }
 
-        if (type.IsSealed && !type.IsAbstract && !type.IsValueType)
+        if (type is { IsSealed: true, IsAbstract: false, IsValueType: false })
         {
             modifiers.Add("sealed");
         }
