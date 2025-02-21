@@ -14,9 +14,9 @@ main {
     padding: 1rem;
 }
 
-section.assembly {
+section {
     margin-top: 1rem;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #708090;
 }
 
 table {
@@ -25,7 +25,7 @@ table {
 }
 
 th, td {
-    border: 1px solid #ccc;
+    border: 1px solid #708090;
     padding: 0.5rem;
 }
 
@@ -35,5 +35,21 @@ th {
 
 div.subtext {
     font-size: 0.8rem;
-    color: #666;
+    color: #708090;
+}
+
+span.count {
+    margin-left: 0.5rem;
+    background-color: #708090;
+    color: white;
+    padding: 0.2rem;
+    border-radius: 0.2rem;
+}
+
+table.stats-table {
+    width: auto;
+
+    th {
+        text-align: left;
+    }
 }

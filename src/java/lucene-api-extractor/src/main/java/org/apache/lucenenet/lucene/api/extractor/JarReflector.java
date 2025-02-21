@@ -138,7 +138,7 @@ public class JarReflector {
         if (Modifier.isPublic(value)) {
             modifiers.add("public");
         }
-        if (Modifier.isAbstract(value)) {
+        if (Modifier.isAbstract(value) && !Modifier.isInterface(value)) {
             modifiers.add("abstract");
         }
         if (Modifier.isFinal(value)) {

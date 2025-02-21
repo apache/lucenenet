@@ -38,6 +38,18 @@ namespace Lucene.Net.ApiCheck.Comparison;
 /// </remarks>
 public static class ModifierComparison
 {
+    private static readonly HashSet<string> JavaPublicFinalSpecialCase = new HashSet<string>
+    {
+        "public",
+        "final"
+    };
+
+    private static readonly HashSet<string> DotNetPublicStaticSpecialCase = new HashSet<string>
+    {
+        "public",
+        "static"
+    };
+
     public enum ModifierUsage
     {
         Type,
@@ -59,6 +71,13 @@ public static class ModifierComparison
             if (!applicableDotNetModifiers.Contains("public"))
             {
                 throw new ArgumentException("All .NET types are expected to be public.");
+            }
+
+            // special case where we consider public final in Java to be equivalent to public static in .NET
+            if (applicableJavaModifiers.SetEquals(JavaPublicFinalSpecialCase)
+                && applicableDotNetModifiers.SetEquals(DotNetPublicStaticSpecialCase))
+            {
+                return true;
             }
 
             // static has different meanings in Java and .NET

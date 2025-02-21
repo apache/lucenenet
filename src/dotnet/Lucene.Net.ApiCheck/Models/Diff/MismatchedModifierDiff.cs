@@ -19,17 +19,9 @@ namespace Lucene.Net.ApiCheck.Models.Diff;
 
 public class MismatchedModifierDiff
 {
-    public required string JavaTypeKind { get; set; }
+    public required TypeReference JavaType { get; set; }
 
-    public required string JavaTypeName { get; set; }
-
-    public required string JavaDisplayName { get; set; }
-
-    public required string DotNetTypeKind { get; set; }
-
-    public required string DotNetTypeName { get; set; }
-
-    public required string DotNetDisplayName { get; set; }
+    public required TypeReference DotNetType { get; set; }
 
     public required IReadOnlyList<string> JavaModifiers { get; set; }
 

@@ -23,8 +23,48 @@ namespace Lucene.Net.ApiCheck.Comparison;
 
 public static class TypeComparison
 {
+    private static readonly Dictionary<Type, HashSet<string>> WellKnownEquivalentTypes = new()
+    {
+        [typeof(object)] = ["java.lang.Object"],
+        [typeof(ValueType)] = ["java.lang.Object"],
+        [typeof(Enum)] = ["java.lang.Enum"],
+        [typeof(IOException)] = ["java.io.IOException"],
+        [typeof(FileNotFoundException)] = ["java.io.FileNotFoundException"],
+        [typeof(Exception)] = ["java.lang.RuntimeException", "java.lang.Exception"],
+    };
+
+    public static bool TypesMatch(Type? dotNetType, string? javaTypeName)
+    {
+        if (dotNetType is null && javaTypeName is null)
+        {
+            return true;
+        }
+
+        if (dotNetType is null || javaTypeName is null)
+        {
+            return false;
+        }
+
+        var nameParts = javaTypeName.Split(".");
+
+        var typeNameStart = nameParts[^1].IndexOf('$') is > 0 and var dollarIndex
+            ? nameParts[^1][..dollarIndex]
+            : nameParts[^1];
+
+        var packageName = string.Join(".", nameParts[..^1]);
+
+        var javaType = new TypeMetadata(packageName, "class", nameParts[^1], javaTypeName, null, [], [], [], []);
+
+        return TypesMatch(dotNetType, javaType);
+    }
+
     public static bool TypesMatch(Type dotNetType, TypeMetadata javaType)
     {
+        if (WellKnownEquivalentTypes.TryGetValue(dotNetType, out HashSet<string>? wellKnownEquivalentTypes))
+        {
+            return wellKnownEquivalentTypes.Contains(javaType.FullName);
+        }
+
         if (dotNetType.GetCustomAttribute<LuceneTypeAttribute>() is { } luceneEquivalent
             && luceneEquivalent.PackageName == javaType.PackageName
             && luceneEquivalent.TypeName == javaType.Name.Replace("$", "."))
