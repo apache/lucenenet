@@ -82,11 +82,5 @@ namespace Lucene.Net.Reflection
         /// Gets or sets a justification for why the discrepancy exists.
         /// </summary>
         public string? Justification { get; set; }
-
-        /// <summary>
-        /// Converts this attribute to a <see cref="LuceneTypeInfo"/> object.
-        /// </summary>
-        /// <returns>A <see cref="LuceneTypeInfo"/> object representing the information in this attribute.</returns>
-        public LuceneTypeInfo ToLuceneTypeInfo() => new(PackageName, TypeName);
     }
 }

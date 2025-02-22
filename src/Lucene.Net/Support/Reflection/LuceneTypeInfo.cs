@@ -28,14 +28,32 @@ namespace Lucene.Net.Reflection
     [NoLuceneEquivalent]
     public class LuceneTypeInfo
     {
-        public LuceneTypeInfo(string packageName, string typeName)
+        /// <summary>
+        /// Initializes a new instance of <see cref="LuceneTypeInfo"/>.
+        /// </summary>
+        /// <param name="packageName">The package name of the Lucene type.</param>
+        /// <param name="typeName">The name of the Lucene type.</param>
+        /// <param name="baseType">The base type of the Lucene type, if any.</param>
+        public LuceneTypeInfo(string packageName, string typeName, LuceneTypeInfo? baseType)
         {
             PackageName = packageName;
             TypeName = typeName;
+            BaseType = baseType;
         }
 
+        /// <summary>
+        /// Gets the package name of the Lucene type.
+        /// </summary>
         public string PackageName { get; }
 
+        /// <summary>
+        /// Gets the name of the Lucene type.
+        /// </summary>
         public string TypeName { get; }
+
+        /// <summary>
+        /// Gets the base type of the Lucene type, if any.
+        /// </summary>
+        public LuceneTypeInfo? BaseType { get; }
     }
 }

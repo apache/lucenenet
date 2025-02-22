@@ -28,4 +28,6 @@ public class ApiDiffResult
     public int TotalMismatchedModifiers => Assemblies.Sum(a => a.MismatchedModifiers.Count);
 
     public int TotalMismatchedBaseTypes => Assemblies.Sum(a => a.MismatchedBaseTypes.Count);
+
+    public int TotalMismatchedInterfaces => Assemblies.Sum(a => a.MismatchedInterfaces.Count);
 }

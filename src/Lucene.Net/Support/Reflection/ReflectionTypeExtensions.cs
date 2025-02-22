@@ -41,13 +41,17 @@ namespace Lucene.Net.Reflection
         public static LuceneTypeInfo? GetLuceneTypeInfo(this Type type)
         {
             var equivalentAttribute = type.GetCustomAttribute<LuceneTypeAttribute>();
+            var noEquivalentAttribute = type.GetCustomAttribute<NoLuceneEquivalentAttribute>();
 
             if (equivalentAttribute != null)
             {
-                return equivalentAttribute.ToLuceneTypeInfo();
-            }
+                if (noEquivalentAttribute != null)
+                {
+                    throw new InvalidOperationException($"Type '{type.FullName}' cannot have both a LuceneTypeAttribute and a NoLuceneEquivalentAttribute.");
+                }
 
-            var noEquivalentAttribute = type.GetCustomAttribute<NoLuceneEquivalentAttribute>();
+                return new LuceneTypeInfo(equivalentAttribute.PackageName, equivalentAttribute.TypeName, type.BaseType?.GetLuceneTypeInfo());
+            }
 
             if (noEquivalentAttribute != null)
             {
@@ -64,7 +68,7 @@ namespace Lucene.Net.Reflection
 
             string typeName = type.GetInferredLuceneTypeName();
 
-            return new LuceneTypeInfo(packageName, typeName);
+            return new LuceneTypeInfo(packageName, typeName, type.BaseType?.GetLuceneTypeInfo());
         }
 
         /// <summary>
@@ -149,6 +153,14 @@ namespace Lucene.Net.Reflection
         /// <returns>true if the type has a known base type difference; otherwise, false.</returns>
         public static bool HasKnownBaseTypeDifference(this Type type)
             => type.GetCustomAttribute<LuceneBaseTypeDifferenceAttribute>() != null;
+
+        /// <summary>
+        /// Gets whether the type has a known interface difference between .NET and Java.
+        /// </summary>
+        /// <param name="type">The type to check for a known interface difference.</param>
+        /// <returns>true if the type has a known interface difference; otherwise, false.</returns>
+        public static bool HasKnownInterfaceDifference(this Type type)
+            => type.GetCustomAttribute<LuceneInterfaceDifferenceAttribute>() != null;
 
         /// <summary>
         /// Gets whether the type has no Lucene equivalent.
