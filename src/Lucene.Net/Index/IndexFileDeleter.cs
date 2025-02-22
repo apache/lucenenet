@@ -113,7 +113,11 @@ namespace Lucene.Net.Index
         /// Change to true to see details of reference counts when
         /// infoStream is enabled
         /// </summary>
-        public static bool VERBOSE_REF_COUNTS = false;
+        /// <remarks>
+        /// LUCENENET specific - was <c>VERBOSE_REF_COUNTS</c> in Java.
+        /// </remarks>
+        // LUCENENET specific - changed from a mutable static field to a property
+        public static bool VerboseRefCounts { get; set; } = false;
 
         // Used only for assert
         private readonly IndexWriter writer;
@@ -567,7 +571,7 @@ namespace Lucene.Net.Index
             RefCount rc = GetRefCount(fileName);
             if (infoStream.IsEnabled("IFD"))
             {
-                if (VERBOSE_REF_COUNTS)
+                if (VerboseRefCounts)
                 {
                     infoStream.Message("IFD", "  IncRef \"" + fileName + "\": pre-incr count is " + rc.count);
                 }
@@ -590,7 +594,7 @@ namespace Lucene.Net.Index
             RefCount rc = GetRefCount(fileName);
             if (infoStream.IsEnabled("IFD"))
             {
-                if (VERBOSE_REF_COUNTS)
+                if (VerboseRefCounts)
                 {
                     infoStream.Message("IFD", "  DecRef \"" + fileName + "\": pre-decr count is " + rc.count);
                 }

@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// Default maximum content size to process. Typically snippets
         /// closer to the beginning of the document better summarize its content
         /// </summary>
-        public static readonly int DEFAULT_MAX_LENGTH = 10000;
+        public const int DEFAULT_MAX_LENGTH = 10000;
 
         private readonly int maxLength;
 

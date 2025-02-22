@@ -47,7 +47,9 @@ namespace Lucene.Net.Analysis.En
         private KStemData6()
         {
         }
-        internal static string[] data = new string[] {
+
+        // LUCENENET specific - made readonly
+        internal static readonly string[] data = {
             "pedant","pedantic","pedantry","peddle","peddler",
             "pederast","pederasty","pedestal","pedestrian","pediatrician",
             "pediatrics","pedicab","pedicel","pedicure","pedigree",
