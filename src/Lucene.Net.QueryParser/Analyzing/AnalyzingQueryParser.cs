@@ -39,14 +39,14 @@ namespace Lucene.Net.QueryParsers.Analyzing
     /// <c>?</c> don't get removed from the search terms.
     /// <para/>
     /// <b>Warning:</b> This class should only be used with analyzers that do not use stopwords
-    /// or that add tokens. Also, several stemming analyzers are inappropriate: for example, <see cref="Analysis.De.GermanAnalyzer"/>  
-    /// will turn <c>Häuser</c> into <c>hau</c>, but <c>H?user</c> will 
+    /// or that add tokens. Also, several stemming analyzers are inappropriate: for example, <see cref="Analysis.De.GermanAnalyzer"/>
+    /// will turn <c>Häuser</c> into <c>hau</c>, but <c>H?user</c> will
     /// become <c>h?user</c> when using this parser and thus no match would be found (i.e.
-    /// using this parser will be no improvement over QueryParser in such cases). 
+    /// using this parser will be no improvement over QueryParser in such cases).
     /// </summary>
     public class AnalyzingQueryParser : Classic.QueryParser
     {
-        // gobble escaped chars or find a wildcard character 
+        // gobble escaped chars or find a wildcard character
         private readonly Regex wildcardPattern = new Regex(@"(\\.)|([?*]+)", RegexOptions.Compiled);
 
         public AnalyzingQueryParser(LuceneVersion matchVersion, string field, Analyzer analyzer)
@@ -158,7 +158,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
 
         /// <summary>
         /// Returns the analyzed form for the given chunk.
-        /// 
+        ///
         /// If the analyzer produces more than one output token from the given chunk,
         /// a ParseException is thrown.
         /// </summary>
@@ -219,7 +219,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(stream);
+                IOUtils.CloseWhileHandlingException(stream);
             }
             return analyzed;
         }

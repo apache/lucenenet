@@ -319,13 +319,10 @@ namespace Lucene.Net.Analysis.Wikipedia
             offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + termAtt.Length));
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                scanner.YyReset(m_input);
-            }
+            base.Close();
+            scanner.YyReset(m_input);
         }
 
         /// <summary>

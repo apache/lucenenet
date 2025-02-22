@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Payloads
             AssertTermEquals("dogs", filter, termAtt, payAtt, "NN".getBytes(Encoding.UTF8));
             assertFalse(filter.IncrementToken());
             filter.End();
-            filter.Dispose();
+            filter.Close();
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Payloads
             AssertTermEquals("dogs", filter, "NN".getBytes(Encoding.UTF8));
             assertFalse(filter.IncrementToken());
             filter.End();
-            filter.Dispose();
+            filter.Close();
         }
 
 
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Payloads
             AssertTermEquals("dogs", filter, termAtt, payAtt, PayloadHelper.EncodeSingle(83.7f));
             assertFalse(filter.IncrementToken());
             filter.End();
-            filter.Dispose();
+            filter.Close();
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Payloads
             AssertTermEquals("dogs", filter, termAtt, payAtt, PayloadHelper.EncodeInt32(83));
             assertFalse(filter.IncrementToken());
             filter.End();
-            filter.Dispose();
+            filter.Close();
         }
 
         internal virtual void AssertTermEquals(string expected, TokenStream stream, byte[] expectPay)

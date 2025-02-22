@@ -260,13 +260,10 @@ namespace Lucene.Net.Analysis.Core
                 Console.WriteLine(m_input.GetType().Name + ".end()");
             }
 
-            protected override void Dispose(bool disposing)
+            public override void Close()
             {
-                base.Dispose(disposing);
-                if (disposing)
-                {
-                    Console.WriteLine(m_input.GetType().Name + ".close()");
-                }
+                base.Close();
+                Console.WriteLine(m_input.GetType().Name + ".close()");
             }
 
             public override void Reset()

@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Core
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(stream);
+                IOUtils.CloseWhileHandlingException(stream);
             }
         }
 

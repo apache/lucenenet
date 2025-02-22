@@ -339,17 +339,25 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         [Test]
         public void TestTokenAttributes()
         {
-            using TokenStream ts = a.GetTokenStream("dummy", "This is a test");
-            IScriptAttribute scriptAtt = ts.AddAttribute<IScriptAttribute>();
-            ts.Reset();
-            while (ts.IncrementToken())
+            TokenStream ts = a.GetTokenStream("dummy", "This is a test");
+            try
             {
-                assertEquals(UScript.Latin, scriptAtt.Code);
-                assertEquals(UScript.GetName(UScript.Latin), scriptAtt.GetName());
-                assertEquals(UScript.GetShortName(UScript.Latin), scriptAtt.GetShortName());
-                assertTrue(ts.ReflectAsString(false).Contains("script=Latin"));
+                IScriptAttribute scriptAtt = ts.AddAttribute<IScriptAttribute>();
+                ts.Reset();
+                while (ts.IncrementToken())
+                {
+                    assertEquals(UScript.Latin, scriptAtt.Code);
+                    assertEquals(UScript.GetName(UScript.Latin), scriptAtt.GetName());
+                    assertEquals(UScript.GetShortName(UScript.Latin), scriptAtt.GetShortName());
+                    assertTrue(ts.ReflectAsString(false).Contains("script=Latin"));
+                }
+
+                ts.End();
             }
-            ts.End();
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(ts);
+            }
         }
 
         private sealed class ThreadAnonymousClass : ThreadJob
