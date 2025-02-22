@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Search
 {
@@ -102,7 +103,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Represents sorting by computed relevance. Using this sort criteria returns
         /// the same results as calling
-        /// <see cref="IndexSearcher.Search(Query, int)"/>without a sort criteria,
+        /// <see cref="IndexSearcher.Search(Query, int, CancellationToken)"/>without a sort criteria,
         /// only with slightly more overhead.
         /// </summary>
         public static readonly Sort RELEVANCE = new Sort();
@@ -116,7 +117,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Sorts by computed relevance. This is the same sort criteria as calling
-        /// <see cref="IndexSearcher.Search(Query, int)"/> without a sort criteria,
+        /// <see cref="IndexSearcher.Search(Query, int, CancellationToken)"/> without a sort criteria,
         /// only with slightly more overhead.
         /// </summary>
         public Sort()
