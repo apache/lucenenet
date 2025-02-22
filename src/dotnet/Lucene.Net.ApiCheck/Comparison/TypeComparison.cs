@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.ApiCheck.Extensions;
 using Lucene.Net.ApiCheck.Models.JavaApi;
 using Lucene.Net.Reflection;
 using System.Reflection;
@@ -33,9 +34,15 @@ public static class TypeComparison
         [typeof(Exception)] = ["java.lang.RuntimeException", "java.lang.Exception"],
     };
 
-    public static bool TypesMatch(Type? dotNetType, string? javaTypeName)
+    public static bool BaseTypesMatch(Type? dotNetType, string? javaTypeName)
     {
         if (dotNetType is null && javaTypeName is null)
+        {
+            return true;
+        }
+
+        // handle classes that are mapped to interfaces in .NET, which don't have base types
+        if (dotNetType == null && javaTypeName != null && javaTypeName.Equals("java.lang.Object", StringComparison.Ordinal))
         {
             return true;
         }
@@ -46,10 +53,6 @@ public static class TypeComparison
         }
 
         var nameParts = javaTypeName.Split(".");
-
-        var typeNameStart = nameParts[^1].IndexOf('$') is > 0 and var dollarIndex
-            ? nameParts[^1][..dollarIndex]
-            : nameParts[^1];
 
         var packageName = string.Join(".", nameParts[..^1]);
 
@@ -65,9 +68,12 @@ public static class TypeComparison
             return wellKnownEquivalentTypes.Contains(javaType.FullName);
         }
 
+        var javaFullNameParts = javaType.FullName.Split(".");
+        var javaName = javaFullNameParts[^1].Replace("$", ".");
+
         if (dotNetType.GetCustomAttribute<LuceneTypeAttribute>() is { } luceneEquivalent
-            && luceneEquivalent.PackageName == javaType.PackageName
-            && luceneEquivalent.TypeName == javaType.Name.Replace("$", "."))
+            && luceneEquivalent.PackageName.Equals(javaType.PackageName, StringComparison.Ordinal)
+            && luceneEquivalent.TypeName.Equals(javaName, StringComparison.Ordinal))
         {
             return true;
         }
@@ -79,19 +85,22 @@ public static class TypeComparison
             return false;
         }
 
-        var expectedPackage = luceneTypeInfo.PackageName;
-        var cleanJavaName = javaType.Name.EndsWith("Impl") ? javaType.Name[..^4] : javaType.Name;
-        cleanJavaName = cleanJavaName.Replace("$", ".");
+        var cleanJavaName = javaType.Kind.Equals("class", StringComparison.Ordinal)
+                            && javaName.EndsWith("Impl", StringComparison.Ordinal)
+            ? javaName[..^4]
+            : javaName;
 
-        var expectedDotNetName = javaType.Kind == "interface"
-            ? $"I{cleanJavaName}"
-            : cleanJavaName;
+        var equivalentJavaKind = dotNetType.GetTypeKind() switch
+        {
+            "interface" => "interface",
+            "class" => "class",
+            "enum" => "enum",
+            "struct" => "class",
+            _ => null
+        };
 
-        var cleanDotNetName = dotNetType.Name.IndexOf('`') is > 0 and var genericIndex
-            ? dotNetType.Name[..genericIndex]
-            : dotNetType.Name;
-
-        return string.Equals(javaType.PackageName, expectedPackage, StringComparison.OrdinalIgnoreCase)
-            && cleanDotNetName == expectedDotNetName;
+        return string.Equals(equivalentJavaKind, javaType.Kind, StringComparison.Ordinal)
+            && string.Equals(luceneTypeInfo.PackageName, javaType.PackageName, StringComparison.Ordinal)
+            && string.Equals(luceneTypeInfo.TypeName, cleanJavaName, StringComparison.Ordinal);
     }
 }

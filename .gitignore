@@ -77,3 +77,6 @@ src/java/**/work/
 # macOS files
 .DS_Store
 
+# Rider/IntelliJ files
+**/.idea/material_theme_project_new.xml
+**/.idea/misc.xml

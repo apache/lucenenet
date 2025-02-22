@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -61,7 +62,7 @@ namespace Lucene.Net.Reflection
                 return null;
             }
 
-            string typeName = type.GetLuceneTypeName();
+            string typeName = type.GetInferredLuceneTypeName();
 
             return new LuceneTypeInfo(packageName, typeName);
         }
@@ -87,31 +88,74 @@ namespace Lucene.Net.Reflection
             {
                 if (type.Namespace.StartsWith(mapping.DotNetNamespace, StringComparison.Ordinal))
                 {
-                    packageName = $"{mapping.JavaPackage}{type.Namespace.Substring(mapping.DotNetNamespace.Length)}";
+                    packageName = $"{mapping.JavaPackage}{type.Namespace.Substring(mapping.DotNetNamespace.Length).ToLowerInvariant()}";
                     break;
                 }
             }
 
             if (packageName == null)
             {
-                packageName = LuceneNetNamespaceRegex.Replace(type.Namespace, "org.apache.lucene.");
+                // assume all lower-case, any casing will have to be mapped manually
+                packageName = LuceneNetNamespaceRegex.Replace(type.Namespace, "org.apache.lucene.").ToLowerInvariant();
             }
 
             var packageNameParts = packageName.Split('.');
-            return string.Join(".", packageNameParts.Select(i => $"{char.ToLowerInvariant(i[0])}{i.Substring(1)}"));
+            return string.Join(".", packageNameParts);
         }
 
-        public static string GetLuceneTypeName(this Type type)
+        /// <summary>
+        /// Gets the inferred Lucene type name for the specified type.
+        /// </summary>
+        /// <param name="type">The type to get the Lucene type name for.</param>
+        /// <returns>The Lucene type name for the specified type.</returns>
+        public static string GetInferredLuceneTypeName(this Type type)
         {
             var typeName = type.Name;
 
-            if (typeName.Contains("`"))
+            if (typeName.Contains('`'))
             {
                 // Java Generic types are erased, so we don't include the type parameters
                 typeName = typeName.Substring(0, type.Name.IndexOf('`'));
             }
 
+            if (type.IsInterface && typeName.Length > 1 && typeName[0] == 'I' && char.IsUpper(typeName[1]))
+            {
+                typeName = typeName.Substring(1);
+            }
+
+            Type? declaringType = type.DeclaringType;
+
+            while (declaringType != null)
+            {
+                typeName = $"{declaringType.Name}.{typeName}";
+                declaringType = declaringType.DeclaringType;
+            }
+
             return typeName;
         }
+
+        /// <summary>
+        /// Gets whether the type has a known modifier difference between .NET and Java.
+        /// </summary>
+        /// <param name="type">The type to check for a known modifier difference.</param>
+        /// <returns>true if the type has a known modifier difference; otherwise, false.</returns>
+        public static bool HasKnownModifierDifference(this Type type)
+            => type.GetCustomAttribute<LuceneModifierDifferenceAttribute>() != null;
+
+        /// <summary>
+        /// Gets whether the type has a known base type difference between .NET and Java.
+        /// </summary>
+        /// <param name="type">The type to check for a known base type difference.</param>
+        /// <returns>true if the type has a known base type difference; otherwise, false.</returns>
+        public static bool HasKnownBaseTypeDifference(this Type type)
+            => type.GetCustomAttribute<LuceneBaseTypeDifferenceAttribute>() != null;
+
+        /// <summary>
+        /// Gets whether the type has no Lucene equivalent.
+        /// </summary>
+        /// <param name="type">The type to check for a Lucene equivalent.</param>
+        /// <returns>true if the type has no Lucene equivalent; otherwise, false.</returns>
+        public static bool HasNoLuceneEquivalent(this Type type)
+            => type.GetCustomAttribute<NoLuceneEquivalentAttribute>() != null;
     }
 }
