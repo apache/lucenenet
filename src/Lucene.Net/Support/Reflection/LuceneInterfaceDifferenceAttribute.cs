@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-
-#nullable enable
+﻿using System;
 
 namespace Lucene.Net.Reflection
 {
@@ -23,37 +20,24 @@ namespace Lucene.Net.Reflection
      */
 
     /// <summary>
-    /// Information about a Lucene type in Java that has an equivalent in Lucene.NET.
+    /// Suppresses API analysis warnings for differences in interfaces between .NET and Java.
     /// </summary>
     [NoLuceneEquivalent]
-    public class LuceneTypeInfo
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    public class LuceneInterfaceDifferenceAttribute : Attribute
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="LuceneTypeInfo"/>.
+        /// Initializes a new instance of <see cref="LuceneInterfaceDifferenceAttribute"/>.
         /// </summary>
-        /// <param name="packageName">The package name of the Lucene type.</param>
-        /// <param name="typeName">The name of the Lucene type.</param>
-        /// <param name="baseType">The base type of the Lucene type, if any.</param>
-        public LuceneTypeInfo(string packageName, string typeName, LuceneTypeInfo? baseType)
+        /// <param name="justification">The justification for the difference in interfaces between .NET and Java.</param>
+        public LuceneInterfaceDifferenceAttribute(string justification)
         {
-            PackageName = packageName;
-            TypeName = typeName;
-            BaseType = baseType;
+            Justification = justification;
         }
 
         /// <summary>
-        /// Gets the package name of the Lucene type.
+        /// Gets the justification for the difference in interfaces between .NET and Java.
         /// </summary>
-        public string PackageName { get; }
-
-        /// <summary>
-        /// Gets the name of the Lucene type.
-        /// </summary>
-        public string TypeName { get; }
-
-        /// <summary>
-        /// Gets the base type of the Lucene type, if any.
-        /// </summary>
-        public LuceneTypeInfo? BaseType { get; }
+        public string Justification { get; }
     }
 }

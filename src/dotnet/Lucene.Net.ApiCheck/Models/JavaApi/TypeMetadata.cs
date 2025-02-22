@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Lucene.Net.ApiCheck.Models.Diff;
+
 namespace Lucene.Net.ApiCheck.Models.JavaApi;
 
 public record TypeMetadata(
@@ -26,4 +28,13 @@ public record TypeMetadata(
     List<string> Interfaces,
     List<string> Modifiers,
     List<MethodMetadata> Methods,
-    List<FieldMetadata> Fields);
+    List<FieldMetadata> Fields)
+{
+    public TypeReference ToTypeReference()
+        => new()
+        {
+            TypeKind = Kind,
+            TypeName = FullName,
+            DisplayName = FullName.Replace("$", "."),
+        };
+}

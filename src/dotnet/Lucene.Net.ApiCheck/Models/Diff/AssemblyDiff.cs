@@ -41,5 +41,7 @@ public class AssemblyDiff
 
     public required IReadOnlyList<MismatchedBaseTypeDiff> MismatchedBaseTypes { get; set; }
 
+    public required IReadOnlyList<MismatchedInterfacesDiff> MismatchedInterfaces { get; set; }
+
     public string LuceneMavenUrl => $"https://mvnrepository.com/artifact/org.apache.lucene/{LuceneMavenCoordinates.ArtifactId}/{LuceneMavenCoordinates.Version}";
 }

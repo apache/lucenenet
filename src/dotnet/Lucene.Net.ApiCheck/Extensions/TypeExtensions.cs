@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Lucene.Net.ApiCheck.Models.Diff;
+
 namespace Lucene.Net.ApiCheck.Extensions;
 
 public static class TypeExtensions
@@ -78,4 +80,22 @@ public static class TypeExtensions
 
         return t.IsClass ? "class" : "unknown";
     }
+
+    public static TypeReference ToTypeReference(this Type type)
+        => new()
+        {
+            TypeKind = type.GetTypeKind(),
+            TypeName = type.FullName ?? type.Name,
+            DisplayName = type.FormatDisplayName()
+        };
+
+    /// <summary>
+    /// Gets the interfaces implemented by the specified type that are not inherited from the base type.
+    /// </summary>
+    /// <param name="type">The type to get the interfaces for.</param>
+    /// <returns>The interfaces implemented by the specified type that are not inherited from the base type.</returns>
+    public static IReadOnlyList<Type> GetImplementedInterfaces(this Type type)
+        => type.BaseType is not null
+        ? type.GetInterfaces().Except(type.BaseType.GetInterfaces()).ToList()
+        : type.GetInterfaces();
 }

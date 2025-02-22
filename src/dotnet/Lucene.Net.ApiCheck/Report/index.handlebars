@@ -43,6 +43,10 @@
                     <th>Mismatched base types</th>
                     <td>{{TotalMismatchedBaseTypes}}</td>
                 </tr>
+                <tr>
+                    <th>Mismatched interfaces</th>
+                    <td>{{TotalMismatchedInterfaces}}</td>
+                </tr>
                 </tbody>
             </table>
         </section>
@@ -181,33 +185,54 @@
                 </tbody>
             </table>
 
-            {{#if LibraryConfig.TypeOverridesCount}}
-            <details>
-                <summary>Type Mapping Overrides ({{LibraryConfig.TypeOverridesCount}})</summary>
-
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Java Type</th>
-                        <th>.NET Type</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {{#each LibraryConfig.TypeOverrides}}
+            <h3>
+                Mismatched Interfaces
+                <span class="count">{{MismatchedInterfaces.Count}}</span>
+            </h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Java Type</th>
+                    <th>.NET Type</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {{#if MismatchedInterfaces.Count}}
+                        {{#each MismatchedInterfaces}}
+                            <tr>
+                                <td>
+                                    {{JavaType.TypeKind}} {{JavaType.DisplayName}}
+                                    {{#if JavaInterfaces.Count}}
+                                        <ul>
+                                        {{#each JavaInterfaces}}
+                                            <li>{{DisplayName}}</li>
+                                        {{/each}}
+                                        </ul>
+                                    {{else}}
+                                        <div class="subtext">No interfaces</div>
+                                    {{/if}}
+                                </td>
+                                <td>
+                                    {{DotNetType.TypeKind}} {{DotNetType.DisplayName}}
+                                    {{#if DotNetInterfaces.Count}}
+                                        <ul>
+                                        {{#each DotNetInterfaces}}
+                                            <li>{{DisplayName}}</li>
+                                        {{/each}}
+                                        </ul>
+                                    {{else}}
+                                        <div class="subtext">No interfaces</div>
+                                    {{/if}}
+                                </td>
+                            </tr>
+                        {{/each}}
+                    {{else}}
                         <tr>
-                            <td colspan="2"><strong>Justification:</strong> {{Justification}}</td>
+                            <td colspan="2">✅ No mismatched interfaces</td>
                         </tr>
-                    {{#each JavaToDotNetTypes}}
-                        <tr>
-                            <td>{{@key}}</td>
-                            <td>{{Value}}</td>
-                        </tr>
-                    {{/each}}
-                    {{/each}}
-                    </tbody>
-                </table>
-            </details>
-            {{/if}}
+                    {{/if}}
+                </tbody>
+            </table>
         </section>
         {{/each}}
     </main>

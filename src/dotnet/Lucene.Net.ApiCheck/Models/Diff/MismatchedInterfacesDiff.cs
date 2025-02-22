@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,17 +17,13 @@
 
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
-public class ApiDiffResult
+public class MismatchedInterfacesDiff
 {
-    public required IList<AssemblyDiff> Assemblies { get; set; }
+    public required TypeReference JavaType { get; set; }
 
-    public int TotalLuceneTypesNotInLuceneNet => Assemblies.Sum(a => a.LuceneTypesNotInLuceneNet.Count);
+    public required TypeReference DotNetType { get; set; }
 
-    public int TotalLuceneNetTypesNotInLucene => Assemblies.Sum(a => a.LuceneNetTypesNotInLucene.Count);
+    public required IReadOnlyList<TypeReference> JavaInterfaces { get; set; }
 
-    public int TotalMismatchedModifiers => Assemblies.Sum(a => a.MismatchedModifiers.Count);
-
-    public int TotalMismatchedBaseTypes => Assemblies.Sum(a => a.MismatchedBaseTypes.Count);
-
-    public int TotalMismatchedInterfaces => Assemblies.Sum(a => a.MismatchedInterfaces.Count);
+    public required IReadOnlyList<TypeReference> DotNetInterfaces { get; set; }
 }

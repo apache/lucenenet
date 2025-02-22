@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using J2N.Text;
 using Lucene.Net.ApiCheck.Extensions;
 using Lucene.Net.ApiCheck.Models.JavaApi;
 using Lucene.Net.Reflection;
@@ -32,9 +33,12 @@ public static class TypeComparison
         [typeof(IOException)] = ["java.io.IOException"],
         [typeof(FileNotFoundException)] = ["java.io.FileNotFoundException"],
         [typeof(Exception)] = ["java.lang.RuntimeException", "java.lang.Exception"],
+        [typeof(IDisposable)] = ["java.lang.AutoCloseable", "java.io.Closeable"], // TODO: map ICloseable once #271 is done
+        [typeof(ICharSequence)] = ["java.lang.CharSequence"],
+        [typeof(IAppendable)] = ["java.lang.Appendable"],
     };
 
-    public static bool BaseTypesMatch(Type? dotNetType, string? javaTypeName)
+    public static bool TypeMatchesFullName(Type? dotNetType, string? javaTypeName, string? javaTypeKind)
     {
         if (dotNetType is null && javaTypeName is null)
         {
@@ -42,7 +46,7 @@ public static class TypeComparison
         }
 
         // handle classes that are mapped to interfaces in .NET, which don't have base types
-        if (dotNetType == null && javaTypeName != null && javaTypeName.Equals("java.lang.Object", StringComparison.Ordinal))
+        if (dotNetType is null && javaTypeName is not null && javaTypeName.Equals("java.lang.Object", StringComparison.Ordinal))
         {
             return true;
         }
@@ -52,11 +56,16 @@ public static class TypeComparison
             return false;
         }
 
+        if (string.IsNullOrEmpty(javaTypeKind))
+        {
+            throw new ArgumentNullException(nameof(javaTypeKind));
+        }
+
         var nameParts = javaTypeName.Split(".");
 
         var packageName = string.Join(".", nameParts[..^1]);
 
-        var javaType = new TypeMetadata(packageName, "class", nameParts[^1], javaTypeName, null, [], [], [], []);
+        var javaType = new TypeMetadata(packageName, javaTypeKind, nameParts[^1], javaTypeName, null, [], [], [], []);
 
         return TypesMatch(dotNetType, javaType);
     }
@@ -102,5 +111,15 @@ public static class TypeComparison
         return string.Equals(equivalentJavaKind, javaType.Kind, StringComparison.Ordinal)
             && string.Equals(luceneTypeInfo.PackageName, javaType.PackageName, StringComparison.Ordinal)
             && string.Equals(luceneTypeInfo.TypeName, cleanJavaName, StringComparison.Ordinal);
+    }
+
+    public static bool InterfacesMatch(IReadOnlyList<Type> dotNetInterfaces, IReadOnlyList<string> javaInterfaces)
+    {
+        if (dotNetInterfaces.Count != javaInterfaces.Count)
+        {
+            return false;
+        }
+
+        return dotNetInterfaces.All(i => javaInterfaces.Any(j => TypeMatchesFullName(i, j, "interface")));
     }
 }
