@@ -72,3 +72,7 @@ svn-*/
 
 # macOS
 .DS_Store
+
+# Rider/IntelliJ files
+**/.idea/material_theme_project_new.xml
+**/.idea/misc.xml

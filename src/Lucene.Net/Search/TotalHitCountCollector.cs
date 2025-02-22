@@ -1,3 +1,5 @@
+using Lucene.Net.Reflection;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -22,7 +24,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Just counts the total number of hits.
     /// </summary>
-
+    [LuceneBaseTypeDifference("Uses ICollector interface instead of Collector abstract base class")]
     public class TotalHitCountCollector : ICollector
     {
         private int totalHits;

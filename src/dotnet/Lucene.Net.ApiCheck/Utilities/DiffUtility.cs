@@ -129,7 +129,8 @@ public static class DiffUtility
     {
         return matchingTypes
             .Where(i => (i.JavaType.BaseType != null || i.DotNetType.BaseType != null)
-                        && !TypeComparison.TypesMatch(i.DotNetType.BaseType, i.JavaType.BaseType))
+                        && !TypeComparison.BaseTypesMatch(i.DotNetType.BaseType, i.JavaType.BaseType)
+                        && !i.DotNetType.HasKnownBaseTypeDifference())
             .Select(i => new MismatchedBaseTypeDiff
             {
                 JavaType = new TypeReference
@@ -166,7 +167,8 @@ public static class DiffUtility
         return matchingTypes
             .Where(i => !ModifierComparison.ModifiersAreEquivalent(ModifierComparison.ModifierUsage.Type,
                 i.JavaType.Modifiers,
-                i.DotNetType.GetModifiers()))
+                i.DotNetType.GetModifiers())
+                && !i.DotNetType.HasKnownModifierDifference())
             .Select(i => new MismatchedModifierDiff
             {
                 JavaType = new TypeReference
@@ -242,7 +244,7 @@ public static class DiffUtility
     internal static IReadOnlyList<Type> GetAssemblyTypesForComparison(Assembly assembly)
     {
         return assembly.GetTypes()
-            .Where(t => (t.IsPublic || t.IsNestedPublic) && t.GetCustomAttribute<NoLuceneEquivalentAttribute>() == null)
+            .Where(t => (t.IsPublic || t.IsNestedPublic) && !t.HasNoLuceneEquivalent())
             .ToList();
     }
 }

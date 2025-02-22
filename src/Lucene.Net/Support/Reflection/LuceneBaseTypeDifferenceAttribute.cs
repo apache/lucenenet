@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-
-#nullable enable
+﻿using System;
 
 namespace Lucene.Net.Reflection
 {
@@ -23,19 +20,24 @@ namespace Lucene.Net.Reflection
      */
 
     /// <summary>
-    /// Information about a Lucene type in Java that has an equivalent in Lucene.NET.
+    /// Suppresses API analysis warnings for differences in base types between .NET and Java.
     /// </summary>
     [NoLuceneEquivalent]
-    public class LuceneTypeInfo
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    public class LuceneBaseTypeDifferenceAttribute : Attribute
     {
-        public LuceneTypeInfo(string packageName, string typeName)
+        /// <summary>
+        /// Initializes a new instance of <see cref="LuceneBaseTypeDifferenceAttribute"/>.
+        /// </summary>
+        /// <param name="justification">The justification for the difference in base types between .NET and Java.</param>
+        public LuceneBaseTypeDifferenceAttribute(string justification)
         {
-            PackageName = packageName;
-            TypeName = typeName;
+            Justification = justification;
         }
 
-        public string PackageName { get; }
-
-        public string TypeName { get; }
+        /// <summary>
+        /// Gets the justification for the difference in base types between .NET and Java.
+        /// </summary>
+        public string Justification { get; }
     }
 }
