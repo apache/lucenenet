@@ -33,15 +33,23 @@ public class AssemblyDiff
 
     public required LibraryConfig LibraryConfig { get; set; }
 
-    public required IReadOnlyList<MissingTypeDiff> LuceneNetTypesNotInLucene { get; set; }
+    public required IReadOnlyList<TypeDeclaration> LuceneNetTypesNotInLucene { get; set; }
 
-    public required IReadOnlyList<MissingTypeDiff> LuceneTypesNotInLuceneNet { get; set; }
+    public required IReadOnlyList<TypeDeclaration> LuceneTypesNotInLuceneNet { get; set; }
 
-    public required IReadOnlyList<MismatchedModifierDiff> MismatchedModifiers { get; set; }
+    public required IReadOnlyList<TypeDiff> MatchingTypes { get; set; }
 
-    public required IReadOnlyList<MismatchedBaseTypeDiff> MismatchedBaseTypes { get; set; }
+    public IEnumerable<TypeDiff> TypesWithMismatchedModifiers => MatchingTypes.Where(t => t.MismatchedModifiers != null);
 
-    public required IReadOnlyList<MismatchedInterfacesDiff> MismatchedInterfaces { get; set; }
+    public int TypesWithMismatchedModifiersCount => TypesWithMismatchedModifiers.Count();
+
+    public IEnumerable<TypeDiff> TypesWithMismatchedBaseTypes => MatchingTypes.Where(t => t.MismatchedBaseType != null);
+
+    public int TypesWithMismatchedBaseTypesCount => TypesWithMismatchedBaseTypes.Count();
+
+    public IEnumerable<TypeDiff> TypesWithMismatchedInterfaces => MatchingTypes.Where(t => t.MismatchedInterfaces != null);
+
+    public int TypesWithMismatchedInterfacesCount => TypesWithMismatchedInterfaces.Count();
 
     public string LuceneMavenUrl => $"https://mvnrepository.com/artifact/org.apache.lucene/{LuceneMavenCoordinates.ArtifactId}/{LuceneMavenCoordinates.Version}";
 }

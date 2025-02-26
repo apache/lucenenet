@@ -15,19 +15,21 @@
  * limitations under the License.
  */
 
+using System.Text.Json.Serialization;
+
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
-public class MismatchedModifierDiff
+[JsonDerivedType(typeof(FieldReference), "field")]
+[JsonDerivedType(typeof(MethodReference), "method")]
+[JsonDerivedType(typeof(PropertyReference), "property")]
+[JsonDerivedType(typeof(ConstructorReference), "ctor")]
+public abstract class MemberReference
 {
-    public required TypeReference JavaType { get; set; }
+    public required MemberKind MemberKind { get; set; }
 
-    public required TypeReference DotNetType { get; set; }
+    public required string MemberName { get; set; }
 
-    public required IReadOnlyList<string> JavaModifiers { get; set; }
+    public required ModifierSet Modifiers { get; set; }
 
-    public string JavaModifiersDisplay => string.Join(" ", JavaModifiers);
-
-    public required IReadOnlyList<string> DotNetModifiers { get; set; }
-
-    public string DotNetModifiersDisplay => string.Join(" ", DotNetModifiers);
+    public required bool IsStatic { get; set; }
 }

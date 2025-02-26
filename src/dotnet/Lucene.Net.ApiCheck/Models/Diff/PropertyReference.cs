@@ -17,11 +17,13 @@
 
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
-public class MissingTypeDiff
+public class PropertyReference : MemberReference
 {
-    public required TypeReference Type { get; set; }
+    public required TypeReference? PropertyType { get; set; }
 
-    public required IReadOnlyList<string> Modifiers { get; set; }
+    public required bool HasGetter { get; set; }
 
-    public string ModifiersDisplay => string.Join(" ", Modifiers);
+    public required bool HasSetter { get; set; }
+
+    public required bool IsIndexer { get; set; }
 }

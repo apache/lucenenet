@@ -16,6 +16,7 @@
  */
 
 using HandlebarsDotNet;
+using HandlebarsDotNet.Helpers;
 using System.Reflection;
 
 namespace Lucene.Net.ApiCheck;
@@ -59,7 +60,9 @@ public static class ReportCommand
         var handlebarsStream = GetEmbeddedResourceStream("index.handlebars");
         using var indexHtmlReader = new StreamReader(handlebarsStream);
 
-        var template = Handlebars.Compile(await indexHtmlReader.ReadToEndAsync());
+        var handlebarsContext = Handlebars.Create();
+        HandlebarsHelpers.Register(handlebarsContext);
+        var template = handlebarsContext.Compile(await indexHtmlReader.ReadToEndAsync());
         var htmlOutput = template(diff);
 
         await File.WriteAllTextAsync(indexHtmlPath, htmlOutput);

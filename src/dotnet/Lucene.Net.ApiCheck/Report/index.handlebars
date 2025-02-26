@@ -70,7 +70,7 @@
                     {{#if LuceneTypesNotInLuceneNet.Count}}
                         {{#each LuceneTypesNotInLuceneNet}}
                             <tr>
-                                <td>{{ModifiersDisplay}}</td>
+                                <td>{{Modifiers.ModifiersDisplay}}</td>
                                 <td>{{Type.TypeKind}}</td>
                                 <td>{{Type.DisplayName}}</td>
                             </tr>
@@ -99,7 +99,7 @@
                     {{#if LuceneNetTypesNotInLucene.Count}}
                         {{#each LuceneNetTypesNotInLucene}}
                             <tr>
-                                <td>{{ModifiersDisplay}}</td>
+                                <td>{{Modifiers.ModifiersDisplay}}</td>
                                 <td>{{Type.TypeKind}}</td>
                                 <td>{{Type.DisplayName}}</td>
                             </tr>
@@ -114,7 +114,7 @@
 
             <h3>
                 Mismatched Modifiers
-                <span class="count">{{MismatchedModifiers.Count}}</span>
+                <span class="count">{{TypesWithMismatchedModifiersCount}}</span>
             </h3>
             <table>
                 <thead>
@@ -125,15 +125,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                    {{#if MismatchedModifiers.Count}}
-                        {{#each MismatchedModifiers}}
+                    {{#if TypesWithMismatchedModifiersCount}}
+                        {{#each TypesWithMismatchedModifiers}}
                             <tr>
                                 <td>
-                                    {{DotNetType.DisplayName}}
-                                    <div class="subtext">{{JavaType.DisplayName}}</div>
+                                    {{MatchingType.DotNet.Type.DisplayName}}
+                                    <div class="subtext">{{MatchingType.Java.Type.DisplayName}}</div>
                                 </td>
-                                <td>{{JavaModifiersDisplay}}</td>
-                                <td>{{DotNetModifiersDisplay}}</td>
+                                <td>{{MismatchedModifiers.Java.ModifiersDisplay}}</td>
+                                <td>{{MismatchedModifiers.DotNet.ModifiersDisplay}}</td>
                             </tr>
                         {{/each}}
                     {{else}}
@@ -146,7 +146,7 @@
 
             <h3>
                 Mismatched Base Types
-                <span class="count">{{MismatchedBaseTypes.Count}}</span>
+                <span class="count">{{TypesWithMismatchedBaseTypesCount}}</span>
             </h3>
             <table>
                 <thead>
@@ -156,22 +156,22 @@
                 </tr>
                 </thead>
                 <tbody>
-                    {{#if MismatchedBaseTypes.Count}}
-                        {{#each MismatchedBaseTypes}}
+                    {{#if TypesWithMismatchedBaseTypesCount}}
+                        {{#each TypesWithMismatchedBaseTypes}}
                             <tr>
                                 <td>
-                                    {{JavaType.TypeKind}} {{JavaType.DisplayName}}
-                                    {{#if JavaBaseType}}
+                                    {{MatchingType.Java.Type.TypeKind}} {{MatchingType.Java.Type.DisplayName}}
+                                    {{#if MismatchedBaseType.Java}}
                                         <div>
-                                            :&nbsp;{{JavaBaseType.DisplayName}}
+                                            :&nbsp;{{MismatchedBaseType.Java.DisplayName}}
                                         </div>
                                     {{/if}}
                                 </td>
                                 <td>
-                                    {{DotNetType.TypeKind}} {{DotNetType.DisplayName}}
-                                    {{#if DotNetBaseType}}
+                                    {{MatchingType.DotNet.Type.TypeKind}} {{MatchingType.DotNet.Type.DisplayName}}
+                                    {{#if MismatchedBaseType.DotNet}}
                                         <div>
-                                        :&nbsp;{{DotNetBaseType.DisplayName}}
+                                        :&nbsp;{{MismatchedBaseType.DotNet.DisplayName}}
                                         </div>
                                     {{/if}}
                                 </td>
@@ -187,7 +187,7 @@
 
             <h3>
                 Mismatched Interfaces
-                <span class="count">{{MismatchedInterfaces.Count}}</span>
+                <span class="count">{{TypesWithMismatchedInterfacesCount}}</span>
             </h3>
             <table>
                 <thead>
@@ -197,14 +197,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                    {{#if MismatchedInterfaces.Count}}
-                        {{#each MismatchedInterfaces}}
+                    {{#if TypesWithMismatchedInterfacesCount}}
+                        {{#each TypesWithMismatchedInterfaces}}
                             <tr>
                                 <td>
-                                    {{JavaType.TypeKind}} {{JavaType.DisplayName}}
-                                    {{#if JavaInterfaces.Count}}
+                                    {{MatchingType.Java.Type.TypeKind}} {{MatchingType.Java.Type.DisplayName}}
+                                    {{#if MismatchedInterfaces.Java.Count}}
                                         <ul>
-                                        {{#each JavaInterfaces}}
+                                        {{#each MismatchedInterfaces.Java}}
                                             <li>{{DisplayName}}</li>
                                         {{/each}}
                                         </ul>
@@ -213,10 +213,10 @@
                                     {{/if}}
                                 </td>
                                 <td>
-                                    {{DotNetType.TypeKind}} {{DotNetType.DisplayName}}
-                                    {{#if DotNetInterfaces.Count}}
+                                    {{MatchingType.DotNet.Type.TypeKind}} {{MatchingType.DotNet.Type.DisplayName}}
+                                    {{#if MismatchedInterfaces.DotNet.Count}}
                                         <ul>
-                                        {{#each DotNetInterfaces}}
+                                        {{#each MismatchedInterfaces.DotNet}}
                                             <li>{{DisplayName}}</li>
                                         {{/each}}
                                         </ul>
