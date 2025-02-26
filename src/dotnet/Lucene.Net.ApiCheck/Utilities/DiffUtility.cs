@@ -23,6 +23,7 @@ using Lucene.Net.ApiCheck.Models.Diff;
 using Lucene.Net.ApiCheck.Models.JavaApi;
 using Lucene.Net.Reflection;
 using System.Reflection;
+// ReSharper disable LocalizableElement
 
 namespace Lucene.Net.ApiCheck.Utilities;
 
@@ -90,22 +91,34 @@ public static class DiffUtility
 
     private static AssemblyDiff DiffAssembly(LibraryResult javaLib, LibraryToDiff libraryToDiff)
     {
-        // strategy:
-        // 1. get types in .NET that are not in Java library
-        // 2. get types in Java library that are not in .NET
-        // 3. get types that are in both, but have different modifiers, base types, or interfaces
-        // 4. get types that are in both, but have different members
-
         var assemblyTypes = GetAssemblyTypesForComparison(libraryToDiff.Assembly);
         var libraryConfig = libraryToDiff.LibraryConfig;
 
         var netTypesNotInJava = GetDotNetTypesNotInJava(javaLib, assemblyTypes);
         var javaTypesNotInNet = GetJavaTypesNotInDotNet(javaLib, assemblyTypes);
-        var matchingTypes = GetMatchingTypes(javaLib, assemblyTypes);
-
-        var mismatchedModifiers = GetMismatchedModifiers(matchingTypes);
-        var mismatchedBaseTypes = GetMismatchedBaseTypes(matchingTypes);
-        var mismatchedInterfaces = GetMismatchedInterfaces(matchingTypes);
+        var typeDiffs = GetMatchingTypes(javaLib, assemblyTypes)
+            .Select(i => new TypeDiff
+            {
+                MatchingType = new ComparisonPair<TypeDeclaration>
+                {
+                    Java = new TypeDeclaration
+                    {
+                        Type = i.JavaType.ToTypeReference(),
+                        Modifiers = new ModifierSet(i.JavaType.Modifiers.SortJavaModifiers().ToList()),
+                    },
+                    DotNet = new TypeDeclaration
+                    {
+                        Type = i.DotNetType.ToTypeReference(),
+                        Modifiers = new ModifierSet(i.DotNetType.GetModifiers().SortDotNetModifiers().ToList()),
+                    },
+                },
+                MismatchedModifiers = GetTypeMismatchedModifiers(i),
+                MismatchedBaseType = GetTypeMismatchedBaseType(i),
+                MismatchedInterfaces = GetTypeMismatchedInterfaces(i),
+                LuceneNetMembersNotInLucene = GetDotNetMembersNotInJava(i),
+                LuceneMembersNotInLuceneNet = GetJavaMembersNotInDotNet(i),
+            })
+            .ToList();
 
         var diff = new AssemblyDiff
         {
@@ -119,66 +132,74 @@ public static class DiffUtility
             LibraryConfig = libraryConfig,
             LuceneNetTypesNotInLucene = netTypesNotInJava,
             LuceneTypesNotInLuceneNet = javaTypesNotInNet,
-            MismatchedModifiers = mismatchedModifiers,
-            MismatchedBaseTypes = mismatchedBaseTypes,
-            MismatchedInterfaces = mismatchedInterfaces,
+            MatchingTypes = typeDiffs,
         };
 
         return diff;
     }
 
-    private static IReadOnlyList<MismatchedInterfacesDiff> GetMismatchedInterfaces(
-        IReadOnlyList<MatchingType> matchingTypes)
+    private static IReadOnlyList<MemberReference> GetJavaMembersNotInDotNet(MatchingType matchingType)
     {
-        return matchingTypes
-            .Where(i => !i.DotNetType.HasKnownInterfaceDifference()
-                        && !TypeComparison.InterfacesMatch(i.DotNetType.GetImplementedInterfaces(), i.JavaType.Interfaces))
-            .Select(i => new MismatchedInterfacesDiff
-            {
-                JavaType = i.JavaType.ToTypeReference(),
-                DotNetType = i.DotNetType.ToTypeReference(),
-                JavaInterfaces = i.JavaType.Interfaces.Select(j => j.ToJavaTypeReference("interface")).ToList(),
-                DotNetInterfaces = i.DotNetType.GetImplementedInterfaces().Select(d => d.ToTypeReference()).ToList(),
-            })
-            .OrderBy(i => i.DotNetType.DisplayName)
-            .ToList();
+        return []; // TODO
     }
 
-    private static IReadOnlyList<MismatchedBaseTypeDiff> GetMismatchedBaseTypes(
-        IReadOnlyList<MatchingType> matchingTypes)
+    private static IReadOnlyList<MemberReference> GetDotNetMembersNotInJava(MatchingType matchingType)
     {
-        return matchingTypes
-            .Where(i => (i.JavaType.BaseType != null || i.DotNetType.BaseType != null)
-                        && !i.DotNetType.HasKnownBaseTypeDifference()
-                        && !TypeComparison.TypeMatchesFullName(i.DotNetType.BaseType, i.JavaType.BaseType, "class"))
-            .Select(i => new MismatchedBaseTypeDiff
-            {
-                JavaType = i.JavaType.ToTypeReference(),
-                DotNetType = i.DotNetType.ToTypeReference(),
-                JavaBaseType = i.JavaType.BaseType?.ToJavaTypeReference("class"),
-                DotNetBaseType = i.DotNetType.BaseType?.ToTypeReference(),
-            })
-            .OrderBy(i => i.DotNetType.DisplayName)
-            .ToList();
+        return []; // TODO
     }
 
-    private static IReadOnlyList<MismatchedModifierDiff> GetMismatchedModifiers(
-        IReadOnlyList<MatchingType> matchingTypes)
+    private static ComparisonPair<IReadOnlyList<TypeReference>>? GetTypeMismatchedInterfaces(MatchingType matchingType)
     {
-        return matchingTypes
-            .Where(i => !i.DotNetType.HasKnownModifierDifference()
-                        && !ModifierComparison.ModifiersAreEquivalent(ModifierComparison.ModifierUsage.Type,
-                            i.JavaType.Modifiers,
-                            i.DotNetType.GetModifiers()))
-            .Select(i => new MismatchedModifierDiff
-            {
-                JavaType = i.JavaType.ToTypeReference(),
-                DotNetType = i.DotNetType.ToTypeReference(),
-                JavaModifiers = i.JavaType.Modifiers.SortJavaModifiers().ToList(),
-                DotNetModifiers = i.DotNetType.GetModifiers().SortDotNetModifiers().ToList(),
-            })
-            .OrderBy(i => i.DotNetType.DisplayName)
-            .ToList();
+        if (matchingType.DotNetType.HasKnownInterfaceDifference()
+            || TypeComparison.InterfacesMatch(matchingType.DotNetType.GetImplementedInterfaces(),
+                matchingType.JavaType.Interfaces))
+        {
+            return null;
+        }
+
+        return new ComparisonPair<IReadOnlyList<TypeReference>>
+        {
+            Java = matchingType.JavaType.Interfaces.Select(j => j.ToJavaTypeReference("interface")).ToList(),
+            DotNet = matchingType.DotNetType.GetImplementedInterfaces().Select(d => d.ToTypeReference()).ToList(),
+        };
+    }
+
+    private static ComparisonPair<TypeReference?>? GetTypeMismatchedBaseType(MatchingType matchingType)
+    {
+        if (matchingType.DotNetType.BaseType == null && matchingType.JavaType.BaseType == null)
+        {
+            return null;
+        }
+
+        if (matchingType.DotNetType.HasKnownBaseTypeDifference()
+            || TypeComparison.TypeMatchesFullName(matchingType.DotNetType.BaseType, matchingType.JavaType.BaseType,
+                "class"))
+        {
+            return null;
+        }
+
+        return new ComparisonPair<TypeReference?>
+        {
+            Java = matchingType.JavaType.BaseType?.ToJavaTypeReference("class"),
+            DotNet = matchingType.DotNetType.BaseType?.ToTypeReference(),
+        };
+    }
+
+    private static ComparisonPair<ModifierSet>? GetTypeMismatchedModifiers(MatchingType matchingType)
+    {
+        if (matchingType.DotNetType.HasKnownModifierDifference()
+            || ModifierComparison.ModifiersAreEquivalent(ModifierComparison.ModifierUsage.Type,
+                matchingType.JavaType.Modifiers,
+                matchingType.DotNetType.GetModifiers()))
+        {
+            return null;
+        }
+
+        return new ComparisonPair<ModifierSet>
+        {
+            Java = new ModifierSet(matchingType.JavaType.Modifiers.SortJavaModifiers().ToList()),
+            DotNet = new ModifierSet(matchingType.DotNetType.GetModifiers().SortDotNetModifiers().ToList()),
+        };
     }
 
     private static IReadOnlyList<MatchingType> GetMatchingTypes(LibraryResult javaLib,
@@ -196,30 +217,30 @@ public static class DiffUtility
             .ToList();
     }
 
-    private static IReadOnlyList<MissingTypeDiff> GetJavaTypesNotInDotNet(LibraryResult javaLib,
+    private static IReadOnlyList<TypeDeclaration> GetJavaTypesNotInDotNet(LibraryResult javaLib,
         IReadOnlyList<Type> assemblyTypes)
     {
         return javaLib.Types
             .Where(jt => jt.Modifiers.Contains("public"))
             .Where(jt => !assemblyTypes.Any(t => TypeComparison.TypesMatch(t, jt)))
-            .Select(jt => new MissingTypeDiff
+            .Select(jt => new TypeDeclaration
             {
                 Type = jt.ToTypeReference(),
-                Modifiers = jt.Modifiers.SortJavaModifiers().ToList(),
+                Modifiers = new ModifierSet(jt.Modifiers.SortJavaModifiers().ToList()),
             })
             .OrderBy(jt => jt.Type.DisplayName)
             .ToList();
     }
 
-    private static IReadOnlyList<MissingTypeDiff> GetDotNetTypesNotInJava(LibraryResult javaLib,
+    private static IReadOnlyList<TypeDeclaration> GetDotNetTypesNotInJava(LibraryResult javaLib,
         IReadOnlyList<Type> assemblyTypes)
     {
         return assemblyTypes
             .Where(t => !javaLib.Types.Any(jt => TypeComparison.TypesMatch(t, jt)))
-            .Select(t => new MissingTypeDiff
+            .Select(t => new TypeDeclaration
             {
                 Type = t.ToTypeReference(),
-                Modifiers = t.GetModifiers().SortDotNetModifiers().ToList(),
+                Modifiers = new ModifierSet(t.GetModifiers().SortDotNetModifiers().ToList()),
             })
             .OrderBy(t => t.Type.DisplayName)
             .ToList();
