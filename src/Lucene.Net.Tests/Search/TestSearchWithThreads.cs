@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
                 }
                 body.SetStringValue(sb.ToString());
                 w.AddDocument(doc);
-                sb.Remove(0, sb.Length);
+                sb.Clear();
             }
             IndexReader r = w.GetReader();
             w.Dispose();
