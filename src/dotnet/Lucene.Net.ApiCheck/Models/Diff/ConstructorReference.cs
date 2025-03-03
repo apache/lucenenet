@@ -17,7 +17,7 @@
 
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
-public class ConstructorReference : MemberReference
+public class ConstructorReference() : MemberReference(MemberKind.Constructor)
 {
-    public required IReadOnlyList<Parameter> Parameters { get; set; }
+    public required IReadOnlyList<Parameter> Parameters { get; init; }
 }

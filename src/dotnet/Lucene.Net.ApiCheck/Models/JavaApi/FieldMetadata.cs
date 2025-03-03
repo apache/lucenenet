@@ -20,4 +20,5 @@ namespace Lucene.Net.ApiCheck.Models.JavaApi;
 public record FieldMetadata(
     string Name,
     string Type,
-    List<string> Modifiers);
+    List<string> Modifiers,
+    bool IsStatic);

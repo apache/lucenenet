@@ -35,4 +35,6 @@ public record MavenCoordinates(
     public override string ToString() => $"{GroupId}:{ArtifactId}:{Version}";
 
     public string JarName => $"{ArtifactId}-{Version}.jar";
+
+    public string MvnRepositoryUrl => $"https://mvnrepository.com/artifact/{GroupId}/{ArtifactId}/{Version}";
 }

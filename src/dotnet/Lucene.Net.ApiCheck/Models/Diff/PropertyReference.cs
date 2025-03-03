@@ -17,13 +17,13 @@
 
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
-public class PropertyReference : MemberReference
+public class PropertyReference() : MemberReference(MemberKind.Property)
 {
-    public required TypeReference? PropertyType { get; set; }
+    public required TypeReference? PropertyType { get; init; }
 
-    public required bool HasGetter { get; set; }
+    public required bool HasGetter { get; init; }
 
-    public required bool HasSetter { get; set; }
+    public required bool HasSetter { get; init; }
 
-    public required bool IsIndexer { get; set; }
+    public required bool IsIndexer { get; init; }
 }

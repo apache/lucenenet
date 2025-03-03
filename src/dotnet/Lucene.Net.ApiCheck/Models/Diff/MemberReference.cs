@@ -23,13 +23,13 @@ namespace Lucene.Net.ApiCheck.Models.Diff;
 [JsonDerivedType(typeof(MethodReference), "method")]
 [JsonDerivedType(typeof(PropertyReference), "property")]
 [JsonDerivedType(typeof(ConstructorReference), "ctor")]
-public abstract class MemberReference
+public abstract class MemberReference(MemberKind memberKind)
 {
-    public required MemberKind MemberKind { get; set; }
+    public MemberKind MemberKind { get; } = memberKind;
 
-    public required string MemberName { get; set; }
+    public required string Name { get; init; }
 
-    public required ModifierSet Modifiers { get; set; }
+    public required ModifierSet Modifiers { get; init; }
 
-    public required bool IsStatic { get; set; }
+    public required bool IsStatic { get; init; }
 }

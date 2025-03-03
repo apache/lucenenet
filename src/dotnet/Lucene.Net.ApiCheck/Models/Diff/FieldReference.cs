@@ -17,7 +17,7 @@
 
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
-public class FieldReference : MemberReference
+public class FieldReference() : MemberReference(MemberKind.Field)
 {
-    public required TypeReference? FieldType { get; set; }
+    public required TypeReference? FieldType { get; init; }
 }

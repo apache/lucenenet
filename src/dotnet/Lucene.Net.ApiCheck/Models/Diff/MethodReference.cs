@@ -17,9 +17,9 @@
 
 namespace Lucene.Net.ApiCheck.Models.Diff;
 
-public class MethodReference : MemberReference
+public class MethodReference() : MemberReference(MemberKind.Method)
 {
-    public required IReadOnlyList<Parameter> Parameters { get; set; }
+    public required IReadOnlyList<Parameter> Parameters { get; init; }
 
-    public required TypeReference? ReturnType { get; set; }
+    public required TypeReference? ReturnType { get; init; }
 }

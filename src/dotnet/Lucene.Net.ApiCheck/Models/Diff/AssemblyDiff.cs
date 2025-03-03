@@ -25,6 +25,8 @@ public class AssemblyDiff
 
     public string LuceneVersion => LuceneMavenCoordinates.Version;
 
+    public string LuceneMavenUrl => LuceneMavenCoordinates.MvnRepositoryUrl;
+
     public required MavenCoordinates LuceneMavenCoordinates { get; set; }
 
     public required string LuceneNetName { get; set; }
@@ -51,5 +53,11 @@ public class AssemblyDiff
 
     public int TypesWithMismatchedInterfacesCount => TypesWithMismatchedInterfaces.Count();
 
-    public string LuceneMavenUrl => $"https://mvnrepository.com/artifact/org.apache.lucene/{LuceneMavenCoordinates.ArtifactId}/{LuceneMavenCoordinates.Version}";
+    public IEnumerable<TypeDiff> TypesWithMembersNotInLuceneNet => MatchingTypes.Where(t => t.LuceneMembersNotInLuceneNet.Count > 0);
+
+    public int TypesWithMembersNotInLuceneNetCount => TypesWithMembersNotInLuceneNet.Count();
+
+    public IEnumerable<TypeDiff> TypesWithMembersNotInLucene => MatchingTypes.Where(t => t.LuceneNetMembersNotInLucene.Count > 0);
+
+    public int TypesWithMembersNotInLuceneCount => TypesWithMembersNotInLucene.Count();
 }
