@@ -97,7 +97,8 @@ public class JarReflector {
                             var fieldMetadata = new FieldMetadata(
                                     field.getName(),
                                     field.getType().getTypeName(),
-                                    fieldModifiers
+                                    fieldModifiers,
+                                    fieldModifiers.contains("static")
                             );
                             fieldList.add(fieldMetadata);
                         }

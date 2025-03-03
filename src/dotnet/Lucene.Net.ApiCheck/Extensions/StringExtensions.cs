@@ -24,7 +24,7 @@ namespace Lucene.Net.ApiCheck.Extensions;
 /// </summary>
 public static class StringExtensions
 {
-    public static TypeReference ToJavaTypeReference(this string fullName, string kind)
+    public static TypeReference ToJavaTypeReference(this string fullName, string? kind)
         => new()
         {
             TypeKind = kind,

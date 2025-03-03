@@ -15,9 +15,17 @@
  * limitations under the License.
  */
 
-namespace Lucene.Net.ApiCheck.Models.Diff;
+using Lucene.Net.ApiCheck.Models.JavaApi;
+using System.Reflection;
 
-public class FieldReference() : MemberReference(MemberKind.Field)
+namespace Lucene.Net.ApiCheck.Comparison;
+
+public class MemberComparison
 {
-    public required TypeReference? FieldType { get; init; }
+    public static bool MembersMatch(FieldInfo dotNetField, FieldMetadata javaField)
+    {
+        // TODO: handle differences in naming conventions
+        return dotNetField.Name == javaField.Name
+            && dotNetField.IsStatic == javaField.IsStatic;
+    }
 }

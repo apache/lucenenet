@@ -19,7 +19,7 @@ package org.apache.lucenenet.lucene.api.extractor;
 
 import java.util.List;
 
-public record FieldMetadata(String name, String type, List<String> modifiers) {
+public record FieldMetadata(String name, String type, List<String> modifiers, boolean isStatic) {
     public int compareTo(FieldMetadata other) {
         return this.name.compareTo(other.name);
     }
