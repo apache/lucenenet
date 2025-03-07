@@ -54,6 +54,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 if (StackTraceHelper.DoesStackTraceContainMethod("Merge"))
                 {
+                    // LUCENENET TODO: This does not seem to be hit, unused?
                     unicodeSortOrder = false;
                     if (LuceneTestCase.Verbose)
                     {

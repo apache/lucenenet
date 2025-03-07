@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
             this.storedConsumer = storedConsumer;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterWithThreads
         public override void Flush(SegmentWriteState state)
         {
             IDictionary<string, DocFieldConsumerPerField> childFields = new Dictionary<string, DocFieldConsumerPerField>();
@@ -94,7 +94,6 @@ namespace Lucene.Net.Index
             infosWriter.Write(state.Directory, state.SegmentInfo.Name, "", state.FieldInfos, IOContext.DEFAULT);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             Exception th = null;
@@ -286,7 +285,7 @@ namespace Lucene.Net.Index
 
         private static readonly IComparer<DocFieldProcessorPerField> fieldsComp = Comparer<DocFieldProcessorPerField>.Create((o1, o2) => o1.fieldInfo.Name.CompareToOrdinal(o2.fieldInfo.Name));
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterWithThreads
         internal override void FinishDocument()
         {
             try

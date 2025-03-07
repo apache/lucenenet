@@ -158,7 +158,6 @@ namespace Lucene.Net.Index
             termsWriter.AddFieldToFlush(this);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void FinishDocument()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.finish start"));

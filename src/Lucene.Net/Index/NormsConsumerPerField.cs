@@ -1,6 +1,5 @@
 using J2N.Text;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -58,7 +57,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void Flush(SegmentWriteState state, DocValuesConsumer normsWriter)
         {
             int docCount = state.SegmentInfo.DocCount;

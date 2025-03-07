@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System;
 using Lucene.Net.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -206,7 +205,6 @@ namespace Lucene.Net.Store
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush()
         {
             SetFileLength();

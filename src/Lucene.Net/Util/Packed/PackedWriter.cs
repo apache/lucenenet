@@ -1,7 +1,5 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -86,7 +84,6 @@ namespace Lucene.Net.Util.Packed
             finished = true;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private void Flush()
         {
             encoder.Encode(nextValues, 0, nextBlocks, 0, iterations);

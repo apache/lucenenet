@@ -2,8 +2,6 @@
 using Lucene.Net.Store;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -34,11 +32,11 @@ namespace Lucene.Net.Util.Fst
     /// output by calling <see cref="Builder{T}.Add(Int32sRef,T)"/> multiple
     /// times.  The builder will then combine the outputs using
     /// the <see cref="Outputs{T}.Merge(T,T)"/> method.
-    /// 
+    ///
     /// <para>The resulting FST may not be minimal when an input has
     /// more than one output, as this requires pushing all
     /// multi-output values to a final state.
-    /// 
+    ///
     /// </para>
     /// <para>NOTE: the only way to create multiple outputs is to
     /// add the same input to the FST multiple times in a row.  This is
@@ -48,11 +46,11 @@ namespace Lucene.Net.Util.Fst
     /// <see cref="UpToTwoPositiveInt64Outputs"/> instead since it stores
     /// the outputs more compactly (by stealing a bit from each
     /// long value).
-    /// 
+    ///
     /// </para>
     /// <para>NOTE: this cannot wrap itself (ie you cannot make an
     /// FST with List&lt;List&lt;Object&gt;&gt; outputs using this).
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>
@@ -176,7 +174,6 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override object Merge(object first, object second)
         {
             IList<T> outputList = new JCG.List<T>();

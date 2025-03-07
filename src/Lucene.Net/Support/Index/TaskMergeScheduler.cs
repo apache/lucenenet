@@ -4,7 +4,6 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,12 +31,12 @@ namespace Lucene.Net.Index
     /// <summary>
     /// A <see cref="MergeScheduler"/> that runs each merge using
     /// <see cref="Task"/>s on the default <see cref="TaskScheduler"/>.
-    /// 
+    ///
     /// <para>If more than <see cref="MaxMergeCount"/> merges are
     /// requested then this class will forcefully throttle the
     /// incoming threads by pausing until one more more merges
     /// complete.</para>
-    ///  
+    ///
     /// LUCENENET specific
     /// </summary>
     [Obsolete("Use ConcurrentMergeScheduler instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
@@ -172,7 +171,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Wait for any running merge threads to finish. 
+        /// Wait for any running merge threads to finish.
         /// This call is not interruptible as used by <see cref="MergeScheduler.Dispose()"/>.
         /// </summary>
         public virtual void Sync()
@@ -214,7 +213,6 @@ namespace Lucene.Net.Index
         /// </summary>
         private int MergeThreadCount => _mergeThreads.Count(x => x.IsAlive && x.CurrentMerge != null);
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
         {
             using (_lock.Write())
@@ -322,7 +320,6 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Does the actual merge, by calling <see cref="IndexWriter.Merge(MergePolicy.OneMerge)"/> </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         protected virtual void DoMerge(MergePolicy.OneMerge merge)
         {
             _writer.Merge(merge);
@@ -478,7 +475,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Return the current merge, or <c>null</c> if this 
+            /// Return the current merge, or <c>null</c> if this
             /// <see cref="MergeThread"/> is done.
             /// </summary>
             public virtual MergePolicy.OneMerge CurrentMerge
@@ -569,9 +566,9 @@ namespace Lucene.Net.Index
                     while (true && !cancellationToken.IsCancellationRequested)
                     {
                         RunningMerge = merge;
-                        // LUCENENET NOTE: We MUST call DoMerge(merge) instead of 
+                        // LUCENENET NOTE: We MUST call DoMerge(merge) instead of
                         // _writer.Merge(merge) because the tests specifically look
-                        // for the method name DoMerge in the stack trace. 
+                        // for the method name DoMerge in the stack trace.
                         _doMerge(merge);
 
                         // Subsequent times through the loop we do any new

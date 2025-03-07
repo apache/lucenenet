@@ -1,8 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
-using System;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -64,7 +62,6 @@ namespace Lucene.Net.Index
             Reset();
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(SegmentWriteState state)
         {
             int numDocs = state.SegmentInfo.DocCount;
@@ -115,7 +112,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             Reset();
@@ -142,7 +138,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(docWriter.TestPoint("StoredFieldsWriter.finishDocument start"));

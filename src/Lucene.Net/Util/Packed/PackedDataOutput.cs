@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -72,7 +71,6 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Flush pending bits to the underlying <see cref="DataOutput"/>.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Flush()
         {
             if (remainingBits < 8)

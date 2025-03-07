@@ -4,7 +4,6 @@ using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Security;
 using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
@@ -419,7 +418,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
         {
             UninterruptableMonitor.Enter(this);
@@ -538,7 +536,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Does the actual merge, by calling <see cref="IndexWriter.Merge(MergePolicy.OneMerge)"/> </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler
         protected internal virtual void DoMerge(MergePolicy.OneMerge merge) // LUCENENET: made protected internal for test access
         {
             m_writer.Merge(merge);

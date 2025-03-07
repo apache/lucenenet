@@ -2,7 +2,6 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
 {
@@ -217,7 +216,6 @@ namespace Lucene.Net.Codecs
         /// Implementations can override this method for more sophisticated
         /// merging (bulk-byte copying, etc).
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual int Merge(MergeState mergeState)
         {
             int docCount = 0;

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;// Used only for WRITE_LOCK_NAME in deprecated create=true case:
-using System.Runtime.CompilerServices;
 using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
@@ -561,7 +560,6 @@ namespace Lucene.Net.Store
             }
 
             /// <inheritdoc/>
-            [MethodImpl(MethodImplOptions.NoInlining)]
             public override void Flush()
             {
                 // LUCENENET specific: Guard to ensure we aren't disposed.

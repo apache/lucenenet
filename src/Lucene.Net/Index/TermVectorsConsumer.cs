@@ -55,7 +55,6 @@ namespace Lucene.Net.Index
         }
 
         // LUCENENE specific - original was internal, but FreqProxTermsWriter requires public (little point, since both are internal classes)
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
             if (writer != null)
@@ -100,7 +99,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         internal void InitTermVectorsWriter()
         {
             if (writer is null)
@@ -111,7 +110,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         internal override void FinishDocument(TermsHash termsHash)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument start"));
@@ -142,7 +141,6 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled) Debugging.Assert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument end"));
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             hasVectors = false;
@@ -168,7 +166,6 @@ namespace Lucene.Net.Index
             return new TermVectorsConsumerPerField(termsHashPerField, this, fieldInfo);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void AddFieldToFlush(TermVectorsConsumerPerField fieldToFlush)
         {
             if (numVectorFields == perFields.Length)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -39,14 +38,12 @@ namespace Lucene.Net.Index
             second.AddField(docID, field, fieldInfo);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(SegmentWriteState state) // LUCENENET NOTE: original was internal, but other implementations require public
         {
             first.Flush(state);
             second.Flush(state);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort() // LUCENENET NOTE: original was internal, but other implementations require public
         {
             try
@@ -74,7 +71,6 @@ namespace Lucene.Net.Index
             second.StartDocument();
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()
         {
             first.FinishDocument();

@@ -1091,7 +1091,7 @@ namespace Lucene.Net.Index
         /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         public void Dispose()
         {
             Dispose(disposing: true, waitForMerges: true);
@@ -1124,7 +1124,7 @@ namespace Lucene.Net.Index
         /// running merges to abort, wait until those merges have
         /// finished (which should be at most a few seconds), and
         /// then return. </param>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("Usage", "CA1816:Dispose methods should call SuppressFinalize", Justification = "This is Lucene's alternate path to Dispose() and we must suppress the finalizer here.")]
         [SuppressMessage("Usage", "S2953:Methods named \"Dispose\" should implement \"IDisposable.Dispose\"", Justification = "This is Lucene's alternate path to Dispose() and we must suppress the finalizer here.")]
@@ -1176,7 +1176,7 @@ namespace Lucene.Net.Index
         /// <c>false</c> to release only unmanaged resources. </param>
         // LUCENENET specific - Added this overload to allow subclasses to dispose resoruces
         // in one place without also having to override Dispose(bool).
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler and TestIndexWriterWithThreads
         protected virtual void Dispose(bool disposing, bool waitForMerges)
         {
             if (disposing)
@@ -1185,7 +1185,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] // LUCENENET NOTE: this will interfere with stack trace inspection in tests, but that case should be covered by Dispose above which is NoInlining
         internal void Close(bool waitForMerges) // LUCENENET: made internal for test purposes
         {
             // Ensure that only one thread actually gets to do the
@@ -2753,7 +2753,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         internal void RollbackInternal() // LUCENENET: made internal for test access
         {
             bool success = false;
@@ -4220,7 +4220,6 @@ namespace Lucene.Net.Index
         /// <param name="triggerMerge"> if <c>true</c>, we may merge segments (if
         /// deletes or docs were flushed) if necessary </param>
         /// <param name="applyAllDeletes"> whether pending deletes should also </param>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Flush(bool triggerMerge, bool applyAllDeletes)
         {
             // NOTE: this method cannot be sync'd because
@@ -4955,7 +4954,7 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterWithThreads
         public virtual void Merge(MergePolicy.OneMerge merge)
         {
             bool success = false;
@@ -6475,7 +6474,7 @@ namespace Lucene.Net.Index
         /// (unlike <see cref="File.Exists(string)"/>) throws <see cref="IOException"/> if
         /// there's some unexpected error.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterDelete
         internal static bool SlowFileExists(Directory dir, string fileName) // LUCENENET: made internal for test access
         {
             try

@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -49,7 +48,6 @@ namespace Lucene.Net.Index
             this.endConsumer = parent.endConsumer.AddField(this, fieldInfo);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Abort()
         {
             try

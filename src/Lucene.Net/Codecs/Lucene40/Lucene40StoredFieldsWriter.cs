@@ -147,7 +147,6 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             try
@@ -288,7 +287,6 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override int Merge(MergeState mergeState)
         {
             int docCount = 0;
