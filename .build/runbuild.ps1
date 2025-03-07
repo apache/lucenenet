@@ -223,7 +223,7 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
             }
 
             # Execute the jobs in parallel
-            Start-Job -Name "$framework" -ScriptBlock $scriptBlock -ArgumentList @($expression)
+            Start-Job -Name "$framework" -ScriptBlock $scriptBlock -ArgumentList @($expression) | Out-Null
         }
 
         # Wait for it all to complete
