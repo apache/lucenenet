@@ -66,9 +66,9 @@ namespace Lucene.Net.Index
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                    bool isDoFlush = StackTraceHelper.DoesStackTraceContainMethod("Flush");
-                    bool isClose = StackTraceHelper.DoesStackTraceContainMethod("Close") ||
-                        StackTraceHelper.DoesStackTraceContainMethod("Dispose");
+                    bool isDoFlush = StackTraceHelper.DoesStackTraceContainMethod(nameof(DocumentsWriterPerThread.Flush));
+                    bool isClose = StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Close)) || // LUCENENET NOTE: Close is aggressively inlined, so likely won't hit this case, but would hit Dispose
+                        StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Dispose));
 
                     if (isDoFlush && !isClose && Random.NextBoolean())
                     {
@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
                 this.failed = failed;
             }
 
-            protected override void DoMerge(MergePolicy.OneMerge merge)
+            protected internal override void DoMerge(MergePolicy.OneMerge merge)
             {
                 try
                 {
@@ -385,7 +385,7 @@ namespace Lucene.Net.Index
                 SetMaxMergesAndThreads(5, 5);
             }
 
-            protected override void DoMerge(MergePolicy.OneMerge merge)
+            protected internal override void DoMerge(MergePolicy.OneMerge merge)
             {
                 totMergedBytes += merge.TotalBytesSize;
                 base.DoMerge(merge);
@@ -432,7 +432,7 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (StackTraceHelper.DoesStackTraceContainMethod("DoMerge"))
+                if (StackTraceHelper.DoesStackTraceContainMethod(nameof(ConcurrentMergeScheduler.DoMerge)))
                 {
                     throw new IOException("now failing during merge");
                 }

@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                    if (StackTraceHelper.DoesStackTraceContainMethod("Merge"))
+                    if (StackTraceHelper.DoesStackTraceContainMethod(nameof(SegmentMerger.Merge)))
                     {
                         unicodeSortOrder = false;
                         if (LuceneTestCase.Verbose)

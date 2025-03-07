@@ -1186,7 +1186,7 @@ namespace Lucene.Net.Index
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Close(bool waitForMerges)
+        internal void Close(bool waitForMerges) // LUCENENET: made internal for test purposes
         {
             // Ensure that only one thread actually gets to do the
             // closing, and make sure no commit is also in progress:
@@ -2754,7 +2754,7 @@ namespace Lucene.Net.Index
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void RollbackInternal()
+        internal void RollbackInternal() // LUCENENET: made internal for test access
         {
             bool success = false;
 
@@ -6476,7 +6476,7 @@ namespace Lucene.Net.Index
         /// there's some unexpected error.
         /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool SlowFileExists(Directory dir, string fileName)
+        internal static bool SlowFileExists(Directory dir, string fileName) // LUCENENET: made internal for test access
         {
             try
             {

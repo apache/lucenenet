@@ -539,7 +539,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Does the actual merge, by calling <see cref="IndexWriter.Merge(MergePolicy.OneMerge)"/> </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected virtual void DoMerge(MergePolicy.OneMerge merge)
+        protected internal virtual void DoMerge(MergePolicy.OneMerge merge) // LUCENENET: made protected internal for test access
         {
             m_writer.Merge(merge);
         }
