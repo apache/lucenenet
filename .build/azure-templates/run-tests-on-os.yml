@@ -205,7 +205,7 @@ steps:
 
             $testResultDirectory = "$testResultsArtifactDirectory/$testOSName/$framework/$testPlatform/$testName"
             if (!(Test-Path "$testResultDirectory")) {
-                New-Item "$testResultDirectory" -ItemType Directory -Force
+                New-Item "$testResultDirectory" -ItemType Directory -Force | Out-Null
             }
 
             if ($isNightly -ne 'true' -and $isWeekly -ne 'true') {
@@ -247,7 +247,7 @@ steps:
                 Start-Sleep -Milliseconds 500
 
                 # Execute the jobs in parallel
-                Start-Job -Name "$testName,$framework,$testPlatform" -ScriptBlock $scriptBlock -ArgumentList $testExpression
+                Start-Job -Name "$testName,$framework,$testPlatform" -ScriptBlock $scriptBlock -ArgumentList $testExpression | Out-Null
             }
         }
     }

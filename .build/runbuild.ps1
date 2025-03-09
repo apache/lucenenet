@@ -223,7 +223,7 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
             }
 
             # Execute the jobs in parallel
-            Start-Job -Name "$framework" -ScriptBlock $scriptBlock -ArgumentList @($expression)
+            Start-Job -Name "$framework" -ScriptBlock $scriptBlock -ArgumentList @($expression) | Out-Null
         }
 
         # Wait for it all to complete
@@ -343,7 +343,7 @@ task Test -depends CheckSDK, UpdateLocalSDKVersion, Restore -description "This t
             }
 
             # Execute the jobs in parallel
-            Start-Job -Name "$testName,$framework" -ScriptBlock $scriptBlock -ArgumentList $testExpression,$testResultDirectory
+            Start-Job -Name "$testName,$framework" -ScriptBlock $scriptBlock -ArgumentList $testExpression,$testResultDirectory | Out-Null
 
             #Invoke-Expression $testExpression
             ## fail the build on negative exit codes (NUnit errors - if positive it is a test count or, if 1, it could be a dotnet error)
@@ -749,14 +749,14 @@ function Delete-Added-File([string]$path) {
 
 function Ensure-Directory-Exists([string] $path) {
     if (!(Test-Path $path)) {
-        New-Item $path -ItemType Directory
+        New-Item $path -ItemType Directory | Out-Null
     }
 }
 
 function New-TemporaryDirectory {
     $parent = [System.IO.Path]::GetTempPath()
     [string] $name = [System.Guid]::NewGuid()
-    New-Item -ItemType Directory -Path (Join-Path $parent $name)
+    New-Item -ItemType Directory -Path (Join-Path $parent $name) | Out-Null
 }
 
 function Normalize-FileSystemSlashes([string]$path) {
