@@ -31056,36 +31056,37 @@ namespace Lucene.Net.Analysis.CharFilters
                 zzReader.Dispose();
         }
 
-        /// <summary>
-        /// Resets the scanner to read from a new input stream.
-        /// Does not close the old reader.
-        /// <para/>
-        /// All internal variables are reset, the old input stream
-        /// <b>cannot</b> be reused (internal buffer is discarded and lost).
-        /// Lexical state is set to <see cref="YYINITIAL"/>.
-        /// <para/>
-        /// Internal scan buffer is resized down to its initial length, if it has grown.
-        /// </summary>
-        /// <param name="reader">the new input stream</param>
-        private void YyReset(BufferedCharFilter reader)
-        {
-            zzReader = reader;
-            //zzAtBOL = true; // LUCENENET: Never read
-            zzAtEOF = false;
-            zzEOFDone = false;
-            zzEndRead = zzStartRead = 0;
-            zzCurrentPos = zzMarkedPos = 0;
-            //yyline = yychar = yycolumn = 0; // LUCENENET: Never read
-            zzLexicalState = YYINITIAL;
-            if (zzBuffer.Length > ZZ_BUFFERSIZE)
-                zzBuffer = new char[ZZ_BUFFERSIZE];
-        }
+        // LUCENENET: commented-out unused method
+        // /// <summary>
+        // /// Resets the scanner to read from a new input stream.
+        // /// Does not close the old reader.
+        // /// <para/>
+        // /// All internal variables are reset, the old input stream
+        // /// <b>cannot</b> be reused (internal buffer is discarded and lost).
+        // /// Lexical state is set to <see cref="YYINITIAL"/>.
+        // /// <para/>
+        // /// Internal scan buffer is resized down to its initial length, if it has grown.
+        // /// </summary>
+        // /// <param name="reader">the new input stream</param>
+        // private void YyReset(BufferedCharFilter reader)
+        // {
+        //     zzReader = reader;
+        //     //zzAtBOL = true; // LUCENENET: Never read
+        //     zzAtEOF = false;
+        //     zzEOFDone = false;
+        //     zzEndRead = zzStartRead = 0;
+        //     zzCurrentPos = zzMarkedPos = 0;
+        //     //yyline = yychar = yycolumn = 0; // LUCENENET: Never read
+        //     zzLexicalState = YYINITIAL;
+        //     if (zzBuffer.Length > ZZ_BUFFERSIZE)
+        //         zzBuffer = new char[ZZ_BUFFERSIZE];
+        // }
 
-
-        /// <summary>
-        /// Returns the current lexical state.
-        /// </summary>
-        private int YyState => zzLexicalState;
+        // LUCENENET: commented out unused property
+        // /// <summary>
+        // /// Returns the current lexical state.
+        // /// </summary>
+        // private int YyState => zzLexicalState;
 
         /// <summary>
         /// Enters a new lexical state
@@ -31103,16 +31104,17 @@ namespace Lucene.Net.Analysis.CharFilters
         ///// <returns>Returns the text matched by the current regular expression.</returns>
         //private string YyText => new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
 
-        /// <summary>
-        /// Returns the character at position <tt>pos</tt> from the
-        /// matched text. It is equivalent to YyText[pos], but faster
-        /// </summary>
-        /// <param name="pos">the position of the character to fetch. A value from 0 to YyLength()-1.</param>
-        /// <returns>the character at position pos</returns>
-        private char YyCharAt(int pos)
-        {
-            return zzBuffer[zzStartRead + pos];
-        }
+        // LUCENENET: commented out unused method
+        // /// <summary>
+        // /// Returns the character at position <tt>pos</tt> from the
+        // /// matched text. It is equivalent to YyText[pos], but faster
+        // /// </summary>
+        // /// <param name="pos">the position of the character to fetch. A value from 0 to YyLength()-1.</param>
+        // /// <returns>the character at position pos</returns>
+        // private char YyCharAt(int pos)
+        // {
+        //     return zzBuffer[zzStartRead + pos];
+        // }
 
 
         /// <summary>

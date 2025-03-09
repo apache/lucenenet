@@ -98,12 +98,13 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         private int I_x;
         private int I_p1;
 
-        private void copy_from(NorwegianStemmer other)
-        {
-            I_x = other.I_x;
-            I_p1 = other.I_p1;
-            base.CopyFrom(other);
-        }
+        // LUCENENET: commented out unused private method
+        // private void copy_from(NorwegianStemmer other)
+        // {
+        //     I_x = other.I_x;
+        //     I_p1 = other.I_p1;
+        //     base.CopyFrom(other);
+        // }
 
         private bool r_mark_regions()
         {

@@ -160,17 +160,18 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         private int I_x;
         private StringBuilder S_ch = new StringBuilder();
 
-        private void copy_from(KpStemmer other)
-        {
-            B_GE_removed = other.B_GE_removed;
-            B_stemmed = other.B_stemmed;
-            B_Y_found = other.B_Y_found;
-            I_p2 = other.I_p2;
-            I_p1 = other.I_p1;
-            I_x = other.I_x;
-            S_ch = other.S_ch;
-            base.CopyFrom(other);
-        }
+        // LUCENENET: commented out unused private method
+        // private void copy_from(KpStemmer other)
+        // {
+        //     B_GE_removed = other.B_GE_removed;
+        //     B_stemmed = other.B_stemmed;
+        //     B_Y_found = other.B_Y_found;
+        //     I_p2 = other.I_p2;
+        //     I_p1 = other.I_p1;
+        //     I_x = other.I_x;
+        //     S_ch = other.S_ch;
+        //     base.CopyFrom(other);
+        // }
 
         private bool r_R1()
         {

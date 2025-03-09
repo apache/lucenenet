@@ -176,19 +176,20 @@ namespace Lucene.Net.Queries.Function
                 return new JCG.List<ChildScorer> { new ChildScorer(scorer, "CUSTOM") };
             }
 
-            public Explanation Explain(int doc)
-            {
-                var subQueryExpl = weight.qWeight.Explain(readerContext, doc);
-                if (!subQueryExpl.IsMatch)
-                {
-                    return subQueryExpl;
-                }
-                float sc = subQueryExpl.Value * vals.SingleVal(doc);
-                Explanation res = new ComplexExplanation(true, sc, outerInstance.ToString() + ", product of:");
-                res.AddDetail(subQueryExpl);
-                res.AddDetail(vals.Explain(doc));
-                return res;
-            }
+            // LUCENENET: commented out unused method in private class
+            // public Explanation Explain(int doc)
+            // {
+            //     var subQueryExpl = weight.qWeight.Explain(readerContext, doc);
+            //     if (!subQueryExpl.IsMatch)
+            //     {
+            //         return subQueryExpl;
+            //     }
+            //     float sc = subQueryExpl.Value * vals.SingleVal(doc);
+            //     Explanation res = new ComplexExplanation(true, sc, outerInstance.ToString() + ", product of:");
+            //     res.AddDetail(subQueryExpl);
+            //     res.AddDetail(vals.Explain(doc));
+            //     return res;
+            // }
 
             public override long GetCost()
             {

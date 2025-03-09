@@ -399,10 +399,11 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     new Among ( "yz", -1, 34 )
                 };
 
-        private void copy_from(LovinsStemmer other)
-        {
-            base.CopyFrom(other);
-        }
+        // LUCENENET: commented out unused private method
+        // private void copy_from(LovinsStemmer other)
+        // {
+        //     base.CopyFrom(other);
+        // }
 
         private bool r_A()
         {

@@ -32,12 +32,12 @@ namespace Lucene.Net.Analysis.Hunspell
     /// <code>
     /// &lt;filter class=&quot;solr.HunspellStemFilterFactory&quot;
     ///         dictionary=&quot;en_GB.dic,my_custom.dic&quot;
-    ///         affix=&quot;en_GB.aff&quot; 
+    ///         affix=&quot;en_GB.aff&quot;
     ///         ignoreCase=&quot;false&quot;
     ///         longestOnly=&quot;false&quot; /&gt;</code>
     /// Both parameters dictionary and affix are mandatory.
     /// Dictionaries for many languages are available through the OpenOffice project.
-    /// 
+    ///
     /// See <a href="http://wiki.apache.org/solr/Hunspell">http://wiki.apache.org/solr/Hunspell</a>
     /// @lucene.experimental
     /// </summary>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Hunspell
     {
         private const string PARAM_DICTIONARY = "dictionary";
         private const string PARAM_AFFIX = "affix";
-        private const string PARAM_RECURSION_CAP = "recursionCap";
+        // private const string PARAM_RECURSION_CAP = "recursionCap"; // LUCENENET: commented out unused private constant
         private const string PARAM_IGNORE_CASE = "ignoreCase";
         private const string PARAM_LONGEST_ONLY = "longestOnly";
 
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         /// <summary>
         /// Creates a new <see cref="HunspellStemFilterFactory"/> </summary>
-        public HunspellStemFilterFactory(IDictionary<string, string> args) 
+        public HunspellStemFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             dictionaryFiles = Require(args, PARAM_DICTIONARY);
@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Hunspell
             // this isnt necessary: we properly load all dictionaries.
             // but recognize and ignore for back compat
             GetBoolean(args, "strictAffixParsing", true);
-            // this isn't necessary: multi-stage stripping is fixed and 
+            // this isn't necessary: multi-stage stripping is fixed and
             // flags like COMPLEXPREFIXES in the data itself control this.
             // but recognize and ignore for back compat
             GetInt32(args, "recursionCap", 0);

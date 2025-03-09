@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.El
     /// Greek Language.</c> Georgios Ntais
     /// <para>
     /// NOTE: Input is expected to be casefolded for Greek (including folding of final
-    /// sigma to sigma), and with diacritics removed. This can be achieved with 
+    /// sigma to sigma), and with diacritics removed. This can be achieved with
     /// either <see cref="GreekLowerCaseFilter"/> or ICUFoldingFilter.
     /// @lucene.experimental
     /// </para>
@@ -81,13 +81,13 @@ namespace Lucene.Net.Analysis.El
 
         private static int Rule0(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
-            if (len > 9 && (StemmerUtil.EndsWith(s, len, "καθεστωτοσ") || 
+            if (len > 9 && (StemmerUtil.EndsWith(s, len, "καθεστωτοσ") ||
                 StemmerUtil.EndsWith(s, len, "καθεστωτων")))
             {
                 return len - 4;
             }
 
-            if (len > 8 && (StemmerUtil.EndsWith(s, len, "γεγονοτοσ") || 
+            if (len > 8 && (StemmerUtil.EndsWith(s, len, "γεγονοτοσ") ||
                 StemmerUtil.EndsWith(s, len, "γεγονοτων")))
             {
                 return len - 4;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.El
                 return len - 3;
             }
 
-            if (len > 7 && (StemmerUtil.EndsWith(s, len, "τατογιου") || 
+            if (len > 7 && (StemmerUtil.EndsWith(s, len, "τατογιου") ||
                 StemmerUtil.EndsWith(s, len, "τατογιων")))
             {
                 return len - 4;
@@ -114,15 +114,15 @@ namespace Lucene.Net.Analysis.El
                 return len - 2;
             }
 
-            if (len > 6 && (StemmerUtil.EndsWith(s, len, "σκαγιου")) || 
-                StemmerUtil.EndsWith(s, len, "σκαγιων") || 
-                StemmerUtil.EndsWith(s, len, "ολογιου") || 
-                StemmerUtil.EndsWith(s, len, "ολογιων") || 
-                StemmerUtil.EndsWith(s, len, "κρεατοσ") || 
-                StemmerUtil.EndsWith(s, len, "κρεατων") || 
-                StemmerUtil.EndsWith(s, len, "περατοσ") || 
-                StemmerUtil.EndsWith(s, len, "περατων") || 
-                StemmerUtil.EndsWith(s, len, "τερατοσ") || 
+            if (len > 6 && (StemmerUtil.EndsWith(s, len, "σκαγιου")) ||
+                StemmerUtil.EndsWith(s, len, "σκαγιων") ||
+                StemmerUtil.EndsWith(s, len, "ολογιου") ||
+                StemmerUtil.EndsWith(s, len, "ολογιων") ||
+                StemmerUtil.EndsWith(s, len, "κρεατοσ") ||
+                StemmerUtil.EndsWith(s, len, "κρεατων") ||
+                StemmerUtil.EndsWith(s, len, "περατοσ") ||
+                StemmerUtil.EndsWith(s, len, "περατων") ||
+                StemmerUtil.EndsWith(s, len, "τερατοσ") ||
                 StemmerUtil.EndsWith(s, len, "τερατων"))
             {
                 return len - 4;
@@ -138,33 +138,33 @@ namespace Lucene.Net.Analysis.El
                 return len - 2;
             }
 
-            if (len > 5 && (StemmerUtil.EndsWith(s, len, "φαγιου") || 
-                StemmerUtil.EndsWith(s, len, "φαγιων") || 
-                StemmerUtil.EndsWith(s, len, "σογιου") || 
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "φαγιου") ||
+                StemmerUtil.EndsWith(s, len, "φαγιων") ||
+                StemmerUtil.EndsWith(s, len, "σογιου") ||
                 StemmerUtil.EndsWith(s, len, "σογιων")))
             {
                 return len - 4;
             }
 
-            if (len > 5 && (StemmerUtil.EndsWith(s, len, "σκαγια") || 
-                StemmerUtil.EndsWith(s, len, "ολογια") || 
-                StemmerUtil.EndsWith(s, len, "κρεατα") || 
-                StemmerUtil.EndsWith(s, len, "περατα") || 
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "σκαγια") ||
+                StemmerUtil.EndsWith(s, len, "ολογια") ||
+                StemmerUtil.EndsWith(s, len, "κρεατα") ||
+                StemmerUtil.EndsWith(s, len, "περατα") ||
                 StemmerUtil.EndsWith(s, len, "τερατα")))
             {
                 return len - 3;
             }
 
-            if (len > 4 && (StemmerUtil.EndsWith(s, len, "φαγια") || 
-                StemmerUtil.EndsWith(s, len, "σογια") || 
-                StemmerUtil.EndsWith(s, len, "φωτοσ") || 
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "φαγια") ||
+                StemmerUtil.EndsWith(s, len, "σογια") ||
+                StemmerUtil.EndsWith(s, len, "φωτοσ") ||
                 StemmerUtil.EndsWith(s, len, "φωτων")))
             {
                 return len - 3;
             }
 
-            if (len > 4 && (StemmerUtil.EndsWith(s, len, "κρεασ") || 
-                StemmerUtil.EndsWith(s, len, "περασ") || 
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "κρεασ") ||
+                StemmerUtil.EndsWith(s, len, "περασ") ||
                 StemmerUtil.EndsWith(s, len, "τερασ")))
             {
                 return len - 2;
@@ -185,19 +185,19 @@ namespace Lucene.Net.Analysis.El
 
         private static int Rule1(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
-            if (len > 4 && (StemmerUtil.EndsWith(s, len, "αδεσ") || 
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "αδεσ") ||
                 StemmerUtil.EndsWith(s, len, "αδων")))
             {
                 len -= 4;
-                if (!(StemmerUtil.EndsWith(s, len, "οκ") || 
-                    StemmerUtil.EndsWith(s, len, "μαμ") || 
-                    StemmerUtil.EndsWith(s, len, "μαν") || 
-                    StemmerUtil.EndsWith(s, len, "μπαμπ") || 
-                    StemmerUtil.EndsWith(s, len, "πατερ") || 
-                    StemmerUtil.EndsWith(s, len, "γιαγι") || 
-                    StemmerUtil.EndsWith(s, len, "νταντ") || 
-                    StemmerUtil.EndsWith(s, len, "κυρ") || 
-                    StemmerUtil.EndsWith(s, len, "θει") || 
+                if (!(StemmerUtil.EndsWith(s, len, "οκ") ||
+                    StemmerUtil.EndsWith(s, len, "μαμ") ||
+                    StemmerUtil.EndsWith(s, len, "μαν") ||
+                    StemmerUtil.EndsWith(s, len, "μπαμπ") ||
+                    StemmerUtil.EndsWith(s, len, "πατερ") ||
+                    StemmerUtil.EndsWith(s, len, "γιαγι") ||
+                    StemmerUtil.EndsWith(s, len, "νταντ") ||
+                    StemmerUtil.EndsWith(s, len, "κυρ") ||
+                    StemmerUtil.EndsWith(s, len, "θει") ||
                     StemmerUtil.EndsWith(s, len, "πεθερ")))
                 {
                     len += 2; // add back -αδ
@@ -208,17 +208,17 @@ namespace Lucene.Net.Analysis.El
 
         private static int Rule2(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
-            if (len > 4 && (StemmerUtil.EndsWith(s, len, "εδεσ") || 
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "εδεσ") ||
                 StemmerUtil.EndsWith(s, len, "εδων")))
             {
                 len -= 4;
                 if (StemmerUtil.EndsWith(s, len, "οπ") ||
-                    StemmerUtil.EndsWith(s, len, "ιπ") || 
-                    StemmerUtil.EndsWith(s, len, "εμπ") || 
-                    StemmerUtil.EndsWith(s, len, "υπ") || 
-                    StemmerUtil.EndsWith(s, len, "γηπ") || 
-                    StemmerUtil.EndsWith(s, len, "δαπ") || 
-                    StemmerUtil.EndsWith(s, len, "κρασπ") || 
+                    StemmerUtil.EndsWith(s, len, "ιπ") ||
+                    StemmerUtil.EndsWith(s, len, "εμπ") ||
+                    StemmerUtil.EndsWith(s, len, "υπ") ||
+                    StemmerUtil.EndsWith(s, len, "γηπ") ||
+                    StemmerUtil.EndsWith(s, len, "δαπ") ||
+                    StemmerUtil.EndsWith(s, len, "κρασπ") ||
                     StemmerUtil.EndsWith(s, len, "μιλ"))
                 {
                     len += 2; // add back -εδ
@@ -229,24 +229,24 @@ namespace Lucene.Net.Analysis.El
 
         private static int Rule3(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
-            if (len > 5 && (StemmerUtil.EndsWith(s, len, "ουδεσ") || 
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "ουδεσ") ||
                 StemmerUtil.EndsWith(s, len, "ουδων")))
             {
                 len -= 5;
-                if (StemmerUtil.EndsWith(s, len, "αρκ") || 
-                    StemmerUtil.EndsWith(s, len, "καλιακ") || 
-                    StemmerUtil.EndsWith(s, len, "πεταλ") || 
-                    StemmerUtil.EndsWith(s, len, "λιχ") || 
-                    StemmerUtil.EndsWith(s, len, "πλεξ") || 
-                    StemmerUtil.EndsWith(s, len, "σκ") || 
-                    StemmerUtil.EndsWith(s, len, "σ") || 
-                    StemmerUtil.EndsWith(s, len, "φλ") || 
-                    StemmerUtil.EndsWith(s, len, "φρ") || 
-                    StemmerUtil.EndsWith(s, len, "βελ") || 
-                    StemmerUtil.EndsWith(s, len, "λουλ") || 
-                    StemmerUtil.EndsWith(s, len, "χν") || 
-                    StemmerUtil.EndsWith(s, len, "σπ") || 
-                    StemmerUtil.EndsWith(s, len, "τραγ") || 
+                if (StemmerUtil.EndsWith(s, len, "αρκ") ||
+                    StemmerUtil.EndsWith(s, len, "καλιακ") ||
+                    StemmerUtil.EndsWith(s, len, "πεταλ") ||
+                    StemmerUtil.EndsWith(s, len, "λιχ") ||
+                    StemmerUtil.EndsWith(s, len, "πλεξ") ||
+                    StemmerUtil.EndsWith(s, len, "σκ") ||
+                    StemmerUtil.EndsWith(s, len, "σ") ||
+                    StemmerUtil.EndsWith(s, len, "φλ") ||
+                    StemmerUtil.EndsWith(s, len, "φρ") ||
+                    StemmerUtil.EndsWith(s, len, "βελ") ||
+                    StemmerUtil.EndsWith(s, len, "λουλ") ||
+                    StemmerUtil.EndsWith(s, len, "χν") ||
+                    StemmerUtil.EndsWith(s, len, "σπ") ||
+                    StemmerUtil.EndsWith(s, len, "τραγ") ||
                     StemmerUtil.EndsWith(s, len, "φε"))
                 {
                     len += 3; // add back -ουδ
@@ -261,7 +261,7 @@ namespace Lucene.Net.Analysis.El
 
         private static int Rule4(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
-            if (len > 3 && (StemmerUtil.EndsWith(s, len, "εωσ") || 
+            if (len > 3 && (StemmerUtil.EndsWith(s, len, "εωσ") ||
                 StemmerUtil.EndsWith(s, len, "εων")))
             {
                 len -= 3;
@@ -283,7 +283,7 @@ namespace Lucene.Net.Analysis.El
                     len++; // add back -ι
                 }
             }
-            else if (len > 3 && (StemmerUtil.EndsWith(s, len, "ιου") || 
+            else if (len > 3 && (StemmerUtil.EndsWith(s, len, "ιου") ||
                 StemmerUtil.EndsWith(s, len, "ιων")))
             {
                 len -= 3;
@@ -308,13 +308,13 @@ namespace Lucene.Net.Analysis.El
         private static int Rule6(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
             bool removed = false;
-            if (len > 3 && (StemmerUtil.EndsWith(s, len, "ικα") || 
+            if (len > 3 && (StemmerUtil.EndsWith(s, len, "ικα") ||
                 StemmerUtil.EndsWith(s, len, "ικο")))
             {
                 len -= 3;
                 removed = true;
             }
-            else if (len > 4 && (StemmerUtil.EndsWith(s, len, "ικου") || 
+            else if (len > 4 && (StemmerUtil.EndsWith(s, len, "ικου") ||
                 StemmerUtil.EndsWith(s, len, "ικων")))
             {
                 len -= 4;
@@ -353,8 +353,8 @@ namespace Lucene.Net.Analysis.El
             {
                 len -= 6;
             }
-            else if (len > 5 && (StemmerUtil.EndsWith(s, len, "αγαμε") || 
-                StemmerUtil.EndsWith(s, len, "ησαμε") || 
+            else if (len > 5 && (StemmerUtil.EndsWith(s, len, "αγαμε") ||
+                StemmerUtil.EndsWith(s, len, "ησαμε") ||
                 StemmerUtil.EndsWith(s, len, "ηκαμε")))
             {
                 len -= 5;
@@ -405,23 +405,23 @@ namespace Lucene.Net.Analysis.El
                 len -= 8;
                 removed = true;
             }
-            else if (len > 7 && StemmerUtil.EndsWith(s, len, "ιοντανε") || 
-                StemmerUtil.EndsWith(s, len, "ουντανε") || 
+            else if (len > 7 && StemmerUtil.EndsWith(s, len, "ιοντανε") ||
+                StemmerUtil.EndsWith(s, len, "ουντανε") ||
                 StemmerUtil.EndsWith(s, len, "ηθηκανε"))
             {
                 len -= 7;
                 removed = true;
             }
-            else if (len > 6 && StemmerUtil.EndsWith(s, len, "ιοτανε") || 
-                StemmerUtil.EndsWith(s, len, "οντανε") || 
+            else if (len > 6 && StemmerUtil.EndsWith(s, len, "ιοτανε") ||
+                StemmerUtil.EndsWith(s, len, "οντανε") ||
                 StemmerUtil.EndsWith(s, len, "ουσανε"))
             {
                 len -= 6;
                 removed = true;
             }
-            else if (len > 5 && StemmerUtil.EndsWith(s, len, "αγανε") || 
-                StemmerUtil.EndsWith(s, len, "ησανε") || 
-                StemmerUtil.EndsWith(s, len, "οτανε") || 
+            else if (len > 5 && StemmerUtil.EndsWith(s, len, "αγανε") ||
+                StemmerUtil.EndsWith(s, len, "ησανε") ||
+                StemmerUtil.EndsWith(s, len, "οτανε") ||
                 StemmerUtil.EndsWith(s, len, "ηκανε"))
             {
                 len -= 5;
@@ -468,38 +468,38 @@ namespace Lucene.Net.Analysis.El
             if (len > 3 && StemmerUtil.EndsWith(s, len, "ετε"))
             {
                 len -= 3;
-                if (exc9.Contains(s, 0, len) || 
-                    EndsWithVowelNoY(s, len) || 
-                    StemmerUtil.EndsWith(s, len, "οδ") || 
-                    StemmerUtil.EndsWith(s, len, "αιρ") || 
-                    StemmerUtil.EndsWith(s, len, "φορ") || 
-                    StemmerUtil.EndsWith(s, len, "ταθ") || 
-                    StemmerUtil.EndsWith(s, len, "διαθ") || 
-                    StemmerUtil.EndsWith(s, len, "σχ") || 
-                    StemmerUtil.EndsWith(s, len, "ενδ") || 
-                    StemmerUtil.EndsWith(s, len, "ευρ") || 
-                    StemmerUtil.EndsWith(s, len, "τιθ") || 
-                    StemmerUtil.EndsWith(s, len, "υπερθ") || 
-                    StemmerUtil.EndsWith(s, len, "ραθ") || 
-                    StemmerUtil.EndsWith(s, len, "ενθ") || 
-                    StemmerUtil.EndsWith(s, len, "ροθ") || 
-                    StemmerUtil.EndsWith(s, len, "σθ") || 
-                    StemmerUtil.EndsWith(s, len, "πυρ") || 
-                    StemmerUtil.EndsWith(s, len, "αιν") || 
-                    StemmerUtil.EndsWith(s, len, "συνδ") || 
-                    StemmerUtil.EndsWith(s, len, "συν") || 
-                    StemmerUtil.EndsWith(s, len, "συνθ") || 
-                    StemmerUtil.EndsWith(s, len, "χωρ") || 
-                    StemmerUtil.EndsWith(s, len, "πον") || 
-                    StemmerUtil.EndsWith(s, len, "βρ") || 
-                    StemmerUtil.EndsWith(s, len, "καθ") || 
-                    StemmerUtil.EndsWith(s, len, "ευθ") || 
-                    StemmerUtil.EndsWith(s, len, "εκθ") || 
-                    StemmerUtil.EndsWith(s, len, "νετ") || 
-                    StemmerUtil.EndsWith(s, len, "ρον") || 
-                    StemmerUtil.EndsWith(s, len, "αρκ") || 
-                    StemmerUtil.EndsWith(s, len, "βαρ") || 
-                    StemmerUtil.EndsWith(s, len, "βολ") || 
+                if (exc9.Contains(s, 0, len) ||
+                    EndsWithVowelNoY(s, len) ||
+                    StemmerUtil.EndsWith(s, len, "οδ") ||
+                    StemmerUtil.EndsWith(s, len, "αιρ") ||
+                    StemmerUtil.EndsWith(s, len, "φορ") ||
+                    StemmerUtil.EndsWith(s, len, "ταθ") ||
+                    StemmerUtil.EndsWith(s, len, "διαθ") ||
+                    StemmerUtil.EndsWith(s, len, "σχ") ||
+                    StemmerUtil.EndsWith(s, len, "ενδ") ||
+                    StemmerUtil.EndsWith(s, len, "ευρ") ||
+                    StemmerUtil.EndsWith(s, len, "τιθ") ||
+                    StemmerUtil.EndsWith(s, len, "υπερθ") ||
+                    StemmerUtil.EndsWith(s, len, "ραθ") ||
+                    StemmerUtil.EndsWith(s, len, "ενθ") ||
+                    StemmerUtil.EndsWith(s, len, "ροθ") ||
+                    StemmerUtil.EndsWith(s, len, "σθ") ||
+                    StemmerUtil.EndsWith(s, len, "πυρ") ||
+                    StemmerUtil.EndsWith(s, len, "αιν") ||
+                    StemmerUtil.EndsWith(s, len, "συνδ") ||
+                    StemmerUtil.EndsWith(s, len, "συν") ||
+                    StemmerUtil.EndsWith(s, len, "συνθ") ||
+                    StemmerUtil.EndsWith(s, len, "χωρ") ||
+                    StemmerUtil.EndsWith(s, len, "πον") ||
+                    StemmerUtil.EndsWith(s, len, "βρ") ||
+                    StemmerUtil.EndsWith(s, len, "καθ") ||
+                    StemmerUtil.EndsWith(s, len, "ευθ") ||
+                    StemmerUtil.EndsWith(s, len, "εκθ") ||
+                    StemmerUtil.EndsWith(s, len, "νετ") ||
+                    StemmerUtil.EndsWith(s, len, "ρον") ||
+                    StemmerUtil.EndsWith(s, len, "αρκ") ||
+                    StemmerUtil.EndsWith(s, len, "βαρ") ||
+                    StemmerUtil.EndsWith(s, len, "βολ") ||
                     StemmerUtil.EndsWith(s, len, "ωφελ"))
                 {
                     len += 2; // add back -ετ
@@ -556,10 +556,10 @@ namespace Lucene.Net.Analysis.El
         }
 
 #pragma warning disable 612, 618
-        private static readonly CharArraySet exc12a = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc12a = new CharArraySet(LuceneVersion.LUCENE_CURRENT,
             new string[] { "π", "απ", "συμπ", "ασυμπ", "ακαταπ", "αμεταμφ" }, false);
 
-        private static readonly CharArraySet exc12b = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc12b = new CharArraySet(LuceneVersion.LUCENE_CURRENT,
             new string[] { "αλ", "αρ", "εκτελ", "ζ", "μ", "ξ", "παρακαλ", "αρ", "προ", "νισ" }, false);
 #pragma warning restore 612, 618
 
@@ -616,12 +616,12 @@ namespace Lucene.Net.Analysis.El
                 removed = true;
             }
 
-            if (removed && (exc13.Contains(s, 0, len) || 
-                StemmerUtil.EndsWith(s, len, "σκωλ") || 
-                StemmerUtil.EndsWith(s, len, "σκουλ") || 
-                StemmerUtil.EndsWith(s, len, "ναρθ") || 
-                StemmerUtil.EndsWith(s, len, "σφ") || 
-                StemmerUtil.EndsWith(s, len, "οθ") || 
+            if (removed && (exc13.Contains(s, 0, len) ||
+                StemmerUtil.EndsWith(s, len, "σκωλ") ||
+                StemmerUtil.EndsWith(s, len, "σκουλ") ||
+                StemmerUtil.EndsWith(s, len, "ναρθ") ||
+                StemmerUtil.EndsWith(s, len, "σφ") ||
+                StemmerUtil.EndsWith(s, len, "οθ") ||
                 StemmerUtil.EndsWith(s, len, "πιθ")))
             {
                 len += 2; // add back the -ηκ
@@ -647,26 +647,26 @@ namespace Lucene.Net.Analysis.El
                 len -= 5;
                 removed = true;
             }
-            else if (len > 4 && (StemmerUtil.EndsWith(s, len, "ουσα") || 
+            else if (len > 4 && (StemmerUtil.EndsWith(s, len, "ουσα") ||
                 StemmerUtil.EndsWith(s, len, "ουσε")))
             {
                 len -= 4;
                 removed = true;
             }
 
-            if (removed && (exc14.Contains(s, 0, len) || 
-                EndsWithVowel(s, len) || 
-                StemmerUtil.EndsWith(s, len, "ποδαρ") || 
-                StemmerUtil.EndsWith(s, len, "βλεπ") || 
-                StemmerUtil.EndsWith(s, len, "πανταχ") || 
-                StemmerUtil.EndsWith(s, len, "φρυδ") || 
-                StemmerUtil.EndsWith(s, len, "μαντιλ") || 
-                StemmerUtil.EndsWith(s, len, "μαλλ") || 
-                StemmerUtil.EndsWith(s, len, "κυματ") || 
-                StemmerUtil.EndsWith(s, len, "λαχ") || 
-                StemmerUtil.EndsWith(s, len, "ληγ") || 
-                StemmerUtil.EndsWith(s, len, "φαγ") || 
-                StemmerUtil.EndsWith(s, len, "ομ") || 
+            if (removed && (exc14.Contains(s, 0, len) ||
+                EndsWithVowel(s, len) ||
+                StemmerUtil.EndsWith(s, len, "ποδαρ") ||
+                StemmerUtil.EndsWith(s, len, "βλεπ") ||
+                StemmerUtil.EndsWith(s, len, "πανταχ") ||
+                StemmerUtil.EndsWith(s, len, "φρυδ") ||
+                StemmerUtil.EndsWith(s, len, "μαντιλ") ||
+                StemmerUtil.EndsWith(s, len, "μαλλ") ||
+                StemmerUtil.EndsWith(s, len, "κυματ") ||
+                StemmerUtil.EndsWith(s, len, "λαχ") ||
+                StemmerUtil.EndsWith(s, len, "ληγ") ||
+                StemmerUtil.EndsWith(s, len, "φαγ") ||
+                StemmerUtil.EndsWith(s, len, "ομ") ||
                 StemmerUtil.EndsWith(s, len, "πρωτ")))
             {
                 len += 3; // add back -ουσ
@@ -708,16 +708,16 @@ namespace Lucene.Net.Analysis.El
 
             if (removed)
             {
-                bool cond1 = exc15a.Contains(s, 0, len) || 
-                    StemmerUtil.EndsWith(s, len, "οφ") || 
-                    StemmerUtil.EndsWith(s, len, "πελ") || 
-                    StemmerUtil.EndsWith(s, len, "χορτ") || 
-                    StemmerUtil.EndsWith(s, len, "λλ") || 
-                    StemmerUtil.EndsWith(s, len, "σφ") || 
-                    StemmerUtil.EndsWith(s, len, "ρπ") || 
-                    StemmerUtil.EndsWith(s, len, "φρ") || 
-                    StemmerUtil.EndsWith(s, len, "πρ") || 
-                    StemmerUtil.EndsWith(s, len, "λοχ") || 
+                bool cond1 = exc15a.Contains(s, 0, len) ||
+                    StemmerUtil.EndsWith(s, len, "οφ") ||
+                    StemmerUtil.EndsWith(s, len, "πελ") ||
+                    StemmerUtil.EndsWith(s, len, "χορτ") ||
+                    StemmerUtil.EndsWith(s, len, "λλ") ||
+                    StemmerUtil.EndsWith(s, len, "σφ") ||
+                    StemmerUtil.EndsWith(s, len, "ρπ") ||
+                    StemmerUtil.EndsWith(s, len, "φρ") ||
+                    StemmerUtil.EndsWith(s, len, "πρ") ||
+                    StemmerUtil.EndsWith(s, len, "λοχ") ||
                     StemmerUtil.EndsWith(s, len, "σμην");
 
                 bool cond2 = exc15b.Contains(s, 0, len) || StemmerUtil.EndsWith(s, len, "κολλ");
@@ -861,105 +861,105 @@ namespace Lucene.Net.Analysis.El
                 return len - 9;
             }
 
-            if (len > 8 && (StemmerUtil.EndsWith(s, len, "ιομασταν") || 
-                StemmerUtil.EndsWith(s, len, "ιοσασταν") || 
-                StemmerUtil.EndsWith(s, len, "ιουμαστε") || 
+            if (len > 8 && (StemmerUtil.EndsWith(s, len, "ιομασταν") ||
+                StemmerUtil.EndsWith(s, len, "ιοσασταν") ||
+                StemmerUtil.EndsWith(s, len, "ιουμαστε") ||
                 StemmerUtil.EndsWith(s, len, "οντουσαν")))
             {
                 return len - 8;
             }
 
-            if (len > 7 && (StemmerUtil.EndsWith(s, len, "ιεμαστε") || 
-                StemmerUtil.EndsWith(s, len, "ιεσαστε") || 
-                StemmerUtil.EndsWith(s, len, "ιομουνα") || 
-                StemmerUtil.EndsWith(s, len, "ιοσαστε") || 
-                StemmerUtil.EndsWith(s, len, "ιοσουνα") || 
-                StemmerUtil.EndsWith(s, len, "ιουνται") || 
-                StemmerUtil.EndsWith(s, len, "ιουνταν") || 
-                StemmerUtil.EndsWith(s, len, "ηθηκατε") || 
-                StemmerUtil.EndsWith(s, len, "ομασταν") || 
-                StemmerUtil.EndsWith(s, len, "οσασταν") || 
+            if (len > 7 && (StemmerUtil.EndsWith(s, len, "ιεμαστε") ||
+                StemmerUtil.EndsWith(s, len, "ιεσαστε") ||
+                StemmerUtil.EndsWith(s, len, "ιομουνα") ||
+                StemmerUtil.EndsWith(s, len, "ιοσαστε") ||
+                StemmerUtil.EndsWith(s, len, "ιοσουνα") ||
+                StemmerUtil.EndsWith(s, len, "ιουνται") ||
+                StemmerUtil.EndsWith(s, len, "ιουνταν") ||
+                StemmerUtil.EndsWith(s, len, "ηθηκατε") ||
+                StemmerUtil.EndsWith(s, len, "ομασταν") ||
+                StemmerUtil.EndsWith(s, len, "οσασταν") ||
                 StemmerUtil.EndsWith(s, len, "ουμαστε")))
             {
                 return len - 7;
             }
 
-            if (len > 6 && (StemmerUtil.EndsWith(s, len, "ιομουν") || 
-                StemmerUtil.EndsWith(s, len, "ιονταν") || 
-                StemmerUtil.EndsWith(s, len, "ιοσουν") || 
-                StemmerUtil.EndsWith(s, len, "ηθειτε") || 
-                StemmerUtil.EndsWith(s, len, "ηθηκαν") || 
-                StemmerUtil.EndsWith(s, len, "ομουνα") || 
-                StemmerUtil.EndsWith(s, len, "οσαστε") || 
-                StemmerUtil.EndsWith(s, len, "οσουνα") || 
-                StemmerUtil.EndsWith(s, len, "ουνται") || 
-                StemmerUtil.EndsWith(s, len, "ουνταν") || 
+            if (len > 6 && (StemmerUtil.EndsWith(s, len, "ιομουν") ||
+                StemmerUtil.EndsWith(s, len, "ιονταν") ||
+                StemmerUtil.EndsWith(s, len, "ιοσουν") ||
+                StemmerUtil.EndsWith(s, len, "ηθειτε") ||
+                StemmerUtil.EndsWith(s, len, "ηθηκαν") ||
+                StemmerUtil.EndsWith(s, len, "ομουνα") ||
+                StemmerUtil.EndsWith(s, len, "οσαστε") ||
+                StemmerUtil.EndsWith(s, len, "οσουνα") ||
+                StemmerUtil.EndsWith(s, len, "ουνται") ||
+                StemmerUtil.EndsWith(s, len, "ουνταν") ||
                 StemmerUtil.EndsWith(s, len, "ουσατε")))
             {
                 return len - 6;
             }
 
-            if (len > 5 && (StemmerUtil.EndsWith(s, len, "αγατε") || 
-                StemmerUtil.EndsWith(s, len, "ιεμαι") || 
-                StemmerUtil.EndsWith(s, len, "ιεται") || 
-                StemmerUtil.EndsWith(s, len, "ιεσαι") || 
-                StemmerUtil.EndsWith(s, len, "ιοταν") || 
-                StemmerUtil.EndsWith(s, len, "ιουμα") || 
-                StemmerUtil.EndsWith(s, len, "ηθεισ") || 
-                StemmerUtil.EndsWith(s, len, "ηθουν") || 
-                StemmerUtil.EndsWith(s, len, "ηκατε") || 
-                StemmerUtil.EndsWith(s, len, "ησατε") || 
-                StemmerUtil.EndsWith(s, len, "ησουν") || 
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "αγατε") ||
+                StemmerUtil.EndsWith(s, len, "ιεμαι") ||
+                StemmerUtil.EndsWith(s, len, "ιεται") ||
+                StemmerUtil.EndsWith(s, len, "ιεσαι") ||
+                StemmerUtil.EndsWith(s, len, "ιοταν") ||
+                StemmerUtil.EndsWith(s, len, "ιουμα") ||
+                StemmerUtil.EndsWith(s, len, "ηθεισ") ||
+                StemmerUtil.EndsWith(s, len, "ηθουν") ||
+                StemmerUtil.EndsWith(s, len, "ηκατε") ||
+                StemmerUtil.EndsWith(s, len, "ησατε") ||
+                StemmerUtil.EndsWith(s, len, "ησουν") ||
                 StemmerUtil.EndsWith(s, len, "ομουν") ||
-                StemmerUtil.EndsWith(s, len, "ονται") || 
-                StemmerUtil.EndsWith(s, len, "ονταν") || 
-                StemmerUtil.EndsWith(s, len, "οσουν") || 
-                StemmerUtil.EndsWith(s, len, "ουμαι") || 
+                StemmerUtil.EndsWith(s, len, "ονται") ||
+                StemmerUtil.EndsWith(s, len, "ονταν") ||
+                StemmerUtil.EndsWith(s, len, "οσουν") ||
+                StemmerUtil.EndsWith(s, len, "ουμαι") ||
                 StemmerUtil.EndsWith(s, len, "ουσαν")))
             {
                 return len - 5;
             }
 
-            if (len > 4 && (StemmerUtil.EndsWith(s, len, "αγαν") || 
-                StemmerUtil.EndsWith(s, len, "αμαι") || 
-                StemmerUtil.EndsWith(s, len, "ασαι") || 
-                StemmerUtil.EndsWith(s, len, "αται") || 
-                StemmerUtil.EndsWith(s, len, "ειτε") || 
-                StemmerUtil.EndsWith(s, len, "εσαι") || 
-                StemmerUtil.EndsWith(s, len, "εται") || 
-                StemmerUtil.EndsWith(s, len, "ηδεσ") || 
-                StemmerUtil.EndsWith(s, len, "ηδων") || 
-                StemmerUtil.EndsWith(s, len, "ηθει") || 
-                StemmerUtil.EndsWith(s, len, "ηκαν") || 
-                StemmerUtil.EndsWith(s, len, "ησαν") || 
-                StemmerUtil.EndsWith(s, len, "ησει") || 
-                StemmerUtil.EndsWith(s, len, "ησεσ") || 
-                StemmerUtil.EndsWith(s, len, "ομαι") || 
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "αγαν") ||
+                StemmerUtil.EndsWith(s, len, "αμαι") ||
+                StemmerUtil.EndsWith(s, len, "ασαι") ||
+                StemmerUtil.EndsWith(s, len, "αται") ||
+                StemmerUtil.EndsWith(s, len, "ειτε") ||
+                StemmerUtil.EndsWith(s, len, "εσαι") ||
+                StemmerUtil.EndsWith(s, len, "εται") ||
+                StemmerUtil.EndsWith(s, len, "ηδεσ") ||
+                StemmerUtil.EndsWith(s, len, "ηδων") ||
+                StemmerUtil.EndsWith(s, len, "ηθει") ||
+                StemmerUtil.EndsWith(s, len, "ηκαν") ||
+                StemmerUtil.EndsWith(s, len, "ησαν") ||
+                StemmerUtil.EndsWith(s, len, "ησει") ||
+                StemmerUtil.EndsWith(s, len, "ησεσ") ||
+                StemmerUtil.EndsWith(s, len, "ομαι") ||
                 StemmerUtil.EndsWith(s, len, "οταν")))
             {
                 return len - 4;
             }
 
-            if (len > 3 && (StemmerUtil.EndsWith(s, len, "αει") || 
-                StemmerUtil.EndsWith(s, len, "εισ") || 
-                StemmerUtil.EndsWith(s, len, "ηθω") || 
-                StemmerUtil.EndsWith(s, len, "ησω") || 
-                StemmerUtil.EndsWith(s, len, "ουν") || 
+            if (len > 3 && (StemmerUtil.EndsWith(s, len, "αει") ||
+                StemmerUtil.EndsWith(s, len, "εισ") ||
+                StemmerUtil.EndsWith(s, len, "ηθω") ||
+                StemmerUtil.EndsWith(s, len, "ησω") ||
+                StemmerUtil.EndsWith(s, len, "ουν") ||
                 StemmerUtil.EndsWith(s, len, "ουσ")))
             {
                 return len - 3;
             }
 
-            if (len > 2 && (StemmerUtil.EndsWith(s, len, "αν") || 
-                StemmerUtil.EndsWith(s, len, "ασ") || 
-                StemmerUtil.EndsWith(s, len, "αω") || 
-                StemmerUtil.EndsWith(s, len, "ει") || 
-                StemmerUtil.EndsWith(s, len, "εσ") || 
-                StemmerUtil.EndsWith(s, len, "ησ") || 
-                StemmerUtil.EndsWith(s, len, "οι") || 
-                StemmerUtil.EndsWith(s, len, "οσ") || 
-                StemmerUtil.EndsWith(s, len, "ου") || 
-                StemmerUtil.EndsWith(s, len, "υσ") || 
+            if (len > 2 && (StemmerUtil.EndsWith(s, len, "αν") ||
+                StemmerUtil.EndsWith(s, len, "ασ") ||
+                StemmerUtil.EndsWith(s, len, "αω") ||
+                StemmerUtil.EndsWith(s, len, "ει") ||
+                StemmerUtil.EndsWith(s, len, "εσ") ||
+                StemmerUtil.EndsWith(s, len, "ησ") ||
+                StemmerUtil.EndsWith(s, len, "οι") ||
+                StemmerUtil.EndsWith(s, len, "οσ") ||
+                StemmerUtil.EndsWith(s, len, "ου") ||
+                StemmerUtil.EndsWith(s, len, "υσ") ||
                 StemmerUtil.EndsWith(s, len, "ων")))
             {
                 return len - 2;
@@ -975,17 +975,17 @@ namespace Lucene.Net.Analysis.El
 
         private static int Rule22(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
-            if (StemmerUtil.EndsWith(s, len, "εστερ") || 
+            if (StemmerUtil.EndsWith(s, len, "εστερ") ||
                 StemmerUtil.EndsWith(s, len, "εστατ"))
             {
                 return len - 5;
             }
 
-            if (StemmerUtil.EndsWith(s, len, "οτερ") || 
-                StemmerUtil.EndsWith(s, len, "οτατ") || 
-                StemmerUtil.EndsWith(s, len, "υτερ") || 
-                StemmerUtil.EndsWith(s, len, "υτατ") || 
-                StemmerUtil.EndsWith(s, len, "ωτερ") || 
+            if (StemmerUtil.EndsWith(s, len, "οτερ") ||
+                StemmerUtil.EndsWith(s, len, "οτατ") ||
+                StemmerUtil.EndsWith(s, len, "υτερ") ||
+                StemmerUtil.EndsWith(s, len, "υτατ") ||
+                StemmerUtil.EndsWith(s, len, "ωτερ") ||
                 StemmerUtil.EndsWith(s, len, "ωτατ"))
             {
                 return len - 4;
@@ -994,39 +994,40 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        /// <summary>
-        /// Checks if the word contained in the leading portion of char[] array , 
-        /// ends with the suffix given as parameter.
-        /// </summary>
-        /// <param name="s"> A char[] array that represents a word. </param>
-        /// <param name="len"> The length of the char[] array. </param>
-        /// <param name="suffix"> A <see cref="string"/> object to check if the word given ends with these characters. </param>
-        /// <returns> True if the word ends with the suffix given , false otherwise. </returns>
-        private static bool EndsWith(char[] s, int len, string suffix) // LUCENENET: CA1822: Mark members as static
-        {
-            int suffixLen = suffix.Length;
-            if (suffixLen > len)
-            {
-                return false;
-            }
-            for (int i = suffixLen - 1; i >= 0; i--)
-            {
-                if (s[len - (suffixLen - i)] != suffix[i])
-                {
-                    return false;
-                }
-            }
+        // LUCENENET: commented out unused private method
+        // /// <summary>
+        // /// Checks if the word contained in the leading portion of char[] array ,
+        // /// ends with the suffix given as parameter.
+        // /// </summary>
+        // /// <param name="s"> A char[] array that represents a word. </param>
+        // /// <param name="len"> The length of the char[] array. </param>
+        // /// <param name="suffix"> A <see cref="string"/> object to check if the word given ends with these characters. </param>
+        // /// <returns> True if the word ends with the suffix given , false otherwise. </returns>
+        // private static bool EndsWith(char[] s, int len, string suffix) // LUCENENET: CA1822: Mark members as static
+        // {
+        //     int suffixLen = suffix.Length;
+        //     if (suffixLen > len)
+        //     {
+        //         return false;
+        //     }
+        //     for (int i = suffixLen - 1; i >= 0; i--)
+        //     {
+        //         if (s[len - (suffixLen - i)] != suffix[i])
+        //         {
+        //             return false;
+        //         }
+        //     }
+        //
+        //     return true;
+        // }
 
-            return true;
-        }
-
         /// <summary>
-        /// Checks if the word contained in the leading portion of <see cref="T:char[]"/> array , 
+        /// Checks if the word contained in the leading portion of <see cref="T:char[]"/> array ,
         /// ends with a Greek vowel.
         /// </summary>
         /// <param name="s"> A <see cref="T:char[]"/> array that represents a word. </param>
         /// <param name="len"> The length of the <see cref="T:char[]"/> array. </param>
-        /// <returns> True if the word contained in the leading portion of <see cref="T:char[]"/> array , 
+        /// <returns> True if the word contained in the leading portion of <see cref="T:char[]"/> array ,
         /// ends with a vowel , false otherwise. </returns>
         private static bool EndsWithVowel(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
@@ -1050,12 +1051,12 @@ namespace Lucene.Net.Analysis.El
         }
 
         /// <summary>
-        /// Checks if the word contained in the leading portion of <see cref="T:char[]"/> array , 
+        /// Checks if the word contained in the leading portion of <see cref="T:char[]"/> array ,
         /// ends with a Greek vowel.
         /// </summary>
         /// <param name="s"> A <see cref="T:char[]"/> array that represents a word. </param>
         /// <param name="len"> The length of the <see cref="T:char[]"/> array. </param>
-        /// <returns> True if the word contained in the leading portion of <see cref="T:char[]"/> array , 
+        /// <returns> True if the word contained in the leading portion of <see cref="T:char[]"/> array ,
         /// ends with a vowel , false otherwise. </returns>
         private static bool EndsWithVowelNoY(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {

@@ -40,10 +40,13 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                     return -1;
             }
         }
-        private int JjStartNfa_1(int pos, long active0)
-        {
-            return JjMoveNfa_1(JjStopStringLiteralDfa_1(pos, active0), pos + 1);
-        }
+
+        // LUCENENET: commented out unused private method
+        // private int JjStartNfa_1(int pos, long active0)
+        // {
+        //     return JjMoveNfa_1(JjStopStringLiteralDfa_1(pos, active0), pos + 1);
+        // }
+
         private int JjStopAtPos(int pos, int kind)
         {
             jjmatchedKind = kind;
