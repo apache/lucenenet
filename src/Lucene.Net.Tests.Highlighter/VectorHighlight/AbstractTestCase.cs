@@ -311,7 +311,7 @@ namespace Lucene.Net.Search.VectorHighlight
             {
                 startTerm = 0;
                 startOffset = nextStartOffset;
-                snippetBuffer.Remove(0, snippetBuffer.Length);
+                snippetBuffer.Clear();
                 while (true)
                 {
                     if (ch != -1)

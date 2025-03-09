@@ -1,4 +1,6 @@
 ﻿// commons-codec version compatibility level: 1.9
+
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Text;
@@ -317,7 +319,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 if (lastChar == 'S')
                 {
                     //key.deleteCharAt(key.length() - 1);
-                    key.Remove(key.Length - 1, 1);
+                    key.Delete(key.Length - 1, 1);
                     lastChar = key[key.Length - 1];
                 }
 
@@ -328,7 +330,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                     if (last2Char == 'A' && lastChar == 'Y')
                     {
                         //.key.deleteCharAt(key.length() - 2);
-                        key.Remove(key.Length - 2, 1);
+                        key.Delete(key.Length - 2, 1);
                     }
                 }
 
@@ -336,7 +338,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 if (lastChar == 'A')
                 {
                     //key.deleteCharAt(key.length() - 1);
-                    key.Remove(key.Length - 1, 1);
+                    key.Delete(key.Length - 1, 1);
                 }
             }
 

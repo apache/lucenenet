@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -24,14 +26,14 @@ namespace Lucene.Net.Analysis.Nl
      */
 
     /// <summary>
-    /// A stemmer for Dutch words. 
+    /// A stemmer for Dutch words.
     /// <para>
     /// The algorithm is an implementation of
     /// the <a href="http://snowball.tartarus.org/algorithms/dutch/stemmer.html">dutch stemming</a>
     /// algorithm in Martin Porter's snowball project.
     /// </para> </summary>
-    /// @deprecated (3.1) Use <see cref="Tartarus.Snowball.Ext.DutchStemmer"/> instead, 
-    /// which has the same functionality. This filter will be removed in Lucene 5.0 
+    /// @deprecated (3.1) Use <see cref="Tartarus.Snowball.Ext.DutchStemmer"/> instead,
+    /// which has the same functionality. This filter will be removed in Lucene 5.0
     [Obsolete("(3.1) Use Tartarus.Snowball.Ext.DutchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public class DutchStemmer
     {
@@ -67,8 +69,7 @@ namespace Lucene.Net.Analysis.Nl
             }
 
             // Reset the StringBuilder.
-            sb.Remove(0, sb.Length);
-            sb.Insert(0, term);
+            sb.Replace(0, sb.Length, term);
             // Stemming starts here...
             Substitute(sb);
             StoreYandI(sb);
@@ -94,7 +95,7 @@ namespace Lucene.Net.Analysis.Nl
                 int index = s.Length - end.Length;
                 if (s.EndsWith(end, StringComparison.Ordinal) && index >= _R1 && IsValidEnEnding(sb, index - 1))
                 {
-                    sb.Remove(index, index + end.Length - index);
+                    sb.Delete(index, index + end.Length - index);
                     UnDouble(sb, index);
                     return true;
                 }
@@ -117,7 +118,8 @@ namespace Lucene.Net.Analysis.Nl
             if (s.EndsWith("heden", StringComparison.Ordinal))
             {
                 //sb.Remove(_R1, lengthR1 + _R1 - _R1).Insert(_R1, sb.Substring(_R1, lengthR1).replaceAll("heden", "heid"));
-                sb.Remove(_R1, lengthR1 + _R1 - _R1).Insert(_R1, sb.ToString(_R1, lengthR1).Replace("heden", "heid"));
+                // LUCENENET NOTE: Per #664, can't use Replace instead of Delete/Insert because argument references sb after Remove/Delete call
+                sb.Delete(_R1, lengthR1 + _R1 - _R1).Insert(_R1, sb.ToString(_R1, lengthR1).Replace("heden", "heid"));
                 return;
             }
 
@@ -128,12 +130,12 @@ namespace Lucene.Net.Analysis.Nl
 
             if (s.EndsWith("se", StringComparison.Ordinal) && (index = s.Length - 2) >= _R1 && IsValidSEnding(sb, index - 1))
             {
-                sb.Remove(index, index + 2 - index);
+                sb.Delete(index, index + 2 - index);
                 return;
             }
             if (s.EndsWith("s", StringComparison.Ordinal) && (index = s.Length - 1) >= _R1 && IsValidSEnding(sb, index - 1))
             {
-                sb.Remove(index, index + 1 - index);
+                sb.Delete(index, index + 1 - index);
             }
         }
 
@@ -153,7 +155,7 @@ namespace Lucene.Net.Analysis.Nl
             int index = s.Length - 1;
             if (index >= _R1 && s.EndsWith("e", StringComparison.Ordinal) && !IsVowel(sb[index - 1]))
             {
-                sb.Remove(index, index + 1 - index);
+                sb.Delete(index, index + 1 - index);
                 UnDouble(sb);
                 _removedE = true;
             }
@@ -173,7 +175,7 @@ namespace Lucene.Net.Analysis.Nl
             int index = s.Length - 4;
             if (s.EndsWith("heid", StringComparison.Ordinal) && index >= _R2 && sb[index - 1] != 'c')
             {
-                sb.Remove(index, index + 4 - index); //remove heid
+                sb.Delete(index, index + 4 - index); //remove heid
                 EnEnding(sb);
             }
         }
@@ -202,13 +204,13 @@ namespace Lucene.Net.Analysis.Nl
 
             if ((s.EndsWith("end", StringComparison.Ordinal) || s.EndsWith("ing", StringComparison.Ordinal)) && (index = s.Length - 3) >= _R2)
             {
-                sb.Remove(index, index + 3 - index);
+                sb.Delete(index, index + 3 - index);
                 if (sb[index - 2] == 'i' && sb[index - 1] == 'g')
                 {
                     if (sb[index - 3] != 'e' && index - 2 >= _R2) // LUCENENET: '&' was changed to '&&' following - https://github.com/apache/lucenenet/issues/673
                     {
                         index -= 2;
-                        sb.Remove(index, index + 2 - index);
+                        sb.Delete(index, index + 2 - index);
                     }
                 }
                 else
@@ -221,26 +223,26 @@ namespace Lucene.Net.Analysis.Nl
             {
                 if (sb[index - 1] != 'e')
                 {
-                    sb.Remove(index, index + 2 - index);
+                    sb.Delete(index, index + 2 - index);
                 }
                 return;
             }
             if (s.EndsWith("lijk", StringComparison.Ordinal) && (index = s.Length - 4) >= _R2)
             {
-                sb.Remove(index, index + 4 - index);
+                sb.Delete(index, index + 4 - index);
                 Step2(sb);
                 return;
             }
             if (s.EndsWith("baar", StringComparison.Ordinal) && (index = s.Length - 4) >= _R2)
             {
-                sb.Remove(index, index + 4 - index);
+                sb.Delete(index, index + 4 - index);
                 return;
             }
             if (s.EndsWith("bar", StringComparison.Ordinal) && (index = s.Length - 3) >= _R2)
             {
                 if (_removedE)
                 {
-                    sb.Remove(index, index + 3 - index);
+                    sb.Delete(index, index + 3 - index);
                 }
                 //return; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
             }
@@ -264,7 +266,7 @@ namespace Lucene.Net.Analysis.Nl
             char d = end[3];
             if (v1 == v2 && d != 'I' && v1 != 'i' && IsVowel(v1) && !IsVowel(d) && !IsVowel(c))
             {
-                sb.Remove(sb.Length - 2, (sb.Length - 1) - (sb.Length - 2));
+                sb.Delete(sb.Length - 2, (sb.Length - 1) - (sb.Length - 2));
             }
         }
 
@@ -374,7 +376,7 @@ namespace Lucene.Net.Analysis.Nl
             string s = sb.ToString(0, endIndex);
             if (s.EndsWith("kk", StringComparison.Ordinal) || s.EndsWith("tt", StringComparison.Ordinal) || s.EndsWith("dd", StringComparison.Ordinal) || s.EndsWith("nn", StringComparison.Ordinal) || s.EndsWith("mm", StringComparison.Ordinal) || s.EndsWith("ff", StringComparison.Ordinal))
             {
-                sb.Remove(endIndex - 1, endIndex - (endIndex - 1));
+                sb.Delete(endIndex - 1, endIndex - (endIndex - 1));
             }
         }
 
@@ -436,8 +438,7 @@ namespace Lucene.Net.Analysis.Nl
         private void ReStoreYandI(StringBuilder sb)
         {
             string tmp = sb.ToString();
-            sb.Remove(0, sb.Length);
-            sb.Insert(0, tmp.Replace("I", "i").Replace("Y", "y"));
+            sb.Replace(0, sb.Length, tmp.Replace("I", "i").Replace("Y", "y"));
         }
 
         private bool IsVowel(char c)
