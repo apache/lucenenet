@@ -278,13 +278,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         private int I_p1;
         private int I_pV;
 
-        private void copy_from(SpanishStemmer other)
-        {
-            I_p2 = other.I_p2;
-            I_p1 = other.I_p1;
-            I_pV = other.I_pV;
-            base.CopyFrom(other);
-        }
+        // LUCENENET: commented out unused private method
+        // private void copy_from(SpanishStemmer other)
+        // {
+        //     I_p2 = other.I_p2;
+        //     I_p1 = other.I_p1;
+        //     I_pV = other.I_pV;
+        //     base.CopyFrom(other);
+        // }
 
         private bool r_mark_regions()
         {

@@ -134,13 +134,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         private int I_p2;
         private int I_p1;
 
-        private void copy_from(PorterStemmer other)
-        {
-            B_Y_found = other.B_Y_found;
-            I_p2 = other.I_p2;
-            I_p1 = other.I_p1;
-            base.CopyFrom(other);
-        }
+        // LUCENENET: commented out unused private method
+        // private void copy_from(PorterStemmer other)
+        // {
+        //     B_Y_found = other.B_Y_found;
+        //     I_p2 = other.I_p2;
+        //     I_p1 = other.I_p1;
+        //     base.CopyFrom(other);
+        // }
 
         [ExceptionToNetNumericConvention]
         private bool r_shortv()

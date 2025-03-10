@@ -513,11 +513,12 @@ namespace Lucene.Net.Index.Memory
                 }
             }
 
-            internal IndexSearcher Searcher
-            {
-                get => this.searcher; // LUCENENET specific: added getter per MSDN guidelines
-                set => this.searcher = value;
-            }
+            // LUCENENET: commented out unused internal property
+            // internal IndexSearcher Searcher
+            // {
+            //     get => this.searcher; // LUCENENET specific: added getter per MSDN guidelines
+            //     set => this.searcher = value;
+            // }
 
             [SuppressMessage("Style", "IDE0025:Use expression body for properties", Justification = "Multiple lines")]
             public override int NumDocs

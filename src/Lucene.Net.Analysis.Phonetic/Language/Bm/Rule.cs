@@ -157,19 +157,19 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             return rules;
         }
 
-#pragma warning disable IDE0051 // Remove unused private members
-        private static bool Contains(ICharSequence chars, char input)
-#pragma warning restore IDE0051 // Remove unused private members
-        {
-            for (int i = 0; i < chars.Length; i++)
-            {
-                if (chars[i] == input)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        // LUCENENET: commented out unused private method
+        // private static bool Contains(ICharSequence chars, char input)
+        // {
+        //     for (int i = 0; i < chars.Length; i++)
+        //     {
+        //         if (chars[i] == input)
+        //         {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // }
+
         private static bool Contains(string chars, char input)
         {
             for (int i = 0; i < chars.Length; i++)
@@ -181,19 +181,19 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             }
             return false;
         }
-#pragma warning disable IDE0051 // Remove unused private members
-        private static bool Contains(StringBuilder chars, char input)
-#pragma warning restore IDE0051 // Remove unused private members
-        {
-            for (int i = 0; i < chars.Length; i++)
-            {
-                if (chars[i] == input)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+
+        // LUCENENET: commented out unused private method
+        // private static bool Contains(StringBuilder chars, char input)
+        // {
+        //     for (int i = 0; i < chars.Length; i++)
+        //     {
+        //         if (chars[i] == input)
+        //         {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // }
 
         private static string CreateResourceName(NameType nameType, RuleType rt, string lang)
         {

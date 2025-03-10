@@ -100,13 +100,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         private int I_p1;
         private bool B_e_found;
 
-        private void copy_from(DutchStemmer other)
-        {
-            I_p2 = other.I_p2;
-            I_p1 = other.I_p1;
-            B_e_found = other.B_e_found;
-            base.CopyFrom(other);
-        }
+        // LUCENENET: commented out unused private method
+        // private void copy_from(DutchStemmer other)
+        // {
+        //     I_p2 = other.I_p2;
+        //     I_p1 = other.I_p1;
+        //     B_e_found = other.B_e_found;
+        //     base.CopyFrom(other);
+        // }
 
         private bool r_prelude()
         {

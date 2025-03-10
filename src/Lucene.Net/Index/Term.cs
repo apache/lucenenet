@@ -37,7 +37,9 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class Term : IComparable<Term>, IEquatable<Term> // LUCENENET specific - class implements IEquatable<T>
     {
+#if FEATURE_UTF8_TOUTF16
         private const int CharStackBufferSize = 64;
+#endif
 
         /// <summary>
         /// Constructs a <see cref="Term"/> with the given field and bytes.

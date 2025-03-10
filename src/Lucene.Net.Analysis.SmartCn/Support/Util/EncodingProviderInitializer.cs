@@ -15,6 +15,7 @@ namespace Lucene.Net.Util
     {
         private static int initialized;
 
+#if FEATURE_ENCODINGPROVIDERS
         private static bool IsNetFramework =>
 #if NETSTANDARD2_0
             RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase);
@@ -22,6 +23,7 @@ namespace Lucene.Net.Util
             true;
 #else
             false;
+#endif
 #endif
 
         [Conditional("FEATURE_ENCODINGPROVIDERS")]

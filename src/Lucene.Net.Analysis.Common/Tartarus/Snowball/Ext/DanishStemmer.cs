@@ -100,13 +100,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         private int I_p1;
         private StringBuilder S_ch = new StringBuilder();
 
-        private void copy_from(DanishStemmer other)
-        {
-            I_x = other.I_x;
-            I_p1 = other.I_p1;
-            S_ch = other.S_ch;
-            base.CopyFrom(other);
-        }
+        // LUCENENET: commented out unused private method
+        // private void copy_from(DanishStemmer other)
+        // {
+        //     I_x = other.I_x;
+        //     I_p1 = other.I_p1;
+        //     S_ch = other.S_ch;
+        //     base.CopyFrom(other);
+        // }
 
         private bool r_mark_regions()
         {

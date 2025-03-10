@@ -248,12 +248,13 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         private int I_p2;
         private int I_pV;
 
-        private void copy_from(ArmenianStemmer other)
-        {
-            I_p2 = other.I_p2;
-            I_pV = other.I_pV;
-            base.CopyFrom(other);
-        }
+        // LUCENENET: commented out unused private method
+        // private void copy_from(ArmenianStemmer other)
+        // {
+        //     I_p2 = other.I_p2;
+        //     I_pV = other.I_pV;
+        //     base.CopyFrom(other);
+        // }
 
         private bool r_mark_regions()
         {

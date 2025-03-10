@@ -2414,9 +2414,11 @@ namespace Lucene.Net.Codecs.Memory
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[][] Positions => positions;
 
-            public int PosJump => posJump;
+            // LUCENENET: commented out unused property in private class
+            // public int PosJump => posJump;
 
-            public IBits LiveDocs => liveDocs;
+            // LUCENENET: commented out unused property in private class
+            // public IBits LiveDocs => liveDocs;
 
             public DocsAndPositionsEnum Reset(int[] docIDs, int[] freqs, int[][] positions, byte[][][] payloads)
             {

@@ -530,17 +530,18 @@ namespace Lucene.Net.Codecs.SimpleText
             public override long GetCost() => cost;
         }
 
-        internal class TermData
-        {
-            public long DocsStart { get; set; }
-            public int DocFreq { get; set; }
-
-            public TermData(long docsStart, int docFreq)
-            {
-                DocsStart = docsStart;
-                DocFreq = docFreq;
-            }
-        }
+        // LUCENENET: commented out unused internal class
+        // internal class TermData
+        // {
+        //     public long DocsStart { get; set; }
+        //     public int DocFreq { get; set; }
+        //
+        //     public TermData(long docsStart, int docFreq)
+        //     {
+        //         DocsStart = docsStart;
+        //         DocFreq = docFreq;
+        //     }
+        // }
 
         private class SimpleTextTerms : Terms
         {
