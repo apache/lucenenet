@@ -1,6 +1,8 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
+using Lucene.Net.Codecs;
+using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -699,7 +701,7 @@ namespace Lucene.Net.Index
                     // which will always be true if the first case is true. The name of the variable implies it checking for "Append"
                     // but that is not a method on FreqProxTermsWriterPerField.
                     bool sawAppend = StackTraceHelper.DoesStackTraceContainMethod(nameof(FreqProxTermsWriterPerField), nameof(FreqProxTermsWriterPerField.Flush));
-                    bool sawFlush = StackTraceHelper.DoesStackTraceContainMethod("Flush");
+                    bool sawFlush = StackTraceHelper.DoesStackTraceContainMethod(nameof(FreqProxTermsWriterPerField.Flush));
 
                     if (sawAppend && sawFlush && count++ >= 30)
                     {
@@ -1810,7 +1812,7 @@ namespace Lucene.Net.Index
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 if (doFail
                     && name.StartsWith("segments_", StringComparison.Ordinal)
-                    && StackTraceHelper.DoesStackTraceContainMethod("Read"))
+                    && StackTraceHelper.DoesStackTraceContainMethod(nameof(SegmentInfos.Read)))
                 {
                     throw UnsupportedOperationException.Create("expected UOE");
                 }
@@ -2349,9 +2351,9 @@ namespace Lucene.Net.Index
 
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                bool sawSeal = StackTraceHelper.DoesStackTraceContainMethod("SealFlushedSegment");
-                bool sawWrite = StackTraceHelper.DoesStackTraceContainMethod("WriteLiveDocs")
-                        || StackTraceHelper.DoesStackTraceContainMethod("WriteFieldUpdates");
+                bool sawSeal = StackTraceHelper.DoesStackTraceContainMethod(nameof(DocumentsWriterPerThread.SealFlushedSegment));
+                bool sawWrite = StackTraceHelper.DoesStackTraceContainMethod(nameof(Lucene40LiveDocsFormat.WriteLiveDocs))
+                        || StackTraceHelper.DoesStackTraceContainMethod(nameof(ReadersAndUpdates.WriteFieldUpdates));
 
                 // Don't throw exc if we are "flushing", else
                 // the segment is aborted and docs are lost:
@@ -2527,7 +2529,7 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                bool maybeFail = StackTraceHelper.DoesStackTraceContainMethod("RollbackInternal");
+                bool maybeFail = StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.RollbackInternal));
 
                 if (maybeFail && Random.Next(10) == 0)
                 {

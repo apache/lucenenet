@@ -100,7 +100,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return liveDocs;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions, TestIndexWriterOnDiskFull
         public override void WriteLiveDocs(IMutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount, IOContext context)
         {
             string filename = IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.NextDelGen);

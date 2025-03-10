@@ -433,11 +433,11 @@ namespace Lucene.Net.Index
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                    bool sawAbortOrFlushDoc = StackTraceHelper.DoesStackTraceContainMethod("Abort")
-                        || StackTraceHelper.DoesStackTraceContainMethod("FinishDocument");
-                    bool sawClose = StackTraceHelper.DoesStackTraceContainMethod("Close")
-                        || StackTraceHelper.DoesStackTraceContainMethod("Dispose");
-                    bool sawMerge = StackTraceHelper.DoesStackTraceContainMethod("Merge");
+                    bool sawAbortOrFlushDoc = StackTraceHelper.DoesStackTraceContainMethod(nameof(DocumentsWriterPerThread.Abort))
+                        || StackTraceHelper.DoesStackTraceContainMethod(nameof(DocFieldProcessor.FinishDocument));
+                    bool sawClose = StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Close))
+                        || StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Dispose));
+                    bool sawMerge = StackTraceHelper.DoesStackTraceContainMethod(nameof(IndexWriter.Merge));
 
                     if (sawAbortOrFlushDoc && !sawClose && !sawMerge)
                     {

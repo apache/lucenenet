@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
         /// actual deleted docIDs in the liveDocs <see cref="Util.IMutableBits"/> for
         /// each <see cref="SegmentReader"/>.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterDelete
         public virtual ApplyDeletesResult ApplyDeletesAndUpdates(IndexWriter.ReaderPool readerPool, IList<SegmentCommitInfo> infos)
         {
             UninterruptableMonitor.Enter(this);

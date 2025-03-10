@@ -394,7 +394,7 @@ namespace Lucene.Net.Index
         /// instances) found in this field and serialize them
         /// into a single RAM segment.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         internal void Flush(string fieldName, FieldsConsumer consumer, SegmentWriteState state)
         {
             if (!fieldInfo.IsIndexed)

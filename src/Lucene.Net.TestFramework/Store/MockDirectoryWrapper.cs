@@ -237,7 +237,7 @@ namespace Lucene.Net.Store
             return @delegate is NRTCachingDirectory;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions,
         public override void Sync(ICollection<string> names)
         {
             UninterruptableMonitor.Enter(this);
@@ -519,7 +519,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         public override void DeleteFile(string name)
         {
             UninterruptableMonitor.Enter(this);
@@ -576,7 +576,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         private void DeleteFile(string name, bool forced)
         {
             UninterruptableMonitor.Enter(this);

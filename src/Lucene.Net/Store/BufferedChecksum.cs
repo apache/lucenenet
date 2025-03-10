@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Support;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -111,7 +110,6 @@ namespace Lucene.Net.Store
             @in.Reset();
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private void Flush()
         {
             if (upto > 0)

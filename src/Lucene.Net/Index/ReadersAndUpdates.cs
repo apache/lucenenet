@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
         /// Returns a ref to a clone. NOTE: you should <see cref="DecRef()"/> the reader when you're
         /// done (ie do not call <see cref="IndexReader.Dispose()"/>).
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterReader
         public virtual SegmentReader GetReadOnlyClone(IOContext context)
         {
             UninterruptableMonitor.Enter(this);
@@ -452,7 +452,6 @@ namespace Lucene.Net.Index
         // _X_N updates files) to the directory; returns true if it wrote any file
         // and false if there were no new deletes or updates to write:
         // TODO (DVU_RENAME) to writeDeletesAndUpdates
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual bool WriteLiveDocs(Directory dir)
         {
             UninterruptableMonitor.Enter(this);
@@ -522,7 +521,7 @@ namespace Lucene.Net.Index
         }
 
         // Writes field updates (new _X_N updates files) to the directory
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         public virtual void WriteFieldUpdates(Directory dir, DocValuesFieldUpdates.Container dvUpdates)
         {
             UninterruptableMonitor.Enter(this);

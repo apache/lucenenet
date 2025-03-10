@@ -498,7 +498,7 @@ namespace Lucene.Net.Index
         /// <param name="segmentFileName"> segment file to load </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         public void Read(Directory directory, string segmentFileName)
         {
             var success = false;
@@ -617,7 +617,7 @@ namespace Lucene.Net.Index
         /// Find the latest commit (<c>segments_N file</c>) and
         /// load all <see cref="SegmentCommitInfo"/>s.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         public void Read(Directory directory)
         {
             generation = lastGeneration = -1;
@@ -1269,7 +1269,7 @@ namespace Lucene.Net.Index
         /// method if changes have been made to this <see cref="SegmentInfos"/> instance
         /// </para>
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         internal void PrepareCommit(Directory dir)
         {
             if (pendingSegnOutput != null)
@@ -1311,7 +1311,7 @@ namespace Lucene.Net.Index
             return files;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         internal void FinishCommit(Directory dir)
         {
             if (pendingSegnOutput is null)

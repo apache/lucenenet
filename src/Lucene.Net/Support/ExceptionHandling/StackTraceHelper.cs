@@ -33,6 +33,11 @@ namespace Lucene.Net.Util
         /// <para/>
         /// IMPORTANT: To make the tests pass in release mode, the method(s) named here
         /// must be decorated with <c>[MethodImpl(MethodImplOptions.NoInlining)]</c>.
+        /// However, do not add this attribute unless you determine it is necessary, as it can
+        /// harm performance. Always add two-way traceability to the method(s) in question
+        /// by using the <c>nameof</c> operator to reference the method name in the test,
+        /// and add a comment at the point of use of the <see cref="MethodImplAttribute"/>
+        /// of which test(s) require it.
         /// </summary>
         public static bool DoesStackTraceContainMethod(string methodName)
         {

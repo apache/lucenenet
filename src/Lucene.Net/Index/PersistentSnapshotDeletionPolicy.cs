@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestPersistentSnapshotDeletionPolicy
         internal void Persist()
         {
             UninterruptableMonitor.Enter(this);

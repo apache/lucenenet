@@ -6,13 +6,11 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.ComponentModel;
 using System.Runtime.Serialization;
 #endif
 using System.Text;
-using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -267,7 +265,6 @@ namespace Lucene.Net.Index
             /// before the merge is committed then the merge will
             /// not be committed.
             /// </summary>
-            [MethodImpl(MethodImplOptions.NoInlining)]
             internal virtual void Abort()
             {
                 UninterruptableMonitor.Enter(this);

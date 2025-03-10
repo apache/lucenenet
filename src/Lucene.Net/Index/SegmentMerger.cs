@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
         /// <returns> The number of documents that were merged </returns>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in PreFlexRWPostingsFormat
         internal MergeState Merge()
         {
             if (!ShouldMerge)
@@ -437,7 +437,7 @@ namespace Lucene.Net.Index
             return docBase;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterOnDiskFull
         internal void MergeTerms(SegmentWriteState segmentWriteState)
         {
             IList<Fields> fields = new JCG.List<Fields>();

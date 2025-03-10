@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
@@ -30,7 +29,7 @@ namespace Lucene.Net.Util.Fst
     /// <para>Note that any operation that returns NO_OUTPUT must
     /// return the same singleton object from
     /// <see cref="NoOutput"/>.</para>
-    /// 
+    ///
     /// <para>LUCENENET IMPORTANT: If <typeparamref name="T"/> is a collection type,
     /// it must implement <see cref="System.Collections.IStructuralEquatable"/>
     /// in order to properly compare its nested values.</para>
@@ -62,7 +61,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Encode an final node output value into a
-        /// <see cref="DataOutput"/>.  By default this just calls 
+        /// <see cref="DataOutput"/>.  By default this just calls
         /// <see cref="Write(T, DataOutput)"/>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -99,7 +98,6 @@ namespace Lucene.Net.Util.Fst
 
         // TODO: maybe make valid(T output) public...?  for asserts
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual T Merge(T first, T second)
         {
             throw UnsupportedOperationException.Create();

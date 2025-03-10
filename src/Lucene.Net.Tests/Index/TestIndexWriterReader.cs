@@ -1379,7 +1379,7 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (shouldFail && StackTraceHelper.DoesStackTraceContainMethod("GetReadOnlyClone"))
+                if (shouldFail && StackTraceHelper.DoesStackTraceContainMethod(nameof(ReadersAndUpdates.GetReadOnlyClone)))
                 {
                     if (Verbose)
                     {

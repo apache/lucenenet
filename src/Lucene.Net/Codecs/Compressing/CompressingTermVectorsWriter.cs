@@ -318,7 +318,6 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             IOUtils.DisposeWhileHandlingException(this);
@@ -331,7 +330,6 @@ namespace Lucene.Net.Codecs.Compressing
             curDoc = AddDocData(numVectorFields);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void FinishDocument()
         {
             // append the payload bytes of the doc after its terms
@@ -390,7 +388,6 @@ namespace Lucene.Net.Codecs.Compressing
             return termSuffixes.Length >= chunkSize || pendingDocs.Count >= MAX_DOCUMENTS_PER_CHUNK;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private void Flush()
         {
             int chunkDocs = pendingDocs.Count;
@@ -879,7 +876,6 @@ namespace Lucene.Net.Codecs.Compressing
             curField.totalPositions += numProx;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override int Merge(MergeState mergeState)
         {
             int docCount = 0;

@@ -5,7 +5,6 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Search
@@ -299,7 +298,6 @@ namespace Lucene.Net.Search
         /// @lucene.experimental
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="shardHits"/> is <c>null</c>.</exception>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public static TopDocs Merge(Sort? sort, int topN, TopDocs[] shardHits)
         {
             return Merge(sort, 0, topN, shardHits);
@@ -311,7 +309,6 @@ namespace Lucene.Net.Search
         /// at most <see cref="Util.PriorityQueue{T}.Count"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="shardHits"/> is <c>null</c>.</exception>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public static TopDocs Merge(Sort? sort, int start, int size, TopDocs[] shardHits)
         {
             // LUCENENET specific - added guard clause.

@@ -141,7 +141,6 @@ namespace Lucene.Net.Codecs.Lucene40
             tvf.WriteByte((byte)bits);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void FinishDocument()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(fieldCount == numVectorFields);
@@ -327,7 +326,6 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             try
@@ -372,7 +370,6 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override int Merge(MergeState mergeState)
         {
             // Used for bulk-reading raw bytes for term vectors

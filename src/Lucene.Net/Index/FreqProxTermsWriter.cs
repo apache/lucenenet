@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -38,7 +37,6 @@ namespace Lucene.Net.Index
         // under the same FieldInfo together, up into TermsHash*.
         // Other writers would presumably share alot of this...
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
             // Gather all FieldData's that have postings, across all

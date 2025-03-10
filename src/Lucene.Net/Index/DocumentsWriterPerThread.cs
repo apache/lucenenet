@@ -2,7 +2,6 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -156,7 +155,7 @@ namespace Lucene.Net.Index
         /// currently buffered docs.  this resets our state,
         /// discarding any docs added since last flush.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterWithThreads
         internal virtual void Abort(ISet<string> createdFiles)
         {
             //System.out.println(Thread.currentThread().getName() + ": now abort seg=" + segmentInfo.name);
@@ -419,7 +418,6 @@ namespace Lucene.Net.Index
             return docCount;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private void FinishDocument(Term delTerm)
         {
             /*
@@ -501,7 +499,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Flush all pending docs to a new segment </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestConcurrentMergeScheduler
         internal virtual FlushedSegment Flush()
         {
             if (Debugging.AssertsEnabled)
@@ -601,7 +599,7 @@ namespace Lucene.Net.Index
         /// Seals the <see cref="Index.SegmentInfo"/> for the new flushed segment and persists
         /// the deleted documents <see cref="IMutableBits"/>.
         /// </summary>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining)] // Stack trace needed intact in TestIndexWriterExceptions
         internal virtual void SealFlushedSegment(FlushedSegment flushedSegment)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(flushedSegment != null);

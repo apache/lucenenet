@@ -84,7 +84,7 @@ namespace Lucene.Net
                 outerInstance.excCalled = true;
             }
 
-            protected override void DoMerge(MergePolicy.OneMerge merge)
+            protected internal override void DoMerge(MergePolicy.OneMerge merge)
             {
                 outerInstance.mergeCalled = true;
                 base.DoMerge(merge);
@@ -97,7 +97,7 @@ namespace Lucene.Net
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (StackTraceHelper.DoesStackTraceContainMethod("DoMerge"))
+                if (StackTraceHelper.DoesStackTraceContainMethod(nameof(ConcurrentMergeScheduler.DoMerge)))
                 {
                     throw new IOException("now failing during merge");
                 }

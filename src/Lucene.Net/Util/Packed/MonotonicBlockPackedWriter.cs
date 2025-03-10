@@ -49,7 +49,7 @@ namespace Lucene.Net.Util.Packed
     ///     <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">zigzag-encoded</a>
     ///     packed (<see cref="PackedInt32s"/>) deltas from the expected value (computed from
     ///     the function) using exaclty BitsPerValue bits per value</description></item>
-    /// </list> 
+    /// </list>
     /// <para/>
     /// @lucene.internal
     /// </summary>
@@ -71,7 +71,6 @@ namespace Lucene.Net.Util.Packed
             base.Add(l);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         protected override void Flush()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(m_off > 0);

@@ -295,7 +295,6 @@ namespace Lucene.Net.Util.Fst
             return output.ToString();
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public override object Merge(object first, object second)
         {
             if (Debugging.AssertsEnabled)
