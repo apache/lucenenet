@@ -251,12 +251,13 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
         private bool B_continue_stemming_noun_suffixes;
         private int I_strlen;
 
-        private void copy_from(TurkishStemmer other)
-        {
-            B_continue_stemming_noun_suffixes = other.B_continue_stemming_noun_suffixes;
-            I_strlen = other.I_strlen;
-            base.CopyFrom(other);
-        }
+        // LUCENENET: commented out unused private method
+        // private void copy_from(TurkishStemmer other)
+        // {
+        //     B_continue_stemming_noun_suffixes = other.B_continue_stemming_noun_suffixes;
+        //     I_strlen = other.I_strlen;
+        //     base.CopyFrom(other);
+        // }
 
         private bool r_check_vowel_harmony()
         {

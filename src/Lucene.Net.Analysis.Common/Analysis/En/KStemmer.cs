@@ -359,7 +359,8 @@ namespace Lucene.Net.Analysis.En
         // private void initializeStemHash() { if (maxCacheSize > 0) cache = new
         // CharArrayDictionary<String>(maxCacheSize,false); }
 
-        private char FinalChar => word[k];
+        // LUCENENET: commented out unused private property
+        // private char FinalChar => word[k];
 
         private char PenultChar => word[k - 1];
 
