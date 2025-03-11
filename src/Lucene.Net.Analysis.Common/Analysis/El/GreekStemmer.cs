@@ -1003,8 +1003,8 @@ namespace Lucene.Net.Analysis.El
         /// <param name="len"> The length of the char[] array. </param>
         /// <param name="suffix"> A <see cref="string"/> object to check if the word given ends with these characters. </param>
         /// <returns> True if the word ends with the suffix given , false otherwise. </returns>
-        private static bool EndsWith(ReadOnlySpan<char> s, int len, string suffix) // LUCENENET: CA1822: Mark members as static
-            => s.Slice(0, len).EndsWith(suffix.AsSpan()); // LUCENENET specific - optimized for ReadOnlySpan<char>
+        private static bool EndsWith(char[] s, int len, string suffix) // LUCENENET: CA1822: Mark members as static
+            => s.AsSpan(0, len).EndsWith(suffix.AsSpan()); // LUCENENET specific - optimized for ReadOnlySpan<char>
 
         /// <summary>
         /// Checks if the word contained in the leading portion of <see cref="T:char[]"/> array ,
