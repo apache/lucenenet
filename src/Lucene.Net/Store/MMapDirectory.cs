@@ -314,7 +314,7 @@ namespace Lucene.Net.Store
                 input.memoryMappedFile = MemoryMappedFile.CreateFromFile(
                     fileStream: fc,
                     mapName: null,
-                    capacity: fc.Length, // use the full length of the file
+                    capacity: length,
                     access: MemoryMappedFileAccess.Read,
 #if FEATURE_MEMORYMAPPEDFILESECURITY
                     memoryMappedFileSecurity: null,
