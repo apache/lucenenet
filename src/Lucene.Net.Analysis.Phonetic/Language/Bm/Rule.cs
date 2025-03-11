@@ -157,43 +157,19 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             return rules;
         }
 
-        // LUCENENET: commented out unused private method
-        // private static bool Contains(ICharSequence chars, char input)
-        // {
-        //     for (int i = 0; i < chars.Length; i++)
-        //     {
-        //         if (chars[i] == input)
-        //         {
-        //             return true;
-        //         }
-        //     }
-        //     return false;
-        // }
-
-        private static bool Contains(string chars, char input)
+        private static bool Contains(ReadOnlySpan<char> chars, char input)
         {
-            for (int i = 0; i < chars.Length; i++)
+            // LUCENENET TODO: change this implementation to use MemoryExtensions.Contains with a polyfill for net462.
+            foreach (var c in chars)
             {
-                if (chars[i] == input)
+                if (c == input)
                 {
                     return true;
                 }
             }
+
             return false;
         }
-
-        // LUCENENET: commented out unused private method
-        // private static bool Contains(StringBuilder chars, char input)
-        // {
-        //     for (int i = 0; i < chars.Length; i++)
-        //     {
-        //         if (chars[i] == input)
-        //         {
-        //             return true;
-        //         }
-        //     }
-        //     return false;
-        // }
 
         private static string CreateResourceName(NameType nameType, RuleType rt, string lang)
         {
@@ -660,13 +636,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                             // exact match
                             return new RPatternHelper(isMatchSB: (input) =>
                             {
-                                return input.Length == 1 && Contains(bContent, input[0]) == shouldMatch;
+                                return input.Length == 1 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
                             }, isMatchStr: (input) =>
                             {
-                                return input.Length == 1 && Contains(bContent, input[0]) == shouldMatch;
+                                return input.Length == 1 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
                             }, isMatchCS: (input) =>
                             {
-                                return input.Length == 1 && Contains(bContent, input[0]) == shouldMatch;
+                                return input.Length == 1 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
                             });
                         }
                         else if (startsWith)
@@ -674,13 +650,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                             // first char
                             return new RPatternHelper(isMatchSB: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent, input[0]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
                             }, isMatchStr: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent, input[0]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
                             }, isMatchCS: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent, input[0]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent.AsSpan(), input[0]) == shouldMatch;
                             });
                         }
                         else if (endsWith)
@@ -688,13 +664,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                             // last char
                             return new RPatternHelper(isMatchSB: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent.AsSpan(), input[input.Length - 1]) == shouldMatch;
                             }, isMatchStr: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent.AsSpan(), input[input.Length - 1]) == shouldMatch;
                             }, isMatchCS: (input) =>
                             {
-                                return input.Length > 0 && Contains(bContent, input[input.Length - 1]) == shouldMatch;
+                                return input.Length > 0 && Contains(bContent.AsSpan(), input[input.Length - 1]) == shouldMatch;
                             });
                         }
                     }
