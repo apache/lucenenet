@@ -330,15 +330,15 @@ namespace Lucene.Net.Store
 
                 // LUCENENET: We get an UnauthorizedAccessException if we create a 0 byte file at the end of the range.
                 // See: https://stackoverflow.com/a/5501331
-                // We can fix this by moving back 1 byte on the offset if the bufSize is 0.
-                int adjust = 0;
-                if (bufSize == 0 && bufNr == (nrBuffers - 1) && (offset + bufferStart) > 0)
+                // We can fix this by using an empty ByteBuffer if the buffer size is 0.
+                if (bufSize == 0 && bufNr == (nrBuffers - 1))
                 {
-                    adjust = 1;
+                    buffers[bufNr] = ByteBuffer.Allocate(0).AsReadOnlyBuffer();
+                    break;
                 }
 
                 buffers[bufNr] = input.memoryMappedFile.CreateViewByteBuffer(
-                    offset: (offset + bufferStart) - adjust,
+                    offset: offset + bufferStart,
                     size: bufSize,
                     access: MemoryMappedFileAccess.Read);
                 bufferStart += bufSize;
