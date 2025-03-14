@@ -475,10 +475,7 @@ namespace Lucene.Net.Analysis
             {
                 public void Dispose()
                 {
-                    foreach (var kvp in this)
-                    {
-                        kvp.Value?.Dispose();
-                    }
+                    IOUtils.Dispose(this.Values);
                     Clear();
                 }
             }
@@ -519,6 +516,8 @@ namespace Lucene.Net.Analysis
         }
     }
 
+#nullable enable
+
     /// <summary>
     /// This class encapsulates the outer components of a token stream. It provides
     /// access to the source (<see cref="Analysis.Tokenizer"/>) and the outer end (sink), an
@@ -527,14 +526,13 @@ namespace Lucene.Net.Analysis
     /// <see cref="Analyzer.GetTokenStream(string, TextReader)"/>.
     /// </summary>
     /// <remarks>
-    /// LUCENENET: This class implements IDisposable so that any TokenStream implementations
-    /// that need to be disposed are disposed when the Analyzer that stores this in its
-    /// stored value is disposed.
+    /// LUCENENET: This class implements <see cref="IDisposable"/> so that any <see cref="Analysis.TokenStream"/>
+    /// implementations that need to be disposed are disposed when the <see cref="Analyzer"/>
+    /// that stores this in its stored value is disposed.
     /// <para />
-    /// Because it's impossible to know if the <see cref="TokenStream"/> would dispose of the <see cref="Tokenizer"/>,
-    /// this class calls <see cref="IDisposable.Dispose()"/> on both if they are not reference equal.
-    /// Implementations of <see cref="TokenStream.Dispose(bool)"/> should be careful to make their
-    /// code idempotent so that calling <see cref="TokenStream.Dispose()"/> multiple times has no effect.
+    /// <see cref="Analysis.TokenStream"/> subclasses may opt in to disposal by implementing <see cref="IDisposable"/>,
+    /// in which case they will receive a call automatically. Only the first call to <see cref="Analyzer.Dispose()"/>
+    /// will be honored, additional calls will have no effect.
     /// </remarks>
     public class TokenStreamComponents : IDisposable
     {
@@ -551,7 +549,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Internal cache only used by <see cref="Analyzer.GetTokenStream(string, string)"/>. </summary>
-        internal ReusableStringReader reusableStringReader;
+        internal ReusableStringReader? reusableStringReader;
 
         /// <summary>
         /// Creates a new <see cref="TokenStreamComponents"/> instance.
@@ -560,10 +558,12 @@ namespace Lucene.Net.Analysis
         ///          the analyzer's tokenizer </param>
         /// <param name="result">
         ///          the analyzer's resulting token stream </param>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or
+        /// <paramref name="result"/> is <c>null</c>.</exception>
         public TokenStreamComponents(Tokenizer source, TokenStream result)
         {
-            this.m_source = source;
-            this.m_sink = result;
+            this.m_source = source ?? throw new ArgumentNullException(nameof(source)); // LUCENENET: Added null guard clauses
+            this.m_sink = result ?? throw new ArgumentNullException(nameof(result));
         }
 
         /// <summary>
@@ -571,9 +571,10 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <param name="source">
         ///          the analyzer's tokenizer </param>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> is <c>null</c>.</exception>
         public TokenStreamComponents(Tokenizer source)
         {
-            this.m_source = source;
+            this.m_source = source ?? throw new ArgumentNullException(nameof(source)); // LUCENENET: Added null guard clause
             this.m_sink = source;
         }
 
@@ -610,17 +611,26 @@ namespace Lucene.Net.Analysis
         /// </remarks>
         public void Dispose()
         {
-            m_source?.Dispose();
-
-            if (!ReferenceEquals(m_source, m_sink))
-            {
-                m_sink?.Dispose();
-            }
-
-            reusableStringReader?.Dispose();
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        /// <summary>
+        /// Releases resources in a way such that the instance is not reusable.
+        /// <para/>
+        /// If you override this method, always call <c>base.Dispose(disposing)</c>.
+        /// Also, ensure that your implementation is idempotent as it may be called multiple times.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            // LUCENENET: Calling DoDispose() on the top-level TokenStream is all that is required
+            // since TokenStream tracks wrapped IDisposable instances automatically.
+            m_source.DoDispose();
+            reusableStringReader?.Dispose();
+        }
     }
+
+#nullable restore
 
     /// <summary>
     /// Strategy defining how <see cref="TokenStreamComponents"/> are reused per call to

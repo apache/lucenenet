@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
@@ -169,20 +170,7 @@ namespace Lucene.Net.Util
             if (copy is null)
                 return;
 
-            foreach (var value in copy.Values)
-            {
-                if (value is IDisposable disposable)
-                {
-                    try
-                    {
-                        disposable.Dispose();
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-            }
+            IOUtils.Dispose(copy.Values.OfType<IDisposable>());
 
             Interlocked.Increment(ref globalVersion);
             _disposed = true;

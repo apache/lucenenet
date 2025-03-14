@@ -1,7 +1,8 @@
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Lucene.Net.Analysis
@@ -22,8 +23,6 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using AttributeSource = Lucene.Net.Util.AttributeSource;
 
     /// <summary>
     /// A <see cref="TokenStream"/> enumerates the sequence of tokens, either from
@@ -77,9 +76,18 @@ namespace Lucene.Net.Analysis
     /// <para/>The <see cref="TokenStream"/>-API in Lucene is based on the decorator pattern.
     /// Therefore all non-abstract subclasses must be sealed or have at least a sealed
     /// implementation of <see cref="IncrementToken()"/>! This is checked when assertions are enabled.
+    /// <para/>
+    /// LUCENENET: <see cref="Close()"/> may be called multiple times upon reuse of the <see cref="Analyzer"/>.
+    /// If a <see cref="TokenStream"/> subclass implements <see cref="IDisposable"/>,
+    /// a call to <see cref="Analyzer.Dispose()"/> will be cascaded to the <see cref="TokenStream"/>
+    /// instance through <see cref="TokenStreamComponents"/>. This allows for final teardown of components
+    /// that are only designed to be disposed once.
     /// </summary>
-    public abstract class TokenStream : AttributeSource, ICloseable, IDisposable
+    public abstract class TokenStream : AttributeSource, ICloseable
     {
+        // LUCENENET specific - track disposable TokenStreams that are part of the current chain
+        private readonly DisposableTracker disposableTracker;
+
         /// <summary>
         /// A <see cref="TokenStream"/> using the default attribute factory.
         /// </summary>
@@ -87,6 +95,9 @@ namespace Lucene.Net.Analysis
         {
             // LUCENENET: Rather than using AssertFinal() to run Reflection code at runtime,
             // we are using a Roslyn code analyzer to ensure the rules are followed at compile time.
+
+            // LUCENENET specific - track disposable TokenStreams that are part of the current chain
+            disposableTracker = new DisposableTracker(This);
         }
 
         /// <summary>
@@ -97,6 +108,17 @@ namespace Lucene.Net.Analysis
         {
             // LUCENENET: Rather than using AssertFinal() to run Reflection code at runtime,
             // we are using a Roslyn code analyzer to ensure the rules are followed at compile time.
+
+            // LUCENENET specific - track disposable TokenStreams that are part of the current chain
+            if (input is TokenStream ts)
+            {
+                disposableTracker = ts.disposableTracker;
+                disposableTracker.MaybeRegisterForDisposal(This);
+            }
+            else
+            {
+                disposableTracker = new DisposableTracker(This);
+            }
         }
 
         /// <summary>
@@ -108,7 +130,16 @@ namespace Lucene.Net.Analysis
         {
             // LUCENENET: Rather than using AssertFinal() to run Reflection code at runtime,
             // we are using a Roslyn code analyzer to ensure the rules are followed at compile time.
+
+            // LUCENENET specific - track disposable TokenStreams that are part of the current chain
+            disposableTracker = new DisposableTracker(This);
         }
+
+        /// <summary>
+        /// LUCENENET: We cannot access <c>this</c> from the constructor, so this property is used
+        /// to cheat the compiler.
+        /// </summary>
+        private TokenStream This => this;
 
         /// <summary>
         /// Consumers (i.e., <see cref="IndexWriter"/>) use this method to advance the stream to
@@ -187,29 +218,69 @@ namespace Lucene.Net.Analysis
         /// throw <see cref="InvalidOperationException"/> on reuse).
         /// </summary>
         /// <remarks>
-        /// LUCENENET notes - this is intended to release resources in a way that allows the
-        /// object to be reused, so it is not the same as <see cref="Dispose()"/>.
+        /// LUCENENET NOTE: This is intended to release resources in a way that allows the
+        /// instance to be reused, so it is not the same as <see cref="IDisposable.Dispose()"/>.
+        /// Implementing <see cref="IDisposable"/> on your <see cref="TokenStream"/> subclass will
+        /// cascade the call from <see cref="Analyzer.Dispose()"/> to your <see cref="TokenStream"/>
+        /// automatically.
         /// </remarks>
         public virtual void Close()
         {
         }
 
-        // LUCENENET specific - implementing proper dispose pattern
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        /// <summary>
+        /// LUCENENET: Disposes all tracked wrapped <see cref="TokenStream"/>s that implement <see cref="IDisposable"/>.
+        /// </summary>
+        internal void DoDispose() => disposableTracker.Dispose();
 
         /// <summary>
-        /// Releases resources associated with this stream, in a way such that the stream is not reusable.
-        /// <para/>
-        /// If you override this method, always call <c>base.Dispose(disposing)</c>.
-        /// Also, ensure that your implementation is idempotent as it may be called multiple times.
+        /// LUCENENET: <see cref="IDisposable"/> tracker class to act as a shared instance
+        /// between <see cref="TokenStream"/> instances.
+        /// This allows us to set <see cref="disposables"/> to <c>null</c> in all cases
+        /// where there are no <see cref="IDisposable"/> <see cref="TokenStream"/>s in the
+        /// decorator chain while still sharing a common reference so the <see cref="LinkedList{T}"/>
+        /// can be instantiated by any participant and still referenced by all of them.
         /// </summary>
-        /// <seealso cref="TokenStreamComponents.Dispose()"/>
-        protected virtual void Dispose(bool disposing)
+        private sealed class DisposableTracker : IDisposable
         {
+            private LinkedList<IDisposable> disposables;
+
+            /// <summary>
+            /// Initializes a new instance of <see cref="DisposableTracker"/> and registers the
+            /// supplied <paramref name="obj"/> if it implements <see cref="IDisposable"/>.
+            /// </summary>
+            /// <param name="obj">An object that may or may not implement <see cref="IDisposable"/>.</param>
+            public DisposableTracker(object obj)
+            {
+                MaybeRegisterForDisposal(obj);
+            }
+
+            /// <summary>
+            /// Registers an object for disposal if it implements <see cref="IDisposable"/>.
+            /// </summary>
+            /// <param name="obj">An object that may or may not implement <see cref="IDisposable"/>.</param>
+            public void MaybeRegisterForDisposal(object obj)
+            {
+                // Register in reverse order (ensures correct teardown order)
+                if (obj is IDisposable disposable)
+                {
+                    // Initialize disposables only if needed
+                    disposables ??= new LinkedList<IDisposable>();
+                    disposables.AddFirst(disposable);
+                }
+            }
+
+            /// <summary>
+            /// Disposes all registered objects.
+            /// </summary>
+            public void Dispose()
+            {
+                if (disposables is not null)
+                {
+                    IOUtils.Dispose(disposables);
+                    disposables = null;
+                }
+            }
         }
     }
 }
