@@ -170,11 +170,16 @@ namespace Lucene.Net.Util
             if (copy is null)
                 return;
 
-            IOUtils.Dispose(copy.Values.OfType<IDisposable>());
-
-            Interlocked.Increment(ref globalVersion);
-            _disposed = true;
-            _values = null;
+            try
+            {
+                IOUtils.Dispose(copy.Values.OfType<IDisposable>());
+            }
+            finally
+            {
+                Interlocked.Increment(ref globalVersion);
+                _disposed = true;
+                _values = null;
+            }
         }
 
         private sealed class CurrentThreadState
