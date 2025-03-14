@@ -233,13 +233,10 @@ namespace Lucene.Net.Analysis.Ja
             set => this.dotOut = value;
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                buffer.Reset(m_input);
-            }
+            base.Close();
+            buffer.Reset(m_input);
         }
 
         public override void Reset()

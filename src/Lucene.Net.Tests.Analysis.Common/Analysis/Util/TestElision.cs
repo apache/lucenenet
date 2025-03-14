@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Util
                 tas.Add(termAtt.ToString());
             }
             filter.End();
-            filter.Dispose();
+            filter.Close();
             return tas;
         }
 

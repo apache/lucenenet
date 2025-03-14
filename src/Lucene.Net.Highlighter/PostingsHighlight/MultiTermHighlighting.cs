@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.PostingsHighlight
     internal class MultiTermHighlighting
     {
         /// <summary>
-        /// Extracts all <see cref="MultiTermQuery"/>s for <paramref name="field"/>, and returns equivalent 
+        /// Extracts all <see cref="MultiTermQuery"/>s for <paramref name="field"/>, and returns equivalent
         /// automata that will match terms.
         /// </summary>
         internal static CharacterRunAutomaton[] ExtractAutomata(Query query, string field)
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                         }
                     }
                     stream.End();
-                    stream.Dispose();
+                    stream.Close();
                     stream = null;
                 }
                 // exhausted

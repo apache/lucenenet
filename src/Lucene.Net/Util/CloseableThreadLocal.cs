@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
@@ -39,7 +40,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// This class works around the issue by using an alternative approach than using <see cref="ThreadLocal{T}"/>.
     /// It keeps track of each thread's local and global state in order to later optimize garbage collection.
-    /// A complete explanation can be found at 
+    /// A complete explanation can be found at
     /// <a href="https://ayende.com/blog/189793-A/the-design-and-implementation-of-a-better-threadlocal-t">
     /// https://ayende.com/blog/189793-A/the-design-and-implementation-of-a-better-threadlocal-t</a>.
     /// <para/>
@@ -169,9 +170,16 @@ namespace Lucene.Net.Util
             if (copy is null)
                 return;
 
-            Interlocked.Increment(ref globalVersion);
-            _disposed = true;
-            _values = null;
+            try
+            {
+                IOUtils.Dispose(copy.Values.OfType<IDisposable>());
+            }
+            finally
+            {
+                Interlocked.Increment(ref globalVersion);
+                _disposed = true;
+                _values = null;
+            }
         }
 
         private sealed class CurrentThreadState

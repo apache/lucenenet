@@ -37,17 +37,17 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// thing at lookup time.  This means lookup is based on the
     /// analyzed form while suggestions are still the surface
     /// form(s).
-    /// 
+    ///
     /// <para>
     /// This can result in powerful suggester functionality.  For
-    /// example, if you use an analyzer removing stop words, 
+    /// example, if you use an analyzer removing stop words,
     /// then the partial text "ghost chr..." could see the
     /// suggestion "The Ghost of Christmas Past". Note that
     /// position increments MUST NOT be preserved for this example
-    /// to work, so you should call the constructor with 
-    /// <see cref="preservePositionIncrements"/> parameter set to 
+    /// to work, so you should call the constructor with
+    /// <see cref="preservePositionIncrements"/> parameter set to
     /// false
-    /// 
+    ///
     /// </para>
     /// <para>
     /// If SynonymFilter is used to map wifi and wireless network to
@@ -55,35 +55,35 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// "wifi router".  Token normalization like stemmers, accent
     /// removal, etc., would allow suggestions to ignore such
     /// variations.
-    /// 
+    ///
     /// </para>
     /// <para>
     /// When two matching suggestions have the same weight, they
     /// are tie-broken by the analyzed form.  If their analyzed
     /// form is the same then the order is undefined.
-    /// 
+    ///
     /// </para>
     /// <para>
     /// There are some limitations:
     /// <list type="number">
-    /// 
+    ///
     ///   <item><description> A lookup from a query like "net" in English won't
     ///        be any different than "net " (ie, user added a
     ///        trailing space) because analyzers don't reflect
     ///        when they've seen a token separator and when they
     ///        haven't.</description></item>
-    /// 
+    ///
     ///   <item><description> If you're using <see cref="Analysis.Core.StopFilter"/>, and the user will
     ///        type "fast apple", but so far all they've typed is
     ///        "fast a", again because the analyzer doesn't convey whether
     ///        it's seen a token separator after the "a",
     ///        <see cref="Analysis.Core.StopFilter"/> will remove that "a" causing
     ///        far more matches than you'd expect.</description></item>
-    /// 
+    ///
     ///   <item><description> Lookups with the empty string return no results
     ///        instead of all results.</description></item>
     /// </list>
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>
@@ -122,19 +122,19 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Represents the separation between tokens, if
-        /// <see cref="SuggesterOptions.PRESERVE_SEP"/> was specified 
+        /// <see cref="SuggesterOptions.PRESERVE_SEP"/> was specified
         /// </summary>
         private const int SEP_LABEL = '\u001F';
 
         /// <summary>
         /// Marks end of the analyzed input and start of dedup
-        ///  byte. 
+        ///  byte.
         /// </summary>
         private const int END_BYTE = 0x0;
 
         /// <summary>
         /// Maximum number of dup surface forms (different surface
-        ///  forms for the same analyzed form). 
+        ///  forms for the same analyzed form).
         /// </summary>
         private readonly int maxSurfaceFormsPerAnalyzedForm;
 
@@ -142,14 +142,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Maximum graph paths to index for a single analyzed
         ///  surface form.  This only matters if your analyzer
         ///  makes lots of alternate paths (e.g. contains
-        ///  SynonymFilter). 
+        ///  SynonymFilter).
         /// </summary>
         private readonly int maxGraphExpansions;
 
         /// <summary>
         /// Highest number of analyzed paths we saw for any single
         ///  input surface form.  For analyzers that never create
-        ///  graphs this will always be 1. 
+        ///  graphs this will always be 1.
         /// </summary>
         private int maxAnalyzedPathsForOneInput;
 
@@ -307,7 +307,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Used by subclass to change the lookup automaton, if
-        ///  necessary. 
+        ///  necessary.
         /// </summary>
         protected internal virtual Automaton ConvertAutomaton(Automaton a)
         {
@@ -969,7 +969,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
 
             ReplaceSep(automaton);
@@ -999,7 +999,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
 
             // TODO: we could use the end offset to "guess"

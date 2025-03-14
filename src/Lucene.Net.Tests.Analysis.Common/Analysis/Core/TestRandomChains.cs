@@ -1149,7 +1149,7 @@ namespace Lucene.Net.Analysis.Core
         }
 
         [Test]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/271#issuecomment-973005744")] // LUCENENET TODO: this test occasionally fails
+        //[AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/271#issuecomment-973005744")] // LUCENENET TODO: this test occasionally fails
         public void TestRandomChains_()
         {
             int numIterations = AtLeast(20);
@@ -1176,7 +1176,7 @@ namespace Lucene.Net.Analysis.Core
 
         // we might regret this decision...
         [Test]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/271#issuecomment-973005744")] // LUCENENET TODO: this test occasionally fails
+        //[AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/271#issuecomment-973005744")] // LUCENENET TODO: this test occasionally fails
         public void TestRandomChainsWithLargeStrings()
         {
             int numIterations = AtLeast(20);
