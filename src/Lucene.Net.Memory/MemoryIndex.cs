@@ -227,6 +227,7 @@ namespace Lucene.Net.Index.Memory
         /// <param name="fieldName"> a name to be associated with the text </param>
         /// <param name="text"> the text to tokenize and index. </param>
         /// <param name="analyzer"> the analyzer to use for tokenization </param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="fieldName"/>, <paramref name="text"/>, or <paramref name="analyzer"/> is <c>null</c>.</exception>
         public virtual void AddField(string fieldName, string text, Analyzer analyzer)
         {
             if (fieldName is null)
@@ -242,26 +243,21 @@ namespace Lucene.Net.Index.Memory
                 throw new ArgumentNullException(nameof(analyzer), "analyzer must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
-            // LUCENENET specific: dispose of the TokenStream when done here, instead of in AddField
-            TokenStream stream = null;
+            // LUCENENET note: AddFieldImpl will close the TokenStream
+            TokenStream stream;
             try
             {
-                try
-                {
-                    stream = analyzer.GetTokenStream(fieldName, text);
-                }
-                catch (Exception ex) when (ex.IsIOException())
-                {
-                    throw RuntimeException.Create(ex);
-                }
-
-                AddField(fieldName, stream, 1.0f, analyzer.GetPositionIncrementGap(fieldName),
-                    analyzer.GetOffsetGap(fieldName));
+                stream = analyzer.GetTokenStream(fieldName, text);
             }
-            finally
+            catch (Exception ex) when (ex.IsIOException())
             {
-                stream?.Close();
+                throw RuntimeException.Create(ex);
             }
+
+            // LUCENENET specific - use refactored AddFieldImpl to avoid duplicated guard clause checks
+            // and to prevent them from being wrapped in a LuceneSystemException
+            AddFieldImpl(fieldName, stream, 1.0f, analyzer.GetPositionIncrementGap(fieldName),
+                analyzer.GetOffsetGap(fieldName));
         }
 
         /// <summary>
@@ -420,22 +416,33 @@ namespace Lucene.Net.Index.Memory
         /// <param name="positionIncrementGap"> the position increment gap if fields with the same name are added more than once </param>
         /// <param name="offsetGap"> the offset gap if fields with the same name are added more than once </param>
         /// <seealso cref="Documents.Field.Boost"/>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="fieldName"/> or <paramref name="stream"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="boost"/> is less than or equal to 0.0.</exception>
         public virtual void AddField(string fieldName, TokenStream stream, float boost, int positionIncrementGap, int offsetGap)
+        {
+            if (fieldName is null)
+            {
+                throw new ArgumentNullException(nameof(fieldName), "fieldName must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            }
+            if (stream is null)
+            {
+                throw new ArgumentNullException(nameof(stream), "token stream must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            }
+            if (boost <= 0.0f)
+            {
+                throw new ArgumentOutOfRangeException(nameof(boost), "boost factor must be greater than 0.0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+            }
+
+            // LUCENENET specific - refactored logic into AddFieldImpl
+            AddFieldImpl(fieldName, stream, boost, positionIncrementGap, offsetGap);
+        }
+
+        // LUCENENET specific - refactored AddField logic into AddFieldImpl after guard clauses to avoid duplicated checks and
+        // to prevent them from being wrapped in a LuceneSystemException
+        private void AddFieldImpl(string fieldName, TokenStream stream, float boost, int positionIncrementGap, int offsetGap)
         {
             try
             {
-                if (fieldName is null)
-                {
-                    throw new ArgumentNullException(nameof(fieldName), "fieldName must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-                }
-                if (stream is null)
-                {
-                    throw new ArgumentNullException(nameof(stream), "token stream must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-                }
-                if (boost <= 0.0f)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(boost), "boost factor must be greater than 0.0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
-                }
                 int numTokens = 0;
                 int numOverlapTokens = 0;
                 int pos = -1;
