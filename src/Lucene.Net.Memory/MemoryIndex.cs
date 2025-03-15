@@ -269,7 +269,8 @@ namespace Lucene.Net.Index.Memory
         /// </summary>
         /// <param name="keywords"> the keywords to generate tokens for </param>
         /// <returns> the corresponding token stream </returns>
-        public virtual TokenStream KeywordTokenStream<T>(ICollection<T> keywords)
+        // LUCENENET: renamed from keywordTokenStream
+        public virtual TokenStream GetKeywordTokenStream<T>(ICollection<T> keywords)
         {
             // TODO: deprecate & move this method into AnalyzerUtil?
             if (keywords is null)
@@ -282,7 +283,7 @@ namespace Lucene.Net.Index.Memory
 
         /// <summary>
         /// An anonymous implementation of <see cref="TokenStream"/> for
-        /// <see cref="KeywordTokenStream{T}(ICollection{T})"/>.
+        /// <see cref="MemoryIndex.GetKeywordTokenStream{T}"/>.
         /// </summary>
         /// <typeparam name="T">The type of item in the collection.</typeparam>
         /// <remarks>
