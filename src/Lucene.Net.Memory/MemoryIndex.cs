@@ -288,7 +288,7 @@ namespace Lucene.Net.Index.Memory
         /// <typeparam name="T">The type of item in the collection.</typeparam>
         /// <remarks>
         /// LUCENENET specific - This class originally got an enumerator in the constructor and stored it to a field
-        /// that was never reset, which meant that it could not be reused (since most IEnumerator implementations can
+        /// that was never reset, which meant that it could not be reused (since many IEnumerator implementations can
         /// only be iterated once and throw on <see cref="System.Collections.IEnumerator.Reset()"/>). This class has
         /// been modified to initialize <see cref="iter"/> on <see cref="TokenStream.Reset()"/> instead, which allows
         /// it to be reused, per the TokenStream workflow contract of allowing <see cref="TokenStream.Reset()"/> after
