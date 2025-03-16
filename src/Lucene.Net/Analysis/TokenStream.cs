@@ -37,13 +37,13 @@ namespace Lucene.Net.Analysis
     /// A new <see cref="TokenStream"/> API has been introduced with Lucene 2.9. this API
     /// has moved from being <see cref="Token"/>-based to <see cref="Util.IAttribute"/>-based. While
     /// <see cref="Token"/> still exists in 2.9 as a convenience class, the preferred way
-    /// to store the information of a <see cref="Token"/> is to use <see cref="System.Attribute"/>s.
+    /// to store the information of a <see cref="Token"/> is to use <see cref="Util.Attribute"/>s.
     /// <para/>
     /// <see cref="TokenStream"/> now extends <see cref="AttributeSource"/>, which provides
     /// access to all of the token <see cref="Util.IAttribute"/>s for the <see cref="TokenStream"/>.
-    /// Note that only one instance per <see cref="System.Attribute"/> is created and reused
+    /// Note that only one instance per <see cref="Util.Attribute"/> is created and reused
     /// for every token. This approach reduces object creation and allows local
-    /// caching of references to the <see cref="System.Attribute"/>s. See
+    /// caching of references to the <see cref="Util.Attribute"/>s. See
     /// <see cref="IncrementToken()"/> for further details.
     /// <para/>
     /// <b>The workflow of the new <see cref="TokenStream"/> API is as follows:</b>
