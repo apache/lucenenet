@@ -220,6 +220,7 @@ namespace Lucene.Net.Util
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
+                    // eat it
                 }
             }
         }
@@ -239,6 +240,7 @@ namespace Lucene.Net.Util
                 }
                 catch (Exception t) when (t.IsThrowable())
                 {
+                    // eat it
                 }
             }
         }

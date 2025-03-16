@@ -246,7 +246,7 @@ namespace Lucene.Net.Analysis.Core
             {
                 if (m_input.IncrementToken())
                 {
-                    Console.WriteLine(m_input.GetType().Name + "->" + this.ReflectAsString(false));
+                    Console.WriteLine($"{m_input.GetType().Name}->{this.ReflectAsString(false)}");
                     return true;
                 }
                 else
@@ -258,19 +258,19 @@ namespace Lucene.Net.Analysis.Core
             public override void End()
             {
                 base.End();
-                Console.WriteLine(m_input.GetType().Name + ".end()");
+                Console.WriteLine($"{m_input.GetType().Name}.{nameof(End)}()");
             }
 
             public override void Close()
             {
                 base.Close();
-                Console.WriteLine(m_input.GetType().Name + ".close()");
+                Console.WriteLine($"{m_input.GetType().Name}.{nameof(Close)}()");
             }
 
             public override void Reset()
             {
                 base.Reset();
-                Console.WriteLine(m_input.GetType().Name + ".reset()");
+                Console.WriteLine($"{m_input.GetType().Name}.{nameof(Reset)}()");
             }
         }
 

@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis
         {
             public override int Read(char[] cbuf, int off, int len)
             {
-                throw IllegalStateException.Create("TokenStream contract violation: Reset()/Dispose() call missing, "
+                throw IllegalStateException.Create("TokenStream contract violation: Reset()/Close() call missing, "
                     + "Reset() called multiple times, or subclass does not call base.Reset(). "
                     + "Please see the documentation of TokenStream class for more information about the correct consuming workflow.");
             }

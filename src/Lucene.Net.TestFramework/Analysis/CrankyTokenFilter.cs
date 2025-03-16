@@ -65,7 +65,7 @@ namespace Lucene.Net.TestFramework.Analysis
             thingToDo = random.Next(100);
             if (thingToDo == 2 && random.nextBoolean())
             {
-                throw new IOException("Fake IOException from TokenStream.Reset()");
+                throw new IOException($"Fake IOException from {nameof(TokenStream)}.{nameof(TokenStream.Reset)}()");
             }
         }
 
@@ -74,7 +74,7 @@ namespace Lucene.Net.TestFramework.Analysis
             base.Close();
             if (thingToDo == 3 && random.nextBoolean())
             {
-                throw new IOException("Fake IOException from TokenStream.DoClose()");
+                throw new IOException($"Fake IOException from {nameof(TokenStream)}.{nameof(TokenStream.Close)}()");
             }
         }
     }

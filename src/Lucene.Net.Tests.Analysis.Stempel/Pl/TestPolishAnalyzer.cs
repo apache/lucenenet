@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -82,6 +83,7 @@ namespace Lucene.Net.Analysis.Pl
         /// (although that behavior no longer throws an exception).
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public void TestOutOfRange()
         {
             var a = new PolishAnalyzer(TEST_VERSION_CURRENT);
