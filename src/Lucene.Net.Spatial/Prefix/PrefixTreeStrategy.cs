@@ -171,11 +171,11 @@ namespace Lucene.Net.Spatial.Prefix
         /// <see cref="TokenStream.Close()"/> will dispose of the enumerator, but it can be reinitialized by calling
         /// <see cref="TokenStream.Reset()"/> again.
         /// <para />
-        /// This implementation also expects that the enumerator will support <see cref="IEnumerator{T}.Reset()"/>
+        /// This implementation also expects that the enumerator will support <see cref="System.Collections.IEnumerator.Reset()"/>
         /// to avoid unnecessary allocations. Most BCL types in .NET support this, but custom implementations may not.
         /// For this reason, anyone that overrides
         /// <see cref="SpatialPrefixTree.GetCells(Spatial4n.Shapes.IShape?,int,bool,bool)"/> must make sure to return
-        /// an implementation of <c>IList&lt;Cell&gt;</c> that supports <see cref="IEnumerator{T}.Reset()"/>.
+        /// an implementation of <c>IList&lt;Cell&gt;</c> that supports <see cref="System.Collections.IEnumerator.Reset()"/>.
         /// </remarks>
         internal sealed class CellTokenStream : TokenStream
         {
