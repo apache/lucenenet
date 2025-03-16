@@ -159,14 +159,23 @@ namespace Lucene.Net.Spatial.Prefix
         }.Freeze();
 
         /// <summary>
-        /// Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.
+        /// Outputs the tokenString of a cell, and if it's a leaf, outputs it again with the leaf byte.
         /// </summary>
         /// <remarks>
         /// LUCENENET specific - This class originally took an enumerator, which meant that it could not
-        /// be reused (since most IEnumerator implementations can only be iterated once and throw on
-        /// <see cref="System.Collections.IEnumerator.Reset()"/>). This class has been modified to take an
-        /// <c>IEnumerable&lt;Cell&gt;</c> instead, which allows it to be reused, per the TokenStream
-        /// workflow contract of allowing <see cref="TokenStream.Reset()"/> after <see cref="TokenStream.Close()"/>.
+        /// be reused after a call to <see cref="TokenStream.Close()"/> (which was not present in the Lucene code).
+        /// This class has been modified to take an <c>IEnumerable&lt;Cell&gt;</c> instead, which allows it to be
+        /// reused, per the TokenStream workflow contract of allowing <see cref="TokenStream.Reset()"/>
+        /// after <see cref="TokenStream.Close()"/>. To accomplish this, it takes an enumerable and lazy-initializes
+        /// its enumerator upon the first call to <see cref="TokenStream.Reset()"/>. Calling
+        /// <see cref="TokenStream.Close()"/> will dispose of the enumerator, but it can be reinitialized by calling
+        /// <see cref="TokenStream.Reset()"/> again.
+        /// <para />
+        /// This implementation also expects that the enumerator will support <see cref="IEnumerator{T}.Reset()"/>
+        /// to avoid unnecessary allocations. Most BCL types in .NET support this, but custom implementations may not.
+        /// For this reason, anyone that overrides
+        /// <see cref="SpatialPrefixTree.GetCells(Spatial4n.Shapes.IShape?,int,bool,bool)"/> must make sure to return
+        /// an implementation of <c>IList&lt;Cell&gt;</c> that supports <see cref="IEnumerator{T}.Reset()"/>.
         /// </remarks>
         internal sealed class CellTokenStream : TokenStream
         {
@@ -227,8 +236,14 @@ namespace Lucene.Net.Spatial.Prefix
             // LUCENENET specific - added Reset() method to allow for reuse of the TokenStream
             public override void Reset()
             {
-                iter?.Dispose();
-                iter = enumerable.GetEnumerator();
+                if (iter is not null)
+                {
+                    iter.Reset(); // LUCENENET NOTE: See remarks in class documentation
+                }
+                else
+                {
+                    iter = enumerable.GetEnumerator();
+                }
                 base.Reset();
             }
         }
