@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis
             // we are using a Roslyn code analyzer to ensure the rules are followed at compile time.
 
             // LUCENENET specific - track disposable TokenStreams that are part of the current chain
-            disposableTracker = new DisposableTracker(This);
+            disposableTracker = new DisposableTracker(this);
         }
 
         /// <summary>
@@ -113,11 +113,11 @@ namespace Lucene.Net.Analysis
             if (input is TokenStream ts)
             {
                 disposableTracker = ts.disposableTracker;
-                disposableTracker.MaybeRegisterForDisposal(This);
+                disposableTracker.MaybeRegisterForDisposal(this);
             }
             else
             {
-                disposableTracker = new DisposableTracker(This);
+                disposableTracker = new DisposableTracker(this);
             }
         }
 
@@ -132,14 +132,8 @@ namespace Lucene.Net.Analysis
             // we are using a Roslyn code analyzer to ensure the rules are followed at compile time.
 
             // LUCENENET specific - track disposable TokenStreams that are part of the current chain
-            disposableTracker = new DisposableTracker(This);
+            disposableTracker = new DisposableTracker(this);
         }
-
-        /// <summary>
-        /// LUCENENET: We cannot access <c>this</c> from the constructor, so this property is used
-        /// to cheat the compiler.
-        /// </summary>
-        private TokenStream This => this;
 
         /// <summary>
         /// Consumers (i.e., <see cref="IndexWriter"/>) use this method to advance the stream to
