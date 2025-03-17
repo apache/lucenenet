@@ -113,6 +113,14 @@ namespace Lucene.Net.Analysis
             if (Debugging.AssertsEnabled) Debugging.Assert(SetReaderTestPoint());
         }
 
+        /// <summary>
+        /// <inheritdoc cref="TokenStream.Reset()"/>
+        /// </summary>
+        /// <remarks>
+        /// <b>NOTE:</b>
+        /// The default implementation chains the call to the input <see cref="TokenStream"/>, so
+        /// be sure to call <c>base.Reset()</c> when overriding this method.
+        /// </remarks>
         public override void Reset()
         {
             base.Reset();

@@ -66,6 +66,11 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// <inheritdoc cref="TokenStream.Close()"/>
         /// </summary>
+        ///  <remarks>
+        /// <b>NOTE:</b>
+        /// The default implementation chains the call to the input <see cref="TokenStream"/>, so
+        /// be sure to call <c>base.Close()</c> first when overriding this method.
+        /// </remarks>
         public override void Close()
         {
             m_input.Close();
