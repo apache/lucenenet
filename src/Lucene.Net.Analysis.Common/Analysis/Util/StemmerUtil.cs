@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             // LUCENENET: use more efficient implementation in MemoryExtensions
-            return s.StartsWith(prefix);
+            return s.StartsWith(prefix, StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             // LUCENENET: use more efficient implementation in MemoryExtensions
-            return s.Slice(0, len).EndsWith(suffix);
+            return s.Slice(0, len).EndsWith(suffix, StringComparison.Ordinal);
         }
 
         // LUCENENET NOTE: char[] overload of EndsWith removed because the ReadOnlySpan<char> overload can be used instead
