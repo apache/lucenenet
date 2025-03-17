@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+#nullable enable
 
 namespace Lucene.Net.Analysis
 {
@@ -237,14 +238,14 @@ namespace Lucene.Net.Analysis
         /// </summary>
         private sealed class DisposableTracker : IDisposable
         {
-            private LinkedList<IDisposable> disposables;
+            private LinkedList<IDisposable>? disposables;
 
             /// <summary>
             /// Initializes a new instance of <see cref="DisposableTracker"/> and registers the
             /// supplied <paramref name="obj"/> if it implements <see cref="IDisposable"/>.
             /// </summary>
             /// <param name="obj">An object that may or may not implement <see cref="IDisposable"/>.</param>
-            public DisposableTracker(object obj)
+            public DisposableTracker(object? obj)
             {
                 MaybeRegisterForDisposal(obj);
             }
@@ -253,7 +254,7 @@ namespace Lucene.Net.Analysis
             /// Registers an object for disposal if it implements <see cref="IDisposable"/>.
             /// </summary>
             /// <param name="obj">An object that may or may not implement <see cref="IDisposable"/>.</param>
-            public void MaybeRegisterForDisposal(object obj)
+            public void MaybeRegisterForDisposal(object? obj)
             {
                 // Register in reverse order (ensures correct teardown order)
                 if (obj is IDisposable disposable)
