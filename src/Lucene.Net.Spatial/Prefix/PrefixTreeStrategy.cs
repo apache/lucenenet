@@ -35,7 +35,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// subclasses are <see cref="RecursivePrefixTreeStrategy">RecursivePrefixTreeStrategy</see> and
     /// <see cref="TermQueryPrefixTreeStrategy">TermQueryPrefixTreeStrategy</see>.  This strategy is most effective as a fast
     /// approximate spatial search filter.
-    /// 
+    ///
     /// <h4>Characteristics:</h4>
     /// <list type="bullet">
     /// <item><description>Can index any shape; however only
@@ -60,7 +60,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// it doesn't scale to large numbers of points nor is it real-time-search
     /// friendly.</description></item>
     /// </list>
-    /// 
+    ///
     /// <h4>Implementation:</h4>
     /// The <see cref="SpatialPrefixTree"/>
     /// does most of the work, for example returning
@@ -141,7 +141,8 @@ namespace Lucene.Net.Spatial.Prefix
             //TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
             //  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
 
-            Field field = new Field(FieldName, new CellTokenStream(cells.GetEnumerator()), FIELD_TYPE);
+            // LUCENENET specific - see remarks in CellTokenStream for why we're passing IEnumerable<Cell> instead of IEnumerator<Cell>
+            Field field = new Field(FieldName, new CellTokenStream(cells), FIELD_TYPE);
             return new Field[] { field };
         }
 
@@ -157,17 +158,37 @@ namespace Lucene.Net.Spatial.Prefix
             IndexOptions = IndexOptions.DOCS_ONLY
         }.Freeze();
 
-        /// <summary>Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.</summary>
+        /// <summary>
+        /// Outputs the tokenString of a cell, and if it's a leaf, outputs it again with the leaf byte.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific - This class originally took an enumerator, which meant that it could not
+        /// be reused after a call to <see cref="TokenStream.Close()"/> (which was not present in the Lucene code).
+        /// This class has been modified to take an <c>IEnumerable&lt;Cell&gt;</c> instead, which allows it to be
+        /// reused, per the TokenStream workflow contract of allowing <see cref="TokenStream.Reset()"/>
+        /// after <see cref="TokenStream.Close()"/>. To accomplish this, it takes an enumerable and lazy-initializes
+        /// its enumerator upon the first call to <see cref="TokenStream.Reset()"/>. Calling
+        /// <see cref="TokenStream.Close()"/> will dispose of the enumerator, but it can be reinitialized by calling
+        /// <see cref="TokenStream.Reset()"/> again.
+        /// <para />
+        /// This implementation also expects that the enumerator will support <see cref="System.Collections.IEnumerator.Reset()"/>
+        /// to avoid unnecessary allocations. Most BCL types in .NET support this, but custom implementations may not.
+        /// For this reason, anyone that overrides
+        /// <see cref="SpatialPrefixTree.GetCells(Spatial4n.Shapes.IShape?,int,bool,bool)"/> must make sure to return
+        /// an implementation of <c>IList&lt;Cell&gt;</c> that supports <see cref="System.Collections.IEnumerator.Reset()"/>.
+        /// </remarks>
         internal sealed class CellTokenStream : TokenStream
         {
             private readonly ICharTermAttribute termAtt;
 
-            private readonly IEnumerator<Cell> iter; // LUCENENET specific - marked readonly and got rid of null setting
+            private readonly IEnumerable<Cell> enumerable; // LUCENENET specific - see remarks above
+            private IEnumerator<Cell>? iter;
 
-            public CellTokenStream(IEnumerator<Cell> tokens)
+            public CellTokenStream(IEnumerable<Cell> tokens)
             {
                 // LUCENENET specific - added guard clause
-                this.iter = tokens ?? throw new ArgumentNullException(nameof(tokens));
+                enumerable = tokens ?? throw new ArgumentNullException(nameof(tokens));
+                // LUCENENET NOTE: not initializing iter here, should be done in Reset()
                 termAtt = AddAttribute<ICharTermAttribute>();
             }
 
@@ -183,9 +204,16 @@ namespace Lucene.Net.Spatial.Prefix
                     nextTokenStringNeedingLeaf = null;
                     return true;
                 }
+
+                // LUCENENET specific: throw if iter has not been initialized
+                if (iter is null)
+                {
+                    throw new InvalidOperationException("TokenStream is not initialized. Call Reset() before IncrementToken().");
+                }
+
                 if (iter.MoveNext())
                 {
-                    Cell cell = iter.Current;
+                    Cell cell = iter.Current ?? throw new InvalidOperationException("CellTokenStream received a null Cell from the enumerator.");
                     string token = cell.TokenString;
                     termAtt.Append(token);
                     if (cell.IsLeaf)
@@ -197,27 +225,26 @@ namespace Lucene.Net.Spatial.Prefix
                 return false;
             }
 
-            /// <summary>
-            /// Releases resources used by the <see cref="CellTokenStream"/> and
-            /// if overridden in a derived class, optionally releases unmanaged resources.
-            /// </summary>
-            /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-            /// <c>false</c> to release only unmanaged resources.</param>
-
-            // LUCENENET specific
-            protected override void Dispose(bool disposing)
+            // LUCENENET specific - added Close() method to clean up resources
+            public override void Close()
             {
-                try
+                iter?.Dispose();
+                iter = null;
+                base.Close();
+            }
+
+            // LUCENENET specific - added Reset() method to allow for reuse of the TokenStream
+            public override void Reset()
+            {
+                if (iter is not null)
                 {
-                    if (disposing)
-                    {
-                        iter.Dispose(); // LUCENENET specific - dispose iter
-                    }
+                    iter.Reset(); // LUCENENET NOTE: See remarks in class documentation
                 }
-                finally
+                else
                 {
-                    base.Dispose(disposing);
+                    iter = enumerable.GetEnumerator();
                 }
+                base.Reset();
             }
         }
 

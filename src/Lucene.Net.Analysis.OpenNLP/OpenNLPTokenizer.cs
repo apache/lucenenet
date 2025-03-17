@@ -67,14 +67,11 @@ namespace Lucene.Net.Analysis.OpenNlp
             this.offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            base.Dispose(disposing);
-            if (disposing)
-            {
-                termSpans = null;
-                termNum = sentenceStart = 0;
-            }
+            base.Close();
+            termSpans = null;
+            termNum = sentenceStart = 0;
         }
 
         protected override void SetNextSentence(int sentenceStart, int sentenceEnd)

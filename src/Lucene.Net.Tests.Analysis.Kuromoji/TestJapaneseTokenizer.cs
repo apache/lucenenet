@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             AssertAnalyzesTo(analyzerNormal,
                              "シニアソフトウェアエンジニア",
-                             new String[] { "シニアソフトウェアエンジニア" });
+                             new string[] { "シニアソフトウェアエンジニア" });
         }
 
         [Test]
@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             AssertAnalyzesTo(analyzerNoPunct, "本来は、貧困層の女性や子供に医療保護を提供するために創設された制度である、" +
                                  "アメリカ低所得者医療援助制度が、今日では、その予算の約３分の１を老人に費やしている。",
-             new String[] { "本来", "は",  "貧困", "層", "の", "女性", "や", "子供", "に", "医療", "保護", "を",
+             new string[] { "本来", "は",  "貧困", "層", "の", "女性", "や", "子供", "に", "医療", "保護", "を",
                     "提供", "する", "ため", "に", "創設", "さ", "れ", "た", "制度", "で", "ある",  "アメリカ",
                     "低", "所得", "者", "医療", "援助", "制度", "が",  "今日", "で", "は",  "その",
                     "予算", "の", "約", "３", "分の", "１", "を", "老人", "に", "費やし", "て", "いる" },
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Ja
         public void TestDecomposition2()
         {
             AssertAnalyzesTo(analyzerNoPunct, "麻薬の密売は根こそぎ絶やさなければならない",
-              new String[] { "麻薬", "の", "密売", "は", "根こそぎ", "絶やさ", "なけれ", "ば", "なら", "ない" },
+              new string[] { "麻薬", "の", "密売", "は", "根こそぎ", "絶やさ", "なけれ", "ば", "なら", "ない" },
               new int[] { 0, 2, 3, 5, 6, 10, 13, 16, 17, 19 },
               new int[] { 2, 3, 5, 6, 10, 13, 16, 17, 19, 21 }
             );
@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.Ja
         public void TestDecomposition3()
         {
             AssertAnalyzesTo(analyzerNoPunct, "魔女狩大将マシュー・ホプキンス。",
-              new String[] { "魔女", "狩", "大将", "マシュー", "ホプキンス" },
+              new string[] { "魔女", "狩", "大将", "マシュー", "ホプキンス" },
               new int[] { 0, 2, 3, 5, 10 },
               new int[] { 2, 3, 5, 9, 15 }
             );
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Ja
         public void TestDecomposition4()
         {
             AssertAnalyzesTo(analyzer, "これは本ではない",
-              new String[] { "これ", "は", "本", "で", "は", "ない" },
+              new string[] { "これ", "は", "本", "で", "は", "ない" },
               new int[] { 0, 2, 3, 4, 5, 6 },
               new int[] { 2, 3, 4, 5, 6, 8 }
             );
@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis.Ja
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 
@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.Ja
             */
 
             AssertAnalyzesTo(analyzerNoPunct, "魔女狩大将マシュー・ホプキンス。 魔女狩大将マシュー・ホプキンス。",
-              new String[] { "魔女", "狩", "大将", "マシュー", "ホプキンス", "魔女", "狩", "大将", "マシュー", "ホプキンス" },
+              new string[] { "魔女", "狩", "大将", "マシュー", "ホプキンス", "魔女", "狩", "大将", "マシュー", "ホプキンス" },
               new int[] { 0, 2, 3, 5, 10, 17, 19, 20, 22, 27 },
               new int[] { 2, 3, 5, 9, 15, 19, 20, 22, 26, 32 }
             );
@@ -238,7 +238,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             for (int i = 0; i < 100; i++)
             {
-                String s = TestUtil.RandomUnicodeString(Random, 10000);
+                string s = TestUtil.RandomUnicodeString(Random, 10000);
                 TokenStream ts = analyzer.GetTokenStream("foo", s);
                 try
                 {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Ja
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ts);
+                    IOUtils.CloseWhileHandlingException(ts);
                 }
             }
         }
@@ -260,7 +260,7 @@ namespace Lucene.Net.Analysis.Ja
         public void TestSurrogates()
         {
             AssertAnalyzesTo(analyzer, "𩬅艱鍟䇹愯瀛",
-              new String[] { "𩬅", "艱", "鍟", "䇹", "愯", "瀛" });
+              new string[] { "𩬅", "艱", "鍟", "䇹", "愯", "瀛" });
         }
 
         /** random test ensuring we don't ever split supplementaries */
@@ -274,7 +274,7 @@ namespace Lucene.Net.Analysis.Ja
                 {
                     Console.WriteLine("\nTEST: iter=" + i);
                 }
-                String s = TestUtil.RandomUnicodeString(Random, 100);
+                string s = TestUtil.RandomUnicodeString(Random, 100);
                 TokenStream ts = analyzer.GetTokenStream("foo", s);
                 try
                 {
@@ -288,7 +288,7 @@ namespace Lucene.Net.Analysis.Ja
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ts);
+                    IOUtils.CloseWhileHandlingException(ts);
                 }
             }
         }
@@ -305,7 +305,7 @@ namespace Lucene.Net.Analysis.Ja
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 
@@ -321,7 +321,7 @@ namespace Lucene.Net.Analysis.Ja
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 
@@ -331,14 +331,14 @@ namespace Lucene.Net.Analysis.Ja
         public void TestEnd()
         {
             AssertTokenStreamContents(analyzerNoPunct.GetTokenStream("foo", "これは本ではない"),
-                new String[] { "これ", "は", "本", "で", "は", "ない" },
+                new string[] { "これ", "は", "本", "で", "は", "ない" },
                 new int[] { 0, 2, 3, 4, 5, 6 },
                 new int[] { 2, 3, 4, 5, 6, 8 },
                 new int?(8)
             );
 
             AssertTokenStreamContents(analyzerNoPunct.GetTokenStream("foo", "これは本ではない    "),
-                new String[] { "これ", "は", "本", "で", "は", "ない" },
+                new string[] { "これ", "は", "本", "で", "は", "ない" },
                 new int[] { 0, 2, 3, 4, 5, 6, 8 },
                 new int[] { 2, 3, 4, 5, 6, 8, 9 },
                 new int?(12)
@@ -351,7 +351,7 @@ namespace Lucene.Net.Analysis.Ja
             // Not a great test because w/o userdict.txt the
             // segmentation is the same:
             AssertTokenStreamContents(analyzer.GetTokenStream("foo", "関西国際空港に行った"),
-                                      new String[] { "関西", "国際", "空港", "に", "行っ", "た" },
+                                      new string[] { "関西", "国際", "空港", "に", "行っ", "た" },
                                       new int[] { 0, 2, 4, 6, 7, 9 },
                                       new int[] { 2, 4, 6, 7, 9, 10 },
                                       new int?(10)
@@ -363,7 +363,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             // Better test: w/o userdict the segmentation is different:
             AssertTokenStreamContents(analyzer.GetTokenStream("foo", "朝青龍"),
-                                      new String[] { "朝青龍" },
+                                      new string[] { "朝青龍" },
                                       new int[] { 0 },
                                       new int[] { 3 },
                                       new int?(3)
@@ -375,7 +375,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             // Test entry that breaks into multiple tokens:
             AssertTokenStreamContents(analyzer.GetTokenStream("foo", "abcd"),
-                                      new String[] { "a", "b", "cd" },
+                                      new string[] { "a", "b", "cd" },
                                       new int[] { 0, 1, 2 },
                                       new int[] { 1, 2, 4 },
                                       new int?(4)
@@ -409,8 +409,8 @@ namespace Lucene.Net.Analysis.Ja
             //        "スペース", "ステーション", "に", "行き", "ます", "。",
             //        "うたがわしい", "。"
             //   };
-            String input = "スペースステーションに行きます。うたがわしい。";
-            String[]
+            string input = "スペースステーションに行きます。うたがわしい。";
+            string[]
             surfaceForms = {
                 "スペース", "ステーション", "に", "行き", "ます", "。",
                 "うたがわしい", "。"
@@ -434,8 +434,8 @@ namespace Lucene.Net.Analysis.Ja
             });
 
 
-            String input = "スペースステーションに行きます。うたがわしい。";
-            String[] surfaceForms = {
+            string input = "スペースステーションに行きます。うたがわしい。";
+            string[] surfaceForms = {
                 "スペース", "ステーション", "に", "行き", "ます", "。",
                 "うたがわしい", "。"
             };
@@ -447,14 +447,14 @@ namespace Lucene.Net.Analysis.Ja
             assertTrue(gv2.Finish().IndexOf("22.0", StringComparison.Ordinal) != -1);
         }
 
-        private void assertReadings(String input, params String[] readings)
+        private void assertReadings(string input, params string[] readings)
         {
             TokenStream ts = analyzer.GetTokenStream("ignored", input);
             try
             {
                 IReadingAttribute readingAtt = ts.AddAttribute<IReadingAttribute>();
                 ts.Reset();
-                foreach (String reading in readings)
+                foreach (string reading in readings)
                 {
                     assertTrue(ts.IncrementToken());
                     assertEquals(reading, readingAtt.GetReading());
@@ -464,18 +464,18 @@ namespace Lucene.Net.Analysis.Ja
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 
-        private void assertPronunciations(String input, params String[] pronunciations)
+        private void assertPronunciations(string input, params string[] pronunciations)
         {
             TokenStream ts = analyzer.GetTokenStream("ignored", input);
             try
             {
                 IReadingAttribute readingAtt = ts.AddAttribute<IReadingAttribute>();
                 ts.Reset();
-                foreach (String pronunciation in pronunciations)
+                foreach (string pronunciation in pronunciations)
                 {
                     assertTrue(ts.IncrementToken());
                     assertEquals(pronunciation, readingAtt.GetPronunciation());
@@ -485,18 +485,18 @@ namespace Lucene.Net.Analysis.Ja
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 
-        private void assertBaseForms(String input, params String[] baseForms)
+        private void assertBaseForms(string input, params string[] baseForms)
         {
             TokenStream ts = analyzer.GetTokenStream("ignored", input);
             try
             {
                 IBaseFormAttribute baseFormAtt = ts.AddAttribute<IBaseFormAttribute>();
                 ts.Reset();
-                foreach (String baseForm in baseForms)
+                foreach (string baseForm in baseForms)
                 {
                     assertTrue(ts.IncrementToken());
                     assertEquals(baseForm, baseFormAtt.GetBaseForm());
@@ -506,18 +506,18 @@ namespace Lucene.Net.Analysis.Ja
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 
-        private void assertInflectionTypes(String input, params String[] inflectionTypes)
+        private void assertInflectionTypes(string input, params string[] inflectionTypes)
         {
             TokenStream ts = analyzer.GetTokenStream("ignored", input);
             try
             {
                 IInflectionAttribute inflectionAtt = ts.AddAttribute<IInflectionAttribute>();
                 ts.Reset();
-                foreach (String inflectionType in inflectionTypes)
+                foreach (string inflectionType in inflectionTypes)
                 {
                     assertTrue(ts.IncrementToken());
                     assertEquals(inflectionType, inflectionAtt.GetInflectionType());
@@ -527,18 +527,18 @@ namespace Lucene.Net.Analysis.Ja
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 
-        private void assertInflectionForms(String input, params String[] inflectionForms)
+        private void assertInflectionForms(string input, params string[] inflectionForms)
         {
             TokenStream ts = analyzer.GetTokenStream("ignored", input);
             try
             {
                 IInflectionAttribute inflectionAtt = ts.AddAttribute<IInflectionAttribute>();
                 ts.Reset();
-                foreach (String inflectionForm in inflectionForms)
+                foreach (string inflectionForm in inflectionForms)
                 {
                     assertTrue(ts.IncrementToken());
                     assertEquals(inflectionForm, inflectionAtt.GetInflectionForm());
@@ -548,18 +548,18 @@ namespace Lucene.Net.Analysis.Ja
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 
-        private void assertPartsOfSpeech(String input, params String[] partsOfSpeech)
+        private void assertPartsOfSpeech(string input, params string[] partsOfSpeech)
         {
             TokenStream ts = analyzer.GetTokenStream("ignored", input);
             try
             {
                 IPartOfSpeechAttribute partOfSpeechAtt = ts.AddAttribute<IPartOfSpeechAttribute>();
                 ts.Reset();
-                foreach (String partOfSpeech in partsOfSpeech)
+                foreach (string partOfSpeech in partsOfSpeech)
                 {
                     assertTrue(ts.IncrementToken());
                     assertEquals(partOfSpeech, partOfSpeechAtt.GetPartOfSpeech());
@@ -569,7 +569,7 @@ namespace Lucene.Net.Analysis.Ja
             }
             finally
             {
-                IOUtils.DisposeWhileHandlingException(ts);
+                IOUtils.CloseWhileHandlingException(ts);
             }
         }
 
@@ -694,14 +694,14 @@ namespace Lucene.Net.Analysis.Ja
         public void TestYabottai()
         {
             AssertAnalyzesTo(analyzer, "やぼったい",
-                             new String[] { "やぼったい" });
+                             new string[] { "やぼったい" });
         }
 
         [Test]
         public void TestTsukitosha()
         {
             AssertAnalyzesTo(analyzer, "突き通しゃ",
-                             new String[] { "突き通しゃ" });
+                             new string[] { "突き通しゃ" });
         }
 
         [Test]
@@ -769,7 +769,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             TextReader reader = new StreamReader(
                 this.GetType().getResourceAsStream("bocchan.utf-8"), Encoding.UTF8);
-            String line = reader.ReadLine();
+            string line = reader.ReadLine();
             reader.Dispose();
 
             if (Verbose)
@@ -800,10 +800,10 @@ namespace Lucene.Net.Analysis.Ja
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ts);
+                    IOUtils.CloseWhileHandlingException(ts);
                 }
             }
-            String[] sentences = Regex.Split(line, "、|。").TrimEnd();
+            string[] sentences = Regex.Split(line, "、|。").TrimEnd();
             if (Verbose)
             {
                 Console.WriteLine("Total time : " + ((Time.NanoTime() / Time.MillisecondsPerNanosecond) - totalStart)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
@@ -812,7 +812,7 @@ namespace Lucene.Net.Analysis.Ja
             totalStart = Time.NanoTime() / Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
             for (int i = 0; i < numIterations; i++)
             {
-                foreach (String sentence in sentences)
+                foreach (string sentence in sentences)
                 {
                     TokenStream ts = analyzer.GetTokenStream("ignored", sentence);
                     try
@@ -823,7 +823,7 @@ namespace Lucene.Net.Analysis.Ja
                     }
                     finally
                     {
-                        IOUtils.DisposeWhileHandlingException(ts);
+                        IOUtils.CloseWhileHandlingException(ts);
                     }
                 }
             }
@@ -837,7 +837,7 @@ namespace Lucene.Net.Analysis.Ja
         public void TestWithPunctuation()
         {
             AssertAnalyzesTo(analyzerNoPunct, "羽田。空港",
-                             new String[] { "羽田", "空港" },
+                             new string[] { "羽田", "空港" },
                              new int[] { 1, 1 });
         }
 
@@ -845,7 +845,7 @@ namespace Lucene.Net.Analysis.Ja
         public void TestCompoundOverPunctuation()
         {
             AssertAnalyzesToPositions(analyzerNoPunct, "dεε϶ϢϏΎϷΞͺ羽田",
-                                      new String[] { "d", "ε", "ε", "ϢϏΎϷΞͺ", "羽田" },
+                                      new string[] { "d", "ε", "ε", "ϢϏΎϷΞͺ", "羽田" },
                                       new int[] { 1, 1, 1, 1, 1 },
                                       new int[] { 1, 1, 1, 1, 1 });
         }
@@ -857,7 +857,7 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestEmptyBacktrace()
         {
-            String text = "";
+            string text = "";
 
             // since the max backtrace gap ({@link JapaneseTokenizer#MAX_BACKTRACE_GAP)
             // is set to 1024, we want the first 1023 characters to generate multiple paths
@@ -871,7 +871,7 @@ namespace Lucene.Net.Analysis.Ja
             // will end-up together
             text += "手紙";
 
-            IList<String> outputs = new List<String>();
+            IList<string> outputs = new List<string>();
             for (int i = 0; i < 511; i++)
             {
                 outputs.Add("ああ");

@@ -76,17 +76,26 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     continue;
                 }
 
-                using TokenStream stream = field.GetTokenStream(analyzer);
-                // reset the TokenStream to the first token
-                stream.Reset();
-
-                ITermToBytesRefAttribute termAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
-                while (stream.IncrementToken())
+                TokenStream stream = field.GetTokenStream(analyzer);
+                // LUCENENET specific: wrap in try/finally block
+                try
                 {
-                    termAtt.FillBytesRef();
-                    tokenCount++;
+                    // reset the TokenStream to the first token
+                    stream.Reset();
+
+                    ITermToBytesRefAttribute termAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
+                    while (stream.IncrementToken())
+                    {
+                        termAtt.FillBytesRef();
+                        tokenCount++;
+                    }
+
+                    stream.End();
                 }
-                stream.End();
+                finally
+                {
+                    stream.Close();
+                }
             }
             totalTokenCount += tokenCount;
             return tokenCount;

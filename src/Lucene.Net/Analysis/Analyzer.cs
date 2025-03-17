@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,7 +35,7 @@ namespace Lucene.Net.Analysis
     /// <para/>
     /// Simple example:
     /// <code>
-    /// Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) => 
+    /// Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
     /// {
     ///     Tokenizer source = new FooTokenizer(reader);
     ///     TokenStream filter = new FooFilter(source);
@@ -96,9 +97,9 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Creates a new instance with the ability to specify the body of the <see cref="CreateComponents(string, TextReader)"/>
         /// method through the <paramref name="createComponents"/> parameter.
-        /// Simple example: 
+        /// Simple example:
         /// <code>
-        ///     var analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) => 
+        ///     var analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         ///     {
         ///         Tokenizer source = new FooTokenizer(reader);
         ///         TokenStream filter = new FooFilter(source);
@@ -110,8 +111,8 @@ namespace Lucene.Net.Analysis
         /// LUCENENET specific
         /// </summary>
         /// <param name="createComponents">
-        /// A delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/> 
-        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and 
+        /// A delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/>
+        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and
         /// returns the <see cref="TokenStreamComponents"/> for this analyzer.
         /// </param>
         /// <returns> A new <see cref="AnonymousAnalyzer"/> instance.</returns>
@@ -123,9 +124,9 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Creates a new instance with the ability to specify the body of the <see cref="CreateComponents(string, TextReader)"/>
         /// method through the <paramref name="createComponents"/> parameter and allows the use of a <see cref="ReuseStrategy"/>.
-        /// Simple example: 
+        /// Simple example:
         /// <code>
-        ///     var analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) => 
+        ///     var analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         ///     {
         ///         Tokenizer source = new FooTokenizer(reader);
         ///         TokenStream filter = new FooFilter(source);
@@ -137,8 +138,8 @@ namespace Lucene.Net.Analysis
         /// LUCENENET specific
         /// </summary>
         /// <param name="createComponents">
-        /// An delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/> 
-        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and 
+        /// An delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/>
+        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and
         /// returns the <see cref="TokenStreamComponents"/> for this analyzer.
         /// </param>
         /// <param name="reuseStrategy">A custom <see cref="ReuseStrategy"/> instance.</param>
@@ -152,15 +153,15 @@ namespace Lucene.Net.Analysis
         /// Creates a new instance with the ability to specify the body of the <see cref="CreateComponents(string, TextReader)"/>
         /// method through the <paramref name="createComponents"/> parameter and the body of the <see cref="InitReader(string, TextReader)"/>
         /// method through the <paramref name="initReader"/> parameter.
-        /// Simple example: 
+        /// Simple example:
         /// <code>
-        ///     var analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) => 
+        ///     var analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         ///     {
         ///         Tokenizer source = new FooTokenizer(reader);
         ///         TokenStream filter = new FooFilter(source);
         ///         filter = new BarFilter(filter);
         ///         return new TokenStreamComponents(source, filter);
-        ///     }, initReader: (fieldName, reader) => 
+        ///     }, initReader: (fieldName, reader) =>
         ///     {
         ///         return new HTMLStripCharFilter(reader);
         ///     });
@@ -169,12 +170,12 @@ namespace Lucene.Net.Analysis
         /// LUCENENET specific
         /// </summary>
         /// <param name="createComponents">
-        /// A delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/> 
-        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and 
+        /// A delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/>
+        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and
         /// returns the <see cref="TokenStreamComponents"/> for this analyzer.
         /// </param>
         /// <param name="initReader">A delegate method that represents (is called by) the <see cref="InitReader(string, TextReader)"/>
-        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and 
+        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and
         /// returns the <see cref="TextReader"/> that can be modified or wrapped by the <paramref name="initReader"/> method.</param>
         /// <returns> A new <see cref="AnonymousAnalyzer"/> instance.</returns>
         public static Analyzer NewAnonymous(Func<string, TextReader, TokenStreamComponents> createComponents, Func<string, TextReader, TextReader> initReader)
@@ -186,15 +187,15 @@ namespace Lucene.Net.Analysis
         /// Creates a new instance with the ability to specify the body of the <see cref="CreateComponents(string, TextReader)"/>
         /// method through the <paramref name="createComponents"/> parameter, the body of the <see cref="InitReader(string, TextReader)"/>
         /// method through the <paramref name="initReader"/> parameter, and allows the use of a <see cref="ReuseStrategy"/>.
-        /// Simple example: 
+        /// Simple example:
         /// <code>
-        ///     var analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) => 
+        ///     var analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         ///     {
         ///         Tokenizer source = new FooTokenizer(reader);
         ///         TokenStream filter = new FooFilter(source);
         ///         filter = new BarFilter(filter);
         ///         return new TokenStreamComponents(source, filter);
-        ///     }, initReader: (fieldName, reader) => 
+        ///     }, initReader: (fieldName, reader) =>
         ///     {
         ///         return new HTMLStripCharFilter(reader);
         ///     }, reuseStrategy);
@@ -203,12 +204,12 @@ namespace Lucene.Net.Analysis
         /// LUCENENET specific
         /// </summary>
         /// <param name="createComponents">
-        /// A delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/> 
-        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and 
+        /// A delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/>
+        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and
         /// returns the <see cref="TokenStreamComponents"/> for this analyzer.
         /// </param>
         /// <param name="initReader">A delegate method that represents (is called by) the <see cref="InitReader(string, TextReader)"/>
-        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and 
+        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and
         /// returns the <see cref="TextReader"/> that can be modified or wrapped by the <paramref name="initReader"/> method.</param>
         /// <param name="reuseStrategy">A custom <see cref="ReuseStrategy"/> instance.</param>
         /// <returns> A new <see cref="AnonymousAnalyzer"/> instance.</returns>
@@ -275,7 +276,7 @@ namespace Lucene.Net.Analysis
         /// method will reuse the previously stored components after resetting them
         /// through <see cref="TokenStreamComponents.SetReader(TextReader)"/>.
         /// <para/>
-        /// <b>NOTE:</b> After calling this method, the consumer must follow the 
+        /// <b>NOTE:</b> After calling this method, the consumer must follow the
         /// workflow described in <see cref="Analysis.TokenStream"/> to properly consume its contents.
         /// See the <see cref="Lucene.Net.Analysis"/> namespace documentation for
         /// some examples demonstrating this.
@@ -314,7 +315,7 @@ namespace Lucene.Net.Analysis
         /// The default implementation returns <paramref name="reader"/>
         /// unchanged.
         /// </summary>
-        /// <param name="fieldName"> <see cref="Index.IIndexableField"/> name being indexed </param>
+        /// <param name="fieldName"> <see cref="IIndexableField"/> name being indexed </param>
         /// <param name="reader"> original <see cref="TextReader"/> </param>
         /// <returns> reader, optionally decorated with <see cref="CharFilter"/>(s) </returns>
         protected internal virtual TextReader InitReader(string fieldName, TextReader reader)
@@ -323,16 +324,16 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Invoked before indexing a <see cref="Index.IIndexableField"/> instance if
+        /// Invoked before indexing a <see cref="IIndexableField"/> instance if
         /// terms have already been added to that field.  This allows custom
         /// analyzers to place an automatic position increment gap between
-        /// <see cref="Index.IIndexableField"/> instances using the same field name.  The default value
+        /// <see cref="IIndexableField"/> instances using the same field name.  The default value
         /// position increment gap is 0.  With a 0 position increment gap and
         /// the typical default token position increment of 1, all terms in a field,
-        /// including across <see cref="Index.IIndexableField"/> instances, are in successive positions, allowing
-        /// exact <see cref="Search.PhraseQuery"/> matches, for instance, across <see cref="Index.IIndexableField"/> instance boundaries.
+        /// including across <see cref="IIndexableField"/> instances, are in successive positions, allowing
+        /// exact <see cref="Search.PhraseQuery"/> matches, for instance, across <see cref="IIndexableField"/> instance boundaries.
         /// </summary>
-        /// <param name="fieldName"> <see cref="Index.IIndexableField"/> name being indexed. </param>
+        /// <param name="fieldName"> <see cref="IIndexableField"/> name being indexed. </param>
         /// <returns> position increment gap, added to the next token emitted from <see cref="GetTokenStream(string, TextReader)"/>.
         ///         this value must be <c>&gt;= 0</c>.</returns>
         public virtual int GetPositionIncrementGap(string fieldName)
@@ -360,7 +361,7 @@ namespace Lucene.Net.Analysis
         public ReuseStrategy Strategy => reuseStrategy;
 
         /// <summary>
-        /// Frees persistent resources used by this <see cref="Analyzer"/> 
+        /// Frees persistent resources used by this <see cref="Analyzer"/>
         /// </summary>
         public void Dispose()
         {
@@ -369,7 +370,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Frees persistent resources used by this <see cref="Analyzer"/> 
+        /// Frees persistent resources used by this <see cref="Analyzer"/>
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
@@ -459,10 +460,24 @@ namespace Lucene.Net.Analysis
                 if (componentsPerField is null)
                 {
                     // LUCENENET-615: This needs to support nullable keys
-                    componentsPerField = new JCG.Dictionary<string, TokenStreamComponents>();
+                    componentsPerField = new TokenStreamComponentsDictionary();
                     SetStoredValue(analyzer, componentsPerField);
                 }
                 componentsPerField[fieldName] = components;
+            }
+
+            /// <summary>
+            /// A dictionary that supports disposing of the values when the dictionary is disposed.
+            /// </summary>
+            /// <seealso cref="TokenStreamComponents"/>
+            private class TokenStreamComponentsDictionary
+                : JCG.Dictionary<string, TokenStreamComponents>, IDisposable
+            {
+                public void Dispose()
+                {
+                    IOUtils.Dispose(this.Values);
+                    Clear();
+                }
             }
         }
 
@@ -470,7 +485,7 @@ namespace Lucene.Net.Analysis
         /// LUCENENET specific helper class to mimick Java's ability to create anonymous classes.
         /// Clearly, the design of <see cref="Analyzer"/> took this feature of Java into consideration.
         /// Since it doesn't exist in .NET, we can use a delegate method to call the constructor of
-        /// this concrete instance to fake it (by calling an overload of 
+        /// this concrete instance to fake it (by calling an overload of
         /// <see cref="Analyzer.NewAnonymous(Func{string, TextReader, TokenStreamComponents})"/>).
         /// </summary>
         private class AnonymousAnalyzer : Analyzer
@@ -501,6 +516,8 @@ namespace Lucene.Net.Analysis
         }
     }
 
+#nullable enable
+
     /// <summary>
     /// This class encapsulates the outer components of a token stream. It provides
     /// access to the source (<see cref="Analysis.Tokenizer"/>) and the outer end (sink), an
@@ -508,7 +525,16 @@ namespace Lucene.Net.Analysis
     /// <see cref="Analysis.TokenStream"/> returned by
     /// <see cref="Analyzer.GetTokenStream(string, TextReader)"/>.
     /// </summary>
-    public class TokenStreamComponents
+    /// <remarks>
+    /// LUCENENET: This class implements <see cref="IDisposable"/> so that any <see cref="Analysis.TokenStream"/>
+    /// implementations that need to be disposed are disposed when the <see cref="Analyzer"/>
+    /// that stores this in its stored value is disposed.
+    /// <para />
+    /// <see cref="Analysis.TokenStream"/> subclasses may opt in to disposal by implementing <see cref="IDisposable"/>,
+    /// in which case they will receive a call automatically. Only the first call to <see cref="Analyzer.Dispose()"/>
+    /// will be honored, additional calls will have no effect.
+    /// </remarks>
+    public class TokenStreamComponents : IDisposable
     {
         /// <summary>
         /// Original source of the tokens.
@@ -523,7 +549,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Internal cache only used by <see cref="Analyzer.GetTokenStream(string, string)"/>. </summary>
-        internal ReusableStringReader reusableStringReader;
+        internal ReusableStringReader? reusableStringReader;
 
         /// <summary>
         /// Creates a new <see cref="TokenStreamComponents"/> instance.
@@ -532,10 +558,12 @@ namespace Lucene.Net.Analysis
         ///          the analyzer's tokenizer </param>
         /// <param name="result">
         ///          the analyzer's resulting token stream </param>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> or
+        /// <paramref name="result"/> is <c>null</c>.</exception>
         public TokenStreamComponents(Tokenizer source, TokenStream result)
         {
-            this.m_source = source;
-            this.m_sink = result;
+            this.m_source = source ?? throw new ArgumentNullException(nameof(source)); // LUCENENET: Added null guard clauses
+            this.m_sink = result ?? throw new ArgumentNullException(nameof(result));
         }
 
         /// <summary>
@@ -543,9 +571,10 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <param name="source">
         ///          the analyzer's tokenizer </param>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> is <c>null</c>.</exception>
         public TokenStreamComponents(Tokenizer source)
         {
-            this.m_source = source;
+            this.m_source = source ?? throw new ArgumentNullException(nameof(source)); // LUCENENET: Added null guard clause
             this.m_sink = source;
         }
 
@@ -573,7 +602,35 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <returns> Component's <see cref="Analysis.Tokenizer"/> </returns>
         public virtual Tokenizer Tokenizer => m_source;
+
+        /// <summary>
+        /// Disposes of the <see cref="Tokenizer"/> and <see cref="TokenStream"/>.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific: see remarks on the <see cref="TokenStreamComponents"/> class.
+        /// </remarks>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources in a way such that the instance is not reusable.
+        /// <para/>
+        /// If you override this method, always call <c>base.Dispose(disposing)</c>.
+        /// Also, ensure that your implementation is idempotent as it may be called multiple times.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            // LUCENENET: Calling DoDispose() on the top-level TokenStream is all that is required
+            // since TokenStream tracks wrapped IDisposable instances automatically.
+            m_source.DoDispose();
+            reusableStringReader?.Dispose();
+        }
     }
+
+#nullable restore
 
     /// <summary>
     /// Strategy defining how <see cref="TokenStreamComponents"/> are reused per call to

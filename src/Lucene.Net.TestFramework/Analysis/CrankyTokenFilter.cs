@@ -65,19 +65,16 @@ namespace Lucene.Net.TestFramework.Analysis
             thingToDo = random.Next(100);
             if (thingToDo == 2 && random.nextBoolean())
             {
-                throw new IOException("Fake IOException from TokenStream.Reset()");
+                throw new IOException($"Fake IOException from {nameof(TokenStream)}.{nameof(TokenStream.Reset)}()");
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            base.Dispose(disposing);
-            if (disposing)
+            base.Close();
+            if (thingToDo == 3 && random.nextBoolean())
             {
-                if (thingToDo == 3 && random.nextBoolean())
-                {
-                    throw new IOException("Fake IOException from TokenStream.Dispose(bool)");
-                }
+                throw new IOException($"Fake IOException from {nameof(TokenStream)}.{nameof(TokenStream.Close)}()");
             }
         }
     }

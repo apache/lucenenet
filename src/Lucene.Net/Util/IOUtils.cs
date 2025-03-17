@@ -64,8 +64,66 @@ namespace Lucene.Net.Util
         public static readonly string UTF_8 = "UTF-8";
 
         /// <summary>
-        /// <para>Disposes all given <c>IDisposable</c>s, suppressing all thrown exceptions. Some of the <c>IDisposable</c>s
-        /// may be <c>null</c>, they are ignored. After everything is disposed, method either throws <paramref name="priorException"/>,
+        /// Closes all given <see cref="ICloseable"/>s.  Some of the
+        /// <see cref="ICloseable"/>s may be <c>null</c>; they are
+        /// ignored.  After everything is closed, the method either
+        /// throws the first exception it hit while closing, or
+        /// completes normally if there were no exceptions.
+        /// </summary>
+        /// <param name="objects">Objects to call <see cref="ICloseable.Close()"/> on</param>
+        public static void Close(params ICloseable[] objects)
+        {
+            Exception th = null;
+
+            foreach (ICloseable @object in objects)
+            {
+                try
+                {
+                    @object?.Close();
+                }
+                catch (Exception t) when (t.IsThrowable())
+                {
+                    AddSuppressed(th, t);
+                    if (th is null)
+                    {
+                        th = t;
+                    }
+                }
+            }
+
+            ReThrow(th);
+        }
+
+        /// <summary>
+        /// Closes all given <see cref="ICloseable"/>s.
+        /// </summary>
+        /// <seealso cref="Close(ICloseable[])"/>
+        public static void Close(IEnumerable<ICloseable> objects)
+        {
+            Exception th = null;
+
+            foreach (ICloseable @object in objects)
+            {
+                try
+                {
+                    @object?.Close();
+                }
+                catch (Exception t) when (t.IsThrowable())
+                {
+                    AddSuppressed(th, t);
+                    if (th is null)
+                    {
+                        th = t;
+                    }
+                }
+            }
+
+            ReThrow(th);
+        }
+
+        /// <summary>
+        /// <para>Closes all given <see cref="ICloseable">ICloseable</see>s, suppressing all thrown exceptions. Some of the <see cref="ICloseable">ICloseable</see>s
+        /// may be <c>null</c>, they are ignored. After everything is closed, method either throws <paramref name="priorException"/>,
         /// if one is supplied, or the first of suppressed exceptions, or completes normally.</para>
         /// <para>Sample usage:
         /// <code>
@@ -88,66 +146,109 @@ namespace Lucene.Net.Util
         /// </para>
         /// </summary>
         /// <param name="priorException">  <c>null</c> or an exception that will be rethrown after method completion. </param>
-        /// <param name="objects">         Objects to call <see cref="IDisposable.Dispose()"/> on. </param>
-        [Obsolete("Use DisposeWhileHandlingException(Exception, params IDisposable[]) instead.")]
-        public static void CloseWhileHandlingException(Exception priorException, params IDisposable[] objects)
+        /// <param name="objects">         Objects to call <see cref="ICloseable.Close()"/> on. </param>
+        public static void CloseWhileHandlingException(Exception priorException, params ICloseable[] objects)
         {
-            DisposeWhileHandlingException(priorException, objects);
+            Exception th = null;
+
+            foreach (ICloseable @object in objects)
+            {
+                try
+                {
+                    @object?.Close();
+                }
+                catch (Exception t) when (t.IsThrowable())
+                {
+                    AddSuppressed(priorException ?? th, t);
+                    if (th is null)
+                    {
+                        th = t;
+                    }
+                }
+            }
+
+            if (priorException != null)
+            {
+                ExceptionDispatchInfo.Capture(priorException).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
+            }
+            else
+            {
+                ReThrow(th);
+            }
         }
 
         /// <summary>
-        /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
-        /// <seealso cref="DisposeWhileHandlingException(Exception, IDisposable[])"/>
-        [Obsolete("Use DisposeWhileHandlingException(Exception, IEnumerable<IDisposable>) instead.")]
-        public static void CloseWhileHandlingException(Exception priorException, IEnumerable<IDisposable> objects)
-        {
-            DisposeWhileHandlingException(priorException, objects);
-        }
-
-        /// <summary>
-        /// Disposes all given <see cref="IDisposable"/>s.  Some of the
-        /// <see cref="IDisposable"/>s may be <c>null</c>; they are
-        /// ignored.  After everything is closed, the method either
-        /// throws the first exception it hit while closing, or
-        /// completes normally if there were no exceptions.
+        /// Closes all given <see cref="ICloseable"/>s, suppressing all thrown exceptions.
         /// </summary>
-        /// <param name="objects">
-        ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
-        [Obsolete("Use Dispose(params IDisposable[]) instead.")]
-        public static void Close(params IDisposable[] objects)
+        /// <seealso cref="CloseWhileHandlingException(Exception, ICloseable[])"/>
+        public static void CloseWhileHandlingException(Exception priorException, IEnumerable<ICloseable> objects)
         {
-            Dispose(objects);
+            Exception th = null;
+
+            foreach (ICloseable @object in objects)
+            {
+                try
+                {
+                    @object?.Close();
+                }
+                catch (Exception t) when (t.IsThrowable())
+                {
+                    AddSuppressed(priorException ?? th, t);
+                    if (th is null)
+                    {
+                        th = t;
+                    }
+                }
+            }
+
+            if (priorException != null)
+            {
+                ExceptionDispatchInfo.Capture(priorException).Throw(); // LUCENENET: Rethrow to preserve stack details from the original throw
+            }
+            else
+            {
+                ReThrow(th);
+            }
         }
 
         /// <summary>
-        /// Disposes all given <see cref="IDisposable"/>s. </summary>
-        /// <seealso cref="Dispose(IDisposable[])"/>
-        [Obsolete("Use Dispose(IEnumerable<IDisposable>) instead.")]
-        public static void Close(IEnumerable<IDisposable> objects)
-        {
-            Dispose(objects);
-        }
-
-        /// <summary>
-        /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions.
-        /// Some of the <see cref="IDisposable"/>s may be <c>null</c>, they are ignored.
+        /// Closes all given <see cref="ICloseable"/>s, suppressing all thrown exceptions.
+        /// Some of the <see cref="ICloseable"/>s may be <c>null</c>, they are ignored.
         /// </summary>
-        /// <param name="objects">
-        ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
-        [Obsolete("Use DisposeWhileHandlingException(params IDisposable[]) instead.")]
-        public static void CloseWhileHandlingException(params IDisposable[] objects)
+        /// <param name="objects">Objects to call <see cref="ICloseable.Close()"/> on</param>
+        public static void CloseWhileHandlingException(params ICloseable[] objects)
         {
-            DisposeWhileHandlingException(objects);
+            foreach (ICloseable @object in objects)
+            {
+                try
+                {
+                    @object?.Close();
+                }
+                catch (Exception t) when (t.IsThrowable())
+                {
+                    // eat it
+                }
+            }
         }
 
         /// <summary>
-        /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
-        /// <seealso cref="DisposeWhileHandlingException(IEnumerable{IDisposable})"/>
-        /// <seealso cref="DisposeWhileHandlingException(IDisposable[])"/>
-        [Obsolete("Use DisposeWhileHandlingException(IEnumerable<IDisposable>) instead.")]
-        public static void CloseWhileHandlingException(IEnumerable<IDisposable> objects)
+        /// Closes all given <see cref="ICloseable"/>s, suppressing all thrown exceptions.
+        /// </summary>
+        /// <seealso cref="CloseWhileHandlingException(IEnumerable{ICloseable})"/>
+        /// <seealso cref="CloseWhileHandlingException(ICloseable[])"/>
+        public static void CloseWhileHandlingException(IEnumerable<ICloseable> objects)
         {
-            DisposeWhileHandlingException(objects);
+            foreach (ICloseable @object in objects)
+            {
+                try
+                {
+                    @object?.Close();
+                }
+                catch (Exception t) when (t.IsThrowable())
+                {
+                    // eat it
+                }
+            }
         }
 
 

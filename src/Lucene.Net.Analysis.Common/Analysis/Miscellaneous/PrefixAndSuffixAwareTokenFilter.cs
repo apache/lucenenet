@@ -21,15 +21,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <summary>
     /// Links two <see cref="PrefixAwareTokenFilter"/>.
     /// <para/>
-    /// <b>NOTE:</b> This filter might not behave correctly if used with custom 
+    /// <b>NOTE:</b> This filter might not behave correctly if used with custom
     /// <see cref="Lucene.Net.Util.IAttribute"/>s, i.e. <see cref="Lucene.Net.Util.IAttribute"/>s other than
-    /// the ones located in Lucene.Net.Analysis.TokenAttributes. 
+    /// the ones located in Lucene.Net.Analysis.TokenAttributes.
     /// </summary>
     public class PrefixAndSuffixAwareTokenFilter : TokenStream
     {
         private readonly PrefixAwareTokenFilter suffix;
 
-        public PrefixAndSuffixAwareTokenFilter(TokenStream prefix, TokenStream input, TokenStream suffix) 
+        public PrefixAndSuffixAwareTokenFilter(TokenStream prefix, TokenStream input, TokenStream suffix)
             : base(suffix)
         {
             prefix = new PrefixAwareTokenFilterAnonymousClass(this, prefix, input);
@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
 
-            public PrefixAwareTokenFilterAnonymousClass(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream input) 
+            public PrefixAwareTokenFilterAnonymousClass(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream input)
                 : base(prefix, input)
             {
                 this.outerInstance = outerInstance;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
 
-            public PrefixAwareTokenFilterAnonymousClass2(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream suffix) 
+            public PrefixAwareTokenFilterAnonymousClass2(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream suffix)
                 : base(prefix, suffix)
             {
                 this.outerInstance = outerInstance;
@@ -90,13 +90,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             suffix.Reset();
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
-            {
-                suffix.Dispose();
-            }
-            base.Dispose(disposing); // LUCENENET specific - disposable pattern requires calling the base class implementation
+            suffix.Close();
         }
 
         public override void End()

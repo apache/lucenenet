@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 stream.Reset();
                 assertEquals(expected, stream.IncrementToken());
                 stream.End();
-                stream.Dispose();
+                stream.Close();
             }
         }
 

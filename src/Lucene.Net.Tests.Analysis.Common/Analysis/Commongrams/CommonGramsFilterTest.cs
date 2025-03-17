@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             assertEquals("the", term.ToString());
             assertTrue(cgf.IncrementToken());
             assertEquals("the_s", term.ToString());
-            cgf.Dispose();
+            cgf.Close();
 
             wt.SetReader(new StringReader(input));
             cgf.Reset();
@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             assertEquals("How_the", term.ToString());
             assertTrue(nsf.IncrementToken());
             assertEquals("the_s", term.ToString());
-            nsf.Dispose();
+            nsf.Close();
 
             wt.SetReader(new StringReader(input));
             nsf.Reset();
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// tokens/positions in)
         /// "foo bar the"=>"foo:1|bar:2,bar-the:2|the:3=> "foo" "bar-the" (2 tokens
         /// out)
-        /// 
+        ///
         /// </summary>
         [Test]
         public virtual void TestCommonGramsQueryFilter()

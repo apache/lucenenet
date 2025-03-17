@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
 
         // LUCENENET: The all locales may are not available for collation.
         // LUCENENET: Removed this (only) reference to the ICU library, since it has a lot of data and we don't
-        // want to unnecessarily reference it in all test projects. 
+        // want to unnecessarily reference it in all test projects.
         //protected readonly string[] availableCollationLocales = RuleBasedCollator.GetAvailableCollationLocales().ToArray();
 
         /// <summary>
@@ -154,13 +154,13 @@ namespace Lucene.Net.Analysis
         //
         // TODO: this test is really fragile. there are already 3 different cases,
         // depending upon unicode version.
-        public virtual void TestCollationKeySort(Analyzer usAnalyzer, 
-                                                Analyzer franceAnalyzer, 
-                                                Analyzer swedenAnalyzer, 
-                                                Analyzer denmarkAnalyzer, 
-                                                string usResult, 
-                                                string frResult, 
-                                                string svResult, 
+        public virtual void TestCollationKeySort(Analyzer usAnalyzer,
+                                                Analyzer franceAnalyzer,
+                                                Analyzer swedenAnalyzer,
+                                                Analyzer denmarkAnalyzer,
+                                                string usResult,
+                                                string frResult,
+                                                string svResult,
                                                 string dkResult)
         {
             using Directory indexStore = NewDirectory();
@@ -272,7 +272,7 @@ namespace Lucene.Net.Analysis
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(priorException, ts);
+                    IOUtils.CloseWhileHandlingException(priorException, ts);
                 }
             }
 
@@ -329,7 +329,7 @@ namespace Lucene.Net.Analysis
                         }
                         finally
                         {
-                            IOUtils.DisposeWhileHandlingException(priorException, ts);
+                            IOUtils.CloseWhileHandlingException(priorException, ts);
                         }
                     }
                 }

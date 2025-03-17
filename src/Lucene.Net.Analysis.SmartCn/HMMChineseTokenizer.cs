@@ -94,27 +94,16 @@ namespace Lucene.Net.Analysis.Cn.Smart
         }
 
         /// <summary>
-        /// Releases resources used by the <see cref="HMMChineseTokenizer"/> and
-        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// Releases resources used by the <see cref="HMMChineseTokenizer"/>.
         /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-        /// <c>false</c> to release only unmanaged resources.</param>
-
-        // LUCENENET specific
-        protected override void Dispose(bool disposing)
+        /// <remarks>
+        /// LUCENENET specific
+        /// </remarks>
+        public override void Close()
         {
-            try
-            {
-                if (disposing)
-                {
-                    tokens?.Dispose(); // LUCENENET specific - dispose tokens and set to null
-                    tokens = null;
-                }
-            }
-            finally
-            {
-                base.Dispose(disposing);
-            }
+            tokens?.Dispose(); // LUCENENET specific - dispose tokens and set to null
+            tokens = null;
+            base.Close();
         }
     }
 }

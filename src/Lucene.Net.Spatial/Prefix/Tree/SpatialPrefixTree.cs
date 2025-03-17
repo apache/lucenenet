@@ -178,6 +178,11 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <para/>
         /// This implementation checks if shape is a <see cref="IPoint"/> and if so returns
         /// <see cref="GetCells(IPoint, int, bool)"/>.
+        /// <para />
+        /// LUCENENET NOTE: If overriding this method, make sure to return an implementation of
+        /// <c>IList&lt;Cell&gt;</c> whose <see cref="IEnumerable{T}.GetEnumerator()"/> returns an enumerator
+        /// that supports being <see cref="System.Collections.IEnumerator.Reset()"/> without throwing an exception.
+        /// Most common .NET collection types like <see cref="List{T}"/> and <c>Cell[]</c> support this.
         /// </remarks>
         /// <param name="shape">the shape</param>
         /// <param name="detailLevel">the maximum detail level to get cells for</param>

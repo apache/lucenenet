@@ -954,12 +954,9 @@ namespace Lucene.Net.Documents
                 used = false;
             }
 
-            protected override void Dispose(bool disposing)
+            public override void Close()
             {
-                if (disposing)
-                {
-                    value = null;
-                }
+                value = null;
             }
         }
 

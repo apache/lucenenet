@@ -122,7 +122,6 @@ namespace Lucene.Net.Analysis
             // Added this try-finally block to fix this.
             try
             {
-
                 Assert.IsNotNull(output);
                 var checkClearAtt = ts.AddAttribute<ICheckClearAttributesAttribute>();
 
@@ -383,19 +382,10 @@ namespace Lucene.Net.Analysis
                 {
                     Assert.AreEqual((int)finalPosInc, posIncrAtt.PositionIncrement, "finalPosInc");
                 }
-
-                //ts.Dispose();
-            }
-            catch (Exception)
-            {
-                //ts.Reset();
-                ts.ClearAttributes();
-                ts.End();
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
             finally
             {
-                ts.Dispose();
+                ts.Close();
             }
         }
 
@@ -554,7 +544,7 @@ namespace Lucene.Net.Analysis
                 {
                 }
                 ts.End();
-                ts.Dispose();
+                ts.Close();
             }
 
             // check for a missing Close()
@@ -567,7 +557,7 @@ namespace Lucene.Net.Analysis
             try
             {
                 ts = a.GetTokenStream("bogus", new StringReader(input));
-                Assert.Fail("Didn't get expected exception when Dispose() not called");
+                Assert.Fail("Didn't get expected exception when Close() not called");
             }
             catch (Exception expected) when (expected.IsIllegalStateException())
             {
@@ -575,7 +565,7 @@ namespace Lucene.Net.Analysis
             }
             finally
             {
-                ts.Dispose();
+                ts.Close();
             }
         }
 
@@ -942,87 +932,59 @@ namespace Lucene.Net.Analysis
                 Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: get first token stream now text=" + text);
             }
 
-            ICharTermAttribute termAtt;
-            IOffsetAttribute offsetAtt;
-            IPositionIncrementAttribute posIncAtt;
-            IPositionLengthAttribute posLengthAtt;
-            ITypeAttribute typeAtt;
-
+            int remainder = random.Next(10);
+            TextReader reader = new StringReader(text);
+            TokenStream ts = a.GetTokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
+            ICharTermAttribute termAtt = ts.HasAttribute<ICharTermAttribute>() ? ts.GetAttribute<ICharTermAttribute>() : null;
+            IOffsetAttribute offsetAtt = ts.HasAttribute<IOffsetAttribute>() ? ts.GetAttribute<IOffsetAttribute>() : null;
+            IPositionIncrementAttribute posIncAtt = ts.HasAttribute<IPositionIncrementAttribute>() ? ts.GetAttribute<IPositionIncrementAttribute>() : null;
+            IPositionLengthAttribute posLengthAtt = ts.HasAttribute<IPositionLengthAttribute>() ? ts.GetAttribute<IPositionLengthAttribute>() : null;
+            ITypeAttribute typeAtt = ts.HasAttribute<ITypeAttribute>() ? ts.GetAttribute<ITypeAttribute>() : null;
             IList<string> tokens = new JCG.List<string>();
             IList<string> types = new JCG.List<string>();
             IList<int> positions = new JCG.List<int>();
             IList<int> positionLengths = new JCG.List<int>();
             IList<int> startOffsets = new JCG.List<int>();
             IList<int> endOffsets = new JCG.List<int>();
+            ts.Reset();
 
-            int remainder = random.Next(10);
-            TextReader reader = new StringReader(text);
-
-            TokenStream ts;
-            using (ts = a.GetTokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader))
+            try
             {
-                bool isReset = false;
-                try
+                // First pass: save away "correct" tokens
+                while (ts.IncrementToken())
                 {
-                    termAtt = ts.HasAttribute<ICharTermAttribute>() ? ts.GetAttribute<ICharTermAttribute>() : null;
-                    offsetAtt = ts.HasAttribute<IOffsetAttribute>() ? ts.GetAttribute<IOffsetAttribute>() : null;
-                    posIncAtt = ts.HasAttribute<IPositionIncrementAttribute>() ? ts.GetAttribute<IPositionIncrementAttribute>() : null;
-                    posLengthAtt = ts.HasAttribute<IPositionLengthAttribute>() ? ts.GetAttribute<IPositionLengthAttribute>() : null;
-                    typeAtt = ts.HasAttribute<ITypeAttribute>() ? ts.GetAttribute<ITypeAttribute>() : null;
-
-                    ts.Reset();
-                    isReset = true;
-
-                    // First pass: save away "correct" tokens
-                    while (ts.IncrementToken())
+                    Assert.IsNotNull(termAtt, "has no CharTermAttribute");
+                    tokens.Add(termAtt.ToString());
+                    if (typeAtt != null)
                     {
-                        Assert.IsNotNull(termAtt, "has no CharTermAttribute");
-                        tokens.Add(termAtt.ToString());
-                        if (typeAtt != null)
-                        {
-                            types.Add(typeAtt.Type);
-                        }
-                        if (posIncAtt != null)
-                        {
-                            positions.Add(posIncAtt.PositionIncrement);
-                        }
-                        if (posLengthAtt != null)
-                        {
-                            positionLengths.Add(posLengthAtt.PositionLength);
-                        }
-                        if (offsetAtt != null)
-                        {
-                            startOffsets.Add(offsetAtt.StartOffset);
-                            endOffsets.Add(offsetAtt.EndOffset);
-                        }
+                        types.Add(typeAtt.Type);
                     }
-                    // LUCENENET: We are doing this in the finally block to ensure it happens
-                    // when there are exeptions thrown (such as when the assert fails).
-                    //ts.End();
-                    //ts.Dispose();
-                }
-                finally
-                {
-                    if (!isReset)
+
+                    if (posIncAtt != null)
                     {
-                        try
-                        {
-                            // consume correctly
-                            ts.Reset();
-                            while (ts.IncrementToken());
-                            //ts.End();
-                            //ts.Dispose();
-                        }
-#pragma warning disable 168
-                        catch (Exception ex)
-#pragma warning restore 168
-                        {
-                            // ignore
-                        }
+                        positions.Add(posIncAtt.PositionIncrement);
                     }
-                    ts.End(); // ts.end();
+
+                    if (posLengthAtt != null)
+                    {
+                        positionLengths.Add(posLengthAtt.PositionLength);
+                    }
+
+                    if (offsetAtt != null)
+                    {
+                        startOffsets.Add(offsetAtt.StartOffset);
+                        endOffsets.Add(offsetAtt.EndOffset);
+                    }
                 }
-            } // ts.close();
+
+                ts.End();
+            }
+            finally
+            {
+                // LUCENENET: We are doing this in the finally block to ensure it happens
+                // when there are exceptions thrown (such as when the assert fails).
+                ts.Close();
+            }
 
             // verify reusing is "reproducable" and also get the normal tokenstream sanity checks
             if (tokens.Count > 0)
@@ -1056,7 +1018,7 @@ namespace Lucene.Net.Analysis
                             // currently allow it, so, we must call
                             // a.TokenStream inside the try since we may
                             // hit the exc on init:
-                            ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(evilReader, remainder) : evilReader);
+                            ts = a.GetTokenStream("dummy", useCharFilter ? new MockCharFilter(evilReader, remainder) : evilReader);
                             ts.Reset();
                             while (ts.IncrementToken()) ;
                             Assert.Fail("did not hit exception");
@@ -1078,7 +1040,7 @@ namespace Lucene.Net.Analysis
                         }
                         finally
                         {
-                            ts.Dispose();
+                            ts.Close();
                         }
                     }
                     else if (evilness == 7)
@@ -1091,7 +1053,7 @@ namespace Lucene.Net.Analysis
                         }
 
                         reader = new StringReader(text);
-                        ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
+                        ts = a.GetTokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
                         ts.Reset();
                         for (int tokenCount = 0; tokenCount < numTokensToRead; tokenCount++)
                         {
@@ -1110,7 +1072,7 @@ namespace Lucene.Net.Analysis
                         }
                         finally
                         {
-                            ts.Dispose();
+                            ts.Close();
                         }
                     }
                 }
@@ -1137,36 +1099,84 @@ namespace Lucene.Net.Analysis
                 reader = new MockReaderWrapper(random, reader);
             }
 
-            ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
-            if (typeAtt != null && posIncAtt != null && posLengthAtt != null && offsetAtt != null)
+            ts = a.GetTokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
+
+            try
             {
-                // offset + pos + posLength + type
-                AssertTokenStreamContents(ts, tokens.ToArray(), ToIntArray(startOffsets), ToIntArray(endOffsets), types.ToArray(), ToIntArray(positions), ToIntArray(positionLengths), text.Length, offsetsAreCorrect);
+                if (typeAtt != null && posIncAtt != null && posLengthAtt != null && offsetAtt != null)
+                {
+                    // offset + pos + posLength + type
+                    AssertTokenStreamContents(ts,
+                        tokens.ToArray(),
+                        ToIntArray(startOffsets),
+                        ToIntArray(endOffsets),
+                        types.ToArray(),
+                        ToIntArray(positions),
+                        ToIntArray(positionLengths),
+                        text.Length,
+                        offsetsAreCorrect);
+                }
+                else if (typeAtt != null && posIncAtt != null && offsetAtt != null)
+                {
+                    // offset + pos + type
+                    AssertTokenStreamContents(ts,
+                        tokens.ToArray(),
+                        ToIntArray(startOffsets),
+                        ToIntArray(endOffsets),
+                        types.ToArray(),
+                        ToIntArray(positions),
+                        null,
+                        text.Length,
+                        offsetsAreCorrect);
+                }
+                else if (posIncAtt != null && posLengthAtt != null && offsetAtt != null)
+                {
+                    // offset + pos + posLength
+                    AssertTokenStreamContents(ts,
+                        tokens.ToArray(),
+                        ToIntArray(startOffsets),
+                        ToIntArray(endOffsets),
+                        null,
+                        ToIntArray(positions),
+                        ToIntArray(positionLengths),
+                        text.Length,
+                        offsetsAreCorrect);
+                }
+                else if (posIncAtt != null && offsetAtt != null)
+                {
+                    // offset + pos
+                    AssertTokenStreamContents(ts,
+                        tokens.ToArray(),
+                        ToIntArray(startOffsets),
+                        ToIntArray(endOffsets),
+                        null,
+                        ToIntArray(positions),
+                        null,
+                        text.Length,
+                        offsetsAreCorrect);
+                }
+                else if (offsetAtt != null)
+                {
+                    // offset
+                    AssertTokenStreamContents(ts,
+                        tokens.ToArray(),
+                        ToIntArray(startOffsets),
+                        ToIntArray(endOffsets),
+                        null,
+                        null,
+                        null,
+                        text.Length,
+                        offsetsAreCorrect);
+                }
+                else
+                {
+                    // terms only
+                    AssertTokenStreamContents(ts, tokens.ToArray());
+                }
             }
-            else if (typeAtt != null && posIncAtt != null && offsetAtt != null)
+            finally
             {
-                // offset + pos + type
-                AssertTokenStreamContents(ts, tokens.ToArray(), ToIntArray(startOffsets), ToIntArray(endOffsets), types.ToArray(), ToIntArray(positions), null, text.Length, offsetsAreCorrect);
-            }
-            else if (posIncAtt != null && posLengthAtt != null && offsetAtt != null)
-            {
-                // offset + pos + posLength
-                AssertTokenStreamContents(ts, tokens.ToArray(), ToIntArray(startOffsets), ToIntArray(endOffsets), null, ToIntArray(positions), ToIntArray(positionLengths), text.Length, offsetsAreCorrect);
-            }
-            else if (posIncAtt != null && offsetAtt != null)
-            {
-                // offset + pos
-                AssertTokenStreamContents(ts, tokens.ToArray(), ToIntArray(startOffsets), ToIntArray(endOffsets), null, ToIntArray(positions), null, text.Length, offsetsAreCorrect);
-            }
-            else if (offsetAtt != null)
-            {
-                // offset
-                AssertTokenStreamContents(ts, tokens.ToArray(), ToIntArray(startOffsets), ToIntArray(endOffsets), null, null, null, text.Length, offsetsAreCorrect);
-            }
-            else
-            {
-                // terms only
-                AssertTokenStreamContents(ts, tokens.ToArray());
+                ts.Close();
             }
 
             if (field != null)
@@ -1183,7 +1193,7 @@ namespace Lucene.Net.Analysis
                     reader = new MockReaderWrapper(random, reader);
                 }
 
-                field.SetReaderValue(useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
+                field.SetReaderValue(useCharFilter ? new MockCharFilter(reader, remainder) : reader);
             }
         }
 
@@ -1192,7 +1202,7 @@ namespace Lucene.Net.Analysis
             StringWriter sw = new StringWriter();
             TokenStream ts = a.GetTokenStream("field", new StringReader(inputText));
             ts.Reset();
-            (new TokenStreamToDot(inputText, ts, /*new StreamWriter(*/(TextWriter)sw/*)*/)).ToDot();
+            new TokenStreamToDot(inputText, ts, /*new StreamWriter(*/(TextWriter)sw/*)*/).ToDot();
             return sw.ToString();
         }
 
@@ -1201,7 +1211,7 @@ namespace Lucene.Net.Analysis
             using StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), Encoding.UTF8);
             TokenStream ts = a.GetTokenStream("field", new StringReader(inputText));
             ts.Reset();
-            (new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();
+            new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/).ToDot();
         }
 
         [ExceptionToNetNumericConvention] // LUCENENET: Private API, keeping as-is

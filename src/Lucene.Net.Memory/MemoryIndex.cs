@@ -227,6 +227,7 @@ namespace Lucene.Net.Index.Memory
         /// <param name="fieldName"> a name to be associated with the text </param>
         /// <param name="text"> the text to tokenize and index. </param>
         /// <param name="analyzer"> the analyzer to use for tokenization </param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="fieldName"/>, <paramref name="text"/>, or <paramref name="analyzer"/> is <c>null</c>.</exception>
         public virtual void AddField(string fieldName, string text, Analyzer analyzer)
         {
             if (fieldName is null)
@@ -242,6 +243,7 @@ namespace Lucene.Net.Index.Memory
                 throw new ArgumentNullException(nameof(analyzer), "analyzer must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
             }
 
+            // LUCENENET note: AddFieldImpl will close the TokenStream
             TokenStream stream;
             try
             {
@@ -252,7 +254,10 @@ namespace Lucene.Net.Index.Memory
                 throw RuntimeException.Create(ex);
             }
 
-            AddField(fieldName, stream, 1.0f, analyzer.GetPositionIncrementGap(fieldName), analyzer.GetOffsetGap(fieldName));
+            // LUCENENET specific - use refactored AddFieldImpl to avoid duplicated guard clause checks
+            // and to prevent them from being wrapped in a LuceneSystemException
+            AddFieldImpl(fieldName, stream, 1.0f, analyzer.GetPositionIncrementGap(fieldName),
+                analyzer.GetOffsetGap(fieldName));
         }
 
         /// <summary>
@@ -264,7 +269,8 @@ namespace Lucene.Net.Index.Memory
         /// </summary>
         /// <param name="keywords"> the keywords to generate tokens for </param>
         /// <returns> the corresponding token stream </returns>
-        public virtual TokenStream KeywordTokenStream<T>(ICollection<T> keywords)
+        // LUCENENET: renamed from keywordTokenStream
+        public virtual TokenStream GetKeywordTokenStream<T>(ICollection<T> keywords)
         {
             // TODO: deprecate & move this method into AnalyzerUtil?
             if (keywords is null)
@@ -275,16 +281,32 @@ namespace Lucene.Net.Index.Memory
             return new TokenStreamAnonymousClass<T>(keywords);
         }
 
+        /// <summary>
+        /// An anonymous implementation of <see cref="TokenStream"/> for
+        /// <see cref="MemoryIndex.GetKeywordTokenStream{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of item in the collection.</typeparam>
+        /// <remarks>
+        /// LUCENENET specific - This class originally got an enumerator in the constructor and stored it to a field
+        /// that was never reset, which meant that it could not be reused (since many IEnumerator implementations can
+        /// only be iterated once and throw on <see cref="System.Collections.IEnumerator.Reset()"/>). This class has
+        /// been modified to initialize <see cref="iter"/> on <see cref="TokenStream.Reset()"/> instead, which allows
+        /// it to be reused, per the TokenStream workflow contract of allowing <see cref="TokenStream.Reset()"/> after
+        /// <see cref="TokenStream.Close()"/>.
+        /// </remarks>
         private sealed class TokenStreamAnonymousClass<T> : TokenStream
         {
             public TokenStreamAnonymousClass(ICollection<T> keywords)
             {
-                iter = keywords.GetEnumerator();
+                // LUCENENET specific - initializing iter in Reset() instead of here and storing keywords, see remarks above
+                // iter = keywords.GetEnumerator();
+                this.keywords = keywords;
                 start = 0;
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
+            private ICollection<T> keywords; // LUCENENET specific - see remarks above
             private IEnumerator<T> iter;
             private int start;
             private readonly ICharTermAttribute termAtt;
@@ -292,6 +314,12 @@ namespace Lucene.Net.Index.Memory
 
             public override bool IncrementToken()
             {
+                // LUCENENET specific - check for null iter
+                if (iter is null)
+                {
+                    throw new InvalidOperationException("TokenStream is not properly initialized, IncrementToken() can only be called after Reset()");
+                }
+
                 if (!iter.MoveNext())
                 {
                     return false;
@@ -311,28 +339,21 @@ namespace Lucene.Net.Index.Memory
                 return true;
             }
 
-            /// <summary>
-            /// Releases resources used by the <see cref="TokenStreamAnonymousClass{T}"/> and
-            /// if overridden in a derived class, optionally releases unmanaged resources.
-            /// </summary>
-            /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-            /// <c>false</c> to release only unmanaged resources.</param>
-
-            // LUCENENET specific
-            protected override void Dispose(bool disposing)
+            // LUCENENET specific - added Close() method to clean up resources
+            public override void Close()
             {
-                try
-                {
-                    if (disposing)
-                    {
-                        iter?.Dispose(); // LUCENENET specific - dispose iter and set to null
-                        iter = null;
-                    }
-                }
-                finally
-                {
-                    base.Dispose(disposing);
-                }
+                iter?.Dispose();
+                iter = null;
+                base.Close();
+            }
+
+            // LUCENENET specific - added Reset() method to allow reuse of the TokenStream
+            public override void Reset()
+            {
+                iter?.Dispose();
+                iter = keywords.GetEnumerator();
+                start = 0;
+                base.Reset();
             }
         }
 
@@ -396,22 +417,33 @@ namespace Lucene.Net.Index.Memory
         /// <param name="positionIncrementGap"> the position increment gap if fields with the same name are added more than once </param>
         /// <param name="offsetGap"> the offset gap if fields with the same name are added more than once </param>
         /// <seealso cref="Documents.Field.Boost"/>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="fieldName"/> or <paramref name="stream"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="boost"/> is less than or equal to 0.0.</exception>
         public virtual void AddField(string fieldName, TokenStream stream, float boost, int positionIncrementGap, int offsetGap)
+        {
+            if (fieldName is null)
+            {
+                throw new ArgumentNullException(nameof(fieldName), "fieldName must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            }
+            if (stream is null)
+            {
+                throw new ArgumentNullException(nameof(stream), "token stream must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
+            }
+            if (boost <= 0.0f)
+            {
+                throw new ArgumentOutOfRangeException(nameof(boost), "boost factor must be greater than 0.0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+            }
+
+            // LUCENENET specific - refactored logic into AddFieldImpl
+            AddFieldImpl(fieldName, stream, boost, positionIncrementGap, offsetGap);
+        }
+
+        // LUCENENET specific - refactored AddField logic into AddFieldImpl after guard clauses to avoid duplicated checks and
+        // to prevent them from being wrapped in a LuceneSystemException
+        private void AddFieldImpl(string fieldName, TokenStream stream, float boost, int positionIncrementGap, int offsetGap)
         {
             try
             {
-                if (fieldName is null)
-                {
-                    throw new ArgumentNullException(nameof(fieldName), "fieldName must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-                }
-                if (stream is null)
-                {
-                    throw new ArgumentNullException(nameof(stream), "token stream must not be null"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
-                }
-                if (boost <= 0.0f)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(boost), "boost factor must be greater than 0.0"); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
-                }
                 int numTokens = 0;
                 int numOverlapTokens = 0;
                 int pos = -1;
@@ -509,7 +541,7 @@ namespace Lucene.Net.Index.Memory
                 {
                     if (stream != null)
                     {
-                        stream.Dispose();
+                        stream.Close();
                     }
                 }
                 catch (Exception e2) when (e2.IsIOException())

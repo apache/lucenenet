@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Phonetic
             }
             assertEquals(12, i);
             stream.End();
-            stream.Dispose();
+            stream.Close();
         }
     }
 }

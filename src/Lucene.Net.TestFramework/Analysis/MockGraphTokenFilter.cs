@@ -110,13 +110,10 @@ namespace Lucene.Net.Analysis
             this.random = new J2N.Randomizer(seed);
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
-            {
-                base.Dispose(disposing);
-                this.random = null;
-            }
+            base.Close();
+            this.random = null;
         }
 
         public override bool IncrementToken()

@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Core
                 assertEquals("if position increment is enabled the positionIncrementAttribute value should be 3, otherwise 1", posIncrAtt.PositionIncrement, enablePositionIncrements ? 3 : 1);
             }
             stpf.End();
-            stpf.Dispose();
+            stpf.Close();
         }
 
         [Test]

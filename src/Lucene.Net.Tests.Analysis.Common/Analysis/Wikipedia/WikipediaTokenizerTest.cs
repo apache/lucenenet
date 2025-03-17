@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Wikipedia
 
     /// <summary>
     /// Basic Tests for <seealso cref="WikipediaTokenizer"/>
-    /// 
+    ///
     /// </summary>
     public class WikipediaTokenizerTest : BaseTokenStreamTestCase
     {
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Wikipedia
                 assertEquals("flags " + i, expectedFlags[i], flagsAtt.Flags);
             }
             assertFalse(tf.IncrementToken());
-            tf.Dispose();
+            tf.Close();
         }
 
         /// <summary>
