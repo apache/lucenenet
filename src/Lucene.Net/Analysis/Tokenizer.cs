@@ -70,8 +70,8 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <remarks>
         /// <b>NOTE:</b>
-        /// The default implementation closes the input Reader, so
-        /// be sure to call <c>super.close()</c> when overriding this method.
+        /// The default implementation disposes the input <see cref="TextReader"/>, so
+        /// be sure to call <c>base.Close()</c> when overriding this method.
         /// </remarks>
         public override void Close()
         {

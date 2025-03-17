@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <remarks>
         /// <b>NOTE:</b>
-        /// The default implementation chains the call to the input TokenStream, so
+        /// The default implementation chains the call to the input <see cref="TokenStream"/>, so
         /// be sure to call <c>base.End()</c> first when overriding this method.
         /// </remarks>
         /// <exception cref="IOException"> If an I/O error occurs </exception>
