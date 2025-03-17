@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis
             if (input is TokenStream ts)
             {
                 disposableTracker = ts.disposableTracker;
-                disposableTracker.MaybeRegisterForDisposal(this);
+                disposableTracker.RegisterForDisposalIfRequired(this);
             }
             else
             {
@@ -247,14 +247,14 @@ namespace Lucene.Net.Analysis
             /// <param name="obj">An object that may or may not implement <see cref="IDisposable"/>.</param>
             public DisposableTracker(object? obj)
             {
-                MaybeRegisterForDisposal(obj);
+                RegisterForDisposalIfRequired(obj);
             }
 
             /// <summary>
             /// Registers an object for disposal if it implements <see cref="IDisposable"/>.
             /// </summary>
             /// <param name="obj">An object that may or may not implement <see cref="IDisposable"/>.</param>
-            public void MaybeRegisterForDisposal(object? obj)
+            public void RegisterForDisposalIfRequired(object? obj)
             {
                 // Register in reverse order (ensures correct teardown order)
                 if (obj is IDisposable disposable)
