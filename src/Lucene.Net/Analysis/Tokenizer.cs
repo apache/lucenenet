@@ -30,6 +30,13 @@ namespace Lucene.Net.Analysis
     /// call <see cref="Util.AttributeSource.ClearAttributes()"/> before
     /// setting attributes.
     /// </summary>
+    /// <remarks>
+    /// If <see cref="IDisposable"/> is implemented on a <see cref="Tokenizer"/> subclass,
+    /// a call to <see cref="Analyzer.Dispose()"/> will cascade the call to the <see cref="Tokenizer"/>
+    /// automatically. This allows for final teardown of components that are only designed to be disposed
+    /// once, since <see cref="Close()"/> may be called multiple times during a <see cref="Tokenizer"/>
+    /// instance lifetime.
+    /// </remarks>
     public abstract class Tokenizer : TokenStream
     {
         /// <summary>

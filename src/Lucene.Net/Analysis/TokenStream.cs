@@ -79,11 +79,14 @@ namespace Lucene.Net.Analysis
     /// implementation of <see cref="IncrementToken()"/>! This is checked when assertions are enabled.
     /// <para/>
     /// LUCENENET: <see cref="Close()"/> may be called multiple times upon reuse of the <see cref="Analyzer"/>.
-    /// If a <see cref="TokenStream"/> subclass implements <see cref="IDisposable"/>,
-    /// a call to <see cref="Analyzer.Dispose()"/> will be cascaded to the <see cref="TokenStream"/>
-    /// instance through <see cref="TokenStreamComponents"/>. This allows for final teardown of components
-    /// that are only designed to be disposed once.
     /// </summary>
+    /// <remarks>
+    /// If <see cref="IDisposable"/> is implemented on a <see cref="TokenStream"/> subclass,
+    /// a call to <see cref="Analyzer.Dispose()"/> will cascade the call to the <see cref="TokenStream"/>
+    /// automatically. This allows for final teardown of components that are only designed to be disposed
+    /// once, since <see cref="Close()"/> may be called multiple times during a <see cref="TokenStream"/>
+    /// instance lifetime.
+    /// </remarks>
     public abstract class TokenStream : AttributeSource, ICloseable
     {
         // LUCENENET specific - track disposable TokenStreams that are part of the current chain
@@ -215,8 +218,9 @@ namespace Lucene.Net.Analysis
         /// <remarks>
         /// LUCENENET NOTE: This is intended to release resources in a way that allows the
         /// instance to be reused, so it is not the same as <see cref="IDisposable.Dispose()"/>.
-        /// Implementing <see cref="IDisposable"/> on your <see cref="TokenStream"/> subclass will
-        /// cascade the call from <see cref="Analyzer.Dispose()"/> to your <see cref="TokenStream"/>
+        /// <para/>
+        /// Implementing <see cref="IDisposable"/> on a <see cref="TokenStream"/> subclass will
+        /// cascade the call from <see cref="Analyzer.Dispose()"/> to the <see cref="TokenStream"/>
         /// automatically.
         /// </remarks>
         public virtual void Close()
@@ -226,6 +230,9 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// LUCENENET: Disposes all tracked wrapped <see cref="TokenStream"/>s that implement <see cref="IDisposable"/>.
         /// </summary>
+        /// <remarks>
+        /// This is named <see cref="DoDispose()"/> to prevent shadowing from any subclasses that implement <see cref="IDisposable"/>.
+        /// </remarks>
         internal void DoDispose() => disposableTracker.Dispose();
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Lucene.Net.Analysis
 {
@@ -24,6 +25,13 @@ namespace Lucene.Net.Analysis
     /// <para/>
     /// This is an abstract class; subclasses must override <see cref="TokenStream.IncrementToken()"/>.
     /// </summary>
+    /// <remarks>
+    /// If <see cref="IDisposable"/> is implemented on a <see cref="TokenFilter"/> subclass,
+    /// a call to <see cref="Analyzer.Dispose()"/> will cascade the call to the <see cref="TokenFilter"/>
+    /// automatically. This allows for final teardown of components that are only designed to be disposed
+    /// once, since <see cref="Close()"/> may be called multiple times during a <see cref="TokenFilter"/>
+    /// instance lifetime.
+    /// </remarks>
     /// <seealso cref="TokenStream"/>
     public abstract class TokenFilter : TokenStream
     {
