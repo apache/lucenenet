@@ -9,7 +9,7 @@ using Lucene.Net.Analysis.Sinks;
 using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.TestFramework.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;

@@ -2,7 +2,8 @@
 using System;
 using System.IO;
 
-namespace Lucene.Net.TestFramework.Analysis
+namespace Lucene.Net.Analysis
+
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
