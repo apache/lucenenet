@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Sinks
         public void AddSinkTokenStream(SinkTokenStream sink)
         {
             // check that sink has correct factory
-            if (!GetAttributeFactory().Equals(sink.GetAttributeFactory()))
+            if (!AttributeFactory.Equals(sink.AttributeFactory))
             {
                 throw new ArgumentException("The supplied sink is not compatible to this tee");
             }

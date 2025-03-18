@@ -254,10 +254,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the used <see cref="AttributeFactory"/>.
         /// </summary>
-        public AttributeFactory GetAttributeFactory()
-        {
-            return this.factory;
-        }
+        public AttributeFactory AttributeFactory => this.factory;
 
         /// <summary>
         /// Returns a new iterator that iterates the attribute classes

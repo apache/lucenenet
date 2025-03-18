@@ -476,7 +476,7 @@ namespace Lucene.Net.Analysis.Shingle
                     numFillerTokensToInsert = Math.Min(posIncrAtt.PositionIncrement, maxShingleSize - 1);
                     if (numFillerTokensToInsert > 0)
                     {
-                        nextInputStreamToken = new AttributeSource(this.GetAttributeFactory());
+                        nextInputStreamToken = new AttributeSource(this.AttributeFactory);
                         nextInputStreamToken.AddAttribute<ICharTermAttribute>();
                         IOffsetAttribute newOffsetAtt = nextInputStreamToken.AddAttribute<IOffsetAttribute>();
                         newOffsetAtt.SetOffset(offsetAtt.EndOffset, offsetAtt.EndOffset);
