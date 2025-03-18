@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             return new SentenceTokenizer(factory, input);
         }

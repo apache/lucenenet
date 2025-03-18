@@ -196,7 +196,7 @@ namespace Lucene.Net.Analysis.Core
             {
             }
 
-            public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+            public override Tokenizer Create(AttributeFactory factory, TextReader input)
             {
                 return new MockTokenizer(factory, input);
             }

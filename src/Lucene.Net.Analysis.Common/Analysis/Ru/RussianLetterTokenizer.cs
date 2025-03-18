@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Ru
     /// </para>
     /// </summary>
     /// @deprecated (3.1) Use <see cref="Standard.StandardTokenizer"/> instead, which has the same functionality.
-    /// This filter will be removed in Lucene 5.0  
+    /// This filter will be removed in Lucene 5.0
     [Obsolete("(3.1) Use StandardTokenizer instead, which has the same functionality.")]
     public class RussianLetterTokenizer : CharTokenizer
     {
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Ru
 
         /// <summary>
         /// Construct a new RussianLetterTokenizer using a given
-        /// <see cref="AttributeSource.AttributeFactory"/>.
+        /// <see cref="AttributeFactory"/>.
         /// </summary>
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="factory">

@@ -6,8 +6,8 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Icu.Segmentation
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         /// Construct a new <see cref="ICUTokenizer"/> that breaks text into words from the given
         /// <see cref="TextReader"/>, using a tailored <see cref="BreakIterator"/> configuration.
         /// </summary>
-        /// <param name="factory"><see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/> to use.</param>
+        /// <param name="factory"><see cref="AttributeFactory"/> to use.</param>
         /// <param name="input"><see cref="TextReader"/> containing text to tokenize.</param>
         /// <param name="config">Tailored <see cref="BreakIterator"/> configuration.</param>
         public ICUTokenizer(AttributeFactory factory, TextReader input, ICUTokenizerConfig config)
@@ -156,14 +156,14 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         }
 
         /*
-         * This tokenizes text based upon the longest matching rule, and because of 
+         * This tokenizes text based upon the longest matching rule, and because of
          * this, isn't friendly to a Reader.
-         * 
+         *
          * Text is read from the input stream in 4kB chunks. Within a 4kB chunk of
          * text, the last unambiguous break point is found (in this implementation:
          * white space character) Any remaining characters represent possible partial
          * words, so are appended to the front of the next chunk.
-         * 
+         *
          * There is the possibility that there are no unambiguous break points within
          * an entire 4kB chunk of text (binary data). So there is a maximum word limit
          * of 4kB since it will not try to grow the buffer in this case.
@@ -263,7 +263,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             offsetAtt.SetOffset(CorrectOffset(offset + start), CorrectOffset(offset + end));
             typeAtt.Type = config.GetType(breaker.ScriptCode, breaker.RuleStatus);
             scriptAtt.Code = breaker.ScriptCode;
-            
+
             return true;
         }
     }

@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Ar
     /// <summary>
     /// Factory for <see cref="ArabicLetterTokenizer"/> </summary>
     /// @deprecated (3.1) Use StandardTokenizerFactory instead.
-    ///  
+    ///
     [Obsolete("(3.1) Use StandardTokenizerFactory instead.")]
     public class ArabicLetterTokenizerFactory : TokenizerFactory
     {
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Ar
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             return new ArabicLetterTokenizer(m_luceneMatchVersion, factory, input);
         }

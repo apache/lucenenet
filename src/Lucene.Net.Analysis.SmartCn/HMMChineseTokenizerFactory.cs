@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// Factory for <see cref="HMMChineseTokenizer"/>
     /// <para/>
     /// Note: this class will currently emit tokens for punctuation. So you should either add
-    /// a <see cref="Miscellaneous.WordDelimiterFilter"/> after to remove these (with concatenate off), or use the 
+    /// a <see cref="Miscellaneous.WordDelimiterFilter"/> after to remove these (with concatenate off), or use the
     /// SmartChinese stoplist with a StopFilterFactory via:
     /// <code>words="org/apache/lucene/analysis/cn/smart/stopwords.txt"</code>
     /// <para/>
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
     public sealed class HMMChineseTokenizerFactory : TokenizerFactory
     {
         /// <summary>
-        /// Creates a new <see cref="HMMChineseTokenizerFactory"/> 
+        /// Creates a new <see cref="HMMChineseTokenizerFactory"/>
         /// </summary>
         public HMMChineseTokenizerFactory(IDictionary<string, string> args)
             : base(args)
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader reader)
+        public override Tokenizer Create(AttributeFactory factory, TextReader reader)
         {
             return new HMMChineseTokenizer(factory, reader);
         }

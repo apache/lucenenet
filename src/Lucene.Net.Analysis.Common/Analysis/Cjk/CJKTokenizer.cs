@@ -1,6 +1,7 @@
 // Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -26,7 +27,7 @@ namespace Lucene.Net.Analysis.Cjk
 
     /// <summary>
     /// CJKTokenizer is designed for Chinese, Japanese, and Korean languages.
-    /// <para>  
+    /// <para>
     /// The tokens returned are every two adjacent characters with overlap match.
     /// </para>
     /// <para>
@@ -42,7 +43,7 @@ namespace Lucene.Net.Analysis.Cjk
     /// please search  <a
     /// href="http://www.google.com/search?q=word+chinese+segment">google</a>
     /// </summary>
-    /// @deprecated Use StandardTokenizer, CJKWidthFilter, CJKBigramFilter, and LowerCaseFilter instead. 
+    /// @deprecated Use StandardTokenizer, CJKWidthFilter, CJKBigramFilter, and LowerCaseFilter instead.
     [Obsolete("Use StandardTokenizer, CJKWidthFilter, CJKBigramFilter, and LowerCaseFilter instead.")]
     public sealed class CJKTokenizer : Tokenizer
     {
@@ -96,7 +97,7 @@ namespace Lucene.Net.Analysis.Cjk
         private int dataLen = 0;
 
         /// <summary>
-        /// character buffer, store the characters which are used to compose 
+        /// character buffer, store the characters which are used to compose
         /// the returned Token
         /// </summary>
         private readonly char[] buffer = new char[MAX_WORD_LEN];
@@ -163,14 +164,14 @@ namespace Lucene.Net.Analysis.Cjk
         {
             ClearAttributes();
 
-            // how many character(s) has been stored in buffer 
+            // how many character(s) has been stored in buffer
 
             while (true) // loop until we find a non-empty token
             {
 
                 int length = 0;
 
-                // the position used to create Token 
+                // the position used to create Token
                 int start = offset;
 
                 while (true) // loop until we've found a full token

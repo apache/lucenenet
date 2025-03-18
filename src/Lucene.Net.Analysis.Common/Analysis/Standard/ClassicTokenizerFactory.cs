@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,7 +51,7 @@ namespace Lucene.Net.Analysis.Standard
             }
         }
 
-        public override Tokenizer Create(Net.Util.AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             ClassicTokenizer tokenizer = new ClassicTokenizer(m_luceneMatchVersion, factory, input);
             tokenizer.MaxTokenLength = maxTokenLength;

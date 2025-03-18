@@ -25,13 +25,13 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Factory for <see cref="UAX29URLEmailTokenizer"/>. 
+    /// Factory for <see cref="UAX29URLEmailTokenizer"/>.
     /// <code>
     /// &lt;fieldType name="text_urlemail" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.UAX29URLEmailTokenizerFactory" maxTokenLength="255"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</code> 
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class UAX29URLEmailTokenizerFactory : TokenizerFactory
     {
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Standard
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             UAX29URLEmailTokenizer tokenizer = new UAX29URLEmailTokenizer(m_luceneMatchVersion, factory, input);
             tokenizer.MaxTokenLength = maxTokenLength;

@@ -41,14 +41,14 @@ namespace Lucene.Net.Analysis.Ar
     /// </list>
     /// </para>
     /// </summary>
-    /// @deprecated (3.1) Use <see cref="Standard.StandardTokenizer"/> instead. 
+    /// @deprecated (3.1) Use <see cref="Standard.StandardTokenizer"/> instead.
     [Obsolete("(3.1) Use StandardTokenizer instead.")]
     public class ArabicLetterTokenizer : LetterTokenizer
     {
         /// <summary>
         /// Construct a new ArabicLetterTokenizer. </summary>
         /// <param name="matchVersion"> <see cref="LuceneVersion"/>
-        /// to match 
+        /// to match
         /// </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Ar
 
         /// <summary>
         /// Construct a new <see cref="ArabicLetterTokenizer"/> using a given
-        /// <see cref="AttributeSource.AttributeFactory"/>. 
+        /// <see cref="AttributeFactory"/>.
         /// </summary>
         /// <param name="matchVersion">
         ///         Lucene version to match - See

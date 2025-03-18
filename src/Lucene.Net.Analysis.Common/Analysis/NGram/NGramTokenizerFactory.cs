@@ -52,8 +52,8 @@ namespace Lucene.Net.Analysis.NGram
         }
 
         /// <summary>
-        /// Creates the <see cref="TokenStream"/> of n-grams from the given <see cref="TextReader"/> and <see cref="AttributeSource.AttributeFactory"/>. </summary>
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        /// Creates the <see cref="TokenStream"/> of n-grams from the given <see cref="TextReader"/> and <see cref="AttributeFactory"/>. </summary>
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
 #pragma warning disable 612, 618
             if (m_luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_44))

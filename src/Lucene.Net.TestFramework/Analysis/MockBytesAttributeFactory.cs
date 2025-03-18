@@ -1,5 +1,4 @@
 using Lucene.Net.Util;
-using System.Reflection;
 using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis
@@ -22,12 +21,12 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// <see cref="AttributeSource.AttributeFactory"/> that implements <see cref="Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute"/> with
+    /// <see cref="AttributeFactory"/> that implements <see cref="Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute"/> with
     /// <see cref="MockUTF16TermAttributeImpl"/>.
     /// </summary>
-    public class MockBytesAttributeFactory : AttributeSource.AttributeFactory
+    public class MockBytesAttributeFactory : AttributeFactory
     {
-        private readonly AttributeSource.AttributeFactory @delegate = DEFAULT_ATTRIBUTE_FACTORY;
+        private readonly AttributeFactory @delegate = DEFAULT_ATTRIBUTE_FACTORY;
 
         public override Attribute CreateAttributeInstance<T>()
         {

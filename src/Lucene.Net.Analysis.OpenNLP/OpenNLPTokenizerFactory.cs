@@ -1,10 +1,10 @@
 ﻿// Lucene version compatibility level 8.2.0
 using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {

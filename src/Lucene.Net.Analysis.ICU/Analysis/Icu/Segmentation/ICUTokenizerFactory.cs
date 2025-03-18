@@ -8,7 +8,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -163,7 +162,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(config != null, "inform must be called first!");
             return new ICUTokenizer(factory, input, config);

@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Creates a new <see cref="ClassicTokenizer"/> with a given <see cref="AttributeSource.AttributeFactory"/>
+        /// Creates a new <see cref="ClassicTokenizer"/> with a given <see cref="AttributeFactory"/>
         /// </summary>
         public ClassicTokenizer(LuceneVersion matchVersion, AttributeFactory factory, Reader input)
             : base(factory, input)

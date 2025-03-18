@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Text;
@@ -27,13 +28,13 @@ namespace Lucene.Net.Analysis.Path
     /// Tokenizer for path-like hierarchies.
     /// <para>
     /// Take something like:
-    /// 
+    ///
     /// <code>
     ///  /something/something/else
     /// </code>
-    /// 
+    ///
     /// and make:
-    /// 
+    ///
     /// <code>
     ///  /something
     ///  /something/something

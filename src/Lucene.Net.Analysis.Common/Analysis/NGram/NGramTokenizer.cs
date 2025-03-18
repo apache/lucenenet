@@ -154,7 +154,7 @@ namespace Lucene.Net.Analysis.NGram
         /// <summary>
         /// Creates <see cref="NGramTokenizer"/> with given min and max n-grams. </summary>
         /// <param name="version"> the lucene compatibility version </param>
-        /// <param name="factory"> <see cref="AttributeSource.AttributeFactory"/> to use </param>
+        /// <param name="factory"> <see cref="AttributeFactory"/> to use </param>
         /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>

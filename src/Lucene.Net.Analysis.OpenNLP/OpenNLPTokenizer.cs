@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 using opennlp.tools.util;
 using System;
 using System.IO;

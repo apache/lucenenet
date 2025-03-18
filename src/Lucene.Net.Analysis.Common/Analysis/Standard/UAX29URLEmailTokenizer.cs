@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// Creates a new <see cref="UAX29URLEmailTokenizer"/> with a given <see cref="AttributeSource.AttributeFactory"/>
+        /// Creates a new <see cref="UAX29URLEmailTokenizer"/> with a given <see cref="AttributeFactory"/>
         /// </summary>
         public UAX29URLEmailTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
             : base(factory, input)

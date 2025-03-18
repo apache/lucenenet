@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Th
         }
 
         /// <summary>
-        /// Creates a new <see cref="ThaiTokenizer"/>, supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/> </summary>
+        /// Creates a new <see cref="ThaiTokenizer"/>, supplying the <see cref="AttributeFactory"/> </summary>
         public ThaiTokenizer(AttributeFactory factory, TextReader reader)
             : base(factory, reader, CreateSentenceClone())
         {

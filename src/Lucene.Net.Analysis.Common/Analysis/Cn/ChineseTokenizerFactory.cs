@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Cn
     /// <summary>
     /// Factory for <see cref="ChineseTokenizer"/>
     /// </summary>
-    /// @deprecated Use <see cref="Standard.StandardTokenizerFactory"/> instead. 
+    /// @deprecated Use <see cref="Standard.StandardTokenizerFactory"/> instead.
     [Obsolete("Use StandardTokenizerFactory instead.")]
     public class ChineseTokenizerFactory : TokenizerFactory
     {
@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Cn
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             return new ChineseTokenizer(factory, input);
         }
