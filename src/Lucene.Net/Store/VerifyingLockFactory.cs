@@ -22,7 +22,7 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A <see cref="LockFactory"/> that wraps another 
+    /// A <see cref="LockFactory"/> that wraps another
     /// <see cref="LockFactory"/> and verifies that each lock obtain/release
     /// is "correct" (never results in two processes holding the
     /// lock at the same time).  It does this by contacting an
@@ -96,23 +96,20 @@ namespace Lucene.Net.Store
                 }
             }
 
-            protected override void Dispose(bool disposing)
+            public override void Close()
             {
-                if (disposing)
+                UninterruptableMonitor.Enter(this);
+                try
                 {
-                    UninterruptableMonitor.Enter(this);
-                    try
+                    if (IsLocked())
                     {
-                        if (IsLocked())
-                        {
-                            Verify((byte)0);
-                            @lock.Dispose();
-                        }
+                        Verify((byte)0);
+                        @lock.Close();
                     }
-                    finally
-                    {
-                        UninterruptableMonitor.Exit(this);
-                    }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(this);
                 }
             }
         }

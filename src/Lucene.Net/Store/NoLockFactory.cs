@@ -19,7 +19,7 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Use this <see cref="LockFactory"/> to disable locking entirely.
-    /// Only one instance of this lock is created.  You should call 
+    /// Only one instance of this lock is created.  You should call
     /// <see cref="GetNoLockFactory()"/> to get the instance.
     /// </summary>
     /// <seealso cref="LockFactory"/>
@@ -55,7 +55,7 @@ namespace Lucene.Net.Store
             return true;
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
         }
 

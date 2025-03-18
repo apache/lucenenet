@@ -83,19 +83,16 @@ namespace Lucene.Net.Store
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            UninterruptableMonitor.Enter(locks);
+            try
             {
-                UninterruptableMonitor.Enter(locks);
-                try
-                {
-                    locks.Remove(lockName);
-                }
-                finally
-                {
-                    UninterruptableMonitor.Exit(locks);
-                }
+                locks.Remove(lockName);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(locks);
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support.Threading;
+﻿using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Threading;
@@ -25,11 +25,11 @@ namespace Lucene.Net.Store
     /// <summary>
     /// An interprocess mutex lock.
     /// <para/>Typical use might look like:
-    /// 
+    ///
     /// <code>
     ///     var result = Lock.With.NewAnonymous&lt;string&gt;(
-    ///         @lock: directory.MakeLock("my.lock"), 
-    ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER, 
+    ///         @lock: directory.MakeLock("my.lock"),
+    ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER,
     ///         doBody: () =>
     ///     {
     ///         //... code to execute while locked ...
@@ -37,8 +37,21 @@ namespace Lucene.Net.Store
     ///     }).Run();
     /// </code>
     /// </summary>
+    /// <remarks>
+    /// LUCENENET NOTE: This class in Lucene only uses <see cref="ICloseable"/>, and does not
+    /// distinguish between closing in a reusable way and disposing when the lock instance is
+    /// not intended to be used again. It is possible to obtain the lock again after calling
+    /// <see cref="Close"/>, so that method is used to release the lock in such a way that the
+    /// lock instance can be reused. Use <see cref="Dispose"/> to release the lock when the lock
+    /// instance will not be reused, which will also call <see cref="Close"/>.
+    /// <para />
+    /// Also note that this distinction is expected to change in the future. Once Lucene.NET
+    /// targets Lucene 5.3.0 or later, this class will be updated to implement
+    /// <see cref="IDisposable"/> only, as the simplified Lock design does not allow for
+    /// re-obtaining the lock after it has been released.
+    /// </remarks>
     /// <seealso cref="Directory.MakeLock(string)"/>
-    public abstract class Lock : IDisposable
+    public abstract class Lock : ICloseable, IDisposable
     {
         /// <summary>
         /// How long <see cref="Obtain(long)"/> waits, in milliseconds,
@@ -59,8 +72,8 @@ namespace Lucene.Net.Store
         /// Simple example:
         /// <code>
         ///     var result = Lock.With.NewAnonymous&lt;string&gt;(
-        ///         @lock: directory.MakeLock("my.lock"), 
-        ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER, 
+        ///         @lock: directory.MakeLock("my.lock"),
+        ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER,
         ///         doBody: () =>
         ///     {
         ///         //... code to execute while locked ...
@@ -74,7 +87,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <param name="lock"> the <see cref="Lock"/> instance to use </param>
         /// <param name="lockWaitTimeout"> length of time to wait in
-        ///        milliseconds or 
+        ///        milliseconds or
         ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
         /// <param name="doBody"> a delegate method that </param>
         /// <returns>The value that is returned from the <paramref name="doBody"/> delegate method (i.e. () => { return theObject; })</returns>
@@ -83,10 +96,14 @@ namespace Lucene.Net.Store
             return new AnonymousWith<T>(@lock, lockWaitTimeout, doBody);
         }
 
+        // LUCENENET specific summary for Close vs Dispose
         /// <summary>
         /// Attempts to obtain exclusive access and immediately return
-        /// upon success or failure.  Use <see cref="Dispose()"/> to
-        /// release the lock. </summary>
+        /// upon success or failure.  Use <see cref="Close()"/> to
+        /// release the lock if this instance will be reused to obtain
+        /// the lock again in the future, or  <see cref="Dispose()"/>
+        /// to release the lock if this instance won't be reused.
+        /// </summary>
         /// <returns> true iff exclusive access is obtained </returns>
         public abstract bool Obtain();
 
@@ -104,7 +121,7 @@ namespace Lucene.Net.Store
         /// passed.
         /// </summary>
         /// <param name="lockWaitTimeout"> length of time to wait in
-        ///        milliseconds or 
+        ///        milliseconds or
         ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
         /// <returns> <c>true</c> if lock was obtained </returns>
         /// <exception cref="LockObtainFailedException"> if lock wait times out </exception>
@@ -150,9 +167,17 @@ namespace Lucene.Net.Store
             }
             return locked;
         }
-        
+
         /// <summary>
-        /// Releases exclusive access. </summary>
+        /// Disposes of any resources held by the lock.
+        /// </summary>
+        /// <remarks>
+        /// This method will also release the lock if it is currently held.
+        /// Do not call this method after calling <see cref="Close"/>, or
+        /// unnecessary extra work might occur when attempting to release the lock twice.
+        /// Use <see cref="Close"/> if you intend to re-obtain the lock later.
+        /// </remarks>
+        // LUCENENET specific for IDisposable pattern
         public void Dispose()
         {
             Dispose(true);
@@ -160,9 +185,26 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Releases exclusive access. </summary>
-        protected abstract void Dispose(bool disposing);
+        /// Disposes of any resources held by the lock.
+        /// </summary>
+        /// <remarks>
+        /// If overriding this method, ensure that the base implementation is called
+        /// so that the lock is released via <see cref="Close"/>. Do not call
+        /// <see cref="Close"/> in the overriding method.
+        /// </remarks>
+        // LUCENENET specific for IDisposable pattern
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Close();
+            }
+        }
 
+        /// <summary>
+        /// Releases exclusive access.
+        /// </summary>
+        public abstract void Close();
 
         /// <summary>
         /// Returns <c>true</c> if the resource is currently locked.  Note that one must
@@ -182,7 +224,7 @@ namespace Lucene.Net.Store
             /// Constructs an executor that will grab the named <paramref name="lock"/>. </summary>
             /// <param name="lock"> the <see cref="Lock"/> instance to use </param>
             /// <param name="lockWaitTimeout"> length of time to wait in
-            ///        milliseconds or 
+            ///        milliseconds or
             ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
             protected With(Lock @lock, long lockWaitTimeout) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
@@ -214,7 +256,7 @@ namespace Lucene.Net.Store
                 {
                     if (locked)
                     {
-                        @lock.Dispose();
+                        @lock.Close();
                     }
                 }
             }

@@ -339,60 +339,57 @@ namespace Lucene.Net.Store
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            UninterruptableMonitor.Enter(this);
+            try
             {
-                UninterruptableMonitor.Enter(this);
+                // whether or not we have created a file, we need to remove
+                // the lock instance from the dictionary that tracks them.
                 try
                 {
-                    // whether or not we have created a file, we need to remove
-                    // the lock instance from the dictionary that tracks them.
+                    UninterruptableMonitor.Enter(NativeFSLockFactory._locks);
                     try
                     {
-                        UninterruptableMonitor.Enter(NativeFSLockFactory._locks);
-                        try
-                        {
-                            NativeFSLockFactory._locks.Remove(path);
-                        }
-                        finally
-                        {
-                            UninterruptableMonitor.Exit(NativeFSLockFactory._locks);
-                        }
+                        NativeFSLockFactory._locks.Remove(path);
                     }
                     finally
                     {
-                        if (channel != null)
-                        {
-                            IOUtils.DisposeWhileHandlingException(channel);
-                            channel = null;
-
-                            bool tmpBool;
-                            if (File.Exists(path))
-                            {
-                                File.Delete(path);
-                                tmpBool = true;
-                            }
-                            else if (System.IO.Directory.Exists(path))
-                            {
-                                System.IO.Directory.Delete(path);
-                                tmpBool = true;
-                            }
-                            else
-                            {
-                                tmpBool = false;
-                            }
-                            if (!tmpBool)
-                            {
-                                throw new LockReleaseFailedException("failed to delete " + path);
-                            }
-                        }
+                        UninterruptableMonitor.Exit(NativeFSLockFactory._locks);
                     }
                 }
                 finally
                 {
-                    UninterruptableMonitor.Exit(this);
+                    if (channel != null)
+                    {
+                        IOUtils.DisposeWhileHandlingException(channel);
+                        channel = null;
+
+                        bool tmpBool;
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                            tmpBool = true;
+                        }
+                        else if (System.IO.Directory.Exists(path))
+                        {
+                            System.IO.Directory.Delete(path);
+                            tmpBool = true;
+                        }
+                        else
+                        {
+                            tmpBool = false;
+                        }
+                        if (!tmpBool)
+                        {
+                            throw new LockReleaseFailedException("failed to delete " + path);
+                        }
+                    }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -424,7 +421,7 @@ namespace Lucene.Net.Store
                     bool obtained = Obtain();
                     if (obtained)
                     {
-                        Dispose();
+                        Close();
                     }
                     return !obtained;
                 }
@@ -541,46 +538,43 @@ namespace Lucene.Net.Store
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            UninterruptableMonitor.Enter(this);
+            try
             {
-                UninterruptableMonitor.Enter(this);
+                // whether or not we have created a file, we need to remove
+                // the lock instance from the dictionary that tracks them.
                 try
                 {
-                    // whether or not we have created a file, we need to remove
-                    // the lock instance from the dictionary that tracks them.
+                    UninterruptableMonitor.Enter(NativeFSLockFactory._locks);
                     try
                     {
-                        UninterruptableMonitor.Enter(NativeFSLockFactory._locks);
-                        try
-                        {
-                            NativeFSLockFactory._locks.Remove(path);
-                        }
-                        finally
-                        {
-                            UninterruptableMonitor.Exit(NativeFSLockFactory._locks);
-                        }
+                        NativeFSLockFactory._locks.Remove(path);
                     }
                     finally
                     {
-                        if (channel != null)
-                        {
-                            try
-                            {
-                                IOUtils.DisposeWhileHandlingException(channel);
-                            }
-                            finally
-                            {
-                                channel = null;
-                            }
-                        }
+                        UninterruptableMonitor.Exit(NativeFSLockFactory._locks);
                     }
                 }
                 finally
                 {
-                    UninterruptableMonitor.Exit(this);
+                    if (channel != null)
+                    {
+                        try
+                        {
+                            IOUtils.DisposeWhileHandlingException(channel);
+                        }
+                        finally
+                        {
+                            channel = null;
+                        }
+                    }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 
@@ -729,55 +723,52 @@ namespace Lucene.Net.Store
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            UninterruptableMonitor.Enter(this);
+            try
             {
-                UninterruptableMonitor.Enter(this);
+                // whether or not we have created a file, we need to remove
+                // the lock instance from the dictionary that tracks them.
                 try
                 {
-                    // whether or not we have created a file, we need to remove
-                    // the lock instance from the dictionary that tracks them.
+                    UninterruptableMonitor.Enter(NativeFSLockFactory._locks);
                     try
                     {
-                        UninterruptableMonitor.Enter(NativeFSLockFactory._locks);
-                        try
-                        {
-                            NativeFSLockFactory._locks.Remove(path);
-                        }
-                        finally
-                        {
-                            UninterruptableMonitor.Exit(NativeFSLockFactory._locks);
-                        }
+                        NativeFSLockFactory._locks.Remove(path);
                     }
                     finally
                     {
-                        if (channel != null)
-                        {
-                            try
-                            {
-                                IOUtils.DisposeWhileHandlingException(channel);
-                            }
-                            finally
-                            {
-                                channel = null;
-                            }
-                            // try to delete the file if we created it, but it's not an error if we can't.
-                            try
-                            {
-                                File.Delete(path);
-                            }
-                            catch
-                            {
-                                // ignored
-                            }
-                        }
+                        UninterruptableMonitor.Exit(NativeFSLockFactory._locks);
                     }
                 }
                 finally
                 {
-                    UninterruptableMonitor.Exit(this);
+                    if (channel != null)
+                    {
+                        try
+                        {
+                            IOUtils.DisposeWhileHandlingException(channel);
+                        }
+                        finally
+                        {
+                            channel = null;
+                        }
+                        // try to delete the file if we created it, but it's not an error if we can't.
+                        try
+                        {
+                            File.Delete(path);
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+                    }
                 }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(this);
             }
         }
 

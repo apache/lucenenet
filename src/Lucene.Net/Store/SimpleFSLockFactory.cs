@@ -157,19 +157,16 @@ namespace Lucene.Net.Store
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Close()
         {
-            if (disposing)
+            if (File.Exists(lockFile.FullName))
             {
+                File.Delete(lockFile.FullName);
+
+                // If lockFile still exists, delete failed
                 if (File.Exists(lockFile.FullName))
                 {
-                    File.Delete(lockFile.FullName);
-
-                    // If lockFile still exists, delete failed
-                    if (File.Exists(lockFile.FullName))
-                    {
-                        throw new LockReleaseFailedException("failed to delete " + lockFile);
-                    }
+                    throw new LockReleaseFailedException("failed to delete " + lockFile);
                 }
             }
         }
