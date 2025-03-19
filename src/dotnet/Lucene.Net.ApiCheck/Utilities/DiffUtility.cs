@@ -154,7 +154,16 @@ public static class DiffUtility
 
     private static IReadOnlyList<MemberReference> GetDotNetMembersNotInJava(MatchingType matchingType)
     {
-        return []; // TODO
+        return matchingType.DotNetType.GetFields()
+            .Where(d => !matchingType.JavaType.Fields.Any(j => MemberComparison.MembersMatch(d, j)))
+            .Select(d => new FieldReference
+            {
+                Name = d.Name,
+                Modifiers = new ModifierSet(d.GetModifiers().SortDotNetModifiers().ToList()),
+                IsStatic = d.IsStatic,
+                FieldType = d.FieldType.ToTypeReference(),
+            })
+            .ToList();
     }
 
     private static ComparisonPair<IReadOnlyList<TypeReference>>? GetTypeMismatchedInterfaces(MatchingType matchingType)
