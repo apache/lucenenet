@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Ru
      */
 
     /// @deprecated Use <see cref="Standard.StandardTokenizerFactory"/> instead.
-    ///  This tokenizer has no Russian-specific functionality. 
+    ///  This tokenizer has no Russian-specific functionality.
     [Obsolete("Use Standard.StandardTokenizerFactory instead.")]
     public class RussianLetterTokenizerFactory : TokenizerFactory
     {
@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Ru
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             return new RussianLetterTokenizer(m_luceneMatchVersion, factory, input);
         }

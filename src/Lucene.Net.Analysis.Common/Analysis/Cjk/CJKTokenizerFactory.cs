@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Cjk
 
 
     /// <summary>
-    /// Factory for <see cref="CJKTokenizer"/>. 
+    /// Factory for <see cref="CJKTokenizer"/>.
     /// <code>
     /// &lt;fieldType name="text_cjk" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Cjk
     /// &lt;/fieldType&gt;
     /// </code>
     /// </summary>
-    /// @deprecated Use <see cref="CJKBigramFilterFactory"/> instead. 
+    /// @deprecated Use <see cref="CJKBigramFilterFactory"/> instead.
     [Obsolete("Use CJKBigramFilterFactory instead.")]
     public class CJKTokenizerFactory : TokenizerFactory
     {
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Cjk
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader @in)
+        public override Tokenizer Create(AttributeFactory factory, TextReader @in)
         {
             return new CJKTokenizer(factory, @in);
         }

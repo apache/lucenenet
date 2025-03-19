@@ -52,11 +52,11 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Reloads the factory list.
         /// Changes to the factories are visible after the method ends, all
-        /// iterators (<see cref="AvailableTokenizers"/>,...) stay consistent. 
-        /// 
+        /// iterators (<see cref="AvailableTokenizers"/>,...) stay consistent.
+        ///
         /// <para><b>NOTE:</b> Only new factories are added, existing ones are
         /// never removed or replaced.
-        /// 
+        ///
         /// </para>
         /// <para><em>This method is expensive and should only be called for discovery
         /// of new factories on the given classpath/classloader!</em>
@@ -79,11 +79,11 @@ namespace Lucene.Net.Analysis.Util
         /// Creates a <see cref="TokenStream"/> of the specified input using the default attribute factory. </summary>
         public Tokenizer Create(TextReader input)
         {
-            return Create(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input);
+            return Create(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input);
         }
 
         /// <summary>
-        /// Creates a <see cref="TokenStream"/> of the specified input using the given <see cref="AttributeSource.AttributeFactory"/> </summary>
-        public abstract Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input);
+        /// Creates a <see cref="TokenStream"/> of the specified input using the given <see cref="AttributeFactory"/> </summary>
+        public abstract Tokenizer Create(AttributeFactory factory, TextReader input);
     }
 }

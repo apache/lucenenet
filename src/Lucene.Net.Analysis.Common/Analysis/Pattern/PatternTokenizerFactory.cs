@@ -50,14 +50,14 @@ namespace Lucene.Net.Analysis.Pattern
     /// but using group=1, the output would be: bbb and ccc (no ' marks)
     /// </para>
     /// <para>NOTE: This Tokenizer does not output tokens that are of zero length.</para>
-    /// 
+    ///
     /// <code>
     /// &lt;fieldType name="text_ptn" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.PatternTokenizerFactory" pattern="\'([^\']+)\'" group="1"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</code> 
-    /// 
+    /// &lt;/fieldType&gt;</code>
+    ///
     /// @since solr1.2
     /// </summary>
     /// <seealso cref="PatternTokenizer"/>
@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Pattern
 
         /// <summary>
         /// Creates a new <see cref="PatternTokenizerFactory"/> </summary>
-        public PatternTokenizerFactory(IDictionary<string, string> args) 
+        public PatternTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {
             m_pattern = GetPattern(args, PATTERN);
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Pattern
         /// <summary>
         /// Split the input using configured pattern
         /// </summary>
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             return new PatternTokenizer(factory, input, m_pattern, m_group);
         }

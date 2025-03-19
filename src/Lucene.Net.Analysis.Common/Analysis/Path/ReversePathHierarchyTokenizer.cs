@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,20 +30,20 @@ namespace Lucene.Net.Analysis.Path
     /// Tokenizer for domain-like hierarchies.
     /// <para>
     /// Take something like:
-    /// 
+    ///
     /// <code>
     /// www.site.co.uk
     /// </code>
-    /// 
+    ///
     /// and make:
-    /// 
+    ///
     /// <code>
     /// www.site.co.uk
     /// site.co.uk
     /// co.uk
     /// uk
     /// </code>
-    /// 
+    ///
     /// </para>
     /// </summary>
     public class ReversePathHierarchyTokenizer : Tokenizer

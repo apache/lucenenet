@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Construct a new <see cref="LetterTokenizer"/> using a given
-        /// <see cref="AttributeSource.AttributeFactory"/>.
+        /// <see cref="AttributeFactory"/>.
         /// </summary>
         /// <param name="matchVersion">
         ///          <see cref="LuceneVersion"/> to match</param>
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Core
         ///          the attribute factory to use for this <see cref="Tokenizer"/> </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
-        public LetterTokenizer(LuceneVersion matchVersion, AttributeSource.AttributeFactory factory, TextReader @in)
+        public LetterTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader @in)
             : base(matchVersion, factory, @in)
         {
         }

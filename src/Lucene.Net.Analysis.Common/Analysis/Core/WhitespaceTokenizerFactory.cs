@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// Factory for <see cref="WhitespaceTokenizer"/>. 
+    /// Factory for <see cref="WhitespaceTokenizer"/>.
     /// <code>
     /// &lt;fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             return new WhitespaceTokenizer(m_luceneMatchVersion, factory, input);
         }

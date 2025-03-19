@@ -1,5 +1,6 @@
 // Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 using System.Globalization;
 using System.IO;
@@ -25,7 +26,7 @@ namespace Lucene.Net.Analysis.Cn
 
     /// <summary>
     /// Tokenize Chinese text as individual chinese characters.
-    /// 
+    ///
     /// <para>
     /// The difference between <see cref="ChineseTokenizer"/> and
     /// <see cref="Cjk.CJKTokenizer"/> is that they have different
@@ -46,10 +47,10 @@ namespace Lucene.Net.Analysis.Cn
     /// The problem is that when searching for C1, C1C2, C1C3,
     /// C4C2, C1C2C3 ... the <see cref="ChineseTokenizer"/> works, but the
     /// <see cref="Cjk.CJKTokenizer"/> will not work.
-    /// </para> 
+    /// </para>
     /// </summary>
     /// @deprecated (3.1) Use <see cref="Standard.StandardTokenizer"/> instead, which has the same functionality.
-    /// This filter will be removed in Lucene 5.0 
+    /// This filter will be removed in Lucene 5.0
     [Obsolete("(3.1) Use StandardTokenizer instead, which has the same functionality.")]
     public sealed class ChineseTokenizer : Tokenizer
     {

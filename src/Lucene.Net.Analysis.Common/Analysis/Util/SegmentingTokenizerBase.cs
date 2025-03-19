@@ -4,8 +4,8 @@ using ICU4N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Util
@@ -31,14 +31,14 @@ namespace Lucene.Net.Analysis.Util
     /// Breaks text into sentences with a <see cref="BreakIterator"/> and
     /// allows subclasses to decompose these sentences into words.
     /// <para>
-    /// This can be used by subclasses that need sentence context 
+    /// This can be used by subclasses that need sentence context
     /// for tokenization purposes, such as CJK segmenters.
     /// </para>
     /// <para>
     /// Additionally it can be used by subclasses that want to mark
     /// sentence boundaries (with a custom attribute, extra token, position
     /// increment, etc) for downstream processing.
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Construct a new SegmenterBase, also supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/>
+        /// Construct a new SegmenterBase, also supplying the <see cref="AttributeFactory"/>
         /// </summary>
         protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator iterator) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(factory, reader)

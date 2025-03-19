@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// A <see cref="TokenStream"/> using the supplied <see cref="AttributeSource.AttributeFactory"/>
+        /// A <see cref="TokenStream"/> using the supplied <see cref="AttributeFactory"/>
         /// for creating new <see cref="Util.IAttribute"/> instances.
         /// </summary>
         protected TokenStream(AttributeFactory factory)

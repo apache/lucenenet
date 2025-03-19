@@ -2,9 +2,9 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Index;
+using Lucene.Net.Util;
 using System;
 using Attribute = Lucene.Net.Util.Attribute;
-using AttributeSource = Lucene.Net.Util.AttributeSource;
 using BytesRef = Lucene.Net.Util.BytesRef;
 using IAttribute = Lucene.Net.Util.IAttribute;
 
@@ -643,22 +643,22 @@ namespace Lucene.Net.Analysis
         /// attributes.
         /// @since 3.0
         /// </summary>
-        public static readonly AttributeSource.AttributeFactory TOKEN_ATTRIBUTE_FACTORY = new TokenAttributeFactory(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
+        public static readonly AttributeFactory TOKEN_ATTRIBUTE_FACTORY = new TokenAttributeFactory(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
 
         /// <summary>
         /// <b>Expert:</b> Creates a <see cref="TokenAttributeFactory"/> returning <see cref="Token"/> as instance for the basic attributes
         /// and for all other attributes calls the given delegate factory.
         /// @since 3.0
         /// </summary>
-        public sealed class TokenAttributeFactory : AttributeSource.AttributeFactory
+        public sealed class TokenAttributeFactory : AttributeFactory
         {
-            internal readonly AttributeSource.AttributeFactory @delegate;
+            internal readonly AttributeFactory @delegate;
 
             /// <summary>
-            /// <b>Expert</b>: Creates an <see cref="AttributeSource.AttributeFactory"/> returning <see cref="Token"/> as instance for the basic attributes
+            /// <b>Expert</b>: Creates an <see cref="AttributeFactory"/> returning <see cref="Token"/> as instance for the basic attributes
             /// and for all other attributes calls the given delegate factory.
             /// </summary>
-            public TokenAttributeFactory(AttributeSource.AttributeFactory @delegate)
+            public TokenAttributeFactory(AttributeFactory @delegate)
             {
                 this.@delegate = @delegate;
             }

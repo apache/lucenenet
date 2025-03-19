@@ -3,6 +3,7 @@ using ICU4N.Text;
 using Lucene.Net.Analysis.Cn.Smart.Hhmm;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -53,7 +54,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         }
 
         /// <summary>
-        /// Creates a new <see cref="HMMChineseTokenizer"/>, supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/>
+        /// Creates a new <see cref="HMMChineseTokenizer"/>, supplying the <see cref="AttributeFactory"/>
         /// </summary>
         public HMMChineseTokenizer(AttributeFactory factory, TextReader reader)
             : base(factory, reader, (BreakIterator)sentenceProto.Clone())

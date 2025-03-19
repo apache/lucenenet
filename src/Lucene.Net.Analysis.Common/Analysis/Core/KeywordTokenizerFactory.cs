@@ -25,14 +25,14 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// Factory for <see cref="KeywordTokenizer"/>. 
+    /// Factory for <see cref="KeywordTokenizer"/>.
     /// <code>
     /// &lt;fieldType name="text_keyword" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;
-    /// </code> 
+    /// </code>
     /// </summary>
     public class KeywordTokenizerFactory : TokenizerFactory
     {
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             return new KeywordTokenizer(factory, input, KeywordTokenizer.DEFAULT_BUFFER_SIZE);
         }

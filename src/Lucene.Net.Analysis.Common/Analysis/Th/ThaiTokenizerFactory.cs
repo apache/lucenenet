@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Th
     {
         /// <summary>
         /// Creates a new <see cref="ThaiTokenizerFactory"/> </summary>
-        public ThaiTokenizerFactory(IDictionary<string, string> args) 
+        public ThaiTokenizerFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Th
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader reader)
+        public override Tokenizer Create(AttributeFactory factory, TextReader reader)
         {
             return new ThaiTokenizer(factory, reader);
         }

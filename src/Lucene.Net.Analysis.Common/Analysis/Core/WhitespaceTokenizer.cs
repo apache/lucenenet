@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Core
     /// </summary>
     public sealed class WhitespaceTokenizer : CharTokenizer
     {
-        /// Construct a new <see cref="WhitespaceTokenizer"/>. 
+        /// Construct a new <see cref="WhitespaceTokenizer"/>.
         /// <param name="matchVersion"> <see cref="LuceneVersion"/> to match</param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Construct a new <see cref="WhitespaceTokenizer"/> using a given
-        /// <see cref="AttributeSource.AttributeFactory"/>.
+        /// <see cref="AttributeFactory"/>.
         /// </summary>
         /// <param name="matchVersion"><see cref="LuceneVersion"/> to match</param>
         /// <param name="factory">

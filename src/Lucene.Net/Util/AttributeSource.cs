@@ -30,6 +30,149 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
+    /// An <see cref="AttributeFactory"/> creates instances of <see cref="Attribute"/>s.
+    /// </summary>
+    /// <remarks>
+    /// LUCENENET NOTE: This class was the nested <c>AttributeSource.AttributeFactory</c> static class in Lucene.
+    /// </remarks>
+    public abstract class AttributeFactory
+    {
+        /// <summary>
+        /// returns an <see cref="Attribute"/> for the supplied <see cref="IAttribute"/> interface.
+        /// </summary>
+        public abstract Attribute CreateAttributeInstance<T>() where T : IAttribute;
+
+        /// <summary>
+        /// This is the default factory that creates <see cref="Attribute"/>s using the
+        /// <see cref="Type"/> of the supplied <see cref="IAttribute"/> interface by removing the <code>I</code> from the prefix.
+        /// </summary>
+        public static readonly AttributeFactory DEFAULT_ATTRIBUTE_FACTORY = new DefaultAttributeFactory();
+
+        private sealed class DefaultAttributeFactory : AttributeFactory
+        {
+            // LUCENENET: Using ConditionalWeakTable instead of WeakIdentityMap. A Type IS an
+            // identity for a class, so there is no need for an identity wrapper for it.
+            private static readonly ConditionalWeakTable<Type, WeakReference<Type>> attClassImplMap =
+                new ConditionalWeakTable<Type, WeakReference<Type>>();
+            private static readonly object attClassImplMapLock = new object();
+
+            internal DefaultAttributeFactory()
+            {
+            }
+
+            public override Attribute CreateAttributeInstance<S>()
+            {
+                try
+                {
+                    Type attributeType = GetClassForInterface<S>();
+
+                    // LUCENENET: Optimize for creating instances of the most common attributes
+                    // directly rather than using Activator.CreateInstance()
+                    return CreateInstance(attributeType) ?? (Attribute)Activator.CreateInstance(attributeType);
+                }
+                catch (Exception e) when (e.IsInstantiationException() || e.IsIllegalAccessException())
+                {
+                    throw new ArgumentException("Could not instantiate implementing class for " + typeof(S).FullName, e);
+                }
+            }
+
+            // LUCENENET: optimize known creation of built-in types
+            private static Attribute CreateInstance(Type attributeType) // LUCENENET: CA1822: Mark members as static
+            {
+                if (ReferenceEquals(typeof(CharTermAttribute), attributeType))
+                    return new CharTermAttribute();
+                if (ReferenceEquals(typeof(FlagsAttribute), attributeType))
+                    return new FlagsAttribute();
+                if (ReferenceEquals(typeof(OffsetAttribute), attributeType))
+                    return new OffsetAttribute();
+                if (ReferenceEquals(typeof(PayloadAttribute), attributeType))
+                    return new PayloadAttribute();
+                if (ReferenceEquals(typeof(PositionIncrementAttribute), attributeType))
+                    return new PositionIncrementAttribute();
+                if (ReferenceEquals(typeof(PositionLengthAttribute), attributeType))
+                    return new PositionLengthAttribute();
+                if (ReferenceEquals(typeof(TypeAttribute), attributeType))
+                    return new TypeAttribute();
+
+                return null;
+            }
+
+            internal static Type GetClassForInterface<T>() where T : IAttribute
+            {
+                var attClass = typeof(T);
+                Type clazz;
+
+                // LUCENENET: If the weakreference is dead, we need to explicitly update its key.
+                // We synchronize on attClassImplMapLock to make the operation atomic.
+                UninterruptableMonitor.Enter(attClassImplMapLock);
+                try
+                {
+                    if (!attClassImplMap.TryGetValue(attClass, out var @ref) || !@ref.TryGetTarget(out clazz))
+                    {
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                        attClassImplMap.AddOrUpdate(attClass, CreateAttributeWeakReference(attClass, out clazz));
+#else
+                        attClassImplMap.Remove(attClass);
+                        attClassImplMap.Add(attClass, CreateAttributeWeakReference(attClass, out clazz));
+#endif
+                    }
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(attClassImplMapLock);
+                }
+
+                return clazz;
+            }
+
+            // LUCENENET specific - factored this out so we can reuse
+            private static WeakReference<Type> CreateAttributeWeakReference(Type attributeInterfaceType, out Type clazz)
+            {
+                try
+                {
+                    string name = ConvertAttributeInterfaceToClassName(attributeInterfaceType);
+                    return new WeakReference<Type>(clazz = attributeInterfaceType.Assembly.GetType(name, true));
+                }
+                catch (Exception e)
+                {
+                    throw new ArgumentException("Could not find implementing class for " + attributeInterfaceType.Name, e);
+                }
+            }
+
+            private static string ConvertAttributeInterfaceToClassName(Type attributeInterfaceType)
+            {
+                int lastPlus = attributeInterfaceType.FullName.LastIndexOf('+');
+                if (lastPlus == -1)
+                {
+#if FEATURE_STRING_CONCAT_READONLYSPAN
+                    return string.Concat(
+                        attributeInterfaceType.Namespace,
+                        ".",
+                        attributeInterfaceType.Name.AsSpan(1));
+#else
+                    return string.Concat(
+                        attributeInterfaceType.Namespace,
+                        ".",
+                        attributeInterfaceType.Name.Substring(1));
+#endif
+                }
+                else
+                {
+#if FEATURE_STRING_CONCAT_READONLYSPAN
+                    return string.Concat(
+                        attributeInterfaceType.FullName.AsSpan(0, lastPlus + 1),
+                        attributeInterfaceType.Name.AsSpan(1));
+#else
+                    return string.Concat(
+                        attributeInterfaceType.FullName.Substring(0, lastPlus + 1),
+                        attributeInterfaceType.Name.Substring(1));
+#endif
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// An <see cref="AttributeSource"/> contains a list of different <see cref="Attribute"/>s,
     /// and methods to add and get them. There can only be a single instance
     /// of an attribute in the same <see cref="AttributeSource"/> instance. This is ensured
@@ -40,145 +183,7 @@ namespace Lucene.Net.Util
     /// </summary>
     public class AttributeSource
     {
-        /// <summary>
-        /// An <see cref="AttributeFactory"/> creates instances of <see cref="Attribute"/>s.
-        /// </summary>
-        public abstract class AttributeFactory // LUCENENET TODO: API - de-nest
-        {
-            /// <summary>
-            /// returns an <see cref="Attribute"/> for the supplied <see cref="IAttribute"/> interface.
-            /// </summary>
-            public abstract Attribute CreateAttributeInstance<T>() where T : IAttribute;
-
-            /// <summary>
-            /// This is the default factory that creates <see cref="Attribute"/>s using the
-            /// <see cref="Type"/> of the supplied <see cref="IAttribute"/> interface by removing the <code>I</code> from the prefix.
-            /// </summary>
-            public static readonly AttributeFactory DEFAULT_ATTRIBUTE_FACTORY = new DefaultAttributeFactory();
-
-            private sealed class DefaultAttributeFactory : AttributeFactory
-            {
-                // LUCENENET: Using ConditionalWeakTable instead of WeakIdentityMap. A Type IS an
-                // identity for a class, so there is no need for an identity wrapper for it.
-                private static readonly ConditionalWeakTable<Type, WeakReference<Type>> attClassImplMap =
-                    new ConditionalWeakTable<Type, WeakReference<Type>>();
-                private static readonly object attClassImplMapLock = new object();
-
-                internal DefaultAttributeFactory()
-                {
-                }
-
-                public override Attribute CreateAttributeInstance<S>()
-                {
-                    try
-                    {
-                        Type attributeType = GetClassForInterface<S>();
-
-                        // LUCENENET: Optimize for creating instances of the most common attributes
-                        // directly rather than using Activator.CreateInstance()
-                        return CreateInstance(attributeType) ?? (Attribute)Activator.CreateInstance(attributeType);
-                    }
-                    catch (Exception e) when (e.IsInstantiationException() || e.IsIllegalAccessException())
-                    {
-                        throw new ArgumentException("Could not instantiate implementing class for " + typeof(S).FullName, e);
-                    }
-                }
-
-                // LUCENENET: optimize known creation of built-in types
-                private static Attribute CreateInstance(Type attributeType) // LUCENENET: CA1822: Mark members as static
-                {
-                    if (ReferenceEquals(typeof(CharTermAttribute), attributeType))
-                        return new CharTermAttribute();
-                    if (ReferenceEquals(typeof(FlagsAttribute), attributeType))
-                        return new FlagsAttribute();
-                    if (ReferenceEquals(typeof(OffsetAttribute), attributeType))
-                        return new OffsetAttribute();
-                    if (ReferenceEquals(typeof(PayloadAttribute), attributeType))
-                        return new PayloadAttribute();
-                    if (ReferenceEquals(typeof(PositionIncrementAttribute), attributeType))
-                        return new PositionIncrementAttribute();
-                    if (ReferenceEquals(typeof(PositionLengthAttribute), attributeType))
-                        return new PositionLengthAttribute();
-                    if (ReferenceEquals(typeof(TypeAttribute), attributeType))
-                        return new TypeAttribute();
-
-                    return null;
-                }
-
-                internal static Type GetClassForInterface<T>() where T : IAttribute
-                {
-                    var attClass = typeof(T);
-                    Type clazz;
-
-                    // LUCENENET: If the weakreference is dead, we need to explicitly update its key.
-                    // We synchronize on attClassImplMapLock to make the operation atomic.
-                    UninterruptableMonitor.Enter(attClassImplMapLock);
-                    try
-                    {
-                        if (!attClassImplMap.TryGetValue(attClass, out var @ref) || !@ref.TryGetTarget(out clazz))
-                        {
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-                            attClassImplMap.AddOrUpdate(attClass, CreateAttributeWeakReference(attClass, out clazz));
-#else
-                            attClassImplMap.Remove(attClass);
-                            attClassImplMap.Add(attClass, CreateAttributeWeakReference(attClass, out clazz));
-#endif
-                        }
-                    }
-                    finally
-                    {
-                        UninterruptableMonitor.Exit(attClassImplMapLock);
-                    }
-
-                    return clazz;
-                }
-
-                // LUCENENET specific - factored this out so we can reuse
-                private static WeakReference<Type> CreateAttributeWeakReference(Type attributeInterfaceType, out Type clazz)
-                {
-                    try
-                    {
-                        string name = ConvertAttributeInterfaceToClassName(attributeInterfaceType);
-                        return new WeakReference<Type>(clazz = attributeInterfaceType.Assembly.GetType(name, true));
-                    }
-                    catch (Exception e)
-                    {
-                        throw new ArgumentException("Could not find implementing class for " + attributeInterfaceType.Name, e);
-                    }
-                }
-
-                private static string ConvertAttributeInterfaceToClassName(Type attributeInterfaceType)
-                {
-                    int lastPlus = attributeInterfaceType.FullName.LastIndexOf('+');
-                    if (lastPlus == -1)
-                    {
-#if FEATURE_STRING_CONCAT_READONLYSPAN
-                        return string.Concat(
-                            attributeInterfaceType.Namespace,
-                            ".",
-                            attributeInterfaceType.Name.AsSpan(1));
-#else
-                        return string.Concat(
-                            attributeInterfaceType.Namespace,
-                            ".",
-                            attributeInterfaceType.Name.Substring(1));
-#endif
-                    }
-                    else
-                    {
-#if FEATURE_STRING_CONCAT_READONLYSPAN
-                        return string.Concat(
-                            attributeInterfaceType.FullName.AsSpan(0, lastPlus + 1),
-                            attributeInterfaceType.Name.AsSpan(1));
-#else
-                        return string.Concat(
-                            attributeInterfaceType.FullName.Substring(0, lastPlus + 1),
-                            attributeInterfaceType.Name.Substring(1));
-#endif
-                    }
-                }
-            }
-        }
+        // LUCENENET specific - AttributeFactory split out above
 
         /// <summary>
         /// This class holds the state of an <see cref="AttributeSource"/>. </summary>
@@ -213,7 +218,7 @@ namespace Lucene.Net.Util
         private readonly AttributeFactory factory;
 
         /// <summary>
-        /// An <see cref="AttributeSource"/> using the default attribute factory <see cref="AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY"/>.
+        /// An <see cref="AttributeSource"/> using the default attribute factory <see cref="AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY"/>.
         /// </summary>
         public AttributeSource()
             : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY)
@@ -249,10 +254,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the used <see cref="AttributeFactory"/>.
         /// </summary>
-        public AttributeFactory GetAttributeFactory()
-        {
-            return this.factory;
-        }
+        public AttributeFactory AttributeFactory => this.factory;
 
         /// <summary>
         /// Returns a new iterator that iterates the attribute classes

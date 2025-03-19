@@ -25,13 +25,13 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Factory for <see cref="StandardTokenizer"/>. 
+    /// Factory for <see cref="StandardTokenizer"/>.
     /// <code>
     /// &lt;fieldType name="text_stndrd" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory" maxTokenLength="255"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</code> 
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class StandardTokenizerFactory : TokenizerFactory
     {
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Standard
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             var tokenizer = new StandardTokenizer(m_luceneMatchVersion, factory, input);
             tokenizer.MaxTokenLength = maxTokenLength;

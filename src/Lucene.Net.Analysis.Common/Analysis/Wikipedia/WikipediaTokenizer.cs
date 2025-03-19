@@ -149,9 +149,9 @@ namespace Lucene.Net.Analysis.Wikipedia
 
         /// <summary>
         /// Creates a new instance of the <see cref="WikipediaTokenizer"/>.  Attaches the
-        /// <paramref name="input"/> to a the newly created JFlex scanner. Uses the given <see cref="AttributeSource.AttributeFactory"/>.
+        /// <paramref name="input"/> to a the newly created JFlex scanner. Uses the given <see cref="AttributeFactory"/>.
         /// </summary>
-        /// <param name="factory"> The <see cref="AttributeSource.AttributeFactory"/> </param>
+        /// <param name="factory"> The <see cref="AttributeFactory"/> </param>
         /// <param name="input"> The input </param>
         /// <param name="tokenOutput"> One of <see cref="TOKENS_ONLY"/>, <see cref="UNTOKENIZED_ONLY"/>, <see cref="BOTH"/> </param>
         /// <param name="untokenizedTypes"> Untokenized types </param>

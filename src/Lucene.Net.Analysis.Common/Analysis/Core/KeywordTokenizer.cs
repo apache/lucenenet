@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Core
             termAtt.ResizeBuffer(bufferSize);
         }
 
-        public KeywordTokenizer(AttributeSource.AttributeFactory factory, TextReader input, int bufferSize)
+        public KeywordTokenizer(AttributeFactory factory, TextReader input, int bufferSize)
             : base(factory, input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.Core
         public override sealed void End()
         {
             base.End();
-            // set final offset 
+            // set final offset
             offsetAtt.SetOffset(finalOffset, finalOffset);
         }
 

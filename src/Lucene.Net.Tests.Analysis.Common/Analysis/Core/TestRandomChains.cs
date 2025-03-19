@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Core
             allowedTokenizerArgs = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
             allowedTokenizerArgs.addAll(argProducers.Keys);
             allowedTokenizerArgs.Add(typeof(TextReader));
-            allowedTokenizerArgs.Add(typeof(AttributeSource.AttributeFactory));
+            allowedTokenizerArgs.Add(typeof(AttributeFactory));
             allowedTokenizerArgs.Add(typeof(AttributeSource));
 
             allowedTokenFilterArgs = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
@@ -783,10 +783,10 @@ namespace Lucene.Net.Analysis.Core
                 {
                     args[i] = reader;
                 }
-                else if (paramType == typeof(AttributeSource.AttributeFactory))
+                else if (paramType == typeof(AttributeFactory))
                 {
                     // TODO: maybe the collator one...???
-                    args[i] = AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY;
+                    args[i] = AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY;
                 }
                 else if (paramType == typeof(AttributeSource))
                 {

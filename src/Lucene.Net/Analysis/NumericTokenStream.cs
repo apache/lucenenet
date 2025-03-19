@@ -2,8 +2,6 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
-using System.Diagnostics;
-using System.Reflection;
 
 namespace Lucene.Net.Analysis
 {
@@ -29,7 +27,7 @@ namespace Lucene.Net.Analysis
     /// for indexing numeric values that can be used by <see cref="Search.NumericRangeQuery"/>
     /// or <see cref="Search.NumericRangeFilter"/>.
     ///
-    /// <para/>Note that for simple usage, <see cref="Documents.Int32Field"/>, <see cref="Documents.Int64Field"/>, 
+    /// <para/>Note that for simple usage, <see cref="Documents.Int32Field"/>, <see cref="Documents.Int64Field"/>,
     /// <see cref="Documents.SingleField"/> or <see cref="Documents.DoubleField"/> is
     /// recommended.  These fields disable norms and
     /// term freqs, as they are not usually needed during
@@ -62,7 +60,7 @@ namespace Lucene.Net.Analysis
     ///     Document document = new Document();
     ///     document.Add(field);
     ///
-    ///     for(all documents) 
+    ///     for(all documents)
     ///     {
     ///         stream.SetInt32Value(value)
     ///         writer.AddDocument(document);
@@ -134,11 +132,11 @@ namespace Lucene.Net.Analysis
         }
 
         // just a wrapper to prevent adding CTA
-        private sealed class NumericAttributeFactory : AttributeSource.AttributeFactory
+        private sealed class NumericAttributeFactory : AttributeFactory
         {
-            private readonly AttributeSource.AttributeFactory @delegate;
+            private readonly AttributeFactory @delegate;
 
-            internal NumericAttributeFactory(AttributeSource.AttributeFactory @delegate)
+            internal NumericAttributeFactory(AttributeFactory @delegate)
             {
                 this.@delegate = @delegate;
             }
@@ -244,7 +242,7 @@ namespace Lucene.Net.Analysis
         /// before using set a value using the various Set<em>???</em>Value() methods.
         /// </summary>
         public NumericTokenStream()
-            : this(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, NumericUtils.PRECISION_STEP_DEFAULT)
+            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, NumericUtils.PRECISION_STEP_DEFAULT)
         {
             InitializeInstanceFields();
         }
@@ -255,7 +253,7 @@ namespace Lucene.Net.Analysis
         /// before using set a value using the various Set<em>???</em>Value() methods.
         /// </summary>
         public NumericTokenStream(int precisionStep)
-            : this(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, precisionStep)
+            : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, precisionStep)
         {
             InitializeInstanceFields();
         }
@@ -263,11 +261,11 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Expert: Creates a token stream for numeric values with the specified
         /// <paramref name="precisionStep"/> using the given
-        /// <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/>.
+        /// <see cref="Lucene.Net.Util.AttributeFactory"/>.
         /// The stream is not yet initialized,
         /// before using set a value using the various Set<em>???</em>Value() methods.
         /// </summary>
-        public NumericTokenStream(AttributeSource.AttributeFactory factory, int precisionStep)
+        public NumericTokenStream(AttributeFactory factory, int precisionStep)
             : base(new NumericAttributeFactory(factory))
         {
             InitializeInstanceFields();
@@ -280,7 +278,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Initializes the token stream with the supplied <see cref="long"/> value. 
+        /// Initializes the token stream with the supplied <see cref="long"/> value.
         /// <para/>
         /// NOTE: This was setLongValue() in Lucene
         /// </summary>
@@ -319,7 +317,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Initializes the token stream with the supplied <see cref="float"/> value. 
+        /// Initializes the token stream with the supplied <see cref="float"/> value.
         /// <para/>
         /// NOTE: This was setFloatValue() in Lucene
         /// </summary>

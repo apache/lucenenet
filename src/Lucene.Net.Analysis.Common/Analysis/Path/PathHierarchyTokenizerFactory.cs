@@ -25,20 +25,20 @@ namespace Lucene.Net.Analysis.Path
      */
 
     /// <summary>
-    /// Factory for <see cref="PathHierarchyTokenizer"/>. 
+    /// Factory for <see cref="PathHierarchyTokenizer"/>.
     /// <para>
-    /// This factory is typically configured for use only in the <code>index</code> 
+    /// This factory is typically configured for use only in the <code>index</code>
     /// Analyzer (or only in the <c>query</c> Analyzer, but never both).
     /// </para>
     /// <para>
-    /// For example, in the configuration below a query for 
-    /// <c>Books/NonFic</c> will match documents indexed with values like 
-    /// <c>Books/NonFic</c>, <c>Books/NonFic/Law</c>, 
-    /// <c>Books/NonFic/Science/Physics</c>, etc. But it will not match 
-    /// documents indexed with values like <c>Books</c>, or 
+    /// For example, in the configuration below a query for
+    /// <c>Books/NonFic</c> will match documents indexed with values like
+    /// <c>Books/NonFic</c>, <c>Books/NonFic/Law</c>,
+    /// <c>Books/NonFic/Science/Physics</c>, etc. But it will not match
+    /// documents indexed with values like <c>Books</c>, or
     /// <c>Books/Fic</c>...
     /// </para>
-    /// 
+    ///
     /// <code>
     /// &lt;fieldType name="descendent_path" class="solr.TextField"&gt;
     ///   &lt;analyzer type="index"&gt;
@@ -50,11 +50,11 @@ namespace Lucene.Net.Analysis.Path
     /// &lt;/fieldType&gt;
     /// </code>
     /// <para>
-    /// In this example however we see the oposite configuration, so that a query 
-    /// for <c>Books/NonFic/Science/Physics</c> would match documents 
-    /// containing <c>Books/NonFic</c>, <c>Books/NonFic/Science</c>, 
-    /// or <c>Books/NonFic/Science/Physics</c>, but not 
-    /// <c>Books/NonFic/Science/Physics/Theory</c> or 
+    /// In this example however we see the oposite configuration, so that a query
+    /// for <c>Books/NonFic/Science/Physics</c> would match documents
+    /// containing <c>Books/NonFic</c>, <c>Books/NonFic/Science</c>,
+    /// or <c>Books/NonFic/Science/Physics</c>, but not
+    /// <c>Books/NonFic/Science/Physics/Theory</c> or
     /// <c>Books/NonFic/Law</c>.
     /// </para>
     /// <code>
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Path
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             if (reverse)
             {

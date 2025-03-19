@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.NGram
         /// Creates <see cref="Lucene43EdgeNGramTokenizer"/> that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the Lucene match version - See <see cref="LuceneVersion"/> </param>
-        /// <param name="factory"> <see cref="AttributeSource.AttributeFactory"/> to use </param>
+        /// <param name="factory"> <see cref="AttributeFactory"/> to use </param>
         /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         /// <param name="side"> the <see cref="Side"/> from which to chop off an n-gram </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.NGram
         /// Creates <see cref="Lucene43EdgeNGramTokenizer"/> that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the Lucene match version - See <see cref="LuceneVersion"/> </param>
-        /// <param name="factory"> <see cref="AttributeSource.AttributeFactory"/> to use </param>
+        /// <param name="factory"> <see cref="AttributeFactory"/> to use </param>
         /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         /// <param name="sideLabel"> the name of the <see cref="Side"/> from which to chop off an n-gram </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis.NGram
         /// Creates <see cref="Lucene43EdgeNGramTokenizer"/> that can generate n-grams in the sizes of the given range
         /// </summary>
         /// <param name="version"> the Lucene match version - See <see cref="LuceneVersion"/> </param>
-        /// <param name="factory"> <see cref="AttributeSource.AttributeFactory"/> to use </param>
+        /// <param name="factory"> <see cref="AttributeFactory"/> to use </param>
         /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>

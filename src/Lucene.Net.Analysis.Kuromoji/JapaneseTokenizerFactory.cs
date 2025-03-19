@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Ja
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             return new JapaneseTokenizer(factory, input, userDictionary, discardPunctuation, mode);
         }

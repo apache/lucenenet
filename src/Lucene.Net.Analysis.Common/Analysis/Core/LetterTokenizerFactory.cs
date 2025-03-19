@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// Factory for <see cref="LetterTokenizer"/>. 
+    /// Factory for <see cref="LetterTokenizer"/>.
     /// <code>
     /// &lt;fieldType name="text_letter" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
             return new LetterTokenizer(m_luceneMatchVersion, factory, input);
         }

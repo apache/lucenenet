@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.NGram
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeFactory factory, TextReader input)
         {
 #pragma warning disable 612, 618
             if (m_luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_44))
