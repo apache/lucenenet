@@ -25,6 +25,7 @@ namespace Lucene.Net.ApiCheck.Models.Diff;
 [JsonDerivedType(typeof(ConstructorReference), "ctor")]
 public abstract class MemberReference(MemberKind memberKind)
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public MemberKind MemberKind { get; } = memberKind;
 
     public required string Name { get; init; }
