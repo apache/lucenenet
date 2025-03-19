@@ -22,7 +22,7 @@ using Lucene.Net.Analysis.Wikipedia;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Tartarus.Snowball;
-using Lucene.Net.TestFramework.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
