@@ -22,4 +22,6 @@ public class MethodReference() : MemberReference(MemberKind.Method)
     public required IReadOnlyList<Parameter> Parameters { get; init; }
 
     public required TypeReference? ReturnType { get; init; }
+
+    public override string ToString() => $"{Modifiers} {ReturnType} {Name}({string.Join(", ", Parameters)})";
 }

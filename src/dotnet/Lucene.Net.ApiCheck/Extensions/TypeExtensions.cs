@@ -16,6 +16,7 @@
  */
 
 using Lucene.Net.ApiCheck.Models.Diff;
+using System.Reflection;
 
 namespace Lucene.Net.ApiCheck.Extensions;
 
@@ -98,4 +99,9 @@ public static class TypeExtensions
         => type.BaseType is not null
         ? type.GetInterfaces().Except(type.BaseType.GetInterfaces()).ToList()
         : type.GetInterfaces();
+
+    public static IReadOnlyList<FieldInfo> GetApiFields(this Type type)
+        => type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+            .Where(f => f is { IsPrivate: false, IsAssembly: false, IsFamilyAndAssembly: false })
+            .ToList();
 }

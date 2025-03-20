@@ -26,4 +26,7 @@ public class PropertyReference() : MemberReference(MemberKind.Property)
     public required bool HasSetter { get; init; }
 
     public required bool IsIndexer { get; init; }
+
+    // TODO: support Java getter/setter somehow
+    public override string ToString() => $"{Modifiers} {PropertyType} {Name} {{ get; set; }}";
 }

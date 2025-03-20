@@ -20,4 +20,6 @@ namespace Lucene.Net.ApiCheck.Models.Diff;
 public class ConstructorReference() : MemberReference(MemberKind.Constructor)
 {
     public required IReadOnlyList<Parameter> Parameters { get; init; }
+
+    public override string ToString() => $"{Modifiers} {Name}({string.Join(", ", Parameters)})";
 }

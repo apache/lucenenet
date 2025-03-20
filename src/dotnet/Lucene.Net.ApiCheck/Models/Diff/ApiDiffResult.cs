@@ -30,4 +30,8 @@ public class ApiDiffResult
     public int TotalMismatchedBaseTypes => Assemblies.Sum(a => a.TypesWithMismatchedBaseTypes.Count());
 
     public int TotalMismatchedInterfaces => Assemblies.Sum(a => a.TypesWithMismatchedInterfaces.Count());
+
+    public int TotalLuceneMembersNotInLuceneNet => Assemblies.Sum(a => a.TypesWithMembersNotInLuceneNet.Sum(b => b.LuceneMembersNotInLuceneNet.Count));
+
+    public int TotalLuceneNetMembersNotInLucene => Assemblies.Sum(a => a.TypesWithMembersNotInLucene.Sum(b => b.LuceneNetMembersNotInLucene.Count));
 }

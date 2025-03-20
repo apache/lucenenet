@@ -33,4 +33,6 @@ public abstract class MemberReference(MemberKind memberKind)
     public required ModifierSet Modifiers { get; init; }
 
     public required bool IsStatic { get; init; }
+
+    public abstract override string ToString();
 }

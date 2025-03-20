@@ -141,7 +141,7 @@ public static class DiffUtility
     private static IReadOnlyList<MemberReference> GetJavaMembersNotInDotNet(MatchingType matchingType)
     {
         return matchingType.JavaType.Fields
-            .Where(j => !matchingType.DotNetType.GetFields().Any(d => MemberComparison.MembersMatch(d, j)))
+            .Where(j => !matchingType.DotNetType.GetApiFields().Any(d => MemberComparison.FieldNamesMatch(d, j)))
             .Select(j => new FieldReference
             {
                 Name = j.Name,
@@ -154,8 +154,8 @@ public static class DiffUtility
 
     private static IReadOnlyList<MemberReference> GetDotNetMembersNotInJava(MatchingType matchingType)
     {
-        return matchingType.DotNetType.GetFields()
-            .Where(d => !matchingType.JavaType.Fields.Any(j => MemberComparison.MembersMatch(d, j)))
+        return matchingType.DotNetType.GetApiFields()
+            .Where(d => !matchingType.JavaType.Fields.Any(j => MemberComparison.FieldNamesMatch(d, j)))
             .Select(d => new FieldReference
             {
                 Name = d.Name,

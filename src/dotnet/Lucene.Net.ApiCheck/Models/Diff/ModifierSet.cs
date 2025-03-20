@@ -22,4 +22,6 @@ public class ModifierSet(IReadOnlyList<string> modifiers)
     public IReadOnlyList<string> Modifiers { get; } = modifiers;
 
     public string ModifiersDisplay => string.Join(" ", Modifiers);
+
+    public override string ToString() => ModifiersDisplay;
 }
