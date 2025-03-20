@@ -22,10 +22,23 @@ namespace Lucene.Net.ApiCheck.Comparison;
 
 public class MemberComparison
 {
-    public static bool MembersMatch(FieldInfo dotNetField, FieldMetadata javaField)
+    public static bool FieldNamesMatch(FieldInfo dotNetField, FieldMetadata javaField)
     {
-        // TODO: handle differences in naming conventions
-        return dotNetField.Name == javaField.Name
-            && dotNetField.IsStatic == javaField.IsStatic;
+        return CleanFieldName(dotNetField.Name) == CleanFieldName(javaField.Name);
+    }
+
+    private static string CleanFieldName(string name)
+    {
+        if (name.StartsWith("m_") || name.StartsWith("s_"))
+        {
+            return name[2..];
+        }
+
+        if (name.StartsWith('_'))
+        {
+            return name[1..];
+        }
+
+        return name;
     }
 }

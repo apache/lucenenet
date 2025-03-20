@@ -47,6 +47,14 @@
                     <th>Mismatched interfaces</th>
                     <td>{{TotalMismatchedInterfaces}}</td>
                 </tr>
+                <tr>
+                    <th>Lucene members not in Lucene.NET</th>
+                    <td>{{TotalLuceneMembersNotInLuceneNet}}</td>
+                </tr>
+                <tr>
+                    <th>Lucene.NET members not in Lucene</th>
+                    <td>{{TotalLuceneNetMembersNotInLucene}}</td>
+                </tr>
                 </tbody>
             </table>
         </section>
@@ -229,6 +237,64 @@
                     {{else}}
                         <tr>
                             <td colspan="2">✅ No mismatched interfaces</td>
+                        </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+
+            <h3>Lucene Members Not in Lucene.NET</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Member Kind</th>
+                    <th>Member</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {{#if TypesWithMembersNotInLuceneNetCount}}
+                        {{#each TypesWithMembersNotInLuceneNet}}
+                            <tr>
+                                <td colspan="2"><strong>{{MatchingType.Java.Type.DisplayName}}</strong></td>
+                            </tr>
+                            {{#each LuceneMembersNotInLuceneNet}}
+                                <tr>
+                                    <td>{{MemberKind}}</td>
+                                    <td>{{this}}</td>
+                                </tr>
+                            {{/each}}
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <td colspan="2">✅ No members missing</td>
+                        </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+
+            <h3>Lucene.NET Members Not in Lucene</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Member Kind</th>
+                    <th>Member</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {{#if TypesWithMembersNotInLuceneCount}}
+                        {{#each TypesWithMembersNotInLucene}}
+                            <tr>
+                                <td colspan="2"><strong>{{MatchingType.DotNet.Type.DisplayName}}</strong></td>
+                            </tr>
+                            {{#each LuceneNetMembersNotInLucene}}
+                                <tr>
+                                    <td>{{MemberKind}}</td>
+                                    <td>{{this}}</td>
+                                </tr>
+                            {{/each}}
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <td colspan="2">✅ No members missing</td>
                         </tr>
                     {{/if}}
                 </tbody>

@@ -24,4 +24,6 @@ public class TypeReference
     public required string TypeName { get; set; }
 
     public required string DisplayName { get; set; }
+
+    public override string ToString() => DisplayName;
 }

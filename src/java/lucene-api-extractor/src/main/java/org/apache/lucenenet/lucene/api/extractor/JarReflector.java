@@ -17,6 +17,7 @@
 
 package org.apache.lucenenet.lucene.api.extractor;
 
+import java.lang.reflect.AccessFlag;
 import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -93,14 +94,17 @@ public class JarReflector {
                     for (Field field : clazz.getDeclaredFields()) {
                         if (field.getDeclaringClass().equals(clazz)) {
                             var fieldModifiers = getModifiers(field.getModifiers());
-                            fieldModifiers.sort(String::compareTo);
-                            var fieldMetadata = new FieldMetadata(
-                                    field.getName(),
-                                    field.getType().getTypeName(),
-                                    fieldModifiers,
-                                    fieldModifiers.contains("static")
-                            );
-                            fieldList.add(fieldMetadata);
+                            if (fieldModifiers.contains("public")
+                                || fieldModifiers.contains("protected")) {
+                                fieldModifiers.sort(String::compareTo);
+                                var fieldMetadata = new FieldMetadata(
+                                        field.getName(),
+                                        field.getType().getTypeName(),
+                                        fieldModifiers,
+                                        fieldModifiers.contains("static")
+                                );
+                                fieldList.add(fieldMetadata);
+                            }
                         }
                     }
                     fieldList.sort(FieldMetadata::compareTo);

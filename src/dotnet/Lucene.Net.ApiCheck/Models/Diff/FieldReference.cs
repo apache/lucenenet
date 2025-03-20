@@ -20,4 +20,6 @@ namespace Lucene.Net.ApiCheck.Models.Diff;
 public class FieldReference() : MemberReference(MemberKind.Field)
 {
     public required TypeReference? FieldType { get; init; }
+
+    public override string ToString() => $"{Modifiers} {FieldType} {Name}";
 }
