@@ -101,7 +101,7 @@ public static class TypeExtensions
         : type.GetInterfaces();
 
     public static IReadOnlyList<FieldInfo> GetApiFields(this Type type)
-        => type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+        => type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
             .Where(f => f is { IsPrivate: false, IsAssembly: false, IsFamilyAndAssembly: false })
             .ToList();
 }
