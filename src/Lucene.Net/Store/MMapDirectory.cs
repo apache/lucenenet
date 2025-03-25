@@ -244,7 +244,7 @@ namespace Lucene.Net.Store
 
         public sealed class MMapIndexInput : BufferedIndexInput
         {
-            internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
+            internal readonly MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
             private readonly MemoryMappedViewAccessor accessor;
             internal readonly FileStream fc;
             private int disposed = 0; // LUCENENET specific - allow double-dispose
@@ -315,10 +315,14 @@ namespace Lucene.Net.Store
                     {
                         try
                         {
+                            if (this.accessor != null)
+                            {
+                                this.accessor.Dispose();
+                            }
+
                             if (this.memoryMappedFile != null)
                             {
                                 this.memoryMappedFile.Dispose();
-                                this.memoryMappedFile = null;
                             }
                         }
                         finally
