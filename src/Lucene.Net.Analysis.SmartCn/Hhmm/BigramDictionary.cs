@@ -254,80 +254,84 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// Load the datafile into this <see cref="BigramDictionary"/>
         /// </summary>
-        /// <param name="dctFilePath">dctFilePath path to the Bigramdictionary (bigramdict.dct)</param>
+        /// <param name="dctFilePath">Path to the Bigramdictionary (bigramDict.dct)</param>
         /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public virtual void LoadFromFile(string dctFilePath)
         {
-            int i, cnt, length, total = 0;
-            // The file only counted 6763 Chinese characters plus 5 reserved slots 3756~3760.
-            // The 3756th is used (as a header) to store information.
-            int[]
-            buffer = new int[3];
-            byte[] intBuffer = new byte[4];
-            string tmpword;
-            //using (RandomAccessFile dctFile = new RandomAccessFile(dctFilePath, "r"))
+            // Position of special header entry in the file structure
+            const int HEADER_POSITION = 3755;
+            // Maximum valid length for word entries to prevent loading corrupted data
+            const int MAX_VALID_LENGTH = 1000;
+
+            // Open file for reading in binary mode
             using var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read);
+            using var reader = new BinaryReader(dctFile);
 
-            // GB2312 characters 0 - 6768
-            for (i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
+            try
             {
-                string currentStr = GetCCByGB2312Id(i);
-                // if (i == 5231)
-                // System.out.println(i);
-
-                dctFile.Read(intBuffer, 0, intBuffer.Length);
-                // the dictionary was developed for C, and byte order must be converted to work with Java
-                cnt = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian).GetInt32();
-                if (cnt <= 0)
+                // Iterate through all GB2312 characters in the valid range
+                for (int i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
                 {
-                    continue;
-                }
-                total += cnt;
-                int j = 0;
-                while (j < cnt)
-                {
-                    dctFile.Read(intBuffer, 0, intBuffer.Length);
-                    buffer[0] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                        .GetInt32();// frequency
-                    dctFile.Read(intBuffer, 0, intBuffer.Length);
-                    buffer[1] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                        .GetInt32();// length
-                    dctFile.Read(intBuffer, 0, intBuffer.Length);
-                    // buffer[2] = ByteBuffer.wrap(intBuffer).order(
-                    // ByteOrder.LITTLE_ENDIAN).getInt();// handle
+                    // Get the current Chinese character
+                    string currentStr = GetCCByGB2312Id(i);
+                    // Read the count of words starting with this character
+                    int cnt = reader.ReadInt32();
 
-                    length = buffer[1];
-                    if (length > 0)
+                    // Skip if no words start with this character
+                    if (cnt <= 0) continue;
+
+                    // Process all words for the current character
+                    for (int j = 0; j < cnt; j++)
                     {
-                        byte[] lchBuffer = new byte[length];
-                        dctFile.Read(lchBuffer, 0, lchBuffer.Length);
-                        //tmpword = new String(lchBuffer, "GB2312");
-                        tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET specific: use cached encoding instance from base class
-                        //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
-                        if (i != 3755 + GB2312_FIRST_CHAR)
+                        // Read word metadata
+                        int frequency = reader.ReadInt32();  // How often this word appears
+                        int length = reader.ReadInt32();     // Length of the word in bytes
+                        reader.ReadInt32();                  // Skip handle value (unused)
+
+                        // Validate word length and ensure we don't read past the file end
+                        if (length > 0 && length <= MAX_VALID_LENGTH && dctFile.Position + length <= dctFile.Length)
                         {
-                            tmpword = currentStr + tmpword;
-                        }
-                        char[] carray = tmpword.ToCharArray();
-                        long hashId = Hash1(carray);
-                        int index = GetAvaliableIndex(hashId, carray);
-                        if (index != -1)
-                        {
-                            if (bigramHashTable[index] == 0)
+                            // Read the word bytes and convert to string
+                            byte[] lchBuffer = reader.ReadBytes(length);
+                            string tmpword = gb2312Encoding.GetString(lchBuffer);
+
+                            // For regular entries (not header entries), prepend the current character
+                            if (i != HEADER_POSITION + GB2312_FIRST_CHAR)
                             {
-                                bigramHashTable[index] = hashId;
-                                // bigramStringTable[index] = tmpword;
+                                tmpword = currentStr + tmpword;
                             }
-                            frequencyTable[index] += buffer[0];
+
+                            // Create a span for efficient string handling
+                            ReadOnlySpan<char> carray = tmpword.AsSpan();
+                            // Generate hash for the word
+                            long hashId = Hash1(carray);
+                            // Find available slot in hash table
+                            int index = GetAvaliableIndex(hashId, carray);
+
+                            // Store word if a valid index was found
+                            if (index != -1)
+                            {
+                                // Set hash ID if slot is empty
+                                if (bigramHashTable[index] == 0)
+                                {
+                                    bigramHashTable[index] = hashId;
+                                }
+                                // Add word frequency to the table
+                                frequencyTable[index] += frequency;
+                            }
                         }
                     }
-                    j++;
                 }
             }
+            // Handle expected end-of-file condition silently
+            catch (EndOfStreamException) { /* Reached end of file */ }
+            // Re-throw IO exceptions as required by contract
+            catch (IOException) { /* Re-throw as per method contract */ throw; }
+
+            // Note: Commented out logging statement
             // log.info("load dictionary done! " + dctFilePath + " total:" + total);
         }
-
-        private int GetAvaliableIndex(long hashId, char[] carray)
+        private int GetAvaliableIndex(long hashId, ReadOnlySpan<char> carray)
         {
             int hash1 = (int)(hashId % PRIME_BIGRAM_LENGTH);
             int hash2 = Hash2(carray) % PRIME_BIGRAM_LENGTH;
@@ -357,7 +361,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// lookup the index into the frequency array.
         /// </summary>
-        private int GetBigramItemIndex(char[] carray)
+        private int GetBigramItemIndex(ReadOnlySpan<char> carray)
         {
             long hashId = Hash1(carray);
             int hash1 = (int)(hashId % PRIME_BIGRAM_LENGTH);
@@ -388,7 +392,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 return -1;
         }
 
-        public int GetFrequency(char[] carray)
+        public int GetFrequency(ReadOnlySpan<char> carray)
         {
             int index = GetBigramItemIndex(carray);
             if (index != -1)

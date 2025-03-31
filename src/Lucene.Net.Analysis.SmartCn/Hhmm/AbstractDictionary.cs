@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// </summary>
         /// <param name="carray">character array</param>
         /// <returns>hashcode</returns>
-        public virtual long Hash1(char[] carray)
+        public virtual long Hash1(ReadOnlySpan<char> carray)
         {
             long p = 1099511628211L;
             long hash = unchecked((long)0xcbf29ce484222325L);
@@ -210,7 +210,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// </summary>
         /// <param name="carray">character array</param>
         /// <returns>hashcode</returns>
-        public virtual int Hash2(char[] carray)
+        public virtual int Hash2(ReadOnlySpan<char> carray)
         {
             int hash = 5381;
 

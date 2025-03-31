@@ -64,4 +64,9 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="$(SystemTextEncodingCodePagesPackageVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+  <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.SmartCn" />
+</ItemGroup>
+
+
 </Project>

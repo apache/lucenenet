@@ -62,5 +62,10 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <PackageReference Include="System.Text.Encoding.CodePages" Version="$(SystemTextEncodingCodePagesPackageVersion)" />
   </ItemGroup>
+  <ItemGroup>
+  <EmbeddedResource Include="Resources\bigramDict.dct" />
+  <EmbeddedResource Include="Resources\coreDict.dct" />
+</ItemGroup>
+
 
 </Project>

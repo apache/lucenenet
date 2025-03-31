@@ -340,80 +340,70 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// Load the datafile into this <see cref="WordDictionary"/>
         /// </summary>
-        /// <param name="dctFilePath">path to word dictionary (coredict.dct)</param>
+        /// <param name="dctFilePath">path to word dictionary (coreDict.dct)</param>
         /// <returns>number of words read</returns>
         /// <exception cref="IOException">If there is a low-level I/O error.</exception>
         private int LoadMainDataFromFile(string dctFilePath)
         {
-            int i, cnt, length, total = 0;
-            // The file only counted 6763 Chinese characters plus 5 reserved slots 3756~3760.
-            // The 3756th is used (as a header) to store information.
-            int[]
-            buffer = new int[3];
-            byte[] intBuffer = new byte[4];
-            string tmpword;
+            // Counter for total number of words loaded
+            int total = 0;
+
+            // Open the dictionary file for binary reading
             using (var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read))
+            using (var reader = new BinaryReader(dctFile))
             {
-
-                // GB2312 characters 0 - 6768
-                for (i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
+                // Process each Chinese character in the GB2312 encoding range
+                for (int i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
                 {
-                    // if (i == 5231)
-                    // System.out.println(i);
+                    // Read number of words starting with this character
+                    int cnt = reader.ReadInt32();
 
-                    dctFile.Read(intBuffer, 0, intBuffer.Length);
-                    // the dictionary was developed for C, and byte order must be converted to work with Java
-                    cnt = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian).GetInt32();
+                    // If no words start with this character, set arrays to null and skip
                     if (cnt <= 0)
                     {
                         wordItem_charArrayTable[i] = null;
                         wordItem_frequencyTable[i] = null;
                         continue;
                     }
+
+                    // Initialize arrays to store words and their frequencies
                     wordItem_charArrayTable[i] = new char[cnt][];
                     wordItem_frequencyTable[i] = new int[cnt];
                     total += cnt;
-                    int j = 0;
-                    while (j < cnt)
+
+                    // Process each word for the current character
+                    for (int j = 0; j < cnt; j++)
                     {
-                        // wordItemTable[i][j] = new WordItem();
-                        dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        buffer[0] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                            .GetInt32();// frequency
-                        dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        buffer[1] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                            .GetInt32();// length
-                        dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        buffer[2] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                            .GetInt32();// handle
+                        // Read word metadata
+                        int frequency = reader.ReadInt32();  // Word usage frequency
+                        int length = reader.ReadInt32();     // Length of word in bytes
+                        reader.ReadInt32();                  // Skip handle (unused)
 
-                        // wordItemTable[i][j].frequency = buffer[0];
-                        wordItem_frequencyTable[i][j] = buffer[0];
+                        // Store word frequency
+                        wordItem_frequencyTable[i][j] = frequency;
 
-                        length = buffer[1];
+                        // Process word data if it exists
                         if (length > 0)
                         {
-                            byte[] lchBuffer = new byte[length];
-                            dctFile.Read(lchBuffer, 0, lchBuffer.Length);
-                            tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET specific: use cached encoding instance from base class
+                            // Read word bytes and convert to character array
+                            byte[] lchBuffer = reader.ReadBytes(length);
+                            string tmpword = gb2312Encoding.GetString(lchBuffer);
                             wordItem_charArrayTable[i][j] = tmpword.ToCharArray();
                         }
                         else
                         {
-                            // wordItemTable[i][j].charArray = null;
+                            // No word data, set to null
                             wordItem_charArrayTable[i][j] = null;
                         }
-                        // System.out.println(indexTable[i].wordItems[j]);
-                        j++;
                     }
 
+                    // Map the character to its index in the lookup tables
                     string str = GetCCByGB2312Id(i);
                     SetTableIndex(str[0], i);
                 }
             }
-            return total;
+            return total;  // Return total number of words loaded
         }
-
         /// <summary>
         /// The original lexicon puts all information with punctuation into a
         /// chart (from 1 to 3755). Here it then gets expanded, separately being
