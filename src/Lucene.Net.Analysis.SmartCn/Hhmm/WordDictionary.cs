@@ -340,25 +340,27 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// Load the datafile into this <see cref="WordDictionary"/>
         /// </summary>
-        /// <param name="dctFilePath">path to word dictionary (coreDict.dct)</param>
-        /// <returns>number of words read</returns>
+        /// <param name="dctFilePath">Path to word dictionary (coredict.dct)</param>
+        /// <returns>Number of words read</returns>
         /// <exception cref="IOException">If there is a low-level I/O error.</exception>
         private int LoadMainDataFromFile(string dctFilePath)
         {
-            // Counter for total number of words loaded
             int total = 0;
 
-            // Open the dictionary file for binary reading
+            // The file only counted 6763 Chinese characters plus 5 reserved slots (3756~3760).
+            // The 3756th is used (as a header) to store information.
+
+            // LUCENENET: Removed buffer and intBuffer arrays since BinaryReader handles reading values directly in a more type-safe and readable way.
+            // LUCENENET: Use BinaryReader to simplify endian conversion and stream reading.
+
             using (var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read))
             using (var reader = new BinaryReader(dctFile))
             {
-                // Process each Chinese character in the GB2312 encoding range
+                // GB2312 characters 0 - 6768
                 for (int i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
                 {
-                    // Read number of words starting with this character
-                    int cnt = reader.ReadInt32();
+                    int cnt = reader.ReadInt32(); // LUCENENET: Use BinaryReader methods instead of ByteBuffer
 
-                    // If no words start with this character, set arrays to null and skip
                     if (cnt <= 0)
                     {
                         wordItem_charArrayTable[i] = null;
@@ -366,44 +368,39 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         continue;
                     }
 
-                    // Initialize arrays to store words and their frequencies
                     wordItem_charArrayTable[i] = new char[cnt][];
                     wordItem_frequencyTable[i] = new int[cnt];
                     total += cnt;
 
-                    // Process each word for the current character
                     for (int j = 0; j < cnt; j++)
                     {
-                        // Read word metadata
-                        int frequency = reader.ReadInt32();  // Word usage frequency
-                        int length = reader.ReadInt32();     // Length of word in bytes
-                        reader.ReadInt32();                  // Skip handle (unused)
+                        // LUCENENET: Use BinaryReader methods instead of ByteBuffer
+                        int frequency = reader.ReadInt32();
+                        int length = reader.ReadInt32();
+                        reader.ReadInt32(); // Skip handle (unused)
 
-                        // Store word frequency
                         wordItem_frequencyTable[i][j] = frequency;
 
-                        // Process word data if it exists
                         if (length > 0)
                         {
-                            // Read word bytes and convert to character array
                             byte[] lchBuffer = reader.ReadBytes(length);
-                            string tmpword = gb2312Encoding.GetString(lchBuffer);
+                            string tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET: Use cached encoding instance from base class
                             wordItem_charArrayTable[i][j] = tmpword.ToCharArray();
                         }
                         else
                         {
-                            // No word data, set to null
                             wordItem_charArrayTable[i][j] = null;
                         }
                     }
 
-                    // Map the character to its index in the lookup tables
                     string str = GetCCByGB2312Id(i);
                     SetTableIndex(str[0], i);
                 }
             }
-            return total;  // Return total number of words loaded
+
+            return total;
         }
+
         /// <summary>
         /// The original lexicon puts all information with punctuation into a
         /// chart (from 1 to 3755). Here it then gets expanded, separately being

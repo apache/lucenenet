@@ -63,8 +63,8 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="$(SystemTextEncodingCodePagesPackageVersion)" />
   </ItemGroup>
   <ItemGroup>
-  <EmbeddedResource Include="Resources\bigramDict.dct" />
-  <EmbeddedResource Include="Resources\coreDict.dct" />
+  <EmbeddedResource Include="Resources\bigramdict.dct" />
+  <EmbeddedResource Include="Resources\coredict.dct" />
 </ItemGroup>
 
 

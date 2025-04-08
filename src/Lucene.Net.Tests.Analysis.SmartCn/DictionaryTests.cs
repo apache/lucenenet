@@ -1,29 +1,28 @@
 using Lucene.Net.Util;
 using Lucene.Net.Analysis.Cn.Smart.Hhmm;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.IO;
 using System.Reflection;
 
+
 [TestFixture]
+[LuceneNetSpecific]
 public class DictionaryTests : LuceneTestCase
 {
-    private const string BigramResourceName = "Lucene.Net.Tests.Analysis.SmartCn.Resources.bigramDict.dct";
+    private const string BigramResourceName = "Lucene.Net.Tests.Analysis.SmartCn.Resources.bigramdict.dct";
 
     [Test, Category("Dictionary")]
     public void TestBigramDictionary()
     {
-        // Extract embedded resource
         using var resourceStream = GetResourceStream(BigramResourceName);
 
-        // Copy to temp file
-        FileInfo _tempFile = CreateTempFile("bigramDict", ".dct");
+        FileInfo _tempFile = CreateTempFile("bigramdict", ".dct");
         CopyStreamToFile(resourceStream, _tempFile);
 
-        // Verify temp file
         Assert.IsTrue(_tempFile.Length > 0, "Temp file is empty.");
 
-        // Test BigramDictionary functionality
         BigramDictionary bigramDict = BigramDictionary.GetInstance();
         bigramDict.LoadFromFile(_tempFile.FullName);
 
@@ -34,10 +33,8 @@ public class DictionaryTests : LuceneTestCase
     [Test, Category("Dictionary")]
     public void TestWordDictionaryGetInstance()
     {
-        // Test WordDictionary functionality using GetInstance()
         WordDictionary wordDict = WordDictionary.GetInstance();
 
-        // Verify that the WordDictionary instance is not null
         Assert.NotNull(wordDict, "WordDictionary.GetInstance() returned null.");
 
     }

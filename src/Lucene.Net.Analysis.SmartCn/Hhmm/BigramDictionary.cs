@@ -254,82 +254,81 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// Load the datafile into this <see cref="BigramDictionary"/>
         /// </summary>
-        /// <param name="dctFilePath">Path to the Bigramdictionary (bigramDict.dct)</param>
+        /// <param name="dctFilePath">Path to the Bigramdictionary (bigramdict.dct)</param>
         /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public virtual void LoadFromFile(string dctFilePath)
         {
-            // Position of special header entry in the file structure
+            // The file only counted 6763 Chinese characters plus 5 reserved slots 3756~3760.
+            // The 3756th is used (as a header) to store information.
+
+            // LUCENENET: Removed buffer and intBuffer arrays since BinaryReader handles reading values directly in a more type-safe and readable way.
+            // LUCENENET specific - refactored constants for clarity
             const int HEADER_POSITION = 3755;
-            // Maximum valid length for word entries to prevent loading corrupted data
             const int MAX_VALID_LENGTH = 1000;
 
-            // Open file for reading in binary mode
+            //using (RandomAccessFile dctFile = new RandomAccessFile(dctFilePath, "r"))
             using var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read);
             using var reader = new BinaryReader(dctFile);
 
-            try
+            // GB2312 characters 0 - 6768
+            for (int i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
             {
-                // Iterate through all GB2312 characters in the valid range
-                for (int i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
+
+                string currentStr = GetCCByGB2312Id(i); 
+                int cnt;
+                try
                 {
-                    // Get the current Chinese character
-                    string currentStr = GetCCByGB2312Id(i);
-                    // Read the count of words starting with this character
-                    int cnt = reader.ReadInt32();
+                   cnt = reader.ReadInt32();  // LUCENENET: Use BinaryReader methods instead of ByteBuffer
+                }
+                catch (EndOfStreamException)
+                {
+                    // Reached end of file
+                    break;
+                }
 
-                    // Skip if no words start with this character
-                    if (cnt <= 0) continue;
+                if (cnt <= 0)
+                {
+                    continue;
+                }
 
-                    // Process all words for the current character
-                    for (int j = 0; j < cnt; j++)
+                for (int j = 0; j < cnt; j++)
+                {
+                    // LUCENENET: Use BinaryReader methods instead of ByteBuffer
+                    int frequency = reader.ReadInt32();
+                    int length = reader.ReadInt32();
+                    reader.ReadInt32();  // Skip handle value (unused)
+
+                    if (length > 0 && length <= MAX_VALID_LENGTH && dctFile.Position + length <= dctFile.Length)
                     {
-                        // Read word metadata
-                        int frequency = reader.ReadInt32();  // How often this word appears
-                        int length = reader.ReadInt32();     // Length of the word in bytes
-                        reader.ReadInt32();                  // Skip handle value (unused)
+                        byte[] lchBuffer = reader.ReadBytes(length);  // LUCENENET: Use BinaryReader methods instead of ByteBuffer
 
-                        // Validate word length and ensure we don't read past the file end
-                        if (length > 0 && length <= MAX_VALID_LENGTH && dctFile.Position + length <= dctFile.Length)
+                        //tmpword = new String(lchBuffer, "GB2312");
+                        string tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET specific: use cached encoding instance from base class
+                        //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
+
+
+                        if (i != HEADER_POSITION + GB2312_FIRST_CHAR)
                         {
-                            // Read the word bytes and convert to string
-                            byte[] lchBuffer = reader.ReadBytes(length);
-                            string tmpword = gb2312Encoding.GetString(lchBuffer);
+                            tmpword = currentStr + tmpword;
+                        }
 
-                            // For regular entries (not header entries), prepend the current character
-                            if (i != HEADER_POSITION + GB2312_FIRST_CHAR)
+                        ReadOnlySpan<char> carray = tmpword.AsSpan();
+                        long hashId = Hash1(carray);
+                        int index = GetAvaliableIndex(hashId, carray);
+
+                        if (index != -1)
+                        {
+                            if (bigramHashTable[index] == 0)
                             {
-                                tmpword = currentStr + tmpword;
-                            }
+                                bigramHashTable[index] = hashId;
+                                // bigramStringTable[index] = tmpword;
 
-                            // Create a span for efficient string handling
-                            ReadOnlySpan<char> carray = tmpword.AsSpan();
-                            // Generate hash for the word
-                            long hashId = Hash1(carray);
-                            // Find available slot in hash table
-                            int index = GetAvaliableIndex(hashId, carray);
-
-                            // Store word if a valid index was found
-                            if (index != -1)
-                            {
-                                // Set hash ID if slot is empty
-                                if (bigramHashTable[index] == 0)
-                                {
-                                    bigramHashTable[index] = hashId;
-                                }
-                                // Add word frequency to the table
-                                frequencyTable[index] += frequency;
                             }
+                            frequencyTable[index] += frequency;
                         }
                     }
                 }
             }
-            // Handle expected end-of-file condition silently
-            catch (EndOfStreamException) { /* Reached end of file */ }
-            // Re-throw IO exceptions as required by contract
-            catch (IOException) { /* Re-throw as per method contract */ throw; }
-
-            // Note: Commented out logging statement
-            // log.info("load dictionary done! " + dctFilePath + " total:" + total);
         }
         private int GetAvaliableIndex(long hashId, ReadOnlySpan<char> carray)
         {
