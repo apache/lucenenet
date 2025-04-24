@@ -351,8 +351,9 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             // The 3756th is used (as a header) to store information.
 
             Span<int> buffer = stackalloc int[3];
+            string tmpword;
 
-            // LUCENENET: Removed buffer and intBuffer arrays since BinaryReader handles reading values directly in a more type-safe and readable way.
+            // LUCENENET: Removed intBuffer arrays since BinaryReader handles reading values directly in a more type-safe and readable way.
             // LUCENENET: Use BinaryReader to simplify endian conversion and stream reading.
 
             using (var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read))
@@ -394,7 +395,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         if (length > 0)
                         {
                             byte[] lchBuffer = reader.ReadBytes(length);
-                            string tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET: Use cached encoding instance from base class
+                            tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET: Use cached encoding instance from base class
                             wordItem_charArrayTable[i][j] = tmpword.ToCharArray();
                         }
                         else

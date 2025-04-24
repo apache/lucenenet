@@ -266,13 +266,12 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             Span<int> buffer = stackalloc int[3];
             string tmpword;
 
-            // LUCENENET: Removed buffer and intBuffer arrays since BinaryReader handles reading values directly in a more type-safe and readable way.
+            // LUCENENET: Removed intBuffer arrays since BinaryReader handles reading values directly in a more type-safe and readable way.
             // LUCENENET specific - refactored constants for clarity
 
             // The 3756th position (using 1-based counting) corresponds to index 3755 (using 0-based indexing)
             // This matches the original Java implementation which used 3755 + GB2312_FIRST_CHAR in the condition
             const int HEADER_POSITION = 3755;
-            const int MAX_VALID_LENGTH = 1000;
 
             //using (RandomAccessFile dctFile = new RandomAccessFile(dctFilePath, "r"))
             using var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read);
@@ -310,7 +309,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     buffer[2] = reader.ReadInt32(); // Skip handle value (unused)
 
                     length = buffer[1];
-                    if (length > 0 && length <= MAX_VALID_LENGTH && dctFile.Position + length <= dctFile.Length)
+                    if (length > 0 && dctFile.Position + length <= dctFile.Length)
                     {
                         byte[] lchBuffer = reader.ReadBytes(length);  // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
 

@@ -55,23 +55,22 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             // First test - builds and loads dictionary from .dict file
             BigramDictionary bigramDict = BigramDictionary.GetInstance();
             CheckBigramDictionary(bigramDict);
-            
+
             // Ensure .mem file was created
-            string memFile = System.IO.Path.Combine(tempDir.FullName,  "bigramdict.mem");
+            string memFile = System.IO.Path.Combine(tempDir.FullName, "bigramdict.mem");
             Assert.IsTrue(File.Exists(memFile), "Memory file should be created after first load");
-            
+
             // Delete the original .dict file
-            string dictFile = System.IO.Path.Combine(tempDir.FullName,  "bigramdict.dct");
-            if (File.Exists(dictFile))
-            {
-                File.Delete(dictFile);
-            }
-            
+            string dictFile = System.IO.Path.Combine(tempDir.FullName, "bigramdict.dct");
+            Assert.IsTrue(File.Exists(dictFile), $"{dictFile} does not exist.");
+            File.Delete(dictFile);
+
+
             // Second test - should load from .mem file now
             bigramDict = BigramDictionary.GetInstance();
             CheckBigramDictionary(bigramDict);
         }
-        
+
         private static void CheckBigramDictionary(BigramDictionary bigramDict)
         {
             Assert.AreEqual(10, bigramDict.GetFrequency("啊hello".AsSpan()), "Frequency for '啊hello' is incorrect.");
@@ -84,23 +83,22 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             // First test - builds and loads dictionary from .dict file
             WordDictionary wordDict = WordDictionary.GetInstance();
             CheckWordDictionary(wordDict);
-            
+
             // Ensure .mem file was created
             string memFile = System.IO.Path.Combine(tempDir.FullName, "coredict.mem");
             Assert.IsTrue(File.Exists(memFile), "Memory file should be created after first load");
-            
+
             // Delete the original .dict file
             string dictFile = System.IO.Path.Combine(tempDir.FullName, "coredict.dct");
-            if (File.Exists(dictFile))
-            {
-                File.Delete(dictFile);
-            }
-            
+            Assert.IsTrue(File.Exists(dictFile), $"{dictFile} does not exist.");
+            File.Delete(dictFile);
+
+
             // Second test - should load from .mem file now
             wordDict = WordDictionary.GetInstance();
             CheckWordDictionary(wordDict);
         }
-        
+
         private static void CheckWordDictionary(WordDictionary wordDict)
         {
             Assert.AreEqual(30, wordDict.GetFrequency("尼".ToCharArray()), "Frequency for '尼' is incorrect.");
