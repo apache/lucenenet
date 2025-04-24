@@ -1,5 +1,7 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -229,7 +231,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// String compare, returns 0 if equal or t is a substring of s
         /// </summary>
-        protected virtual int HStrCmp(char[] s, int si, char[] t, int ti)
+        protected virtual int HStrCmp(ReadOnlySpan<char> s, int si, ReadOnlySpan<char> t, int ti)
         {
             for (; s[si] == t[ti]; si++, ti++)
             {
@@ -296,7 +298,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="word"> null terminated word to match </param>
         /// <param name="index"> start index from word </param>
         /// <param name="il"> interletter values array to update </param>
-        protected virtual void SearchPatterns(char[] word, int index, byte[] il)
+        protected virtual void SearchPatterns(ReadOnlySpan<char> word, int index, Span<byte> il)
         {
             byte[] values;
             int i = index;
@@ -384,8 +386,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         ///         hyphenated word or null if word is not hyphenated. </returns>
         public virtual Hyphenation Hyphenate(string word, int remainCharCount, int pushCharCount)
         {
-            char[] w = word.ToCharArray();
-            return Hyphenate(w, 0, w.Length, remainCharCount, pushCharCount);
+            // LUCENENET: use Span instead of ToCharArray
+            return Hyphenate(word.AsSpan(), 0, word.Length, remainCharCount, pushCharCount);
         }
 
 
@@ -415,13 +417,14 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         ///        hyphenation point. </param>
         /// <returns> a <see cref="Hyphenation"/> object representing the
         ///         hyphenated word or null if word is not hyphenated. </returns>
-        public virtual Hyphenation Hyphenate(char[] w, int offset, int len, int remainCharCount, int pushCharCount)
+        public virtual Hyphenation Hyphenate(ReadOnlySpan<char> w, int offset, int len, int remainCharCount, int pushCharCount)
         {
             int i;
-            char[] word = new char[len + 3];
+            // LUCENENET: optimized method for Span and stackalloc
+            Span<char> word = (len + 3) * sizeof(char) > Constants.MaxStackByteLimit ? new char[len + 3] : stackalloc char[len + 3];
 
             // normalize word
-            char[] c = new char[2];
+            Span<char> c = stackalloc char[2];
             int iIgnoreAtBeginning = 0;
             int iLength = len;
             bool bEndOfLetters = false;
@@ -461,11 +464,11 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 // word is too short to be hyphenated
                 return null;
             }
-            int[] result = new int[len + 1];
+            Span<int> result = (len + 1) * sizeof(int) > Constants.MaxStackByteLimit ? new int[len + 1] : stackalloc int[len + 1];
             int k = 0;
 
             // check exception list first
-            string sw = new string(word, 1, len);
+            string sw = word.Slice(1).ToString();
             // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
             if (m_stoplist.TryGetValue(sw, out IList<object> hw))
             {
@@ -493,7 +496,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 word[0] = '.'; // word start marker
                 word[len + 1] = '.'; // word end marker
                 word[len + 2] = (char)0; // null terminated
-                byte[] il = new byte[len + 3]; // initialized to zero
+                Span<byte> il = (len + 3) > Constants.MaxStackByteLimit ? new byte[len + 3] : stackalloc byte[len + 3]; // initialized to zero
                 for (i = 0; i < len + 1; i++)
                 {
                     SearchPatterns(word, i, il);
@@ -516,7 +519,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 // trim result array
                 int[] res = new int[k + 2];
-                Arrays.Copy(result, 0, res, 1, k);
+                result.Slice(0, k).CopyTo(res.AsSpan(1, k));
                 // We add the synthetical hyphenation points
                 // at the beginning and end of the word
                 res[0] = 0;
@@ -544,7 +547,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             if (chargroup.Length > 0)
             {
                 char equivChar = chargroup[0];
-                char[] key = new char[2];
+                Span<char> key = stackalloc char[2];
                 key[1] = (char)0;
                 for (int i = 0; i < chargroup.Length; i++)
                 {
