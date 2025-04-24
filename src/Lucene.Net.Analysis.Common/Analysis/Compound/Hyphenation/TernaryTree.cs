@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -145,7 +146,19 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// same prefix is inserted. This saves a lot of space, specially for long
         /// keys.
         /// </summary>
-        public virtual void Insert(string key, char val)
+        public void Insert(string key, char val)
+            => Insert(key.AsSpan(), val);
+
+        /// <summary>
+        /// Branches are initially compressed, needing one node per key plus the size
+        /// of the string key. They are decompressed as needed when another key with
+        /// same prefix is inserted. This saves a lot of space, specially for long
+        /// keys.
+        /// </summary>
+        /// <remarks>
+        /// LUCENENET specific overload for ReadOnlySpan&lt;char&gt;
+        /// </remarks>
+        public virtual void Insert(ReadOnlySpan<char> key, char val)
         {
             // make sure we have enough room in the arrays
             int len = key.Length + 1; // maximum number of nodes that may be generated
@@ -153,13 +166,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 RedimNodeArrays(m_eq.Length + BLOCK_SIZE);
             }
-            char[] strkey = new char[len--];
-            key.CopyTo(0, strkey, 0, len - 0);
+            // LUCENENET: add optimization for stackalloc and Span
+            int strkeyLen = len--;
+            Span<char> strkey = strkeyLen * sizeof(char) > Constants.MaxStackByteLimit ? new char[strkeyLen] : stackalloc char[strkeyLen];
+            key.CopyTo(strkey);
             strkey[len] = (char)0;
             m_root = Insert(m_root, strkey, 0, val);
         }
 
-        public virtual void Insert(char[] key, int start, char val)
+        public virtual void Insert(ReadOnlySpan<char> key, int start, char val)
         {
             int len = StrLen(key) + 1;
             if (m_freenode + len > m_eq.Length)
@@ -172,7 +187,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// The actual insertion function, recursive version.
         /// </summary>
-        private char Insert(char p, char[] key, int start, char val)
+        private char Insert(char p, ReadOnlySpan<char> key, int start, char val)
         {
             int len = StrLen(key, start);
             if (p == 0)
@@ -264,7 +279,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Compares 2 null terminated char arrays
         /// </summary>
-        public static int StrCmp(char[] a, int startA, char[] b, int startB)
+        public static int StrCmp(ReadOnlySpan<char> a, int startA, ReadOnlySpan<char> b, int startB)
         {
             for (; a[startA] == b[startB]; startA++, startB++)
             {
@@ -279,7 +294,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// Compares a string with null terminated char array
         /// </summary>
-        public static int StrCmp(string str, char[] a, int start)
+        public static int StrCmp(ReadOnlySpan<char> str, ReadOnlySpan<char> a, int start)
         {
             int i, d, len = str.Length;
             for (i = 0; i < len; i++)
@@ -299,10 +314,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 return -a[start + i];
             }
             return 0;
-
         }
 
-        public static void StrCpy(char[] dst, int di, char[] src, int si)
+        public static void StrCpy(Span<char> dst, int di, ReadOnlySpan<char> src, int si)
         {
             while (src[si] != 0)
             {
@@ -311,7 +325,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             dst[di] = (char)0;
         }
 
-        public static int StrLen(char[] a, int start)
+        public static int StrLen(ReadOnlySpan<char> a, int start)
         {
             int len = 0;
             for (int i = start; i < a.Length && a[i] != 0; i++)
@@ -321,7 +335,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             return len;
         }
 
-        public static int StrLen(char[] a)
+        public static int StrLen(ReadOnlySpan<char> a)
         {
             return StrLen(a, 0);
         }
@@ -329,14 +343,15 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         public virtual int Find(string key)
         {
             int len = key.Length;
-            char[] strkey = new char[len + 1];
-            key.CopyTo(0, strkey, 0, len - 0);
+            // LUCENENET: add optimization for stackalloc and Span
+            Span<char> strkey = (len + 1) * sizeof(char) > Constants.MaxStackByteLimit ? new char[len + 1] : stackalloc char[len + 1];
+            key.AsSpan().CopyTo(strkey);
             strkey[len] = (char)0;
 
             return Find(strkey, 0);
         }
 
-        public virtual int Find(char[] key, int start)
+        public virtual int Find(ReadOnlySpan<char> key, int start)
         {
             int d;
             char p = m_root;
@@ -424,7 +439,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// upper halves, and so on in order to get a balanced tree. The array of keys
         /// is assumed to be sorted in ascending order.
         /// </summary>
-        protected virtual void InsertBalanced(string[] k, char[] v, int offset, int n)
+        protected virtual void InsertBalanced(ReadOnlySpan<string> k, ReadOnlySpan<char> v, int offset, int n)
         {
             int m;
             if (n < 1)
@@ -449,7 +464,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             int i = 0, n = m_length;
             string[] k = new string[n];
-            char[] v = new char[n];
+            // LUCENENET: add optimization for stackalloc and Span
+            Span<char> v = n * sizeof(char) > Constants.MaxStackByteLimit ? new char[n] : stackalloc char[n];
             using (Enumerator iter = new Enumerator(this))
             {
                 while (iter.MoveNext())
