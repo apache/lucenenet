@@ -345,10 +345,12 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <exception cref="IOException">If there is a low-level I/O error.</exception>
         private int LoadMainDataFromFile(string dctFilePath)
         {
-            int total = 0;
+            int i, cnt, length, total = 0;
 
             // The file only counted 6763 Chinese characters plus 5 reserved slots (3756~3760).
             // The 3756th is used (as a header) to store information.
+
+            Span<int> buffer = stackalloc int[3];
 
             // LUCENENET: Removed buffer and intBuffer arrays since BinaryReader handles reading values directly in a more type-safe and readable way.
             // LUCENENET: Use BinaryReader to simplify endian conversion and stream reading.
@@ -357,9 +359,12 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             using (var reader = new BinaryReader(dctFile))
             {
                 // GB2312 characters 0 - 6768
-                for (int i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
+                for (i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
                 {
-                    int cnt = reader.ReadInt32(); // LUCENENET: Use BinaryReader methods instead of ByteBuffer
+                    // if (i == 5231)
+                    // System.out.println(i);
+
+                    cnt = reader.ReadInt32(); // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
 
                     if (cnt <= 0)
                     {
@@ -371,16 +376,21 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     wordItem_charArrayTable[i] = new char[cnt][];
                     wordItem_frequencyTable[i] = new int[cnt];
                     total += cnt;
-
-                    for (int j = 0; j < cnt; j++)
+                    int j = 0;
+                    while (j < cnt)
                     {
-                        // LUCENENET: Use BinaryReader methods instead of ByteBuffer
-                        int frequency = reader.ReadInt32();
-                        int length = reader.ReadInt32();
-                        reader.ReadInt32(); // Skip handle (unused)
+                        // wordItemTable[i][j] = new WordItem();
 
-                        wordItem_frequencyTable[i][j] = frequency;
+                        // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
+                        buffer[0] = reader.ReadInt32(); // frequency
+                        buffer[1] = reader.ReadInt32(); // length
+                        buffer[2] = reader.ReadInt32(); // handle
 
+                        // wordItemTable[i][j].frequency = buffer[0];
+
+                        wordItem_frequencyTable[i][j] = buffer[0];
+
+                        length = buffer[1];
                         if (length > 0)
                         {
                             byte[] lchBuffer = reader.ReadBytes(length);
@@ -389,8 +399,11 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         }
                         else
                         {
+                            // wordItemTable[i][j].charArray = null;
                             wordItem_charArrayTable[i][j] = null;
                         }
+                        // System.out.println(indexTable[i].wordItems[j]);
+                        j++;
                     }
 
                     string str = GetCCByGB2312Id(i);

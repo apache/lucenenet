@@ -258,11 +258,19 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public virtual void LoadFromFile(string dctFilePath)
         {
+            int i, cnt, length, total = 0;
+
             // The file only counted 6763 Chinese characters plus 5 reserved slots 3756~3760.
             // The 3756th is used (as a header) to store information.
 
+            Span<int> buffer = stackalloc int[3];
+            string tmpword;
+
             // LUCENENET: Removed buffer and intBuffer arrays since BinaryReader handles reading values directly in a more type-safe and readable way.
             // LUCENENET specific - refactored constants for clarity
+
+            // The 3756th position (using 1-based counting) corresponds to index 3755 (using 0-based indexing)
+            // This matches the original Java implementation which used 3755 + GB2312_FIRST_CHAR in the condition
             const int HEADER_POSITION = 3755;
             const int MAX_VALID_LENGTH = 1000;
 
@@ -271,18 +279,20 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             using var reader = new BinaryReader(dctFile);
 
             // GB2312 characters 0 - 6768
-            for (int i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
+            for (i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
             {
 
-                string currentStr = GetCCByGB2312Id(i); 
-                int cnt;
+                string currentStr = GetCCByGB2312Id(i);
+                // if (i == 5231)
+                // System.out.println(i);
                 try
                 {
-                   cnt = reader.ReadInt32();  // LUCENENET: Use BinaryReader methods instead of ByteBuffer
+                    cnt = reader.ReadInt32();  // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
                 }
                 catch (EndOfStreamException)
                 {
-                    // Reached end of file
+                    // Test dictionary files contain fewer entries than production files
+                    // Breaking here is normal and expected behavior for test files
                     break;
                 }
 
@@ -290,20 +300,22 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 {
                     continue;
                 }
-
-                for (int j = 0; j < cnt; j++)
+                total += cnt;
+                int j = 0;
+                while (j < cnt)
                 {
-                    // LUCENENET: Use BinaryReader methods instead of ByteBuffer
-                    int frequency = reader.ReadInt32();
-                    int length = reader.ReadInt32();
-                    reader.ReadInt32();  // Skip handle value (unused)
+                    // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
+                    buffer[0] = reader.ReadInt32(); // frequency
+                    buffer[1] = reader.ReadInt32(); // length
+                    buffer[2] = reader.ReadInt32(); // Skip handle value (unused)
 
+                    length = buffer[1];
                     if (length > 0 && length <= MAX_VALID_LENGTH && dctFile.Position + length <= dctFile.Length)
                     {
-                        byte[] lchBuffer = reader.ReadBytes(length);  // LUCENENET: Use BinaryReader methods instead of ByteBuffer
+                        byte[] lchBuffer = reader.ReadBytes(length);  // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
 
                         //tmpword = new String(lchBuffer, "GB2312");
-                        string tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET specific: use cached encoding instance from base class
+                        tmpword = gb2312Encoding.GetString(lchBuffer); // LUCENENET specific: use cached encoding instance from base class
                         //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
 
 
@@ -324,11 +336,13 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                                 // bigramStringTable[index] = tmpword;
 
                             }
-                            frequencyTable[index] += frequency;
+                            frequencyTable[index] += buffer[0];
                         }
                     }
+                    j++;
                 }
             }
+            // log.info("load dictionary done! " + dctFilePath + " total:" + total);
         }
         private int GetAvaliableIndex(long hashId, ReadOnlySpan<char> carray)
         {

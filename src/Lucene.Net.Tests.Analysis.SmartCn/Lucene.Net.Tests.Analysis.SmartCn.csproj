@@ -28,6 +28,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="**/*.zip" Exclude="bin/**/*;obj/**/*" Label="Zip Test Data" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>
@@ -58,14 +62,9 @@
   </ItemGroup>
 
   <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
-
+  
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <PackageReference Include="System.Text.Encoding.CodePages" Version="$(SystemTextEncodingCodePagesPackageVersion)" />
   </ItemGroup>
-  <ItemGroup>
-  <EmbeddedResource Include="Resources\bigramdict.dct" />
-  <EmbeddedResource Include="Resources\coredict.dct" />
-</ItemGroup>
-
-
+  
 </Project>

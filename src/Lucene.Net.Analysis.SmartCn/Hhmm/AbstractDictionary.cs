@@ -33,7 +33,9 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
     internal abstract class AbstractDictionary
     {
         // LUCENENET specific: cached GB2312 encoding to avoid repeated calls to Encoding.GetEncoding("GB2312")
-        protected static readonly Encoding gb2312Encoding = Encoding.GetEncoding("GB2312");
+        protected static readonly Encoding gb2312Encoding = Encoding.GetEncoding("GB2312",
+    EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
+
 
         /// <summary>
         /// First Chinese Character in GB2312 (15 * 94)
