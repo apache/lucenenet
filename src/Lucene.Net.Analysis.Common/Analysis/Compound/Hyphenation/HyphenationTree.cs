@@ -468,7 +468,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             int k = 0;
 
             // check exception list first
-            string sw = word.Slice(1).ToString();
+            string sw = word.Slice(1, len).ToString();
             // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
             if (m_stoplist.TryGetValue(sw, out IList<object> hw))
             {

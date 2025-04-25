@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// keys.
         /// </summary>
         /// <remarks>
-        /// LUCENENET specific overload for ReadOnlySpan&lt;char&gt;
+        /// LUCENENET specific overload for <see cref="ReadOnlySpan{T}"/>
         /// </remarks>
         public virtual void Insert(ReadOnlySpan<char> key, char val)
         {
