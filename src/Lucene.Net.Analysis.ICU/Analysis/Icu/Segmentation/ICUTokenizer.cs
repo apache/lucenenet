@@ -58,8 +58,6 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         private readonly ITypeAttribute typeAtt;
         private readonly IScriptAttribute scriptAtt;
 
-        private static readonly object syncLock = new object(); // LUCENENET specific - workaround until BreakIterator is made thread safe (LUCENENET TODO: TO REVERT)
-
         /// <summary>
         /// Construct a new <see cref="ICUTokenizer"/> that breaks text into words from the given
         /// <see cref="TextReader"/>.
@@ -112,39 +110,23 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         public override bool IncrementToken()
         {
-            UninterruptableMonitor.Enter(syncLock);
-            try
+            ClearAttributes();
+            if (length == 0)
+                Refill();
+            while (!IncrementTokenBuffer())
             {
-                ClearAttributes();
-                if (length == 0)
-                    Refill();
-                while (!IncrementTokenBuffer())
-                {
-                    Refill();
-                    if (length <= 0) // no more bytes to read;
-                        return false;
-                }
-                return true;
+                Refill();
+                if (length <= 0) // no more bytes to read;
+                    return false;
             }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            return true;
         }
 
 
         public override void Reset()
         {
             base.Reset();
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                breaker.SetText(buffer, 0, 0);
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            breaker.SetText(buffer, 0, 0);
             length = usableLength = offset = 0;
         }
 
@@ -206,15 +188,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                                 */
             }
 
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                breaker.SetText(buffer, 0, Math.Max(0, usableLength));
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            breaker.SetText(buffer, 0, Math.Max(0, usableLength));
         }
 
         // TODO: refactor to a shared readFully somewhere

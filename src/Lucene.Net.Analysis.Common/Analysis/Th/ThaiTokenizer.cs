@@ -46,8 +46,6 @@ namespace Lucene.Net.Analysis.Th
     /// </summary>
     public class ThaiTokenizer : SegmentingTokenizerBase
     {
-        private static readonly object syncLock = new object(); // LUCENENET specific - workaround until BreakIterator is made thread safe  (LUCENENET TODO: TO REVERT)
-
         // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
         private static readonly BreakIterator proto = LoadProto();
 
@@ -58,28 +56,12 @@ namespace Lucene.Net.Analysis.Th
 
         private static BreakIterator LoadProto()
         {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                return BreakIterator.GetWordInstance(new CultureInfo("th"));
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            return BreakIterator.GetWordInstance(new CultureInfo("th"));
         }
 
         private static BreakIterator LoadSentenceProto()
         {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                return BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            return BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
         }
 
         private readonly ThaiWordBreaker wordBreaker;
@@ -104,109 +86,60 @@ namespace Lucene.Net.Analysis.Th
             : base(factory, reader, CreateSentenceClone())
         {
             // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
-
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                wordBreaker = new ThaiWordBreaker((BreakIterator)proto.Clone());
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            wordBreaker = new ThaiWordBreaker((BreakIterator)proto.Clone());
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         private static BreakIterator CreateSentenceClone()
         {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                return (BreakIterator)sentenceProto.Clone();
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            return (BreakIterator)sentenceProto.Clone();
         }
 
         public override void Reset()
         {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                base.Reset();
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            base.Reset();
         }
 
         public override State CaptureState()
         {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                return base.CaptureState();
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            return base.CaptureState();
         }
 
         protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
         {
-            UninterruptableMonitor.Enter(syncLock);
-            try
-            {
-                this.sentenceStart = sentenceStart;
-                this.sentenceEnd = sentenceEnd;
-                wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
-                wordBreaker.SetText(wrapper);
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(syncLock);
-            }
+            this.sentenceStart = sentenceStart;
+            this.sentenceEnd = sentenceEnd;
+            wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
+            wordBreaker.SetText(wrapper);
         }
 
         protected override bool IncrementWord()
         {
             int start, end;
-            UninterruptableMonitor.Enter(syncLock);
-            try
+            start = wordBreaker.Current;
+            if (start == BreakIterator.Done)
             {
-                start = wordBreaker.Current;
-                if (start == BreakIterator.Done)
-                {
-                    return false; // BreakIterator exhausted
-                }
+                return false; // BreakIterator exhausted
+            }
 
-                // find the next set of boundaries, skipping over non-tokens
+            // find the next set of boundaries, skipping over non-tokens
+            end = wordBreaker.Next();
+            while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
+            {
+                start = end;
                 end = wordBreaker.Next();
-                while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
-                {
-                    start = end;
-                    end = wordBreaker.Next();
-                }
-
-                if (end == BreakIterator.Done)
-                {
-                    return false; // BreakIterator exhausted
-                }
-
-                ClearAttributes();
-                termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
-                offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
-                return true;
             }
-            finally
+
+            if (end == BreakIterator.Done)
             {
-                UninterruptableMonitor.Exit(syncLock);
+                return false; // BreakIterator exhausted
             }
+
+            ClearAttributes();
+            termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
+            offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
+            return true;
         }
     }
 
