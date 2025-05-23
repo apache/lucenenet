@@ -57,7 +57,7 @@ variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
 - name: DotNetSDKVersion
-  value: '9.0.100'
+  value: '9.0.300'
 - name: DocumentationArtifactName
   value: 'docs'
 - name: DocumentationArtifactZipFileName
