@@ -27,7 +27,7 @@ properties {
     [string]$testResultsDirectory = "$artifactsDirectory/TestResults"
     [string]$publishDirectory = "$artifactsDirectory/Publish"
     [string]$solutionFile = "$baseDirectory/Lucene.Net.sln"
-    [string]$minimumSdkVersion = "9.0.100"
+    [string]$minimumSdkVersion = "9.0.200" # We need at least 9.0.200 for ICU4N satellite assemblies with 3-character language codes to get copied to the output.
     [string]$globalJsonFile = "$baseDirectory/global.json"
     [string]$versionPropsFile = "$baseDirectory/version.props"
     [string]$luceneReadmeFile = "$baseDirectory/src/Lucene.Net/readme-nuget.md"
