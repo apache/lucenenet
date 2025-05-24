@@ -117,8 +117,11 @@ namespace Lucene.Net.Analysis
         public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, int? finalPosInc, bool[] keywordAtts, bool offsetsAreCorrect, byte[][] payloads)
         {
             // LUCENENET: Bug fix: NUnit throws an exception when something fails.
-            // This causes Dispose() to be skipped and it pollutes other tests indicating false negatives.
-            // Added this try-finally block to fix this.
+            // This causes Close() to be skipped and it pollutes other tests indicating false negatives
+            // if there are open file handles. We added this try-finally block to fix this.
+            // Also, disabled MockTokenizer checks during the call to Close() so our original exception is thrown.
+            MockTokenizer mockTokenizer = ts as MockTokenizer;
+            bool originalMockTokenizerChecksEnabled = mockTokenizer?.EnableChecks ?? true;
             try
             {
                 Assert.IsNotNull(output);
@@ -382,17 +385,22 @@ namespace Lucene.Net.Analysis
                     Assert.AreEqual((int)finalPosInc, posIncrAtt.PositionIncrement, "finalPosInc");
                 }
             }
-            catch (Exception)
+            catch when (mockTokenizer is not null)
             {
-                // LUCENENET: Since we are using a finally block to call Close(), we need to ensure the state is cleared first so we don't
-                // obscure the real error message an invalid token stream state exception.
-                ts.ClearAttributes();
-                ts.End();
+                // LUCENENET: Since we are using a finally block to call Close() we need to disable the MockTokenzier checks in case of
+                // an exception to prevent our original error from being swallowed. But we need the call to Close() in case we are consuming
+                // any file handles.
+                mockTokenizer.EnableChecks = false;
                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
             finally
             {
                 ts.Close();
+                // LUCENENET: Restore the state of MockTokenizer
+                if (mockTokenizer is not null)
+                {
+                    mockTokenizer.EnableChecks = originalMockTokenizerChecksEnabled;
+                }
             }
         }
 
@@ -942,6 +950,14 @@ namespace Lucene.Net.Analysis
             int remainder = random.Next(10);
             TextReader reader = new StringReader(text);
             TokenStream ts = a.GetTokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
+
+            // LUCENENET: Bug fix: NUnit throws an exception when something fails.
+            // This causes Close() to be skipped and it pollutes other tests indicating false negatives
+            // if there are open file handles. We added this try-finally block to fix this.
+            // Also, disabled MockTokenizer checks during the call to Close() so our original exception is thrown.
+            MockTokenizer mockTokenizer = ts as MockTokenizer;
+            bool originalMockTokenizerChecksEnabled = mockTokenizer?.EnableChecks ?? true;
+
             ICharTermAttribute termAtt = ts.HasAttribute<ICharTermAttribute>() ? ts.GetAttribute<ICharTermAttribute>() : null;
             IOffsetAttribute offsetAtt = ts.HasAttribute<IOffsetAttribute>() ? ts.GetAttribute<IOffsetAttribute>() : null;
             IPositionIncrementAttribute posIncAtt = ts.HasAttribute<IPositionIncrementAttribute>() ? ts.GetAttribute<IPositionIncrementAttribute>() : null;
@@ -986,11 +1002,24 @@ namespace Lucene.Net.Analysis
 
                 ts.End();
             }
+            catch when (mockTokenizer is not null)
+            {
+                // LUCENENET: Since we are using a finally block to call Close() we need to disable the MockTokenzier checks in case of
+                // an exception to prevent our original error from being swallowed. But we need the call to Close() in case we are consuming
+                // any file handles.
+                mockTokenizer.EnableChecks = false;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+            }
             finally
             {
                 // LUCENENET: We are doing this in the finally block to ensure it happens
                 // when there are exceptions thrown (such as when the assert fails).
                 ts.Close();
+                // LUCENENET: Restore the state of MockTokenizer
+                if (mockTokenizer is not null)
+                {
+                    mockTokenizer.EnableChecks = originalMockTokenizerChecksEnabled;
+                }
             }
 
             // verify reusing is "reproducable" and also get the normal tokenstream sanity checks
@@ -1035,6 +1064,13 @@ namespace Lucene.Net.Analysis
                             Assert.IsTrue(MockReaderWrapper.IsMyEvilException(re));
                         }
 
+                        // LUCENENET: Bug fix: NUnit throws an exception when something fails.
+                        // This causes Close() to be skipped and it pollutes other tests indicating false negatives
+                        // if there are open file handles. We added this try-finally block to fix this.
+                        // Also, disabled MockTokenizer checks during the call to Close() so our original exception is thrown.
+                        mockTokenizer = ts as MockTokenizer;
+                        originalMockTokenizerChecksEnabled = mockTokenizer?.EnableChecks ?? true;
+
                         try
                         {
                             ts.End();
@@ -1045,9 +1081,22 @@ namespace Lucene.Net.Analysis
                             // anger...
                             // OK
                         }
+                        catch when (mockTokenizer is not null)
+                        {
+                            // LUCENENET: Since we are using a finally block to call Close() we need to disable the MockTokenzier checks in case of
+                            // an exception to prevent our original error from being swallowed. But we need the call to Close() in case we are consuming
+                            // any file handles.
+                            mockTokenizer.EnableChecks = false;
+                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                        }
                         finally
                         {
                             ts.Close();
+                            // LUCENENET: Restore the state of MockTokenizer
+                            if (mockTokenizer is not null)
+                            {
+                                mockTokenizer.EnableChecks = originalMockTokenizerChecksEnabled;
+                            }
                         }
                     }
                     else if (evilness == 7)
@@ -1067,6 +1116,13 @@ namespace Lucene.Net.Analysis
                             Assert.IsTrue(ts.IncrementToken());
                         }
 
+                        // LUCENENET: Bug fix: NUnit throws an exception when something fails.
+                        // This causes Close() to be skipped and it pollutes other tests indicating false negatives
+                        // if there are open file handles. We added this try-finally block to fix this.
+                        // Also, disabled MockTokenizer checks during the call to Close() so our original exception is thrown.
+                        mockTokenizer = ts as MockTokenizer;
+                        originalMockTokenizerChecksEnabled = mockTokenizer?.EnableChecks ?? true;
+
                         try
                         {
                             ts.End();
@@ -1077,9 +1133,22 @@ namespace Lucene.Net.Analysis
                             // anger...
                             // OK
                         }
+                        catch when (mockTokenizer is not null)
+                        {
+                            // LUCENENET: Since we are using a finally block to call Close() we need to disable the MockTokenzier checks in case of
+                            // an exception to prevent our original error from being swallowed. But we need the call to Close() in case we are consuming
+                            // any file handles.
+                            mockTokenizer.EnableChecks = false;
+                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                        }
                         finally
                         {
                             ts.Close();
+                            // LUCENENET: Restore the state of MockTokenizer
+                            if (mockTokenizer is not null)
+                            {
+                                mockTokenizer.EnableChecks = originalMockTokenizerChecksEnabled;
+                            }
                         }
                     }
                 }
