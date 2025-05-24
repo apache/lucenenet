@@ -1100,82 +1100,75 @@ namespace Lucene.Net.Analysis
 
             ts = a.GetTokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
 
-            try
+            if (typeAtt != null && posIncAtt != null && posLengthAtt != null && offsetAtt != null)
             {
-                if (typeAtt != null && posIncAtt != null && posLengthAtt != null && offsetAtt != null)
-                {
-                    // offset + pos + posLength + type
-                    AssertTokenStreamContents(ts,
-                        tokens.ToArray(),
-                        ToIntArray(startOffsets),
-                        ToIntArray(endOffsets),
-                        types.ToArray(),
-                        ToIntArray(positions),
-                        ToIntArray(positionLengths),
-                        text.Length,
-                        offsetsAreCorrect);
-                }
-                else if (typeAtt != null && posIncAtt != null && offsetAtt != null)
-                {
-                    // offset + pos + type
-                    AssertTokenStreamContents(ts,
-                        tokens.ToArray(),
-                        ToIntArray(startOffsets),
-                        ToIntArray(endOffsets),
-                        types.ToArray(),
-                        ToIntArray(positions),
-                        null,
-                        text.Length,
-                        offsetsAreCorrect);
-                }
-                else if (posIncAtt != null && posLengthAtt != null && offsetAtt != null)
-                {
-                    // offset + pos + posLength
-                    AssertTokenStreamContents(ts,
-                        tokens.ToArray(),
-                        ToIntArray(startOffsets),
-                        ToIntArray(endOffsets),
-                        null,
-                        ToIntArray(positions),
-                        ToIntArray(positionLengths),
-                        text.Length,
-                        offsetsAreCorrect);
-                }
-                else if (posIncAtt != null && offsetAtt != null)
-                {
-                    // offset + pos
-                    AssertTokenStreamContents(ts,
-                        tokens.ToArray(),
-                        ToIntArray(startOffsets),
-                        ToIntArray(endOffsets),
-                        null,
-                        ToIntArray(positions),
-                        null,
-                        text.Length,
-                        offsetsAreCorrect);
-                }
-                else if (offsetAtt != null)
-                {
-                    // offset
-                    AssertTokenStreamContents(ts,
-                        tokens.ToArray(),
-                        ToIntArray(startOffsets),
-                        ToIntArray(endOffsets),
-                        null,
-                        null,
-                        null,
-                        text.Length,
-                        offsetsAreCorrect);
-                }
-                else
-                {
-                    // terms only
-                    AssertTokenStreamContents(ts, tokens.ToArray());
-                }
+                // offset + pos + posLength + type
+                AssertTokenStreamContents(ts,
+                    tokens.ToArray(),
+                    ToIntArray(startOffsets),
+                    ToIntArray(endOffsets),
+                    types.ToArray(),
+                    ToIntArray(positions),
+                    ToIntArray(positionLengths),
+                    text.Length,
+                    offsetsAreCorrect);
             }
-            finally
+            else if (typeAtt != null && posIncAtt != null && offsetAtt != null)
             {
-                ts.Close();
+                // offset + pos + type
+                AssertTokenStreamContents(ts,
+                    tokens.ToArray(),
+                    ToIntArray(startOffsets),
+                    ToIntArray(endOffsets),
+                    types.ToArray(),
+                    ToIntArray(positions),
+                    null,
+                    text.Length,
+                    offsetsAreCorrect);
+            }
+            else if (posIncAtt != null && posLengthAtt != null && offsetAtt != null)
+            {
+                // offset + pos + posLength
+                AssertTokenStreamContents(ts,
+                    tokens.ToArray(),
+                    ToIntArray(startOffsets),
+                    ToIntArray(endOffsets),
+                    null,
+                    ToIntArray(positions),
+                    ToIntArray(positionLengths),
+                    text.Length,
+                    offsetsAreCorrect);
+            }
+            else if (posIncAtt != null && offsetAtt != null)
+            {
+                // offset + pos
+                AssertTokenStreamContents(ts,
+                    tokens.ToArray(),
+                    ToIntArray(startOffsets),
+                    ToIntArray(endOffsets),
+                    null,
+                    ToIntArray(positions),
+                    null,
+                    text.Length,
+                    offsetsAreCorrect);
+            }
+            else if (offsetAtt != null)
+            {
+                // offset
+                AssertTokenStreamContents(ts,
+                    tokens.ToArray(),
+                    ToIntArray(startOffsets),
+                    ToIntArray(endOffsets),
+                    null,
+                    null,
+                    null,
+                    text.Length,
+                    offsetsAreCorrect);
+            }
+            else
+            {
+                // terms only
+                AssertTokenStreamContents(ts, tokens.ToArray());
             }
 
             if (field != null)
