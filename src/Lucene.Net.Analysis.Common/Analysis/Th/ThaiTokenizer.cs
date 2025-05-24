@@ -164,6 +164,7 @@ namespace Lucene.Net.Analysis.Th
         {
             this.text.CopyChars(text.Text, text.Start, text.Length);
             wordBreaker.SetText(text);
+            transitions.Clear();
         }
 
         public int Current
