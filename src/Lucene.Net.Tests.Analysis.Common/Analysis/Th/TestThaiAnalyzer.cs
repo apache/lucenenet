@@ -264,10 +264,10 @@ namespace Lucene.Net.Analysis.Th
 
             // LUCENENET: Bug fix: NUnit throws an exception when something fails.
             // This causes Close() to be skipped and it pollutes other tests indicating false negatives
-            // if there are open file handles. We added this try-finally block to fix this.
-            // Also, disabled MockTokenizer checks during the call to Close() so our original exception is thrown.
-            MockTokenizer mockTokenizer = ts as MockTokenizer;
-            bool originalMockTokenizerChecksEnabled = mockTokenizer?.EnableChecks ?? true;
+            // if there are open file handles. We added this try-finally block to fix this, but we must
+            // take care not to swallow our original exception message, so we track whether or not the
+            // try block completed and only throw an exception if it did, otherwise log the error (Verbose ignored).
+            bool success = false;
 
             try
             {
@@ -287,22 +287,22 @@ namespace Lucene.Net.Analysis.Th
                 }
 
                 ts.End();
-            }
-            catch when (mockTokenizer is not null)
-            {
-                // LUCENENET: Since we are using a finally block to call Close() we need to disable the MockTokenzier checks in case of
-                // an exception to prevent our original error from being swallowed. But we need the call to Close() in case we are consuming
-                // any file handles.
-                mockTokenizer.EnableChecks = false;
-                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+
+                // LUCENENET: Keep track of successful completion for the finally block
+                success = true;
             }
             finally
             {
-                ts.Close();
-                // LUCENENET: Restore the state of MockTokenizer
-                if (mockTokenizer is not null)
+                try
                 {
-                    mockTokenizer.EnableChecks = originalMockTokenizerChecksEnabled;
+                    ts.Close();
+                }
+                // LUCENENET: Make the failure as visible as possible, but do not rethrow it
+                // in case of a primary exception because it may swallow the information required
+                // to reproduce the failure.
+                catch (Exception e) when (!success)
+                {
+                    Console.WriteLine($"TestThaiAnalyzer.AssertAnalyzer(): Failed to close TokenStream: {e}");
                 }
             }
 
