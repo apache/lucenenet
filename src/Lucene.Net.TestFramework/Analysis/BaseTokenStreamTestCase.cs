@@ -382,6 +382,14 @@ namespace Lucene.Net.Analysis
                     Assert.AreEqual((int)finalPosInc, posIncrAtt.PositionIncrement, "finalPosInc");
                 }
             }
+            catch (Exception)
+            {
+                // LUCENENET: Since we are using a finally block to call Close(), we need to ensure the state is cleared first so we don't
+                // obscure the real error message an invalid token stream state exception.
+                ts.ClearAttributes();
+                ts.End();
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+            }
             finally
             {
                 ts.Close();
