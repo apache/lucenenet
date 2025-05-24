@@ -262,104 +262,63 @@ namespace Lucene.Net.Analysis.Th
             TextReader reader = new StringReader(text);
             TokenStream ts = analyzer.GetTokenStream("dummy", reader);
 
+            // LUCENENET: Bug fix: NUnit throws an exception when something fails.
+            // This causes Close() to be skipped and it pollutes other tests indicating false negatives
+            // if there are open file handles. We added this try-finally block to fix this.
+            // Also, disabled MockTokenizer checks during the call to Close() so our original exception is thrown.
+            MockTokenizer mockTokenizer = ts as MockTokenizer;
+            bool originalMockTokenizerChecksEnabled = mockTokenizer?.EnableChecks ?? true;
+
             try
             {
-                bool isReset = false;
-                try
+                termAtt = ts.GetAttribute<ICharTermAttribute>();
+                offsetAtt = ts.GetAttribute<IOffsetAttribute>();
+                posIncAtt = ts.GetAttribute<IPositionIncrementAttribute>();
+
+                ts.Reset();
+
+                while (ts.IncrementToken())
                 {
-
-                    termAtt = ts.GetAttribute<ICharTermAttribute>();
-                    offsetAtt = ts.GetAttribute<IOffsetAttribute>();
-                    posIncAtt = ts.GetAttribute<IPositionIncrementAttribute>();
-
-                    ts.Reset();
-                    isReset = true;
-
-                    while (ts.IncrementToken())
-                    {
-                        Assert.IsNotNull(termAtt, "has no CharTermAttribute");
-                        tokens.Add(termAtt.ToString());
-                        positions.Add(posIncAtt.PositionIncrement);
-                        startOffsets.Add(offsetAtt.StartOffset);
-                        endOffsets.Add(offsetAtt.EndOffset);
-                    }
+                    Assert.IsNotNull(termAtt, "has no CharTermAttribute");
+                    tokens.Add(termAtt.ToString());
+                    positions.Add(posIncAtt.PositionIncrement);
+                    startOffsets.Add(offsetAtt.StartOffset);
+                    endOffsets.Add(offsetAtt.EndOffset);
                 }
-                finally
-                {
-                    if (!isReset)
-                    {
-                        try
-                        {
-                            // consume correctly
-                            ts.Reset();
-                            while (ts.IncrementToken()) ;
-                            //ts.End();
-                            //ts.Dispose();
-                        }
-#pragma warning disable 168
-                        catch (Exception ex)
-#pragma warning restore 168
-                        {
-                            // ignore
-                        }
-                    }
 
-                    ts.End();
-                }
+                ts.End();
+            }
+            catch when (mockTokenizer is not null)
+            {
+                // LUCENENET: Since we are using a finally block to call Close() we need to disable the MockTokenzier checks in case of
+                // an exception to prevent our original error from being swallowed. But we need the call to Close() in case we are consuming
+                // any file handles.
+                mockTokenizer.EnableChecks = false;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
             finally
             {
                 ts.Close();
+                // LUCENENET: Restore the state of MockTokenizer
+                if (mockTokenizer is not null)
+                {
+                    mockTokenizer.EnableChecks = originalMockTokenizerChecksEnabled;
+                }
             }
 
             reader = new StringReader(text);
             ts = analyzer.GetTokenStream("dummy", reader);
 
-            try
-            {
-                bool isReset = false;
-                try
-                {
-
-                    // offset + pos
-                    AssertTokenStreamContents(ts,
-                        output: tokens.ToArray(),
-                        startOffsets: ToIntArray(startOffsets),
-                        endOffsets: ToIntArray(endOffsets),
-                        types: null,
-                        posIncrements: ToIntArray(positions),
-                        posLengths: null,
-                        finalOffset: text.Length,
-                        offsetsAreCorrect: true);
-
-                    isReset = true;
-                }
-                finally
-                {
-                    if (!isReset)
-                    {
-                        try
-                        {
-                            // consume correctly
-                            ts.Reset();
-                            while (ts.IncrementToken()) ;
-                            //ts.End();
-                            //ts.Dispose();
-                        }
-#pragma warning disable 168
-                        catch (Exception ex)
-#pragma warning restore 168
-                        {
-                            // ignore
-                        }
-                    }
-                    ts.End();
-                }
-            }
-            finally
-            {
-                ts.Close();
-            }
+            // offset + pos
+            AssertTokenStreamContents(ts,
+                output: tokens.ToArray(),
+                startOffsets: ToIntArray(startOffsets),
+                endOffsets: ToIntArray(endOffsets),
+                types: null,
+                posIncrements: ToIntArray(positions),
+                posLengths: null,
+                finalOffset: text.Length,
+                offsetsAreCorrect: true);
         }
 
 
