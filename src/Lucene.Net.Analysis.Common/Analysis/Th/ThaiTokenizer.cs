@@ -47,22 +47,12 @@ namespace Lucene.Net.Analysis.Th
     public class ThaiTokenizer : SegmentingTokenizerBase
     {
         // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
-        private static readonly BreakIterator proto = LoadProto();
+        private static readonly BreakIterator proto = BreakIterator.GetWordInstance(new CultureInfo("th"));
 
         /// <summary>
         /// used for breaking the text into sentences
         /// </summary>
-        private static readonly BreakIterator sentenceProto = LoadSentenceProto();
-
-        private static BreakIterator LoadProto()
-        {
-            return BreakIterator.GetWordInstance(new CultureInfo("th"));
-        }
-
-        private static BreakIterator LoadSentenceProto()
-        {
-            return BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
-        }
+        private static readonly BreakIterator sentenceProto = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
 
         private readonly ThaiWordBreaker wordBreaker;
         private readonly CharArrayIterator wrapper = CharArrayIterator.NewWordInstance();
@@ -83,27 +73,12 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// Creates a new <see cref="ThaiTokenizer"/>, supplying the <see cref="AttributeFactory"/> </summary>
         public ThaiTokenizer(AttributeFactory factory, TextReader reader)
-            : base(factory, reader, CreateSentenceClone())
+            : base(factory, reader, (BreakIterator)sentenceProto.Clone())
         {
             // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
             wordBreaker = new ThaiWordBreaker((BreakIterator)proto.Clone());
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
-        }
-
-        private static BreakIterator CreateSentenceClone()
-        {
-            return (BreakIterator)sentenceProto.Clone();
-        }
-
-        public override void Reset()
-        {
-            base.Reset();
-        }
-
-        public override State CaptureState()
-        {
-            return base.CaptureState();
         }
 
         protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
