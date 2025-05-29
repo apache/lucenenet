@@ -262,111 +262,69 @@ namespace Lucene.Net.Analysis.Th
             TextReader reader = new StringReader(text);
             TokenStream ts = analyzer.GetTokenStream("dummy", reader);
 
+            // LUCENENET: Bug fix: NUnit throws an exception when something fails.
+            // This causes Close() to be skipped and it pollutes other tests indicating false negatives
+            // if there are open file handles. We added this try-finally block to fix this, but we must
+            // take care not to swallow our original exception message, so we track whether or not the
+            // try block completed and only throw an exception if it did, otherwise log the error (Verbose ignored).
+            bool success = false;
+
             try
             {
-                bool isReset = false;
-                try
+                termAtt = ts.GetAttribute<ICharTermAttribute>();
+                offsetAtt = ts.GetAttribute<IOffsetAttribute>();
+                posIncAtt = ts.GetAttribute<IPositionIncrementAttribute>();
+
+                ts.Reset();
+
+                while (ts.IncrementToken())
                 {
-
-                    termAtt = ts.GetAttribute<ICharTermAttribute>();
-                    offsetAtt = ts.GetAttribute<IOffsetAttribute>();
-                    posIncAtt = ts.GetAttribute<IPositionIncrementAttribute>();
-
-                    ts.Reset();
-                    isReset = true;
-
-                    while (ts.IncrementToken())
-                    {
-                        Assert.IsNotNull(termAtt, "has no CharTermAttribute");
-                        tokens.Add(termAtt.ToString());
-                        positions.Add(posIncAtt.PositionIncrement);
-                        startOffsets.Add(offsetAtt.StartOffset);
-                        endOffsets.Add(offsetAtt.EndOffset);
-                    }
+                    Assert.IsNotNull(termAtt, "has no CharTermAttribute");
+                    tokens.Add(termAtt.ToString());
+                    positions.Add(posIncAtt.PositionIncrement);
+                    startOffsets.Add(offsetAtt.StartOffset);
+                    endOffsets.Add(offsetAtt.EndOffset);
                 }
-                finally
-                {
-                    if (!isReset)
-                    {
-                        try
-                        {
-                            // consume correctly
-                            ts.Reset();
-                            while (ts.IncrementToken()) ;
-                            //ts.End();
-                            //ts.Dispose();
-                        }
-#pragma warning disable 168
-                        catch (Exception ex)
-#pragma warning restore 168
-                        {
-                            // ignore
-                        }
-                    }
 
-                    ts.End();
-                }
+                ts.End();
+
+                // LUCENENET: Keep track of successful completion for the finally block
+                success = true;
             }
             finally
             {
-                ts.Close();
+                try
+                {
+                    ts.Close();
+                }
+                // LUCENENET: Make the failure as visible as possible, but do not rethrow it
+                // in case of a primary exception because it may swallow the information required
+                // to reproduce the failure.
+                catch (Exception e) when (!success)
+                {
+                    Console.WriteLine($"TestThaiAnalyzer.AssertAnalyzer(): Failed to close TokenStream: {e}");
+                }
             }
 
             reader = new StringReader(text);
             ts = analyzer.GetTokenStream("dummy", reader);
 
-            try
-            {
-                bool isReset = false;
-                try
-                {
-
-                    // offset + pos
-                    AssertTokenStreamContents(ts,
-                        output: tokens.ToArray(),
-                        startOffsets: ToIntArray(startOffsets),
-                        endOffsets: ToIntArray(endOffsets),
-                        types: null,
-                        posIncrements: ToIntArray(positions),
-                        posLengths: null,
-                        finalOffset: text.Length,
-                        offsetsAreCorrect: true);
-
-                    isReset = true;
-                }
-                finally
-                {
-                    if (!isReset)
-                    {
-                        try
-                        {
-                            // consume correctly
-                            ts.Reset();
-                            while (ts.IncrementToken()) ;
-                            //ts.End();
-                            //ts.Dispose();
-                        }
-#pragma warning disable 168
-                        catch (Exception ex)
-#pragma warning restore 168
-                        {
-                            // ignore
-                        }
-                    }
-                    ts.End();
-                }
-            }
-            finally
-            {
-                ts.Close();
-            }
+            // offset + pos
+            AssertTokenStreamContents(ts,
+                output: tokens.ToArray(),
+                startOffsets: ToIntArray(startOffsets),
+                endOffsets: ToIntArray(endOffsets),
+                types: null,
+                posIncrements: ToIntArray(positions),
+                posLengths: null,
+                finalOffset: text.Length,
+                offsetsAreCorrect: true);
         }
 
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>
         [Test]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public virtual void TestRandomStrings()
         {
             CheckRandomData(Random, new ThaiAnalyzer(TEST_VERSION_CURRENT), 1000 * RandomMultiplier);
@@ -376,7 +334,6 @@ namespace Lucene.Net.Analysis.Th
         /// blast some random large strings through the analyzer </summary>
         ///
         [Test]
-        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public virtual void TestRandomHugeStrings()
         {
             Random random = Random;
