@@ -47,7 +47,9 @@ namespace Lucene.Net.Analysis.En
         private KStemData3()
         {
         }
-        internal static string[] data = new string[] {
+
+        // LUCENENET specific - made readonly
+        internal static readonly string[] data = {
             "distasteful","distemper","distempered","distend","distension",
             "distil","distill","distillation","distiller","distillery",
             "distinct","distinction","distinctive","distinguish","distinguishable",
