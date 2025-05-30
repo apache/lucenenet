@@ -1,3 +1,4 @@
+using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -96,7 +97,7 @@ namespace Lucene.Net.Search.Payloads
             }
 
             if (hasCommaSpace)
-                buffer.Remove(buffer.Length - 2, 2);
+                buffer.Delete(buffer.Length - 2, 2);
 
             buffer.Append("], ");
             buffer.Append(m_slop);
