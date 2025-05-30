@@ -6,6 +6,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Lucene.Net.Search
 {
@@ -28,8 +29,8 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Represents hits returned by
-    /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> and
-    /// <see cref="IndexSearcher.Search(Query,int)"/>.
+    /// <see cref="IndexSearcher.Search(Query,Filter,int,CancellationToken)"/> and
+    /// <see cref="IndexSearcher.Search(Query,int,CancellationToken)"/>.
     /// </summary>
     public class TopDocs
     {

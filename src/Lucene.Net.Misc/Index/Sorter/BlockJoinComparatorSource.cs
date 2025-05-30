@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Index.Sorter
 {
@@ -28,7 +29,7 @@ namespace Lucene.Net.Index.Sorter
     /// Note that this class is intended to used with <see cref="SortingMergePolicy"/>,
     /// and for other purposes has some limitations:
     /// <list type="bullet">
-    ///    <item><description>Cannot yet be used with <see cref="IndexSearcher.SearchAfter(ScoreDoc, Query, Filter, int, Sort)">
+    ///    <item><description>Cannot yet be used with <see cref="IndexSearcher.SearchAfter(ScoreDoc, Query, Filter, int, Sort, CancellationToken)">
     ///    IndexSearcher.SearchAfter</see></description></item>
     ///    <item><description>Filling sort field values is not yet supported.</description></item>
     /// </list>
