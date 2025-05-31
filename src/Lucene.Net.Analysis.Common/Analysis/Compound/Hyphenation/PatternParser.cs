@@ -308,11 +308,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                         {
                             res.Add(buf.ToString());
                             buf.Length = 0;
-                            char[] h = new char[1];
-                            h[0] = hyphenChar;
+                            // LUCENENET: commented out unnecessary array allocation
+                            //char[] h = new char[1];
+                            //h[0] = hyphenChar;
                             // we use here hyphenChar which is not necessarily
                             // the one to be printed
-                            res.Add(new Hyphen(new string(h), null, null));
+                            res.Add(new Hyphen(new string(hyphenChar, 1), null, null));
                         }
                     }
                     if (buf.Length > 0)
