@@ -59,7 +59,8 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             public override string ToString()
             {
-                return Utf8.Utf8ToString() + "/" + Bucket.ToString("0.0", CultureInfo.InvariantCulture);
+                // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                return Utf8.Utf8ToStringWithFallback() + "/" + Bucket.ToString("0.0", CultureInfo.InvariantCulture);
             }
 
             /// <seealso cref="BytesRef.CompareTo(object)"></seealso>
