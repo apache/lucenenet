@@ -196,7 +196,7 @@ namespace Lucene.Net.Store
         {
             IndexOutput os = null;
             IndexInput @is = null;
-            Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
+            Exception priorException = null; // LUCENENET: No need to cast to IOException
             try
             {
                 os = to.CreateOutput(dest, context);

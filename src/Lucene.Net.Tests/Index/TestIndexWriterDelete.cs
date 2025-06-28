@@ -605,7 +605,7 @@ namespace Lucene.Net.Index
             long diskUsage = startDir.GetSizeInBytes();
             long diskFree = diskUsage + 10;
 
-            Exception err = null; // LUCENENET: No need to cast to IOExcpetion
+            Exception err = null; // LUCENENET: No need to cast to IOException
 
             bool done = false;
 

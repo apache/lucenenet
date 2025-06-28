@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     string dictRoot = AnalyzerProfile.ANALYSIS_DATA_DIR;
                     if (string.IsNullOrEmpty(dictRoot))
                     {
-                        singleInstance.Load(); // LUCENENET: No IOExcpetion can happen here
+                        singleInstance.Load(); // LUCENENET: No IOException can happen here
                     }
                     else
                     {

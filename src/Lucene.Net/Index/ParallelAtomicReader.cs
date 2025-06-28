@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception ioe = null; // LUCENENET: No need to cast to IOException
                 foreach (AtomicReader reader in completeReaderSet)
                 {
                     try

@@ -252,7 +252,7 @@ namespace Lucene.Net.Analysis
             for (int i = 0; i < numTestPoints; i++)
             {
                 string term = TestUtil.RandomSimpleString(Random);
-                Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception priorException = null; // LUCENENET: No need to cast to IOException
                 TokenStream ts = analyzer.GetTokenStream("fake", new StringReader(term));
                 try
                 {
@@ -310,7 +310,7 @@ namespace Lucene.Net.Analysis
                     {
                         string term = mapping.Key;
                         BytesRef expected = mapping.Value;
-                        Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
+                        Exception priorException = null; // LUCENENET: No need to cast to IOException
                         TokenStream ts = this.analyzer.GetTokenStream("fake", new StringReader(term));
                         try
                         {

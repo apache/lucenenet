@@ -578,7 +578,7 @@ namespace Lucene.Net.Store
                     // only close the file if it has not been closed yet
                     if (isOpen)
                     {
-                        Exception priorE = null; // LUCENENET: No need to cast to IOExcpetion
+                        Exception priorE = null; // LUCENENET: No need to cast to IOException
                         try
                         {
                             file.Flush(flushToDisk: false);

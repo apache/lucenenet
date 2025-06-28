@@ -31,8 +31,8 @@ Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical 
   4.8.0-beta00012 : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
   4.8.0-beta00013 : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
 
-InvocationCount=1  IterationCount=15  LaunchCount=2  
-UnrollFactor=1  WarmupCount=10  
+InvocationCount=1  IterationCount=15  LaunchCount=2
+UnrollFactor=1  WarmupCount=10
 
 ```
 |     Method |             Job |     Mean |    Error |   StdDev |      Gen 0 |     Gen 1 |     Gen 2 | Allocated |
@@ -69,7 +69,7 @@ Intel Core i7-8850H CPU 2.60GHz (Coffee Lake), 1 CPU, 12 logical and 6 physical 
   4.8.0-beta00012 : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
   4.8.0-beta00013 : .NET Core 3.1.9 (CoreCLR 4.700.20.47201, CoreFX 4.700.20.47203), X64 RyuJIT
 
-IterationCount=15  LaunchCount=2  WarmupCount=10  
+IterationCount=15  LaunchCount=2  WarmupCount=10
 
 ```
 |      Method |             Job |     Mean |   Error |   StdDev |      Gen 0 |     Gen 1 | Gen 2 | Allocated |
@@ -92,7 +92,7 @@ IterationCount=15  LaunchCount=2  WarmupCount=10
 * `Lucene.Net.Search.FieldCache`: Added interface `ICreationPlaceholder` and changed `CreationPlaceholder` class to `CreationPlaceHolder<TValue>`.
 
 ### Bugs
-* [#356](https://github.com/apache/lucenenet/pull/356) - `Lucene.Net.Store.NativeFSLockFactory`: Modified options to allow read access on non-Windows operating systems. This caused the copy constructor of `RAMDirectory` to throw "The process cannot access the file 'file path' because it is being used by another process" excpetions.
+* [#356](https://github.com/apache/lucenenet/pull/356) - `Lucene.Net.Store.NativeFSLockFactory`: Modified options to allow read access on non-Windows operating systems. This caused the copy constructor of `RAMDirectory` to throw "The process cannot access the file 'file path' because it is being used by another process" exceptions.
 * [#296](https://github.com/apache/lucenenet/pull/296) - `Lucene.Net.Util.Automaton.State`: Removed `Equals()` implementation; it was intended to use reference equality as a unique key. This caused random `IndexOperationException`s to occur when using `FuzzyTermsEnum`/`FuzzyQuery`.
 * [#387](https://github.com/apache/lucenenet/pull/387) - Fixed formatting in `ArgumentException` message for all analyzer factories so it will display the dictionary contents
 * [#387](https://github.com/apache/lucenenet/pull/387) - Lucene.Net.Util.ExceptionExtensions.GetSuppressedAsList(): Use `J2N.Collections.Generic.List<T>` so the call to `ToString()` will automatically list the exception messages

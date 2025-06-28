@@ -149,7 +149,7 @@ namespace Lucene.Net.Store
             {
                 return;
             }
-            Exception priorException = null; // LUCENENET: No need to cast to IOExcpetion
+            Exception priorException = null; // LUCENENET: No need to cast to IOException
             IndexOutput entryTableOut = null;
             // TODO this code should clean up after itself
             // (remove partial .cfs/.cfe)

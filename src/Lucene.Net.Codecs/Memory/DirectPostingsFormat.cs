@@ -1787,7 +1787,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override int NextDoc()
             {
-                // LUCENENET: Refactored to avoid throwing IndexOutOfRangeExcpetion in the normal flow
+                // LUCENENET: Refactored to avoid throwing IndexOutOfRangeException in the normal flow
                 upto++;
                 if (liveDocs is null)
                 {
@@ -2243,7 +2243,7 @@ namespace Lucene.Net.Codecs.Memory
                 upto++;
                 if (liveDocs is null)
                 {
-                    // LUCENENET: Proactively check bounds so we don't have to catch and ingore an exception
+                    // LUCENENET: Proactively check bounds so we don't have to catch and ignore an exception
                     if (upto >= 0 && upto < docIDs.Length)
                         return docID = docIDs[upto];
                 }
