@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Provide the <see cref="DocIdSet"/> to be cached, using the <see cref="DocIdSet"/> provided
-        /// by the wrapped Filter. 
+        /// by the wrapped Filter.
         /// <para/>This implementation returns the given <see cref="DocIdSet"/>,
         /// if <see cref="DocIdSet.IsCacheable"/> returns <c>true</c>, else it calls
         /// <see cref="CacheImpl(DocIdSetIterator, AtomicReader)"/>
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
                 try
                 {
                     cache.AddOrUpdate(key, docIdSet);
-                    // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+                    // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a ConditionalWeakTable enumerator,
                     // we use a weak event to retrieve the DocIdSet instances
                     reader.SubscribeToGetCacheKeysEvent(eventAggregator.GetEvent<WeakEvents.GetCacheKeysEvent>());
                 }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
                 foreach (var pair in cache)
                     docIdSets.Add(pair.Value);
 #else
-                // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+                // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a ConditionalWeakTable enumerator,
                 // we use a weak event to retrieve the DocIdSet instances. We look each of these up here to avoid the need
                 // to attach events to the DocIdSet instances themselves (thus using the existing IndexReader.Dispose()
                 // method to detach the events rather than using a finalizer in DocIdSet to ensure they are cleaned up).

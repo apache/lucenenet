@@ -39,25 +39,25 @@ namespace Lucene.Net.Facet.Taxonomy
 
     /// <summary>
     /// A per-segment cache of documents' facet ordinals. Every
-    /// <see cref="CachedOrds"/> holds the ordinals in a raw <see cref="T:int[]"/>, 
+    /// <see cref="CachedOrds"/> holds the ordinals in a raw <see cref="T:int[]"/>,
     /// and therefore consumes as much RAM as the total
     /// number of ordinals found in the segment, but saves the
     /// CPU cost of decoding ordinals during facet counting.
-    /// 
+    ///
     /// <para>
     /// <b>NOTE:</b> every <see cref="CachedOrds"/> is limited to 2.1B
     /// total ordinals. If that is a limitation for you then
     /// consider limiting the segment size to fewer documents, or
     /// use an alternative cache which pages through the category
     /// ordinals.
-    /// 
+    ///
     /// </para>
     /// <para>
     /// <b>NOTE:</b> when using this cache, it is advised to use
     /// a <see cref="DocValuesFormat"/> that does not cache the data in
     /// memory, at least for the category lists fields, or
     /// otherwise you'll be doing double-caching.
-    /// 
+    ///
     /// </para>
     /// <para>
     /// <b>NOTE:</b> create one instance of this and re-use it
@@ -225,7 +225,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 foreach (var pair in ordsCache)
                     cachedOrdsList.Add(pair.Value);
 #else
-                // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a CondtionalWeakTable enumerator,
+                // LUCENENET specific - since .NET Standard 2.0 and .NET Framework don't have a ConditionalWeakTable enumerator,
                 // we use a weak event to retrieve the CachedOrds instances. We look each of these up here to avoid the need
                 // to attach events to the CachedOrds instances themselves (thus using the existing IndexReader.Dispose()
                 // method to detach the events rather than using a finalizer in CachedOrds to ensure they are cleaned up).
