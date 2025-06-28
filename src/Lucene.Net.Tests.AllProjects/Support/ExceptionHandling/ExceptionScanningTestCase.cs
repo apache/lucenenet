@@ -440,7 +440,7 @@ namespace Lucene.Net.Support.ExceptionHandling
                     //    public MultipleAssertException(ITestResult testResult)
                     return Activator.CreateInstance(
                             typeof(NUnit.Framework.MultipleAssertException),
-                            new object[] { new NUnitExceptionMessage(message) }); // NUnitExcpetionMessage implements NUnit.Framework.Interfaces.ITestResult
+                            new object[] { new NUnitExceptionMessage(message) }); // NUnitExceptionMessage implements NUnit.Framework.Interfaces.ITestResult
                 },
                 [typeof(ReflectionTypeLoadException)] = (exceptionType, message) =>
                 {

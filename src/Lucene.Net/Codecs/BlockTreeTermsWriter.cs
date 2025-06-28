@@ -50,15 +50,15 @@ namespace Lucene.Net.Codecs
     public static class BlockTreeTermsWriter
     {
         /// <summary>
-        /// Suggested default value for the 
-        /// <c>minItemsInBlock</c> parameter to 
+        /// Suggested default value for the
+        /// <c>minItemsInBlock</c> parameter to
         /// <see cref="BlockTreeTermsWriter{TSubclassState}(SegmentWriteState, PostingsWriterBase, int, int, TSubclassState)"/>.
         /// </summary>
         public const int DEFAULT_MIN_BLOCK_SIZE = 25;
 
         /// <summary>
-        /// Suggested default value for the 
-        /// <c>maxItemsInBlock</c> parameter to 
+        /// Suggested default value for the
+        /// <c>maxItemsInBlock</c> parameter to
         /// <see cref="BlockTreeTermsWriter{TSubclassState}(SegmentWriteState, PostingsWriterBase, int, int, TSubclassState)"/>.
         /// </summary>
         public const int DEFAULT_MAX_BLOCK_SIZE = 48;
@@ -296,12 +296,12 @@ namespace Lucene.Net.Codecs
         /// to set state. It is *optional* and can be used when overriding the WriteHeader(),
         /// WriteIndexHeader(). It only matters in the case where the state
         /// is required inside of any of those methods that is passed in to the subclass constructor.
-        /// 
+        ///
         /// When passed to the constructor, it is set to the protected field m_subclassState before
         /// any of the above methods are called where it is available for reading when overriding the above methods.
-        /// 
+        ///
         /// If your subclass needs to pass more than one piece of data, you can create a class or struct to do so.
-        /// All other virtual members of BlockTreeTermsWriter are not called in the constructor, 
+        /// All other virtual members of BlockTreeTermsWriter are not called in the constructor,
         /// so the overrides of those methods won't specifically need to use this field (although they could for consistency).
         /// </param>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
@@ -1311,7 +1311,7 @@ namespace Lucene.Net.Codecs
         {
             if (disposing)
             {
-                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception ioe = null; // LUCENENET: No need to cast to IOException
                 try
                 {
                     long dirStart = @out.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream

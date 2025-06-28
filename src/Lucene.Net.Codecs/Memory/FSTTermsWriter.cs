@@ -52,13 +52,13 @@ namespace Lucene.Net.Codecs.Memory
     /// </list>
     /// </para>
     /// <para>
-    /// 
+    ///
     /// <a name="Termdictionary" id="Termdictionary"></a>
     /// <h3>Term Dictionary</h3>
     /// </para>
     /// <para>
     ///  The .tst contains a list of FSTs, one for each field.
-    ///  The FST maps a term to its corresponding statistics (e.g. docfreq) 
+    ///  The FST maps a term to its corresponding statistics (e.g. docfreq)
     ///  and metadata (e.g. information for postings list reader like file pointer
     ///  to postings list).
     /// </para>
@@ -74,20 +74,20 @@ namespace Lucene.Net.Codecs.Memory
     ///   </description></item>
     /// </list>
     /// </para>
-    /// 
+    ///
     /// File format:
     /// <list type="bullet">
     ///  <item><description>TermsDict(.tst) --&gt; Header, <i>PostingsHeader</i>, FieldSummary, DirOffset</description></item>
-    ///  <item><description>FieldSummary --&gt; NumFields, &lt;FieldNumber, NumTerms, SumTotalTermFreq?, 
+    ///  <item><description>FieldSummary --&gt; NumFields, &lt;FieldNumber, NumTerms, SumTotalTermFreq?,
     ///                                      SumDocFreq, DocCount, LongsSize, TermFST &gt;<sup>NumFields</sup></description></item>
     ///  <item><description>TermFST TermData</description></item>
-    ///  <item><description>TermData --&gt; Flag, BytesSize?, LongDelta<sup>LongsSize</sup>?, Byte<sup>BytesSize</sup>?, 
+    ///  <item><description>TermData --&gt; Flag, BytesSize?, LongDelta<sup>LongsSize</sup>?, Byte<sup>BytesSize</sup>?,
     ///                      &lt; DocFreq[Same?], (TotalTermFreq-DocFreq) &gt; ? </description></item>
     ///  <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/>) </description></item>
     ///  <item><description>DirOffset --&gt; Uint64 (<see cref="Store.DataOutput.WriteInt64(long)"/>) </description></item>
     ///  <item><description>DocFreq, LongsSize, BytesSize, NumFields,
     ///        FieldNumber, DocCount --&gt; VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) </description></item>
-    ///  <item><description>TotalTermFreq, NumTerms, SumTotalTermFreq, SumDocFreq, LongDelta --&gt; 
+    ///  <item><description>TotalTermFreq, NumTerms, SumTotalTermFreq, SumDocFreq, LongDelta --&gt;
     ///        VLong (<see cref="Store.DataOutput.WriteVInt64(long)"/>) </description></item>
     /// </list>
     /// <para>Notes:</para>
@@ -173,7 +173,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (_output is null) return;
 
-                Exception ioe = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception ioe = null; // LUCENENET: No need to cast to IOException
                 try
                 {
                     // write field summary

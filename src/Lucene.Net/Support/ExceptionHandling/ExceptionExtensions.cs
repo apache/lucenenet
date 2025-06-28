@@ -370,7 +370,7 @@ namespace Lucene
             // If our exception implements IError and subclasses ArgumentException, we will ignore it.
             if (e is null || e.IsError() || e.IsAlwaysIgnored()) return false;
 
-            // LUCENENET: In production, there is a chance that we will upgrade to ArgumentNullExcpetion or ArgumentOutOfRangeException
+            // LUCENENET: In production, there is a chance that we will upgrade to ArgumentNullException or ArgumentOutOfRangeException
             // and it is still important that those are caught. However, we have a copy of this method in the test environment
             // where this is done more strictly to catch ArgumentException without its known subclasses so we can be more explicit in tests.
             return e is ArgumentException

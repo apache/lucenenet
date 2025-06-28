@@ -982,7 +982,7 @@ namespace Lucene.Net.Index
                 long lastGen = -1;
                 long gen = 0;
                 int genLookaheadCount = 0;
-                Exception exc = null; // LUCENENET: No need to cast to IOExcpetion
+                Exception exc = null; // LUCENENET: No need to cast to IOException
                 int retryCount = 0;
 
                 bool useFirstMethod = true;
