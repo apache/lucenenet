@@ -273,7 +273,7 @@ namespace Lucene.Net.Analysis.Util
             //    CharArraySet.UnmodifiableSet(null);
             //    fail("can not make null unmodifiable");
             //}
-            //catch (ArgumentNullException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            //catch (ArgumentNullException) // NOTE: In .NET we throw an ArgumentException, not a NullReferenceException
             //{
             //    // expected
             //}
@@ -341,7 +341,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// @deprecated (3.1) remove this test when lucene 3.0 "broken unicode 4" support is
-        ///             no longer needed. 
+        ///             no longer needed.
         [Test]
         [Obsolete("(3.1) remove this test when lucene 3.0 'broken unicode 4' support is no longer needed.")]
         public virtual void TestSupplementaryCharsBWCompat()
@@ -375,7 +375,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// @deprecated (3.1) remove this test when lucene 3.0 "broken unicode 4" support is
-        ///             no longer needed. 
+        ///             no longer needed.
         [Test]
         [Obsolete("(3.1) remove this test when lucene 3.0 'broken unicode 4' support is no longer needed.")]
         public virtual void TestSingleHighSurrogateBWComapt()
@@ -600,7 +600,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((char[])null, 0, 10);
                 fail("null value must raise NPE");
             }
-            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentException, not a NullReferenceException
             {
             }
             try
@@ -608,7 +608,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((ICharSequence)null);
                 fail("null value must raise NPE");
             }
-            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentException, not a NullReferenceException
             {
             }
             // LUCENENET Specific test for string (since it does not implement ICharSequence)
@@ -617,7 +617,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((string)null);
                 fail("null value must raise NPE");
             }
-            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentException, not a NullReferenceException
             {
             }
             try
@@ -625,7 +625,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((object)null);
                 fail("null value must raise NPE");
             }
-            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentException, not a NullReferenceException
             {
             }
         }
