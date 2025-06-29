@@ -26,6 +26,9 @@ jobs:
           # Move and rename to /usr/local/bin/ec
           sudo mv "$EC_PATH" /usr/local/bin/ec
           sudo chmod +x /usr/local/bin/ec
+          
+          # Clean up the temp dir
+          rm -rf ec-temp ec.tar.gz
 
       - name: Run EditorConfig Checker
         id: check
