@@ -9,7 +9,7 @@ resharper_enforce_empty_line_at_end_of_file = true
 
 [*.md]
 indent_style = space
-indent_size = 4
+indent_size = 2
 
 # C# files
 [*.cs]
