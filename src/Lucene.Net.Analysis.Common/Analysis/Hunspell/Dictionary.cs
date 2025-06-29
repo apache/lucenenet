@@ -1450,8 +1450,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
                 if (longestMatch >= 0)
                 {
-                    sb.Remove(i, longestMatch + 1 - i);
-                    sb.Insert(i, longestOutput);
+                    sb.Replace(i, longestMatch + 1 - i, longestOutput!.ToString()); // LUCENENET: [!]: longestOutput is set if longestMatch >= 0
                     i += (longestOutput.Length - 1);
                 }
             }

@@ -1,4 +1,5 @@
 ﻿using J2N.Runtime.CompilerServices;
+using J2N.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
@@ -181,7 +182,7 @@ namespace Lucene.Net.Index
 
             if (removeLastCommaSpace)
             {
-                buffer.Remove(buffer.Length - 2, 2);
+                buffer.Delete(buffer.Length - 2, 2);
             }
 
             return buffer.Append(')').ToString();
