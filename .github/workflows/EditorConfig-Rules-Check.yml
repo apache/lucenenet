@@ -11,10 +11,22 @@ jobs:
 
       - name: Install EditorConfig Checker
         run: |
+          # Download the outer .tar.gz archive
           curl -sSfL https://github.com/editorconfig-checker/editorconfig-checker/releases/latest/download/ec-linux-amd64.tar.gz -o ec.tar.gz
+          
+          # Make a working directory
           mkdir -p ec-temp
+          
+          # Extract the first .tar.gz
           tar -xzf ec.tar.gz -C ec-temp
+          
+          # Extract the second .tar inside the temp folder
+          tar -xf ec-temp/ec-linux-amd64.tar -C ec-temp
+          
+          # Move and rename the binary from the extracted structure
           sudo mv ec-temp/ec-linux-amd64/bin/ec-linux-amd64 /usr/local/bin/ec
+          
+          # Make it executable
           chmod +x /usr/local/bin/ec
 
       - name: Run EditorConfig Checker
