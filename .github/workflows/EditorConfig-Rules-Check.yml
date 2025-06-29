@@ -1,0 +1,51 @@
+name: EditorConfig Rules Check
+
+on: [pull_request]
+
+jobs:
+  check-editorconfig:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install EditorConfig Checker
+        run: |
+          curl -sSfL https://github.com/editorconfig-checker/editorconfig-checker/releases/latest/download/ec-linux-amd64.tar.gz | tar -xz
+          sudo mv ec-linux-amd64 /usr/local/bin/ec
+
+      - name: Run EditorConfig Checker
+        id: check
+        continue-on-error: true
+        run: |
+          echo "::group::Running editorconfig-checker"
+          ec || echo "::set-output name=result::fail"
+          echo "::endgroup::"
+
+      - name: Show IDE troubleshooting help
+        if: steps.check.outputs.result == 'fail'
+        run: |
+          echo ""
+          echo "❌ One or more files do not conform to .editorconfig rules."
+          echo ""
+          echo "🧩 If you're using JetBrains Rider *without* ReSharper:"
+          echo "  ➤ Go to: Preferences > Editor > Code Style"
+          echo "  ➤ Enable: 'Enable EditorConfig support'"
+          echo "  ➤ Then re-save the affected file to apply final newlines."
+          echo ""
+          echo "💡 If you're using Visual Studio Code:"
+          echo "  ➤ Make sure the 'EditorConfig for VS Code' extension is installed."
+          echo "  ➤ Ensure 'editor.insertFinalNewline' is not overridden in your settings.json."
+          echo ""
+          echo "💡 If you're using Vim:"
+          echo "  ➤ Use a plugin like 'editorconfig-vim'."
+          echo ""
+          echo "💡 If you're using Emacs:"
+          echo "  ➤ Use the 'editorconfig' package from MELPA."
+          echo ""
+          echo "✅ After configuring your editor, open the file and make a whitespace-only edit, then save."
+          echo "   This will ensure the file ends with a newline."
+          echo ""
+          echo "🔁 Finally, commit and push your changes to update the PR."
+          echo ""
+          exit 1
