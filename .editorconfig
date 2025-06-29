@@ -16,6 +16,18 @@ indent_size = 2
 indent_style = space
 indent_size = 4
 
+# Exclusions
+
+# Files that tests read should not change from Lucene, so we don't enforce rules on them
+[src/Lucene.Net.Tests.*/**.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+[lib/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+
 #### Core EditorConfig Options ####
 
 #Formatting - indentation
