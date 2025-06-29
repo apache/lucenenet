@@ -49,14 +49,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <summary>
         /// Get a textual summary of the benchmark results, average from all test runs.
         /// </summary>
-        protected static readonly string OP = "Operation  ";
-        protected static readonly string ROUND = " round";
-        protected static readonly string RUNCNT = "   runCnt";
-        protected static readonly string RECCNT = "   recsPerRun";
-        protected static readonly string RECSEC = "        rec/s";
-        protected static readonly string ELAPSED = "  elapsedSec";
-        protected static readonly string USEDMEM = "    avgUsedMem";
-        protected static readonly string TOTMEM = "    avgTotalMem";
+        protected const string OP = "Operation  ";
+        protected const string ROUND = " round";
+        protected const string RUNCNT = "   runCnt";
+        protected const string RECCNT = "   recsPerRun";
+        protected const string RECSEC = "        rec/s";
+        protected const string ELAPSED = "  elapsedSec";
+        protected const string USEDMEM = "    avgUsedMem";
+        protected const string TOTMEM = "    avgTotalMem";
         protected static readonly string[] COLS = {
             RUNCNT,
             RECCNT,
