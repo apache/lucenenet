@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            GroupingSearch groupingSearch = new GroupingSearch("carMake");
+            var groupingSearch = GroupingSearch.ByField("carMake");
             groupingSearch.SetAllGroups(true);                    //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                 //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake_dv", SortFieldType.STRING)));
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<BytesRef> topGroups = groupingSearch.SearchByField(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
+            TopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
 
 
             int? totalGroupCount = topGroups.TotalGroupCount;               //null if not computed
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             
+
                 Group: Audi
                 Audi A3 Orange
                 Audi A3 Green
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search.Grouping
             //as a 8 term trie structure by default.  But by specifying int.MaxValue as the NumericPrecisionStep
             //we force the inverted index to store the value as a single term. This allows us to use it for
             //grouping via FieldCache (although it's no longer good for range queries as they will be slow if
-            //the range is large). 
+            //the range is large).
 
             var int32OneTerm = new FieldType
             {
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search.Grouping
             writer.Commit();
 
             ValueSource vs = new BytesRefFieldSource("major");
-            GroupingSearch groupingSearch = new GroupingSearch(vs, new Hashtable());
+            var groupingSearch = GroupingSearch.ByFunction<MutableValueStr>(vs, new Hashtable());
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(10);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<MutableValueStr> topGroups = groupingSearch.SearchByFunction<MutableValueStr>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            TopGroups<MutableValueStr> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValueStr> groupDocs in topGroups.Groups)
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -284,7 +284,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            GroupingSearch groupingSearch = new GroupingSearch("carMake");
+            var groupingSearch = GroupingSearch.ByField("carMake");
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake", SortFieldType.STRING)));
@@ -295,7 +295,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<object> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
+            TopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
 
 
             int? totalGroupCount = topGroups.TotalGroupCount;               //null if not computed
@@ -326,7 +326,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             
+
                 Group: Audi
                 Audi A3 Orange
                 Audi A3 Green
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            GroupingSearch groupingSearch = new GroupingSearch("carMake");
+            var groupingSearch = GroupingSearch.ByField("carMake");
             groupingSearch.SetAllGroups(true);                    //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(4);                 //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("carMake_dv", SortFieldType.STRING)));
@@ -390,7 +390,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<object> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
+            TopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 3);
 
 
             int? totalGroupCount = topGroups.TotalGroupCount;               //null if not computed
@@ -421,7 +421,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             
+
                 Group: Audi
                 Audi A3 Orange
                 Audi A3 Green
@@ -464,7 +464,7 @@ namespace Lucene.Net.Search.Grouping
             //as a 8 term trie structure by default.  But by specifying int.MaxValue as the NumericPrecisionStep
             //we force the inverted index to store the value as a single term. This allows us to use it for
             //grouping via FieldCache (although it's no longer good for range queries as they will be slow if
-            //the range is large). 
+            //the range is large).
 
             var int32OneTerm = new FieldType
             {
@@ -490,7 +490,7 @@ namespace Lucene.Net.Search.Grouping
             }
             writer.Commit();
 
-            GroupingSearch groupingSearch = new GroupingSearch("major");
+            var groupingSearch = GroupingSearch.ByField("major");
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(10);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
@@ -499,7 +499,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<BytesRef> topGroups = groupingSearch.Search<BytesRef>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            TopGroups<BytesRef> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<BytesRef> groupDocs in topGroups.Groups)
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search.Grouping
             //as a 8 term trie structure by default.  But by specifying int.MaxValue as the NumericPrecisionStep
             //we force the inverted index to store the value as a single term. This allows us to use it for
             //grouping via FieldCache (although it's no longer good for range queries as they will be slow if
-            //the range is large). 
+            //the range is large).
 
             var int32OneTerm = new FieldType
             {
@@ -601,7 +601,7 @@ namespace Lucene.Net.Search.Grouping
             writer.Commit();
 
             ValueSource vs = new BytesRefFieldSource("major");
-            GroupingSearch groupingSearch = new GroupingSearch(vs, new Hashtable());
+            var groupingSearch = GroupingSearch.ByFunction<MutableValue>(vs, new Hashtable());
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(10);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
@@ -610,7 +610,7 @@ namespace Lucene.Net.Search.Grouping
             using IndexReader reader = writer.GetReader(applyAllDeletes: true);
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
-            ITopGroups<MutableValue> topGroups = groupingSearch.Search<MutableValue>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            TopGroups<MutableValue> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValue> groupDocs in topGroups.Groups)
@@ -639,7 +639,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -696,7 +696,7 @@ namespace Lucene.Net.Search.Grouping
             writer.Commit();
 
             ValueSource vs = new Int32FieldSource("major");
-            GroupingSearch groupingSearch = new GroupingSearch(vs, new Hashtable());
+            var groupingSearch = GroupingSearch.ByFunction<MutableValueInt32>(vs, new Hashtable());
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(10);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
@@ -706,7 +706,7 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
 
-            ITopGroups<MutableValueInt32> topGroups = groupingSearch.SearchByFunction<MutableValueInt32>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
+            TopGroups<MutableValueInt32> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 10);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValueInt32> groupDocs in topGroups.Groups)
@@ -734,7 +734,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -790,7 +790,7 @@ namespace Lucene.Net.Search.Grouping
             writer.Commit();
 
             ValueSource vs = new Int32FieldSource("major");
-            GroupingSearch groupingSearch = new GroupingSearch(vs, new Hashtable());
+            var groupingSearch = GroupingSearch.ByFunction<MutableValue>(vs, new Hashtable());
             groupingSearch.SetAllGroups(true);                      //true = compute all groups matching the query
             groupingSearch.SetGroupDocsLimit(2);                   //max docs returned in a group
             groupingSearch.SetGroupSort(new Sort(new SortField("major", SortFieldType.INT32)));
@@ -800,7 +800,7 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher searcher = new IndexSearcher(reader);
             Query matchAllQuery = new MatchAllDocsQuery();
 
-            ITopGroups<MutableValue> topGroups = groupingSearch.Search<MutableValue>(searcher, matchAllQuery, groupOffset: 0, groupLimit: 4);
+            TopGroups<MutableValue> topGroups = groupingSearch.Search(searcher, matchAllQuery, groupOffset: 0, groupLimit: 4);
 
             StringBuilder sb = new StringBuilder();
             foreach (GroupDocs<MutableValue> groupDocs in topGroups.Groups)
@@ -828,7 +828,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -852,7 +852,7 @@ namespace Lucene.Net.Search.Grouping
         /// LUCENENET: Additional Unit Test.  Low Level test that does not use GroupingSearch
         /// Class. Tests grouping by an StringField via the
         /// 2 pass by field name approach. Uses DocValues, not FieldCache.
-        /// Demonstrates grouping returning ITopGroups<BytesRef> 
+        /// Demonstrates grouping returning ITopGroups<BytesRef>
         /// </summary>
         [Test]
         [LuceneNetSpecific]
@@ -905,13 +905,13 @@ namespace Lucene.Net.Search.Grouping
             //First Pass
             TermFirstPassGroupingCollector firstPassCollector = new TermFirstPassGroupingCollector(groupField, groupSort, topN);
             searcher.Search(query, filter, firstPassCollector);
-            IEnumerable<ISearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
+            ICollection<SearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
 
             //Second Pass
             TermSecondPassGroupingCollector secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups,
                 groupSort, sortWithinGroup, topNInsideGroup, getScores: true, getMaxScores: true, fillSortFields);
             searcher.Search(query, filter, secondPassCollector);
-            ITopGroups<BytesRef> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
+            TopGroups<BytesRef> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
 
             //Validate topGroups are as expected
             StringBuilder sb = new StringBuilder();
@@ -939,7 +939,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             
+
                 Group: Audi
                 Audi A3 Orange
                 Audi A3 Green
@@ -982,7 +982,7 @@ namespace Lucene.Net.Search.Grouping
             //Normally we can not group on a Int32Field because it's stored as a 8 term trie structure
             //by default.  But by specifying int.MaxValue as the NumericPrecisionStep we force the inverted
             //index to store the value as a single term. This allows us to use it for grouping (although
-            //it's no longer good for range queries as they will be slow if the range is large). 
+            //it's no longer good for range queries as they will be slow if the range is large).
 
             var int32OneTerm = new FieldType
             {
@@ -1030,13 +1030,13 @@ namespace Lucene.Net.Search.Grouping
             //First Pass
             TermFirstPassGroupingCollector firstPassCollector = new TermFirstPassGroupingCollector(groupField, groupSort, topN);
             searcher.Search(query, filter, firstPassCollector);
-            IEnumerable<ISearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
+            ICollection<SearchGroup<BytesRef>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
 
             //Second Pass
             TermSecondPassGroupingCollector secondPassCollector = new TermSecondPassGroupingCollector(groupField, topSearchGroups,
                 groupSort, sortWithinGroup, topNInsideGroup, getScores: true, getMaxScores: true, fillSortFields);
             searcher.Search(query, filter, secondPassCollector);
-            ITopGroups<BytesRef> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
+            TopGroups<BytesRef> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
 
             //Validate topGroups are as expected
             StringBuilder sb = new StringBuilder();
@@ -1065,7 +1065,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -1105,7 +1105,7 @@ namespace Lucene.Net.Search.Grouping
             //Normally we can not group on a Int32Field because it's stored as a 8 term trie structure
             //by default.  But by specifying int.MaxValue as the NumericPrecisionStep we force the inverted
             //index to store the value as a single term. This allows us to use it for grouping (although
-            //it's no longer good for range queries as they will be slow if the range is large). 
+            //it's no longer good for range queries as they will be slow if the range is large).
 
             var int32OneTerm = new FieldType
             {
@@ -1156,14 +1156,14 @@ namespace Lucene.Net.Search.Grouping
             FunctionFirstPassGroupingCollector<MutableValueStr> firstPassCollector =
                                             new FunctionFirstPassGroupingCollector<MutableValueStr>(groupByValueSource, valueSourceContext, groupSort, topN);
             searcher.Search(query, filter, firstPassCollector);
-            IEnumerable<ISearchGroup<MutableValueStr>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
+            ICollection<SearchGroup<MutableValueStr>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
 
             //Second Pass
             FunctionSecondPassGroupingCollector<MutableValueStr> secondPassCollector =
                                             new FunctionSecondPassGroupingCollector<MutableValueStr>(topSearchGroups, groupSort, sortWithinGroup,
                                                     topNInsideGroup, getScores: true, getMaxScores: true, fillSortFields, groupByValueSource, valueSourceContext);
             searcher.Search(query, filter, secondPassCollector);
-            ITopGroups<MutableValue> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
+            TopGroups<MutableValueStr> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
 
             //Validate topGroups are as expected
             StringBuilder sb = new StringBuilder();
@@ -1192,7 +1192,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -1216,7 +1216,7 @@ namespace Lucene.Net.Search.Grouping
         /// LUCENENET: Additional Unit Test.  Low Level test that does not use GroupingSearch
         /// Class. Tests grouping by an Int32 via the
         /// 2 pass by fuction/valueSource approach. Uses DocValues, not FieldCache.
-        /// Demonstrates grouping returning ITopGroups<MutableValueInt32> 
+        /// Demonstrates grouping returning ITopGroups<MutableValueInt32>
         /// </summary>
         [Test]
         [LuceneNetSpecific]
@@ -1269,14 +1269,14 @@ namespace Lucene.Net.Search.Grouping
             FunctionFirstPassGroupingCollector<MutableValueInt32> firstPassCollector =
                                             new FunctionFirstPassGroupingCollector<MutableValueInt32>(groupByValueSource, valueSourceContext, groupSort, topN);
             searcher.Search(query, filter, firstPassCollector);
-            IEnumerable<ISearchGroup<MutableValueInt32>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
+            ICollection<SearchGroup<MutableValueInt32>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
 
             //Second Pass
             FunctionSecondPassGroupingCollector<MutableValueInt32> secondPassCollector =
                                             new FunctionSecondPassGroupingCollector<MutableValueInt32>(topSearchGroups, groupSort, sortWithinGroup,
                                                     topNInsideGroup, getScores: true, getMaxScores: true, fillSortFields, groupByValueSource, valueSourceContext);
             searcher.Search(query, filter, secondPassCollector);
-            ITopGroups<MutableValueInt32> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
+            TopGroups<MutableValueInt32> topGroups = secondPassCollector.GetTopGroups(groupDocsOffset);
 
             //Validate topGroups are as expected
             StringBuilder sb = new StringBuilder();
@@ -1305,7 +1305,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
