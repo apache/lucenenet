@@ -22,8 +22,9 @@ indent_size = 2
 
 # Exclusions
 
+# Disable trimming to preserve indented script blocks in YAML
 [*.{yml,yaml}]
-trim_trailing_whitespace = false # this unintentionally removes indented script within the yaml, so we disable
+trim_trailing_whitespace = false
 
 # Files that tests read should not change from Lucene, so we don't enforce rules on them
 [src/Lucene.Net.Tests.*/**.txt]
