@@ -1,7 +1,9 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.IO;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Number = J2N.Numerics.Number;
 
@@ -403,7 +405,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as <see cref="byte"/> (using
-        /// <see cref="IFieldCache.GetBytes(Index.AtomicReader, string, FieldCache.IByteParser, bool)"/> and sorts by ascending value
+        /// <see cref="IFieldCache.GetBytes(AtomicReader, string, FieldCache.IByteParser, bool)"/> and sorts by ascending value
         /// </summary>
         [Obsolete, CLSCompliant(false)] // LUCENENET NOTE: marking non-CLS compliant because of sbyte - it is obsolete, anyway
         public sealed class ByteComparer : NumericComparer<J2N.Numerics.SByte>
@@ -488,7 +490,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as <see cref="double"/> (using
-        /// <see cref="IFieldCache.GetDoubles(Index.AtomicReader, string, FieldCache.IDoubleParser, bool)"/> and sorts by ascending value
+        /// <see cref="IFieldCache.GetDoubles(AtomicReader, string, FieldCache.IDoubleParser, bool)"/> and sorts by ascending value
         /// </summary>
         public sealed class DoubleComparer : NumericComparer<J2N.Numerics.Double>
         {
@@ -581,7 +583,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as <see cref="float"/> (using
-        /// <see cref="IFieldCache.GetSingles(Index.AtomicReader, string, FieldCache.ISingleParser, bool)"/>  and sorts by ascending value
+        /// <see cref="IFieldCache.GetSingles(AtomicReader, string, FieldCache.ISingleParser, bool)"/>  and sorts by ascending value
         /// <para/>
         /// NOTE: This was FloatComparator in Lucene
         /// </summary>
@@ -677,7 +679,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as <see cref="short"/> (using
-        /// <see cref="IFieldCache.GetInt16s(Index.AtomicReader, string, FieldCache.IInt16Parser, bool)"/> and sorts by ascending value
+        /// <see cref="IFieldCache.GetInt16s(AtomicReader, string, FieldCache.IInt16Parser, bool)"/> and sorts by ascending value
         /// <para/>
         /// NOTE: This was ShortComparator in Lucene
         /// </summary>
@@ -765,7 +767,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as <see cref="int"/> (using
-        /// <see cref="IFieldCache.GetInt32s(Index.AtomicReader, string, FieldCache.IInt32Parser, bool)"/> and sorts by ascending value
+        /// <see cref="IFieldCache.GetInt32s(AtomicReader, string, FieldCache.IInt32Parser, bool)"/> and sorts by ascending value
         /// <para/>
         /// NOTE: This was IntComparator in Lucene
         /// </summary>
@@ -849,7 +851,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as <see cref="long"/> (using
-        /// <see cref="IFieldCache.GetInt64s(Index.AtomicReader, string, FieldCache.IInt64Parser, bool)"/> and sorts by ascending value
+        /// <see cref="IFieldCache.GetInt64s(AtomicReader, string, FieldCache.IInt64Parser, bool)"/> and sorts by ascending value
         /// <para/>
         /// NOTE: This was LongComparator in Lucene
         /// </summary>
@@ -941,7 +943,7 @@ namespace Lucene.Net.Search
         /// sorting only by descending relevance and then
         /// secondarily by ascending docID, performance is faster
         /// using <see cref="TopScoreDocCollector"/> directly (which all overloads of
-        /// <see cref="IndexSearcher.Search(Query, int)"/> use when no <see cref="Sort"/> is
+        /// <see cref="IndexSearcher.Search(Query, int, CancellationToken)"/> use when no <see cref="Sort"/> is
         /// specified).
         /// </summary>
         public sealed class RelevanceComparer : FieldComparer<J2N.Numerics.Single>
@@ -1105,11 +1107,11 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Sorts by field's natural <see cref="Index.Term"/> sort order, using
+        /// Sorts by field's natural <see cref="Term"/> sort order, using
         /// ordinals.  This is functionally equivalent to
         /// <see cref="Lucene.Net.Search.FieldComparer.TermValComparer"/>, but it first resolves the string
         /// to their relative ordinal positions (using the index
-        /// returned by <see cref="IFieldCache.GetTermsIndex(Index.AtomicReader, string, float)"/>), and
+        /// returned by <see cref="IFieldCache.GetTermsIndex(AtomicReader, string, float)"/>), and
         /// does most comparisons using the ordinals.  For medium
         /// to large results, this comparer will be much faster
         /// than <see cref="Lucene.Net.Search.FieldComparer.TermValComparer"/>.  For very small
@@ -1447,7 +1449,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Sorts by field's natural <see cref="Index.Term"/> sort order.  All
+        /// Sorts by field's natural <see cref="Term"/> sort order.  All
         /// comparisons are done using <see cref="BytesRef.CompareTo(BytesRef)"/>, which is
         /// slow for medium to large result sets but possibly
         /// very fast for very small results sets.
