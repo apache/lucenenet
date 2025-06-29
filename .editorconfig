@@ -21,13 +21,34 @@ indent_size = 2
 # ========================================
 # YAML files (preserve trailing spaces for indented script blocks)
 # ========================================
-[*.{yml,yaml}]
+[*.yml]
+trim_trailing_whitespace = false
+
+[*.yaml]
 trim_trailing_whitespace = false
 
 # ========================================
 # XML, MSBuild files
 # ========================================
-[*.{props,targets,csproj,msbuildproj,fsproj,vbproj,xml}]
+[*.props]
+indent_size = 2
+
+[*.targets]
+indent_size = 2
+
+[*.csproj]
+indent_size = 2
+
+[*.msbuildproj]
+indent_size = 2
+
+[*.fsproj]
+indent_size = 2
+
+[*.vbproj]
+indent_size = 2
+
+[*.xml]
 indent_size = 2
 
 # ========================================
