@@ -16,6 +16,10 @@ indent_size = 2
 indent_style = space
 indent_size = 4
 
+[*.{props,targets,csproj,msbuildproj,fsproj,vbproj,xml}]
+indent_style = space
+indent_size = 2
+
 # Exclusions
 
 # Files that tests read should not change from Lucene, so we don't enforce rules on them
