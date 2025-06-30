@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     try
                     {
                         Dispose();
-                    } 
+                    }
                     catch (Exception t) when (t.IsThrowable())
                     {
                         // ensure we throw our original exception
@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 throw AlreadyClosedException.Create(this.GetType().FullName, "this FieldsReader is disposed.");
             }
-            return new SimpleTextStoredFieldsReader(_offsets, (IndexInput) _input.Clone(), _fieldInfos);
+            return new SimpleTextStoredFieldsReader(_offsets, (IndexInput)_input.Clone(), _fieldInfos);
         }
 
         protected override void Dispose(bool disposing)

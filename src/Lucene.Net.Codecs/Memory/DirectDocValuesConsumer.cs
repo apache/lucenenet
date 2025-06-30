@@ -99,7 +99,7 @@ namespace Lucene.Net.Codecs.Memory
                                                        DirectDocValuesFormat.MAX_SORTED_SET_ORDS + " values/total ords");
                 }
             }
-            meta.WriteInt32((int) count);
+            meta.WriteInt32((int)count);
 
             if (missing)
             {
@@ -139,13 +139,13 @@ namespace Lucene.Net.Codecs.Memory
                 switch (byteWidth)
                 {
                     case 1:
-                        data.WriteByte((byte) v);
+                        data.WriteByte((byte)v);
                         break;
                     case 2:
-                        data.WriteInt16((short) v);
+                        data.WriteInt16((short)v);
                         break;
                     case 4:
-                        data.WriteInt32((int) v);
+                        data.WriteInt32((int)v);
                         break;
                     case 8:
                         data.WriteInt64(v);
@@ -221,7 +221,7 @@ namespace Lucene.Net.Codecs.Memory
             }
 
             meta.WriteInt64(startFP);
-            meta.WriteInt32((int) totalBytes);
+            meta.WriteInt32((int)totalBytes);
             meta.WriteInt32(count);
             if (missing)
             {
@@ -319,7 +319,7 @@ namespace Lucene.Net.Codecs.Memory
             // (the final sum):
             public IEnumerator<long?> GetEnumerator()
             {
-                return new Enumerator( _docToOrdCount);
+                return new Enumerator(_docToOrdCount);
             }
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -365,7 +365,7 @@ namespace Lucene.Net.Codecs.Memory
                         return true;
                     }
                     else
-                    { 
+                    {
                         if (Debugging.AssertsEnabled) Debugging.Assert(false);
                         return false;
                     }

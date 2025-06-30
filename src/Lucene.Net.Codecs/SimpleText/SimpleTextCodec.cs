@@ -36,7 +36,7 @@
         private readonly LiveDocsFormat _liveDocs = new SimpleTextLiveDocsFormat();
         private readonly DocValuesFormat _dvFormat = new SimpleTextDocValuesFormat();
 
-        public SimpleTextCodec() 
+        public SimpleTextCodec()
             : base()
         {
         }

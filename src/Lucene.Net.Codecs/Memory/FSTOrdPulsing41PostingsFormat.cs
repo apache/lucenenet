@@ -35,12 +35,12 @@
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
         private readonly int _freqCutoff;
 
-        public FSTOrdPulsing41PostingsFormat() 
+        public FSTOrdPulsing41PostingsFormat()
             : this(1)
         {
         }
 
-        public FSTOrdPulsing41PostingsFormat(int freqCutoff) 
+        public FSTOrdPulsing41PostingsFormat(int freqCutoff)
             : base()
         {
             _wrappedPostingsBaseFormat = new Lucene41PostingsBaseFormat();

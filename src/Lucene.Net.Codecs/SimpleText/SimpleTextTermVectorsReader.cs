@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     try
                     {
                         Dispose();
-                    } 
+                    }
                     catch (Exception t) when (t.IsThrowable())
                     {
                         // ensure we throw our original exception
@@ -343,7 +343,7 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             internal int freq;
             internal int[] positions;
-            internal int[] startOffsets; 
+            internal int[] startOffsets;
             internal int[] endOffsets;
             internal BytesRef[] payloads;
         }

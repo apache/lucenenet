@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs.Memory
         internal const byte NUMBER = 0;
         internal const byte BYTES = 1;
         internal const byte FST = 2;
-        
+
         internal const int BLOCK_SIZE = 4096;
 
         internal const byte DELTA_COMPRESSED = 0;
@@ -143,7 +143,7 @@ namespace Lucene.Net.Codecs.Memory
                 int fieldType = meta.ReadByte();
                 if (fieldType == NUMBER)
                 {
-                    var entry = new NumericEntry {offset = meta.ReadInt64(), missingOffset = meta.ReadInt64()};
+                    var entry = new NumericEntry { offset = meta.ReadInt64(), missingOffset = meta.ReadInt64() };
                     if (entry.missingOffset != -1)
                     {
                         entry.missingBytes = meta.ReadInt64();
@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 else if (fieldType == FST)
                 {
-                    var entry = new FSTEntry {offset = meta.ReadInt64(), numOrds = meta.ReadVInt64()};
+                    var entry = new FSTEntry { offset = meta.ReadInt64(), numOrds = meta.ReadVInt64() };
                     fsts[fieldNumber] = entry;
                 }
                 else
@@ -297,7 +297,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override long Get(int docID)
             {
-                return decode[(int) ordsReader.Get(docID)];
+                return decode[(int)ordsReader.Get(docID)];
             }
         }
 
@@ -332,7 +332,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override long Get(int docID)
             {
-                return min + mult*quotientReader.Get(docID);
+                return min + mult * quotientReader.Get(docID);
             }
         }
 
@@ -390,7 +390,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override void Get(int docID, BytesRef result)
             {
-                bytesReader.FillSlice(result, fixedLength*(long) docID, fixedLength);
+                bytesReader.FillSlice(result, fixedLength * (long)docID, fixedLength);
             }
         }
 
@@ -409,7 +409,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 var startAddress = docID == 0 ? 0 : addresses.Get(docID - 1);
                 var endAddress = addresses.Get(docID);
-                bytesReader.FillSlice(result, startAddress, (int) (endAddress - startAddress));
+                bytesReader.FillSlice(result, startAddress, (int)(endAddress - startAddress));
             }
         }
 
@@ -477,7 +477,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override int GetOrd(int docID)
             {
-                return (int) docToOrd.Get(docID);
+                return (int)docToOrd.Get(docID);
             }
 
             public override void LookupOrd(int ord, BytesRef result)
@@ -509,11 +509,11 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     else if (o.Input.Equals(key))
                     {
-                        return (int) o.Output;
+                        return (int)o.Output;
                     }
                     else
                     {
-                        return (int) -o.Output - 1;
+                        return (int)-o.Output - 1;
                     }
                 }
                 catch (Exception bogus) when (bogus.IsIOException())
@@ -522,7 +522,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int ValueCount => (int) entry.numOrds;
+            public override int ValueCount => (int)entry.numOrds;
 
             public override TermsEnum GetTermsEnum()
             {
@@ -686,7 +686,7 @@ namespace Lucene.Net.Codecs.Memory
                         var data = (IndexInput)this.data.Clone();
                         data.Seek(offset);
                         if (Debugging.AssertsEnabled) Debugging.Assert(length % 8 == 0);
-                        var bits = new long[(int) length >> 3];
+                        var bits = new long[(int)length >> 3];
                         for (var i = 0; i < bits.Length; i++)
                         {
                             bits[i] = data.ReadInt64();

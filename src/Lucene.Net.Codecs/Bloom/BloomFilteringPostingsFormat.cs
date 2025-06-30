@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// Used only by core Lucene at read-time via Service Provider instantiation -
         /// do not use at Write-time in application code.
         /// </summary>
-        public BloomFilteringPostingsFormat() 
+        public BloomFilteringPostingsFormat()
             : base()
         {
         }
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Bloom
                         var fieldInfo = state.FieldInfos.FieldInfo(fieldNum);
                         _bloomsByFieldName.Add(fieldInfo.Name, bloom);
                     }
-                    
+
                     if (version >= VERSION_CHECKSUM)
                     {
                         CodecUtil.CheckFooter(bloomIn);
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Bloom
                 private Terms _delegateTerms;
                 internal TermsEnum delegateTermsEnum;
                 private TermsEnum _reuseDelegate;
-                internal readonly FuzzySet filter; 
+                internal readonly FuzzySet filter;
 
                 public BloomFilteredTermsEnum(Terms delegateTerms, TermsEnum reuseDelegate, FuzzySet filter)
                 {
@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.Bloom
             private readonly FieldsConsumer _delegateFieldsConsumer;
             private readonly Dictionary<FieldInfo, FuzzySet> _bloomFilters = new Dictionary<FieldInfo, FuzzySet>();
             private readonly SegmentWriteState _state;
-            
+
             public BloomFilteredFieldsConsumer(BloomFilteringPostingsFormat outerInstance, FieldsConsumer fieldsConsumer,
                 SegmentWriteState state)
             {

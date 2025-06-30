@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs.Lucene41;
+﻿using Lucene.Net.Codecs.Lucene41;
 
 namespace Lucene.Net.Codecs.Pulsing
 {
@@ -28,19 +28,19 @@ namespace Lucene.Net.Codecs.Pulsing
     public class Pulsing41PostingsFormat : PulsingPostingsFormat
     {
         /// <summary>Inlines docFreq=1 terms, otherwise uses the normal "Lucene41" format.</summary>
-        public Pulsing41PostingsFormat() 
+        public Pulsing41PostingsFormat()
             : this(1)
         {
         }
 
         /// <summary>Inlines docFreq=<paramref name="freqCutoff"/> terms, otherwise uses the normal "Lucene41" format.</summary>
-        public Pulsing41PostingsFormat(int freqCutoff) 
+        public Pulsing41PostingsFormat(int freqCutoff)
             : this(freqCutoff, BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE, BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE)
         {
         }
 
         /// <summary>Inlines docFreq=<paramref name="freqCutoff"/> terms, otherwise uses the normal "Lucene41" format.</summary>
-        public Pulsing41PostingsFormat(int freqCutoff, int minBlockSize, int maxBlockSize) 
+        public Pulsing41PostingsFormat(int freqCutoff, int minBlockSize, int maxBlockSize)
             : base(new Lucene41PostingsBaseFormat(), freqCutoff, minBlockSize, maxBlockSize)
         {
         }

@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs.Bloom
             var hash = _hashFunction.Hash(value);
             if (hash < 0)
             {
-                hash = hash*-1;
+                hash = hash * -1;
             }
             return MayContainValue(hash);
         }
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.Bloom
             var version = input.ReadInt32();
             if (version == VERSION_SPI)
                 input.ReadString();
-           
+
             var hashFunction = HashFunctionForVersion(version);
             var bloomSize = input.ReadInt32();
             var numLongs = input.ReadInt32();
@@ -246,7 +246,7 @@ namespace Lucene.Net.Codecs.Bloom
             var hash = _hashFunction.Hash(value);
             if (hash < 0)
             {
-                hash = hash*-1;
+                hash = hash * -1;
             }
             // Bitmasking using bloomSize is effectively a modulo operation.
             var bloomPos = hash & _bloomSize;
@@ -314,15 +314,15 @@ namespace Lucene.Net.Codecs.Bloom
         {
             double setSizeAsDouble = setSize;
             double numRecordedBitsAsDouble = numRecordedBits;
-            var saturation = numRecordedBitsAsDouble/setSizeAsDouble;
-            var logInverseSaturation = Math.Log(1 - saturation)*-1;
-            return (int) (setSizeAsDouble*logInverseSaturation);
+            var saturation = numRecordedBitsAsDouble / setSizeAsDouble;
+            var logInverseSaturation = Math.Log(1 - saturation) * -1;
+            return (int)(setSizeAsDouble * logInverseSaturation);
         }
 
         public virtual float GetSaturation()
         {
             var numBitsSet = _filter.Cardinality;
-            return numBitsSet/(float) _bloomSize;
+            return numBitsSet / (float)_bloomSize;
         }
 
         public virtual long RamBytesUsed()
