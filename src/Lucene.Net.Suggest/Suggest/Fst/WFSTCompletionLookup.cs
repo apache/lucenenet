@@ -323,7 +323,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         internal static readonly IComparer<Int64> weightComparer = Comparer<Int64>.Create((left, right) => Comparer<Int64>.Default.Compare(left, right));
-        
+
         /// <summary>
         /// Returns byte size of the underlying FST. </summary>
         public override long GetSizeInBytes()

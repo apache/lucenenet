@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         public override IInputEnumerator GetEntryEnumerator()
-        { 
+        {
             return new DocumentValueSourceInputEnumerator(this, m_payloadField != null, m_contextsField != null);
         }
 
