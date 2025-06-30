@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Grouping
         }
 
 
-        
+
     }
 
     /// <summary>

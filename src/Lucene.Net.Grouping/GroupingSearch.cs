@@ -415,7 +415,7 @@ namespace Lucene.Net.Search.Grouping
         //          SearchByFunction in a way that eliminates casting for the caller.
         //          This method is essentually a Function specific version of the GroupByFieldOrFunction.
         protected virtual ITopGroups<TMutableValue> GroupByFunction<TMutableValue>(IndexSearcher searcher, Filter filter, Query query, int groupOffset, int groupLimit)
-            where TMutableValue: MutableValue
+            where TMutableValue : MutableValue
         {
             int topN = groupOffset + groupLimit;
             FunctionFirstPassGroupingCollector<TMutableValue> firstPassCollector;
