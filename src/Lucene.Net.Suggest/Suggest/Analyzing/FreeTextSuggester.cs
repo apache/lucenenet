@@ -731,8 +731,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             (long)(long.MaxValue * (decimal)backoff * ((decimal)DecodeWeight(completion.Output)) / contextCount));
                         results.Add(result);
                         if (Debugging.AssertsEnabled) Debugging.Assert(results.Count == seen.Count);
-                    //System.out.println("  add result=" + result);
-                    nextCompletionContinue: {/* LUCENENET: intentionally blank */}
+                        //System.out.println("  add result=" + result);
+                        nextCompletionContinue: {/* LUCENENET: intentionally blank */}
                     }
                     backoff *= ALPHA;
                 }
@@ -862,7 +862,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return output;
         }
 
-        internal static readonly IComparer<Int64> weightComparer =  Comparer<Int64>.Default;
+        internal static readonly IComparer<Int64> weightComparer = Comparer<Int64>.Default;
 
         /// <summary>
         /// Returns the weight associated with an input string,
