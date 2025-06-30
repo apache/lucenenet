@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis.Icu
                     break;
                 }
 
-                int lastCodePoint = Character.CodePointBefore(tmpBuffer.Buffer, tmpBuffer.Length , 0);
+                int lastCodePoint = Character.CodePointBefore(tmpBuffer.Buffer, tmpBuffer.Length, 0);
                 if (normalizer.IsInert(lastCodePoint))
                 {
                     // we require an inert char so that we can normalize content before and

@@ -26,8 +26,8 @@ namespace Lucene.Net.Search.PostingsHighlight
     public sealed class WholeBreakIterator : BreakIterator
     {
         private CharacterIterator text;
-        private int start; 
-        private int end; 
+        private int start;
+        private int end;
         private int current;
 
         public override int Current => current;
