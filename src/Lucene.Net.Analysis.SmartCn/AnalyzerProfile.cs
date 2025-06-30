@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
                 ANALYSIS_DATA_DIR = candidatePath;
                 return;
             }
-            
+
 
             try
             {
