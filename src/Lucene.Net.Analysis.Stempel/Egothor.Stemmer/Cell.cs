@@ -99,7 +99,7 @@ namespace Egothor.Stemmer
         /// <returns>a string representation of this <see cref="Cell"/></returns>
         public override string ToString()
         {
-            return "ref(" + @ref +")cmd(" + cmd + ")cnt(" + cnt + ")skp(" + skip + ")";
+            return "ref(" + @ref + ")cmd(" + cmd + ")cnt(" + cnt + ")skp(" + skip + ")";
         }
     }
 }

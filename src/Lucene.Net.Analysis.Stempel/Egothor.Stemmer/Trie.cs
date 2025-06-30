@@ -268,7 +268,8 @@ namespace Egothor.Stemmer
                 {
                     if (i < key.Length)
                     {
-                        /*aux =*/e.Next(); // LUCENENET: IDE0059: Remove unnecessary value assignment
+                        /*aux =*/
+                        e.Next(); // LUCENENET: IDE0059: Remove unnecessary value assignment
                     }
                     else
                     {
