@@ -385,7 +385,7 @@ namespace Lucene.Net.Documents
             }
 
             // LUCENENET specific - method added for better .NET compatibility
-            public virtual string ToString(string format,IFormatProvider provider)
+            public virtual string ToString(string format, IFormatProvider provider)
             {
                 IIndexableField rv = GetRealValue();
                 if (rv is IFormattable formattable)
