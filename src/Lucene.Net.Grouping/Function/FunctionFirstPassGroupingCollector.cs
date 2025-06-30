@@ -73,7 +73,7 @@ namespace Lucene.Net.Search.Grouping.Function
                 reuse.Copy(groupValue);
                 return reuse;
             }
-            return (TMutableValue) groupValue.Duplicate();
+            return (TMutableValue)groupValue.Duplicate();
         }
 
         public override void SetNextReader(AtomicReaderContext context)
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Grouping.Function
             base.SetNextReader(context);
             FunctionValues values = groupByVS.GetValues(vsContext, context);
             filler = values.GetValueFiller();
-            mval = (TMutableValue) filler.Value;
+            mval = (TMutableValue)filler.Value;
         }
     }
 }
