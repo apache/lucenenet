@@ -173,7 +173,7 @@ namespace Lucene.Net.Replicator.Http
                         }
                         break;
 
-                        // LUCENENET specific:
+                    // LUCENENET specific:
                     default:
                         if (Debugging.AssertsEnabled) Debugging.Assert(false, "Invalid ReplicationAction specified");
                         break;
