@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Sv
         private readonly ICharTermAttribute termAtt;
         private readonly IKeywordAttribute keywordAttr;
 
-        public SwedishLightStemFilter(TokenStream input) 
+        public SwedishLightStemFilter(TokenStream input)
             : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();

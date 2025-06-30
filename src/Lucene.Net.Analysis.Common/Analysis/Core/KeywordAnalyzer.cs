@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using System.IO;
 
 namespace Lucene.Net.Analysis.Core

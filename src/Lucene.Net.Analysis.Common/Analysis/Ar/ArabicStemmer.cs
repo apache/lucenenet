@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Ar
             ("" + TEH_MARBUTA).ToCharArray(),
             ("" + YEH).ToCharArray() };
         }
-        
+
         /// <summary>
         /// Stem an input buffer of Arabic text.
         /// </summary>

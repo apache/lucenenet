@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         protected override bool IsKeyword()
         {
-            matcher = pattern.Match(termAtt.ToString()); 
+            matcher = pattern.Match(termAtt.ToString());
             return matcher.Success;
         }
     }

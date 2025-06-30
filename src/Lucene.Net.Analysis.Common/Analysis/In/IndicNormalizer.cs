@@ -372,7 +372,7 @@ namespace Lucene.Net.Analysis.In
             return GetBlockForCharSlow(previousScript, charAsString, out scriptData);
 
             static Regex GetBlockForCharSlow(Regex previousScript, string charAsString, out ScriptData scriptData)
-            { 
+            {
                 foreach (var script in scripts)
                 {
                     Regex block = script.block;

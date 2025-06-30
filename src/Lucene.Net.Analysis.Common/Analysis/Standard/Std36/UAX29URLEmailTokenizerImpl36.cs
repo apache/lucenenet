@@ -4141,7 +4141,7 @@ namespace Lucene.Net.Analysis.Standard.Std36
                     }
 
                 }
-                zzForActionBreak:
+            zzForActionBreak:
 
                 // store back cached position
                 zzMarkedPos = zzMarkedPosL;

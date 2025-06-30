@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis.Fr
         /// </summary>
         public FrenchAnalyzer(LuceneVersion matchVersion)
 #pragma warning disable 612, 618
-              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? 
+              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ?
                     DefaultSetHolder.DEFAULT_STOP_SET : DefaultSetHolder.DEFAULT_STOP_SET_30)
 #pragma warning restore 612, 618
         {

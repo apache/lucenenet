@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Creates a new <see cref="CodepointCountFilterFactory"/> </summary>
-        public CodepointCountFilterFactory(IDictionary<string, string> args) 
+        public CodepointCountFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             min = RequireInt32(args, MIN_KEY);

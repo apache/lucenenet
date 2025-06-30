@@ -132,8 +132,8 @@ namespace Lucene.Net.Analysis.Ar
         protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
 #pragma warning disable 612, 618
-            Tokenizer source = m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) 
-                ? new StandardTokenizer(m_matchVersion, reader) 
+            Tokenizer source = m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_31)
+                ? new StandardTokenizer(m_matchVersion, reader)
                 : (Tokenizer)new ArabicLetterTokenizer(m_matchVersion, reader);
 #pragma warning restore 612, 618
             TokenStream result = new LowerCaseFilter(m_matchVersion, source);

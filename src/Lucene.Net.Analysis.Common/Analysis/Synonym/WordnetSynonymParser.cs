@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Synonym
     {
         private readonly bool expand;
 
-        public WordnetSynonymParser(bool dedup, bool expand, Analyzer analyzer) 
+        public WordnetSynonymParser(bool dedup, bool expand, Analyzer analyzer)
             : base(dedup, analyzer)
         {
             this.expand = expand;

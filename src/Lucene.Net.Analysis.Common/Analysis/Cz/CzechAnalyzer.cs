@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Cz
                 try
                 {
                     return WordlistLoader.GetWordSet(
-                        IOUtils.GetDecodingReader(typeof(CzechAnalyzer), DEFAULT_STOPWORD_FILE, Encoding.UTF8), 
+                        IOUtils.GetDecodingReader(typeof(CzechAnalyzer), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
                         "#",
 #pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT).AsReadOnly(); // LUCENENET: Made readonly as stated in the docs: https://github.com/apache/lucene/issues/11866

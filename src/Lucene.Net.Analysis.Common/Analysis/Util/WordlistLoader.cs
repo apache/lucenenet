@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     result.Add(word.Trim());
                 }
-                
+
             }
             finally
             {
@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Util
         public static CharArraySet GetSnowballWordSet(TextReader reader, CharArraySet result)
         {
             try
-            { 
+            {
                 string line = null;
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -202,7 +202,7 @@ namespace Lucene.Net.Analysis.Util
         public static CharArrayDictionary<string> GetStemDict(TextReader reader, CharArrayDictionary<string> result)
         {
             try
-            { 
+            {
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {

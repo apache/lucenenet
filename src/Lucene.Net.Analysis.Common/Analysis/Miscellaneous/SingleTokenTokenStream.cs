@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using System.Diagnostics;
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private Token singleToken;
         private readonly ICharTermAttribute tokenAtt;
 
-        public SingleTokenTokenStream(Token token) 
+        public SingleTokenTokenStream(Token token)
             : base(Token.TOKEN_ATTRIBUTE_FACTORY)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(token != null);

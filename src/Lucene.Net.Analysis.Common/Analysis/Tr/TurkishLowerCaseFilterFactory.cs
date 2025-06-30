@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Tr
     {
         /// <summary>
         /// Creates a new <see cref="TurkishLowerCaseFilterFactory"/> </summary>
-        public TurkishLowerCaseFilterFactory(IDictionary<string, string> args) 
+        public TurkishLowerCaseFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)

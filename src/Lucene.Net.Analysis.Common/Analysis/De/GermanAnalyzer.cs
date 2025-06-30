@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.De
         /// </summary>
         public GermanAnalyzer(LuceneVersion matchVersion)
 #pragma warning disable 612, 618
-              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? 
+              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ?
                     DefaultSetHolder.DEFAULT_SET : DefaultSetHolder.DEFAULT_SET_30)
 #pragma warning restore 612, 618
         {
