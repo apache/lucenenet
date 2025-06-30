@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis.Ja
                     // the chars directly to the StringBuilder below.
 
                     sb.Append(" [label=\"");
-                    sb.Append(fragment, posData.backPos[idx] - startPos, pos - posData.backPos[idx]); 
+                    sb.Append(fragment, posData.backPos[idx] - startPos, pos - posData.backPos[idx]);
                     sb.Append(' ');
                     sb.Append(wordCost);
                     if (bgCost >= 0)

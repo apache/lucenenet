@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Ja
             if (cas != null)
             {
                 stopTags = new JCG.HashSet<string>();
-                foreach (string element in cas) 
+                foreach (string element in cas)
                 {
                     stopTags.Add(element);
                 }
