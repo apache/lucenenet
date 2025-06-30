@@ -176,7 +176,7 @@ namespace Lucene.Net.Spatial.Serialized
                 {
                     throw UnsupportedOperationException.Create(
                         "Iteration is too slow; instead try FilteredQuery.QUERY_FIRST_FILTER_STRATEGY");
-                        //Note that if you're truly bent on doing this, then see FunctionValues.getRangeScorer
+                    //Note that if you're truly bent on doing this, then see FunctionValues.getRangeScorer
                 }
 
                 public override IBits Bits

@@ -40,7 +40,7 @@ namespace Lucene.Net.Spatial.Util
         private readonly ShapeFieldCacheProvider<IPoint> provider;
         private readonly double multiplier;
 
-        public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, 
+        public ShapeFieldCacheDistanceValueSource(SpatialContext ctx,
             ShapeFieldCacheProvider<IPoint> provider, IPoint from, double multiplier)
         {
             // LUCENENET specific - added guard clauses
