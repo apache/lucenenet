@@ -115,7 +115,7 @@ namespace Lucene.Net.Index.Sorter
             private readonly Sorter.DocComparer comparer;
             private readonly int[] tmp;
 
-            internal DocValueSorter(int[] docs, Sorter.DocComparer comparer) 
+            internal DocValueSorter(int[] docs, Sorter.DocComparer comparer)
                 : base(docs.Length / 64)
             {
                 this.docs = docs;
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index.Sorter
 
         private sealed class ScorerAnonymousClass : Scorer
         {
-            public ScorerAnonymousClass() 
+            public ScorerAnonymousClass()
                 : base(null)
             {
             }
