@@ -239,7 +239,7 @@ namespace Lucene.Net.Spatial.Prefix
                     }
                 }
             }//main loop
-            main_break: { /* LUCENENET: intentionally empty */ }
+        main_break: { /* LUCENENET: intentionally empty */ }
 
             return Finish();
         }
