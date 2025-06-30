@@ -164,27 +164,31 @@ dotnet_diagnostic.S907.severity = none
 # ========================================
 
 # Files that tests read should not change from Lucene
-[src/Lucene.Net.Tests.*/**.txt]
+[**/src/Lucene.Net.Tests.*/**.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+[**/src/**/Lucene.Net.Tests.*/**.txt]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
 # Exclude all files under /lib (3rd party binaries)
-[lib/**]
+[**/lib/**]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
 # Exclude all files under /.build/psake (3rd party code)
-[.build/psake/**]
+[**/.build/psake/**]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
 # Exclude CHANGES.txt (we don't care about formatting here)
-[CHANGES.txt]
+[**/CHANGES.txt]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
 # Exclude *.snk (we don't care about formatting here)
-[*.snk]
+[**/*.snk]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
@@ -199,12 +203,12 @@ trim_trailing_whitespace = unset
 insert_final_newline = unset
 
 # Exclude *.rslp (copied directly from Lucene)
-[*.rslp]
+[**/*.rslp]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
 # Exclude stopwords.txt (copied directly from Lucene)
-[stopwords.txt]
+[**/stopwords.txt]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
@@ -224,11 +228,11 @@ trim_trailing_whitespace = unset
 insert_final_newline = unset
 
 # Exclude .idea files (these are auto-generated)
-[.idea/**]
+[**/.idea/**]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
 # For now, exclude entire websites directory (maybe we can fix these later)
-[websites/**]
+[**/websites/**]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
