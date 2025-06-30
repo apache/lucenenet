@@ -191,7 +191,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                             code.Append(symb);
                             break;
                         case 'C': // lots of C special cases
-                                  /* discard if SCI, SCE or SCY */
+                            /* discard if SCI, SCE or SCY */
                             if (IsPreviousChar(local, n, 'S') &&
                                  !IsLastChar(wdsz, n) &&
                                  FRONTV.IndexOf(local[n + 1]) >= 0)
