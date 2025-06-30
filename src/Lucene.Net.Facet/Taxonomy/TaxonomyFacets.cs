@@ -45,7 +45,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return a.Dim.CompareToOrdinal(b.Dim);
             }
         });
-                
+
         /// <summary>
         /// Index field name provided to the constructor.
         /// </summary>

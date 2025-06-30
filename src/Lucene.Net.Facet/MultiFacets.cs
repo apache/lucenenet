@@ -54,7 +54,7 @@ namespace Lucene.Net.Facet
             return facets.GetTopChildren(topN, dim, path);
         }
 
-        
+
         public override float GetSpecificValue(string dim, params string[] path)
         {
             if (!dimToFacets.TryGetValue(dim, out Facets facets))

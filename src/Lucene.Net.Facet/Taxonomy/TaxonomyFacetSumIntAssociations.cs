@@ -81,10 +81,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     int offset = scratch.Offset;
                     while (offset < end)
                     {
-                        int ord = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | 
+                        int ord = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) |
                             ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
                         offset += 4;
-                        int value = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | 
+                        int value = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) |
                             ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
                         offset += 4;
                         m_values[ord] += value;

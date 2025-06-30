@@ -85,8 +85,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// recreated, you should pass <c>null</c> as the caches and parent/children
         /// arrays.
         /// </summary>
-        private DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter, 
-            LruDictionary<FacetLabel, Int32Class> ordinalCache, LruDictionary<int, FacetLabel> categoryCache, 
+        private DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter,
+            LruDictionary<FacetLabel, Int32Class> ordinalCache, LruDictionary<int, FacetLabel> categoryCache,
             TaxonomyIndexArrays taxoArrays)
         {
             this.indexReader = indexReader;
@@ -163,7 +163,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             if (taxoWriter is null) throw new ArgumentNullException(nameof(taxoWriter));
             this.taxoWriter = taxoWriter;
             taxoEpoch = taxoWriter.TaxonomyEpoch;
-            
+
             // LUCENENET specific - uses indexReaderFactory to open the index reader instead of
             // calling virtual method
             if (indexReaderFactory is null) throw new ArgumentNullException(nameof(indexReaderFactory));

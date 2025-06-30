@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public static int BytesRefToInt32(BytesRef b)
         {
-            return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) | 
+            return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) |
                 ((b.Bytes[b.Offset + 2] & 0xFF) << 8) | (b.Bytes[b.Offset + 3] & 0xFF);
         }
 

@@ -270,7 +270,7 @@ namespace Lucene.Net.Facet
                 }
 
                 docID = baseScorer.NextDoc();
-                nextDocContinue: {/* LUCENENET: intentionally blank */}
+            nextDocContinue: {/* LUCENENET: intentionally blank */}
             }
             //nextDocBreak: // Not referenced
         }

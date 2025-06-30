@@ -72,7 +72,7 @@ namespace Lucene.Net.Facet.Range
         /// checked for the matching ranges.  The filter must be
         /// random access (implement <see cref="DocIdSet.Bits"/>). 
         /// </summary>
-        public Int64RangeFacetCounts(string field, ValueSource valueSource, 
+        public Int64RangeFacetCounts(string field, ValueSource valueSource,
             FacetsCollector hits, Filter fastMatchFilter, params Int64Range[] ranges)
             : base(field, ranges, fastMatchFilter)
         {

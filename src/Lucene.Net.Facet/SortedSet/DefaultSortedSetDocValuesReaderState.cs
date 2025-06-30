@@ -101,7 +101,7 @@ namespace Lucene.Net.Facet.SortedSet
         /// <summary>
         /// Return top-level doc values.
         /// </summary>
-        public override SortedSetDocValues GetDocValues() 
+        public override SortedSetDocValues GetDocValues()
         {
             return topReader.GetSortedSetDocValues(field);
         }
