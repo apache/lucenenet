@@ -19,7 +19,7 @@ namespace Lucene.Net.Queries
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// A <see cref="Search.Filter"/> that wrapped with an indication of how that filter
     /// is used when composed with another filter.
@@ -62,7 +62,7 @@ namespace Lucene.Net.Queries
             {
                 return false;
             }
-            return this.filter.Equals(other.filter) 
+            return this.filter.Equals(other.filter)
                 && this.occur == other.occur;
         }
 

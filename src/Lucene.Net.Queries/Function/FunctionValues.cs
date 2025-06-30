@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries.Function
         /// <summary>
         /// NOTE: This was shortVal() in Lucene
         /// </summary>
-        public virtual short Int16Val(int doc) 
+        public virtual short Int16Val(int doc)
         {
             throw UnsupportedOperationException.Create();
         }

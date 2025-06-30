@@ -22,7 +22,7 @@ namespace Lucene.Net.Queries.Function
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// <see cref="Scorer"/> which returns the result of <see cref="FunctionValues.SingleVal(int)"/> as
     /// the score for a document.

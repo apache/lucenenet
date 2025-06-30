@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// Function that returns <see cref="TFIDFSimilarity.Tf(float)"/>
     /// for every document.
