@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -162,7 +162,7 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double EarthDiameter(double latitude)
         {
-            if(double.IsNaN(latitude)) 
+            if (double.IsNaN(latitude))
                 return double.NaN;
             int index = (int)(Math.Abs(latitude) * RADIUS_INDEXER + 0.5) % earthDiameterPerLatitude.Length;
             return earthDiameterPerLatitude[index];

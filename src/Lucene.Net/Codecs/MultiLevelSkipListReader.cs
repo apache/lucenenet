@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs
         {
             this.skipPointer[0] = skipPointer;
             this.docCount = df;
-            if (Debugging.AssertsEnabled) Debugging.Assert(skipPointer >= 0 && skipPointer <= skipStream[0].Length,"invalid skip pointer: {0}, length={1}", skipPointer, skipStream[0].Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(skipPointer >= 0 && skipPointer <= skipStream[0].Length, "invalid skip pointer: {0}, length={1}", skipPointer, skipStream[0].Length);
             Arrays.Fill(m_skipDoc, 0);
             Arrays.Fill(numSkipped, 0);
             Arrays.Fill(childPointer, 0);

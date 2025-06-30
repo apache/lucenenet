@@ -359,7 +359,7 @@ namespace Lucene.Net.Search
         TextWriter InfoStream { set; get; }
     }
 
-    public static class FieldCache 
+    public static class FieldCache
     {
         /// <summary>
         /// Field values as 8-bit signed bytes

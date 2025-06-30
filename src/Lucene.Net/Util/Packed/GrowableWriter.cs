@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -140,10 +140,10 @@ namespace Lucene.Net.Util.Packed
         public override long RamBytesUsed()
         {
             return RamUsageEstimator.AlignObjectSize(
-                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
-                + RamUsageEstimator.NUM_BYTES_OBJECT_REF 
-                + RamUsageEstimator.NUM_BYTES_INT64 
-                + RamUsageEstimator.NUM_BYTES_SINGLE) 
+                RamUsageEstimator.NUM_BYTES_OBJECT_HEADER
+                + RamUsageEstimator.NUM_BYTES_OBJECT_REF
+                + RamUsageEstimator.NUM_BYTES_INT64
+                + RamUsageEstimator.NUM_BYTES_SINGLE)
                 + current.RamBytesUsed();
         }
 

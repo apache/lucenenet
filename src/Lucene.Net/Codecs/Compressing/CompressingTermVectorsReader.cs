@@ -305,7 +305,7 @@ namespace Lucene.Net.Codecs.Compressing
                     int termCount = (int)numTerms.Get(skip + i);
                     int[] fieldPrefixLengths = new int[termCount];
                     prefixLengths[i] = fieldPrefixLengths;
-                    for (int j = 0; j < termCount; )
+                    for (int j = 0; j < termCount;)
                     {
                         Int64sRef next = reader.Next(termCount - j);
                         for (int k = 0; k < next.Length; ++k)
@@ -331,7 +331,7 @@ namespace Lucene.Net.Codecs.Compressing
                     int termCount = (int)numTerms.Get(skip + i);
                     int[] fieldSuffixLengths = new int[termCount];
                     suffixLengths[i] = fieldSuffixLengths;
-                    for (int j = 0; j < termCount; )
+                    for (int j = 0; j < termCount;)
                     {
                         Int64sRef next = reader.Next(termCount - j);
                         for (int k = 0; k < next.Length; ++k)
@@ -356,7 +356,7 @@ namespace Lucene.Net.Codecs.Compressing
             int[] termFreqs = new int[totalTerms];
             {
                 reader.Reset(vectorsStream, totalTerms);
-                for (int i = 0; i < totalTerms; )
+                for (int i = 0; i < totalTerms;)
                 {
                     Int64sRef next = reader.Next(totalTerms - i);
                     for (int k = 0; k < next.Length; ++k)
@@ -643,7 +643,7 @@ namespace Lucene.Net.Codecs.Compressing
                     int totalFreq = positionIndex[i][termCount];
                     int[] fieldPositions = new int[totalFreq];
                     positions[i] = fieldPositions;
-                    for (int j = 0; j < totalFreq; )
+                    for (int j = 0; j < totalFreq;)
                     {
                         Int64sRef nextPositions = reader.Next(totalFreq - j);
                         for (int k = 0; k < nextPositions.Length; ++k)

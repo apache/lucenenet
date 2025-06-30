@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search

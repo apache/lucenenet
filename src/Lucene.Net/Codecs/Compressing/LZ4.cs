@@ -295,7 +295,7 @@ namespace Lucene.Net.Codecs.Compressing
                     EncodeSequence(bytes, anchor, @ref, off, matchLen, @out);
                     off += matchLen;
                     anchor = off;
-                //mainContinue: ; // LUCENENET NOTE: Not Referenced
+                    //mainContinue: ; // LUCENENET NOTE: Not Referenced
                 }
             mainBreak: {/* LUCENENET: intentionally blank */}
             }
@@ -640,7 +640,7 @@ namespace Lucene.Net.Codecs.Compressing
                         CopyTo(match2, match1);
                         CopyTo(match3, match2);
 
-                        // goto search3Continue; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
+                    // goto search3Continue; // LUCENENET: Removed redundant jump statements. https://rules.sonarsource.com/csharp/RSPEC-3626
                     search3Continue: {/* LUCENENET: intentionally blank */}
                     }
                 //search3Break: ; // LUCENENET NOTE: Unreachable
@@ -651,7 +651,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             mainContinue: {/* LUCENENET: intentionally blank */}
             }
-        //mainBreak: // LUCENENET NOTE: Not referenced
+            //mainBreak: // LUCENENET NOTE: Not referenced
 
             EncodeLastLiterals(src, anchor, srcEnd - anchor, @out);
         }

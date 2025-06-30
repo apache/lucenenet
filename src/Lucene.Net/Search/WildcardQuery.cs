@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 
             string wildcardText = wildcardquery.Text;
 
-            for (int i = 0; i < wildcardText.Length; )
+            for (int i = 0; i < wildcardText.Length;)
             {
                 int c = Character.CodePointAt(wildcardText, i);
                 int length = Character.CharCount(c);

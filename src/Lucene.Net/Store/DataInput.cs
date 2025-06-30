@@ -103,7 +103,7 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataOutput.WriteInt32(int)"/>
         public virtual int ReadInt32()
         {
-            return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16) 
+            return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16)
                 | ((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF);
         }
 
@@ -322,7 +322,7 @@ namespace Lucene.Net.Store
                 skipBuffer = new byte[SKIP_BUFFER_SIZE];
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(skipBuffer.Length == SKIP_BUFFER_SIZE);
-            for (long skipped = 0; skipped < numBytes; )
+            for (long skipped = 0; skipped < numBytes;)
             {
                 var step = (int)Math.Min(SKIP_BUFFER_SIZE, numBytes - skipped);
                 ReadBytes(skipBuffer, 0, step, false);

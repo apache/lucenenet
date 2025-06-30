@@ -479,7 +479,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex + 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value,"value={0} Position={1}", value, this.Position);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value, "value={0} Position={1}", value, this.Position);
                 }
             }
 
@@ -557,7 +557,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex - 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value,"value={0} this.Position={1}", value, this.Position);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value, "value={0} this.Position={1}", value, this.Position);
                 }
             }
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Search
 {
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
                 c.SetNextReader(context);
             }
         }
-        
+
         public virtual void SetScorer(Scorer scorer)
         {
             foreach (ICollector c in collectors)

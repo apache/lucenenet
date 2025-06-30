@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = fieldsStream.ReadByte() & 0xFF;
-                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY),"bits={0:x}", bits);
+                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY), "bits={0:x}", bits);
 
                 switch (visitor.NeedsField(fieldInfo))
                 {

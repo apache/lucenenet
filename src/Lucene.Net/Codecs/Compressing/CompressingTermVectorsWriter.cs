@@ -916,7 +916,7 @@ namespace Lucene.Net.Codecs.Compressing
                     vectorsStreamOrig.Seek(0);
                     ChecksumIndexInput vectorsStream = new BufferedChecksumIndexInput((IndexInput)vectorsStreamOrig.Clone());
 
-                    for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; )
+                    for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc;)
                     {
                         // We make sure to move the checksum input in any case, otherwise the final
                         // integrity check might need to read the whole file a second time

@@ -153,9 +153,9 @@ namespace Lucene.Net.Util.Fst
         ///    <see cref="T:byte[]"/> block in the <see cref="BytesStore"/>; if you know the FST
         ///    will be large then make this larger.  For example 15
         ///    bits = 32768 byte pages. </param>
-        public Builder(FST.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix, 
-            bool doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs, 
-            FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio, bool allowArrayArcs, 
+        public Builder(FST.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix,
+            bool doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs,
+            FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio, bool allowArrayArcs,
             int bytesPageBits)
         {
             this.minSuffixCount1 = minSuffixCount1;
@@ -700,7 +700,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(NumArcs > 0);
                 Arc<S> arc = Arcs[NumArcs - 1];
-                if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == labelToMatch,"arc.Label={0} vs {1}", arc.Label, labelToMatch);
+                if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == labelToMatch, "arc.Label={0} vs {1}", arc.Label, labelToMatch);
                 arc.Target = target;
                 //assert target.Node != -2;
                 arc.NextFinalOutput = nextFinalOutput;

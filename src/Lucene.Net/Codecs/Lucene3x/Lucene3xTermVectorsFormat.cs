@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 using Directory = Lucene.Net.Store.Directory;
 

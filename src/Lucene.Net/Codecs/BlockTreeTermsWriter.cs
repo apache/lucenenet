@@ -943,7 +943,7 @@ namespace Lucene.Net.Codecs
                                   System.out.println("      **");
                                 }
                                 */
-                                floorBlocks.Add(WriteBlock(prevTerm, prefixLength, prefixLength + 1, curStart,curStart, /* 0, LUCENENET: Never read */ true, startLabel, true));
+                                floorBlocks.Add(WriteBlock(prevTerm, prefixLength, prefixLength + 1, curStart, curStart, /* 0, LUCENENET: Never read */ true, startLabel, true));
                                 break;
                             }
                         }

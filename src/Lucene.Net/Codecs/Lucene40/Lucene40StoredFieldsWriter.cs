@@ -336,7 +336,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (matchingFieldsReader != null)
             {
                 // We can bulk-copy because the fieldInfos are "congruent"
-                for (int j = 0; j < maxDoc; )
+                for (int j = 0; j < maxDoc;)
                 {
                     if (!liveDocs.Get(j))
                     {

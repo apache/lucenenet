@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.Similarities
         /// Lucene's default implementation.  If you change this, then you should
         /// change <see cref="DecodeNormValue(byte)"/> to match.
         /// </summary>
-        protected internal virtual byte EncodeNormValue(float boost, int fieldLength) 
+        protected internal virtual byte EncodeNormValue(float boost, int fieldLength)
         {
             return SmallSingle.SingleToByte315(boost / (float)Math.Sqrt(fieldLength));
         }

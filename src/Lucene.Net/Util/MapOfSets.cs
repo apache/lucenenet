@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
         private readonly IDictionary<TKey, ISet<TValue>> theMap;
 
         /// <param name="m"> The backing store for this object. </param>
-        public MapOfSets(IDictionary<TKey, ISet<TValue>> m) 
+        public MapOfSets(IDictionary<TKey, ISet<TValue>> m)
         {
             theMap = m;
         }

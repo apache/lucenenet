@@ -317,7 +317,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), optionalScorers.Count == 1 ? new SingleMatchScorer(this, optionalScorers[0])
-                        // require 1 in combined, optional scorer.
+                                    // require 1 in combined, optional scorer.
                                     : CountingDisjunctionSumScorer(optionalScorers, 1));
                 }
             }

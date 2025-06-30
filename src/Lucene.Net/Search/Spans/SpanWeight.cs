@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans

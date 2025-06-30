@@ -554,7 +554,7 @@ namespace Lucene.Net.Util
                             size += (long)NUM_BYTES_OBJECT_REF * len;
 
                             // Push refs for traversal later.
-                            for (int i = len; --i >= 0; )
+                            for (int i = len; --i >= 0;)
                             {
                                 object o = array.GetValue(i);
                                 if (o != null && !seen.Contains(o))

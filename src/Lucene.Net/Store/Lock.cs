@@ -150,7 +150,7 @@ namespace Lucene.Net.Store
             }
             return locked;
         }
-        
+
         /// <summary>
         /// Releases exclusive access. </summary>
         public void Dispose()

@@ -89,7 +89,7 @@ namespace Lucene.Net.Store
                 throw new ArgumentOutOfRangeException(nameof(len), len, "Non-negative number required.");
             if (bytes.Length - offset < len)
                 throw new ArgumentException("Offset and length were out of bounds for the array or length is greater than the number of elements from index to the end of the source array.");
-                
+
             this.bytes = bytes;
             pos = offset;
             limit = offset + len;

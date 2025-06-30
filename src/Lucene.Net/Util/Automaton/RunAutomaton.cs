@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;

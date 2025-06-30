@@ -99,8 +99,8 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(length >= 0,"length={0}", length);
-                    Debugging.Assert(length <= blockSize + 1,"length={0}", length);
+                    Debugging.Assert(length >= 0, "length={0}", length);
+                    Debugging.Assert(length <= blockSize + 1, "length={0}", length);
                 }
                 b.Length = length;
                 if (length == 0)

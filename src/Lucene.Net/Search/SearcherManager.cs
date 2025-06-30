@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using System;
 using System.IO;
 
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
         protected override IndexSearcher RefreshIfNeeded(IndexSearcher referenceToRefresh)
         {
             IndexReader r = referenceToRefresh.IndexReader;
-            if (Debugging.AssertsEnabled) Debugging.Assert(r is DirectoryReader,"searcher's IndexReader should be a DirectoryReader, but got {0}", r);
+            if (Debugging.AssertsEnabled) Debugging.Assert(r is DirectoryReader, "searcher's IndexReader should be a DirectoryReader, but got {0}", r);
             IndexReader newReader = DirectoryReader.OpenIfChanged((DirectoryReader)r);
             if (newReader is null)
             {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
             try
             {
                 IndexReader r = searcher.IndexReader;
-                if (Debugging.AssertsEnabled) Debugging.Assert(r is DirectoryReader,"searcher's IndexReader should be a DirectoryReader, but got {0}", r);
+                if (Debugging.AssertsEnabled) Debugging.Assert(r is DirectoryReader, "searcher's IndexReader should be a DirectoryReader, but got {0}", r);
                 return ((DirectoryReader)r).IsCurrent();
             }
             finally

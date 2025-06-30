@@ -105,7 +105,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(inc.Length < output.Length,"inc.Length={0} vs output.Length={1}", inc.Length, output.Length);
+                    Debugging.Assert(inc.Length < output.Length, "inc.Length={0} vs output.Length={1}", inc.Length, output.Length);
                     Debugging.Assert(inc.Length > 0);
                 }
                 return new CharsRef(output.Chars, output.Offset + inc.Length, output.Length - inc.Length);

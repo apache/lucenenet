@@ -317,7 +317,7 @@ namespace Lucene.Net.Util
             int i = 0, j = mid + 1, dest = lo + 1;
             for (; ; )
             {
-                for (int count = 0; count < MIN_GALLOP; )
+                for (int count = 0; count < MIN_GALLOP;)
                 {
                     if (i >= len1 || j >= hi)
                     {
@@ -341,7 +341,7 @@ namespace Lucene.Net.Util
                     Copy(j++, dest);
                 }
                 Restore(i++, dest++);
-            //outerContinue: ; // LUCENENET NOTE: Not referenced
+                //outerContinue: ; // LUCENENET NOTE: Not referenced
             }
         outerBreak:
             for (; i < len1; ++dest)
@@ -361,7 +361,7 @@ namespace Lucene.Net.Util
             int i = mid - 2, j = len2 - 1, dest = hi - 2;
             for (; ; )
             {
-                for (int count = 0; count < MIN_GALLOP; )
+                for (int count = 0; count < MIN_GALLOP;)
                 {
                     if (i < lo || j < 0)
                     {
@@ -385,7 +385,7 @@ namespace Lucene.Net.Util
                     Copy(i--, dest--);
                 }
                 Restore(j--, dest--);
-            //outerContinue: ; // LUCENENET NOTE: Not referenced
+                //outerContinue: ; // LUCENENET NOTE: Not referenced
             }
         outerBreak:
             for (; j >= 0; --dest)

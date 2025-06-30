@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
         {
         }
 
-        public override byte[] GetByteBlock() 
+        public override byte[] GetByteBlock()
         {
             if (freeBlocks == 0)
             {

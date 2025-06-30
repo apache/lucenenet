@@ -1,4 +1,4 @@
-// LUCENENET NOTE: This class appears to be Java-specific, so it is being excluded.
+﻿// LUCENENET NOTE: This class appears to be Java-specific, so it is being excluded.
 
 //using Lucene.Net.Support;
 //using System.Globalization;

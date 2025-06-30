@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lucene.Net.Search
 {
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public sealed class NumericRangeFilter<T> : MultiTermQueryWrapperFilter<NumericRangeQuery<T>>
         where T : struct, IComparable<T>
-    // real numbers in C# are structs and IComparable with themselves, best constraint we have
+        // real numbers in C# are structs and IComparable with themselves, best constraint we have
     {
         internal NumericRangeFilter(NumericRangeQuery<T> query)
             : base(query)

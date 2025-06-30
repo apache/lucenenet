@@ -450,7 +450,7 @@ namespace Lucene.Net.Store
             for (int charIDX = 0; charIDX < dirName.Length; charIDX++)
             {
                 char ch = dirName[charIDX];
-                digest = 31*digest + ch;
+                digest = 31 * digest + ch;
             }
             return "lucene-" + digest.ToString("x", CultureInfo.InvariantCulture);
         }
