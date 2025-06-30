@@ -39,7 +39,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and a
         /// <see cref="float"/> association 
         /// </summary>
-        public SingleAssociationFacetField(float assoc, string dim, params string[] path) 
+        public SingleAssociationFacetField(float assoc, string dim, params string[] path)
             : base(SingleToBytesRef(assoc), dim, path)
         {
         }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public override string ToString()
         {
-            return "SingleAssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + 
+            return "SingleAssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) +
                 " value=" + BytesRefToSingle(Assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
         }
     }

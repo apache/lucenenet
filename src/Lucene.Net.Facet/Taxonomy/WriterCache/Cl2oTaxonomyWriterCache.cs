@@ -74,7 +74,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         protected virtual void Dispose(bool disposing) // LUCENENET specific - use proper dispose pattern
         {
-            
+
             if (disposing)
             {
                 if (isDisposed) return;

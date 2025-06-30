@@ -1,4 +1,4 @@
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
 
@@ -33,7 +33,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     public class DirectoryTaxonomyIndexWriterFactory
     {
         public static DirectoryTaxonomyIndexWriterFactory Default { get; } = new DirectoryTaxonomyIndexWriterFactory();
-        
+
         /// <summary>
         /// Open internal index writer, which contains the taxonomy data.
         /// <para/>

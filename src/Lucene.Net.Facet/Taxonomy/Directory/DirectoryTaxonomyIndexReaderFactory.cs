@@ -1,5 +1,5 @@
-using Lucene.Net.Index;
-    
+﻿using Lucene.Net.Index;
+
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
     /*
@@ -31,7 +31,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     public class DirectoryTaxonomyIndexReaderFactory
     {
         public static DirectoryTaxonomyIndexReaderFactory Default { get; } = new DirectoryTaxonomyIndexReaderFactory();
-        
+
         /// <summary>
         /// Open the <see cref="DirectoryReader"/> from this <see cref="Directory"/>. 
         /// </summary>

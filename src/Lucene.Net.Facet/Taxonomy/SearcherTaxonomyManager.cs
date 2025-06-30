@@ -77,7 +77,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Creates near-real-time searcher and taxonomy reader
         /// from the corresponding writers. 
         /// </summary>
-        public SearcherTaxonomyManager(IndexWriter writer, bool applyAllDeletes, 
+        public SearcherTaxonomyManager(IndexWriter writer, bool applyAllDeletes,
             SearcherFactory searcherFactory, DirectoryTaxonomyWriter taxoWriter)
         {
             if (searcherFactory is null)
