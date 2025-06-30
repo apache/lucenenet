@@ -153,7 +153,7 @@ namespace Lucene.Net.Replicator
             {
                 indexSdp.Release(indexCommit);
             }
-            finally 
+            finally
             {
                 taxonomySdp.Release(taxonomyCommit);
             }

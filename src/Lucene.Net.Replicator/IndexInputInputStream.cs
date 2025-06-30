@@ -65,7 +65,7 @@ namespace Lucene.Net.Replicator
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            int remaining = (int) (input.Length - input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+            int remaining = (int)(input.Length - input.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
             int readCount = Math.Min(remaining, count);
             input.ReadBytes(buffer, offset, readCount);
             return readCount;

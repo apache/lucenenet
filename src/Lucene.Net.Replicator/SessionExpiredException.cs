@@ -50,12 +50,12 @@ namespace Lucene.Net.Replicator
         {
         }
 
-        public SessionExpiredException(string message) 
+        public SessionExpiredException(string message)
             : base(message)
         {
         }
 
-        public SessionExpiredException(string message, Exception inner) 
+        public SessionExpiredException(string message, Exception inner)
             : base(message, inner)
         {
         }
