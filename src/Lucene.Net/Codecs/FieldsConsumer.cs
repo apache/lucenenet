@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs
             foreach (string field in fields)
             {
                 FieldInfo info = mergeState.FieldInfos.FieldInfo(field);
-                if (Debugging.AssertsEnabled) Debugging.Assert(info != null,"FieldInfo for field is null: {0}", field);
+                if (Debugging.AssertsEnabled) Debugging.Assert(info != null, "FieldInfo for field is null: {0}", field);
                 Terms terms = fields.GetTerms(field);
                 if (terms != null)
                 {

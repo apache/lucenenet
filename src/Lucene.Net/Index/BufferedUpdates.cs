@@ -163,9 +163,9 @@ namespace Lucene.Net.Index
         {
             if (VERBOSE_DELETES)
             {
-                return "gen=" + gen + " numTerms=" + numTermDeletes + ", terms=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", terms) 
-                    + ", queries=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", queries) + ", docIDs=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", docIDs) 
-                    + ", numericUpdates=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", numericUpdates) 
+                return "gen=" + gen + " numTerms=" + numTermDeletes + ", terms=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", terms)
+                    + ", queries=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", queries) + ", docIDs=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", docIDs)
+                    + ", numericUpdates=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", numericUpdates)
                     + ", binaryUpdates=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", binaryUpdates) + ", bytesUsed=" + bytesUsed;
             }
             else

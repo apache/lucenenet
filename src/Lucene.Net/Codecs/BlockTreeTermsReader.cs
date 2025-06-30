@@ -2165,7 +2165,7 @@ namespace Lucene.Net.Codecs
                                 break;
                             }
                             arc = arcs[1 + targetUpto];
-                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF),"arc.label={0} targetLabel={1}", (char)arc.Label, (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
+                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF), "arc.label={0} targetLabel={1}", (char)arc.Label, (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
                             // TOOD: we could save the outputs in local
                             // byte[][] instead of making new objs ever
                             // seek; but, often the FST doesn't have any
@@ -3084,7 +3084,7 @@ namespace Lucene.Net.Codecs
                             //if (DEBUG) System.out.println("    already positioned");
                             return;
                         }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(subFP < fp,"fp={0} subFP={1}", fp, subFP);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(subFP < fp, "fp={0} subFP={1}", fp, subFP);
                         long targetSubCode = fp - subFP;
                         //if (DEBUG) System.out.println("    targetSubCode=" + targetSubCode);
                         while (true)

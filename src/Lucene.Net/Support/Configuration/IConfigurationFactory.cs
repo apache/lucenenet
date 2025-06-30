@@ -19,7 +19,7 @@ namespace Lucene.Net.Configuration
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// Contract for extending the functionality of system properties by providing an application-defined
     /// <see cref="IConfiguration"/> instance.

@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
                 {
                     // unreleased thread states are deactivated during DW#close()
                     numThreadStatesActive++; // increment will publish the ThreadState
-                                                    //System.out.println("activeCount=" + numThreadStatesActive);
+                                             //System.out.println("activeCount=" + numThreadStatesActive);
                     if (Debugging.AssertsEnabled) Debugging.Assert(threadState.dwpt is null);
                     unlock = false;
                     return threadState;
@@ -319,7 +319,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                for (;;)
+                for (; ; )
                 {
                     if (freeCount > 0)
                     {

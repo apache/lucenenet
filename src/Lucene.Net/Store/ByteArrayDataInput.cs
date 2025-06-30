@@ -102,7 +102,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public override int ReadInt32()
         {
-            return ((bytes[pos++] & 0xFF) << 24) | ((bytes[pos++] & 0xFF) << 16) 
+            return ((bytes[pos++] & 0xFF) << 24) | ((bytes[pos++] & 0xFF) << 16)
                 | ((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF);
         }
 
@@ -111,9 +111,9 @@ namespace Lucene.Net.Store
         /// </summary>
         public override long ReadInt64()
         {
-            int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) 
+            int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16)
                 | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
-            int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) 
+            int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16)
                 | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
             return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
         }

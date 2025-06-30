@@ -1029,7 +1029,7 @@ namespace Lucene.Net.Search
             }
         }
 #nullable enable
-        
+
         /// <summary>
         /// A class holding a subset of the <see cref="IndexSearcher"/>s leaf contexts to be
         /// executed within a single thread.

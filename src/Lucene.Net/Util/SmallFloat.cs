@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was floatToByte315() in Lucene
         /// </summary>
         [CLSCompliant(false)]
-        public static sbyte SingleToSByte315(float f) 
+        public static sbyte SingleToSByte315(float f)
         {
             int bits = J2N.BitConversion.SingleToRawInt32Bits(f);
             int smallfloat = bits >> (24 - 3);

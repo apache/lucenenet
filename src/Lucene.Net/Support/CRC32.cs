@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -32,7 +32,7 @@ namespace Lucene.Net.Support
             for (uint n = 0; n < 256; n++)
             {
                 uint c = n;
-                for (int k = 8; --k >= 0; )
+                for (int k = 8; --k >= 0;)
                 {
                     if ((c & 1) != 0)
                         c = 0xedb88320 ^ (c >> 1);

@@ -126,7 +126,7 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
-                Debugging.Assert(bytesID < bytesStart.Length,"bytesID exceeds byteStart len: {0}", bytesStart.Length);
+                Debugging.Assert(bytesID < bytesStart.Length, "bytesID exceeds byteStart len: {0}", bytesStart.Length);
             }
             pool.SetBytesRef(@ref, bytesStart[bytesID]);
             return @ref;
@@ -334,7 +334,7 @@ namespace Lucene.Net.Util
                 if (count >= bytesStart.Length)
                 {
                     bytesStart = bytesStartArray.Grow();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(count < bytesStart.Length + 1,"count: {0} len: {1}", count, bytesStart.Length);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(count < bytesStart.Length + 1, "count: {0} len: {1}", count, bytesStart.Length);
                 }
                 e = count++;
 
@@ -349,7 +349,7 @@ namespace Lucene.Net.Util
                     // 1 byte to store length
                     buffer[bufferUpto] = (byte)length;
                     pool.ByteUpto += length + 1;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0,"Length must be positive: {0}", length);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0, "Length must be positive: {0}", length);
                     Arrays.Copy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 1, length);
                 }
                 else
@@ -442,7 +442,7 @@ namespace Lucene.Net.Util
                 if (count >= bytesStart.Length)
                 {
                     bytesStart = bytesStartArray.Grow();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(count < bytesStart.Length + 1,"count: {0} len: {1}", count, bytesStart.Length);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(count < bytesStart.Length + 1, "count: {0} len: {1}", count, bytesStart.Length);
                 }
                 e = count++;
                 bytesStart[e] = offset;
@@ -574,7 +574,7 @@ namespace Lucene.Net.Util
         // LUCENENET: It is no longer good practice to use binary serialization. 
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
-    [Serializable]
+        [Serializable]
 #endif
         public class MaxBytesLengthExceededException : Exception, IRuntimeException // LUCENENET specific: Added IRuntimeException for identification of the Java superclass in .NET
         {

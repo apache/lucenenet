@@ -368,7 +368,7 @@ namespace Lucene.Net.Util
                                 goto indexBreak;
                             }
                         }
-                    //indexContinue: ;
+                        //indexContinue: ;
                     }
                 indexBreak:
                     docIDs.Freeze();
@@ -480,7 +480,7 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert((token & HAS_EXCEPTIONS) == 0);
                 int docID = this.docID;
-                for (int i = 0; i < BLOCK_SIZE; )
+                for (int i = 0; i < BLOCK_SIZE;)
                 {
                     var b = data[offset++];
                     for (int bitList = BitUtil.BitList(b); bitList != 0; ++i, bitList >>>= 4)

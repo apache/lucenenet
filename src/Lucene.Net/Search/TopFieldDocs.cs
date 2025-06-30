@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search

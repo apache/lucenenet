@@ -1,4 +1,4 @@
-using J2N.Collections;
+﻿using J2N.Collections;
 
 namespace Lucene.Net.Search
 {

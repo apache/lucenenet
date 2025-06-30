@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
                     }
                     else if (targets.Get(target))
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false,  "{0} is already taken ({1})", target, i);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(false, "{0} is already taken ({1})", target, i);
                         return false;
                     }
                 }

@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             //System.out.println("version=" + version + " name=" + name + " docCount=" + docCount + " delGen=" + delGen + " dso=" + docStoreOffset + " dss=" + docStoreSegment + " dssCFs=" + docStoreIsCompoundFile + " b=" + b + " format=" + format);
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(1 == b,"expected 1 but was: {0} format: {1}", b, format);
+            if (Debugging.AssertsEnabled) Debugging.Assert(1 == b, "expected 1 but was: {0} format: {1}", b, format);
             int numNormGen = input.ReadInt32();
             IDictionary<int, long> normGen;
             if (numNormGen == SegmentInfo.NO)

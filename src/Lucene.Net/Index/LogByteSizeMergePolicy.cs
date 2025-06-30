@@ -1,4 +1,4 @@
-namespace Lucene.Net.Index
+﻿namespace Lucene.Net.Index
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
         {
             m_minMergeSize = (long)(DEFAULT_MIN_MERGE_MB * 1024 * 1024);
             m_maxMergeSize = (long)(DEFAULT_MAX_MERGE_MB * 1024 * 1024);
-            
+
             // .Net port, original line is inappropriate, overflows in .NET 
             // and the property gets set to a negative value.
             // In Java however such statements results in long.MaxValue

@@ -1,4 +1,4 @@
-namespace Lucene.Net.Search.Similarities
+﻿namespace Lucene.Net.Search.Similarities
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

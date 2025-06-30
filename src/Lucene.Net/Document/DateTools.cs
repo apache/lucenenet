@@ -285,7 +285,7 @@ namespace Lucene.Net.Documents
                 NumericRepresentation.TICKS_AS_MILLISECONDS => time * TimeSpan.TicksPerMillisecond,
                 _ => throw new ArgumentException($"'{inputRepresentation}' is not a valid {nameof(inputRepresentation)}.")
             };
-            
+
             DateTimeOffset dt = new DateTimeOffset(ticks, TimeSpan.Zero);
             // Remove extra ticks beyond milliseconds
             dt = new DateTimeOffset(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond, TimeSpan.Zero);

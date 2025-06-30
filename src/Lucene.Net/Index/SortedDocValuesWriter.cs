@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             }
 
             dvConsumer.AddSortedField(fieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
-                // doc -> ord
+                                      // doc -> ord
                                       GetOrdsEnumberable(maxDoc, ordMap));
         }
 

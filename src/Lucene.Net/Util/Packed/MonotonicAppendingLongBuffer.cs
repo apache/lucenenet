@@ -171,7 +171,7 @@ namespace Lucene.Net.Util.Packed
             {
                 int bitsRequired = maxDelta < 0 ? 64 : PackedInt32s.BitsRequired(maxDelta);
                 PackedInt32s.Mutable mutable = PackedInt32s.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
-                for (int i = 0; i < pendingOff; )
+                for (int i = 0; i < pendingOff;)
                 {
                     i += mutable.Set(i, pending, i, pendingOff - i);
                 }

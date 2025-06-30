@@ -1,4 +1,4 @@
-using J2N;
+﻿using J2N;
 
 namespace Lucene.Net.Util.Automaton
 {

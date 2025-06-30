@@ -597,7 +597,7 @@ namespace Lucene.Net.Index
             {
                 this.SubSlice = subSlice;
                 this.Index = index;
-                if (Debugging.AssertsEnabled) Debugging.Assert(subSlice.Length >= 0,"length={0}", subSlice.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(subSlice.Length >= 0, "length={0}", subSlice.Length);
             }
 
             public void Reset(TermsEnum terms, BytesRef term)

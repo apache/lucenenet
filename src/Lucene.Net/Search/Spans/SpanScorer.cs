@@ -1,4 +1,4 @@
-namespace Lucene.Net.Search.Spans
+﻿namespace Lucene.Net.Search.Spans
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

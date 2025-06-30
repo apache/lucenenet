@@ -64,7 +64,7 @@ namespace Lucene.Net.Util.Fst
                 if (arc.IsFinal != scratchArc.IsFinal ||
                     arc.Label != scratchArc.Label ||
                     ((Builder.CompiledNode)arc.Target).Node != scratchArc.Target ||
-                    !(tIsValueType ? JCG.EqualityComparer<T>.Default.Equals(arc.Output, scratchArc.Output) : StructuralEqualityComparer.Default.Equals(arc.Output, scratchArc.Output)) || 
+                    !(tIsValueType ? JCG.EqualityComparer<T>.Default.Equals(arc.Output, scratchArc.Output) : StructuralEqualityComparer.Default.Equals(arc.Output, scratchArc.Output)) ||
                     !(tIsValueType ? JCG.EqualityComparer<T>.Default.Equals(arc.NextFinalOutput, scratchArc.NextFinalOutput) : StructuralEqualityComparer.Default.Equals(arc.NextFinalOutput, scratchArc.NextFinalOutput))
                     )
                 {

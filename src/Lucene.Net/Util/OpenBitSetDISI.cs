@@ -1,4 +1,4 @@
-namespace Lucene.Net.Util
+﻿namespace Lucene.Net.Util
 {
     using System.Diagnostics.CodeAnalysis;
     /*

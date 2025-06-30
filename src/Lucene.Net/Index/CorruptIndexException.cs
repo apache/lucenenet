@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Constructor. </summary>
-        public CorruptIndexException(string message, Exception ex) 
+        public CorruptIndexException(string message, Exception ex)
             : base(message, ex)
         {
         }

@@ -1108,7 +1108,7 @@ namespace Lucene.Net.Util
                 // Start with a zero hash and use a mix that results in zero if the input is zero.
                 // this effectively truncates trailing zeros without an explicit check.
                 long h = 0;
-                for (int i = m_bits.Length; --i >= 0; )
+                for (int i = m_bits.Length; --i >= 0;)
                 {
                     h ^= m_bits[i];
                     h = (h << 1) | (h >>> 63); // rotate left

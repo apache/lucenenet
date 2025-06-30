@@ -1,4 +1,4 @@
-using J2N.Text;
+﻿using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
             }
             writer.FinishDocument();
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(lastDocID == docState.docID,"lastDocID={0} docState.docID={1}", lastDocID, docState.docID);
+            if (Debugging.AssertsEnabled) Debugging.Assert(lastDocID == docState.docID, "lastDocID={0} docState.docID={1}", lastDocID, docState.docID);
 
             lastDocID++;
 
