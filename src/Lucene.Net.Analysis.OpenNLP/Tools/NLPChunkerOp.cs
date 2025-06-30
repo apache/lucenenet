@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
     {
         private readonly ChunkerME chunker = null;
 
-        public NLPChunkerOp(ChunkerModel chunkerModel) 
+        public NLPChunkerOp(ChunkerModel chunkerModel)
         {
             chunker = new ChunkerME(chunkerModel);
         }
