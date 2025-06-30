@@ -2069,7 +2069,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-#endregion
+        #endregion
     }
 
     /// <summary>

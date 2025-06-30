@@ -1330,7 +1330,7 @@ namespace Lucene.Net.Analysis.Standard
 
                     }
                 }
-                zzForActionBreak:
+            zzForActionBreak:
 
                 // store back cached position
                 zzMarkedPos = zzMarkedPosL;
@@ -1341,7 +1341,7 @@ namespace Lucene.Net.Analysis.Standard
                         { // Break so we don't hit fall-through warning:
                             break; // Not numeric, word, ideographic, hiragana, or SE Asian -- ignore it.
                         }
-                        // goto case 9; // unreachable
+                    // goto case 9; // unreachable
                     case 9:
                         break;
                     case 2:

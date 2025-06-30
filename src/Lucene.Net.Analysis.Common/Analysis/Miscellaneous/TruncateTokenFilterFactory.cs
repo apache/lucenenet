@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Creates a new <see cref="TruncateTokenFilterFactory"/> </summary>
-        public TruncateTokenFilterFactory(IDictionary<string, string> args) 
+        public TruncateTokenFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             var prefixLengthString = Get(args, PREFIX_LENGTH_KEY, "5");

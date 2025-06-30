@@ -399,7 +399,8 @@ namespace Lucene.Net.Analysis.Synonym
                 {
                     priorException = e;
                 }
-                finally {
+                finally
+                {
                     IOUtils.CloseWhileHandlingException(priorException, ts);
                 }
 

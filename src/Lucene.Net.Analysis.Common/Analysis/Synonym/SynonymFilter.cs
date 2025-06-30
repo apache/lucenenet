@@ -459,7 +459,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                 curNextRead = RollIncr(curNextRead);
             }
-            byTokenBreak:
+        byTokenBreak:
 
             if (nextRead == nextWrite && !finished)
             {

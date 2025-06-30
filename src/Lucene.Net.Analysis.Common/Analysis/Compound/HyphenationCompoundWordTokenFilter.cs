@@ -59,9 +59,9 @@ namespace Lucene.Net.Analysis.Compound
         ///          the hyphenation pattern tree to use for hyphenation </param>
         /// <param name="dictionary">
         ///          the word dictionary to match against. </param>
-        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, 
+        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input,
             HyphenationTree hyphenator, CharArraySet dictionary)
-            : this(matchVersion, input, hyphenator, dictionary, DEFAULT_MIN_WORD_SIZE, 
+            : this(matchVersion, input, hyphenator, dictionary, DEFAULT_MIN_WORD_SIZE,
                   DEFAULT_MIN_SUBWORD_SIZE, DEFAULT_MAX_SUBWORD_SIZE, false)
         {
         }
@@ -88,10 +88,10 @@ namespace Lucene.Net.Analysis.Compound
         ///          only subwords shorter than this get to the output stream </param>
         /// <param name="onlyLongestMatch">
         ///          Add only the longest matching subword to the stream </param>
-        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, 
-            HyphenationTree hyphenator, CharArraySet dictionary, int minWordSize, int minSubwordSize, 
+        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input,
+            HyphenationTree hyphenator, CharArraySet dictionary, int minWordSize, int minSubwordSize,
             int maxSubwordSize, bool onlyLongestMatch)
-            : base(matchVersion, input, dictionary, minWordSize, minSubwordSize, maxSubwordSize, 
+            : base(matchVersion, input, dictionary, minWordSize, minSubwordSize, maxSubwordSize,
                   onlyLongestMatch)
         {
             this.hyphenator = hyphenator;
@@ -103,10 +103,10 @@ namespace Lucene.Net.Analysis.Compound
         /// Calls <see cref="HyphenationCompoundWordTokenFilter.HyphenationCompoundWordTokenFilter(LuceneVersion, TokenStream, HyphenationTree, CharArraySet, int, int, int, bool)"/>
         /// </para>
         /// </summary>
-        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, 
-            HyphenationTree hyphenator, int minWordSize, int minSubwordSize, 
+        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input,
+            HyphenationTree hyphenator, int minWordSize, int minSubwordSize,
             int maxSubwordSize)
-            : this(matchVersion, input, hyphenator, null, minWordSize, minSubwordSize, 
+            : this(matchVersion, input, hyphenator, null, minWordSize, minSubwordSize,
                   maxSubwordSize, false)
         {
         }
@@ -117,9 +117,9 @@ namespace Lucene.Net.Analysis.Compound
         /// Calls <see cref="HyphenationCompoundWordTokenFilter.HyphenationCompoundWordTokenFilter(LuceneVersion, TokenStream, HyphenationTree, int, int, int)"/>
         /// </para>
         /// </summary>
-        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, 
+        public HyphenationCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input,
             HyphenationTree hyphenator)
-            : this(matchVersion, input, hyphenator, DEFAULT_MIN_WORD_SIZE, DEFAULT_MIN_SUBWORD_SIZE, 
+            : this(matchVersion, input, hyphenator, DEFAULT_MIN_WORD_SIZE, DEFAULT_MIN_SUBWORD_SIZE,
                   DEFAULT_MAX_SUBWORD_SIZE)
         {
         }

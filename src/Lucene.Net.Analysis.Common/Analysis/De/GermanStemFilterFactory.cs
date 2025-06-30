@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.De
     {
         /// <summary>
         /// Creates a new <see cref="GermanStemFilterFactory"/> </summary>
-        public GermanStemFilterFactory(IDictionary<string, string> args) 
+        public GermanStemFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)

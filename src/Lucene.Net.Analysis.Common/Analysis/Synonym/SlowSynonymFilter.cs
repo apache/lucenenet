@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Synonym
         private readonly SlowSynonymMap map; // Map<String, SynonymMap>
         private IEnumerator<AttributeSource> replacement; // iterator over generated tokens
 
-        public SlowSynonymFilter(TokenStream @in, SlowSynonymMap map) 
+        public SlowSynonymFilter(TokenStream @in, SlowSynonymMap map)
             : base(@in)
         {
             if (map is null)

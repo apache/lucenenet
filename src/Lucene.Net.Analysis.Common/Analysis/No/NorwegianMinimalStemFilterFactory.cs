@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.No
 
         /// <summary>
         /// Creates a new <see cref="NorwegianMinimalStemFilterFactory"/> </summary>
-        public NorwegianMinimalStemFilterFactory(IDictionary<string, string> args) 
+        public NorwegianMinimalStemFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             string variant = Get(args, "variant");

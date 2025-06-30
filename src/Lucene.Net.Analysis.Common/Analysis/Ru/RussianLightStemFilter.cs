@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Ru
         private readonly ICharTermAttribute termAtt;
         private readonly IKeywordAttribute keywordAttr;
 
-        public RussianLightStemFilter(TokenStream input) 
+        public RussianLightStemFilter(TokenStream input)
             : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();

@@ -68,8 +68,8 @@ namespace Lucene.Net.Analysis.Shingle
         ///        Note that if outputUnigrams==true, then unigrams are always output,
         ///        regardless of whether any shingles are available. </param>
         /// <param name="fillerToken"> filler token to use when positionIncrement is more than 1 </param>
-        public ShingleAnalyzerWrapper(Analyzer @delegate, int minShingleSize, int maxShingleSize, 
-            string tokenSeparator, bool outputUnigrams, bool outputUnigramsIfNoShingles, string fillerToken) 
+        public ShingleAnalyzerWrapper(Analyzer @delegate, int minShingleSize, int maxShingleSize,
+            string tokenSeparator, bool outputUnigrams, bool outputUnigramsIfNoShingles, string fillerToken)
             : base(@delegate.Strategy)
         {
             this.@delegate = @delegate;

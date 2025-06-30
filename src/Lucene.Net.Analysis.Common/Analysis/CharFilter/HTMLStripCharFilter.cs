@@ -31320,7 +31320,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     }
 
                 }
-                zzForActionBreak:
+            zzForActionBreak:
 
 
                 // store back cached position

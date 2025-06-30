@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.No
         /// <param name="input"> the source <see cref="TokenStream"/> to filter </param>
         /// <param name="flags"> set to <see cref="NorwegianStandard.BOKMAAL"/>, 
         ///                     <see cref="NorwegianStandard.NYNORSK"/>, or both. </param>
-        public NorwegianLightStemFilter(TokenStream input, NorwegianStandard flags) 
+        public NorwegianLightStemFilter(TokenStream input, NorwegianStandard flags)
             : base(input)
         {
             stemmer = new NorwegianLightStemmer(flags);

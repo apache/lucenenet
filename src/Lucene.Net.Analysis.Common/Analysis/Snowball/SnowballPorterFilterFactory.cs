@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Snowball
 
         public virtual void Inform(IResourceLoader loader)
         {
-            string className = typeof(SnowballProgram).Namespace + ".Ext." + 
+            string className = typeof(SnowballProgram).Namespace + ".Ext." +
                 language + "Stemmer, " + this.GetType().Assembly.GetName().Name;
             stemClass = Type.GetType(className);
 

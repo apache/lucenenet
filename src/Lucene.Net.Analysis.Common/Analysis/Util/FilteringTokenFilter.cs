@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
@@ -154,7 +154,7 @@ namespace Lucene.Net.Analysis.Util
             CheckPositionIncrement(m_version, enable);
             this.enablePositionIncrements = enable;
         }
-        
+
 
         public override void End()
         {

@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <seealso cref="ScandinavianFoldingFilter"/>
     public sealed class ScandinavianNormalizationFilter : TokenFilter
     {
-        public ScandinavianNormalizationFilter(TokenStream input) 
+        public ScandinavianNormalizationFilter(TokenStream input)
             : base(input)
         {
             charTermAttribute = AddAttribute<ICharTermAttribute>();

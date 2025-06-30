@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Synonym
             public static readonly Regex TOKENIZER_FACTORY_REPLACEMENT_PATTERN = new Regex("^tokenizerFactory\\.", RegexOptions.Compiled);
         }
 
-        public SlowSynonymFilterFactory(IDictionary<string, string> args) 
+        public SlowSynonymFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             synonyms = Require(args, "synonyms");

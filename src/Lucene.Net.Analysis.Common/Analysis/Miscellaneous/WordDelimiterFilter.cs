@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -229,9 +229,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             this.flags = configurationFlags;
             this.protWords = protWords;
-            this.iterator = new WordDelimiterIterator(charTypeTable, 
-                Has(WordDelimiterFlags.SPLIT_ON_CASE_CHANGE), 
-                Has(WordDelimiterFlags.SPLIT_ON_NUMERICS), 
+            this.iterator = new WordDelimiterIterator(charTypeTable,
+                Has(WordDelimiterFlags.SPLIT_ON_CASE_CHANGE),
+                Has(WordDelimiterFlags.SPLIT_ON_NUMERICS),
                 Has(WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE));
         }
 
@@ -530,7 +530,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> <c>true</c> if a word/number part should be generated, <c>false</c> otherwise </returns>
         private bool ShouldGenerateParts(int wordType)
         {
-            return (Has(WordDelimiterFlags.GENERATE_WORD_PARTS) && IsAlpha(wordType)) || 
+            return (Has(WordDelimiterFlags.GENERATE_WORD_PARTS) && IsAlpha(wordType)) ||
                 (Has(WordDelimiterFlags.GENERATE_NUMBER_PARTS) && IsDigit(wordType));
         }
 

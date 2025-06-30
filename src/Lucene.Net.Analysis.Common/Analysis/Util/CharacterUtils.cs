@@ -264,7 +264,7 @@ namespace Lucene.Net.Analysis.Util
                 throw new ArgumentOutOfRangeException(nameof(srcLen), "srcLen must be >= 0");
             }
             int codePointCount = 0;
-            for (int i = 0; i < srcLen; )
+            for (int i = 0; i < srcLen;)
             {
                 int cp = CodePointAt(src, srcOff + i, srcOff + srcLen);
                 int charCount = Character.CharCount(cp);
@@ -489,7 +489,7 @@ namespace Lucene.Net.Analysis.Util
                     throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must be less than limit.");
                 }
                 // LUCENENET specific - added array bound check
-                if (offset < 0  || offset >= chars.Length)
+                if (offset < 0 || offset >= chars.Length)
                     throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} must not be negative and be less than chars.Length.");
 
                 return chars[offset];

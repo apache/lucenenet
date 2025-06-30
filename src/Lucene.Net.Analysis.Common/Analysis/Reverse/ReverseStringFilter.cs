@@ -1,4 +1,4 @@
-// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Reverse
         /// </summary>
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="in"> <see cref="TokenStream"/> to filter </param>
-        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in) 
+        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in)
             : this(matchVersion, @in, NOMARKER)
         {
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Reverse
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         /// <param name="marker"> A character used to mark reversed tokens </param>
-        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in, char marker) 
+        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in, char marker)
             : base(@in)
         {
             this.matchVersion = matchVersion;
