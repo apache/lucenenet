@@ -156,19 +156,19 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /*
         * Constructors of various flavors follow.
         */
-        
+
         /// <summary>No arg constructor. </summary>
         public TokenMgrError()
         {
         }
-        
+
         /// <summary>Constructor with message and reason. </summary>
         public TokenMgrError(string message, int reason)
             : base(message)
         {
             errorCode = reason;
         }
-        
+
         /// <summary>Full Constructor. </summary>
         public TokenMgrError(bool EOFSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar, int reason)
             : this(LexicalError(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason)

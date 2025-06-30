@@ -73,7 +73,7 @@ namespace Lucene.Net.QueryParsers.Ext
         private readonly string defaultField;
         private readonly Extensions extensions;
 
-  
+
         /// <summary>
         ///  Default empty extensions instance
         /// </summary>

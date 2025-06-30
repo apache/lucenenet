@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public override Search.Query Rewrite(IndexReader reader)
         {
             var luceneSubQueries = new JCG.List<Search.Query>();
-            m_srndQuery.VisitMatchingTerms(reader, m_fieldName, 
+            m_srndQuery.VisitMatchingTerms(reader, m_fieldName,
                 new SimpleTermRewriteMatchingTermVisitor(luceneSubQueries, m_qf));
             return (luceneSubQueries.Count == 0) ? SrndQuery.TheEmptyLcnQuery
                 : (luceneSubQueries.Count == 1) ? luceneSubQueries[0]

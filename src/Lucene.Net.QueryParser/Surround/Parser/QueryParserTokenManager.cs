@@ -593,7 +593,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         {
             int i;
             jjround = 0x80000001;
-            for (i = 38; i-- > 0; )
+            for (i = 38; i-- > 0;)
                 jjrounds[i] = 0x80000000;
         }
 

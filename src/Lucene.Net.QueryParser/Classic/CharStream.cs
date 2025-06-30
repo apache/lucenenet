@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 
 namespace Lucene.Net.QueryParsers.Classic
@@ -119,13 +119,13 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </code>
         /// </summary>
         char[] GetSuffix(int len);
-        
+
         /// <summary> 
         /// The lexer calls this function to indicate that it is done with the stream
         /// and hence implementations can free any resources held by this class.
         /// Again, the body of this function can be just empty and it will not
         /// affect the lexer's operation.
         /// </summary>
-        void  Done();
+        void Done();
     }
 }
