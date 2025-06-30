@@ -223,6 +223,11 @@ insert_final_newline = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
+# Exclude .idea files (these are auto-generated)
+[.idea/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
 # For now, exclude entire websites directory (maybe we can fix these later)
 [websites/**]
 trim_trailing_whitespace = unset
