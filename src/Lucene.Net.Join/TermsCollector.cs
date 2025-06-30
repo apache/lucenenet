@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Join
         /// <returns>A <see cref="TermsCollector"/> instance.</returns>
         internal static TermsCollector Create(string field, bool multipleValuesPerDocument)
         {
-            return multipleValuesPerDocument ? (TermsCollector) new MV(field) : new SV(field);
+            return multipleValuesPerDocument ? (TermsCollector)new MV(field) : new SV(field);
         }
 
         // impl that works with multiple values per document
@@ -90,11 +90,11 @@ namespace Lucene.Net.Search.Join
             private readonly BytesRef _scratch = new BytesRef();
             private SortedSetDocValues _docTermOrds;
 
-            internal MV(string field) 
+            internal MV(string field)
                 : base(field)
             {
             }
-            
+
             public override void Collect(int doc)
             {
                 _docTermOrds.SetDocument(doc);
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.Join
                     _collectorTerms.Add(_scratch);
                 }
             }
-            
+
             public override void SetNextReader(AtomicReaderContext context)
             {
                 _docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, _field);
@@ -118,17 +118,17 @@ namespace Lucene.Net.Search.Join
             private readonly BytesRef _spare = new BytesRef();
             private BinaryDocValues _fromDocTerms;
 
-            internal SV(string field) 
+            internal SV(string field)
                 : base(field)
             {
             }
-            
+
             public override void Collect(int doc)
             {
                 _fromDocTerms.Get(doc, _spare);
                 _collectorTerms.Add(_spare);
             }
-            
+
             public override void SetNextReader(AtomicReaderContext context)
             {
                 _fromDocTerms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, _field, false);

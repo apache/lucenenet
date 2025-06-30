@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Join
         /// <param name="reverse"> Whether natural order should be reversed on the nested / child level. </param>
         /// <param name="parentFilter"> <see cref="Filter"/> that identifies the parent documents. </param>
         /// <param name="childFilter"> <see cref="Filter"/> that defines which child documents participates in sorting. </param>
-        public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, Filter parentFilter, Filter childFilter) 
+        public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, Filter parentFilter, Filter childFilter)
             : base(field, type, reverse)
         {
             this.order = reverse;
@@ -56,14 +56,14 @@ namespace Lucene.Net.Search.Join
         /// <param name="order"> Whether natural order should be reversed on the parent level. </param>
         /// <param name="parentFilter"> <see cref="Filter"/> that identifies the parent documents. </param>
         /// <param name="childFilter"> <see cref="Filter"/> that defines which child documents participates in sorting. </param>
-        public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, bool order, Filter parentFilter, Filter childFilter) 
+        public ToParentBlockJoinSortField(string field, SortFieldType type, bool reverse, bool order, Filter parentFilter, Filter childFilter)
             : base(field, type, reverse)
         {
             this.order = order;
             this.parentFilter = parentFilter;
             this.childFilter = childFilter;
         }
-        
+
         public override FieldComparer GetComparer(int numHits, int sortPos)
         {
             var wrappedFieldComparer = base.GetComparer(numHits + 1, sortPos);
