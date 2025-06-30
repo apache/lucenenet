@@ -51,6 +51,9 @@ indent_size = 2
 [*.xml]
 indent_size = 2
 
+[*.sln]
+indent_style = tab
+
 # ========================================
 # C# files
 # ========================================
@@ -169,3 +172,46 @@ insert_final_newline = unset
 [lib/**]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
+
+# Exclude all files under /.build/psake (3rd party code)
+[.build/psake/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+# Exclude CHANGES.txt (we don't care about formatting here)
+[CHANGES.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+# Exclude *.snk (we don't care about formatting here)
+[*.snk]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+# Exclude package.md (these are auto-generated)
+[package.md]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+# Exclude overview.md (these are auto-generated)
+[overview.md]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+# Exclude *.rslp (copied directly from Lucene)
+[*.rslp]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+# Exclude stopwords.txt (copied directly from Lucene)
+[stopwords.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+# Exclude Snowball stopwords (copied directly from Lucene)
+[**/Snowball/*_stop.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+
+# Exclude Phonetic language bm files (Copied directly from commons-codec)
+[**/Language/**/*.txt]
