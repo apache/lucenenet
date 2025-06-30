@@ -24,7 +24,7 @@ namespace Lucene.Net.Cli
         public SegmentOption(bool allowMultiple = true)
             : base("-s|--segment <SEGMENT>", allowMultiple ? CommandOptionType.MultipleValue : CommandOptionType.SingleValue)
         {
-            Description = Resources.Strings.SegmentsOptionDescription + 
+            Description = Resources.Strings.SegmentsOptionDescription +
                 (allowMultiple ? " " + Resources.Strings.SegmentsOptionMultipleDescription : "");
         }
     }

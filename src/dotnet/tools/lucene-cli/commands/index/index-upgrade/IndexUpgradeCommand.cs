@@ -35,11 +35,11 @@ namespace Lucene.Net.Cli
 
                 this.Arguments.Add(new IndexDirectoryArgument());
                 this.DeletePriorCommitsOption = this.Option("-d|--delete-prior-commits",
-                    FromResource("DeleteDescription"), 
+                    FromResource("DeleteDescription"),
                     CommandOptionType.NoValue);
                 this.Options.Add(new VerboseOption());
                 this.Options.Add(new DirectoryTypeOption());
-                
+
                 this.OnExecute(() => new IndexUpgradeCommand().Run(this));
             }
 
@@ -55,7 +55,7 @@ namespace Lucene.Net.Cli
 
             var args = new List<string>() { cmd.GetArgument<IndexDirectoryArgument>().Value };
             var input = cmd as Configuration;
-            
+
             if (input.DeletePriorCommitsOption != null && input.DeletePriorCommitsOption.HasValue())
             {
                 args.Add("-delete-prior-commits");

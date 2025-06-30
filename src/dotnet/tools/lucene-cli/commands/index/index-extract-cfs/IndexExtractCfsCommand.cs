@@ -34,7 +34,7 @@ namespace Lucene.Net.Cli
 
                 this.Argument("<CFS_FILE_NAME>", FromResource("CFSFileNameDescription"));
                 this.Options.Add(new DirectoryTypeOption());
-                
+
                 this.OnExecute(() => new IndexListCfsCommand(extract: true).Run(this));
             }
         }

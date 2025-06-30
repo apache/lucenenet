@@ -141,7 +141,7 @@ namespace Lucene.Net.Cli.SourceCode
                 if (this.fileEnumerator.MoveNext())
                 {
                     currentFile = new SourceCodeSectionReader(new StreamReader(
-                        typeof(Program).FindAndGetManifestResourceStream(this.fileEnumerator.Current), 
+                        typeof(Program).FindAndGetManifestResourceStream(this.fileEnumerator.Current),
                         SourceCodeSectionParser.ENCODING));
                     return true;
                 }
