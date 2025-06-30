@@ -184,7 +184,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             foreach (QueryText pathelement in GetPathElements(1))
             {
-                string value = escaper.Escape(new StringCharSequence(pathelement.Value), 
+                string value = escaper.Escape(new StringCharSequence(pathelement.Value),
                     CultureInfo.InvariantCulture, EscapeQuerySyntaxType.STRING).ToString();
                 path.Append("/\"").Append(value).Append("\"");
             }

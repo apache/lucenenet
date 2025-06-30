@@ -200,12 +200,12 @@ namespace Lucene.Net.QueryParsers.Classic
             retval += expected.ToString();
             return retval;
         }
-        
+
         /// <summary> 
         /// The end of line string for this machine.
         /// </summary>
         protected static string eol = Environment.NewLine;
-        
+
         /// <summary> 
         /// Used to convert raw characters to their escaped version
         /// when these raw version cannot be used as part of an ASCII
@@ -219,43 +219,43 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 switch (str[i])
                 {
-                    
-                    case (char) (0): 
+
+                    case (char)(0):
                         continue;
-                    
-                    case '\b': 
+
+                    case '\b':
                         retval.Append("\\b");
                         continue;
-                    
-                    case '\t': 
+
+                    case '\t':
                         retval.Append("\\t");
                         continue;
-                    
-                    case '\n': 
+
+                    case '\n':
                         retval.Append("\\n");
                         continue;
-                    
-                    case '\f': 
+
+                    case '\f':
                         retval.Append("\\f");
                         continue;
-                    
-                    case '\r': 
+
+                    case '\r':
                         retval.Append("\\r");
                         continue;
-                    
-                    case '\"': 
+
+                    case '\"':
                         retval.Append("\\\"");
                         continue;
-                    
-                    case '\'': 
+
+                    case '\'':
                         retval.Append("\\\'");
                         continue;
-                    
-                    case '\\': 
+
+                    case '\\':
                         retval.Append("\\\\");
                         continue;
-                    
-                    default: 
+
+                    default:
                         if ((ch = str[i]) < 0x20 || ch > 0x7e)
                         {
                             string s = "0000" + Convert.ToString(ch, 16);
@@ -266,7 +266,7 @@ namespace Lucene.Net.QueryParsers.Classic
                             retval.Append(ch);
                         }
                         continue;
-                    
+
                 }
             }
             return retval.ToString();

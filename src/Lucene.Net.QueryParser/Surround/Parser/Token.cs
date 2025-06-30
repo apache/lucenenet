@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// stored in the file ...Constants.java.
         /// </summary>
         public int Kind { get; set; }
-        
+
         /// <summary>The line number of the first character of this Token. </summary>
         public int BeginLine { get; set; }
         /// <summary>The column number of the first character of this Token. </summary>
@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         public Token()
         {
         }
-        
+
         /// <summary> 
         /// Constructs a new token for the specified Image.
         /// </summary>
@@ -96,7 +96,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             : this(kind, null)
         {
         }
-        
+
         /// <summary> 
         /// Constructs a new token for the specified Image and Kind.
         /// </summary>
@@ -105,7 +105,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             this.Kind = kind;
             this.Image = image;
         }
-        
+
         /// <summary> 
         /// Returns the image.
         /// </summary>
@@ -113,7 +113,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         {
             return Image;
         }
-        
+
         /// <summary> 
         /// Returns a new Token object, by default. However, if you want, you
         /// can create and return subclass objects based on the value of ofKind.
@@ -130,10 +130,10 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         {
             switch (ofKind)
             {
-                default:  return new Token(ofKind, image);
+                default: return new Token(ofKind, image);
             }
         }
-        
+
         public static Token NewToken(int ofKind)
         {
             return NewToken(ofKind, null);

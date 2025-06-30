@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Classic
 #endif
     public class Token
     {
-        
+
         /// <summary> 
         /// An integer that describes the kind of this token.  This numbering
         /// system is determined by JavaCCParser, and a table of these numbers is
@@ -89,7 +89,7 @@ namespace Lucene.Net.QueryParsers.Classic
         public Token()
         {
         }
-        
+
         /// <summary> 
         /// Constructs a new token for the specified Image.
         /// </summary>
@@ -97,7 +97,7 @@ namespace Lucene.Net.QueryParsers.Classic
             : this(kind, null)
         {
         }
-        
+
         /// <summary> 
         /// Constructs a new token for the specified Image and Kind.
         /// </summary>
@@ -106,7 +106,7 @@ namespace Lucene.Net.QueryParsers.Classic
             this.Kind = kind;
             this.Image = image;
         }
-        
+
         /// <summary> 
         /// Returns the image.
         /// </summary>
@@ -114,7 +114,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             return Image;
         }
-        
+
         /// <summary> 
         /// Returns a new Token object, by default. However, if you want, you
         /// can create and return subclass objects based on the value of ofKind.
@@ -131,10 +131,10 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             switch (ofKind)
             {
-                default:  return new Token(ofKind, image);
+                default: return new Token(ofKind, image);
             }
         }
-        
+
         public static Token NewToken(int ofKind)
         {
             return NewToken(ofKind, null);
