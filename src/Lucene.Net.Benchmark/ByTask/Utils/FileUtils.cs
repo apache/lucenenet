@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         /// <param name="dir">File or directory.</param>
         /// <returns><c>true</c> on success, <c>false</c> if no or part of files have been deleted.</returns>
         /// <exception cref="IOException">If there is a low-level I/O error.</exception>
-        public static bool FullyDelete(DirectoryInfo dir) 
+        public static bool FullyDelete(DirectoryInfo dir)
         {
             try
             {

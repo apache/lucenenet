@@ -40,7 +40,7 @@ namespace Sax
         /// Default constructor.
         /// </summary>
         public SAXNotRecognizedException()
-            : base() 
+            : base()
         {
         }
 

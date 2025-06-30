@@ -197,12 +197,12 @@ namespace Lucene.Net.Benchmarks.Quality
         {
             s = (s ?? "");
             int n = Math.Max(minLen, s.Length);
-            return (s + padd).Substring(0, n-0);
+            return (s + padd).Substring(0, n - 0);
         }
         private static string FracFormat(string frac) // LUCENENET: CA1822: Mark members as static
         {
             int k = frac.IndexOf('.');
-            string s1 = padd + frac.Substring(0, k-0);
+            string s1 = padd + frac.Substring(0, k - 0);
             int n = Math.Max(k, 6);
             s1 = s1.Substring(s1.Length - n);
             return s1 + frac.Substring(k);

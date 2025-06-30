@@ -65,7 +65,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             {
                 extensionToType.TryGetValue(fileName.Substring(idx).ToLowerInvariant(), out type);
             }
-            return type ?? FileType.PLAIN ;
+            return type ?? FileType.PLAIN;
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 case FileType.BZIP2:
                     return new BZip2InputStream(input);
                 case FileType.GZIP:
-                    return new GZipStream(input, CompressionMode.Decompress); 
+                    return new GZipStream(input, CompressionMode.Decompress);
                 default:
                     return input;
             }

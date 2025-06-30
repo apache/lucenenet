@@ -468,7 +468,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             }
                     }
                 }
-                WHILE_LOOP_BREAK: { /* LUCENENET: intentionally empty */ }
+            WHILE_LOOP_BREAK: { /* LUCENENET: intentionally empty */ }
 
                 if (!argMap.ContainsKey("luceneMatchVersion"))
                 {

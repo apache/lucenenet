@@ -46,7 +46,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </remarks>
     public abstract class ReadTask : PerfTask
     {
-        #nullable enable
+#nullable enable
         private readonly IQueryMaker? queryMaker;
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
@@ -70,7 +70,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             this.queryMaker = queryMaker;
         }
-        #nullable restore
+#nullable restore
 
         public override int DoLogic()
         {

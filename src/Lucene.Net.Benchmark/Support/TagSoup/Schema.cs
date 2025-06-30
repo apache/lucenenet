@@ -41,7 +41,7 @@ namespace TagSoup
         private string theURI = "";
         private string thePrefix = "";
         private ElementType theRoot;
-        
+
         /// <summary>
         /// Add or replace an element type for this schema.
         /// </summary>
@@ -142,7 +142,7 @@ namespace TagSoup
             if (theEntities.TryGetValue(name, out int value))
             {
                 return value;
-            }    
+            }
             return 0;
         }
 
