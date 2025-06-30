@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Icu
             {
                 UnicodeSet sourceSet = transform.GetSourceSet();
                 if (sourceSet != null && sourceSet.Any())
-                    transform.Filter=sourceSet;
+                    transform.Filter = sourceSet;
             }
         }
 

@@ -2,7 +2,7 @@
 #if FEATURE_BREAKITERATOR
 using ICU4N.Support.Text;
 using Lucene.Net.Support;
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Analysis.Util
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Util
         public override char Current => (index == limit) ? Done : array[index];
 
         protected abstract char JreBugWorkaround(char ch);
- 
+
 
         public override char First()
         {
