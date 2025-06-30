@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Highlight
                 // specialized since rewriting would change the result query 
                 // this query is TermContext sensitive.
                 ExtractWeightedTerms(terms, query);
-            } 
+            }
             else if (query is DisjunctionMaxQuery disjunctionMaxQuery)
             {
                 foreach (var q in disjunctionMaxQuery)
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search.Highlight
                     {
                         return;
                     }
-                    MultiTermQuery copy = (MultiTermQuery) query.Clone();
+                    MultiTermQuery copy = (MultiTermQuery)query.Clone();
                     copy.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
                     origQuery = copy;
                 }
@@ -382,7 +382,7 @@ namespace Lucene.Net.Search.Highlight
                 tokenStream.Reset();
                 IndexSearcher searcher = indexer.CreateSearcher();
                 // MEM index has only atomic ctx
-                var reader = ((AtomicReaderContext) searcher.TopReaderContext).AtomicReader;
+                var reader = ((AtomicReaderContext)searcher.TopReaderContext).AtomicReader;
                 internalReader = new DelegatingAtomicReader(reader);
             }
             return internalReader.AtomicContext;
@@ -430,7 +430,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 return base.GetBinaryDocValues(FIELD_NAME);
             }
-           
+
             public override SortedDocValues GetSortedDocValues(string field)
             {
                 return base.GetSortedDocValues(FIELD_NAME);

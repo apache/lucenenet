@@ -238,7 +238,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public class WeightedPhraseInfo : IComparable<WeightedPhraseInfo>, IFormattable // LUCENENET specific - implemented IFormattable for floating point representations
         {
             private readonly IList<Toffs> termsOffsets;   // usually termsOffsets.size() == 1, // LUCENENET: marked readonly
-                                                         // but if position-gap > 1 and slop > 0 then size() could be greater than 1
+                                                          // but if position-gap > 1 and slop > 0 then size() could be greater than 1
             private readonly float boost;  // query boost // LUCENENET: marked readonly
             private readonly int seqnum; // LUCENENET: marked readonly
 
