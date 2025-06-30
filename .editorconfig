@@ -197,6 +197,13 @@ insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
+# Exclude LICENSE.txt (we should preserve original formatting here)
+[**/LICENSE.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
 # Exclude *.snk (we don't care about formatting here)
 [**/*.snk]
 trim_trailing_whitespace = unset
