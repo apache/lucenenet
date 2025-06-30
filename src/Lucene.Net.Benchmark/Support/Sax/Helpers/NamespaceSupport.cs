@@ -498,7 +498,7 @@ namespace Sax.Helpers
         ////////////////////////////////////////////////////////////////////
         // Internal state.
         ////////////////////////////////////////////////////////////////////
-        
+
         private Context[] contexts;
         private Context currentContext;
         private int contextPos;

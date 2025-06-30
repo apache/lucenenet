@@ -247,7 +247,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// the header - any header - of the lines file.
     /// It is less efficient than <see cref="SimpleLineParser"/> but more powerful.
     /// </summary>
-    public class HeaderLineParser : LineParser 
+    public class HeaderLineParser : LineParser
     {
         private enum FieldName { NAME, TITLE, DATE, BODY, PROP }
         private readonly FieldName[] posToF;

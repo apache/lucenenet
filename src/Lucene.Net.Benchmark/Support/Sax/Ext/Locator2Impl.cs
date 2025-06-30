@@ -58,7 +58,7 @@ namespace Sax.Ext
         /// Gets the current value of the version property.
         /// </summary>
         public string XMLVersion
-        { 
+        {
             get => version;
             set => version = value;
         }
@@ -67,7 +67,7 @@ namespace Sax.Ext
         /// Gets the current value of the encoding property.
         /// </summary>
         public Encoding Encoding
-        { 
+        {
             get => encoding;
             set => encoding = value;
         }
