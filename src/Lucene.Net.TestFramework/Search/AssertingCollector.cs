@@ -1,4 +1,4 @@
-using Lucene.Net.Diagnostics;
+﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
 
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         {
             if (inOrder || !AcceptsDocsOutOfOrder)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(doc > lastCollected,"Out of order : {0} {1}", lastCollected, doc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(doc > lastCollected, "Out of order : {0} {1}", lastCollected, doc);
             }
             @in.Collect(doc);
             lastCollected = doc;

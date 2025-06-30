@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs.Lucene42;
+﻿using Lucene.Net.Codecs.Lucene42;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using static Lucene.Net.Codecs.Asserting.AssertingDocValuesFormat;

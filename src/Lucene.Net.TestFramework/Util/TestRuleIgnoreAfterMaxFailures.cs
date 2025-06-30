@@ -1,4 +1,4 @@
-#if TESTFRAMEWORK
+﻿#if TESTFRAMEWORK
 // LUCENENET NOTE: This is incomplete
 
 namespace Lucene.Net.Util

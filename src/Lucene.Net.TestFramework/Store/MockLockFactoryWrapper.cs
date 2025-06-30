@@ -1,4 +1,4 @@
-namespace Lucene.Net.Store
+﻿namespace Lucene.Net.Store
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

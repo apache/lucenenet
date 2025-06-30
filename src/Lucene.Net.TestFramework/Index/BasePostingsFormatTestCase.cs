@@ -714,7 +714,7 @@ namespace Lucene.Net.Index
             bool doCheckPositions = allowPositions && (alwaysTestMax || Random.Next(3) <= 2);
 
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
-            bool allowOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >=0 &&
+            bool allowOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0 &&
                 IndexOptionsComparer.Default.Compare(maxTestOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool doCheckOffsets = allowOffsets && (alwaysTestMax || Random.Next(3) <= 2);
 
@@ -1362,7 +1362,7 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                var ft = new FieldType { IndexOptions = opts, IsIndexed = true, OmitNorms = true}.Freeze();
+                var ft = new FieldType { IndexOptions = opts, IsIndexed = true, OmitNorms = true }.Freeze();
                 int numFields = Random.Next(5);
                 for (int j = 0; j < numFields; ++j)
                 {
