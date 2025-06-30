@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.VectorHighlight
             {
                 private readonly string text;  // unnecessary member, just exists for debugging purpose
                 private readonly IList<Toffs> termsOffsets;   // usually termsOffsets.size() == 1,
-                                                             // but if position-gap > 1 and slop > 0 then size() could be greater than 1
+                                                              // but if position-gap > 1 and slop > 0 then size() could be greater than 1
                 private readonly int seqnum;
                 private readonly float boost; // used for scoring split WeightedPhraseInfos.
 

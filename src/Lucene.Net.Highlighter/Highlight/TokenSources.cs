@@ -240,7 +240,7 @@ namespace Lucene.Net.Search.Highlight
                     {
                         throw new ArgumentException("Required TermVector Offset information was not found");
                     }
-                    Token token = new Token(term,dpEnum.StartOffset, dpEnum.EndOffset);
+                    Token token = new Token(term, dpEnum.StartOffset, dpEnum.EndOffset);
                     if (hasPayloads)
                     {
                         // Must make a deep copy of the returned payload,
@@ -303,16 +303,19 @@ namespace Lucene.Net.Search.Highlight
         public static TokenStream GetTokenStreamWithOffsets(IndexReader reader, int docId, string field)
         {
             Fields vectors = reader.GetTermVectors(docId);
-            if (vectors is null) {
+            if (vectors is null)
+            {
                 return null;
             }
 
             Terms vector = vectors.GetTerms(field);
-            if (vector is null) {
+            if (vector is null)
+            {
                 return null;
             }
 
-            if (!vector.HasPositions || !vector.HasOffsets) {
+            if (!vector.HasPositions || !vector.HasOffsets)
+            {
                 return null;
             }
 
