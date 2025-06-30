@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Join
 
             public override float GetValueForNormalization()
             {
-                return _parentWeight.GetValueForNormalization() * _joinQuery.Boost*_joinQuery.Boost;
+                return _parentWeight.GetValueForNormalization() * _joinQuery.Boost * _joinQuery.Boost;
             }
 
             public override void Normalize(float norm, float topLevelBoost)
@@ -254,7 +254,7 @@ namespace Lucene.Net.Search.Join
                     }
                     //System.out.println("  " + childDoc);
                     return _childDoc;
-                    nextChildDocContinue: {/* LUCENENET: intentionally blank */}
+                nextChildDocContinue: {/* LUCENENET: intentionally blank */}
                 }
             }
 
@@ -374,16 +374,16 @@ namespace Lucene.Net.Search.Join
             unchecked
             {
                 int hashCode = base.GetHashCode();
-                hashCode = (hashCode*397) ^ (_origParentQuery != null ? _origParentQuery.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ _doScores.GetHashCode();
-                hashCode = (hashCode*397) ^ (_parentsFilter != null ? _parentsFilter.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_origParentQuery != null ? _origParentQuery.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ _doScores.GetHashCode();
+                hashCode = (hashCode * 397) ^ (_parentsFilter != null ? _parentsFilter.GetHashCode() : 0);
                 return hashCode;
             }
         }
 
         public override object Clone()
         {
-            return new ToChildBlockJoinQuery((Query) _origParentQuery.Clone(), _parentsFilter, _doScores);
+            return new ToChildBlockJoinQuery((Query)_origParentQuery.Clone(), _parentsFilter, _doScores);
         }
     }
 }

@@ -117,11 +117,11 @@ namespace Lucene.Net.Search.Join
             private readonly BytesRef _spare = new BytesRef();
             private BinaryDocValues _fromDocTerms;
 
-            internal SV(string field, ScoreMode scoreMode) 
+            internal SV(string field, ScoreMode scoreMode)
                 : base(field, scoreMode)
             {
             }
-            
+
             public override void Collect(int doc)
             {
                 _fromDocTerms.Get(doc, _spare);
@@ -160,7 +160,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public override void SetNextReader(AtomicReaderContext context)
             {
                 _fromDocTerms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, _field, false);
@@ -170,11 +170,11 @@ namespace Lucene.Net.Search.Join
             {
                 private int[] _scoreCounts = new int[INITIAL_ARRAY_SIZE];
 
-                internal Avg(string field) 
+                internal Avg(string field)
                     : base(field, ScoreMode.Avg)
                 {
                 }
-                
+
                 public override void Collect(int doc)
                 {
                     _fromDocTerms.Get(doc, _spare);
@@ -230,11 +230,11 @@ namespace Lucene.Net.Search.Join
             private SortedSetDocValues _fromDocTermOrds;
             private readonly BytesRef _scratch = new BytesRef();
 
-            internal MV(string field, ScoreMode scoreMode) 
+            internal MV(string field, ScoreMode scoreMode)
                 : base(field, scoreMode)
             {
             }
-            
+
             public override void Collect(int doc)
             {
                 _fromDocTermOrds.SetDocument(doc);
@@ -277,11 +277,11 @@ namespace Lucene.Net.Search.Join
             {
                 private int[] _scoreCounts = new int[INITIAL_ARRAY_SIZE];
 
-                internal Avg(string field) 
+                internal Avg(string field)
                     : base(field, ScoreMode.Avg)
                 {
                 }
-                
+
                 public override void Collect(int doc)
                 {
                     _fromDocTermOrds.SetDocument(doc);

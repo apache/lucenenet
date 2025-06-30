@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Join
         internal float _score;
         internal int doc = -1;
 
-        public FakeScorer() 
+        public FakeScorer()
             : base(null)
         {
         }
