@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Phonetic
 
         public override bool IncrementToken()
         {
-            for (;;)
+            for (; ; )
             {
                 if (remainingTokens.TryDequeue(out State first))
                 {
