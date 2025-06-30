@@ -308,7 +308,7 @@ namespace Lucene.Net.Util
             }
 
             destination.AppendLine("Caller Details:");
-            if (scope != null) 
+            if (scope != null)
             {
                 destination.Append("Scope: ");
                 destination.AppendLine(scope);

@@ -73,7 +73,7 @@ namespace Lucene.Net.Util
                 if (stackCount.GetAndIncrement() == 0)
                 {
                     // Set up for assembly
-                
+
                     // This is where a global application setup can be done that includes a randomized context,
                     // therefore LuceneTestCase.Random calls are allowed here and are repeatable.
                     initializer.DoTestFrameworkSetUp();

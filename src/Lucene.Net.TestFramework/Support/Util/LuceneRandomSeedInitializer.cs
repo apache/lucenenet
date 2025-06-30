@@ -70,7 +70,7 @@ namespace Lucene.Net.Util
             }
 
             int colonIndex = seedAsString.IndexOf(':');
-            if (colonIndex  != -1)
+            if (colonIndex != -1)
             {
                 if (!J2N.Numerics.Int64.TryParse(seedAsString.AsSpan(0, colonIndex), radix: 16, out seed))
                 {

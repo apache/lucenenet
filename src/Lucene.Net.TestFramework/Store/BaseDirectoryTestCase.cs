@@ -451,7 +451,8 @@ namespace Lucene.Net.Store
             Directory dir = GetDirectory(CreateTempDir("testDetectClose"));
             dir.Dispose();
 
-            Assert.Throws<ObjectDisposedException>(() => {
+            Assert.Throws<ObjectDisposedException>(() =>
+            {
                 dir.CreateOutput("test", NewIOContext(Random));
             });
         }

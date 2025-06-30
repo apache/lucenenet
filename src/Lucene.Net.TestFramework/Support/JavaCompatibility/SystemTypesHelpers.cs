@@ -217,7 +217,7 @@ namespace Lucene.Net
 
         public static T[] clone<T>(this T[] e)
         {
-            return (T[]) e.Clone();
+            return (T[])e.Clone();
         }
 
         public static void add<T>(this ISet<T> s, T item)

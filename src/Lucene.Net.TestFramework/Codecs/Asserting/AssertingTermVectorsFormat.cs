@@ -1,4 +1,4 @@
-using Lucene.Net.Codecs.Lucene40;
+﻿using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;

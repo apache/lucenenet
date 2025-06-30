@@ -182,7 +182,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                for (int doc = -1; doc != DocIdSetIterator.NO_MORE_DOCS; )
+                for (int doc = -1; doc != DocIdSetIterator.NO_MORE_DOCS;)
                 {
                     if (Random.NextBoolean())
                     {
