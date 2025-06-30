@@ -50,7 +50,7 @@
         /// </summary>
         public class SimpleTextNormsProducer : SimpleTextDocValuesReader
         {
-            public SimpleTextNormsProducer(SegmentReadState state) 
+            public SimpleTextNormsProducer(SegmentReadState state)
                 : base(state, NORMS_SEG_EXTENSION)
             {
                 // All we do is change the extension from .dat -> .len;
@@ -67,7 +67,7 @@
         /// </summary>
         public class SimpleTextNormsConsumer : SimpleTextDocValuesWriter
         {
-            public SimpleTextNormsConsumer(SegmentWriteState state) 
+            public SimpleTextNormsConsumer(SegmentWriteState state)
                 : base(state, NORMS_SEG_EXTENSION)
             {
                 // All we do is change the extension from .dat -> .len;

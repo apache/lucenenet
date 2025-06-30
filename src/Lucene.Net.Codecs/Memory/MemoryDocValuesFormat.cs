@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs.Memory
         /// Calls <c>MemoryDocValuesFormat(PackedInts.DEFAULT)</c> 
         /// (<see cref="MemoryDocValuesFormat(float)"/>)
         /// </summary>
-        public MemoryDocValuesFormat() 
+        public MemoryDocValuesFormat()
             : this(PackedInt32s.DEFAULT)
         {
         }
@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Memory
         /// </summary>
         /// <param name="acceptableOverheadRatio"> Compression parameter for numerics. 
         ///        Currently this is only used when the number of unique values is small. </param>
-        public MemoryDocValuesFormat(float acceptableOverheadRatio) 
+        public MemoryDocValuesFormat(float acceptableOverheadRatio)
             : base()
         {
             this.acceptableOverheadRatio = acceptableOverheadRatio;

@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         break;
                     }
-                    
+
                     scratch.Bytes[upto++] = b;
                 }
             }

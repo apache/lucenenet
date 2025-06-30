@@ -172,8 +172,8 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.Write(data, PATTERN);
             SimpleTextUtil.Write(data, patternString, scratch);
             SimpleTextUtil.WriteNewline(data);
-            
-           
+
+
             int numDocsWritten = 0;
             foreach (BytesRef value in values)
             {
@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 // pad to fit
                 for (int i = length; i < maxLength; i++)
                 {
-                    data.WriteByte((byte) ' ');
+                    data.WriteByte((byte)' ');
                 }
                 SimpleTextUtil.WriteNewline(data);
                 SimpleTextUtil.Write(data, value is null ? "F" : "T", scratch);

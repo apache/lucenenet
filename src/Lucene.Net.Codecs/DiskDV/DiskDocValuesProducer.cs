@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.DiskDV
     internal class DiskDocValuesProducer : Lucene45DocValuesProducer
     {
         internal DiskDocValuesProducer(SegmentReadState state, string dataCodec, string dataExtension, string metaCodec,
-            string metaExtension) 
+            string metaExtension)
             : base(state, dataCodec, dataExtension, metaCodec, metaExtension)
         {
         }

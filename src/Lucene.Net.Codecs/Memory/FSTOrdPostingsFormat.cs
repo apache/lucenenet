@@ -29,7 +29,7 @@
     [PostingsFormatName("FSTOrd41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class FSTOrdPostingsFormat : PostingsFormat
     {
-        public FSTOrdPostingsFormat() 
+        public FSTOrdPostingsFormat()
             : base()
         {
         }

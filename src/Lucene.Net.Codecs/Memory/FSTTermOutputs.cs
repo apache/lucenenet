@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Memory
                         var end = longs.Length;
                         for (var i = 0; i < end; i++)
                         {
-                            hash -= (int) longs[i];
+                            hash -= (int)longs[i];
                         }
                     }
                     if (bytes != null)
@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.Memory
                             hash += bytes[i];
                         }
                     }
-                    hash += (int) (docFreq + totalTermFreq);
+                    hash += (int)(docFreq + totalTermFreq);
                     return hash;
                 }
             }
@@ -256,17 +256,17 @@ namespace Lucene.Net.Codecs.Memory
                 if (data.bytes.Length < 32)
                 {
                     bits |= (data.bytes.Length << 3);
-                    output.WriteByte((byte) bits);
+                    output.WriteByte((byte)bits);
                 }
                 else
                 {
-                    output.WriteByte((byte) bits);
+                    output.WriteByte((byte)bits);
                     output.WriteVInt32(data.bytes.Length);
                 }
             }
             else
             {
-                output.WriteByte((byte) bits);
+                output.WriteByte((byte)bits);
             }
             if (bit0 > 0) // not all-zero case
             {

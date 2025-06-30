@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
 
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads,
-                        indexOptions, docValuesType, normsType, new ReadOnlyDictionary<string,string>(atts))
+                        indexOptions, docValuesType, normsType, new ReadOnlyDictionary<string, string>(atts))
                     {
                         DocValuesGen = dvGen
                     };
