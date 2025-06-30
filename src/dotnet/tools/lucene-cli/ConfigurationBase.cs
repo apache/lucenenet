@@ -29,13 +29,13 @@ namespace Lucene.Net.Cli
         protected static string HELP_VALUE_NAME = "help";
 
         protected ConfigurationBase()
-            //: base(throwOnUnexpectedArg: false)
+        //: base(throwOnUnexpectedArg: false)
         {
             var help = this.HelpOption("-?|-h|--help");
             help.UniqueId = HELP_VALUE_NAME;
             help.ShowInHelpText = false;
 
-            this.ShortVersionGetter = () => 
+            this.ShortVersionGetter = () =>
             {
                 return "Lucene.Net Command Line Utility, Version: " + thisAssembly
                     .GetCustomAttribute<AssemblyInformationalVersionAttribute>()

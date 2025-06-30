@@ -40,9 +40,9 @@ namespace Lucene.Net.Cli
                     FromResource("SourceDirectoryDescription"));
                 this.UpdateOption = this.Option(
                     "-u|--update",
-                    FromResource("UpdateDescription"), 
+                    FromResource("UpdateDescription"),
                     CommandOptionType.NoValue);
-                
+
                 this.OnExecute(() => new DemoIndexFilesCommand().Run(this));
             }
 

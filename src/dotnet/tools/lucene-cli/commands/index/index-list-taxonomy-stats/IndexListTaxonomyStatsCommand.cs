@@ -50,7 +50,7 @@ namespace Lucene.Net.Cli
             }
             var input = cmd as Configuration;
             var args = new List<string>() { cmd.GetArgument<IndexDirectoryArgument>().Value };
-            
+
             if (input.ShowTreeOption != null && input.ShowTreeOption.HasValue())
             {
                 args.Add("-printTree");
