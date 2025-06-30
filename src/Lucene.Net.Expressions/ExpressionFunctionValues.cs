@@ -32,7 +32,7 @@ namespace Lucene.Net.Expressions
         internal int currentDocument = -1;
         internal double currentValue;
 
-        internal ExpressionFunctionValues(ValueSource parent, Expression expression, FunctionValues[] functionValues) 
+        internal ExpressionFunctionValues(ValueSource parent, Expression expression, FunctionValues[] functionValues)
             : base(parent)
         {
             this.expression = expression ?? throw new ArgumentNullException(nameof(expression)); // LUCENENET specific - changed from IllegalArgumentException to ArgumentNullException (.NET convention)
