@@ -38,7 +38,7 @@ namespace Lucene.Net.Tests.Queries.Function
         internal static Directory dir;
         internal static IndexReader ir;
         internal static IndexSearcher @is;
-        
+
         [SetUp]
         public override void SetUp()
         {
@@ -66,7 +66,7 @@ namespace Lucene.Net.Tests.Queries.Function
             dir = null;
             base.TearDown();
         }
-        
+
         [Test]
         public virtual void TestBasic()
         {
