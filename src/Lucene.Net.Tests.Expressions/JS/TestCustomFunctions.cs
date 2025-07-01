@@ -35,7 +35,7 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestEmpty()
         {
-            IDictionary<string, MethodInfo> functions = Collections.EmptyMap<string,MethodInfo>();
+            IDictionary<string, MethodInfo> functions = Collections.EmptyMap<string, MethodInfo>();
             try
             {
                 JavascriptCompiler.Compile("sqrt(20)", functions);
@@ -75,7 +75,7 @@ namespace Lucene.Net.Expressions.JS
         public virtual void TestOneArgMethod()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod(nameof(OneArgMethod), new []{ typeof(double)});
+            functions["foo"] = GetType().GetMethod(nameof(OneArgMethod), new[] { typeof(double) });
             var expr = JavascriptCompiler.Compile("foo(3)", functions);
             Assert.AreEqual(6, expr.Evaluate(0, null), DELTA);
         }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Expressions.JS
         public virtual void TestThreeArgMethod()
         {
             IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-            functions["foo"] = GetType().GetMethod(nameof(ThreeArgMethod), new []{ typeof(double), typeof(double), typeof(double)});
+            functions["foo"] = GetType().GetMethod(nameof(ThreeArgMethod), new[] { typeof(double), typeof(double), typeof(double) });
             var expr = JavascriptCompiler.Compile("foo(3, 4, 5)", functions);
             Assert.AreEqual(12, expr.Evaluate(0, null), DELTA);
         }

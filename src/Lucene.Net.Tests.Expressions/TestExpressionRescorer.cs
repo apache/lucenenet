@@ -107,8 +107,8 @@ namespace Lucene.Net.Expressions
             Assert.AreEqual("1", r.Document(hits.ScoreDocs[1].Doc).Get("id"));
             Assert.AreEqual("3", r.Document(hits.ScoreDocs[2].Doc).Get("id"));
 
-            string expl = rescorer.Explain(searcher, 
-                                           searcher.Explain(query, hits.ScoreDocs[0].Doc), 
+            string expl = rescorer.Explain(searcher,
+                                           searcher.Explain(query, hits.ScoreDocs[0].Doc),
                                            hits.ScoreDocs[0].Doc).ToString();
 
             // Confirm the explanation breaks out the individual

@@ -297,11 +297,11 @@ namespace Lucene.Net.Expressions.JS
             // to ensure the numeric formatting is correct, otherwise it may look like the wrong number of parameters
             AssertEvaluatesTo("sin(0)", 0);
             AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", Math.PI / 2), 1);
-            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", -Math.PI / 2), - 1);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", -Math.PI / 2), -1);
             AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", Math.PI / 4), 0.7071068);
             AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", -Math.PI / 4), -0.7071068);
             AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", Math.PI * 2 / 3), 0.8660254);
-            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", -Math.PI * 2 / 3), - 0.8660254);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", -Math.PI * 2 / 3), -0.8660254);
             AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", Math.PI / 6), 0.5);
             AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", -Math.PI / 6), -0.5);
         }

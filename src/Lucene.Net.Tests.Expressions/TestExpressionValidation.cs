@@ -78,7 +78,7 @@ namespace Lucene.Net.Expressions
             }
         }
 
-        [Test,Ignore("StackOverflowException can't be caught in .NET")]
+        [Test, Ignore("StackOverflowException can't be caught in .NET")]
         public virtual void TestSelfRecursion()
         {
             SimpleBindings bindings = new SimpleBindings();
