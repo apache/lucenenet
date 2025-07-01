@@ -100,7 +100,7 @@ namespace Egothor.Stemmer
                 Copy(input, output);
             }
             string path = output.FullName;
-            Compile.Main(new string[] {"test", path });
+            Compile.Main(new string[] { "test", path });
             string compiled = path + ".out";
             Trie trie = LoadTrie(compiled);
             AssertTrie(trie, path, true, true);
