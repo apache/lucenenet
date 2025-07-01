@@ -458,7 +458,7 @@ namespace Lucene.Net.Util.Packed
             {
                 for (int j = 1; j < packedInts.Count; j++)
                 {
-                    Assert.AreEqual( @base.Get(i), packedInts[j].Get(i), string.Format(CultureInfo.InvariantCulture, "{0}. The value at index {1} should be the same for {2} and {3}", message, i, @base.GetType().Name, packedInts[j].GetType().Name));
+                    Assert.AreEqual(@base.Get(i), packedInts[j].Get(i), string.Format(CultureInfo.InvariantCulture, "{0}. The value at index {1} should be the same for {2} and {3}", message, i, @base.GetType().Name, packedInts[j].GetType().Name));
                 }
             }
         }
@@ -1342,7 +1342,7 @@ namespace Lucene.Net.Util.Packed
                 ByteArrayDataInput in2 = new ByteArrayDataInput(buf);
                 DataInput @in = Random.NextBoolean() ? in1 : in2;
                 BlockPackedReaderIterator it = new BlockPackedReaderIterator(@in, PackedInt32s.VERSION_CURRENT, blockSize, valueCount);
-                for (int i = 0; i < valueCount; )
+                for (int i = 0; i < valueCount;)
                 {
                     if (Random.NextBoolean())
                     {
@@ -1462,7 +1462,7 @@ namespace Lucene.Net.Util.Packed
                 assertEquals(fp, @in.Position); // LUCENENET specific: Renamed from getFilePointer() to match FileStream
                 for (int i = 0; i < valueCount; ++i)
                 {
-                    Assert.AreEqual(values[i], reader.Get(i),"i=" + i);
+                    Assert.AreEqual(values[i], reader.Get(i), "i=" + i);
                 }
                 @in.Dispose();
                 dir.Dispose();
@@ -1480,7 +1480,7 @@ namespace Lucene.Net.Util.Packed
             BlockPackedWriter writer = new BlockPackedWriter(@out, blockSize);
             long value = Random.Next() & 0xFFFFFFFFL;
             long valueOffset = TestUtil.NextInt64(Random, 0, valueCount - 1);
-            for (long i = 0; i < valueCount; )
+            for (long i = 0; i < valueCount;)
             {
                 Assert.AreEqual(i, writer.Ord);
                 if ((i & (blockSize - 1)) == 0 && (i + blockSize < valueOffset || i > valueOffset && i + blockSize < valueCount))

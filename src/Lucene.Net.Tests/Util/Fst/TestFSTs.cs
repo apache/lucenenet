@@ -1451,7 +1451,7 @@ namespace Lucene.Net.Util.Fst
             Assert.AreEqual(42, arc.Output);
         }
 
-        internal static readonly IComparer<Int64> minLongComparer = Comparer<Int64>.Create((left, right)=> left.CompareTo(right));
+        internal static readonly IComparer<Int64> minLongComparer = Comparer<Int64>.Create((left, right) => left.CompareTo(right));
 
         [Test]
         public virtual void TestShortestPaths()
@@ -1558,7 +1558,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         // compares just the weight side of the pair
-        internal static readonly IComparer<Pair> minPairWeightComparer = Comparer<Pair>.Create((left, right)=> left.Output1.CompareTo(right.Output1));
+        internal static readonly IComparer<Pair> minPairWeightComparer = Comparer<Pair>.Create((left, right) => left.Output1.CompareTo(right.Output1));
 
         /// <summary>
         /// like testShortestPaths, but uses pairoutputs so we have both a weight and an output </summary>

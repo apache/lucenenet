@@ -138,7 +138,7 @@ namespace Lucene.Net.Util
                 int fromIndex, toIndex;
                 fromIndex = Random.Next(sz / 2);
                 toIndex = fromIndex + Random.Next(sz - fromIndex);
-                BitSet aa =  (BitSet)a.Clone();
+                BitSet aa = (BitSet)a.Clone();
                 aa.Flip(fromIndex, toIndex);
                 Int64BitSet bb = b.Clone();
                 bb.Flip(fromIndex, toIndex);

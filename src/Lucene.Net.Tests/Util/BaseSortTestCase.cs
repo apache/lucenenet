@@ -141,7 +141,8 @@ namespace Lucene.Net.Util
         private void DoTest(Strategy strategy, int length)
         {
             Entry[] arr = new Entry[length];
-            for (int i = 0; i < arr.Length; ++i) {
+            for (int i = 0; i < arr.Length; ++i)
+            {
                 strategy(arr, i);
             }
             SortTest(arr);

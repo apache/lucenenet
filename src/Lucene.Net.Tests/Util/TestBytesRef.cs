@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestFromBytes()
         {
-            var bytes = new [] { (byte)'a', (byte)'b', (byte)'c', (byte)'d' };
+            var bytes = new[] { (byte)'a', (byte)'b', (byte)'c', (byte)'d' };
             BytesRef b = new BytesRef(bytes);
             Assert.AreEqual(bytes, b.Bytes);
             Assert.AreEqual(0, b.Offset);

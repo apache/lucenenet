@@ -164,7 +164,8 @@ namespace Lucene.Net.Util
             return bytes;
         }
 
-        internal static readonly IComparer<byte[]> unsignedByteOrderComparer = Comparer<byte[]>.Create((left,right)=> {
+        internal static readonly IComparer<byte[]> unsignedByteOrderComparer = Comparer<byte[]>.Create((left, right) =>
+        {
             int max = Math.Min(left.Length, right.Length);
             for (int i = 0, j = 0; i < max; i++, j++)
             {
