@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Join
     /// <summary>
     /// A field comparer that allows parent documents to be sorted by fields
     /// from the nested / child documents.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class ToParentBlockJoinFieldComparer : FieldComparer<object>

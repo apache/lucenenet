@@ -30,16 +30,16 @@
 
 //    /// <summary>
 //    /// MessageBundles classes extend this class, to implement a bundle.
-//    /// 
+//    ///
 //    /// For Native Language Support (NLS), system of software internationalization.
-//    /// 
+//    ///
 //    /// This interface is similar to the NLS class in eclipse.osgi.util.NLS class -
 //    /// initializeMessages() method resets the values of all static strings, should
 //    /// only be called by classes that extend from NLS (see TestMessages.java for
 //    /// reference) - performs validation of all message in a bundle, at class load
 //    /// time - performs per message validation at runtime - see NLSTest.java for
 //    /// usage reference
-//    /// 
+//    ///
 //    /// MessageBundle classes may subclass this type.
 //    /// </summary>
 //    public abstract class NLS // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
@@ -185,7 +185,7 @@
 //        }
 
 //        /// <summary>
-//        /// 
+//        ///
 //        /// </summary>
 //        /// <param name="key">Message Key</param>
 //        /// <param name="clazz"></param>

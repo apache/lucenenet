@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Fa
 
     /// <summary>
     /// Test the Persian Analyzer
-    /// 
+    ///
     /// </summary>
     public class TestPersianAnalyzer : BaseTokenStreamTestCase
     {
@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Fa
         /// This test shows how the combination of tokenization (breaking on zero-width
         /// non-joiner), normalization (such as treating arabic YEH and farsi YEH the
         /// same), and stopwords creates a light-stemming effect for verbs.
-        /// 
+        ///
         /// These verb forms are from http://en.wikipedia.org/wiki/Persian_grammar
         /// </summary>
         [Test]
@@ -114,11 +114,11 @@ namespace Lucene.Net.Analysis.Fa
         /// <summary>
         /// This test shows how the combination of tokenization and stopwords creates a
         /// light-stemming effect for verbs.
-        /// 
+        ///
         /// In this case, these forms are presented with alternative orthography, using
         /// arabic yeh and whitespace. This yeh phenomenon is common for legacy text
         /// due to some previous bugs in Microsoft Windows.
-        /// 
+        ///
         /// These verb forms are from http://en.wikipedia.org/wiki/Persian_grammar
         /// </summary>
         [Test]

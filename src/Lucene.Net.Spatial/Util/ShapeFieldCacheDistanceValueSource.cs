@@ -30,7 +30,7 @@ namespace Lucene.Net.Spatial.Util
     /// between an input point and a document's points in
     /// <see cref="ShapeFieldCacheProvider{T}"/>. The shortest distance is returned if a
     /// document has more than one point.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public class ShapeFieldCacheDistanceValueSource : ValueSource

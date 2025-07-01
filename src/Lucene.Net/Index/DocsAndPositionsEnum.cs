@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
     public enum DocsAndPositionsFlags
     {
         /// <summary>
-        /// Flag to pass to <see cref="TermsEnum.DocsAndPositions(Util.IBits, DocsAndPositionsEnum, DocsAndPositionsFlags)"/> 
+        /// Flag to pass to <see cref="TermsEnum.DocsAndPositions(Util.IBits, DocsAndPositionsEnum, DocsAndPositionsFlags)"/>
         /// if you require that no offsets and payloads will be returned.
         /// </summary>
         NONE = 0x0,

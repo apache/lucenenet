@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Classic
      */
 
 
-    /// <summary> 
+    /// <summary>
     /// A <see cref="QueryParser"/> which constructs queries to search multiple fields.
     /// </summary>
     public class MultiFieldQueryParser : QueryParser
@@ -33,36 +33,36 @@ namespace Lucene.Net.QueryParsers.Classic
         protected string[] m_fields;
         protected IDictionary<string, float> m_boosts;
 
-        /// <summary> 
+        /// <summary>
         /// Creates a <see cref="MultiFieldQueryParser"/>. Allows passing of a map with term to
         /// Boost, and the boost to apply to each term.
-        /// 
+        ///
         /// <para/>
         /// It will, when <see cref="QueryParserBase.Parse(string)"/> is called, construct a query like this
         /// (assuming the query consists of two terms and you specify the two fields
         /// <c>title</c> and <c>body</c>):
         /// <para/>
-        /// 
+        ///
         /// <code>
         /// (title:term1 body:term1) (title:term2 body:term2)
         /// </code>
-        /// 
+        ///
         /// <para/>
         /// When <see cref="QueryParserBase.DefaultOperator"/> is set to <see cref="QueryParserBase.AND_OPERATOR"/>, the result will be:
         /// <para/>
-        /// 
+        ///
         /// <code>
         /// +(title:term1 body:term1) +(title:term2 body:term2)
         /// </code>
-        /// 
+        ///
         /// <para/>
         /// When you pass a boost (title=>5 body=>10) you can get
         /// <para/>
-        /// 
+        ///
         /// <code>
         /// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
         /// </code>
-        /// 
+        ///
         /// <para/>
         /// In other words, all the query's terms must appear, but it doesn't matter
         /// in what fields they appear.
@@ -74,27 +74,27 @@ namespace Lucene.Net.QueryParsers.Classic
             this.m_boosts = boosts;
         }
 
-        /// <summary> 
+        /// <summary>
         /// Creates a MultiFieldQueryParser.
-        /// 
+        ///
         /// <para/>
         /// It will, when <see cref="QueryParserBase.Parse(string)"/> is called, construct a query like this
         /// (assuming the query consists of two terms and you specify the two fields
         /// <c>title</c> and <c>body</c>):
         /// <para/>
-        /// 
+        ///
         /// <code>
         /// (title:term1 body:term1) (title:term2 body:term2)
         /// </code>
-        /// 
+        ///
         /// <para/>
         /// When <see cref="QueryParserBase.DefaultOperator"/> is set to <see cref="QueryParserBase.AND_OPERATOR"/>, the result will be:
         /// <para/>
-        /// 
+        ///
         /// <code>
         /// +(title:term1 body:term1) +(title:term2 body:term2)
         /// </code>
-        /// 
+        ///
         /// <para/>
         /// In other words, all the query's terms must appear, but it doesn't matter
         /// in what fields they appear.
@@ -249,15 +249,15 @@ namespace Lucene.Net.QueryParsers.Classic
             return base.GetRegexpQuery(field, termStr);
         }
 
-        /// <summary> 
+        /// <summary>
         /// Parses a query which searches on the fields specified.
         /// <para/>
         /// If x fields are specified, this effectively constructs:
-        /// 
+        ///
         /// <code>
         /// (field1:query1) (field2:query2) (field3:query3)...(fieldx:queryx)
         /// </code>
-        /// 
+        ///
         /// </summary>
         /// <param name="matchVersion">Lucene version to match; this is passed through to
         /// <see cref="QueryParser"/>.</param>
@@ -292,7 +292,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return bQuery;
         }
 
-        /// <summary> 
+        /// <summary>
         /// Parses a query, searching on the fields specified. Use this if you need
         /// to specify certain fields as required, and others as prohibited.
         /// <para/>
@@ -306,11 +306,11 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </code>
         /// <para/>
         /// The code above would construct a query:
-        /// 
+        ///
         /// <code>
         /// (filename:query) +(contents:query) -(description:query)
         /// </code>
-        /// 
+        ///
         /// </summary>
         /// <param name="matchVersion">Lucene version to match; this is passed through to
         /// <see cref="QueryParser"/>.</param>
@@ -348,7 +348,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return bQuery;
         }
 
-        /// <summary> 
+        /// <summary>
         /// Parses a query, searching on the fields specified. Use this if you need
         /// to specify certain fields as required, and others as prohibited.
         /// <para/>
@@ -363,11 +363,11 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </code>
         /// <para/>
         /// The code above would construct a query:
-        /// 
+        ///
         /// <code>
         /// (filename:query1) +(contents:query2) -(description:query3)
         /// </code>
-        /// 
+        ///
         /// </summary>
         /// <param name="matchVersion">Lucene version to match; this is passed through to
         /// <see cref="QueryParser"/>.</param>

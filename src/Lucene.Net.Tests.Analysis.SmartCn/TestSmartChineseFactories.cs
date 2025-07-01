@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
      */
 
     /// <summary>
-    /// Tests for <see cref=""SmartChineseSentenceTokenizerFactory/> and 
+    /// Tests for <see cref=""SmartChineseSentenceTokenizerFactory/> and
     /// <see cref="SmartChineseWordTokenFilterFactory"/>
     /// </summary>
     [Obsolete]

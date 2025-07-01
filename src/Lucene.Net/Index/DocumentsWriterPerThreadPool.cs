@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
             {
                 if (unlock)
                 {
-                    // in any case make sure we unlock if we fail 
+                    // in any case make sure we unlock if we fail
                     threadState.Unlock();
                 }
             }

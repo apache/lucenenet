@@ -33,13 +33,13 @@ namespace Lucene.Net.Codecs.Bloom
     /// the set. It can therefore be used as a Bloom Filter.
     /// <para/>
     /// Another application of the set is that it can be used to perform fuzzy counting because
-    /// it can estimate reasonably accurately how many unique values are contained in the set. 
+    /// it can estimate reasonably accurately how many unique values are contained in the set.
     /// <para/>
     /// This class is NOT threadsafe.
     /// <para/>
     /// Internally a Bitset is used to record values and once a client has finished recording
     /// a stream of values the <see cref="Downsize(float)"/> method can be used to create a suitably smaller set that
-    /// is sized appropriately for the number of values recorded and desired saturation levels. 
+    /// is sized appropriately for the number of values recorded and desired saturation levels.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
@@ -64,7 +64,7 @@ namespace Lucene.Net.Codecs.Bloom
 
         /// <remarks>
         /// Result from <see cref="FuzzySet.Contains(BytesRef)"/>:
-        /// can never return definitively YES (always MAYBE), 
+        /// can never return definitively YES (always MAYBE),
         /// but can sometimes definitely return NO.
         /// </remarks>
         public enum ContainsResult
@@ -100,7 +100,7 @@ namespace Lucene.Net.Codecs.Bloom
 
         /// <summary>
         /// Rounds down required <paramref name="maxNumberOfBits"/> to the nearest number that is made up
-        /// of all ones as a binary number.  
+        /// of all ones as a binary number.
         /// Use this method where controlling memory use is paramount.
         /// </summary>
         public static int GetNearestSetSize(int maxNumberOfBits)
@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs.Bloom
 
         /// <summary>
         /// The main method required for a Bloom filter which, given a value determines set membership.
-        /// Unlike a conventional set, the fuzzy set returns <see cref="ContainsResult.NO"/> or 
+        /// Unlike a conventional set, the fuzzy set returns <see cref="ContainsResult.NO"/> or
         /// <see cref="ContainsResult.MAYBE"/> rather than <c>true</c> or <c>false</c>.
         /// </summary>
         /// <returns><see cref="ContainsResult.NO"/> or <see cref="ContainsResult.MAYBE"/></returns>
@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// Serializes the data set to file using the following format:
         /// <list type="bullet">
         ///     <item><description>FuzzySet --&gt;FuzzySetVersion,HashFunctionName,BloomSize,
-        ///         NumBitSetWords,BitSetWord<sup>NumBitSetWords</sup></description></item> 
+        ///         NumBitSetWords,BitSetWord<sup>NumBitSetWords</sup></description></item>
         ///     <item><description>HashFunctionName --&gt; String (<see cref="DataOutput.WriteString(string)"/>) The
         ///         name of a ServiceProvider registered <see cref="HashFunction"/></description></item>
         ///     <item><description>FuzzySetVersion --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>) The version number of the <see cref="FuzzySet"/> class</description></item>
@@ -254,7 +254,7 @@ namespace Lucene.Net.Codecs.Bloom
         }
 
         /// <param name="targetMaxSaturation">
-        /// A number between 0 and 1 describing the % of bits that would ideally be set in the result. 
+        /// A number between 0 and 1 describing the % of bits that would ideally be set in the result.
         /// Lower values have better accuracy but require more space.
         /// </param>
         /// <return>A smaller <see cref="FuzzySet"/> or <c>null</c> if the current set is already over-saturated.</return>

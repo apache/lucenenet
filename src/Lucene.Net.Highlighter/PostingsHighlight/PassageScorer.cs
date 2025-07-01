@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// Each passage is scored as a miniature document within the document.
     /// The final score is computed as <c>norm</c> * ∑ (<c>weight</c> * <c>tf</c>).
     /// The default implementation is <c>norm</c> * BM25.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class PassageScorer
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <summary>
         /// Normalize a passage according to its position in the document.
         /// <para/>
-        /// Typically passages towards the beginning of the document are 
+        /// Typically passages towards the beginning of the document are
         /// more useful for summarizing the contents.
         /// <para/>
         /// The default implementation is <c>1 + 1/log(pivot + passageStart)</c>

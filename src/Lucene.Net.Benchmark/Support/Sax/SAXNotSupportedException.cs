@@ -30,7 +30,7 @@ namespace Sax
     /// <author>David Megginson</author>
     /// <version>2.0.1 (sax2r2)</version>
     /// <seealso cref="SAXNotRecognizedException"/>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

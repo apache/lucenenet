@@ -69,7 +69,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// so there is no danger that a "too new" taxonomy not being consistent with
     /// an older index.
     /// </para>
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class TaxonomyReader : IDisposable
@@ -136,7 +136,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// return a new <see cref="TaxonomyReader"/>; else, return <c>null</c>. The new
         /// reader, if not <c>null</c>, will be the same type of reader as the one
         /// given to this method.
-        /// 
+        ///
         /// <para>
         /// This method is typically far less costly than opening a fully new
         /// <see cref="TaxonomyReader"/> as it shares resources with the provided
@@ -314,7 +314,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Expert: increments the refCount of this TaxonomyReader
         /// instance only if it has not been closed yet.  Returns
-        /// <c>true</c> on success. 
+        /// <c>true</c> on success.
         /// </summary>
         public bool TryIncRef()
         {

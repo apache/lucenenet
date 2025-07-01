@@ -37,7 +37,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Open internal index writer, which contains the taxonomy data.
         /// <para/>
-        /// Extensions may provide their own <see cref="IndexWriter"/> implementation or instance. 
+        /// Extensions may provide their own <see cref="IndexWriter"/> implementation or instance.
         /// <para/>
         /// <b>NOTE:</b> the instance this method returns will be disposed upon calling
         /// to <see cref="DirectoryTaxonomyWriter.Dispose()"/>.

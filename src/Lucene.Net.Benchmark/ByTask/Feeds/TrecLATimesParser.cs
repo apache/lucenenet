@@ -27,7 +27,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     {
         private const string DATE = "<DATE>";
         private const string DATE_END = "</DATE>";
-        private const string DATE_NOISE = "day,"; // anything aftre the ',' 
+        private const string DATE_NOISE = "day,"; // anything aftre the ','
 
         private const string SUBJECT = "<SUBJECT>";
         private const string SUBJECT_END = "</SUBJECT>";

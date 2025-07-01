@@ -29,7 +29,7 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Verifies in collect() that all child subScorers are on
-    ///  the collected doc. 
+    ///  the collected doc.
     /// </summary>
     internal class AssertingSubDocsAtOnceCollector : ICollector
     {

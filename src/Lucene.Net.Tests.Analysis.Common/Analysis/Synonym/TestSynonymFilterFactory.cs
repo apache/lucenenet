@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         /// <summary>
         /// test that we can parse and use the solr syn file, with the old impl </summary>
-        /// @deprecated Remove this test in Lucene 5.0  
+        /// @deprecated Remove this test in Lucene 5.0
         [Test]
         [Obsolete("Remove this test in Lucene 5.0")]
         public virtual void TestSynonymsOld()
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         /// <summary>
         /// test multiword offsets with the old impl </summary>
-        /// @deprecated Remove this test in Lucene 5.0  
+        /// @deprecated Remove this test in Lucene 5.0
         [Test]
         [Obsolete("Remove this test in Lucene 5.0")]
         public virtual void TestMultiwordOffsetsOld()

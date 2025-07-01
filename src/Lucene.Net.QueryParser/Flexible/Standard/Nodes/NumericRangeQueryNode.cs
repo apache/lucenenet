@@ -82,7 +82,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// Sets the upper and lower bounds of this range query node and the
         /// <see cref="Config.NumericConfig"/> associated with these bounds.
         ///
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls
         /// a private method and not this virtual method. So if you need to override
         /// the behavior during the initialization, call your own private method from the constructor
         /// with whatever custom behavior you need.

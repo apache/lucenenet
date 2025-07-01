@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.PerField
     /// <para/>
     /// Files written by each docvalues format have an additional suffix containing the
     /// format name. For example, in a per-field configuration instead of <c>_1.dat</c>
-    /// filenames would look like <c>_1_Lucene40_0.dat</c>. 
+    /// filenames would look like <c>_1_Lucene40_0.dat</c>.
     /// <para/>
     /// @lucene.experimental
     /// </summary>

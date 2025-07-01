@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Ja
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.JapaneseTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.JapanesePartOfSpeechStopFilterFactory"
-    ///             tags="stopTags.txt" 
+    ///             tags="stopTags.txt"
     ///             enablePositionIncrements="true"/&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;

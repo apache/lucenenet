@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
     public sealed class RunListenerPrintReproduceInfo : RunListener
     {
       /// <summary>
-      /// A list of all test suite classes executed so far in this JVM (ehm, 
+      /// A list of all test suite classes executed so far in this JVM (ehm,
       /// under this class's classloader).
       /// </summary>
       private static IList<string> TestClassesRun = new JCG.List<string>();
@@ -112,7 +112,7 @@ namespace Lucene.Net.Util
       /// The <seealso cref="Description"/> object in JUnit does not expose the actual test method,
       /// instead it has the concept of a unique "name" of a test. To run the same method (tests)
       /// repeatedly, randomizedtesting must make those "names" unique: it appends the current iteration
-      /// and seeds to the test method's name. We strip this information here.   
+      /// and seeds to the test method's name. We strip this information here.
       /// </summary>
       private string StripTestNameAugmentations(string methodName)
       {
@@ -223,7 +223,7 @@ namespace Lucene.Net.Util
       }
 
       /// <summary>
-      /// Append a VM option (-Dkey=value) to a <seealso cref="StringBuilder"/>. Add quotes if 
+      /// Append a VM option (-Dkey=value) to a <seealso cref="StringBuilder"/>. Add quotes if
       /// spaces or other funky characters are detected.
       /// </summary>
       internal static void AddVmOpt(StringBuilder b, string key, object value)

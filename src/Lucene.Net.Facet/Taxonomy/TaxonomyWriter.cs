@@ -52,7 +52,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// is being opened only right after both indices have been flushed (and
     /// before anything else is written to them).
     /// </para>
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public interface ITaxonomyWriter : IDisposable, ITwoPhaseCommit
@@ -65,7 +65,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Before adding a category, <see cref="AddCategory"/> makes sure that all its
         /// ancestor categories exist in the taxonomy as well. As result, the
         /// ordinal of a category is guaranteed to be smaller then the ordinal of
-        /// any of its descendants. 
+        /// any of its descendants.
         /// </summary>
         int AddCategory(FacetLabel categoryPath);
 
@@ -80,9 +80,9 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <see cref="TaxonomyReader.GetOrdinal(FacetLabel)"/> to get an ordinal back.
         /// </para>
         /// <para>
-        /// If the given ordinal is the <see cref="TaxonomyReader.ROOT_ORDINAL"/>, an 
+        /// If the given ordinal is the <see cref="TaxonomyReader.ROOT_ORDINAL"/>, an
         /// <see cref="TaxonomyReader.INVALID_ORDINAL"/> is returned.
-        /// If the given ordinal is a top-level category, the 
+        /// If the given ordinal is a top-level category, the
         /// <see cref="TaxonomyReader.ROOT_ORDINAL"/> is returned.
         /// If an invalid ordinal is given (negative or beyond the last available
         /// ordinal), an <see cref="ArgumentOutOfRangeException"/> is thrown. However, it is

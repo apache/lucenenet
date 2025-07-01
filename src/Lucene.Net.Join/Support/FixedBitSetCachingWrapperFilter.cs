@@ -25,7 +25,7 @@ namespace Lucene.Net.Join
 
     /// <summary>
     /// A <see cref="CachingWrapperFilter"/> that caches sets using a <see cref="FixedBitSet"/>,
-    /// as required for joins. 
+    /// as required for joins.
     /// </summary>
     [Obsolete("Use Lucene.Net.Search.Join.FixedBitSetCachingWrapperFilter instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public sealed class FixedBitSetCachingWrapperFilter : CachingWrapperFilter

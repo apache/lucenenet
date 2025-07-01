@@ -31,14 +31,14 @@ namespace Lucene.Net.Facet.Taxonomy
     /// encoding.
     /// <para/>
     /// NOTE: This was TaxonomyFacetSumIntAssociations in Lucene
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public class TaxonomyFacetSumInt32Associations : Int32TaxonomyFacets
     {
         /// <summary>
         /// Create <see cref="TaxonomyFacetSumInt32Associations"/> against
-        /// the default index field. 
+        /// the default index field.
         /// </summary>
         public TaxonomyFacetSumInt32Associations(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : this(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, taxoReader, config, fc)
@@ -47,7 +47,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Create <see cref="TaxonomyFacetSumInt32Associations"/> against
-        /// the specified index field. 
+        /// the specified index field.
         /// </summary>
         public TaxonomyFacetSumInt32Associations(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : base(indexFieldName, taxoReader, config)

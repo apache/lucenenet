@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Pt
      */
 
     /// <summary>
-    /// A <see cref="TokenFilter"/> that applies <see cref="PortugueseLightStemmer"/> to stem 
+    /// A <see cref="TokenFilter"/> that applies <see cref="PortugueseLightStemmer"/> to stem
     /// Portuguese words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of

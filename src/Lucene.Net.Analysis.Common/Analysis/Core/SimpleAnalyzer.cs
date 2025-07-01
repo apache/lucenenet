@@ -22,8 +22,8 @@ namespace Lucene.Net.Analysis.Core
      */
 
     /// <summary>
-    /// An <see cref="Analyzer"/> that filters <see cref="LetterTokenizer"/> 
-    ///  with <see cref="LowerCaseFilter"/> 
+    /// An <see cref="Analyzer"/> that filters <see cref="LetterTokenizer"/>
+    ///  with <see cref="LowerCaseFilter"/>
     /// <para>
     /// You must specify the required <see cref="LuceneVersion"/> compatibility
     /// when creating <see cref="Util.CharTokenizer"/>:

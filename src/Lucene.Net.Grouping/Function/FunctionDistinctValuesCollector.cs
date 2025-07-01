@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Grouping.Function
 
     /// <summary>
     /// Function based implementation of <see cref="AbstractDistinctValuesCollector"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class FunctionDistinctValuesCollector : AbstractDistinctValuesCollector<FunctionDistinctValuesCollector.GroupCount>
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Grouping.Function
 
         /// <summary>
         /// Holds distinct values for a single group.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public class GroupCount : AbstractDistinctValuesCollector.GroupCount<MutableValue>

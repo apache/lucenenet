@@ -40,11 +40,11 @@ namespace Lucene.Net.Util.JunitCompat
 	/// <summary>
 	/// An abstract test class that prepares nested test classes to run.
 	/// A nested test class will assume it's executed under control of this
-	/// class and be ignored otherwise. 
-	/// 
+	/// class and be ignored otherwise.
+	///
 	/// <p>The purpose of this is so that nested test suites don't run from
 	/// IDEs like Eclipse (where they are automatically detected).
-	/// 
+	///
 	/// <p>this class cannot extend <seealso cref="LuceneTestCase"/> because in case
 	/// there's a nested <seealso cref="LuceneTestCase"/> afterclass hooks run twice and
 	/// cause havoc (static fields).
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util.JunitCompat
 			Console.WriteLine("syserr from nested test: " + SysErr);
 		})
 			.around(marker);
-            
+
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Before public final void before()
 			public void before()
@@ -74,7 +74,7 @@ namespace Lucene.Net.Util.JunitCompat
 			PrevSysOut = System.out;
 			}
 			PrevSysErr = System.err;
-            
+
 			try
 			{
 			Sysout = new ByteArrayOutputStream();
@@ -86,10 +86,10 @@ namespace Lucene.Net.Util.JunitCompat
 			{
 			throw new Exception(e);
 			}
-            
+
 			FailureMarker.resetFailures();
 			System.setProperty(TestRuleIgnoreTestSuites.PROPERTY_RUN_NESTED, "true");
-            
+
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @After public final void after()
 			public void after()
@@ -98,15 +98,15 @@ namespace Lucene.Net.Util.JunitCompat
 			System.out.flush();
 			}
 			System.err.flush();
-            
+
 			System.Out = PrevSysOut;
 			System.Err = PrevSysErr;
-            
+
 			protected string SysOut
 			Assert.IsTrue(SuppressOutputStreams);
 			System.out.flush();
 			return new string(Sysout.toByteArray(), StandardCharsets.UTF_8);
-            
+
 			protected string SysErr
 			Assert.IsTrue(SuppressOutputStreams);
 			System.err.flush();

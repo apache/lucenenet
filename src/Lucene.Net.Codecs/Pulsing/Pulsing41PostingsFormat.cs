@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Pulsing
     /// <summary>
     /// Concrete pulsing implementation over <see cref="Lucene41PostingsFormat"/>.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [PostingsFormatName("Pulsing41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class Pulsing41PostingsFormat : PulsingPostingsFormat

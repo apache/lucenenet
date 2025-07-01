@@ -33,7 +33,7 @@ namespace Lucene.Net.Documents.Extensions
         /// </summary>
         /// <remarks>
         /// Add a <see cref="SortedSetDocValuesFacetField"/> to your <see cref="Documents.Document"/> for every facet
-        /// label to be indexed via <see cref="Index.SortedSetDocValues"/>. 
+        /// label to be indexed via <see cref="Index.SortedSetDocValues"/>.
         /// </remarks>
         /// <param name="document">This <see cref="Document"/>.</param>
         /// <param name="dim">Dimension for this field.</param>
@@ -112,7 +112,7 @@ namespace Lucene.Net.Documents.Extensions
 
         /// <summary>
         /// Adds a new <see cref="FacetField"/> with the specified <paramref name="dim"/> and
-        /// <paramref name="path"/>. 
+        /// <paramref name="path"/>.
         /// </summary>
         /// <param name="document">This <see cref="Document"/>.</param>
         /// <param name="dim">Dimension for this field.</param>

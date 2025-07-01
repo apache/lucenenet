@@ -174,7 +174,7 @@
 //        }
 
 //        /// <summary>
-//        /// LUCENENET specific class to allow the 
+//        /// LUCENENET specific class to allow the
 //        /// GetEnumerator() method to be overridden
 //        /// for the keys so we can return an enumerator
 //        /// that is smart enough to clean up the dead keys
@@ -339,8 +339,8 @@
 //        /// This method manually cleans up the reference queue to remove all garbage
 //        /// collected key/value pairs from the map. Calling this method is not needed
 //        /// if <c>reapOnRead = true</c>. Otherwise it might be a good idea
-//        /// to call this method when there is spare time (e.g. from a background thread). 
-//        /// <a href="#reapInfo">Information about the <c>reapOnRead</c> setting</a>		
+//        /// to call this method when there is spare time (e.g. from a background thread).
+//        /// <a href="#reapInfo">Information about the <c>reapOnRead</c> setting</a>
 //        /// </summary>
 //        public void Reap()
 //        {

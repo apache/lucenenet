@@ -25,7 +25,7 @@ namespace Lucene.Net.Support
     /// <summary>
     /// Static methods to create <see cref="BreakIterator"/> instances that behave (somewhat) like the JDK.
     /// It is recommended to either use the default ICU <see cref="BreakIterator"/> methods instead of these
-    /// or else use the <see cref="RuleBasedBreakIterator.GetInstanceFromCompiledRules(Stream)"/> or the 
+    /// or else use the <see cref="RuleBasedBreakIterator.GetInstanceFromCompiledRules(Stream)"/> or the
     /// <see cref="RuleBasedBreakIterator.RuleBasedBreakIterator(string)"/> constructor to create a <see cref="BreakIterator"/>
     /// for the specific context it is used in rather than using these methods.
     /// </summary>
@@ -49,7 +49,7 @@ namespace Lucene.Net.Support
         /// <remarks>
         /// NOTE: If the culture is Thai, Lao, Burmese, Khmer, Japanese, Korean, or Chinese,
         /// the instance returned has the same dictionary-based <see cref="BreakIterator"/> behavior
-        /// as if you call <see cref="BreakIterator.GetWordInstance(CultureInfo)"/>. See the 
+        /// as if you call <see cref="BreakIterator.GetWordInstance(CultureInfo)"/>. See the
         /// section titled "Details about Dictionary-Based Break Iteration" at
         /// <a href="http://userguide.icu-project.org/boundaryanalysis">http://userguide.icu-project.org/boundaryanalysis</a>.
         /// </remarks>
@@ -80,7 +80,7 @@ namespace Lucene.Net.Support
         /// <remarks>
         /// NOTE: If the culture is Thai, Lao, Burmese, Khmer, Japanese, Korean, or Chinese,
         /// the instance returned has the same dictionary-based <see cref="BreakIterator"/> behavior
-        /// as if you call <see cref="BreakIterator.GetWordInstance(CultureInfo)"/>. See the 
+        /// as if you call <see cref="BreakIterator.GetWordInstance(CultureInfo)"/>. See the
         /// section titled "Details about Dictionary-Based Break Iteration" at
         /// <a href="http://userguide.icu-project.org/boundaryanalysis">http://userguide.icu-project.org/boundaryanalysis</a>.
         /// </remarks>

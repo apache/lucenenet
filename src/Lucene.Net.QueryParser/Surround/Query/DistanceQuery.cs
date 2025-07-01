@@ -23,7 +23,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
      */
 
     /// <summary>
-    /// Factory for NEAR queries 
+    /// Factory for NEAR queries
     /// </summary>
     public class DistanceQuery : ComposedQuery, IDistanceSubQuery
     {

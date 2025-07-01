@@ -51,13 +51,13 @@ namespace Lucene.Net.Tartarus.Snowball
     /// <summary>
     ///   Snowball's among construction.
     /// </summary>
-    /// 
+    ///
     public class Among
     {
         /// <summary>
         ///   Search string.
         /// </summary>
-        /// 
+        ///
         public string SearchString
         {
             get; private set;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Tartarus.Snowball
         /// <summary>
         ///   Index to longest matching substring.
         /// </summary>
-        /// 
+        ///
         public int MatchIndex
         {
             get; private set;
@@ -75,7 +75,7 @@ namespace Lucene.Net.Tartarus.Snowball
         /// <summary>
         ///   Result of the lookup.
         /// </summary>
-        /// 
+        ///
         public int Result
         {
             get; private set;
@@ -84,7 +84,7 @@ namespace Lucene.Net.Tartarus.Snowball
         /// <summary>
         ///   Action to be invoked.
         /// </summary>
-        /// 
+        ///
         public Func<bool> Action
         {
             get; private set;
@@ -93,11 +93,11 @@ namespace Lucene.Net.Tartarus.Snowball
         /// <summary>
         ///   Initializes a new instance of the <see cref="Among"/> class.
         /// </summary>
-        /// 
+        ///
         /// <param name="str">The search string.</param>
         /// <param name="index">The index to the longest matching substring.</param>
         /// <param name="result">The result of the lookup.</param>
-        /// 
+        ///
         public Among(string str, int index, int result)
             : this(str, index, result, null)
         {
@@ -106,12 +106,12 @@ namespace Lucene.Net.Tartarus.Snowball
         /// <summary>
         ///   Initializes a new instance of the <see cref="Among"/> class.
         /// </summary>
-        /// 
+        ///
         /// <param name="str">The search string.</param>
         /// <param name="index">The index to the longest matching substring.</param>
         /// <param name="result">The result of the lookup.</param>
         /// <param name="action">The action to be performed, if any.</param>
-        /// 
+        ///
         public Among(string str, int index, int result, Func<bool> action)
         {
             this.SearchString = str;
@@ -123,11 +123,11 @@ namespace Lucene.Net.Tartarus.Snowball
         /// <summary>
         ///   Returns a <see cref="string" /> that represents this instance.
         /// </summary>
-        /// 
+        ///
         /// <returns>
         ///   A <see cref="string" /> that represents this instance.
         /// </returns>
-        /// 
+        ///
         public override string ToString()
         {
             return SearchString;

@@ -227,7 +227,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             Parser p = new Parser(source);
 
-            // properties 
+            // properties
             IDictionary<string, string> props = p.MetaTags;
             if (props.TryGetValue("date", out string dateStr) && dateStr != null)
             {

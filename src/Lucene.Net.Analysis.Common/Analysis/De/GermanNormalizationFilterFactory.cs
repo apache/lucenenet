@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.De
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.GermanNormalizationFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</code> 
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class GermanNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {

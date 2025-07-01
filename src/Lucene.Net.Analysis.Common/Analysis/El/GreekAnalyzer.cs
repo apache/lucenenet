@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.El
      */
 
     /// <summary>
-    /// <see cref="Analyzer"/> for the Greek language. 
+    /// <see cref="Analyzer"/> for the Greek language.
     /// <para>
     /// Supports an external list of stopwords (words
     /// that will not be indexed at all).
@@ -83,11 +83,11 @@ namespace Lucene.Net.Analysis.El
         }
 
         /// <summary>
-        /// Builds an analyzer with the given stop words. 
+        /// Builds an analyzer with the given stop words.
         /// <para>
-        /// <b>NOTE:</b> The stopwords set should be pre-processed with the logic of 
+        /// <b>NOTE:</b> The stopwords set should be pre-processed with the logic of
         /// <see cref="GreekLowerCaseFilter"/> for best results.
-        ///  
+        ///
         /// </para>
         /// </summary>
         /// <param name="matchVersion"> Lucene compatibility version,

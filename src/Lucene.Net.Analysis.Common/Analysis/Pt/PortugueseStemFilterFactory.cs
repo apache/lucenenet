@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Pt
      */
 
     /// <summary>
-    /// Factory for <see cref="PortugueseStemFilter"/>. 
+    /// Factory for <see cref="PortugueseStemFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_ptstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

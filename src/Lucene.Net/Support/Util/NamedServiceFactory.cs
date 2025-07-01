@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
             {
                 if (codecsAssembly is null)
                 {
-                    // Attempt to load the SimpleTextCodec type. If it loads it will not be null, 
+                    // Attempt to load the SimpleTextCodec type. If it loads it will not be null,
                     // which means the assembly is referenced so we can load all of the named services from that assembly.
                     Type simpleTextType = Type.GetType("Lucene.Net.Codecs.SimpleText.SimpleTextCodec, Lucene.Net.Codecs");
                     if (simpleTextType != null)

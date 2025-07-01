@@ -60,14 +60,14 @@ namespace Lucene.Net.Codecs
         public abstract BlockTermState NewTermState();
 
         /// <summary>
-        /// Start a new term.  Note that a matching call to 
+        /// Start a new term.  Note that a matching call to
         /// <see cref="FinishTerm(BlockTermState)"/> is done, only if the term has at least one
         /// document.
         /// </summary>
         public abstract void StartTerm();
 
         /// <summary>
-        /// Finishes the current term.  The provided 
+        /// Finishes the current term.  The provided
         /// <see cref="BlockTermState"/> contains the term's summary statistics,
         /// and will holds metadata from PBF when returned.
         /// </summary>

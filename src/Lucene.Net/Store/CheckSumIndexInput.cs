@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
         public abstract long Checksum { get; }
 
         /// <summary>
-        /// Sets current position in this file, where the next read will occur. 
+        /// Sets current position in this file, where the next read will occur.
         /// <para/>
         /// <see cref="ChecksumIndexInput"/> can only seek forward and seeks are expensive
         /// since they imply to read bytes in-between the current position and the

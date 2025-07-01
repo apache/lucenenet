@@ -46,7 +46,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private bool resetExhausted = false;
         private PerfTask[] tasksArray;
         private bool anyExhaustibleTasks;
-        private readonly bool collapsable = false; // to not collapse external sequence named in alg.  
+        private readonly bool collapsable = false; // to not collapse external sequence named in alg.
 
         private bool fixedTime;                      // true if we run for fixed time
         private double runTimeSec;                      // how long to run for
@@ -299,7 +299,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     {
                         break;
                     }
-                    nextStartTime += delayStep; // this aims at avarage rate. 
+                    nextStartTime += delayStep; // this aims at avarage rate.
                     try
                     {
                         int inc = task.RunAndMaybeStats(letChildReport);
@@ -494,7 +494,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     Thread.Sleep((int)waitMore);
                 }
-                nextStartTime += delayStep; // this aims at average rate of starting threads. 
+                nextStartTime += delayStep; // this aims at average rate of starting threads.
                 t[i].Start();
             }
         }
@@ -573,7 +573,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="rate">The rate to set.</param>
         /// <param name="perMin"></param>
@@ -607,7 +607,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         public override string GetName()
         {
-            return seqName; // override to include more info 
+            return seqName; // override to include more info
         }
 
         /// <summary>

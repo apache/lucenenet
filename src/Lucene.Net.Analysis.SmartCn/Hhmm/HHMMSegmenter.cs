@@ -61,8 +61,8 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         j = i + 1;
                         //wordBuf.delete(0, wordBuf.length());
                         wordBuf.Remove(0, wordBuf.Length);
-                        // It doesn't matter if a single Chinese character (Hanzi) can form a phrase or not, 
-                        // it will store that single Chinese character (Hanzi) in the SegGraph.  Otherwise, it will 
+                        // It doesn't matter if a single Chinese character (Hanzi) can form a phrase or not,
+                        // it will store that single Chinese character (Hanzi) in the SegGraph.  Otherwise, it will
                         // cause word division.
                         wordBuf.Append(sentence[i]);
                         charArray = new char[] { sentence[i] };
@@ -93,8 +93,8 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                                 charArray = new char[wordBuf.Length];
                                 //wordBuf.GetChars(0, charArray.Length, charArray, 0);
                                 wordBuf.CopyTo(0, charArray, 0, charArray.Length);
-                                // idArray has been found (foundWordIndex!=-1) as a prefix before.  
-                                // Therefore, idArray after it has been lengthened can only appear after foundWordIndex.  
+                                // idArray has been found (foundWordIndex!=-1) as a prefix before.
+                                // Therefore, idArray after it has been lengthened can only appear after foundWordIndex.
                                 // So start searching after foundWordIndex.
                                 foundIndex = wordDict.GetPrefixMatch(charArray, foundIndex);
                                 j++;

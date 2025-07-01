@@ -32,7 +32,7 @@
 //        {
 //            IMessage invalidSyntax = new Message(
 //                MessagesTestBundle.Q0001E_INVALID_SYNTAX, "XXX");
-//            /* 
+//            /*
 //             * if the default locale is ja, you get ja as a fallback:
 //             * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
 //             */
@@ -54,7 +54,7 @@
 //        {
 //            String message = NLS
 //                .GetLocalizedMessage(MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION, new CultureInfo("en"));
-//            /* 
+//            /*
 //             * if the default locale is ja, you get ja as a fallback:
 //             * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
 //             */
@@ -63,7 +63,7 @@
 
 //            message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0001E_INVALID_SYNTAX, new CultureInfo("en"),
 //                "XXX");
-//            /* 
+//            /*
 //             * if the default locale is ja, you get ja as a fallback:
 //             * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
 //             */
@@ -93,7 +93,7 @@
 //                String message = NLS.GetLocalizedMessage(
 //                    MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION,
 //                    locale);
-//                /* 
+//                /*
 //                 * if the default locale is ja, you get ja as a fallback:
 //                 * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
 //                 */
@@ -102,7 +102,7 @@
 
 //                message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0001E_INVALID_SYNTAX,
 //                    locale, "XXX");
-//                /* 
+//                /*
 //                 * if the default locale is ja, you get ja as a fallback:
 //                 * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
 //                 */

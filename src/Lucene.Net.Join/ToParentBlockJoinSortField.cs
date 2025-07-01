@@ -22,7 +22,7 @@ namespace Lucene.Net.Search.Join
     /// <summary>
     /// A special sort field that allows sorting parent docs based on nested / child level fields.
     /// Based on the sort order it either takes the document with the lowest or highest field value into account.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class ToParentBlockJoinSortField : SortField

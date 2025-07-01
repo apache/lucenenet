@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <see cref="LimitTokenCountFilter"/>. 
+    /// Factory for <see cref="LimitTokenCountFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_lngthcnt" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// <para>
-    /// The <see cref="consumeAllTokens"/> property is optional and defaults to <c>false</c>.  
+    /// The <see cref="consumeAllTokens"/> property is optional and defaults to <c>false</c>.
     /// See <see cref="LimitTokenCountFilter"/> for an explanation of it's use.
     /// </para>
     /// </summary>

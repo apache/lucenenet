@@ -26,8 +26,8 @@ namespace Lucene.Net.Facet.Range
 
     /// <summary>
     /// Base class for range faceting.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public abstract class RangeFacetCounts : Facets
     {
@@ -43,7 +43,7 @@ namespace Lucene.Net.Facet.Range
         /// Optional: if specified, we first test this Filter to
         /// see whether the document should be checked for
         /// matching ranges.  If this is null, all documents are
-        /// checked. 
+        /// checked.
         /// </summary>
         protected readonly Filter m_fastMatchFilter;
 

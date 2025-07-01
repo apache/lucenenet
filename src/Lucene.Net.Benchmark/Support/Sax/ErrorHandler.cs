@@ -29,12 +29,12 @@ namespace Sax
     /// In order to detect validity errors, an ErrorHandler that does something
     /// with <see cref="Error(SAXParseException)"/> calls must be registered.
     /// <para/>
-    /// For XML processing errors, a SAX driver must use this interface 
+    /// For XML processing errors, a SAX driver must use this interface
     /// in preference to throwing an exception: it is up to the application
     /// to decide whether to throw an exception for different types of
     /// errors and warnings.Note, however, that there is no requirement that
-    /// the parser continue to report additional errors after a call to 
-    /// <see cref="FatalError(SAXParseException)"/>.  In other words, a SAX driver class 
+    /// the parser continue to report additional errors after a call to
+    /// <see cref="FatalError(SAXParseException)"/>.  In other words, a SAX driver class
     /// may throw an exception after reporting any fatalError.
     /// Also parsers may throw appropriate exceptions for non - XML errors.
     /// For example, <see cref="IXMLReader.Parse(InputSource)"/> would throw

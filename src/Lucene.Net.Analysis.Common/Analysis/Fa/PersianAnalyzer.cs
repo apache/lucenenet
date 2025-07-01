@@ -38,11 +38,11 @@ namespace Lucene.Net.Analysis.Fa
     {
         /// <summary>
         /// File containing default Persian stopwords.
-        /// 
+        ///
         /// Default stopword list is from
         /// http://members.unine.ch/jacques.savoy/clef/index.html. The stopword list is
         /// BSD-Licensed.
-        /// 
+        ///
         /// </summary>
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.Fa
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultSetHolder
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Fa
         }
 
         /// <summary>
-        /// Builds an analyzer with the given stop words 
+        /// Builds an analyzer with the given stop words
         /// </summary>
         /// <param name="matchVersion">
         ///          lucene compatibility version </param>

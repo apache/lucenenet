@@ -28,14 +28,14 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// Represents a group that is found during the first pass search.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
     public class SearchGroup<TGroupValue> : ISearchGroup<TGroupValue>
     {
         /// <summary>
-        /// The value that defines this group 
+        /// The value that defines this group
         /// </summary>
         public TGroupValue GroupValue { get; set; }
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Grouping
     }
 
     /// <summary>
-    /// LUCENENET specific class used to nest types to mimic the syntax used 
+    /// LUCENENET specific class used to nest types to mimic the syntax used
     /// by Lucene (that is, without specifying the generic closing type of <see cref="SearchGroup{TGroupValue}"/>)
     /// </summary>
     public static class SearchGroup // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
@@ -485,7 +485,7 @@ namespace Lucene.Net.Search.Grouping
     public interface ISearchGroup<out TGroupValue>
     {
         /// <summary>
-        /// The value that defines this group 
+        /// The value that defines this group
         /// </summary>
         TGroupValue GroupValue { get; }
 

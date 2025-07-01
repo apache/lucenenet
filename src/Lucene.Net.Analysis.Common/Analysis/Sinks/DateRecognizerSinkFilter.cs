@@ -24,10 +24,10 @@ namespace Lucene.Net.Analysis.Sinks
      */
 
     /// <summary>
-    /// Attempts to parse the <see cref="ICharTermAttribute.Buffer"/> as a Date using either the 
-    /// <see cref="DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"/> or 
+    /// Attempts to parse the <see cref="ICharTermAttribute.Buffer"/> as a Date using either the
+    /// <see cref="DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"/> or
     /// <see cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/> methods.
-    /// If a format is passed, <see cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/> 
+    /// If a format is passed, <see cref="DateTime.TryParseExact(string, string[], IFormatProvider, DateTimeStyles, out DateTime)"/>
     /// will be used, and the format must strictly match one of the specified formats as specified in the MSDN documentation.
     /// If the value is a Date, it will add it to the sink.
     /// </summary>
@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// Loosely matches standard DateTime formats using <see cref="DateTime.TryParse(string, IFormatProvider, DateTimeStyles, out DateTime)"/>.
         /// </summary>
         /// <param name="culture">An object that supplies culture-specific format information</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s. 
+        /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s.
         /// A typical value to specify is <see cref="DateTimeStyles.None"/></param>
         public DateRecognizerSinkFilter(IFormatProvider culture, DateTimeStyles style)
             : this((string[])null, culture, style)
@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// <param name="format">The allowable format of the <see cref="ICharTermAttribute.Buffer"/>.
         /// If supplied, it must match the format of the date exactly to get a match.</param>
         /// <param name="culture">An object that supplies culture-specific format information</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s. 
+        /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s.
         /// A typical value to specify is <see cref="DateTimeStyles.None"/></param>
         public DateRecognizerSinkFilter(string format, IFormatProvider culture, DateTimeStyles style)
             : this(new string[] { format }, culture, style)
@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.Sinks
         /// <param name="formats">An array of allowable formats of the <see cref="ICharTermAttribute.Buffer"/>.
         /// If supplied, one of them must match the format of the date exactly to get a match.</param>
         /// <param name="culture">An object that supplies culture-specific format information</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s. 
+        /// <param name="style">A bitwise combination of enumeration values that indicates the permitted format of s.
         /// A typical value to specify is <see cref="DateTimeStyles.None"/></param>
         public DateRecognizerSinkFilter(string[] formats, IFormatProvider culture, DateTimeStyles style)
         {

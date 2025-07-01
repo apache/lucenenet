@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Bloom
      */
 
     /// <summary>
-    /// 
+    ///
     /// A <see cref="PostingsFormat"/> useful for low doc-frequency fields such as primary
     /// keys. Bloom filters are maintained in a ".blm" file which offers "fast-fail"
     /// for reads in segments known to have no record of the key. A choice of
@@ -289,7 +289,7 @@ namespace Lucene.Net.Codecs.Bloom
 
                 private TermsEnum @delegate =>
                     // pull the iterator only if we really need it -
-                    // this can be a relativly heavy operation depending on the 
+                    // this can be a relativly heavy operation depending on the
                     // delegate postings format and they underlying directory
                     // (clone IndexInput)
                     delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetEnumerator(_reuseDelegate));

@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     /// <seealso cref="QueryNodeException"/>
     /// <seealso cref="Parser.ISyntaxParser"/>
     /// <seealso cref="Nodes.IQueryNode"/>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
@@ -143,7 +143,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// <summary>
         /// For EndOfLine and EndOfFile ("&lt;EOF&gt;") parsing problems the last char in the
         /// string is returned. For the case where the parser is not able to figure out
-        /// the line and column number -1 will be returned. 
+        /// the line and column number -1 will be returned.
         /// Returns column of the first char where the problem was found.
         /// </summary>
         public virtual int BeginColumn

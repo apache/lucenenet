@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     /// <summary>
     /// This test case is a copy of the core Lucene query parser test, it was adapted
     /// to use new QueryParserHelper instead of the old query parser.
-    /// 
+    ///
     /// Tests QueryParser.
     /// </summary>
     public class TestMultiFieldQPHelper : LuceneTestCase

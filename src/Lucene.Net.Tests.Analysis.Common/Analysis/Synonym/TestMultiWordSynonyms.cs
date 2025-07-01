@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Synonym
     public class TestMultiWordSynonyms_ : BaseTokenStreamFactoryTestCase
     {
 
-        /// @deprecated Remove this test in 5.0 
+        /// @deprecated Remove this test in 5.0
         [Test]
         [Obsolete("Remove this test in 5.0")]
         public virtual void TestMultiWordSynonymsOld()

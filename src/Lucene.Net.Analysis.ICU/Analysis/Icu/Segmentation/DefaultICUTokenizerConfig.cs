@@ -30,8 +30,8 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
     /// to many languages.
     /// </summary>
     /// <remarks>
-    /// Generally tokenizes Unicode text according to UAX#29 
-    /// (<see cref="T:BreakIterator.GetWordInstance(ULocale.ROOT)"/>), 
+    /// Generally tokenizes Unicode text according to UAX#29
+    /// (<see cref="T:BreakIterator.GetWordInstance(ULocale.ROOT)"/>),
     /// but with the following tailorings:
     /// <list type="bullet">
     ///     <item><description>Thai, Lao, Myanmar, Khmer, and CJK text is broken into words with a dictionary.</description></item>

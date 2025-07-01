@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <para/>
     /// Characters from the following Unicode blocks are converted; however, only
     /// those characters with reasonable ASCII alternatives are converted:
-    /// 
+    ///
     /// <ul>
     ///   <item><description>C1 Controls and Latin-1 Supplement: <a href="http://www.unicode.org/charts/PDF/U0080.pdf">http://www.unicode.org/charts/PDF/U0080.pdf</a></description></item>
     ///   <item><description>Latin Extended-A: <a href="http://www.unicode.org/charts/PDF/U0100.pdf">http://www.unicode.org/charts/PDF/U0100.pdf</a></description></item>
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Converts characters above ASCII to their ASCII equivalents.  For example,
-        /// accents are removed from accented characters. 
+        /// accents are removed from accented characters.
         /// <para/>
         /// @lucene.internal
         /// </summary>

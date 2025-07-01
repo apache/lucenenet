@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.El
     /// </para>
     /// <para>
     /// NOTE: Input is expected to be casefolded for Greek (including folding of final
-    /// sigma to sigma), and with diacritics removed. This can be achieved by using 
+    /// sigma to sigma), and with diacritics removed. This can be achieved by using
     /// either <see cref="GreekLowerCaseFilter"/> or ICUFoldingFilter before <see cref="GreekStemFilter"/>.
     /// @lucene.experimental
     /// </para>

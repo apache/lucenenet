@@ -28,9 +28,9 @@ namespace Lucene.Net.Index
     /// <summary>
     /// This class contains useful constants representing filenames and extensions
     /// used by lucene, as well as convenience methods for querying whether a file
-    /// name matches an extension (<see cref="MatchesExtension(string, string)"/>), 
+    /// name matches an extension (<see cref="MatchesExtension(string, string)"/>),
     /// as well as generating file names from a segment name,
-    /// generation and extension 
+    /// generation and extension
     /// (<see cref="FileNameFromGeneration(string, string, long)"/>,
     /// <see cref="SegmentFileName(string, string, string)"/>).
     ///

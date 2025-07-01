@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
             private readonly static AtomicInt32 stackCount = new AtomicInt32(0);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="setUpFixture">The setup wrapper fixture for the current context. This is the top level parent class. It is used to report exceptions.</param>
             /// <param name="testFixture">The setup fixture for the current tests. This is the original NUnit test fixture.

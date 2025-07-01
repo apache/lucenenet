@@ -17,7 +17,7 @@ namespace Lucene.Net.Search.Highlight
      * limitations under the License.
      */
 
-    /// <summary> Processes terms found in the original text, typically by applying some form 
+    /// <summary> Processes terms found in the original text, typically by applying some form
     /// of mark-up to highlight terms in HTML search results pages.</summary>
     public interface IFormatter
     {

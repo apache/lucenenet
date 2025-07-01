@@ -22,7 +22,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// <summary>
     /// Search task.
     /// <para/>
-    /// Note: This task reuses the reader if it is already open. 
+    /// Note: This task reuses the reader if it is already open.
     /// Otherwise a reader is opened at start and closed at the end.
     /// </summary>
     public class SearchTask : ReadTask

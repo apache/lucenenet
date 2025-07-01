@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis
                 // LUCENENET NOTE: In Java this returns -1 when done reading,
                 // but in .NET it returns 0. We are sticking with the .NET behavior
                 // for compatibility reasons, but all Java-ported tests need to be fixed
-                // to compensate for this (i.e. instead of checking x == -1, we should 
+                // to compensate for this (i.e. instead of checking x == -1, we should
                 // check x <= 0 which covers both cases)
                 read = input.Read(cbuf, off, realLen);
             }
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis
         }
 
         // LUCENENET: These are not supported by TextReader, so doesn't make much sense to include them.
-        // These were basically just to override the Java Reader class. In .NET, there is no Mark() method 
+        // These were basically just to override the Java Reader class. In .NET, there is no Mark() method
         // to support, nor is there an IsReady. TextReader works happily without these.
         //public virtual bool IsMarkSupported // LUCENENET specific - renamed from markSupported()
         //{

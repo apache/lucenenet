@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// A large training corpus was used to calculate Chinese word frequency probability.
     /// </para>
     /// <para>
-    /// This analyzer requires a dictionary to provide statistical data. 
+    /// This analyzer requires a dictionary to provide statistical data.
     /// <see cref="SmartChineseAnalyzer"/> has an included dictionary out-of-box.
     /// </para>
     /// <para>
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class
         /// accesses the static final set the first time.
         /// </summary>
         private static class DefaultSetHolder

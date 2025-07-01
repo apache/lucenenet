@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs
     ///   <item><description>DocValuesConsumer is created by
     ///       <see cref="DocValuesFormat.FieldsConsumer(Index.SegmentWriteState)"/> or
     ///       <see cref="NormsFormat.NormsConsumer(Index.SegmentWriteState)"/>.</description></item>
-    ///   <item><description><see cref="AddNumericField(FieldInfo, IEnumerable{long?})"/>, 
+    ///   <item><description><see cref="AddNumericField(FieldInfo, IEnumerable{long?})"/>,
     ///       <see cref="AddBinaryField(FieldInfo, IEnumerable{BytesRef})"/>,
     ///       or <see cref="AddSortedField(FieldInfo, IEnumerable{BytesRef}, IEnumerable{long?})"/> are called for each Numeric,
     ///       Binary, or Sorted docvalues field. The API is a "pull" rather

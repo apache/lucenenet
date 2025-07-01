@@ -24,7 +24,7 @@ namespace Lucene.Net.Join
 
     /// <summary>
     /// Utility for query time joining using <see cref="Lucene.Net.Search.Join.TermsQuery"/> and <see cref="Lucene.Net.Search.Join.TermsCollector"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     [Obsolete("Use Lucene.Net.Search.Join.JoinUtil instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

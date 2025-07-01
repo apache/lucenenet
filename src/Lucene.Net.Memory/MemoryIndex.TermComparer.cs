@@ -26,7 +26,7 @@ namespace Lucene.Net.Index.Memory
         {
             /// <summary>
             /// Sorts term entries into ascending order; also works for
-            /// <see cref="Array.BinarySearch{T}(T[], T, IComparer{T})"/> and 
+            /// <see cref="Array.BinarySearch{T}(T[], T, IComparer{T})"/> and
             /// <see cref="Array.Sort{T}(T[], IComparer{T})"/>.
             /// </summary>
             public static int KeyComparer<TKey, TValue>(KeyValuePair<TKey, TValue> x, KeyValuePair<TKey, TValue> y)

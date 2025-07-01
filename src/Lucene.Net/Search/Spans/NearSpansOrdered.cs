@@ -201,12 +201,12 @@ namespace Lucene.Net.Search.Spans
         /// <c> target &lt;= current</c>, or after the iterator has exhausted.
         /// Both cases may result in unpredicted behavior.
         /// <para/>Returns <c>true</c> if there is such
-        /// a match.  
-        /// <para/>Behaves as if written: 
+        /// a match.
+        /// <para/>Behaves as if written:
         /// <code>
-        ///     bool SkipTo(int target) 
+        ///     bool SkipTo(int target)
         ///     {
-        ///         do 
+        ///         do
         ///         {
         ///             if (!Next())
         ///                 return false;

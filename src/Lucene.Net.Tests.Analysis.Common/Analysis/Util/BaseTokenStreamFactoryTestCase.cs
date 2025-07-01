@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// Base class for testing tokenstream factories. 
+    /// Base class for testing tokenstream factories.
     /// <para>
     /// Example usage:
     /// <code><pre>
@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns a fully initialized TokenizerFactory with the specified name, version, resource loader, 
+        /// Returns a fully initialized TokenizerFactory with the specified name, version, resource loader,
         /// and key-value arguments.
         /// </summary>
         protected internal virtual TokenizerFactory TokenizerFactory(string name, Version matchVersion, IResourceLoader loader, params string[] keysAndValues)
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns a fully initialized TokenFilterFactory with the specified name, version, resource loader, 
+        /// Returns a fully initialized TokenFilterFactory with the specified name, version, resource loader,
         /// and key-value arguments.
         /// </summary>
         protected internal virtual TokenFilterFactory TokenFilterFactory(string name, Version matchVersion, IResourceLoader loader, params string[] keysAndValues)
@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns a fully initialized CharFilterFactory with the specified name, version, resource loader, 
+        /// Returns a fully initialized CharFilterFactory with the specified name, version, resource loader,
         /// and key-value arguments.
         /// </summary>
         protected internal virtual CharFilterFactory CharFilterFactory(string name, Version matchVersion, IResourceLoader loader, params string[] keysAndValues)

@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// <summary>
     /// Lucene 4.0 implementation of <see cref="SegmentInfoReader"/>.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     /// <seealso cref="Lucene40SegmentInfoFormat"/>
     [Obsolete("Only for reading old 4.0-4.5 segments")]

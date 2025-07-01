@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Grouping.Function
     /// <summary>
     /// Concrete implementation of <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/> that groups based on
     /// <see cref="ValueSource"/> instances.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     // LUCENENET Specific - Made generic to reduce need for casting.

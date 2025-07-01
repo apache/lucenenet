@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Util
 
     /// <summary>
     /// Some commonly-used stemming functions
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public static class StemmerUtil // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable

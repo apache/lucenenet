@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Snowball
 
     /// <summary>
     /// A filter that stems words using a Snowball-generated stemmer.
-    /// 
+    ///
     /// Available stemmers are listed in Lucene.Net.Tartarus.Snowball.Ext.
     /// <para><b>NOTE</b>: <see cref="SnowballFilter"/> expects lowercased text.
     /// <list type="bullet">
@@ -33,13 +33,13 @@ namespace Lucene.Net.Analysis.Snowball
     ///     <item><description>For other languages, see <see cref="Core.LowerCaseFilter"/>.</description></item>
     /// </list>
     /// </para>
-    /// 
+    ///
     /// <para>
     /// Note: This filter is aware of the <see cref="IKeywordAttribute"/>. To prevent
     /// certain terms from being passed to the stemmer
     /// <see cref="IKeywordAttribute.IsKeyword"/> should be set to <c>true</c>
     /// in a previous <see cref="TokenStream"/>.
-    /// 
+    ///
     /// Note: For including the original term as well as the stemmed version, see
     /// <see cref="Miscellaneous.KeywordRepeatFilterFactory"/>
     /// </para>
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Snowball
 
         /// <summary>
         /// Construct the named stemming filter.
-        /// 
+        ///
         /// Available stemmers are listed in Lucene.Net.Tartarus.Snowball.Ext.
         /// The name of a stemmer is the part of the class name before "Stemmer",
         /// e.g., the stemmer in <see cref="Tartarus.Snowball.Ext.EnglishStemmer"/> is named "English".

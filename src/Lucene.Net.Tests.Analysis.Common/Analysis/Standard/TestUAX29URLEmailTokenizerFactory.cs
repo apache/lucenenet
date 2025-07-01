@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Standard
             AssertTokenStreamContents(stream, new string[] { "some", "dashed", "phrase" });
         }
 
-        // Test with some URLs from TestUAX29URLEmailTokenizer's 
+        // Test with some URLs from TestUAX29URLEmailTokenizer's
         // urls.from.random.text.with.urls.txt
         [Test]
         public virtual void TestURLs()
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Standard
             AssertTokenStreamContents(stream, new string[] { "http://johno.jsmf.net/knowhow/ngrams/index.php?table=en-dickens-word-2gram&paragraphs=50&length=200&no-ads=on", "some", "extra", "Words", "thrown", "in", "here", "http://c5-3486.bisynxu.FR/aI.YnNms/", "samba", "Halta", "gamba", "ftp://119.220.152.185/JgJgdZ/31aW5c/viWlfQSTs5/1c8U5T/ih5rXx/YfUJ/xBW1uHrQo6.R", "M19nq.0URV4A.Me.CC/mj0kgt6hue/dRXv8YVLOw9v/CIOqb", "Https://yu7v33rbt.vC6U3.XN--KPRW13D/y%4fMSzkGFlm/wbDF4m", "inter", "Locutio", "[c2d4::]/%471j5l/j3KFN%AAAn/Fip-NisKH/", "file:///aXvSZS34is/eIgM8s~U5dU4Ifd%c7", "blah", "Sirrah", "woof", "http://[a42:a7b6::]/qSmxSUU4z/%52qVl4" });
         }
 
-        // Test with some emails from TestUAX29URLEmailTokenizer's 
+        // Test with some emails from TestUAX29URLEmailTokenizer's
         // email.addresses.from.random.text.with.email.addresses.txt
         [Test]
         public virtual void TestEmails()
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Standard
             AssertTokenStreamContents(stream, new string[] { "one", "two", "three", longWord, "four", "five", "six" });
         }
 
-        /// @deprecated nuke this test in lucene 5.0 
+        /// @deprecated nuke this test in lucene 5.0
         [Test]
         [Obsolete("nuke this test in lucene 5.0")]
         public virtual void TestMatchVersion()

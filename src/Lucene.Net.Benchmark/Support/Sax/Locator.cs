@@ -81,14 +81,14 @@ namespace Sax
         /// to edit the character content of the original XML document.
         /// In some cases, these "line" numbers match what would be displayed
         /// as columns, and in others they may not match the source text
-        /// due to internal entity expansion. 
+        /// due to internal entity expansion.
         /// <para/>
         /// The return value is an approximation of the line number
         /// in the document entity or external parsed entity where the
         /// markup triggering the event appears.
         /// <para/>
-        /// If possible, the SAX driver should provide the line position 
-        /// of the first character after the text associated with the document 
+        /// If possible, the SAX driver should provide the line position
+        /// of the first character after the text associated with the document
         /// event.  The first line is line 1.
         /// <para/>
         /// Returns the line number, or -1 if none is available.
@@ -107,14 +107,14 @@ namespace Sax
         /// to edit the character content of the original XML document.
         /// For example, when lines contain combining character sequences, wide
         /// characters, surrogate pairs, or bi-directional text, the value may
-        /// not correspond to the column in a text editor's display. 
+        /// not correspond to the column in a text editor's display.
         /// <para/>
         /// The return value is an approximation of the column number
         /// in the document entity or external parsed entity where the
         /// markup triggering the event appears.
         /// <para/>
-        /// If possible, the SAX driver should provide the line position 
-        /// of the first character after the text associated with the document 
+        /// If possible, the SAX driver should provide the line position
+        /// of the first character after the text associated with the document
         /// event.  The first column in each line is column 1.
         /// <para/>
         /// Returns the column number, or -1 if none is available.

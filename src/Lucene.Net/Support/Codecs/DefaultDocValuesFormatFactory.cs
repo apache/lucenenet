@@ -59,17 +59,17 @@ namespace Lucene.Net.Codecs
     ///         PutDocValuesFormatType(typeof(MyDocValuesFormat));
     ///         PutDocValuesFormatType(typeof(AnotherDocValuesFormat));
     ///     }
-    ///     
+    ///
     ///     protected override DocValuesFormat NewDocValuesFormat(Type type)
     ///     {
     ///         // Special case: AnotherDocValuesFormat has a required dependency
     ///         if (typeof(AnotherDocValuesFormat).Equals(type))
     ///             return new AnotherDocValuesFormat(new SomeDependency());
-    ///         
+    ///
     ///         return base.NewDocValuesFormat(type);
     ///     }
     /// }
-    /// 
+    ///
     /// // Register the factory at application start up.
     /// DocValuesFormat.SetDocValuesFormatFactory(new ExplicitDocValuesFormatFactory());
     /// </code>
@@ -87,12 +87,12 @@ namespace Lucene.Net.Codecs
     ///     {
     ///         // Load all default codecs
     ///         base.Initialize();
-    ///         
+    ///
     ///         // Load all of the codecs inside of the same assembly that MyDocValuesFormat is defined in
     ///         ScanForDocValuesFormats(typeof(MyDocValuesFormat).Assembly);
     ///     }
     /// }
-    /// 
+    ///
     /// // Register the factory at application start up.
     /// DocValuesFormat.SetDocValuesFormatFactory(new ScanningDocValuesFormatFactory());
     /// </code>
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs
         /// to make your custom codecs known to Lucene.
         /// <para/>
         /// These types will be registered after the default Lucene types, so if a custom type has the same
-        /// name as a Lucene <see cref="DocValuesFormat"/> (via <see cref="DocValuesFormatNameAttribute"/>) 
+        /// name as a Lucene <see cref="DocValuesFormat"/> (via <see cref="DocValuesFormatNameAttribute"/>)
         /// the custom type will replace the Lucene type with the same name.
         /// </summary>
         public IEnumerable<Type> CustomDocValuesFormatTypes { get; set; }
@@ -141,7 +141,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Initializes the doc values type cache with the known <see cref="DocValuesFormat"/> types.
         /// Override this method (and optionally call <c>base.Initialize()</c>) to add your
-        /// own <see cref="DocValuesFormat"/> types by calling <see cref="PutDocValuesFormatType(Type)"/> 
+        /// own <see cref="DocValuesFormat"/> types by calling <see cref="PutDocValuesFormatType(Type)"/>
         /// or <see cref="ScanForDocValuesFormats(Assembly)"/>.
         /// <para/>
         /// If two types have the same name by using the <see cref="DocValuesFormatNameAttribute"/>, the
@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs
         /// and adds their names to the <see cref="docValuesFormatNameToTypeMap"/>. Note that names will be
         /// automatically overridden if the <see cref="DocValuesFormat"/> name appears multiple times - the last match wins.
         /// </summary>
-        /// <param name="assemblies">A list of assemblies to scan. The assemblies will be scanned from first to last, 
+        /// <param name="assemblies">A list of assemblies to scan. The assemblies will be scanned from first to last,
         /// and the last match for each <see cref="DocValuesFormat"/> name wins.</param>
         protected virtual void ScanForDocValuesFormats(IEnumerable<Assembly> assemblies)
         {
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Adds a <see cref="DocValuesFormat"/> type to the <see cref="docValuesFormatNameToTypeMap"/>, using 
+        /// Adds a <see cref="DocValuesFormat"/> type to the <see cref="docValuesFormatNameToTypeMap"/>, using
         /// the name provided in the <see cref="DocValuesFormatNameAttribute"/>, if present, or the name
         /// of the codec class minus the "DocValuesFormat" suffix as the name by default.
         /// <para/>

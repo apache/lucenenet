@@ -24,10 +24,10 @@ namespace Lucene.Net.Analysis.De
      */
 
     /// <summary>
-    /// Test the German stemmer. The stemming algorithm is known to work less 
-    /// than perfect, as it doesn't use any word lists with exceptions. We 
+    /// Test the German stemmer. The stemming algorithm is known to work less
+    /// than perfect, as it doesn't use any word lists with exceptions. We
     /// also check some of the cases where the algorithm is wrong.
-    /// 
+    ///
     /// </summary>
     public class TestGermanStemFilter : BaseTokenStreamTestCase
     {

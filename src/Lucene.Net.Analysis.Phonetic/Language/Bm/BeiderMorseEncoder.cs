@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         /// <summary>
         /// Gets or Sets how multiple possible phonetic encodings are combined.
-        /// <c>true</c> if multiple encodings are to be combined with a '|', <c>false</c> if just the first one is 
+        /// <c>true</c> if multiple encodings are to be combined with a '|', <c>false</c> if just the first one is
         /// to be considered.
         /// </summary>
         public virtual bool IsConcat

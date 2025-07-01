@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// At most, this query will match terms up to <see cref="LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE"/>
     /// edits. Higher distances are not supported.  Note that the
     /// fuzzy distance is measured in "byte space" on the bytes
-    /// returned by the <see cref="TokenStream"/>'s <see cref="Analysis.TokenAttributes.ITermToBytesRefAttribute"/>, 
+    /// returned by the <see cref="TokenStream"/>'s <see cref="Analysis.TokenAttributes.ITermToBytesRefAttribute"/>,
     /// usually UTF8.  By default
     /// the analyzed bytes must be at least 3 <see cref="DEFAULT_MIN_FUZZY_LENGTH"/>
     /// bytes before any edits are
@@ -45,15 +45,15 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// edited.  We allow up to 1 <see cref="DEFAULT_MAX_EDITS"/>
     /// edit.
     /// If <see cref="unicodeAware"/> parameter in the constructor is set to true, maxEdits,
-    /// minFuzzyLength, transpositions and nonFuzzyPrefix are measured in Unicode code 
-    /// points (actual letters) instead of bytes. 
-    /// 
+    /// minFuzzyLength, transpositions and nonFuzzyPrefix are measured in Unicode code
+    /// points (actual letters) instead of bytes.
+    ///
     /// </para>
     /// <para>
     /// NOTE: This suggester does not boost suggestions that
     /// required no edits over suggestions that did require
     /// edits.  This is a known limitation.
-    /// 
+    ///
     /// </para>
     /// <para>
     /// Note: complex query analyzers can have a significant impact on the lookup
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// like synonyms to keep the complexity of the prefix intersection low for good
     /// lookup performance. At index time, complex analyzers can safely be used.
     /// </para>
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public sealed class FuzzySuggester : AnalyzingSuggester
@@ -73,8 +73,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private readonly bool unicodeAware;
 
         /// <summary>
-        /// Measure <see cref="maxEdits"/>, <see cref="minFuzzyLength"/>, 
-        /// <see cref="transpositions"/>, and <see cref="nonFuzzyPrefix"/> 
+        /// Measure <see cref="maxEdits"/>, <see cref="minFuzzyLength"/>,
+        /// <see cref="transpositions"/>, and <see cref="nonFuzzyPrefix"/>
         /// parameters in Unicode code points (actual letters)
         /// instead of bytes.
         /// </summary>
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///        no limit. </param>
         /// <param name="preservePositionIncrements"> Whether position holes should appear in the automaton </param>
         /// <param name="maxEdits"> must be &gt;= 0 and &lt;= <see cref="LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE"/>. </param>
-        /// <param name="transpositions"> <c>true</c> if transpositions should be treated as a primitive 
+        /// <param name="transpositions"> <c>true</c> if transpositions should be treated as a primitive
         ///        edit operation. If this is false, comparisons will implement the classic
         ///        Levenshtein algorithm. </param>
         /// <param name="nonFuzzyPrefix"> length of common (non-fuzzy) prefix (see default <see cref="DEFAULT_NON_FUZZY_PREFIX"/> </param>
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // multiple paths: this is really scary! is it slow?
                 // maybe we should not do this and throw UOE?
                 Automaton a = BasicOperations.Union(subs);
-                // TODO: we could call toLevenshteinAutomata() before det? 
+                // TODO: we could call toLevenshteinAutomata() before det?
                 // this only happens if you have multiple paths anyway (e.g. synonyms)
                 BasicOperations.Determinize(a);
 

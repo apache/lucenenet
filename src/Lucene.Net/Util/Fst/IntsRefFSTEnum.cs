@@ -98,7 +98,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Seeks to exactly this term, returning <c>null</c> if the term
-        /// doesn't exist.  This is faster than using 
+        /// doesn't exist.  This is faster than using
         /// <see cref="SeekFloor"/> or <see cref="SeekCeil"/> because it
         /// short-circuits as soon the match is not found.
         /// </summary>

@@ -33,7 +33,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
     /// <code>
     ///   &lt;top&gt;
     ///   &lt;num&gt; Number: nnn
-    ///     
+    ///
     ///   &lt;title&gt; title of the topic
     ///
     ///   &lt;desc&gt; Description:

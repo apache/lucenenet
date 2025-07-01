@@ -225,7 +225,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     {
                         Stream localFileIS = outerInstance.@is;
                         if (localFileIS != null)
-                        { // null means fileIS was closed on us 
+                        { // null means fileIS was closed on us
                             try
                             {
                                 // To work around a bug in XERCES (XERCESJ-1257), we assume the XML is always UTF8, so we simply provide reader.

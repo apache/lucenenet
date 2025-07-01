@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Hi
     /// to prevent terms from being normalized use an instance of
     /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="IKeywordAttribute"/> before this <see cref="TokenStream"/>.
-    /// </para> 
+    /// </para>
     /// </summary>
     /// <seealso cref="HindiNormalizer"/>
     public sealed class HindiNormalizationFilter : TokenFilter

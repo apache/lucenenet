@@ -21,7 +21,7 @@ namespace Lucene.Net.Search.Highlight
 
     /// <summary> Implements the policy for breaking text into multiple fragments for consideration
     /// by the <see cref="Highlighter"/> class. A sophisticated implementation may do this on the basis
-    /// of detecting end of sentences in the text. 
+    /// of detecting end of sentences in the text.
     /// </summary>
     /// <author>  mark@searcharea.co.uk </author>
     public interface IFragmenter

@@ -32,10 +32,10 @@ namespace Lucene.Net.Facet.Taxonomy
     /// Do note that every time an element is read from <see cref="LruDictionary{TKey, TValue}"/>,
     /// a write operation also takes place to update the element's last access time.
     /// This is because the LRU order needs to be remembered to determine which element
-    /// to evict when the <see cref="Limit"/> is exceeded. 
+    /// to evict when the <see cref="Limit"/> is exceeded.
     /// </para>
     /// <para>
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>
@@ -53,7 +53,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <para/>
         /// Setting <paramref name="limit"/> to a very large value, like <see cref="int.MaxValue"/>
         /// is allowed, but is less efficient than
-        /// using <see cref="J2N.Collections.Generic.Dictionary{TKey, TValue}"/> or 
+        /// using <see cref="J2N.Collections.Generic.Dictionary{TKey, TValue}"/> or
         /// <see cref="Dictionary{TKey, TValue}"/> because our class needs
         /// to keep track of the use order (via an additional doubly-linked
         /// list) which is not used when the map's size is always below the
@@ -68,7 +68,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Create a new hash map with a bounded size and with least recently
         /// used entries removed.
         /// <para/>
-        /// LUCENENET specific overload to allow passing in custom <see cref="IEqualityComparer{T}"/>. 
+        /// LUCENENET specific overload to allow passing in custom <see cref="IEqualityComparer{T}"/>.
         /// See LUCENENET-602.
         /// </summary>
         /// <param name="limit">
@@ -77,14 +77,14 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <para/>
         /// Setting <paramref name="limit"/> to a very large value, like <see cref="int.MaxValue"/>
         /// is allowed, but is less efficient than
-        /// using <see cref="J2N.Collections.Generic.Dictionary{TKey, TValue}"/> or 
+        /// using <see cref="J2N.Collections.Generic.Dictionary{TKey, TValue}"/> or
         /// <see cref="Dictionary{TKey, TValue}"/> because our class needs
         /// to keep track of the use order (via an additional doubly-linked
         /// list) which is not used when the map's size is always below the
         /// maximum size.
         /// </param>
         /// <param name="comparer">
-        /// The <see cref="IEqualityComparer{TKey}"/> implementation to use when comparing keys, 
+        /// The <see cref="IEqualityComparer{TKey}"/> implementation to use when comparing keys,
         /// or <c>null</c> to use the default <see cref="IEqualityComparer{TKey}"/> for the type of the key.
         /// </param>
         public LruDictionary(int limit, IEqualityComparer<TKey> comparer)
@@ -96,7 +96,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Allows changing the dictionary's maximal number of elements
         /// which was defined at construction time.
         /// <para>
-        /// Note that if the dictionary is already larger than <see cref="Limit"/>, the current 
+        /// Note that if the dictionary is already larger than <see cref="Limit"/>, the current
         /// implementation does not shrink it (by removing the oldest elements);
         /// Rather, the map remains in its current size as new elements are
         /// added, and will only start shrinking (until settling again on the

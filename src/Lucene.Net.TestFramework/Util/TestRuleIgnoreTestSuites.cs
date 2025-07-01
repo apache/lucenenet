@@ -25,10 +25,10 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// this rule will cause the suite to be assumption-ignored if 
+    /// this rule will cause the suite to be assumption-ignored if
     /// the test class implements a given marker interface and a special
     /// property is not set.
-    /// 
+    ///
     /// <p>this is a workaround for problems with certain JUnit containers (IntelliJ)
     /// which automatically discover test suites and attempt to run nested classes
     /// that we use for testing the test framework itself.

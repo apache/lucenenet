@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Core
 
     /// <summary>
     /// Factory for <see cref="StopFilter"/>.
-    /// 
+    ///
     /// <code>
     /// &lt;fieldType name="text_stop" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="true"&gt;
     ///   &lt;analyzer&gt;
@@ -42,11 +42,11 @@ namespace Lucene.Net.Analysis.Core
     /// </para>
     /// <list type="bullet">
     ///     <item><description><c>ignoreCase</c> defaults to <c>false</c></description></item>
-    ///     <item><description><c>words</c> should be the name of a stopwords file to parse, if not 
+    ///     <item><description><c>words</c> should be the name of a stopwords file to parse, if not
     ///      specified the factory will use <see cref="StopAnalyzer.ENGLISH_STOP_WORDS_SET"/>
     ///     </description></item>
-    ///     <item><description><c>format</c> defines how the <c>words</c> file will be parsed, 
-    ///      and defaults to <c>wordset</c>.  If <c>words</c> is not specified, 
+    ///     <item><description><c>format</c> defines how the <c>words</c> file will be parsed,
+    ///      and defaults to <c>wordset</c>.  If <c>words</c> is not specified,
     ///      then <c>format</c> must not be specified.
     ///     </description></item>
     /// </list>
@@ -54,15 +54,15 @@ namespace Lucene.Net.Analysis.Core
     /// The valid values for the <c>format</c> option are:
     /// </para>
     /// <list type="bullet">
-    ///  <item><description><c>wordset</c> - This is the default format, which supports one word per 
-    ///      line (including any intra-word whitespace) and allows whole line comments 
-    ///      begining with the "#" character.  Blank lines are ignored.  See 
+    ///  <item><description><c>wordset</c> - This is the default format, which supports one word per
+    ///      line (including any intra-word whitespace) and allows whole line comments
+    ///      begining with the "#" character.  Blank lines are ignored.  See
     ///      <see cref="WordlistLoader.GetLines"/> for details.
     ///  </description></item>
-    ///  <item><description><c>snowball</c> - This format allows for multiple words specified on each 
-    ///      line, and trailing comments may be specified using the vertical line ("&#124;"). 
-    ///      Blank lines are ignored.  See 
-    ///      <see cref="WordlistLoader.GetSnowballWordSet(TextReader, Net.Util.LuceneVersion)"/> 
+    ///  <item><description><c>snowball</c> - This format allows for multiple words specified on each
+    ///      line, and trailing comments may be specified using the vertical line ("&#124;").
+    ///      Blank lines are ignored.  See
+    ///      <see cref="WordlistLoader.GetSnowballWordSet(TextReader, Net.Util.LuceneVersion)"/>
     ///      for details.
     ///  </description></item>
     /// </list>

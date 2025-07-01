@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
         ///
         /// // Now pop the truly added elements.
         /// ScoreDoc[] results = new ScoreDoc[totalHits];
-        /// for (int i = totalHits - 1; i &gt;= 0; i--) 
+        /// for (int i = totalHits - 1; i &gt;= 0; i--)
         /// {
         ///     results[i] = (ScoreDoc)pq.Pop();
         /// }

@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// <summary>
     /// Reads Lucene 3.x norms format and exposes it via <see cref="Index.DocValues"/> API.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [Obsolete("Only for reading existing 3.x indexes")]
     internal class Lucene3xNormsProducer : DocValuesProducer

@@ -41,10 +41,10 @@ namespace Lucene.Net.Codecs.SimpleText
     ///  T
     ///  ...
     /// </code>
-    /// So a document's value (delta encoded from minvalue) can be retrieved by 
-    /// seeking to startOffset + (1+pattern.length()+2)*docid. The extra 1 is the newline. 
+    /// So a document's value (delta encoded from minvalue) can be retrieved by
+    /// seeking to startOffset + (1+pattern.length()+2)*docid. The extra 1 is the newline.
     /// The extra 2 is another newline and 'T' or 'F': true if the value is real, false if missing.
-    ///  
+    ///
     /// for bytes this is also a "fixed-width" file, for example:
     /// <code>
     ///  field myField
@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs.SimpleText
     /// So a doc's value can be retrieved by seeking to startOffset + (9+pattern.length+maxlength+2)*doc
     /// the extra 9 is 2 newlines, plus "length " itself.
     /// The extra 2 is another newline and 'T' or 'F': true if the value is real, false if missing.
-    ///  
+    ///
     /// For sorted bytes this is a fixed-width file, for example:
     /// <code>
     ///  field myField
@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.SimpleText
     /// So the "ord section" begins at startOffset + (9+pattern.length+maxlength)*numValues.
     /// A document's ord can be retrieved by seeking to "ord section" + (1+ordpattern.length())*docid
     /// an ord's value can be retrieved by seeking to startOffset + (9+pattern.length+maxlength)*ord
-    ///  
+    ///
     /// For sorted set this is a fixed-width file very similar to the SORTED case, for example:
     /// <code>
     ///  field myField
@@ -99,9 +99,9 @@ namespace Lucene.Net.Codecs.SimpleText
     ///  length 3
     ///  baz[space][space][space][space][space]
     ///  ...
-    ///  0,3,5   
+    ///  0,3,5
     ///  1,2
-    ///  
+    ///
     ///  10
     ///  ...
     /// </code>
@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.SimpleText
     /// this is a comma-separated list, and its padded with spaces to be fixed width. so trim() and split() it.
     /// and beware the empty string!
     /// An ord's value can be retrieved by seeking to startOffset + (9+pattern.length+maxlength)*ord
-    /// <para/> 
+    /// <para/>
     /// The reader can just scan this file when it opens, skipping over the data blocks
     /// and saving the offset/etc for each field.
     /// <para/>

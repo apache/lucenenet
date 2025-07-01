@@ -94,7 +94,7 @@ namespace Lucene.Net.Support.IO
         }
 
         /// <summary>
-        /// Creates a new empty file in a random subdirectory of <see cref="Path.GetTempPath()"/>, using the given prefix and 
+        /// Creates a new empty file in a random subdirectory of <see cref="Path.GetTempPath()"/>, using the given prefix and
         /// suffix strings to generate its name.
         /// </summary>
         /// <remarks>
@@ -103,20 +103,20 @@ namespace Lucene.Net.Support.IO
         /// <item><description>The file denoted by the returned abstract pathname did not exist before this method was invoked, and</description></item>
         /// <item><description>Neither this method nor any of its variants will return the same abstract pathname again in the current invocation of the virtual machine.</description></item>
         /// </list>
-        /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically, 
+        /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically,
         /// it must be deleted by the caller.
         /// <para/>
-        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful 
-        /// string such as "hjb" or "mail". 
+        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful
+        /// string such as "hjb" or "mail".
         /// <para/>
         /// The suffix argument may be null, in which case a random suffix will be used.
         /// <para/>
-        /// Both prefix and suffix must be provided with valid characters for the underlying system, as specified by 
+        /// Both prefix and suffix must be provided with valid characters for the underlying system, as specified by
         /// <see cref="Path.GetInvalidFileNameChars()"/>.
         /// <para/>
-        /// If the directory argument is null then the system-dependent default temporary-file directory will be used, 
-        /// with a random subdirectory name. The default temporary-file directory is specified by the 
-        /// <see cref="Path.GetTempPath()"/> method. On UNIX systems the default value of this property is typically 
+        /// If the directory argument is null then the system-dependent default temporary-file directory will be used,
+        /// with a random subdirectory name. The default temporary-file directory is specified by the
+        /// <see cref="Path.GetTempPath()"/> method. On UNIX systems the default value of this property is typically
         /// "/tmp" or "/var/tmp"; on Microsoft Windows systems it is typically "C:\\Users\\[UserName]\\AppData\Local\Temp".
         /// </remarks>
         /// <param name="prefix">The prefix string to be used in generating the file's name; must be at least three characters long</param>
@@ -192,7 +192,7 @@ namespace Lucene.Net.Support.IO
         /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically,
         /// it must be deleted by the caller.
         /// <para/>
-        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful 
+        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful
         /// string such as "hjb" or "mail".
         /// <para/>
         /// The suffix argument may be null, in which case a random suffix will be used.
@@ -236,7 +236,7 @@ namespace Lucene.Net.Support.IO
         /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically,
         /// it must be deleted by the caller.
         /// <para/>
-        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful 
+        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful
         /// string such as "hjb" or "mail".
         /// <para/>
         /// The suffix argument may be null, in which case a random suffix will be used.
@@ -279,7 +279,7 @@ namespace Lucene.Net.Support.IO
         /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically,
         /// it must be deleted by the caller.
         /// <para/>
-        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful 
+        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful
         /// string such as "hjb" or "mail".
         /// <para/>
         /// The suffix argument may be null, in which case a random suffix will be used.
@@ -322,7 +322,7 @@ namespace Lucene.Net.Support.IO
         /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically,
         /// it must be deleted by the caller.
         /// <para/>
-        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful 
+        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful
         /// string such as "hjb" or "mail".
         /// <para/>
         /// The suffix argument may be null, in which case a random suffix will be used.
@@ -370,7 +370,7 @@ namespace Lucene.Net.Support.IO
         /// This method provides only part of a temporary-file facility. However, the file will not be deleted automatically,
         /// it must be deleted by the caller.
         /// <para/>
-        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful 
+        /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful
         /// string such as "hjb" or "mail".
         /// <para/>
         /// The suffix argument may be null, in which case a random suffix will be used.
@@ -458,7 +458,7 @@ namespace Lucene.Net.Support.IO
         /// <param name="ex">An exception, for comparison.</param>
         /// <param name="filePath">The path of the file to check. This is used as a fallback in case the
         /// current OS doesn't have an HResult (an edge case).</param>
-        /// <returns><c>true</c> if the exception passed is an <see cref="IOException"/> with an 
+        /// <returns><c>true</c> if the exception passed is an <see cref="IOException"/> with an
         /// <see cref="Exception.HResult"/> corresponding to the operating system's "File Already Exists" violation, which
         /// occurs when an attempt is made to create a file that already exists.</returns>
         public static bool IsFileAlreadyExistsException(Exception ex, string filePath)
@@ -475,7 +475,7 @@ namespace Lucene.Net.Support.IO
         }
 
         /// <summary>
-        /// Generates a new random file name with the provided <paramref name="directory"/>, 
+        /// Generates a new random file name with the provided <paramref name="directory"/>,
         /// <paramref name="prefix"/> and optional <paramref name="suffix"/>.
         /// </summary>
         /// <param name="prefix">The prefix string to be used in generating the file's name</param>
@@ -492,7 +492,7 @@ namespace Lucene.Net.Support.IO
         }
 
         /// <summary>
-        /// Generates a new random file name with the provided <paramref name="directory"/>, 
+        /// Generates a new random file name with the provided <paramref name="directory"/>,
         /// <paramref name="prefix"/> and optional <paramref name="suffix"/>.
         /// </summary>
         /// <param name="prefix">The prefix string to be used in generating the file's name</param>
@@ -529,7 +529,7 @@ namespace Lucene.Net.Support.IO
         /// system. The canonical path is one in which all references have been
         /// resolved. For the cases of '..' and '.', where the file system supports
         /// parent and working directory respectively, these are removed and replaced
-        /// with a direct directory reference. 
+        /// with a direct directory reference.
         /// </summary>
         /// <param name="path">This <see cref="FileSystemInfo"/> instance.</param>
         /// <returns>The canonical path of this file.</returns>

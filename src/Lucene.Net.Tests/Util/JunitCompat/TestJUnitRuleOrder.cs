@@ -35,7 +35,7 @@ namespace Lucene.Net.Util.JunitCompat
 	using Statement = org.junit.runners.model.Statement;
 
 	/// <summary>
-	/// this verifies that JUnit <seealso cref="Rule"/>s are invoked before 
+	/// this verifies that JUnit <seealso cref="Rule"/>s are invoked before
 	/// <seealso cref="Before"/> and <seealso cref=" After"/> hooks. this should be the
 	/// case from JUnit 4.10 on.
 	/// </summary>

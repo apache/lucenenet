@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Fa
 
     /// <summary>
     /// Test the Persian Normalization Filter
-    /// 
+    ///
     /// </summary>
     public class TestPersianNormalizationFilter : BaseTokenStreamTestCase
     {

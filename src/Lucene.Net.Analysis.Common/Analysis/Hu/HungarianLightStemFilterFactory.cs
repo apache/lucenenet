@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Hu
      */
 
     /// <summary>
-    /// Factory for <see cref="HungarianLightStemFilter"/>. 
+    /// Factory for <see cref="HungarianLightStemFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_hulgtstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

@@ -30,13 +30,13 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <para/>
     /// NOTE: This was IntAssociationFacetField in Lucene
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     public class Int32AssociationFacetField : AssociationFacetField
     {
         /// <summary>
         /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and an
-        /// int association 
+        /// int association
         /// </summary>
         public Int32AssociationFacetField(int assoc, string dim, params string[] path)
             : base(Int32ToBytesRef(assoc), dim, path)

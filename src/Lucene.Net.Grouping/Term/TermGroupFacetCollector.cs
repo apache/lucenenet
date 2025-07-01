@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// <summary>
     /// An implementation of <see cref="AbstractGroupFacetCollector"/> that computes grouped facets based on the indexed terms
     /// from the <see cref="FieldCache"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class TermGroupFacetCollector : AbstractGroupFacetCollector

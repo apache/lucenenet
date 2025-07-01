@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
             /// <summary>
             /// Builds the <see cref="NormalizeCharMap"/>; call this once you
-            /// are done calling <see cref="Add"/>. 
+            /// are done calling <see cref="Add"/>.
             /// </summary>
             public virtual NormalizeCharMap Build()
             {

@@ -25,16 +25,16 @@ namespace Lucene.Net.Search.Highlight
      * limitations under the License.
      */
 
-    /// <summary> 
+    /// <summary>
     /// Utility class used to extract the terms used in a query, plus any weights.
     /// This class will not find terms for <see cref="MultiTermQuery"/>, RangeQuery and <see cref="PrefixQuery"/> classes
-    /// so the caller must pass a rewritten query (see <see cref="Query.Rewrite(IndexReader)"/>) to obtain a list of 
+    /// so the caller must pass a rewritten query (see <see cref="Query.Rewrite(IndexReader)"/>) to obtain a list of
     /// expanded terms.
     /// </summary>
     public static class QueryTermExtractor
     {
 
-        /// <summary> 
+        /// <summary>
         /// Extracts all terms texts of a given <see cref="Query"/> into an array of WeightedTerms
         /// </summary>
         /// <param name="query"><see cref="Query"/> to extract term texts from</param>
@@ -44,11 +44,11 @@ namespace Lucene.Net.Search.Highlight
             return GetTerms(query, false);
         }
 
-        /// <summary> 
+        /// <summary>
         /// Extracts all terms texts of a given <see cref="Query"/> into an array of WeightedTerms
         /// </summary>
         /// <param name="query"><see cref="Query"/> to extract term texts from</param>
-        /// <param name="reader">used to compute IDF which can be used to a) score selected fragments better 
+        /// <param name="reader">used to compute IDF which can be used to a) score selected fragments better
         /// b) use graded highlights eg chaning intensity of font color</param>
         /// <param name="fieldName">the field on which Inverse Document Frequency (IDF) calculations are based</param>
         /// <returns> an array of the terms used in a query, plus their weights.</returns>
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Highlight
                 }
                 catch (Exception e) when (e.IsIOException())
                 {
-                    //ignore 
+                    //ignore
                 }
             }
             return terms;
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.Highlight
             return terms.ToArray();
         }
 
-        /// <summary> 
+        /// <summary>
         /// Extracts all terms texts of a given <see cref="Query"/> into an array of WeightedTerms
         /// </summary>
         /// <param name="query"><see cref="Query"/> to extract term texts from</param>
@@ -131,12 +131,12 @@ namespace Lucene.Net.Search.Highlight
         /// <summary> extractTerms is currently the only query-independent means of introspecting queries but it only reveals
         /// a list of terms for that query - not the boosts each individual term in that query may or may not have.
         /// "Container" queries such as BooleanQuery should be unwrapped to get at the boost info held
-        /// in each child element. 
+        /// in each child element.
         /// Some discussion around this topic here:
         /// http://www.gossamer-threads.com/lists/lucene/java-dev/34208?search_string=introspection;#34208
         /// Unfortunately there seemed to be limited interest in requiring all <see cref="Query"/> objects to implement
         /// something common which would allow access to child queries so what follows here are query-specific
-        /// implementations for accessing embedded query elements. 
+        /// implementations for accessing embedded query elements.
         /// </summary>
         private static void GetTermsFromBooleanQuery(BooleanQuery query, ISet<WeightedTerm> terms, bool prohibited, string fieldName)
         {

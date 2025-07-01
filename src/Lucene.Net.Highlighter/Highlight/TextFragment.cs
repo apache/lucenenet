@@ -20,8 +20,8 @@ namespace Lucene.Net.Search.Highlight
      * limitations under the License.
      */
 
-    /// <summary> 
-    /// Low-level class used to record information about a section of a document 
+    /// <summary>
+    /// Low-level class used to record information about a section of a document
     /// with a score.
     /// </summary>
     public class TextFragment
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Returns the marked-up text for this text fragment 
+        /// Returns the marked-up text for this text fragment
         /// </summary>
         public override string ToString()
         {

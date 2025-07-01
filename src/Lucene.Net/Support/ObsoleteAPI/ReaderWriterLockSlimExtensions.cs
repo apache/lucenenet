@@ -24,7 +24,7 @@ namespace Lucene.Net.Support.Threading
     /// Extensions to help obtain/release from a ReaderWriterSlimLock.
     /// Taken from:
     /// http://stackoverflow.com/questions/170028/how-would-you-simplify-entering-and-exiting-a-readerwriterlock
-    /// 
+    ///
     /// LUCENENET specific
     /// </summary>
     [Obsolete("Using these extensions will allocte memory. New code should call EnterReadLock(), ExitReadLock(), EnterWriteLock() or ExitWriteLock() directly in a try/finally block. This class will be removed in 4.8.0 release candidate.")]

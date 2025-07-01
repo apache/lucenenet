@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// This collector specializes in collecting the most relevant document (group head) for each group that match the query.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="GH"></typeparam>
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Grouping
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="maxDoc">The maxDoc of the top level <see cref="Index.IndexReader"/></param>
         /// <returns>a <see cref="FixedBitSet"/> containing all group heads.</returns>
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Grouping
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns>an int array containing all group heads. The size of the array is equal to number of collected unique groups.</returns>
         public override int[] RetrieveGroupHeads()
@@ -161,8 +161,8 @@ namespace Lucene.Net.Search.Grouping
     /// <remarks>
     /// LUCENENET: moved this class from being a nested class of <see cref="AbstractAllGroupHeadsCollector{TGroupValue}"/>,
     /// made it non-generic so the generic closing type doesn't need to be specified in classes that
-    /// use <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> as a generic closing type, and renamed 
-    /// it from GroupHead to <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> to avoid naming conflicts with nested classes 
+    /// use <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> as a generic closing type, and renamed
+    /// it from GroupHead to <see cref="AbstractAllGroupHeadsCollector_GroupHead"/> to avoid naming conflicts with nested classes
     /// named GroupHead in derived classes of <see cref="AbstractAllGroupHeadsCollector"/>.
     /// </remarks>
     public abstract class AbstractAllGroupHeadsCollector_GroupHead /*<TGroupValue>*/
@@ -198,21 +198,21 @@ namespace Lucene.Net.Search.Grouping
     }
 
     /// <summary>
-    /// LUCENENET specific class used to reference an 
+    /// LUCENENET specific class used to reference an
     /// <see cref="AbstractAllGroupHeadsCollector{GH}"/> subclass
     /// without refering to its generic closing type.
     /// </summary>
     public abstract class AbstractAllGroupHeadsCollector : ICollector
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="maxDoc">The maxDoc of the top level <see cref="Index.IndexReader"/></param>
         /// <returns>a <see cref="FixedBitSet"/> containing all group heads.</returns>
         public abstract FixedBitSet RetrieveGroupHeads(int maxDoc);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns>an int array containing all group heads. The size of the array is equal to number of collected unique groups.</returns>
         public abstract int[] RetrieveGroupHeads();
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search.Grouping
         ///
         /// <para> Most Lucene Query implementations will visit
         /// matching docIDs in order.  However, some queries
-        /// (currently limited to certain cases of <see cref="BooleanQuery"/>) 
+        /// (currently limited to certain cases of <see cref="BooleanQuery"/>)
         /// can achieve faster searching if the
         /// <see cref="ICollector"/> allows them to deliver the
         /// docIDs out of order.</para>

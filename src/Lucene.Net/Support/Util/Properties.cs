@@ -22,7 +22,7 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Implementation of <see cref="IProperties"/> that handles type conversion and default values 
+    /// Implementation of <see cref="IProperties"/> that handles type conversion and default values
     /// for Java-style properties.
     /// <para/>
     /// Reads properties from a <see cref="Func{IConfiguration}"/> that is supplied to the constructor.
@@ -55,12 +55,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Retrieves the value of an property from the current process, 
-        /// with a default value if it doens't exist or the caller doesn't have 
+        /// Retrieves the value of an property from the current process,
+        /// with a default value if it doens't exist or the caller doesn't have
         /// permission to read the value.
         /// </summary>
         /// <param name="key">The name of the property.</param>
-        /// <param name="defaultValue">The value to use if the property does not exist 
+        /// <param name="defaultValue">The value to use if the property does not exist
         /// or the caller doesn't have permission to read the value.</param>
         /// <returns>The property value.</returns>
         public string GetProperty(string key, string defaultValue)
@@ -85,8 +85,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Retrieves the value of an property from the current process as <see cref="bool"/>, 
-        /// with a default value if it doens't exist, the caller doesn't have permission to read the value, 
+        /// Retrieves the value of an property from the current process as <see cref="bool"/>,
+        /// with a default value if it doens't exist, the caller doesn't have permission to read the value,
         /// or the value cannot be cast to a <see cref="bool"/>.
         /// </summary>
         /// <param name="key">The name of the property.</param>
@@ -115,8 +115,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Retrieves the value of an property from the current process as <see cref="int"/>, 
-        /// with a default value if it doens't exist, the caller doesn't have permission to read the value, 
+        /// Retrieves the value of an property from the current process as <see cref="int"/>,
+        /// with a default value if it doens't exist, the caller doesn't have permission to read the value,
         /// or the value cannot be cast to a <see cref="int"/>.
         /// </summary>
         /// <param name="key">The name of the property.</param>

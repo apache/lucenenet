@@ -29,9 +29,9 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Exposes flex API, merged from flex API of sub-segments.
-    /// This is useful when you're interacting with an 
+    /// This is useful when you're interacting with an
     /// <see cref="IndexReader"/> implementation that consists of sequential
-    /// sub-readers (eg <see cref="DirectoryReader"/> or 
+    /// sub-readers (eg <see cref="DirectoryReader"/> or
     /// <see cref="MultiReader"/>).
     ///
     /// <para/><b>NOTE</b>: for composite readers, you'll get better
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
         /// required.  Some codecs may be able to optimize
         /// their implementation when offsets and/or payloads are not
         /// required. This will return <c>null</c> if the field or term does not
-        /// exist or positions were not indexed. See 
+        /// exist or positions were not indexed. See
         /// <see cref="TermsEnum.DocsAndPositions(IBits, DocsAndPositionsEnum, DocsAndPositionsFlags)"/>.
         /// </summary>
         public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsAndPositionsFlags flags)

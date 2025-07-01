@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.CharFilters
      */
 
     /// <summary>
-    /// Factory for <see cref="HTMLStripCharFilter"/>. 
+    /// Factory for <see cref="HTMLStripCharFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_html" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

@@ -100,7 +100,7 @@ namespace Lucene.Net.Tartarus.Snowball
         /// Get the current buffer containing the stem.
         /// <para/>
         /// NOTE: this may be a reference to a different character array than the
-        /// one originally provided with setCurrent, in the exceptional case that 
+        /// one originally provided with setCurrent, in the exceptional case that
         /// stemming produced a longer intermediate or result string.
         /// <para/>
         /// It is necessary to use <see cref="CurrentBufferLength"/> to determine

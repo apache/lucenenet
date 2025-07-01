@@ -35,7 +35,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <summary>
     /// Manages near-real-time reopen of both an <see cref="IndexSearcher"/>
     /// and a <see cref="TaxonomyReader"/>.
-    /// 
+    ///
     /// <para>
     /// <b>NOTE</b>: If you call <see cref="DirectoryTaxonomyWriter.ReplaceTaxonomy"/>
     /// then you must open a new <see cref="SearcherTaxonomyManager"/> afterwards.
@@ -45,7 +45,7 @@ namespace Lucene.Net.Facet.Taxonomy
     {
         /// <summary>
         /// Holds a matched pair of <see cref="IndexSearcher"/> and
-        /// <see cref="Taxonomy.TaxonomyReader"/> 
+        /// <see cref="Taxonomy.TaxonomyReader"/>
         /// </summary>
         public class SearcherAndTaxonomy
         {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Creates near-real-time searcher and taxonomy reader
-        /// from the corresponding writers. 
+        /// from the corresponding writers.
         /// </summary>
         public SearcherTaxonomyManager(IndexWriter writer, bool applyAllDeletes,
             SearcherFactory searcherFactory, DirectoryTaxonomyWriter taxoWriter)
@@ -94,7 +94,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Creates search and taxonomy readers over the corresponding directories.
-        /// 
+        ///
         /// <para>
         /// <b>NOTE:</b> you should only use this constructor if you commit and call
         /// <see cref="Search.ReferenceManager{G}.MaybeRefresh()"/> (on the <see cref="Index.ReaderManager"/>) in the same thread. Otherwise it could lead to an

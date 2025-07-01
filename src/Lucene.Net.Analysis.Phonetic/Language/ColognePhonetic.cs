@@ -313,7 +313,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <para>
         /// In contrast to the initial description of the algorithm, this implementation does the encoding in one pass.
         /// </para>
-        /// 
+        ///
         /// </summary>
         /// <param name="text"></param>
         /// <returns>The corresponding encoding according to the <i>K&#246;lner Phonetik</i> algorithm</returns>

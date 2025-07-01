@@ -42,7 +42,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// results, while other methods prefetch all the data into memory and then
     /// provide answers directly from in-memory tables. See the documentation of
     /// individual methods for comments on their performance.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class DirectoryTaxonomyReader : TaxonomyReader
@@ -196,7 +196,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Implements the opening of a new <see cref="DirectoryTaxonomyReader"/> instance if
         /// the taxonomy has changed.
-        /// 
+        ///
         /// <para>
         /// <b>NOTE:</b> the returned <see cref="DirectoryTaxonomyReader"/> shares the
         /// ordinal and category caches with this reader. This is not expected to cause
@@ -473,7 +473,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Returns ordinal -> label mapping, up to the provided
         /// max ordinal or number of ordinals, whichever is
-        /// smaller. 
+        /// smaller.
         /// </summary>
         public virtual string ToString(int max)
         {

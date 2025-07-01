@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// Factory for the <see cref="SmartChineseAnalyzer"/> <see cref="WordTokenFilter"/>
     /// <para>
     /// Note: this class will currently emit tokens for punctuation. So you should either add
-    /// a <see cref="Miscellaneous.WordDelimiterFilter"/> after to remove these (with concatenate off), or use the 
+    /// a <see cref="Miscellaneous.WordDelimiterFilter"/> after to remove these (with concatenate off), or use the
     /// SmartChinese stoplist with a <see cref="Core.StopFilterFactory"/> via:
     /// <code>words="org/apache/lucene/analysis/cn/smart/stopwords.txt"</code>
     /// </para>

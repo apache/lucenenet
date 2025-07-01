@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Hi
      */
 
     /// <summary>
-    /// Factory for <see cref="HindiNormalizationFilter"/>. 
+    /// Factory for <see cref="HindiNormalizationFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_hinormal" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Ja
     //[Slow] // LUCENENET specific - not very slow in .NET
     public class TestJapaneseAnalyzer : BaseTokenStreamTestCase
     {
-        /** This test fails with NPE when the 
+        /** This test fails with NPE when the
         * stopwords file is missing in classpath */
         [Test]
         public void TestResourcesAvailable()

@@ -26,7 +26,7 @@ namespace Lucene.Net.Replicator.AspNetCore
     /// Abstraction for remote replication requests, allows easy integration into any hosting frameworks.
     /// </summary>
     /// <remarks>
-    /// .NET Specific Implementation of the Lucene Replicator using AspNetCore  
+    /// .NET Specific Implementation of the Lucene Replicator using AspNetCore
     /// </remarks>
     //Note: LUCENENET specific
     public class AspNetCoreReplicationRequest : IReplicationRequest

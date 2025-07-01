@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Reverse
     ///     &lt;filter class="solr.ReverseStringFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
-    /// 
+    ///
     /// @since solr 1.4
     /// </summary>
     public class ReverseStringFilterFactory : TokenFilterFactory

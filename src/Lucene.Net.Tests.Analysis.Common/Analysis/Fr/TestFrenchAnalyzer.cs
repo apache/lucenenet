@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Fr
 
     /// <summary>
     /// Test case for FrenchAnalyzer.
-    /// 
+    ///
     /// </summary>
 
     public class TestFrenchAnalyzer : BaseTokenStreamTestCase
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Fr
 
         }
 
-        /// @deprecated (3.1) remove this test for Lucene 5.0 
+        /// @deprecated (3.1) remove this test for Lucene 5.0
         [Test]
         [Obsolete("(3.1) remove this test for Lucene 5.0")]
         public virtual void TestAnalyzer30()
@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.Fr
         /// <summary>
         /// Prior to 3.1, this analyzer had no lowercase filter.
         /// stopwords were case sensitive. Preserve this for back compat. </summary>
-        /// @deprecated (3.1) Remove this test in Lucene 5.0 
+        /// @deprecated (3.1) Remove this test in Lucene 5.0
         [Test]
         [Obsolete("(3.1) Remove this test in Lucene 5.0")]
         public virtual void TestBuggyStopwordsCasing()

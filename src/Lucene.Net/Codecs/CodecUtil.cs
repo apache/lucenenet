@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Like 
+        /// Like
         /// <see cref="CheckHeader(DataInput,string,int,int)"/> except this
         /// version assumes the first <see cref="int"/> has already been read
         /// and validated from the input.

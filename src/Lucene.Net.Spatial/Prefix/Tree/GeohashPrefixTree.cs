@@ -28,7 +28,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// A <see cref="SpatialPrefixTree">SpatialPrefixTree</see> based on
     /// <a href="http://en.wikipedia.org/wiki/Geohash">Geohashes</a>.
     /// Uses <see cref="GeohashUtils"/> to do all the geohash work.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class GeohashPrefixTree : SpatialPrefixTree

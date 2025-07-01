@@ -235,7 +235,7 @@ namespace Lucene.Net.Analysis.Core
             CheckOneTerm(a, "아゙", "아゙"); // hangul
         }
 
-        /// @deprecated remove this and sophisticated backwards layer in 5.0 
+        /// @deprecated remove this and sophisticated backwards layer in 5.0
         [Test]
         [Obsolete("remove this and sophisticated backwards layer in 5.0")]
         public virtual void TestCombiningMarksBackwards()

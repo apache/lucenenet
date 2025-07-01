@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         public FieldInfos FieldInfos { get; private set; }
 
         /// <summary>
-        /// <see cref="IOContext"/> to pass to 
+        /// <see cref="IOContext"/> to pass to
         /// <see cref="Directory.OpenInput(string, IOContext)"/>.
         /// </summary>
         public IOContext Context { get; private set; }

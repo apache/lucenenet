@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Pl
         public static Trie DefaultTable => DefaultsHolder.DEFAULT_TABLE;
 
         /// <summary>
-        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultsHolder
@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis.Pl
         /// </summary>
         /// <returns>
         /// A <see cref="TokenStreamComponents"/> built from an <see cref="StandardTokenizer"/>
-        /// filtered with <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, 
+        /// filtered with <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
         /// <see cref="SetKeywordMarkerFilter"/> if a stem excusion set is provided and <see cref="StempelFilter"/>.
         /// </returns>
         protected internal override TokenStreamComponents CreateComponents(string fieldName,

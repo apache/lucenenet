@@ -25,9 +25,9 @@ namespace Lucene.Net.Analysis.Nl
 
     /// <summary>
     /// Test the Dutch Stem Filter, which only modifies the term text.
-    /// 
+    ///
     /// The code states that it uses the snowball algorithm, but tests reveal some differences.
-    /// 
+    ///
     /// </summary>
     public class TestDutchStemmer : BaseTokenStreamTestCase
     {
@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Nl
             check("ophouden", "ophoud");
         }
 
-        /// @deprecated (3.1) remove this test in Lucene 5.0 
+        /// @deprecated (3.1) remove this test in Lucene 5.0
         [Test]
         [Obsolete("(3.1) remove this test in Lucene 5.0")]
         public virtual void TestOldBuggyStemmer()
@@ -171,7 +171,7 @@ namespace Lucene.Net.Analysis.Nl
         }
         /// <summary>
         /// 3.0 still uses the chararraymap internally check if that works as well </summary>
-        /// @deprecated (4.3) remove this test in Lucene 5.0 
+        /// @deprecated (4.3) remove this test in Lucene 5.0
         [Test]
         [Obsolete("(4.3) remove this test in Lucene 5.0")]
         public virtual void Test30StemOverrides()
@@ -190,9 +190,9 @@ namespace Lucene.Net.Analysis.Nl
         }
 
         /// <summary>
-        /// prior to 3.6, this confusingly did not happen if 
+        /// prior to 3.6, this confusingly did not happen if
         /// you specified your own stoplist!!!! </summary>
-        /// @deprecated (3.6) Remove this test in Lucene 5.0 
+        /// @deprecated (3.6) Remove this test in Lucene 5.0
         [Test]
         [Obsolete("(3.6) Remove this test in Lucene 5.0")]
         public virtual void TestBuggyStemOverrides()
@@ -204,7 +204,7 @@ namespace Lucene.Net.Analysis.Nl
         /// <summary>
         /// Prior to 3.1, this analyzer had no lowercase filter.
         /// stopwords were case sensitive. Preserve this for back compat. </summary>
-        /// @deprecated (3.1) Remove this test in Lucene 5.0 
+        /// @deprecated (3.1) Remove this test in Lucene 5.0
         [Test]
         [Obsolete("(3.1) Remove this test in Lucene 5.0")]
         public virtual void TestBuggyStopwordsCasing()

@@ -21,8 +21,8 @@ namespace Lucene.Net.Codecs.Appending
      */
 
     /// <summary>
-    /// This codec uses an index format that is very similar to <see cref="Lucene40Codec"/> 
-    /// but works on append-only outputs, such as plain output streams and 
+    /// This codec uses an index format that is very similar to <see cref="Lucene40Codec"/>
+    /// but works on append-only outputs, such as plain output streams and
     /// append-only filesystems.
     /// <para/>
     /// @lucene.experimental

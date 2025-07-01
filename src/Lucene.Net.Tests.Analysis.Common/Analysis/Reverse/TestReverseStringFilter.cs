@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Reverse
 
         /// <summary>
         /// Test the broken 3.0 behavior, for back compat </summary>
-        /// @deprecated (3.1) Remove in Lucene 5.0 
+        /// @deprecated (3.1) Remove in Lucene 5.0
         [Test]
         [Obsolete("(3.1) Remove in Lucene 5.0")]
         public virtual void TestBackCompat()

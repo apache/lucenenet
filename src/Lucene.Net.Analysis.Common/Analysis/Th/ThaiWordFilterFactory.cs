@@ -31,9 +31,9 @@ namespace Lucene.Net.Analysis.Th
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.ThaiWordFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</code> 
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
-    /// @deprecated Use <see cref="ThaiTokenizerFactory"/> instead 
+    /// @deprecated Use <see cref="ThaiTokenizerFactory"/> instead
     [Obsolete("Use ThaiTokenizerFactory instead")]
     public class ThaiWordFilterFactory : TokenFilterFactory
     {

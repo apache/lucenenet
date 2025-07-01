@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Spell
     /// A simple interface representing a Dictionary. A Dictionary
     /// here is a list of entries, where every entry consists of
     /// term, weight and payload.
-    /// 
+    ///
     /// </summary>
     public interface IDictionary
     {

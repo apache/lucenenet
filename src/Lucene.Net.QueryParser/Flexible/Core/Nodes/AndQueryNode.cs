@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     public class AndQueryNode : BooleanQueryNode
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="clauses">the query nodes to be and'ed</param>
         public AndQueryNode(IList<IQueryNode> clauses)

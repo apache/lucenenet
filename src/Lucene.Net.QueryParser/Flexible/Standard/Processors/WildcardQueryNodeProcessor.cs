@@ -49,7 +49,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 FieldQueryNode fqn = (FieldQueryNode)node;
                 string text = fqn.Text.ToString();
 
-                // do not process wildcards for TermRangeQueryNode children and 
+                // do not process wildcards for TermRangeQueryNode children and
                 // QuotedFieldQueryNode to reproduce the old parser behavior
                 if (fqn.Parent is TermRangeQueryNode
                     || fqn is QuotedFieldQueryNode

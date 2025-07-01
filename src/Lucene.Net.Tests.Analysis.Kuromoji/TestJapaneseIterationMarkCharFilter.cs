@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestFullStop()
         {
-            // Test full stops   
+            // Test full stops
             AssertAnalyzesTo(keywordAnalyzer, "。", new String[] { "。" });
             AssertAnalyzesTo(keywordAnalyzer, "。。", new String[] { "。。" });
             AssertAnalyzesTo(keywordAnalyzer, "。。。", new String[] { "。。。" });

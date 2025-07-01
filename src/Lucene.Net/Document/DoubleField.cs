@@ -47,11 +47,11 @@ namespace Lucene.Net.Documents
     ///     }
     /// </code>
     ///
-    /// See also <seealso cref="Int32Field"/>, <seealso cref="Int64Field"/>, 
+    /// See also <seealso cref="Int32Field"/>, <seealso cref="Int64Field"/>,
     /// <see cref="SingleField"/>.</para>
     ///
     /// <para>To perform range querying or filtering against a
-    /// <see cref="DoubleField"/>, use <see cref="Search.NumericRangeQuery"/> or 
+    /// <see cref="DoubleField"/>, use <see cref="Search.NumericRangeQuery"/> or
     /// <see cref="Search.NumericRangeFilter{T}"/>.  To sort according to a
     /// <see cref="DoubleField"/>, use the normal numeric sort types, eg
     /// <see cref="Lucene.Net.Search.SortFieldType.DOUBLE"/>. <see cref="DoubleField"/>
@@ -84,7 +84,7 @@ namespace Lucene.Net.Documents
     /// create a custom <see cref="FieldType"/> and invoke the
     /// <see cref="FieldType.NumericPrecisionStep"/> setter if you'd
     /// like to change the value.  Note that you must also
-    /// specify a congruent value when creating 
+    /// specify a congruent value when creating
     /// <see cref="Search.NumericRangeQuery{T}"/> or <see cref="Search.NumericRangeFilter{T}"/>.
     /// For low cardinality fields larger precision steps are good.
     /// If the cardinality is &lt; 100, it is fair
@@ -102,7 +102,7 @@ namespace Lucene.Net.Documents
     /// <c>precisionStep</c> of <see cref="int.MaxValue"/>.
     /// this will minimize disk space consumed. </para>
     ///
-    /// <para>More advanced users can instead use 
+    /// <para>More advanced users can instead use
     /// <see cref="Analysis.NumericTokenStream"/> directly, when indexing numbers. This
     /// class is a wrapper around this token stream type for
     /// easier, more intuitive usage.</para>
@@ -142,7 +142,7 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Creates a stored or un-stored <see cref="DoubleField"/> with the provided value
-        /// and default <c>precisionStep</c> 
+        /// and default <c>precisionStep</c>
         /// <see cref="Util.NumericUtils.PRECISION_STEP_DEFAULT"/> (4).
         /// </summary>
         /// <param name="name"> field name </param>
@@ -156,7 +156,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Expert: allows you to customize the <see cref="FieldType"/>. 
+        /// Expert: allows you to customize the <see cref="FieldType"/>.
         /// </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 64-bit double value </param>

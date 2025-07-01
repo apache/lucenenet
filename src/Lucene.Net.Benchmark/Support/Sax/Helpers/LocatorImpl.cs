@@ -20,13 +20,13 @@ namespace Sax.Helpers
     /// <code>
     /// ILocator locator;
     /// ILocator startloc;
-    /// 
+    ///
     /// public void SetLocator(ILocator locator)
     /// {
     ///    // note the locator
     ///    this.locator = locator;
     /// }
-    /// 
+    ///
     /// public void StartDocument()
     /// {
     ///    // save the location of the start of the document

@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
     /// <summary>
     /// A <see cref="SlopQueryNode"/> represents phrase query with a slop.
-    /// 
+    ///
     /// From Lucene FAQ: Is there a way to use a proximity operator (like near or
     /// within) with Lucene? There is a variable called slop that allows you to
     /// perform NEAR/WITHIN-like queries. By default, slop is set to 0 so that only
@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         private int value = 0;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="query">QueryNode Tree with the phrase</param>
         /// <param name="value">slop value</param>

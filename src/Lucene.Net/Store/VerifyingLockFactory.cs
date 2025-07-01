@@ -22,7 +22,7 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A <see cref="LockFactory"/> that wraps another 
+    /// A <see cref="LockFactory"/> that wraps another
     /// <see cref="LockFactory"/> and verifies that each lock obtain/release
     /// is "correct" (never results in two processes holding the
     /// lock at the same time).  It does this by contacting an

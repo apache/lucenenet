@@ -496,7 +496,7 @@ namespace Lucene.Net.Tests.Queries
                 /*
                  *  need to force merge here since QueryUtils adds checks based
                  *  on leave readers which have different statistics than the top
-                 *  level reader if we have more than one segment. This could 
+                 *  level reader if we have more than one segment. This could
                  *  result in a different query / results.
                  */
                 w.ForceMerge(1);

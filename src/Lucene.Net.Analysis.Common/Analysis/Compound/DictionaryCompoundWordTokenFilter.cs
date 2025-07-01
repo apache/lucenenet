@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Compound
     /// A <see cref="TokenFilter"/> that decomposes compound words found in many Germanic languages.
     /// <para>
     /// "Donaudampfschiff" becomes Donau, dampf, schiff so that you can find
-    /// "Donaudampfschiff" even when you only enter "schiff". 
+    /// "Donaudampfschiff" even when you only enter "schiff".
     ///  It uses a brute-force algorithm to achieve this.
     /// </para>
     /// <para>

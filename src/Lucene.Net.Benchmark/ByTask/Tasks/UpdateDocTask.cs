@@ -29,7 +29,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// <para/>
     /// Other side effects: none.
     /// <para/>
-    /// Takes optional param: document size. 
+    /// Takes optional param: document size.
     /// </summary>
     public class UpdateDocTask : PerfTask
     {

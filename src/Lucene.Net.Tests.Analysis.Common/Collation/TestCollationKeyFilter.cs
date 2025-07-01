@@ -44,7 +44,7 @@ namespace Lucene.Net.Collation
         }
 
         // the sort order of Ø versus U depends on the version of the rules being used
-        // for the inherited root locale: Ø's order isnt specified in Locale.US since 
+        // for the inherited root locale: Ø's order isnt specified in Locale.US since
         // its not used in english.
         internal bool oStrokeFirst = Collator.Create(new CultureInfo("")).Compare("Ø", "U") < 0;
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.Collation
         private BytesRef firstRangeEnd;
         private BytesRef secondRangeBeginning;
         private BytesRef secondRangeEnd;
-        
+
         public sealed class TestAnalyzer : Analyzer
         {
             private readonly TestCollationKeyFilter outerInstance;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Collation
 
             // The ICU Collator and Sun java.text.Collator implementations differ in their
             // orderings - "BFJDH" is the ordering for java.text.Collator for Locale.US.
-            this.TestCollationKeySort(usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer, 
+            this.TestCollationKeySort(usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer,
                 this.oStrokeFirst ? "BFJHD" : "BFJDH", "EACGI", "BJDFH", "BJDHF");
         }
 
@@ -134,17 +134,17 @@ namespace Lucene.Net.Collation
         // Original Java Code:
         //public void testCollationKeySort() throws Exception {
         //  Analyzer usAnalyzer = new TestAnalyzer(Collator.getInstance(Locale.US));
-        //  Analyzer franceAnalyzer 
+        //  Analyzer franceAnalyzer
         //    = new TestAnalyzer(Collator.getInstance(Locale.FRANCE));
-        //  Analyzer swedenAnalyzer 
+        //  Analyzer swedenAnalyzer
         //    = new TestAnalyzer(Collator.getInstance(new Locale("sv", "se")));
-        //  Analyzer denmarkAnalyzer 
+        //  Analyzer denmarkAnalyzer
         //    = new TestAnalyzer(Collator.getInstance(new Locale("da", "dk")));
 
         //  // The ICU Collator and Sun java.text.Collator implementations differ in their
         //  // orderings - "BFJDH" is the ordering for java.text.Collator for Locale.US.
         //  testCollationKeySort
-        //  (usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer, 
+        //  (usAnalyzer, franceAnalyzer, swedenAnalyzer, denmarkAnalyzer,
         //   oStrokeFirst ? "BFJHD" : "BFJDH", "EACGI", "BJDFH", "BJDHF");
         //}
     }

@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         /// <summary>
         /// Sets an index term when docFreq >= docFreqThresh, or
         /// every interval terms.  This should reduce seek time
-        /// to high docFreq terms. 
+        /// to high docFreq terms.
         /// </summary>
         public sealed class EveryNOrDocFreqTermSelector : IndexTermSelector
         {

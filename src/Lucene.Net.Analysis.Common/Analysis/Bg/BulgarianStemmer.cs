@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Bg
     /// <summary>
     /// Light Stemmer for Bulgarian.
     /// <para>
-    /// Implements the algorithm described in:  
+    /// Implements the algorithm described in:
     /// <c>
     /// Searching Strategies for the Bulgarian Language
     /// </c>

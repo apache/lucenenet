@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.De
      */
 
     /// <summary>
-    /// <see cref="Analyzer"/> for German language. 
+    /// <see cref="Analyzer"/> for German language.
     /// <para>
     /// Supports an external list of stopwords (words that
     /// will not be indexed at all) and an external list of exclusions (word that will
@@ -40,24 +40,24 @@ namespace Lucene.Net.Analysis.De
     /// A default set of stopwords is used unless an alternative list is specified, but the
     /// exclusion list is empty by default.
     /// </para>
-    /// 
+    ///
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating GermanAnalyzer:
     /// <list>
     ///   <item><description> As of 3.6, GermanLightStemFilter is used for less aggressive stemming.</description></item>
-    ///   <item><description> As of 3.1, Snowball stemming is done with SnowballFilter, and 
+    ///   <item><description> As of 3.1, Snowball stemming is done with SnowballFilter, and
     ///        Snowball stopwords are used by default.</description></item>
     ///   <item><description> As of 2.9, StopFilter preserves position
     ///        increments</description></item>
     /// </list>
-    /// 
+    ///
     /// </para>
     /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
     /// dependent settings as <see cref="StandardAnalyzer"/>.</para>
     /// </summary>
     public sealed class GermanAnalyzer : StopwordAnalyzerBase
     {
-        /// @deprecated in 3.1, remove in Lucene 5.0 (index bw compat) 
+        /// @deprecated in 3.1, remove in Lucene 5.0 (index bw compat)
         [Obsolete("in 3.1, remove in Lucene 5.0 (index bw compat)")]
         private static readonly string[] GERMAN_STOP_WORDS = new string[] {
             "einer", "eine", "eines", "einem", "einen",
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.De
 
         private static class DefaultSetHolder
         {
-            /// @deprecated in 3.1, remove in Lucene 5.0 (index bw compat) 
+            /// @deprecated in 3.1, remove in Lucene 5.0 (index bw compat)
             [Obsolete("in 3.1, remove in Lucene 5.0 (index bw compat)")]
             internal static readonly CharArraySet DEFAULT_SET_30 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, GERMAN_STOP_WORDS, false).AsReadOnly();
             internal static readonly CharArraySet DEFAULT_SET = LoadDefaultSet();
@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis.De
         }
 
         /// <summary>
-        /// Builds an analyzer with the given stop words 
+        /// Builds an analyzer with the given stop words
         /// </summary>
         /// <param name="matchVersion">
         ///          lucene compatibility version </param>

@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
         private const string REFERENCE_MANAGER_IS_CLOSED_MSG = "this ReferenceManager is disposed.";
 
         // LUCENENET NOTE: changed this to be a private volatile field
-        // with a property to set/get it, since protected volatile 
+        // with a property to set/get it, since protected volatile
         // fields are not CLS compliant
         private volatile G current;
 

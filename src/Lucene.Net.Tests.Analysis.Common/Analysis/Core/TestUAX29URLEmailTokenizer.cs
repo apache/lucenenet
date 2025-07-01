@@ -538,7 +538,7 @@ namespace Lucene.Net.Analysis.Core
             BaseTokenStreamTestCase.AssertAnalyzesTo(a, "3_1.,2", new string[] { "3_1", "2" });
         }
 
-        /// @deprecated remove this and sophisticated backwards layer in 5.0 
+        /// @deprecated remove this and sophisticated backwards layer in 5.0
         [Test]
         [Obsolete("remove this and sophisticated backwards layer in 5.0")]
         public virtual void TestCombiningMarksBackwards()
@@ -557,7 +557,7 @@ namespace Lucene.Net.Analysis.Core
         }
 
         // LUCENE-3880
-        /// @deprecated remove this and sophisticated backwards layer in 5.0 
+        /// @deprecated remove this and sophisticated backwards layer in 5.0
         [Test]
         [Obsolete("remove this and sophisticated backwards layer in 5.0")]
         public virtual void TestMailtoBackwards()
@@ -572,7 +572,7 @@ namespace Lucene.Net.Analysis.Core
             AssertAnalyzesTo(a, "mailto:test@example.org", new string[] { "mailto:test", "example.org" });
         }
 
-        /// @deprecated uses older unicode (6.0). simple test to make sure its basically working 
+        /// @deprecated uses older unicode (6.0). simple test to make sure its basically working
         [Test]
         [Obsolete("uses older unicode (6.0). simple test to make sure its basically working")]
         public virtual void TestVersion36()
@@ -587,7 +587,7 @@ namespace Lucene.Net.Analysis.Core
             AssertAnalyzesTo(a, "this is just a t\u08E6st lucene@apache.org", new string[] { "this", "is", "just", "a", "t", "st", "lucene@apache.org" }); // new combining mark in 6.1
         }
 
-        /// @deprecated uses older unicode (6.1). simple test to make sure its basically working 
+        /// @deprecated uses older unicode (6.1). simple test to make sure its basically working
         [Test]
         [Obsolete("uses older unicode (6.1). simple test to make sure its basically working")]
         public virtual void TestVersion40()

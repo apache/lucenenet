@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// <summary>
         /// Half-width katakana forms normalized to standard katakana.
         /// A bit trickier in some cases, since half-width forms are decomposed
-        /// and voice marks need to be recombined with a preceding base form. 
+        /// and voice marks need to be recombined with a preceding base form.
         /// </summary>
         [Test]
         public virtual void TestHalfWidthKana()

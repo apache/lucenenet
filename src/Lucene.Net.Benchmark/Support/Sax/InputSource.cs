@@ -42,7 +42,7 @@ namespace Sax
     /// identifier.
     /// <para/>
     /// An <see cref="InputSource"/> object belongs to the application: the SAX parser
-    /// shall never modify it in any way (it may modify a copy if 
+    /// shall never modify it in any way (it may modify a copy if
     /// necessary).  However, standard processing of both byte and
     /// character streams is to close them on as part of end-of-parse cleanup,
     /// so applications should not attempt to re-use such streams after they
@@ -73,7 +73,7 @@ namespace Sax
         /// Create a new input source with a system identifier.
         /// </summary>
         /// <remarks>
-        /// Applications may use <see cref="PublicId"/> to include a 
+        /// Applications may use <see cref="PublicId"/> to include a
         /// public identifier as well, or <see cref="Encoding"/> to specify
         /// the character encoding, if known.
         /// <para/>
@@ -95,8 +95,8 @@ namespace Sax
         /// Create a new input source with a byte stream.
         /// </summary>
         /// <remarks>
-        /// Application writers should use <see cref="SystemId"/> to provide a base 
-        /// for resolving relative URIs, may use <see cref="PublicId"/> to include a 
+        /// Application writers should use <see cref="SystemId"/> to provide a base
+        /// for resolving relative URIs, may use <see cref="PublicId"/> to include a
         /// public identifier, and may use <see cref="Encoding"/> to specify the object's
         /// character encoding.
         /// </remarks>
@@ -115,7 +115,7 @@ namespace Sax
         /// Create a new input source with a character stream.
         /// </summary>
         /// <remarks>
-        /// Application writers should use <see cref="SystemId"/> to provide a base 
+        /// Application writers should use <see cref="SystemId"/> to provide a base
         /// for resolving relative URIs, and may use <see cref="PublicId"/> to include a
         /// public identifier.
         /// <para/>

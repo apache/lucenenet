@@ -166,7 +166,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             private readonly CharsRef charsSpare = new CharsRef();
 
             /// <summary>
-            /// Creates a new <see cref="Builder"/> with <see cref="ignoreCase"/> set to <c>false</c> 
+            /// Creates a new <see cref="Builder"/> with <see cref="ignoreCase"/> set to <c>false</c>
             /// </summary>
             public Builder()
                 : this(false)

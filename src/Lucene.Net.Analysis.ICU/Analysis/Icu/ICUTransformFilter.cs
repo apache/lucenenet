@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Icu
     ///     <item><description>Script conversions, for example Serbian Cyrillic to Latin</description></item>
     /// </list>
     /// <para/>
-    /// Example usage: 
+    /// Example usage:
     /// <code>
     ///     stream = new ICUTransformFilter(stream, Transliterator.GetInstance("Traditional-Simplified"));
     /// </code>
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Icu
             this.transform = transform;
             this.termAtt = AddAttribute<ICharTermAttribute>();
 
-            /* 
+            /*
              * This is cheating, but speeds things up a lot.
              * If we wanted to use pkg-private APIs we could probably do better.
              */

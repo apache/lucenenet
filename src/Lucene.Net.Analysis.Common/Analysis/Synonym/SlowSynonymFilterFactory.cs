@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Synonym
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// </summary>
-    /// @deprecated (3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
+    /// @deprecated (3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0
     [Obsolete("(3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal sealed class SlowSynonymFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {

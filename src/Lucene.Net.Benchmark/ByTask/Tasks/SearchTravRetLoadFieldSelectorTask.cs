@@ -33,7 +33,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// <para/>
     /// Takes optional param: comma separated list of Fields to load.
     /// <para/>
-    /// Other side effects: counts additional 1 (record) for each traversed hit, 
+    /// Other side effects: counts additional 1 (record) for each traversed hit,
     /// and 1 more for each retrieved (non null) document.
     /// </remarks>
     public class SearchTravRetLoadFieldSelectorTask : SearchTravTask

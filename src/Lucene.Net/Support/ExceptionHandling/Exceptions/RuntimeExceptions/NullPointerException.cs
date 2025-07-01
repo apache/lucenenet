@@ -75,7 +75,7 @@ namespace Lucene
     /// There are also other edge cases (i.e. <c>null</c> state in the middle of a method where the null value isn't being passed in)
     /// where throwing <see cref="InvalidOperationException"/> may be more sensible, but this sort of change would need to be tested thoroughly.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

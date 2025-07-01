@@ -21,7 +21,7 @@ namespace Lucene.Net.Replicator.Http.Abstractions
     /// Abstraction for remote replication requests, allows easy integration into any hosting frameworks.
     /// </summary>
     /// <remarks>
-    /// .NET Specific Abstraction  
+    /// .NET Specific Abstraction
     /// </remarks>
     //Note: LUCENENET specific
     public interface IReplicationRequest

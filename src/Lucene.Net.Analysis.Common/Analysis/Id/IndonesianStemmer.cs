@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Id
     /// Stemmer for Indonesian.
     /// <para>
     /// Stems Indonesian words with the algorithm presented in:
-    /// <c>A Study of Stemming Effects on Information Retrieval in 
+    /// <c>A Study of Stemming Effects on Information Retrieval in
     /// Bahasa Indonesia</c>, Fadillah Z Tala.
     /// http://www.illc.uva.nl/Publications/ResearchReports/MoL-2003-02.text.pdf
     /// </para>

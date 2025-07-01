@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.En
      */
 
     /// <summary>
-    /// A <see cref="TokenFilter"/> that applies <see cref="EnglishMinimalStemmer"/> to stem 
+    /// A <see cref="TokenFilter"/> that applies <see cref="EnglishMinimalStemmer"/> to stem
     /// English words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of

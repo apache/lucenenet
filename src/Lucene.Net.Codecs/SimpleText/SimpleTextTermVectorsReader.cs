@@ -94,8 +94,8 @@ namespace Lucene.Net.Codecs.SimpleText
             _input = input;
         }
 
-        // we don't actually write a .tvx-like index, instead we read the 
-        // vectors file in entirety up-front and save the offsets 
+        // we don't actually write a .tvx-like index, instead we read the
+        // vectors file in entirety up-front and save the offsets
         // so we can seek to the data later.
         private void ReadIndex(int maxDoc)
         {

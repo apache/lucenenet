@@ -29,7 +29,7 @@ namespace Lucene.Net.Search.Grouping.Function
     /// query. Only the group value is collected, and the order
     /// is undefined.  This collector does not determine
     /// the most relevant document of a group.
-    /// 
+    ///
     /// <para>
     /// Implementation detail: Uses <see cref="ValueSource"/> and <see cref="FunctionValues"/> to retrieve the
     /// field values to group by.

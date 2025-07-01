@@ -31,15 +31,15 @@ namespace Lucene.Net.Search
         /// using (var context = searcherManager.GetContext())
         /// {
         ///     IndexSearcher searcher = context.Reference;
-        ///     
+        ///
         ///     // use searcher...
         /// }
         /// </code>
         /// </summary>
         /// <typeparam name="T">The reference type</typeparam>
         /// <param name="referenceManager">this <see cref="ReferenceManager{G}"/></param>
-        /// <returns>A <see cref="ReferenceContext{T}"/> instance that holds the 
-        /// <see cref="ReferenceContext{T}.Reference"/> and ensures it is released properly 
+        /// <returns>A <see cref="ReferenceContext{T}"/> instance that holds the
+        /// <see cref="ReferenceContext{T}.Reference"/> and ensures it is released properly
         /// when <see cref="ReferenceContext{T}.Dispose()"/> is called.</returns>
         public static ReferenceContext<T> GetContext<T>(this ReferenceManager<T> referenceManager) where T : class
         {

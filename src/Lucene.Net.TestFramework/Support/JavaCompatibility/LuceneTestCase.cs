@@ -35,7 +35,7 @@ namespace Lucene.Net.Util
     {
         // LUCENENET NOTE: This was not added because it causes naming collisions with
         // member variables "private readonly Random random;". Capitlizing it would collide
-        // with the Random property. Better (and safer) just to convert all of these 
+        // with the Random property. Better (and safer) just to convert all of these
         // from "random()" to "Random" going forward.
         //internal static Random random()
         //{

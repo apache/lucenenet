@@ -119,7 +119,7 @@ namespace Lucene.Net.Collation
 
             RuleBasedCollator tailoredCollator = new RuleBasedCollator(tailoredRules);
 
-            // at this point, you would save these tailoredRules to a file, 
+            // at this point, you would save these tailoredRules to a file,
             // and use the custom parameter.
             string germanUmlaut = "Töne";
             string germanOE = "Toene";
@@ -135,7 +135,7 @@ namespace Lucene.Net.Collation
 
             AssertCollatesToSame(tsUmlaut, tsOE);
         }
-        
+
         private static void AssertCollatesToSame(TokenStream stream1, TokenStream stream2)
         {
             stream1.Reset();

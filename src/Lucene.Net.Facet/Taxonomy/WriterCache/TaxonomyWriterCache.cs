@@ -45,7 +45,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// <para>
     /// <b>NOTE:</b> the cache may be accessed concurrently by multiple threads,
     /// therefore cache implementations should take this into consideration.
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>
