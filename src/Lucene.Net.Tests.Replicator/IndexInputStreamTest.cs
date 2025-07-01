@@ -46,7 +46,7 @@ namespace Lucene.Net.Tests.Replicator
 
         [Test]
         [LuceneNetSpecific]
-        public void Read_RemainingIndexInputLargerThanReadCount_ReturnsExpectedSection([Range(1,8)]int section)
+        public void Read_RemainingIndexInputLargerThanReadCount_ReturnsExpectedSection([Range(1, 8)] int section)
         {
             byte[] buffer = new byte[8.KiloBytes()];
             Random.NextBytes(buffer);
