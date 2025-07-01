@@ -623,7 +623,7 @@ namespace Lucene.Net.QueryParsers.Util
 
             ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
 
-            qp.MultiTermRewriteMethod=(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+            qp.MultiTermRewriteMethod = (MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
             assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery)GetQuery("[ a TO z]", qp)).MultiTermRewriteMethod);
 
             // test open ranges
@@ -1082,7 +1082,7 @@ namespace Lucene.Net.QueryParsers.Util
             assertTrue(GetQuery("/[A-Z][123]/^0.5", qp) is RegexpQuery);
             assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((RegexpQuery)GetQuery("/[A-Z][123]/^0.5", qp)).MultiTermRewriteMethod);
             assertEquals(q, GetQuery("/[A-Z][123]/^0.5", qp));
-            qp.MultiTermRewriteMethod=(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
+            qp.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
 
             Query escaped = new RegexpQuery(new Term("field", "[a-z]\\/[123]"));
             assertEquals(escaped, GetQuery("/[a-z]\\/[123]/", qp));
@@ -1345,7 +1345,7 @@ namespace Lucene.Net.QueryParsers.Util
             string oldDefaultField = DefaultField;
             DefaultField = (field);
             ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random));
-            qp.AllowLeadingWildcard=(true);
+            qp.AllowLeadingWildcard = (true);
 
             string[][] prefixQueries = new string[3][] {
                 new string[] {"a*", "ab*", "abc*",},
@@ -1393,7 +1393,7 @@ namespace Lucene.Net.QueryParsers.Util
 
             qp = GetParserConfig(
                                  new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false, stopStopList));
-            qp.EnablePositionIncrements=(true);
+            qp.EnablePositionIncrements = (true);
 
             PhraseQuery phraseQuery = new PhraseQuery();
             phraseQuery.Add(new Term("field", "1"));

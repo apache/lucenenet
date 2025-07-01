@@ -53,8 +53,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         private class DummyQueryNode : AbstractDummyQueryNode
         {
 
-            
-        public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
+
+            public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
             {
                 return "DummyQueryNode";
             }
