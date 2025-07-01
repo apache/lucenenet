@@ -103,7 +103,7 @@ namespace Lucene.Net.Expressions
             }
         }
 
-        
+
         internal virtual void AssertQuery(Query query, Filter filter)
         {
             for (int i = 0; i < 10; i++)
@@ -125,7 +125,7 @@ namespace Lucene.Net.Expressions
             }
         }
 
-        
+
         internal virtual void AssertQuery(Query query, Filter filter, Sort sort)
         {
             int size = TestUtil.NextInt32(Random, 1, searcher.IndexReader.MaxDoc / 5);

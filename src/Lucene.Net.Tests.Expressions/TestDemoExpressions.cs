@@ -177,7 +177,7 @@ namespace Lucene.Net.Expressions
             // so if we want to test such huge expressions, we need to instead change parser to use an explicit Stack
         }
 
-        
+
         private void DoTestLotsOfBindings(int n)
         {
             SimpleBindings bindings = new SimpleBindings();

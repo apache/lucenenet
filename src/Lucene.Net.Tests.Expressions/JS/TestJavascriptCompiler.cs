@@ -115,7 +115,7 @@ namespace Lucene.Net.Expressions.JS
             {
                 // expected
             }
-            
+
             try
             {
                 JavascriptCompiler.Compile("500EE");
@@ -125,7 +125,7 @@ namespace Lucene.Net.Expressions.JS
             {
                 // expected
             }
-            
+
             try
             {
                 JavascriptCompiler.Compile("500.5EE");
@@ -149,7 +149,7 @@ namespace Lucene.Net.Expressions.JS
             {
                 // expected
             }
-            
+
             try
             {
                 JavascriptCompiler.Compile("()");
@@ -159,7 +159,7 @@ namespace Lucene.Net.Expressions.JS
             {
                 // expected
             }
-            
+
             try
             {
                 JavascriptCompiler.Compile("   \r\n   \n \t");
