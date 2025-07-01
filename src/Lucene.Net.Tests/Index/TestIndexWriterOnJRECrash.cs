@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
             return p;
         }
 
-#region LUCENENET-specific methods for ForkTest
+        #region LUCENENET-specific methods for ForkTest
         private static string TestRunParameter(string name, string value)
         {
             // See: https://github.com/microsoft/vstest/issues/862#issuecomment-621737720
@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
         {
             return Environment.Is64BitProcess ? "x64" : "x86";
         }
-#endregion
+        #endregion
 
         /// <summary>
         /// A pipe thread. It'd be nice to reuse guava's implementation for this... </summary>
