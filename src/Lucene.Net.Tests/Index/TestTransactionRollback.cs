@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
             string ids = "-" + id;
             IndexCommit last = null;
             ICollection<IndexCommit> commits = DirectoryReader.ListCommits(dir);
-            for (IEnumerator<IndexCommit> iterator = commits.GetEnumerator(); iterator.MoveNext(); )
+            for (IEnumerator<IndexCommit> iterator = commits.GetEnumerator(); iterator.MoveNext();)
             {
                 IndexCommit commit = iterator.Current;
                 IDictionary<string, string> ud = commit.UserData;
