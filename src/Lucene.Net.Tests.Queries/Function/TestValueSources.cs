@@ -97,7 +97,7 @@ namespace Lucene.Net.Tests.Queries.Function
             searcher = NewSearcher(reader);
             iw.Dispose();
         }
-        
+
         [TearDown]
         public override void TearDown()
         {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Tests.Queries.Function
             dir = null;
             base.TearDown();
         }
-        
+
         [Test]
         public void TestByte()
         {

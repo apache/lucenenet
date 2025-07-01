@@ -38,7 +38,7 @@ namespace Lucene.Net.Tests.Queries.Function
         internal static IndexReader reader;
         internal static IndexSearcher searcher;
         private static Similarity sim = new PreciseDefaultSimilarity();
-        
+
         [SetUp]
         public override void SetUp()
         {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Tests.Queries.Function
             searcher = NewSearcher(reader);
             iw.Dispose();
         }
-        
+
         [TearDown]
         public override void TearDown()
         {
@@ -73,7 +73,7 @@ namespace Lucene.Net.Tests.Queries.Function
             dir = null;
             base.TearDown();
         }
-        
+
         [Test]
         public void TestNorm()
         {
@@ -91,7 +91,7 @@ namespace Lucene.Net.Tests.Queries.Function
                 searcher.Similarity = saved;
             }
         }
-        
+
         internal void AssertHits(Query q, float[] scores)
         {
             ScoreDoc[] expected = new ScoreDoc[scores.Length];

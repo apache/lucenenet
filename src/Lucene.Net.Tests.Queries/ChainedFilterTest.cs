@@ -106,7 +106,7 @@ namespace Lucene.Net.Tests.Queries
             return new ChainedFilter(chain, logic);
         }
 
-        
+
         [Test]
         public virtual void TestSingleFilter()
         {
@@ -131,7 +131,7 @@ namespace Lucene.Net.Tests.Queries
             assertEquals(Max / 2, numHits);
             assertEquals("sue", searcher.Doc(hits.ScoreDocs[0].Doc).Get("owner"));
         }
-        
+
         [Test]
         public virtual void TestOR()
         {
@@ -141,7 +141,7 @@ namespace Lucene.Net.Tests.Queries
             int numHits = searcher.Search(query, chain, 1000).TotalHits;
             assertEquals("OR matches all", Max, numHits);
         }
-        
+
         [Test]
         public virtual void TestAND()
         {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Tests.Queries
             assertEquals("AND matches just bob", Max / 2, hits.TotalHits);
             assertEquals("bob", searcher.Doc(hits.ScoreDocs[0].Doc).Get("owner"));
         }
-        
+
         [Test]
         public virtual void TestXOR()
         {

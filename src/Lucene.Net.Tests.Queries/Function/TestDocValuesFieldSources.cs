@@ -79,7 +79,7 @@ namespace Lucene.Net.Tests.Queries.Function
                     case DocValuesType.NUMERIC:
                         int bitsPerValue = RandomInts.RandomInt32Between(Random, 1, 31); // keep it an int
                         vals[i] = (long)Random.Next((int)PackedInt32s.MaxValue(bitsPerValue));
-                        f.SetInt64Value((long) vals[i]);
+                        f.SetInt64Value((long)vals[i]);
                         break;
                 }
                 iw.AddDocument(document);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Tests.Queries.Function
             rd.Dispose();
             d.Dispose();
         }
-        
+
         [Test]
         public void Test()
         {
