@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Facet;
+using Lucene.Net.Facet;
 using Lucene.Net.Facet.SortedSet;
 using Lucene.Net.Facet.Taxonomy;
 using Lucene.Net.Util;

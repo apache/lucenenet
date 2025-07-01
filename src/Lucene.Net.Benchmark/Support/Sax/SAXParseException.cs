@@ -1,4 +1,4 @@
-﻿// SAX exception class.
+// SAX exception class.
 // http://www.saxproject.org
 // No warranty; no copyright -- use this as you will.
 // $Id: SAXParseException.java,v 1.11 2004/04/21 13:05:02 dmegginson Exp $

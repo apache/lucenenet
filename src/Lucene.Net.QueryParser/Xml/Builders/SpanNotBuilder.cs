@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search.Spans;
+using Lucene.Net.Search.Spans;
 using System.Xml;
 
 namespace Lucene.Net.QueryParsers.Xml.Builders

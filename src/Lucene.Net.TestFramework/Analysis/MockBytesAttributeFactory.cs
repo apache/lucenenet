@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis

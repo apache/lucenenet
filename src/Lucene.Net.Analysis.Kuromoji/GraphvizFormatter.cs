@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Ja.Dict;
+using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;

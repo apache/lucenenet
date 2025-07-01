@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 using ICU4N.Globalization;
 using ICU4N.Text;
 using Lucene.Net.Analysis;

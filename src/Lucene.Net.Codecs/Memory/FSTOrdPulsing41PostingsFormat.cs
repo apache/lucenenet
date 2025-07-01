@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Codecs.Memory
+namespace Lucene.Net.Codecs.Memory
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

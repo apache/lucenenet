@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Facet.Taxonomy.Directory;
+using Lucene.Net.Facet.Taxonomy.Directory;
 using Lucene.Net.Index;
 using Directory = Lucene.Net.Store.Directory;
 

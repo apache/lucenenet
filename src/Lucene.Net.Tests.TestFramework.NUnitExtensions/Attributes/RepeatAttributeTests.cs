@@ -1,4 +1,4 @@
-﻿// Source: https://github.com/nunit/nunit/blob/v3.14.0/src/NUnitFramework/tests/Attributes/RepeatAttributeTests.cs
+// Source: https://github.com/nunit/nunit/blob/v3.14.0/src/NUnitFramework/tests/Attributes/RepeatAttributeTests.cs
 
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;

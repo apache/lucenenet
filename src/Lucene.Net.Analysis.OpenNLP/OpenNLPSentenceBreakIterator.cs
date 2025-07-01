@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 using ICU4N.Support.Text;
 using ICU4N.Text;
 using Lucene.Net.Analysis.OpenNlp.Tools;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Attributes;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 
 namespace Lucene.Net.Analysis.Hunspell

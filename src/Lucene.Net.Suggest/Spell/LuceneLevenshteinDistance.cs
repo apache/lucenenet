@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using Lucene.Net.Util;
 using System;
 using RectangularArrays = Lucene.Net.Support.RectangularArrays;

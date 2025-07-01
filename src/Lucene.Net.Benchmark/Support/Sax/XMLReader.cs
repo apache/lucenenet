@@ -1,4 +1,4 @@
-﻿// XMLFilter.java - filter SAX2 events.
+// XMLFilter.java - filter SAX2 events.
 // http://www.saxproject.org
 // Written by David Megginson
 // NO WARRANTY!  This class is in the Public Domain.

@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using System;
 
 namespace Lucene.Net.Documents

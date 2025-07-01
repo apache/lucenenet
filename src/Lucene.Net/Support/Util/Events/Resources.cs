@@ -1,4 +1,4 @@
-﻿// Source: https://github.com/PrismLibrary/Prism/blob/7f0b1680bbe754da790274f80851265f808d9bbf
+// Source: https://github.com/PrismLibrary/Prism/blob/7f0b1680bbe754da790274f80851265f808d9bbf
 
 #region Copyright .NET Foundation, Licensed under the MIT License (MIT)
 // The MIT License (MIT)

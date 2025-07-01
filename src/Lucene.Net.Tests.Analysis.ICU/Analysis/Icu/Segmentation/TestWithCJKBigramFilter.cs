@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level < 7.1.0
+// Lucene version compatibility level < 7.1.0
 using Lucene.Net.Analysis.Cjk;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;

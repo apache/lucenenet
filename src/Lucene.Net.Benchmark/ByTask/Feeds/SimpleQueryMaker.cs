@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Classic;

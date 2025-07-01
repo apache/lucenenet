@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.BlockTerms;
+using Lucene.Net.Codecs.BlockTerms;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Memory;
 using Lucene.Net.Codecs.MockIntBlock;

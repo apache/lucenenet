@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util.Fst;
+using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;

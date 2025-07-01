@@ -1,4 +1,4 @@
-﻿// Source: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/CloseableResourceInfo.java
+// Source: https://github.com/randomizedtesting/randomizedtesting/blob/release/2.7.8/randomized-runner/src/main/java/com/carrotsearch/randomizedtesting/CloseableResourceInfo.java
 
 using System;
 using System.Collections.Generic;

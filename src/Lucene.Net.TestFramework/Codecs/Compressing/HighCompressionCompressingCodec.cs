@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.Lucene42;
+using Lucene.Net.Codecs.Lucene42;
 using Lucene.Net.Util.Packed;
 
 namespace Lucene.Net.Codecs.Compressing

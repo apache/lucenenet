@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level <= 8.2.0
+// Lucene version compatibility level <= 8.2.0
 // LUCENENET NOTE: This class is only partially complete, and should be public when finally ported from 8.2.0+
 using System;
 

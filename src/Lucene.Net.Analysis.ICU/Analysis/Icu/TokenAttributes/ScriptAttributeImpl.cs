@@ -1,4 +1,4 @@
-﻿using ICU4N.Globalization;
+using ICU4N.Globalization;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;

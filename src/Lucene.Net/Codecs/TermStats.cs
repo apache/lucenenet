@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Codecs
+namespace Lucene.Net.Codecs
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Benchmarks.ByTask.Tasks.Alt
+namespace Lucene.Net.Benchmarks.ByTask.Tasks.Alt
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

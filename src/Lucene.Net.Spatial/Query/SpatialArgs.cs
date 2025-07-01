@@ -1,4 +1,4 @@
-﻿using Spatial4n.Context;
+using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
 

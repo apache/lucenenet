@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;

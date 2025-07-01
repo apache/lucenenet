@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Classification
+namespace Lucene.Net.Classification
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

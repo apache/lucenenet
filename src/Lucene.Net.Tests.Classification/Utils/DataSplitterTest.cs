@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Classification.Utils;

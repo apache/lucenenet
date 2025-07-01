@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Expressions.JS;
+using Lucene.Net.Expressions.JS;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using NUnit.Framework;

@@ -1,4 +1,4 @@
-﻿#if FEATURE_BREAKITERATOR
+#if FEATURE_BREAKITERATOR
 using ICU4N.Support.Text;
 using ICU4N.Text;
 using Lucene.Net.Support;

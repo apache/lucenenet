@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
 using NUnit.Framework;

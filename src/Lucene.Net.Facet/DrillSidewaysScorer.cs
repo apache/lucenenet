@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1 + LUCENE-6001
+// Lucene version compatibility level 4.8.1 + LUCENE-6001
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;

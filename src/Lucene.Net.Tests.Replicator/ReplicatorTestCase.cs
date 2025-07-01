@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Replicator.Http;
+using Lucene.Net.Replicator.Http;
 using Lucene.Net.Replicator.Http.Abstractions;
 using Lucene.Net.Util;
 using Microsoft.AspNetCore.Hosting;

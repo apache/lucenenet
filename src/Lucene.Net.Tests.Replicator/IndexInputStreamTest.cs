@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Attributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Index;
 using Lucene.Net.Replicator;
 using Lucene.Net.Util;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using BytesRef = Lucene.Net.Util.BytesRef;
 
 namespace Lucene.Net.Search

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Queries;
+using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;

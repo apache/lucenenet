@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic;
+using J2N.Collections.Generic;
 using J2N.Threading.Atomic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;

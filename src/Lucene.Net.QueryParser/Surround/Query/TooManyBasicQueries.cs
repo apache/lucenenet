@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.ComponentModel;

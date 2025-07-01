@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core;
+using Lucene.Net.QueryParsers.Flexible.Core;
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.Support;
 using System;

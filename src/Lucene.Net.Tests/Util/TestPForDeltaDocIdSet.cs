@@ -1,4 +1,4 @@
-﻿using Assert = Lucene.Net.TestFramework.Assert;
+using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
 
 namespace Lucene.Net.Util

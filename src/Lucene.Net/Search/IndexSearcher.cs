@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;

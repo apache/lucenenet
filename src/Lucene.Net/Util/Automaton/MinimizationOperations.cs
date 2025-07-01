@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using JCG = J2N.Collections.Generic;

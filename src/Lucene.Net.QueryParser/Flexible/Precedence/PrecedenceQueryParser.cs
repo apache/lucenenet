@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.QueryParsers.Flexible.Precedence.Processors;
 using Lucene.Net.QueryParsers.Flexible.Standard;
 

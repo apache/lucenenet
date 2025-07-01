@@ -1,4 +1,4 @@
-﻿// commons-codec version compatibility level: 1.10
+// commons-codec version compatibility level: 1.10
 using Lucene.Net.Support;
 using System;
 

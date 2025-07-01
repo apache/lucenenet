@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell

@@ -1,4 +1,4 @@
-﻿// commons-codec version compatibility level: 1.10
+// commons-codec version compatibility level: 1.10
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;

@@ -1,4 +1,4 @@
-﻿#if FEATURE_UTIL_TESTS
+#if FEATURE_UTIL_TESTS
 using J2N.Text;
 using Lucene.Net.Support;
 using NUnit.Framework;

@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using NUnit.Framework;
 using System;
 using System.Text;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;

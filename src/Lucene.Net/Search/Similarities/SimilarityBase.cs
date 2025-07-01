@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System;
 using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 using BytesRef = Lucene.Net.Util.BytesRef;

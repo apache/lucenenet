@@ -1,4 +1,4 @@
-﻿// NamespaceSupport.java - generic Namespace support for SAX.
+// NamespaceSupport.java - generic Namespace support for SAX.
 // http://www.saxproject.org
 // Written by David Megginson
 // This class is in the Public Domain.  NO WARRANTY!

@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;
 using Lucene.Net.Util;
 using System;

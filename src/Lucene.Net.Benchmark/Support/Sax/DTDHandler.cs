@@ -1,4 +1,4 @@
-﻿// SAX DTD handler.
+// SAX DTD handler.
 // http://www.saxproject.org
 // No warranty; no copyright -- use this as you will.
 // $Id: DTDHandler.java,v 1.8 2002/01/30 21:13:43 dbrownell Exp $

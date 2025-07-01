@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Lucene.Net.Codecs.Lucene40;
 
 namespace Lucene.Net.Codecs.Appending

@@ -1,4 +1,4 @@
-﻿// LUCENENET TODO: Use HTML Agility pack instead of SAX ?
+// LUCENENET TODO: Use HTML Agility pack instead of SAX ?
 
 using J2N.Threading;
 using Lucene.Net.Benchmarks.ByTask.Utils;

@@ -1,4 +1,4 @@
-﻿#if FEATURE_SERIALIZABLE_EXCEPTIONS
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;

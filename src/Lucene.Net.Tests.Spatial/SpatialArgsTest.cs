@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using Spatial4n.Context;

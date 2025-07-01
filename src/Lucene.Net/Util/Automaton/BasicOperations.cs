@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;

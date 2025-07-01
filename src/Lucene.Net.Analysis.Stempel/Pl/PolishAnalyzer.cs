@@ -1,4 +1,4 @@
-﻿using Egothor.Stemmer;
+using Egothor.Stemmer;
 using J2N;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;

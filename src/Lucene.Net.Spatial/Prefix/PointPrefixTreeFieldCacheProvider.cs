@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Spatial.Prefix.Tree;
+using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Util;
 using Lucene.Net.Util;
 using Spatial4n.Shapes;

@@ -1,4 +1,4 @@
-﻿using NUnit.Framework.Interfaces;
+using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using System;
 using System.Diagnostics.CodeAnalysis;

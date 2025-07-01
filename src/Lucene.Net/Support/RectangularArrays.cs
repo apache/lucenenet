@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
 //  Copyright © 2007 - 2013 Tangible Software Solutions Inc.
 //  this class can be used by anyone provided that the copyright notice remains intact.
 //

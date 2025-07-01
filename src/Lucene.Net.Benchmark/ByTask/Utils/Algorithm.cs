@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Support;

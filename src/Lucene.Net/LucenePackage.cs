@@ -1,4 +1,4 @@
-﻿// LUCENENET NOTE: This class appears to be Java-specific, so it wasn't ported.
+// LUCENENET NOTE: This class appears to be Java-specific, so it wasn't ported.
 
 //namespace Lucene.Net
 //{

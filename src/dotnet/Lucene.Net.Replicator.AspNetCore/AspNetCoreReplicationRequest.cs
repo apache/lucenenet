@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Replicator.Http.Abstractions;
+using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;

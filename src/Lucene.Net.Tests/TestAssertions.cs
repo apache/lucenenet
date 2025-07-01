@@ -1,4 +1,4 @@
-﻿// LUCENENET: Rather than using AssertFinal() to run Reflection code at runtime,
+// LUCENENET: Rather than using AssertFinal() to run Reflection code at runtime,
 // we are using a Roslyn code analyzer to ensure the rules are followed at compile time.
 
 //using System.Diagnostics;

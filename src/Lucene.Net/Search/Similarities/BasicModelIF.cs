@@ -1,4 +1,4 @@
-﻿using static Lucene.Net.Search.Similarities.SimilarityBase;
+using static Lucene.Net.Search.Similarities.SimilarityBase;
 
 namespace Lucene.Net.Search.Similarities
 {

@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Benchmarks.ByTask.Tasks
+namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

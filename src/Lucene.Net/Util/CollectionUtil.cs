@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 

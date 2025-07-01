@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System.Diagnostics;
 
 namespace Lucene.Net.Index

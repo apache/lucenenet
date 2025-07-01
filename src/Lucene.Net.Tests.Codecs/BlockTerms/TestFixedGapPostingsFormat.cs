@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.Lucene41Ords;
+using Lucene.Net.Codecs.Lucene41Ords;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 

@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Util.Automaton
+namespace Lucene.Net.Util.Automaton
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

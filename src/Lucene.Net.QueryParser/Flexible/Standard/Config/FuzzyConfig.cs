@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 {

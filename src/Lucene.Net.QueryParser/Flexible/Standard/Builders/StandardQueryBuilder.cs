@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Builders;
+using Lucene.Net.QueryParsers.Flexible.Core.Builders;
 using Lucene.Net.Search;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders

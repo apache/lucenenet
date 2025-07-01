@@ -1,4 +1,4 @@
-﻿// From Apache Harmony tests:
+// From Apache Harmony tests:
 // https://github.com/apache/harmony/blob/trunk/classlib/modules/concurrent/src/test/java/JSR166TestCase.java
 using Lucene.Net.Util;
 using System;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support.Text;
+using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
