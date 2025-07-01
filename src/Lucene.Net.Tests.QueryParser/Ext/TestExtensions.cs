@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Ext
         {
             assertEquals("field\\:key", ext.BuildExtensionField("key", "field"));
             assertEquals("\\:key", ext.BuildExtensionField("key"));
-            
+
             ext = new Extensions('.');
             assertEquals("field.key", ext.BuildExtensionField("key", "field"));
             assertEquals(".key", ext.BuildExtensionField("key"));

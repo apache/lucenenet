@@ -264,7 +264,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             Query q = QueryParserUtil.Parse("one", fields, flags,
                 new MockAnalyzer(Random));// , fields, flags, new
-                                            // MockAnalyzer());
+                                          // MockAnalyzer());
             assertEquals("+b:one -t:one", q.toString());
 
             q = QueryParserUtil.Parse("one two", fields, flags, new MockAnalyzer(Random));

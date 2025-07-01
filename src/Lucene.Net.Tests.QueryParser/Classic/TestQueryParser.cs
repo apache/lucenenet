@@ -171,7 +171,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             public TestFuzzySlopeExtendabilityQueryParser()
                 : base(TEST_VERSION_CURRENT, "a", new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
-            {}
+            { }
 
             internal override Query HandleBareFuzzy(string qfield, Token fuzzySlop, string termImage)
             {
