@@ -188,7 +188,8 @@ namespace Lucene.Net.Analysis.Core
             base.OneTimeSetUp();
 
             IEnumerable<Type> analysisClasses = typeof(StandardAnalyzer).Assembly.GetTypes()
-                .Where(c => {
+                .Where(c =>
+                {
                     var typeInfo = c;
 
                     return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface
@@ -235,7 +236,7 @@ namespace Lucene.Net.Analysis.Core
                 }
             }
 
-            IComparer<ConstructorInfo> ctorComp = Comparer<ConstructorInfo>.Create((arg0, arg1)=> arg0.ToString().CompareToOrdinal(arg1.ToString()));
+            IComparer<ConstructorInfo> ctorComp = Comparer<ConstructorInfo>.Create((arg0, arg1) => arg0.ToString().CompareToOrdinal(arg1.ToString()));
             tokenizers.Sort(ctorComp);
             tokenfilters.Sort(ctorComp);
             charfilters.Sort(ctorComp);
