@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.Core
                 assertEquals("wrong position for input: " + s, leftPos.PositionIncrement, rightPos.PositionIncrement);
                 assertEquals("wrong start offset for input: " + s, leftOffset.StartOffset, rightOffset.StartOffset);
                 assertEquals("wrong end offset for input: " + s, leftOffset.EndOffset, rightOffset.EndOffset);
-            };
+            }
             assertFalse("wrong number of tokens for input: " + s, right.IncrementToken());
             left.End();
             right.End();
