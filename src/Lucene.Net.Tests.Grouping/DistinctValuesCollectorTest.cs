@@ -119,7 +119,8 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
-            var cmp = Comparer<AbstractDistinctValuesCollector.IGroupCount<IComparable>>.Create((groupCount1, groupCount2) => {
+            var cmp = Comparer<AbstractDistinctValuesCollector.IGroupCount<IComparable>>.Create((groupCount1, groupCount2) =>
+            {
                 if (groupCount1.GroupValue is null)
                 {
                     if (groupCount2.GroupValue is null)
@@ -498,7 +499,7 @@ namespace Lucene.Net.Search.Grouping
         private IndexContext CreateIndexContext()
         {
             Random random = Random;
-                DocValuesType[] dvTypes = new DocValuesType[]{
+            DocValuesType[] dvTypes = new DocValuesType[]{
                 DocValuesType.BINARY,
                 DocValuesType.SORTED
             };
