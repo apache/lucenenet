@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
         /**
          * Test round-robin splitting.
          */
-         [Test]
+        [Test]
         public void TestSplitRR()
         {
             MultiPassIndexSplitter splitter = new MultiPassIndexSplitter();
