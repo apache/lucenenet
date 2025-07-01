@@ -57,11 +57,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsets()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             // test that subwords and catenated subwords have
             // the correct offsets.
@@ -77,11 +77,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             TokenFilter wdf = new Lucene47WordDelimiterFilter(new SingleTokenTokenStream(new Token("übelkeit)", 7, 16)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
@@ -91,11 +91,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange2()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             TokenFilter wdf = new Lucene47WordDelimiterFilter(new SingleTokenTokenStream(new Token("(übelkeit", 7, 17)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
@@ -105,11 +105,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange3()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             TokenFilter wdf = new Lucene47WordDelimiterFilter(new SingleTokenTokenStream(new Token("(übelkeit", 7, 16)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
@@ -119,11 +119,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange4()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             TokenFilter wdf = new Lucene47WordDelimiterFilter(new SingleTokenTokenStream(new Token("(foo,bar)", 7, 16)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
@@ -132,10 +132,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public virtual void DoSplit(string input, params string[] output)
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             MockTokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.KEYWORD, false);
             TokenFilter wdf = new Lucene47WordDelimiterFilter(tokenizer, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
@@ -181,9 +181,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public virtual void DoSplitPossessive(int stemPossessive, string input, params string[] output)
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
                 | WordDelimiterFlags.SPLIT_ON_NUMERICS;
             flags |= (stemPossessive == 1) ? WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE : 0;
             MockTokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.KEYWORD, false);
@@ -236,11 +236,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestPositionIncrements()
         {
-            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
-                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
-                | WordDelimiterFlags.CATENATE_ALL 
-                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
-                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS
+                | WordDelimiterFlags.CATENATE_ALL
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS
                 | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             CharArraySet protWords = new CharArraySet(TEST_VERSION_CURRENT, new string[] { "NUTCH" }, false);
 

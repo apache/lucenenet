@@ -54,7 +54,8 @@ namespace Lucene.Net.Analysis.Sinks
         [Test]
         public virtual void TestIllegalArguments()
         {
-            Assert.Throws<ArgumentException>(() => {
+            Assert.Throws<ArgumentException>(() =>
+            {
                 new TokenRangeSinkFilter(4, 2);
             });
         }

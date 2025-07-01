@@ -47,11 +47,11 @@ namespace Lucene.Net.Analysis.CharFilters
         [Test]
         public virtual void Test()
         {
-            string html = "<div class=\"foo\">this is some text</div> here is a <a href=\"#bar\">link</a> and " + 
-                "another <a href=\"http://lucene.apache.org/\">link</a>. " + 
+            string html = "<div class=\"foo\">this is some text</div> here is a <a href=\"#bar\">link</a> and " +
+                "another <a href=\"http://lucene.apache.org/\">link</a>. " +
                 "This is an entity: &amp; plus a &lt;.  Here is an &. <!-- is a comment -->";
-            string gold = "\nthis is some text\n here is a link and " + 
-                "another link. " + 
+            string gold = "\nthis is some text\n here is a link and " +
+                "another link. " +
                 "This is an entity: & plus a <.  Here is an &. ";
             AssertHTMLStripsTo(html, gold, null);
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 builder.Append((char)ch);
             }
             // Compare trim()'d output to gold
-            assertEquals("'" + builder.ToString().Trim() + "' is not equal to '" + gold + "'", 
+            assertEquals("'" + builder.ToString().Trim() + "' is not equal to '" + gold + "'",
                 gold, builder.ToString().Trim());
         }
 
@@ -407,7 +407,7 @@ namespace Lucene.Net.Analysis.CharFilters
             while ((ch = reader.Read()) > 0)
             {
                 int correction = reader.CorrectOffset(off);
-                assertTrue("invalid offset correction: " + off + "->" + correction + " for doc of length: " + length, 
+                assertTrue("invalid offset correction: " + off + "->" + correction + " for doc of length: " + length,
                     correction <= length);
                 off++;
             }
@@ -443,8 +443,8 @@ namespace Lucene.Net.Analysis.CharFilters
         [Test]
         public virtual void TestServerSideIncludes()
         {
-            string test = "one<img src=\"image.png\"\n" + 
-                " alt =  \"Alt: <!--#echo var='${IMAGE_CAPTION:<!--comment-->\\'Comment\\'}'  -->\"\n\n" + 
+            string test = "one<img src=\"image.png\"\n" +
+                " alt =  \"Alt: <!--#echo var='${IMAGE_CAPTION:<!--comment-->\\'Comment\\'}'  -->\"\n\n" +
                 " title=\"Title: <!--#echo var=\"IMAGE_CAPTION\"-->\">two";
             string gold = "onetwo";
             AssertHTMLStripsTo(test, gold, null);
@@ -478,10 +478,10 @@ namespace Lucene.Net.Analysis.CharFilters
         [Test]
         public virtual void TestStyle()
         {
-            string test = "one<style type=\"text/css\">\n" + 
-                "<!--\n" + 
-                "@import url('http://www.lasletrasdecanciones.com/css.css');\n" + 
-                "-->\n" + 
+            string test = "one<style type=\"text/css\">\n" +
+                "<!--\n" +
+                "@import url('http://www.lasletrasdecanciones.com/css.css');\n" +
+                "-->\n" +
                 "</style>two";
             string gold = "one\ntwo";
             AssertHTMLStripsTo(test, gold, null);

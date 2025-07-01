@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.NGram
                     assertEquals(1, posLenAtt.PositionLength);
                     assertEquals(offsets[start], offsetAtt.StartOffset);
                     assertEquals(offsets[end], offsetAtt.EndOffset);
-                    nextGramContinue:;
+                nextGramContinue:;
                 }
                 //nextGramBreak:;
             }

@@ -77,7 +77,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestIllegalArguments()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
                 new CodepointCountFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("accept only valid arguments"), MockTokenizer.WHITESPACE, false), 4, 1);
             });
         }

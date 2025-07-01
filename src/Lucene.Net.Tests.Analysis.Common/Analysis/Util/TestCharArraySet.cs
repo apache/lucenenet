@@ -224,7 +224,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                ((ISet<string>)set).ExceptWith(new CharArraySet(TEST_VERSION_CURRENT, new [] { NOT_IN_SET }, true));
+                ((ISet<string>)set).ExceptWith(new CharArraySet(TEST_VERSION_CURRENT, new[] { NOT_IN_SET }, true));
                 fail("Modified unmodifiable set");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())
@@ -235,7 +235,7 @@ namespace Lucene.Net.Analysis.Util
 
             try
             {
-                set.UnionWith(new[] { NOT_IN_SET});
+                set.UnionWith(new[] { NOT_IN_SET });
                 fail("Modified unmodifiable set");
             }
             catch (Exception e) when (e.IsUnsupportedOperationException())

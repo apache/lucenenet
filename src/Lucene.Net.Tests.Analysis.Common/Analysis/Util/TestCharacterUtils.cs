@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Util
         {
             var java4 = CharacterUtils.GetJava4Instance(TEST_VERSION_CURRENT);
             var java5 = CharacterUtils.GetInstance(TEST_VERSION_CURRENT);
-            
+
             var s = TestUtil.RandomUnicodeString(Random);
             assertEquals(s.Length, java4.CodePointCount(s));
             assertEquals(Character.CodePointCount(s, 0, s.Length), java5.CodePointCount(s));
@@ -152,11 +152,11 @@ namespace Lucene.Net.Analysis.Util
         private void TestConversions(CharacterUtils charUtils)
         {
             var orig = TestUtil.RandomUnicodeString(Random, 100).toCharArray();
-            
+
             var buf = new int[orig.Length];
-            
+
             var restored = new char[buf.Length];
-            
+
             var o1 = TestUtil.NextInt32(Random, 0, Math.Min(5, orig.Length));
             var o2 = TestUtil.NextInt32(Random, 0, o1);
             var o3 = TestUtil.NextInt32(Random, 0, o1);

@@ -91,10 +91,10 @@ namespace Lucene.Net.Analysis.CommonGrams
             assertTrue("words is null and it shouldn't be", words != null);
             assertTrue(words.contains("the"));
             assertTrue(words.contains("The"));
-            Tokenizer tokenizer = new MockTokenizer(new StringReader("testing The factory"),MockTokenizer.WHITESPACE, false);
+            Tokenizer tokenizer = new MockTokenizer(new StringReader("testing The factory"), MockTokenizer.WHITESPACE, false);
             TokenStream stream = factory.Create(tokenizer);
             AssertTokenStreamContents(
-                stream, new string[] {"testing", "testing_The", "The", "The_factory", "factory"});
+                stream, new string[] { "testing", "testing_The", "The", "The_factory", "factory" });
         }
 
         /// <summary>
