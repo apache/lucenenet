@@ -110,7 +110,7 @@ namespace Lucene.Net.Spatial.Prefix
             doTest(SpatialOperation.IsWithin);
         }
 
-        [Test , Repeat(ITERATIONS)]
+        [Test, Repeat(ITERATIONS)]
         public virtual void TestContains()
         {
             SetupGrid(-1);
@@ -467,7 +467,8 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (!ctx.IsGeo)
                     return shape;//already non-geo
-                if (shape is IRectangle) {
+                if (shape is IRectangle)
+                {
                     Rectangle rect = (Rectangle)shape;
                     if (rect.CrossesDateLine)
                     {
