@@ -73,7 +73,8 @@ namespace Lucene.Net.Codecs.Compressing
 
             try
             {
-                Assert.Throws<ArgumentException>(() => {
+                Assert.Throws<ArgumentException>(() =>
+                {
                     iw.AddDocument(invalidDoc);
                     iw.Commit();
                 });
