@@ -437,7 +437,7 @@ namespace Lucene.Net.Search.Grouping
         private IComparer<GroupDoc> GetComparer(Sort sort)
         {
             SortField[] sortFields = sort.GetSort();
-            return Comparer<GroupDoc>.Create((d1,d2) =>
+            return Comparer<GroupDoc>.Create((d1, d2) =>
             {
                 foreach (SortField sf in sortFields)
                 {
