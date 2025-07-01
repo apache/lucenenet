@@ -262,7 +262,8 @@ namespace Lucene.Net.Analysis
                 CharacterRunAutomaton dfa = new CharacterRunAutomaton(AutomatonTestUtil.RandomAutomaton(Random) /*, int.MaxValue*/);
                 bool lowercase = Random.NextBoolean();
                 int limit = TestUtil.NextInt32(Random, 0, 500);
-                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) => {
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
                     Tokenizer t = new MockTokenizer(reader, dfa, lowercase, limit);
                     return new TokenStreamComponents(t, t);
                 });
