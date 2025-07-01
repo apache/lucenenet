@@ -66,7 +66,8 @@ namespace Lucene.Net.Analysis.OpenNlp
         public void TestBasic()
         {
             var loader = new ClasspathResourceLoader(GetType());
-            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldname, reader) => {
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldname, reader) =>
+            {
                 var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 tokenizerFactory.Inform(loader);
                 var tokenizer = tokenizerFactory.Create(reader);
@@ -77,10 +78,10 @@ namespace Lucene.Net.Analysis.OpenNlp
 
                 return new TokenStreamComponents(tokenizer, filter1);
             });
-        //    CustomAnalyzer analyzer = CustomAnalyzer.builder(new ClasspathResourceLoader(GetType()))
-        //.withTokenizer("opennlp", "tokenizerModel", tokenizerModelFile, "sentenceModel", sentenceModelFile)
-        //.addTokenFilter("opennlpPOS", "posTaggerModel", posTaggerModelFile)
-        //.build();
+            //    CustomAnalyzer analyzer = CustomAnalyzer.builder(new ClasspathResourceLoader(GetType()))
+            //.withTokenizer("opennlp", "tokenizerModel", tokenizerModelFile, "sentenceModel", sentenceModelFile)
+            //.addTokenFilter("opennlpPOS", "posTaggerModel", posTaggerModelFile)
+            //.build();
             AssertAnalyzesTo(analyzer, SENTENCES, SENTENCES_punc, SENTENCES_startOffsets, SENTENCES_endOffsets);
         }
 
@@ -141,11 +142,11 @@ namespace Lucene.Net.Analysis.OpenNlp
                 var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 tokenizerFactory.Inform(loader);
                 var tokenizer = tokenizerFactory.Create(reader);
-                
+
                 var tokenFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 tokenFilterFactory.Inform(loader);
                 var tokenFilter = tokenFilterFactory.Create(tokenizer);
-                
+
                 return new TokenStreamComponents(tokenizer, tokenFilter);
             });
 
