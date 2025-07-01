@@ -217,7 +217,7 @@ namespace Lucene.Net.Search
                 // Compute expected results:
                 var expected = f.matchValues.ToList();
 
-                expected.Sort(Comparer<BytesRef>.Create((a,b) =>
+                expected.Sort(Comparer<BytesRef>.Create((a, b) =>
                     {
                         if (a is null)
                         {

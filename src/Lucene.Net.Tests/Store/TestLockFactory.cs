@@ -229,7 +229,8 @@ namespace Lucene.Net.Store
 
             // Touch the lock file
             var lockFile = new FileInfo(Path.Combine(tempDir.FullName, "test.lock"));
-            using (lockFile.Create()){};
+            using (lockFile.Create()) { }
+            ;
 
             var l = new NativeFSLockFactory(tempDir).MakeLock("test.lock");
             Assert.IsTrue(l.Obtain(), "failed to obtain lock, got exception: {0}", l.FailureReason);

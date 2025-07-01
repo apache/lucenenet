@@ -45,7 +45,8 @@ namespace Lucene.Net
         /// Cannot create with negative capacity
         /// </summary>
         [Test]
-        public void TestConstructor1() {
+        public void TestConstructor1()
+        {
             try
             {
                 _ = new ConcurrentHashSet<object>(8, -1);

@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
             {
                 if (result is null)
                 {
-                    result =  (BitSet)rnd.Clone();
+                    result = (BitSet)rnd.Clone();
                 }
                 else
                 {
