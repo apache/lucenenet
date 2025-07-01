@@ -547,7 +547,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 tw.GetParent(-1);
                 fail("getParent for -1 should throw exception");
             }
-            catch (Exception e) when(e.IsArrayIndexOutOfBoundsException())
+            catch (Exception e) when (e.IsArrayIndexOutOfBoundsException())
             {
                 // ok
             }

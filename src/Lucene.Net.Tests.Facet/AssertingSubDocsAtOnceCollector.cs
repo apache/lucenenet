@@ -26,7 +26,7 @@ namespace Lucene.Net.Facet
     using ICollector = Lucene.Net.Search.ICollector;
     using ChildScorer = Lucene.Net.Search.Scorer.ChildScorer;
     using Scorer = Lucene.Net.Search.Scorer;
-    
+
     /// <summary>
     /// Verifies in collect() that all child subScorers are on
     ///  the collected doc. 
