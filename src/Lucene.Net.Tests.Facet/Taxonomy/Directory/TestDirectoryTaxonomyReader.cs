@@ -359,7 +359,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             var indexWriterFactory = new TestDirectoryTaxonomyIndexWriterFactory2(Random, TEST_VERSION_CURRENT);
             var writer = new DirectoryTaxonomyWriter(indexWriterFactory, dir);
             Assert.NotNull(indexWriterFactory.iw, "iw should be set via DirectoryTaxonomyIndexWriter constructor calling factory");
-            
+
             // add a category so that the following DTR open will cause a flush and 
             // a new segment will be created
             writer.AddCategory(new FacetLabel("a"));

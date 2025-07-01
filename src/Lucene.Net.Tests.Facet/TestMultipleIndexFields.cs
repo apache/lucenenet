@@ -282,7 +282,7 @@ namespace Lucene.Net.Facet
             IOUtils.Dispose(indexDir, taxoDir);
         }
 
-        
+
         private void AssertCorrectResults(Facets facets)
         {
             Assert.AreEqual(5, facets.GetSpecificValue("Band"), 0);
@@ -291,7 +291,7 @@ namespace Lucene.Net.Facet
             Assert.AreEqual("dim=Author path=[] value=3 childCount=3\n  Mark Twain (1)\n  Stephen King (1)\n  Kurt Vonnegut (1)\n", facets.GetTopChildren(10, "Author").ToString());
         }
 
-        
+
         private static FacetsCollector PerformSearch(TaxonomyReader tr, IndexReader ir, IndexSearcher searcher)
         {
             FacetsCollector fc = new FacetsCollector();

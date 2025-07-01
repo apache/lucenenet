@@ -36,10 +36,10 @@ namespace Lucene.Net.Facet
     public class SlowRAMDirectory : RAMDirectory
     {
         private const int IO_SLEEP_THRESHOLD = 50;
-        
+
         internal Random random;
         private int sleepMillis;
-        
+
         public virtual void SetSleepMillis(int sleepMillis)
         {
             this.sleepMillis = sleepMillis;
@@ -201,7 +201,7 @@ namespace Lucene.Net.Facet
             private readonly IndexOutput io;
             private int numWrote;
             private readonly Random rand;
-            
+
             public SlowIndexOutput(SlowRAMDirectory outerInstance, IndexOutput io)
             {
                 this.outerInstance = outerInstance;
