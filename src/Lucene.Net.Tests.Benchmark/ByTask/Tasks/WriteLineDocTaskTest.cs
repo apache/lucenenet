@@ -167,10 +167,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             switch (fileType)
             {
                 case FileType.BZIP2:
-                    input = new BZip2InputStream(input); 
+                    input = new BZip2InputStream(input);
                     break;
                 case FileType.GZIP:
-                    input = new GZipStream(input, CompressionMode.Decompress);   
+                    input = new GZipStream(input, CompressionMode.Decompress);
                     break;
                 case FileType.PLAIN:
                     break; // nothing to do
