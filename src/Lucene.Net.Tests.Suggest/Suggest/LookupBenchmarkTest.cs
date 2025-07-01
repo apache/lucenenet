@@ -298,7 +298,7 @@ namespace Lucene.Net.Search.Suggest
                 {
                     long start = J2N.Time.NanoTime();
                     guard = Convert.ToInt32(callable());
-                    times.Add((J2N.Time.NanoTime() - start) / NANOS_PER_MS );
+                    times.Add((J2N.Time.NanoTime() - start) / NANOS_PER_MS);
                 }
                 return new BenchmarkResult(times, warmup, rounds);
             }
