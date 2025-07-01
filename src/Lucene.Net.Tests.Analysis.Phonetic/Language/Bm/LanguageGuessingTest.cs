@@ -52,8 +52,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 new object[] { "\u00e1cz", "any", EXACT }, // ácz
                 new object[] { "\u00e1tz", "any", EXACT } // átz
         };
-            
-       
+
+
 
         //private readonly String exactness;
 
