@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System;
 
 namespace Lucene.Net.Codecs.Lucene40

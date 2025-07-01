@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;

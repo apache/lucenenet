@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search.Suggest;
+using Lucene.Net.Search.Suggest;
 using System;
 
 namespace Lucene.Net.Search.Spell

@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Search.Payloads
+namespace Lucene.Net.Search.Payloads
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

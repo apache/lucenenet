@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes.Extensions;

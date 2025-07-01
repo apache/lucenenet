@@ -1,4 +1,4 @@
-﻿using J2N.Globalization;
+using J2N.Globalization;
 using System;
 using System.Globalization;
 using System.IO;

@@ -1,4 +1,4 @@
-﻿// XMLFilterImpl.java - base SAX2 filter implementation.
+// XMLFilterImpl.java - base SAX2 filter implementation.
 // http://www.saxproject.org
 // Written by David Megginson
 // NO WARRANTY!  This class is in the Public Domain.

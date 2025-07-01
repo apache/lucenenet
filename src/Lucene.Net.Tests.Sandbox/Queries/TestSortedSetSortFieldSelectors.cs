@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs;
+using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.DiskDV;
 using Lucene.Net.Codecs.Lucene45;
 using Lucene.Net.Codecs.Memory;

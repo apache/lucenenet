@@ -1,4 +1,4 @@
-﻿// EntityResolver2.java - Extended SAX entity resolver.
+// EntityResolver2.java - Extended SAX entity resolver.
 // http://www.saxproject.org
 // No warranty; no copyright -- use this as you will.
 // $Id: EntityResolver2.java,v 1.2 2002/01/12 19:20:08 dbrownell Exp $

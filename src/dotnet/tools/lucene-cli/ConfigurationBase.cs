@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Cli.CommandLine;
+using Lucene.Net.Cli.CommandLine;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,4 @@
-﻿// SAXNotSupportedException.java - unsupported feature or value.
+// SAXNotSupportedException.java - unsupported feature or value.
 // http://www.saxproject.org
 // Written by David Megginson
 // NO WARRANTY!  This class is in the Public Domain.

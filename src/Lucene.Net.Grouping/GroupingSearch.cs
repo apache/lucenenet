@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Queries.Function;
+using Lucene.Net.Queries.Function;
 using Lucene.Net.Search.Grouping.Function;
 using Lucene.Net.Search.Grouping.Terms;
 using Lucene.Net.Support;

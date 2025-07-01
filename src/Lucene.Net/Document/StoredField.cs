@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using System;
 using Double = J2N.Numerics.Double;
 using Int32 = J2N.Numerics.Int32;

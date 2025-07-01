@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;

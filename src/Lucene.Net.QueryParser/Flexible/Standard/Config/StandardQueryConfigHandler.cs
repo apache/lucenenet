@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers.Flexible.Core.Config;
 using Lucene.Net.Search;

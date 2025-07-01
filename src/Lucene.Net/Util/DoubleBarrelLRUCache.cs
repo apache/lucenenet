@@ -1,4 +1,4 @@
-﻿using J2N.Threading.Atomic;
+using J2N.Threading.Atomic;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 

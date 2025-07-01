@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Spatial4n.Context;
 using Spatial4n.Distance;

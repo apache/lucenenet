@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Parser;
+using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System.Collections.Generic;
 using System.Text;
 

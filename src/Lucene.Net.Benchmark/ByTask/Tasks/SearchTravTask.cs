@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
+using Lucene.Net.Benchmarks.ByTask.Feeds;
 using System.Globalization;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks

@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;

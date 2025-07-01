@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.6.1
+// Lucene version compatibility level 8.6.1
 using ICU4N.Globalization;
 using ICU4N.Text;
 using J2N;

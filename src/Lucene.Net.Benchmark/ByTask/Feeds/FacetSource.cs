@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Facet;
+using Lucene.Net.Facet;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds

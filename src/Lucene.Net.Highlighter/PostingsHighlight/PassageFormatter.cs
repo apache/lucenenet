@@ -1,4 +1,4 @@
-﻿#if FEATURE_BREAKITERATOR
+#if FEATURE_BREAKITERATOR
 namespace Lucene.Net.Search.PostingsHighlight
 {
     /*

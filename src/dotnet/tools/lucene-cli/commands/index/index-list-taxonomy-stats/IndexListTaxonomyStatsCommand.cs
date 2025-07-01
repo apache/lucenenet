@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Cli.CommandLine;
+using Lucene.Net.Cli.CommandLine;
 using Lucene.Net.Facet.Taxonomy;
 using System.Collections.Generic;
 

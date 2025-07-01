@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 using Lucene.Net.Analysis.Util;
 using Morfologik.Stemming;
 using Morfologik.Stemming.Polish;

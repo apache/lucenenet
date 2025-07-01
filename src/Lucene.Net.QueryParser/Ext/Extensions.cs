@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Classic;
+using Lucene.Net.QueryParsers.Classic;
 using System;
 using System.Collections.Generic;
 using System.Text;

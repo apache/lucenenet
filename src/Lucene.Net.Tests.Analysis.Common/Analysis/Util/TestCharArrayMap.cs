@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N.Collections;
 using J2N.Text;
 using Lucene.Net.Analysis.Util;

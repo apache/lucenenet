@@ -1,4 +1,4 @@
-﻿#if FEATURE_BREAKITERATOR
+#if FEATURE_BREAKITERATOR
 using J2N;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;

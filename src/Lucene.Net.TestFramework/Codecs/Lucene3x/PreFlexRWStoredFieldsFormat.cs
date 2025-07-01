@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 
 namespace Lucene.Net.Codecs.Lucene3x

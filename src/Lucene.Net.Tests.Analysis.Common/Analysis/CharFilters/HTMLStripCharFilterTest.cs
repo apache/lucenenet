@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1 (added fix for SOLR-5983: HTMLStripCharFilter is treating CDATA sections incorrectly)
+// Lucene version compatibility level 4.8.1 (added fix for SOLR-5983: HTMLStripCharFilter is treating CDATA sections incorrectly)
 using J2N.Text;
 using Lucene.Net.Util;
 using NUnit.Framework;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System.Diagnostics;

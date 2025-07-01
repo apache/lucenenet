@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Cjk;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Ja.Dict;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS

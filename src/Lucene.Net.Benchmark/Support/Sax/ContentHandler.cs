@@ -1,4 +1,4 @@
-﻿// ContentHandler.java - handle main document content.
+// ContentHandler.java - handle main document content.
 // http://www.saxproject.org
 // Written by David Megginson
 // NO WARRANTY!  This class is in the public domain.

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Store;
 
 namespace Lucene.Net.Codecs.MockSep

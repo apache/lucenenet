@@ -1,4 +1,4 @@
-﻿// LUCENENET TODO: Use HTML Agility pack instead of SAX ?
+// LUCENENET TODO: Use HTML Agility pack instead of SAX ?
 
 using J2N.Collections.Generic.Extensions;
 using Sax;

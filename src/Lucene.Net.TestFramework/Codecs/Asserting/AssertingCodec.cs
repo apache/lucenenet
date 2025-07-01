@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.Lucene46;
+using Lucene.Net.Codecs.Lucene46;
 
 namespace Lucene.Net.Codecs.Asserting
 {

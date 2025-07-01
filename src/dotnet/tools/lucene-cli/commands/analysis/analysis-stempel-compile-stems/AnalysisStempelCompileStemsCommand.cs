@@ -1,4 +1,4 @@
-﻿using Egothor.Stemmer;
+using Egothor.Stemmer;
 using Lucene.Net.Cli.CommandLine;
 using System.Collections.Generic;
 

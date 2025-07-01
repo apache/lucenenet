@@ -1,4 +1,4 @@
-﻿// SAXNotRecognizedException.java - unrecognized feature or value.
+// SAXNotRecognizedException.java - unrecognized feature or value.
 // http://www.saxproject.org
 // Written by David Megginson
 // NO WARRANTY!  This class is in the Public Domain.

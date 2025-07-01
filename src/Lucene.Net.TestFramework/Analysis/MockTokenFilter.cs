@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
 

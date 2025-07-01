@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using System;
 
 namespace Lucene.Net.Util.Mutable

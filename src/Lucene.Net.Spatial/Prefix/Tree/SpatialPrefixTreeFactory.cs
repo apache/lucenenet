@@ -1,4 +1,4 @@
-﻿using Spatial4n.Context;
+using Spatial4n.Context;
 using Spatial4n.Distance;
 using System;
 using System.Collections.Generic;

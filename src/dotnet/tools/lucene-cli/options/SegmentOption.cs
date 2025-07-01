@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Cli.CommandLine;
+using Lucene.Net.Cli.CommandLine;
 
 namespace Lucene.Net.Cli
 {

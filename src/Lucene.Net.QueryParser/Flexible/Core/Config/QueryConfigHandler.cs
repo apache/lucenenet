@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Util;
+using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Config

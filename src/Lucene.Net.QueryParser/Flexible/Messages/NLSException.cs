@@ -1,4 +1,4 @@
-﻿// LUCENENET specific - Factored out NLS so end users can elect to use .NET localization or not
+// LUCENENET specific - Factored out NLS so end users can elect to use .NET localization or not
 // rather than forcing them to use it.
 
 //namespace Lucene.Net.QueryParsers.Flexible.Messages

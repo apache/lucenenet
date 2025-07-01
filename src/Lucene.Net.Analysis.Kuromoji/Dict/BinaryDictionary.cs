@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using J2N.IO;
 using Lucene.Net.Codecs;
 using Lucene.Net.Store;

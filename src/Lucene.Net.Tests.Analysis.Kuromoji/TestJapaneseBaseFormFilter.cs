@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;

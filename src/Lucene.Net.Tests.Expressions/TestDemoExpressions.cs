@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
 using Lucene.Net.Search;

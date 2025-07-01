@@ -1,4 +1,4 @@
-﻿using J2N.Numerics;
+using J2N.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util // from org.apache.solr.util rev 555343

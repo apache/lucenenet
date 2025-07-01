@@ -1,4 +1,4 @@
-﻿using J2N.Runtime.CompilerServices;
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;

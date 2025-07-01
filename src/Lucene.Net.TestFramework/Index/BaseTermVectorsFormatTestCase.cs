@@ -1,4 +1,4 @@
-﻿using J2N.Threading;
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;

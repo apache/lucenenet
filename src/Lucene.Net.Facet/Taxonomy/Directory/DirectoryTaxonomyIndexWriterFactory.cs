@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
 

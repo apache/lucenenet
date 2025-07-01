@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Programmatic;
+using Lucene.Net.Benchmarks.ByTask.Programmatic;
 using System;
 using System.Collections.Generic;
 

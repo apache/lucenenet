@@ -1,4 +1,4 @@
-﻿// SAX input source.
+// SAX input source.
 // http://www.saxproject.org
 // No warranty; no copyright -- use this as you will.
 // $Id: InputSource.java,v 1.10 2004/12/02 02:49:58 dmegginson Exp $

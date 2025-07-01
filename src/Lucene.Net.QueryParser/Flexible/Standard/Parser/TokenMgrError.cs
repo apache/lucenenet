@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.ComponentModel;

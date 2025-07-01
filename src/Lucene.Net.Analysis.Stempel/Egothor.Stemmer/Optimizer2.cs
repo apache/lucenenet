@@ -1,4 +1,4 @@
-﻿/*
+/*
                     Egothor Software License version 1.00
                     Copyright (C) 1997-2004 Leo Galambos.
                  Copyright (C) 2002-2004 "Egothor developers"

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 
 namespace Lucene.Net.Configuration

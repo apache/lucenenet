@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Codecs.Lucene46;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Sorter;

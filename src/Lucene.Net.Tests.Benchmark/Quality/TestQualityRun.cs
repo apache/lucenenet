@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.Quality.Trec;
+using Lucene.Net.Benchmarks.Quality.Trec;
 using Lucene.Net.Benchmarks.Quality.Utils;
 using Lucene.Net.Index;
 using Lucene.Net.Search;

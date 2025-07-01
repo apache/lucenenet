@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using Lucene.Net.Analysis.Ja.Util;
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;

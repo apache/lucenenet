@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Spatial.Prefix;
+using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Serialized;
 using Lucene.Net.Spatial.Vector;

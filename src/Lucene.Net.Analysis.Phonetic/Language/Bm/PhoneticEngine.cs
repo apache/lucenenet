@@ -1,4 +1,4 @@
-﻿// commons-codec version compatibility level: 1.9
+// commons-codec version compatibility level: 1.9
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Util;

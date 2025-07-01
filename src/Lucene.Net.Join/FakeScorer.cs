@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Join

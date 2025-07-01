@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Surround.Query;
+using Lucene.Net.QueryParsers.Surround.Query;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;

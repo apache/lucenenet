@@ -1,4 +1,4 @@
-﻿// Locator2Impl.java - extended LocatorImpl
+// Locator2Impl.java - extended LocatorImpl
 // http://www.saxproject.org
 // Public Domain: no warranty.
 // $Id: Locator2Impl.java,v 1.3 2004/04/26 17:34:35 dmegginson Exp $

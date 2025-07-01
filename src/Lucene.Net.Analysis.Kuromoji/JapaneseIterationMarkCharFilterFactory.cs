@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using SegmentReadState = Lucene.Net.Index.SegmentReadState;
 using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;

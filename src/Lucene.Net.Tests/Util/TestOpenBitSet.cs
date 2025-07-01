@@ -1,4 +1,4 @@
-﻿using J2N.Collections;
+using J2N.Collections;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using RandomizedTesting.Generators;

@@ -1,4 +1,4 @@
-﻿// Attributes2.java - extended Attributes
+// Attributes2.java - extended Attributes
 // http://www.saxproject.org
 // Public Domain: no warranty.
 // $Id: Attributes2.java,v 1.6 2004/03/08 13:01:00 dmegginson Exp $

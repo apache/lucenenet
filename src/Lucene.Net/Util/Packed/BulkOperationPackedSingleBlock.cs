@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Util.Packed
+namespace Lucene.Net.Util.Packed
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

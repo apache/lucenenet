@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 {

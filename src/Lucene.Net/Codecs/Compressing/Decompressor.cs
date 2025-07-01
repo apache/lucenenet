@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BytesRef = Lucene.Net.Util.BytesRef;
 
 namespace Lucene.Net.Codecs.Compressing

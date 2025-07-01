@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Highlight;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search;
+using Lucene.Net.Search;
 using System;
 using System.Globalization;
 using System.IO;

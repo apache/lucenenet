@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;

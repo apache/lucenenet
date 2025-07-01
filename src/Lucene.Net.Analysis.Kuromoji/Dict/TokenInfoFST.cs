@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util.Fst;
 using System.Diagnostics;
 using Int64 = J2N.Numerics.Int64;

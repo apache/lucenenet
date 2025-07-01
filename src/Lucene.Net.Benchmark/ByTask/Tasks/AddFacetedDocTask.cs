@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
+using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Facet;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;

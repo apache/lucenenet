@@ -1,4 +1,4 @@
-﻿using J2N.Runtime.CompilerServices;
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.Quality.Utils;
+using Lucene.Net.Benchmarks.Quality.Utils;
 using Lucene.Net.Search;
 using System;
 using System.IO;

@@ -1,4 +1,4 @@
-﻿#if TESTFRAMEWORK
+#if TESTFRAMEWORK
 // LUCENENET NOTE: This is incomplete
 
 using Lucene.Net.Support;

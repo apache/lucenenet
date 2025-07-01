@@ -1,4 +1,4 @@
-﻿// commons-codec version compatibility level: 1.9
+// commons-codec version compatibility level: 1.9
 using System.Globalization;
 
 namespace Lucene.Net.Analysis.Phonetic.Language

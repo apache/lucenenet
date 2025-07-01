@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Integer = J2N.Numerics.Int32;
 

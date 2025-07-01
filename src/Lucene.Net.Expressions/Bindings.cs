@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Queries.Function;
+using Lucene.Net.Queries.Function;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Expressions

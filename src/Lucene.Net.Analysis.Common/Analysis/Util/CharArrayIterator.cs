@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using ICU4N.Support.Text;
 using Lucene.Net.Support;

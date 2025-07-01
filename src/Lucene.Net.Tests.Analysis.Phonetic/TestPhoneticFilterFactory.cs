@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Phonetic.Language;
+using Lucene.Net.Analysis.Phonetic.Language;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using NUnit.Framework;

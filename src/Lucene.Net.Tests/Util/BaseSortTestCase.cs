@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;

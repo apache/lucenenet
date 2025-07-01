@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Mlt;
 using Lucene.Net.Search;

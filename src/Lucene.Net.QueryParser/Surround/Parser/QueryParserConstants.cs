@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.QueryParsers.Surround.Parser
+namespace Lucene.Net.QueryParsers.Surround.Parser
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

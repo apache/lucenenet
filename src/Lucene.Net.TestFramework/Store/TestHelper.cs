@@ -1,4 +1,4 @@
-﻿using SimpleFSIndexInput = Lucene.Net.Store.SimpleFSDirectory.SimpleFSIndexInput;
+using SimpleFSIndexInput = Lucene.Net.Store.SimpleFSDirectory.SimpleFSIndexInput;
 
 namespace Lucene.Net.Store
 {

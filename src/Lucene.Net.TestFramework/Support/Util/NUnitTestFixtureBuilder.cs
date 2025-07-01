@@ -1,4 +1,4 @@
-﻿// Based on: https://github.com/nunit/nunit/blob/v3.14.0/src/NUnitFramework/framework/Internal/Builders/NUnitTestFixtureBuilder.cs
+// Based on: https://github.com/nunit/nunit/blob/v3.14.0/src/NUnitFramework/framework/Internal/Builders/NUnitTestFixtureBuilder.cs
 
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;

@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;

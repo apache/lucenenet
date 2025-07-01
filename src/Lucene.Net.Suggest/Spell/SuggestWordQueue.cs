@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell

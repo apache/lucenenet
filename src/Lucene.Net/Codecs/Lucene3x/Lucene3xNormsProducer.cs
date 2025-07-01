@@ -1,4 +1,4 @@
-﻿using J2N.Runtime.CompilerServices;
+using J2N.Runtime.CompilerServices;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;

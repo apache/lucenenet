@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using Lucene;
 using System;
 using System.Collections.Generic;

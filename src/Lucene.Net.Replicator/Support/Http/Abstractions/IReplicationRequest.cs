@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Replicator.Http.Abstractions
+namespace Lucene.Net.Replicator.Http.Abstractions
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -1,4 +1,4 @@
-﻿// XMLWriter.java - serialize an XML document.
+// XMLWriter.java - serialize an XML document.
 // Written by David Megginson, david@megginson.com
 // and placed by him into the public domain.
 // Extensively modified by John Cowan for TagSoup.
