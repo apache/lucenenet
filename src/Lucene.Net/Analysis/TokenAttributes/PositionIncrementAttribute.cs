@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     /// <para/>The default value is one.
     ///
     /// <para/>Some common uses for this are:
-    /// 
+    ///
     /// <list type="bullet">
     /// <item><description>Set it to zero to put multiple terms in the same position.  this is
     /// useful if, e.g., a word has multiple stems.  Searches for phrases

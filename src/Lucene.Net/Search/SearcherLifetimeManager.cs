@@ -58,21 +58,21 @@ namespace Lucene.Net.Search
     ///     // If possible, obtain the same searcher as the last
     ///     // search:
     ///     IndexSearcher searcher = mgr.Acquire(token);
-    ///     if (searcher != null) 
+    ///     if (searcher != null)
     ///     {
     ///         // Searcher is still here
-    ///         try 
+    ///         try
     ///         {
     ///             // do searching...
-    ///         } 
-    ///         finally 
+    ///         }
+    ///         finally
     ///         {
     ///             mgr.Release(searcher);
     ///             // Do not use searcher after this!
     ///             searcher = null;
     ///         }
-    ///     } 
-    ///     else 
+    ///     }
+    ///     else
     ///     {
     ///         // Searcher was pruned -- notify user session timed
     ///         // out, or, pull fresh searcher again
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
     ///
     /// <para><b>NOTE</b>: keeping many searchers around means
     /// you'll use more resources (open files, RAM) than a single
-    /// searcher.  However, as long as you are using 
+    /// searcher.  However, as long as you are using
     /// <see cref="DirectoryReader.OpenIfChanged(DirectoryReader)"/>, the searchers
     /// will usually share almost all segments and the added resource usage
     /// is contained.  When a large merge has completed, and
@@ -160,7 +160,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Records that you are now using this <see cref="IndexSearcher"/>.
         /// Always call this when you've obtained a possibly new
-        /// <see cref="IndexSearcher"/>, for example from 
+        /// <see cref="IndexSearcher"/>, for example from
         /// <see cref="SearcherManager"/>.  It's fine if you already passed the
         /// same searcher to this method before.
         ///
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Release a searcher previously obtained from 
+        /// Release a searcher previously obtained from
         /// <see cref="Acquire(long)"/>.
         ///
         /// <para/><b>NOTE</b>: it's fine to call this after Dispose().

@@ -263,7 +263,7 @@ namespace Lucene.Net.Analysis.NGram
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 #pragma warning disable 612, 618
                 return new TokenStreamComponents(tokenizer, new EdgeNGramTokenFilter(LuceneVersion.LUCENE_43, tokenizer, EdgeNGramTokenFilter.Side.BACK, 2, 4));
-#pragma warning restore 612, 618 
+#pragma warning restore 612, 618
             });
             CheckRandomData(Random, b, 1000 * RandomMultiplier, 20, false, false);
         }

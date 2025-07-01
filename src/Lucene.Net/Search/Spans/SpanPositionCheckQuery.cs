@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Spans
             this.m_match = match;
         }
 
-        /// <returns> 
+        /// <returns>
         /// The <see cref="SpanQuery"/> whose matches are filtered.
         /// </returns>
         public virtual SpanQuery Match => m_match;

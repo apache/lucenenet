@@ -26,7 +26,7 @@ namespace Lucene.Net.Join
     /// <summary>
     /// A field comparer that allows parent documents to be sorted by fields
     /// from the nested / child documents.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     [Obsolete("Use Lucene.Net.Search.Join.ToParentBlockJoinFieldComparer instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <see cref="CodepointCountFilter"/>. 
+    /// Factory for <see cref="CodepointCountFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_lngth" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

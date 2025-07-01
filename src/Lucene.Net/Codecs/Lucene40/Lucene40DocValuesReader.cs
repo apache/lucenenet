@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// <summary>
     /// Reads the 4.0 format of norms/docvalues.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [Obsolete("Only for reading old 4.0 and 4.1 segments")]
     internal sealed class Lucene40DocValuesReader : DocValuesProducer

@@ -32,8 +32,8 @@
 namespace Lucene.Net.QueryParsers.Flexible.Messages {
     using System;
     using System.Reflection;
-    
-    
+
+
     /// <summary>
     ///    A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -44,14 +44,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class MessagesTestBundleBundle {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         internal MessagesTestBundleBundle() {
         }
-        
+
         /// <summary>
         ///    Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -65,7 +65,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///    Overrides the current thread's CurrentUICulture property for all
         ///    resource lookups using this strongly typed resource class.
@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Syntax Error: {0}.
         /// </summary>
@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages {
                 return ResourceManager.GetString("Q0001E_INVALID_SYNTAX", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Truncated unicode escape sequence..
         /// </summary>

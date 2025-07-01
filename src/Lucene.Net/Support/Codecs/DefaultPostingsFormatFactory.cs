@@ -59,17 +59,17 @@ namespace Lucene.Net.Codecs
     ///         PutPostingsFormatType(typeof(MyPostingsFormat));
     ///         PutPostingsFormatType(typeof(AnotherPostingsFormat));
     ///     }
-    ///     
+    ///
     ///     protected override PostingsFormat NewPostingsFormat(Type type)
     ///     {
     ///         // Special case: AnotherPostingsFormat has a required dependency
     ///         if (typeof(AnotherPostingsFormat).Equals(type))
     ///             return new AnotherPostingsFormat(new SomeDependency());
-    ///         
+    ///
     ///         return base.NewPostingsFormat(type);
     ///     }
     /// }
-    /// 
+    ///
     /// // Register the factory at application start up.
     /// PostingsFormat.SetPostingsFormatFactory(new ExplicitPostingsFormatFactory());
     /// </code>
@@ -87,12 +87,12 @@ namespace Lucene.Net.Codecs
     ///     {
     ///         // Load all default codecs
     ///         base.Initialize();
-    ///         
+    ///
     ///         // Load all of the codecs inside of the same assembly that MyPostingsFormat is defined in
     ///         ScanForPostingsFormats(typeof(MyPostingsFormat).Assembly);
     ///     }
     /// }
-    /// 
+    ///
     /// // Register the factory at application start up.
     /// PostingsFormat.SetPostingsFormatFactory(new ScanningPostingsFormatFactory());
     /// </code>
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs
         /// to make your custom codecs known to Lucene.
         /// <para/>
         /// These types will be registered after the default Lucene types, so if a custom type has the same
-        /// name as a Lucene <see cref="PostingsFormat"/> (via <see cref="PostingsFormatNameAttribute"/>) 
+        /// name as a Lucene <see cref="PostingsFormat"/> (via <see cref="PostingsFormatNameAttribute"/>)
         /// the custom type will replace the Lucene type with the same name.
         /// </summary>
         public IEnumerable<Type> CustomPostingsFormatTypes { get; set; }
@@ -141,7 +141,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Initializes the codec type cache with the known <see cref="PostingsFormat"/> types.
         /// Override this method (and optionally call <c>base.Initialize()</c>) to add your
-        /// own <see cref="PostingsFormat"/> types by calling <see cref="PutPostingsFormatType(Type)"/> 
+        /// own <see cref="PostingsFormat"/> types by calling <see cref="PutPostingsFormatType(Type)"/>
         /// or <see cref="ScanForPostingsFormats(Assembly)"/>.
         /// <para/>
         /// If two types have the same name by using the <see cref="PostingsFormatNameAttribute"/>, the
@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs
         /// and adds their names to the <see cref="postingsFormatNameToTypeMap"/>. Note that names will be
         /// automatically overridden if the <see cref="PostingsFormat"/> name appears multiple times - the last match wins.
         /// </summary>
-        /// <param name="assemblies">A list of assemblies to scan. The assemblies will be scanned from first to last, 
+        /// <param name="assemblies">A list of assemblies to scan. The assemblies will be scanned from first to last,
         /// and the last match for each <see cref="PostingsFormat"/> name wins.</param>
         protected virtual void ScanForPostingsFormats(IEnumerable<Assembly> assemblies)
         {
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Adds a <see cref="PostingsFormat"/> type to the <see cref="postingsFormatNameToTypeMap"/>, using 
+        /// Adds a <see cref="PostingsFormat"/> type to the <see cref="postingsFormatNameToTypeMap"/>, using
         /// the name provided in the <see cref="PostingsFormatNameAttribute"/>, if present, or the name
         /// of the codec class minus the "Codec" suffix as the name by default.
         /// <para/>

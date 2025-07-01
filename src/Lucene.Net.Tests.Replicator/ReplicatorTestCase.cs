@@ -103,7 +103,7 @@ namespace Lucene.Net.Replicator
 #endif
 
         /// <summary>
-        /// Returns a <see cref="server"/>'s port. 
+        /// Returns a <see cref="server"/>'s port.
         /// </summary>
         public static int ServerPort(TestServer server)
         {
@@ -111,7 +111,7 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// Returns a <see cref="server"/>'s host. 
+        /// Returns a <see cref="server"/>'s host.
         /// </summary>
         public static string ServerHost(TestServer server)
         {

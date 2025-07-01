@@ -82,7 +82,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads two bytes and returns a <see cref="short"/>. 
+        /// Reads two bytes and returns a <see cref="short"/>.
         /// <para/>
         /// LUCENENET NOTE: Important - always cast to ushort (System.UInt16) before using to ensure
         /// the value is positive!
@@ -96,7 +96,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads four bytes and returns an <see cref="int"/>. 
+        /// Reads four bytes and returns an <see cref="int"/>.
         /// <para/>
         /// NOTE: this was readInt() in Lucene
         /// </summary>
@@ -154,7 +154,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads eight bytes and returns a <see cref="long"/>. 
+        /// Reads eight bytes and returns a <see cref="long"/>.
         /// <para/>
         /// NOTE: this was readLong() in Lucene
         /// </summary>

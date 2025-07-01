@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Util
     /// etc.  It is designed to be quick to test if a <see cref="T:char[]"/>
     /// is in the set without the necessity of converting it
     /// to a <see cref="string"/> first.
-    /// 
+    ///
     /// <a name="version"></a>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="CharArraySet"/>:
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a set from a collection of <see cref="string"/>s. 
+        /// Creates a set from a collection of <see cref="string"/>s.
         /// </summary>
         /// <param name="matchVersion">
         ///          Compatibility match version see <see cref="CharArraySet"/> for details. </param>
@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Creates a set from a collection of <see cref="ICharSequence"/>s. 
+        /// Creates a set from a collection of <see cref="ICharSequence"/>s.
         /// </summary>
         /// <param name="matchVersion">
         ///          Compatibility match version see <see cref="CharArraySet"/> for details. </param>
@@ -235,8 +235,8 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// <c>true</c> if the <see cref="T:char[]"/>s 
-        /// are in the set 
+        /// <c>true</c> if the <see cref="T:char[]"/>s
+        /// are in the set
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <c>null</c>.</exception>
         public virtual bool Contains(char[] text)
@@ -283,7 +283,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Adds the <see cref="object.ToString()"/> representation of <paramref name="text"/> into the set.
         /// The <see cref="object.ToString()"/> method is called after setting the thread to <see cref="CultureInfo.InvariantCulture"/>.
-        /// If the type of <paramref name="text"/> is a value type, it will be converted using the 
+        /// If the type of <paramref name="text"/> is a value type, it will be converted using the
         /// <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="text">A string-able object.</param>
@@ -723,14 +723,14 @@ namespace Lucene.Net.Analysis.Util
         #region LUCENENET specific members
 
         /// <summary>
-        /// Compares the specified object with this set for equality. Returns <c>true</c> if the 
-        /// given object is also a set, the two sets have the same size, and every member of the 
-        /// given set is contained in this set. This ensures that the equals method works properly 
+        /// Compares the specified object with this set for equality. Returns <c>true</c> if the
+        /// given object is also a set, the two sets have the same size, and every member of the
+        /// given set is contained in this set. This ensures that the equals method works properly
         /// across different implementations of the <see cref="T:ISet{string}"/> interface.
         /// <para/>
-        /// This implementation first checks if the specified object is this set; if so it 
-        /// returns <c>true</c>. Then, it checks if the specified object is a set whose 
-        /// size is identical to the size of this set; if not, it returns <c>false</c>. If so, 
+        /// This implementation first checks if the specified object is this set; if so it
+        /// returns <c>true</c>. Then, it checks if the specified object is a set whose
+        /// size is identical to the size of this set; if not, it returns <c>false</c>. If so,
         /// it uses the enumerator of this set and the specified object to determine if all of the
         /// contained values are present (using <see cref="string.Equals(string)"/>).
         /// </summary>
@@ -746,12 +746,12 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Returns the hash code value for this set. The hash code of a set 
-        /// is defined to be the sum of the hash codes of the elements in the 
-        /// set, where the hash code of a <c>null</c> element is defined to be zero. 
-        /// This ensures that <c>s1.Equals(s2)</c> implies that 
+        /// Returns the hash code value for this set. The hash code of a set
+        /// is defined to be the sum of the hash codes of the elements in the
+        /// set, where the hash code of a <c>null</c> element is defined to be zero.
+        /// This ensures that <c>s1.Equals(s2)</c> implies that
         /// <c>s1.GetHashCode()==s2.GetHashCode()</c> for any two sets s1 and s2.
-        /// This implementation iterates over the set, calling the GetHashCode() 
+        /// This implementation iterates over the set, calling the GetHashCode()
         /// method on each element in the set, and adding up the results.
         /// </summary>
         /// <returns>the hash code value for this set</returns>
@@ -761,10 +761,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:string[]"/> array, 
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:string[]"/> array,
         /// starting at the specified index of the target array.
         /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
+        /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
@@ -775,10 +775,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:string[]"/> array, 
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:string[]"/> array,
         /// starting at the specified index of the target array.
         /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
+        /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
@@ -791,10 +791,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:string[]"/> array, 
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:string[]"/> array,
         /// starting at the specified index of the target array.
         /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the 
+        /// <param name="array">The one-dimensional <see cref="T:string[]"/> Array that is the destination of the
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
@@ -891,10 +891,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array, 
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array,
         /// starting at the specified index of the target array.
         /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the 
+        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
         /// <exception cref="ArgumentException">The number of elements in the source is greater
@@ -905,10 +905,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array, 
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array,
         /// starting at the specified index of the target array.
         /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the 
+        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
@@ -921,10 +921,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array, 
+        /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:ICharSequence[]"/> array,
         /// starting at the specified index of the target array.
         /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the 
+        /// <param name="array">The one-dimensional <see cref="T:ICharSequence[]"/> Array that is the destination of the
         /// elements copied from <see cref="CharArraySet"/>. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
@@ -1166,7 +1166,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
+        /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present
         /// in itself, the specified collection, or both.
         /// <para/>
         /// <b>NOTE:</b> If <c>ignoreCase</c> is <c>true</c> for this <see cref="CharArraySet"/>, the text arrays will be directly modified.
@@ -1192,7 +1192,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
+        /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present
         /// in itself, the specified collection, or both.
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
@@ -1225,7 +1225,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
+        /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present
         /// in itself, the specified collection, or both.
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
@@ -1253,7 +1253,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present 
+        /// Modifies the current <see cref="CharArraySet"/> to contain all elements that are present
         /// in itself, the specified collection, or both.
         /// </summary>
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>

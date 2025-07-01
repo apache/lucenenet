@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Ca
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating CatalanAnalyzer:
     /// <list>
-    ///   <item><description> As of 3.6, <see cref="ElisionFilter"/> with a set of Catalan 
+    ///   <item><description> As of 3.6, <see cref="ElisionFilter"/> with a set of Catalan
     ///        contractions is used by default.</description></item>
     /// </list>
     /// </para>
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Ca
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultSetHolder
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Ca
         /// <returns> A
         ///         <see cref="TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
-        ///         <see cref="StandardFilter"/>, <see cref="ElisionFilter"/>, <see cref="LowerCaseFilter"/>, 
+        ///         <see cref="StandardFilter"/>, <see cref="ElisionFilter"/>, <see cref="LowerCaseFilter"/>,
         ///         <see cref="StopFilter"/>, <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided and <see cref="SnowballFilter"/>. </returns>
         protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)

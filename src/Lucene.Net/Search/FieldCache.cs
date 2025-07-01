@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
         /// Checks the internal cache for an appropriate entry, and if none is
         /// found, reads the terms in <paramref name="field"/> as <see cref="short"/>s and returns an array
         /// of size <c>reader.MaxDoc</c> of the value each document
-        /// has in the given field. 
+        /// has in the given field.
         /// <para/>
         /// NOTE: this was getShorts() in Lucene
         /// </summary>
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
         /// Checks the internal cache for an appropriate entry, and if none is found,
         /// reads the terms in <paramref name="field"/> as shorts and returns an array of
         /// size <c>reader.MaxDoc</c> of the value each document has in the
-        /// given field. 
+        /// given field.
         /// <para/>
         /// NOTE: this was getShorts() in Lucene
         /// </summary>
@@ -293,7 +293,7 @@ namespace Lucene.Net.Search
         SortedDocValues GetTermsIndex(AtomicReader reader, string field);
 
         /// <summary>
-        /// Expert: just like 
+        /// Expert: just like
         /// <see cref="GetTermsIndex(AtomicReader, string)"/>, but you can specify
         /// whether more RAM should be consumed in exchange for
         /// faster lookups (default is "true").  Note that the
@@ -1020,7 +1020,7 @@ namespace Lucene.Net.Search
 
         // .NET Port: skipping down to about line 681 of java version. The actual interface methods of FieldCache are in IFieldCache below.
         /// <summary>
-        /// EXPERT: A unique Identifier/Description for each item in the <see cref="IFieldCache"/>. 
+        /// EXPERT: A unique Identifier/Description for each item in the <see cref="IFieldCache"/>.
         /// Can be useful for logging/debugging.
         /// <para/>
         /// @lucene.experimental
@@ -1074,7 +1074,7 @@ namespace Lucene.Net.Search
             }
 
             /// <summary>
-            /// The most recently estimated size of the value, <c>null</c> unless 
+            /// The most recently estimated size of the value, <c>null</c> unless
             /// <see cref="EstimateSize()"/> has been called.
             /// </summary>
             public string EstimatedSize => size;

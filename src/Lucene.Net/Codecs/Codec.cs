@@ -33,24 +33,24 @@ namespace Lucene.Net.Codecs
     /// <list type="number">
     ///     <item><description>Subclass this class.</description></item>
     ///     <item><description>Subclass <see cref="DefaultCodecFactory"/>, override the <see cref="DefaultCodecFactory.Initialize()"/> method,
-    ///         and add the line <c>base.ScanForCodecs(typeof(YourCodec).Assembly)</c>. 
-    ///         If you have any codec classes in your assembly 
-    ///         that are not meant for reading, you can add the <see cref="ExcludeCodecFromScanAttribute"/> 
+    ///         and add the line <c>base.ScanForCodecs(typeof(YourCodec).Assembly)</c>.
+    ///         If you have any codec classes in your assembly
+    ///         that are not meant for reading, you can add the <see cref="ExcludeCodecFromScanAttribute"/>
     ///         to them so they are ignored by the scan.</description></item>
     ///     <item><description>set the new <see cref="ICodecFactory"/> by calling <see cref="SetCodecFactory"/> at application startup.</description></item>
     /// </list>
-    /// If your codec has dependencies, you may also override <see cref="DefaultCodecFactory.GetCodec(Type)"/> to inject 
+    /// If your codec has dependencies, you may also override <see cref="DefaultCodecFactory.GetCodec(Type)"/> to inject
     /// them via pure DI or a DI container. See <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framework/">DI-Friendly Framework</a>
     /// to understand the approach used.
     /// <para/>
     /// <b>Codec Names</b>
     /// <para/>
-    /// Unlike the Java version, codec names are by default convention-based on the class name. 
-    /// If you name your custom codec class "MyCustomCodec", the codec name will the same name 
+    /// Unlike the Java version, codec names are by default convention-based on the class name.
+    /// If you name your custom codec class "MyCustomCodec", the codec name will the same name
     /// without the "Codec" suffix: "MyCustom".
     /// <para/>
     /// You can override this default behavior by using the <see cref="CodecNameAttribute"/> to
-    /// name the codec differently than this convention. Codec names must be all ASCII alphanumeric, 
+    /// name the codec differently than this convention. Codec names must be all ASCII alphanumeric,
     /// and less than 128 characters in length.
     /// </summary>
     /// <seealso cref="DefaultCodecFactory"/>
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs
         /// <para/>
         /// The <see cref="Codec.Name"/> will be written into the index segment: in order for
         /// the segment to be read this class should be registered by subclassing <see cref="DefaultCodecFactory"/> and
-        /// calling <see cref="DefaultCodecFactory.ScanForCodecs(System.Reflection.Assembly)"/> in the class constructor. 
+        /// calling <see cref="DefaultCodecFactory.ScanForCodecs(System.Reflection.Assembly)"/> in the class constructor.
         /// The new <see cref="ICodecFactory"/> can be registered by calling <see cref="SetCodecFactory"/> at application startup.</summary>
         protected Codec()
         {

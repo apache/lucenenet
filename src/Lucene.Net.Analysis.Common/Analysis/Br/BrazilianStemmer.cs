@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis.Br
 
         /// <summary>
         /// Gets R1
-        /// 
+        ///
         /// R1 - is the region after the first non-vowel following a vowel,
         ///      or is the null region at the end of the word if there is
         ///      no such non-vowel.
@@ -176,16 +176,16 @@ namespace Lucene.Net.Analysis.Br
 
         /// <summary>
         /// Gets RV
-        /// 
+        ///
         /// RV - IF the second letter is a consonant, RV is the region after
         ///      the next following vowel,
-        /// 
+        ///
         ///      OR if the first two letters are vowels, RV is the region
         ///      after the next consonant,
-        /// 
+        ///
         ///      AND otherwise (consonant-vowel case) RV is the region after
         ///      the third letter.
-        /// 
+        ///
         ///      BUT RV is the end of the word if this positions cannot be
         ///      found.
         /// </summary>
@@ -675,7 +675,7 @@ namespace Lucene.Net.Analysis.Br
 
         /// <summary>
         /// Verb suffixes.
-        /// 
+        ///
         /// Search for the longest among the following suffixes in RV,
         /// and if found, delete.
         /// </summary>
@@ -1311,7 +1311,7 @@ namespace Lucene.Net.Analysis.Br
 
         /// <summary>
         /// Residual suffix
-        /// 
+        ///
         /// If the word ends with one of the suffixes (os a i o á í ó)
         /// in RV, delete it
         /// </summary>
@@ -1349,7 +1349,7 @@ namespace Lucene.Net.Analysis.Br
         /// If the word ends with one of ( e é ê) in RV,delete it,
         /// and if preceded by 'gu' (or 'ci') with the 'u' (or 'i') in RV,
         /// delete the 'u' (or 'i')
-        /// 
+        ///
         /// Or if the word ends ç remove the cedilha
         /// </summary>
         private void Step5()

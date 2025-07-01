@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Join
 
     /// <summary>
     /// A <see cref="CachingWrapperFilter"/> that caches sets using a <see cref="FixedBitSet"/>,
-    /// as required for joins. 
+    /// as required for joins.
     /// </summary>
     public sealed class FixedBitSetCachingWrapperFilter : CachingWrapperFilter
     {

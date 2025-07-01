@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Highlight
     /// <summary>
     /// Exception thrown if TokenStream Tokens are incompatible with provided text
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

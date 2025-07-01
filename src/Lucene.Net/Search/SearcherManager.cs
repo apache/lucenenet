@@ -37,11 +37,11 @@ namespace Lucene.Net.Search
     ///
     /// <code>
     /// IndexSearcher s = manager.Acquire();
-    /// try 
+    /// try
     /// {
     ///     // Do searching, doc retrieval, etc. with s
-    /// } 
-    /// finally 
+    /// }
+    /// finally
     /// {
     ///     manager.Release(s);
     ///     // Do not use s after this!
@@ -162,8 +162,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Expert: creates a searcher from the provided 
-        /// <see cref="IndexReader"/> using the provided 
+        /// Expert: creates a searcher from the provided
+        /// <see cref="IndexReader"/> using the provided
         /// <see cref="SearcherFactory"/>.  NOTE: this decRefs incoming reader
         /// on throwing an exception.
         /// </summary>

@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Shingle
         }
 
         /// <summary>
-        /// Test with higher min (and max) shingle size 
+        /// Test with higher min (and max) shingle size
         /// and with a non-default token separator
         /// </summary>
         [Test]
@@ -163,7 +163,7 @@ namespace Lucene.Net.Analysis.Shingle
         }
 
         /// <summary>
-        /// Test with higher min (and max) shingle size 
+        /// Test with higher min (and max) shingle size
         /// and with a non-default token separator
         /// and with unigrams disabled
         /// </summary>

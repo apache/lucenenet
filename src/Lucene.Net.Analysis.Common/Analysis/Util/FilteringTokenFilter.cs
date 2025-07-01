@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="version">                  the <a href="#lucene_match_version">Lucene match version</a> </param>
         /// <param name="enablePositionIncrements"> whether to increment position increments when filtering out terms </param>
         /// <param name="input">                    the input to consume </param>
-        /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4 
+        /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4
         [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4")]
         public FilteringTokenFilter(Lucene.Net.Util.LuceneVersion version, bool enablePositionIncrements, TokenStream input)
             : this(version, input)
@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis.Util
         /// Generally, <c>true</c> is best as it does not
         /// lose information (positions of the original tokens)
         /// during indexing.
-        /// 
+        ///
         /// <para/> When set, when a token is stopped
         /// (omitted), the position increment of the following
         /// token is incremented.

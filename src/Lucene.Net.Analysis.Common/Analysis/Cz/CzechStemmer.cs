@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Cz
     /// <summary>
     /// Light Stemmer for Czech.
     /// <para>
-    /// Implements the algorithm described in:  
+    /// Implements the algorithm described in:
     /// <c>
     /// Indexing and stemming approaches for the Czech language
     /// </c>
@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Cz
     {
         /// <summary>
         /// Stem an input buffer of Czech text.
-        /// <para><b>NOTE</b>: Input is expected to be in lowercase, 
+        /// <para><b>NOTE</b>: Input is expected to be in lowercase,
         /// but with diacritical marks</para>
         /// </summary>
         /// <param name="s"> input buffer </param>

@@ -98,7 +98,7 @@ namespace Lucene.Net.Store
         /// <para/>Expert: Subclasses must ensure that clones may be positioned at
         /// different points in the input from each other and from the stream they
         /// were cloned from.
-        /// 
+        ///
         /// <para/><b>Warning:</b> Lucene never closes cloned
         /// <see cref="IndexInput"/>s, it will only do this on the original one.
         /// The original instance must take care that cloned instances throw

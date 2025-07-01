@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Util
     /// Add to any analysis factory component to allow returning an
     /// analysis component factory for use with partial terms in prefix queries,
     /// wildcard queries, range query endpoints, regex queries, etc.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public interface IMultiTermAwareComponent

@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor verifies if 
+    /// This processor verifies if
     /// <see cref="ConfigurationKeys.LOWERCASE_EXPANDED_TERMS"/> is defined in the
     /// <see cref="Core.Config.QueryConfigHandler"/>. If it is and the expanded terms should be
     /// lower-cased, it looks for every <see cref="WildcardQueryNode"/>,

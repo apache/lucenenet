@@ -29,24 +29,24 @@ namespace Lucene.Net.Analysis.Synonym
     /// &lt;fieldType name="text_synonym" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
-    ///     &lt;filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" 
-    ///             format="solr" ignoreCase="false" expand="true" 
+    ///     &lt;filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt"
+    ///             format="solr" ignoreCase="false" expand="true"
     ///             tokenizerFactory="solr.WhitespaceTokenizerFactory"
     ///             [optional tokenizer factory parameters]/&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
-    /// 
+    ///
     /// <para>
-    /// An optional param name prefix of "tokenizerFactory." may be used for any 
-    /// init params that the <see cref="SynonymFilterFactory"/> needs to pass to the specified 
-    /// <see cref="TokenizerFactory"/>.  If the <see cref="TokenizerFactory"/> expects an init parameters with 
-    /// the same name as an init param used by the <see cref="SynonymFilterFactory"/>, the prefix 
+    /// An optional param name prefix of "tokenizerFactory." may be used for any
+    /// init params that the <see cref="SynonymFilterFactory"/> needs to pass to the specified
+    /// <see cref="TokenizerFactory"/>.  If the <see cref="TokenizerFactory"/> expects an init parameters with
+    /// the same name as an init param used by the <see cref="SynonymFilterFactory"/>, the prefix
     /// is mandatory.
     /// </para>
     /// <para>
     /// The optional <c>format</c> parameter controls how the synonyms will be parsed:
-    /// It supports the short names of <c>solr</c> for <see cref="SolrSynonymParser"/> 
-    /// and <c>wordnet</c> for and <see cref="WordnetSynonymParser"/>, or your own 
+    /// It supports the short names of <c>solr</c> for <see cref="SolrSynonymParser"/>
+    /// and <c>wordnet</c> for and <see cref="WordnetSynonymParser"/>, or your own
     /// <see cref="SynonymMap.Parser"/> class name. The default is <c>solr</c>.
     /// A custom <see cref="SynonymMap.Parser"/> is expected to have a constructor taking:
     /// <list type="bullet">
@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Synonym
 #pragma warning restore 612, 618
             else
             {
-                // check if you use the new optional arg "format". this makes no sense for the old one, 
+                // check if you use the new optional arg "format". this makes no sense for the old one,
                 // as its wired to solr's synonyms format only.
                 if (args.TryGetValue("format", out string value) && !value.Equals("solr", StringComparison.Ordinal))
                 {
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// Access to the delegator <see cref="TokenFilterFactory"/> for test verification
         /// </summary>
         /// @deprecated Method exists only for testing 4x, will be removed in 5.0
-        /// @lucene.internal 
+        /// @lucene.internal
         [Obsolete("Method exists only for testing 4x, will be removed in 5.0")]
         internal virtual TokenFilterFactory Delegator => delegator;
     }

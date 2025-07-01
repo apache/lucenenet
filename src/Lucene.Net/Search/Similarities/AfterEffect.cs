@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Similarities
     /// formula <em>Inf<sub>2</sub> = 1 - Prob<sub>2</sub></em>, where
     /// <em>Prob<sub>2</sub></em> measures the <em>information gain</em>.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     /// <seealso cref="DFRSimilarity"/>
     public abstract class AfterEffect

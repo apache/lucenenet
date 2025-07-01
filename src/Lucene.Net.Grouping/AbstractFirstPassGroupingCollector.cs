@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Grouping
     /// to collect grouped hits.  This pass gathers the top N sorted
     /// groups. Concrete subclasses define what a group is and how it
     /// is internally collected.
-    /// 
+    ///
     /// <para>
     /// See <a href="https://github.com/apache/lucene-solr/blob/releases/lucene-solr/4.8.0/lucene/grouping/src/java/org/apache/lucene/search/grouping/package.html">org.apache.lucene.search.grouping</a> for more
     /// details including a full code example.
@@ -439,7 +439,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="fillFields">Whether to fill to <see cref="SearchGroup{TGroupValue}.SortValues"/></param>
         /// <returns>top groups, starting from offset</returns>
         /// <remarks>
-        /// LUCENENET NOTE: We must use <see cref="IEnumerable{TGroupValue}"/> rather than 
+        /// LUCENENET NOTE: We must use <see cref="IEnumerable{TGroupValue}"/> rather than
         /// <see cref="ICollection{TGroupValue}"/> here because we need this to be covariant
         /// </remarks>
         IEnumerable<ISearchGroup<TGroupValue>> GetTopGroups(int groupOffset, bool fillFields);

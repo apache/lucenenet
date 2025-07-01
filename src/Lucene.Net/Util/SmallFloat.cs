@@ -83,7 +83,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Converts an 8 bit <see cref="float"/> to a 32 bit <see cref="float"/>. 
+        /// Converts an 8 bit <see cref="float"/> to a 32 bit <see cref="float"/>.
         /// <para/>
         /// NOTE: This was byteToFloat() in Lucene
         /// </summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Converts an 8 bit <see cref="float"/> to a 32 bit <see cref="float"/>. 
+        /// Converts an 8 bit <see cref="float"/> to a 32 bit <see cref="float"/>.
         /// <para/>
         /// NOTE: This was byteToFloat() in Lucene
         /// </summary>
@@ -159,7 +159,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// ByteToSingle(b, mantissaBits=3, zeroExponent=15) 
+        /// ByteToSingle(b, mantissaBits=3, zeroExponent=15)
         /// <para/>
         /// NOTE: This was byte315ToFloat() in Lucene
         /// </summary>
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// SByteToSingle(b, mantissaBits=3, zeroExponent=15) 
+        /// SByteToSingle(b, mantissaBits=3, zeroExponent=15)
         /// <para/>
         /// NOTE: This was byte315ToFloat() in Lucene
         /// </summary>
@@ -229,7 +229,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// ByteToFloat(b, mantissaBits=5, zeroExponent=2) 
+        /// ByteToFloat(b, mantissaBits=5, zeroExponent=2)
         /// <para/>
         /// NOTE: This was byte52ToFloat() in Lucene
         /// </summary>
@@ -241,7 +241,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// SByteToFloat(b, mantissaBits=5, zeroExponent=2) 
+        /// SByteToFloat(b, mantissaBits=5, zeroExponent=2)
         /// <para/>
         /// NOTE: This was byte52ToFloat() in Lucene
         /// </summary>

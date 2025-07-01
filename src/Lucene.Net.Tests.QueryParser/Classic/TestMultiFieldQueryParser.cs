@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Classic
     public class TestMultiFieldQueryParser : LuceneTestCase
     {
         /// <summary>
-        /// test stop words parsing for both the non static form, and for the 
+        /// test stop words parsing for both the non static form, and for the
         /// corresponding static form (qtxt, fields[]).
         /// </summary>
         [Test]
@@ -47,7 +47,7 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 
         /// <summary>
-        /// verify parsing of query using a stopping analyzer  
+        /// verify parsing of query using a stopping analyzer
         /// </summary>
         /// <param name="qtxt"></param>
         /// <param name="expectedRes"></param>

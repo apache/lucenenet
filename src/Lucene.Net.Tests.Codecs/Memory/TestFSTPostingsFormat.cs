@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Memory
      */
 
     /// <summary>
-    /// Tests FSTPostingsFormat 
+    /// Tests FSTPostingsFormat
     /// </summary>
     public class TestFSTPostingsFormat : BasePostingsFormatTestCase
     {

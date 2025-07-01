@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     {
         /// <summary>
         /// Returns the next <see cref="DocData"/> from the content source.
-        /// Implementations must account for multi-threading, as multiple threads 
+        /// Implementations must account for multi-threading, as multiple threads
         /// can call this method simultaneously.
         /// </summary>
         public abstract DocData GetNextDocData(DocData docData);

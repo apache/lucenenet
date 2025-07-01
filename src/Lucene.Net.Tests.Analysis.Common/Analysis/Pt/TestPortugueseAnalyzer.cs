@@ -25,8 +25,8 @@ namespace Lucene.Net.Analysis.Pt
     public class TestPortugueseAnalyzer : BaseTokenStreamTestCase
     {
         /// <summary>
-        /// This test fails with NPE when the 
-        /// stopwords file is missing in classpath 
+        /// This test fails with NPE when the
+        /// stopwords file is missing in classpath
         /// </summary>
         [Test]
         public virtual void TestResourcesAvailable()

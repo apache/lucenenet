@@ -139,7 +139,7 @@ namespace Lucene.Net.Queries.Function
         /// a reusable <see cref="MutableValue"/>.  Implementations of <see cref="FunctionValues"/>
         /// are encouraged to define their own implementations of <see cref="ValueFiller"/> if their
         /// value is not a <see cref="float"/>.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public abstract class ValueFiller

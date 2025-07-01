@@ -24,8 +24,8 @@ namespace Lucene.Net.Analysis.Ga
     public class TestIrishAnalyzer : BaseTokenStreamTestCase
     {
         /// <summary>
-        /// This test fails with NPE when the 
-        /// stopwords file is missing in classpath 
+        /// This test fails with NPE when the
+        /// stopwords file is missing in classpath
         /// </summary>
         public virtual void TestResourcesAvailable()
         {

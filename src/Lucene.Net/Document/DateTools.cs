@@ -37,7 +37,7 @@ namespace Lucene.Net.Documents
     /// Another approach is <see cref="Util.NumericUtils"/>, which provides
     /// a sortable binary representation (prefix encoded) of numeric values, which
     /// date/time are.
-    /// 
+    ///
     /// For indexing a <see cref="DateTime"/>, just get the <see cref="UnixTimeMillisecondsToTicks(long)"/> from <see cref="DateTime.Ticks"/> and index
     /// this as a numeric value with <see cref="Int64Field"/> and use <see cref="Search.NumericRangeQuery{T}"/>
     /// to query it.
@@ -126,7 +126,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Converts a <see cref="DateTimeOffset"/> to a string suitable for indexing using the specified 
+        /// Converts a <see cref="DateTimeOffset"/> to a string suitable for indexing using the specified
         /// <paramref name="resolution"/>.
         /// <para/>
         /// The <paramref name="date"/> is converted using its <see cref="DateTimeOffset.UtcDateTime"/> property.

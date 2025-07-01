@@ -23,7 +23,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
     /// <summary>
     /// This class can be used to hold any query configuration and no field
     /// configuration. For field configuration, it creates an empty
-    /// <see cref="FieldConfig"/> object and delegate it to field config listeners, 
+    /// <see cref="FieldConfig"/> object and delegate it to field config listeners,
     /// these are responsible for setting up all the field configuration.
     /// <para>
     /// <see cref="QueryConfigHandler"/> should be extended by classes that intends to

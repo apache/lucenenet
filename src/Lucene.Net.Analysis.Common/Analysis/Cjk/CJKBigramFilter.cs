@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Cjk
     /// Forms bigrams of CJK terms that are generated from <see cref="StandardTokenizer"/>
     /// or ICUTokenizer.
     /// <para>
-    /// CJK types are set by these tokenizers, but you can also use 
+    /// CJK types are set by these tokenizers, but you can also use
     /// <see cref="CJKBigramFilter(TokenStream, CJKScript)"/> to explicitly control which
     /// of the CJK scripts are turned into bigrams.
     /// </para>
@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.Cjk
         private static readonly string KATAKANA_TYPE = StandardTokenizer.TOKEN_TYPES[StandardTokenizer.KATAKANA];
         private static readonly string HANGUL_TYPE = StandardTokenizer.TOKEN_TYPES[StandardTokenizer.HANGUL];
 
-        // sentinel value for ignoring a script 
+        // sentinel value for ignoring a script
         private static readonly string NO = "<NO>";
 
         // these are set to either their type or NO if we want to pass them thru
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// </summary>
         /// <param name="in">
         ///          Input <see cref="TokenStream"/> </param>
-        /// <param name="flags"> OR'ed set from <see cref="CJKScript.HAN"/>, <see cref="CJKScript.HIRAGANA"/>, 
+        /// <param name="flags"> OR'ed set from <see cref="CJKScript.HAN"/>, <see cref="CJKScript.HIRAGANA"/>,
         ///        <see cref="CJKScript.KATAKANA"/>, <see cref="CJKScript.HANGUL"/> </param>
         public CJKBigramFilter(TokenStream @in, CJKScript flags)
               : this(@in, flags, false)
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// and whether or not unigrams should also be output. </summary>
         /// <param name="in">
         ///          Input <see cref="TokenStream"/> </param>
-        /// <param name="flags"> OR'ed set from <see cref="CJKScript.HAN"/>, <see cref="CJKScript.HIRAGANA"/>, 
+        /// <param name="flags"> OR'ed set from <see cref="CJKScript.HAN"/>, <see cref="CJKScript.HIRAGANA"/>,
         ///        <see cref="CJKScript.KATAKANA"/>, <see cref="CJKScript.HANGUL"/> </param>
         /// <param name="outputUnigrams"> true if unigrams for the selected writing systems should also be output.
         ///        when this is false, this is only done when there are no adjacent characters to form
@@ -166,8 +166,8 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /*
-         * much of this complexity revolves around handling the special case of a 
-         * "lone cjk character" where cjktokenizer would output a unigram. this 
+         * much of this complexity revolves around handling the special case of a
+         * "lone cjk character" where cjktokenizer would output a unigram. this
          * is also the only time we ever have to captureState.
          */
         public override bool IncrementToken()
@@ -186,7 +186,7 @@ namespace Lucene.Net.Analysis.Cjk
                         // when also outputting unigrams, we output the unigram first,
                         // then rewind back to revisit the bigram.
                         // so an input of ABC is A + (rewind)AB + B + (rewind)BC + C
-                        // the logic in hasBufferedUnigram ensures we output the C, 
+                        // the logic in hasBufferedUnigram ensures we output the C,
                         // even though it did actually have adjacent CJK characters.
 
                         if (ngramState)
@@ -225,7 +225,7 @@ namespace Lucene.Net.Analysis.Cjk
                             {
 
                                 // we have a buffered unigram, and we peeked ahead to see if we could form
-                                // a bigram, but we can't, because the offsets are unaligned. capture the state 
+                                // a bigram, but we can't, because the offsets are unaligned. capture the state
                                 // of this peeked data to be revisited next time thru the loop, and dump our unigram.
 
                                 loneState = CaptureState();
@@ -246,7 +246,7 @@ namespace Lucene.Net.Analysis.Cjk
                         {
 
                             // we have a buffered unigram, and we peeked ahead to see if we could form
-                            // a bigram, but we can't, because its not a CJK type. capture the state 
+                            // a bigram, but we can't, because its not a CJK type. capture the state
                             // of this peeked data to be revisited next time thru the loop, and dump our unigram.
 
                             loneState = CaptureState();
@@ -259,7 +259,7 @@ namespace Lucene.Net.Analysis.Cjk
                 else
                 {
 
-                    // case 3: we have only zero or 1 codepoints buffered, 
+                    // case 3: we have only zero or 1 codepoints buffered,
                     // so not enough to form a bigram. But, we also have no
                     // more input. So if we have a buffered codepoint, emit
                     // a unigram, otherwise, its end of stream.
@@ -277,7 +277,7 @@ namespace Lucene.Net.Analysis.Cjk
         private State loneState; // rarely used: only for "lone cjk characters", where we emit unigrams
 
         /// <summary>
-        /// looks at next input token, returning false is none is available 
+        /// looks at next input token, returning false is none is available
         /// </summary>
         private bool DoNext()
         {
@@ -359,7 +359,7 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /// <summary>
-        /// Flushes a bigram token to output from our buffer 
+        /// Flushes a bigram token to output from our buffer
         /// This is the normal case, e.g. ABC -> AB BC
         /// </summary>
         private void FlushBigram()
@@ -383,7 +383,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// <summary>
         /// Flushes a unigram token to output from our buffer.
         /// This happens when we encounter isolated CJK characters, either the whole
-        /// CJK string is a single character, or we encounter a CJK character surrounded 
+        /// CJK string is a single character, or we encounter a CJK character surrounded
         /// by space, punctuation, english, etc, but not beside any other CJK.
         /// </summary>
         private void FlushUnigram()

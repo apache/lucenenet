@@ -116,7 +116,7 @@ namespace Lucene.Net.Util
         {
             // LUCENENET NOTE: In Java, the check is for sun.misc.Unsafe.addressSize,
             // which is the pointer size of the current environment. We don't need to
-            // fallback to the OS bitness in .NET because this property is reliable and 
+            // fallback to the OS bitness in .NET because this property is reliable and
             // doesn't throw exceptions.
             if (IntPtr.Size == 8)
                 return true;// 64 bit machine

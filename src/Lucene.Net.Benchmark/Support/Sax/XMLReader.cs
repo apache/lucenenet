@@ -23,7 +23,7 @@ namespace Sax
     /// events as they pass on to the final application.
     /// <para/>
     /// The <see cref="IXMLFilter"/> helper class provides a convenient base
-    /// for creating SAX2 filters, by passing on all <see cref="IEntityResolver"/>, 
+    /// for creating SAX2 filters, by passing on all <see cref="IEntityResolver"/>,
     /// <see cref="IDTDHandler"/>,
     /// <see cref="IContentHandler"/> and <see cref="IErrorHandler"/>
     /// events automatically.
@@ -63,7 +63,7 @@ namespace Sax
         /// try {
         ///    r.SetFeature("http://xml.org/sax/features/validation", true);
         /// } catch (SAXException e) {
-        ///    Console.Error.WriteLine("Cannot activate validation."); 
+        ///    Console.Error.WriteLine("Cannot activate validation.");
         /// }
         ///                         // register event handlers
         /// r.ContentHandler = new MyContentHandler();
@@ -97,8 +97,8 @@ namespace Sax
         /// The feature name is any fully-qualified URI.  It is
         /// possible for an XMLReader to expose a feature value but
         /// to be unable to change the current value.
-        /// Some feature values may be immutable or mutable only 
-        /// in specific contexts, such as before, during, or after 
+        /// Some feature values may be immutable or mutable only
+        /// in specific contexts, such as before, during, or after
         /// a parse.
         /// <para/>
         /// All XMLReaders are required to support setting
@@ -138,7 +138,7 @@ namespace Sax
         /// <exception cref="SAXNotRecognizedException">If the property
         /// value can't be assigned or retrieved.</exception>
         /// <exception cref="SAXNotSupportedException">When the
-        /// <see cref="IXMLReader"/> recognizes the property name but 
+        /// <see cref="IXMLReader"/> recognizes the property name but
         /// cannot determine its value at this time.</exception>
         /// <seealso cref="SetProperty(string, object)"/>
         object GetProperty(string name);
@@ -151,12 +151,12 @@ namespace Sax
         /// The property name is any fully-qualified URI.  It is
         /// possible for an <see cref="IXMLReader"/> to recognize a property name but
         /// to be unable to change the current value.
-        /// Some property values may be immutable or mutable only 
-        /// in specific contexts, such as before, during, or after 
+        /// Some property values may be immutable or mutable only
+        /// in specific contexts, such as before, during, or after
         /// a parse.
         /// <para/>
         /// <see cref="IXMLReader"/>s are not required to recognize setting
-        /// any specific property names, though a core set is defined by 
+        /// any specific property names, though a core set is defined by
         /// SAX2.
         /// <para/>
         /// This method is also the standard mechanism for setting
@@ -264,7 +264,7 @@ namespace Sax
         /// handlers.
         /// <para/>
         /// This method is synchronous: it will not return until parsing
-        /// has ended.  If a client application wants to terminate 
+        /// has ended.  If a client application wants to terminate
         /// parsing early, it should throw an exception.
         /// </remarks>
         /// <param name="input">The input source for the top-level of the

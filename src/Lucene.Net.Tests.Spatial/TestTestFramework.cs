@@ -54,7 +54,7 @@ namespace Lucene.Net.Spatial
         }
 
         // LUCENENET specific - we don't nee to worry about the naming convention
-        // because the [Test] attribute will cause the test to run regardless. 
+        // because the [Test] attribute will cause the test to run regardless.
         // So, this is a duplicate test to SpatialExample.Test() and not needed.
 
         //[Test]

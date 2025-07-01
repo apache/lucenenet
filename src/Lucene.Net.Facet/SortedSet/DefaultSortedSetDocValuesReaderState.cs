@@ -41,7 +41,7 @@ namespace Lucene.Net.Facet.SortedSet
 
         /// <summary>
         /// Creates this, pulling doc values from the specified
-        /// field. 
+        /// field.
         /// </summary>
         public DefaultSortedSetDocValuesReaderState(IndexReader reader, string field = FacetsConfig.DEFAULT_INDEX_FIELD_NAME)
         {

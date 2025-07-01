@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
                         // don't loop here, higher level logic will re-stall!
                         try
                         {
-                            // LUCENENET: make sure not to run IncWaiters / DecrWaiters in Debugging.Assert as that gets 
+                            // LUCENENET: make sure not to run IncWaiters / DecrWaiters in Debugging.Assert as that gets
                             // disabled in production
                             var result = IncWaiters();
                             if (Debugging.AssertsEnabled) Debugging.Assert(result);

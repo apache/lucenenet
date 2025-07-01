@@ -19,17 +19,17 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
      * limitations under the License.
      */
 
-    /// <summary> 
+    /// <summary>
     /// Describes the input token stream.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
     public class Token
     {
-        /// <summary> 
+        /// <summary>
         /// An integer that describes the kind of this token.  This numbering
         /// system is determined by JavaCCParser, and a table of these numbers is
         /// stored in the file ...Constants.java.
@@ -48,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// <summary>The string image of the token.</summary>
         public string Image { get; set; }
 
-        /// <summary> 
+        /// <summary>
         /// A reference to the next regular (non-special) token from the input
         /// stream.  If this is the last token from the input stream, or if the
         /// token manager has not read tokens beyond this one, this field is
@@ -58,7 +58,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// </summary>
         public Token Next { get; set; }
 
-        /// <summary> 
+        /// <summary>
         /// This field is used to access special tokens that occur prior to this
         /// token, but after the immediately preceding regular (non-special) token.
         /// If there are no such special tokens, this field is set to null.
@@ -72,7 +72,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// </summary>
         public Token SpecialToken { get; set; }
 
-        /// <summary> 
+        /// <summary>
         /// An optional attribute value of the Token.
         /// Tokens which are not used as syntactic sugar will often contain
         /// meaningful values that will be used later on by the compiler or
@@ -82,14 +82,14 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// </summary>
         public virtual object Value => null;
 
-        /// <summary> 
+        /// <summary>
         /// No-argument constructor
         /// </summary>
         public Token()
         {
         }
 
-        /// <summary> 
+        /// <summary>
         /// Constructs a new token for the specified Image.
         /// </summary>
         public Token(int kind)
@@ -97,7 +97,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         {
         }
 
-        /// <summary> 
+        /// <summary>
         /// Constructs a new token for the specified Image and Kind.
         /// </summary>
         public Token(int kind, string image)
@@ -106,7 +106,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             this.Image = image;
         }
 
-        /// <summary> 
+        /// <summary>
         /// Returns the image.
         /// </summary>
         public override string ToString()
@@ -114,15 +114,15 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             return Image;
         }
 
-        /// <summary> 
+        /// <summary>
         /// Returns a new Token object, by default. However, if you want, you
         /// can create and return subclass objects based on the value of ofKind.
         /// Simply add the cases to the switch for all those special cases.
         /// For example, if you have a subclass of Token called IDToken that
         /// you want to create if ofKind is ID, simply add something like :
-        /// 
+        ///
         /// case MyParserConstants.ID : return new IDToken(ofKind, image);
-        /// 
+        ///
         /// to the following switch statement. Then you can cast matchedToken
         /// variable to the appropriate type and use sit in your lexical actions.
         /// </summary>

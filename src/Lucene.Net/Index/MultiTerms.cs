@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         /// Sole constructor.
         /// </summary>
         /// <param name="subs"> The <see cref="Terms"/> instances of all sub-readers. </param>
-        /// <param name="subSlices"> A parallel array (matching 
+        /// <param name="subSlices"> A parallel array (matching
         ///        <paramref name="subs"/>) describing the sub-reader slices. </param>
         public MultiTerms(Terms[] subs, ReaderSlice[] subSlices)
         {

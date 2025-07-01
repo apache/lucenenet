@@ -36,10 +36,10 @@ namespace Lucene.Net.Facet.Taxonomy
     using Weight = Lucene.Net.Search.Weight;
 
     /// <summary>
-    /// Aggregates sum of values from <see cref="FunctionValues.DoubleVal(int)"/> and <see cref="FunctionValues.DoubleVal(int, double[])"/>, 
+    /// Aggregates sum of values from <see cref="FunctionValues.DoubleVal(int)"/> and <see cref="FunctionValues.DoubleVal(int, double[])"/>,
     /// for each facet label.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public class TaxonomyFacetSumValueSource : SingleTaxonomyFacets
     {
@@ -49,7 +49,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Aggreggates float facet values from the provided
         /// <see cref="ValueSource"/>, pulling ordinals using <see cref="DocValuesOrdinalsReader"/>
         /// against the default indexed
-        /// facet field <see cref="FacetsConfig.DEFAULT_INDEX_FIELD_NAME"/>. 
+        /// facet field <see cref="FacetsConfig.DEFAULT_INDEX_FIELD_NAME"/>.
         /// </summary>
         public TaxonomyFacetSumValueSource(TaxonomyReader taxoReader, FacetsConfig config,
             FacetsCollector fc, ValueSource valueSource)
@@ -61,7 +61,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Aggreggates float facet values from the provided
         /// <see cref="ValueSource"/>, and pulls ordinals from the
-        /// provided <see cref="OrdinalsReader"/>. 
+        /// provided <see cref="OrdinalsReader"/>.
         /// </summary>
         public TaxonomyFacetSumValueSource(OrdinalsReader ordinalsReader, TaxonomyReader taxoReader,
             FacetsConfig config, FacetsCollector fc, ValueSource valueSource)
@@ -149,7 +149,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// <see cref="ValueSource"/> that returns the score for each
         /// hit; use this to aggregate the sum of all hit scores
-        /// for each facet label.  
+        /// for each facet label.
         /// </summary>
         public class ScoreValueSource : ValueSource
         {

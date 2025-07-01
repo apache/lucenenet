@@ -154,7 +154,7 @@ namespace Lucene.Net.QueryParsers.Xml
 
         /// <summary>
         /// Fast transformation using a pre-compiled stylesheet (suitable for production environments)
-        /// </summary>   
+        /// </summary>
         public static void TransformCriteria(IDictionary<string, string> formProperties, XslCompiledTransform transformer, Stream result)
         {
             XmlDocument doc = new XmlDocument();

@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Spell
 
     /// <summary>
     /// Dictionary represented by a text file.
-    /// 
+    ///
     /// <para/>Format allowed: 1 word per line:<para/>
     /// word1<para/>
     /// word2<para/>

@@ -190,7 +190,7 @@ namespace Lucene.Net.Search.Highlight
             return "" + hexDigits[(i & 0xF0) >> 4] + hexDigits[i & 0x0F];
         }
 
-        /// <summary> 
+        /// <summary>
         /// Converts a hex string into an <see cref="int"/>.
         /// <para/>
         /// NOTE: This was hexToInt() in Lucene
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search.Highlight
             return result;
         }
 
-        /// <summary> 
+        /// <summary>
         /// Converts a hex string at the specified index and length of <paramref name="hex"/>
         /// into an <see cref="int"/>.
         /// <para/>

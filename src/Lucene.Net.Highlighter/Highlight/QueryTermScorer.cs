@@ -144,7 +144,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// The highest weighted term (useful for passing to <see cref="GradientFormatter"/> 
+        /// The highest weighted term (useful for passing to <see cref="GradientFormatter"/>
         /// to set top end of coloring scale.
         /// </summary>
         public virtual float MaxTermWeight => maxTermWeight;

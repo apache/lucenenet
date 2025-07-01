@@ -34,11 +34,11 @@ namespace Lucene.Net.Facet.SortedSet
     /// (2-level) hierarchy more efficiently.  In addition, the
     /// tie-break during faceting is now meaningful (in label
     /// sorted order).
-    /// 
+    ///
     /// <para><b>NOTE</b>: creating an instance of this class is
     /// somewhat costly, as it computes per-segment ordinal maps,
     /// so you should create it once and re-use that one instance
-    /// for a given <see cref="IndexReader"/>. 
+    /// for a given <see cref="IndexReader"/>.
     /// </para>
     /// </summary>
     public abstract class SortedSetDocValuesReaderState
@@ -46,7 +46,7 @@ namespace Lucene.Net.Facet.SortedSet
         /// <summary>
         /// Holds start/end range of ords, which maps to one
         /// dimension (someday we may generalize it to map to
-        /// hierarchies within one dimension). 
+        /// hierarchies within one dimension).
         /// </summary>
         public sealed class OrdRange
         {

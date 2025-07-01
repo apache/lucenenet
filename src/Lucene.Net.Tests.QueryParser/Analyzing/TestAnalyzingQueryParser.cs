@@ -128,7 +128,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         [Test]
         public virtual void TestWildcardAlone()
         {
-            //seems like crazy edge case, but can be useful in concordance 
+            //seems like crazy edge case, but can be useful in concordance
             bool pex = false;
             try
             {

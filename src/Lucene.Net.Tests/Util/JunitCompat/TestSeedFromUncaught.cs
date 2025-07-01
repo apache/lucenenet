@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.JunitCompat
 
 	/// <summary>
 	/// Check that uncaught exceptions result in seed info being dumped to
-	/// console. 
+	/// console.
 	/// </summary>
 	public class TestSeedFromUncaught : WithNestedTests
 	{

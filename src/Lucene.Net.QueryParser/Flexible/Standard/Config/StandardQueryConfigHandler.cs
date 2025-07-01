@@ -119,7 +119,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// <summary>
         /// Key used to set the <see cref="MultiTermQuery.RewriteMethod"/> used when creating queries
         /// </summary>
-        /// <seealso cref="StandardQueryParser.MultiTermRewriteMethod"/> 
+        /// <seealso cref="StandardQueryParser.MultiTermRewriteMethod"/>
         public readonly static ConfigurationKey<MultiTermQuery.RewriteMethod> MULTI_TERM_REWRITE_METHOD = ConfigurationKey.NewInstance<MultiTermQuery.RewriteMethod>();
 
         /// <summary>

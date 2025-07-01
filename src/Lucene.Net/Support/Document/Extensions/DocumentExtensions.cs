@@ -114,7 +114,7 @@ namespace Lucene.Net.Documents.Extensions
 
         /// <summary>
         /// Adds a stored or un-stored <see cref="DoubleField"/> with the provided value
-        /// and default <c>precisionStep</c> 
+        /// and default <c>precisionStep</c>
         /// <see cref="Util.NumericUtils.PRECISION_STEP_DEFAULT"/> (4).
         /// </summary>
         /// <param name="document">This <see cref="Document"/>.</param>
@@ -136,7 +136,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <summary>
         /// Adds a stored or un-stored <see cref="DoubleField"/> with the provided value.
         /// <para/>
-        /// Expert: allows you to customize the <see cref="FieldType"/>. 
+        /// Expert: allows you to customize the <see cref="FieldType"/>.
         /// </summary>
         /// <param name="document">This <see cref="Document"/>.</param>
         /// <param name="name"> field name </param>
@@ -197,7 +197,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <summary>
         /// Adds a stored or un-stored <see cref="SingleField"/> with the provided value.
         /// <para/>
-        /// Expert: allows you to customize the <see cref="FieldType"/>. 
+        /// Expert: allows you to customize the <see cref="FieldType"/>.
         /// </summary>
         /// <param name="document">This <see cref="Document"/>.</param>
         /// <param name="name"> field name </param>
@@ -219,8 +219,8 @@ namespace Lucene.Net.Documents.Extensions
 
         /// <summary>
         /// Adds a stored or un-stored <see cref="Int32Field"/> with the provided value
-        /// and default <c>precisionStep</c> 
-        /// <see cref="Util.NumericUtils.PRECISION_STEP_DEFAULT"/> (4). 
+        /// and default <c>precisionStep</c>
+        /// <see cref="Util.NumericUtils.PRECISION_STEP_DEFAULT"/> (4).
         /// </summary>
         /// <param name="document">This <see cref="Document"/>.</param>
         /// <param name="name"> field name </param>
@@ -241,7 +241,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <summary>
         /// Adds a stored or un-stored <see cref="Int32Field"/> with the provided value.
         /// <para/>
-        /// Expert: allows you to customize the 
+        /// Expert: allows you to customize the
         /// <see cref="FieldType"/>.
         /// </summary>
         /// <param name="document">This <see cref="Document"/>.</param>
@@ -251,7 +251,7 @@ namespace Lucene.Net.Documents.Extensions
         ///         of <see cref="NumericType.INT32"/>. </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
         /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c>. </exception>
-        /// <exception cref="ArgumentException">if the field type does not have a 
+        /// <exception cref="ArgumentException">if the field type does not have a
         ///         <see cref="FieldType.NumericType"/> of <see cref="NumericType.INT32"/> </exception>
         public static Int32Field AddInt32Field(this Document document, string name, int value, FieldType type)
         {
@@ -265,8 +265,8 @@ namespace Lucene.Net.Documents.Extensions
 
         /// <summary>
         /// Adds a stored or un-stored <see cref="Int64Field"/> with the provided value
-        /// and default <c>precisionStep</c> 
-        /// <see cref="Util.NumericUtils.PRECISION_STEP_DEFAULT"/> (4). 
+        /// and default <c>precisionStep</c>
+        /// <see cref="Util.NumericUtils.PRECISION_STEP_DEFAULT"/> (4).
         /// </summary>
         /// <param name="document">This <see cref="Document"/>.</param>
         /// <param name="name"> field name </param>
@@ -287,7 +287,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <summary>
         /// Adds a stored or un-stored <see cref="Int64Field"/> with the provided value.
         /// <para/>
-        /// Expert: allows you to customize the <see cref="FieldType"/>. 
+        /// Expert: allows you to customize the <see cref="FieldType"/>.
         /// </summary>
         /// <param name="document">This <see cref="Document"/>.</param>
         /// <param name="name"> field name </param>
@@ -296,7 +296,7 @@ namespace Lucene.Net.Documents.Extensions
         ///         of <see cref="NumericType.INT64"/>. </param>
         /// <returns>The field that was added to this <see cref="Document"/>.</returns>
         /// <exception cref="ArgumentNullException"> if this <paramref name="document"/>, the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c>. </exception>
-        /// <exception cref="ArgumentException"> if the field type does not have a 
+        /// <exception cref="ArgumentException"> if the field type does not have a
         /// <see cref="FieldType.NumericType"/> of <see cref="NumericType.INT64"/> </exception>
         public static Int64Field AddInt64Field(this Document document, string name, long value, FieldType type)
         {

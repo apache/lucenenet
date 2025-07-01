@@ -23,7 +23,7 @@ namespace Lucene.Net.Queries
     /// <summary>
     /// A <see cref="Search.Filter"/> that wrapped with an indication of how that filter
     /// is used when composed with another filter.
-    /// (Follows the boolean logic in <see cref="BooleanClause"/> for composition 
+    /// (Follows the boolean logic in <see cref="BooleanClause"/> for composition
     /// of queries.)
     /// </summary>
     public sealed class FilterClause

@@ -31,13 +31,13 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <para/>
     /// NOTE: This was FloatAssociationFacetField in Lucene
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     public class SingleAssociationFacetField : AssociationFacetField
     {
         /// <summary>
         /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and a
-        /// <see cref="float"/> association 
+        /// <see cref="float"/> association
         /// </summary>
         public SingleAssociationFacetField(float assoc, string dim, params string[] path)
             : base(SingleToBytesRef(assoc), dim, path)

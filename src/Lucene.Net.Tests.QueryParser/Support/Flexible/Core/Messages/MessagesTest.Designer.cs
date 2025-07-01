@@ -10,8 +10,8 @@
 
 namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class MessagesTest {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal MessagesTest() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Syntax Error: {0} (TEST).
         /// </summary>
@@ -68,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages {
                 return ResourceManager.GetString("INVALID_SYNTAX", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Non-hex character in Unicode escape sequence: {0} (TEST).
         /// </summary>
@@ -77,7 +77,7 @@ namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages {
                 return ResourceManager.GetString("INVALID_SYNTAX_ESCAPE_NONE_HEX_UNICODE", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Truncated unicode escape sequence. (TEST) .
         /// </summary>
@@ -86,7 +86,7 @@ namespace Lucene.Net.QueryParsers.Support.Flexible.Core.Messages {
                 return ResourceManager.GetString("INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>

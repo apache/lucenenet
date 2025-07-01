@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.It
      */
 
     /// <summary>
-    /// Factory for <see cref="ItalianLightStemFilter"/>. 
+    /// Factory for <see cref="ItalianLightStemFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_itlgtstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.It
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
     ///     &lt;filter class="solr.ItalianLightStemFilterFactory"/&gt;
     ///   &lt;/analyzer&gt;
-    /// &lt;/fieldType&gt;</code> 
+    /// &lt;/fieldType&gt;</code>
     /// </summary>
     public class ItalianLightStemFilterFactory : TokenFilterFactory
     {

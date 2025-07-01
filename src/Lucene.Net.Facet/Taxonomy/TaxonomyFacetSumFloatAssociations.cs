@@ -31,14 +31,14 @@ namespace Lucene.Net.Facet.Taxonomy
     /// encoding.
     /// <para/>
     /// NOTE: This was TaxonomyFacetSumFloatAssociations in Lucene
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public class TaxonomyFacetSumSingleAssociations : SingleTaxonomyFacets
     {
         /// <summary>
         /// Create <see cref="TaxonomyFacetSumSingleAssociations"/> against
-        /// the default index field. 
+        /// the default index field.
         /// </summary>
         public TaxonomyFacetSumSingleAssociations(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : this(FacetsConfig.DEFAULT_INDEX_FIELD_NAME, taxoReader, config, fc)
@@ -47,7 +47,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Create <see cref="TaxonomyFacetSumSingleAssociations"/> against
-        /// the specified index field. 
+        /// the specified index field.
         /// </summary>
         public TaxonomyFacetSumSingleAssociations(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : base(indexFieldName, taxoReader, config)

@@ -27,7 +27,7 @@ namespace Lucene.Net.Diagnostics
     /// <summary>
     /// Thrown to indicate that an assertion has failed.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
@@ -51,7 +51,7 @@ namespace Lucene.Net.Diagnostics
         /// Constructs an <see cref="AssertionException"/> with the provided <paramref name="message"/> and <paramref name="innerException"/>.
         /// </summary>
         /// <param name="message">Value to be used as the assertion message.</param>
-        /// <param name="innerException">The exception that is the cause of the current exception, 
+        /// <param name="innerException">The exception that is the cause of the current exception,
         /// or a <c>null</c> reference (<c>Nothing</c> in Visual Basic) if no inner exception is specified.</param>
         public AssertionException(string message, Exception innerException)
             : base(message, innerException)

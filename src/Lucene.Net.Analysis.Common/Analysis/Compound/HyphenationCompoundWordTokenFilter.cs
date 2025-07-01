@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Compound
         private readonly HyphenationTree hyphenator;
 
         /// <summary>
-        /// Creates a new <see cref="HyphenationCompoundWordTokenFilter"/> instance. 
+        /// Creates a new <see cref="HyphenationCompoundWordTokenFilter"/> instance.
         /// </summary>
         /// <param name="matchVersion">
         ///          Lucene version to enable correct Unicode 4.0 behavior in the
@@ -227,7 +227,7 @@ namespace Lucene.Net.Analysis.Compound
                     // that are longer than minPartSize
                     if (partLength < this.m_minSubwordSize)
                     {
-                        // BOGUS/BROKEN/FUNKY/WACKO: somehow we have negative 'parts' according to the 
+                        // BOGUS/BROKEN/FUNKY/WACKO: somehow we have negative 'parts' according to the
                         // calculation above, and we rely upon minSubwordSize being >=0 to filter them out...
                         continue;
                     }

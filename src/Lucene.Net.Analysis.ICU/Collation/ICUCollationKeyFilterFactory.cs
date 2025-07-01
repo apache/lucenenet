@@ -33,7 +33,7 @@ namespace Lucene.Net.Collation
     /// Factory for <see cref="ICUCollationKeyFilter"/>.
     /// </summary>
     /// <remarks>
-    /// This factory can be created in two ways: 
+    /// This factory can be created in two ways:
     /// <list type="bullet">
     ///     <item><description>Based upon a system collator associated with a Locale.</description></item>
     ///     <item><description>Based upon a tailored ruleset.</description></item>

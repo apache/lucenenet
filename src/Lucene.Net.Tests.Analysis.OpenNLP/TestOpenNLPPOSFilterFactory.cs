@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.OpenNlp
     /// <summary>
     /// Needs the OpenNLP Tokenizer because it creates full streams of punctuation.
     /// The POS model is based on this tokenization.
-    /// 
+    ///
     /// <para/>Tagging models are created from tiny test data in opennlp/tools/test-model-data/ and are not very accurate.
     /// </summary>
     public class TestOpenNLPPOSFilterFactory : BaseTokenStreamTestCase

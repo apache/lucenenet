@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Shingle
         }
 
         /// <summary>
-        /// Wraps <see cref="StandardAnalyzer"/>. 
+        /// Wraps <see cref="StandardAnalyzer"/>.
         /// </summary>
         public ShingleAnalyzerWrapper(LuceneVersion matchVersion)
               : this(matchVersion, ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE, ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE)
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Shingle
         }
 
         /// <summary>
-        /// Wraps <see cref="StandardAnalyzer"/>. 
+        /// Wraps <see cref="StandardAnalyzer"/>.
         /// </summary>
         public ShingleAnalyzerWrapper(LuceneVersion matchVersion, int minShingleSize, int maxShingleSize)
               : this(new StandardAnalyzer(matchVersion), minShingleSize, maxShingleSize)

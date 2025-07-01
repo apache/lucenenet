@@ -20,7 +20,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
     /// <summary>
     /// Creates a formatted snippet from the top passages.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class PassageFormatter

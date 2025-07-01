@@ -88,7 +88,7 @@ namespace Sax
         /// </summary>
         /// <remarks>
         /// <strong>There is an apparent contradiction between the
-        /// documentation for this method and the documentation for 
+        /// documentation for this method and the documentation for
         /// <see cref="IErrorHandler.FatalError(SAXParseException)"/>.  Until this ambiguity is
         /// resolved in a future major release, clients should make no
         /// assumptions about whether <see cref="EndDocument()"/> will or will not be
@@ -124,11 +124,11 @@ namespace Sax
         /// <para/>Note that start/endPrefixMapping events are not
         /// guaranteed to be properly nested relative to each other:
         /// all startPrefixMapping events will occur immediately before the
-        /// corresponding <see cref="StartElement(string, string, string, IAttributes)"/> event, 
+        /// corresponding <see cref="StartElement(string, string, string, IAttributes)"/> event,
         /// and all <see cref="EndPrefixMapping(string)"/>
         /// events will occur immediately after the corresponding
         /// <see cref="EndElement(string, string, string)"/> event,
-        /// but their order is not otherwise 
+        /// but their order is not otherwise
         /// guaranteed.
         /// <para/>There should never be start/endPrefixMapping events for the
         /// "xml" prefix, since it is predeclared and immutable.
@@ -147,9 +147,9 @@ namespace Sax
         /// End the scope of a prefix-URI mapping.
         /// </summary>
         /// <remarks>
-        /// See <see cref="StartPrefixMapping(string, string)"/> for 
+        /// See <see cref="StartPrefixMapping(string, string)"/> for
         /// details. These events will always occur immediately after the
-        /// corresponding <see cref="EndElement(string, string, string)"/> event, but the order of 
+        /// corresponding <see cref="EndElement(string, string, string)"/> event, but the order of
         /// <see cref="EndPrefixMapping(string)"/> events is not otherwise
         /// guaranteed.
         /// </remarks>
@@ -227,7 +227,7 @@ namespace Sax
         /// <remarks>
         /// The SAX parser will invoke this method at the end of every
         /// element in the XML document; there will be a corresponding
-        /// <see cref="StartElement(string, string, string, IAttributes)"/> event for every endElement 
+        /// <see cref="StartElement(string, string, string, IAttributes)"/> event for every endElement
         /// event (even when the element is empty).
         /// <para/>
         /// For information on the names, see <see cref="StartElement(string, string, string, IAttributes)"/>.
@@ -265,7 +265,7 @@ namespace Sax
         /// using two special Unicode values. Such characters are in the so-called
         /// "Astral Planes", with a code point above U+FFFF.A second case involves
         /// composite characters, such as a base character combining with one or
-        /// more accent characters. 
+        /// more accent characters.
         /// <para/> Your code should not assume that algorithms using
         /// <c>char</c>-at-a-time idioms will be working in character
         /// units; in some cases they will split characters. This is relevant
@@ -355,7 +355,7 @@ namespace Sax
         /// and the <a href="http://xml.org/sax/features/external-general-entities">http://xml.org/sax/features/external-general-entities</a>
         /// properties.
         /// </summary>
-        /// <param name="name">the name of the skipped entity.  If it is a 
+        /// <param name="name">the name of the skipped entity.  If it is a
         /// parameter entity, the name will begin with '%', and if
         /// it is the external DTD subset, it will be the string
         /// "[dtd]"</param>

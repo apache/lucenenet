@@ -31,16 +31,16 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <item><description> <see cref="Siblings"/>: <c>Siblings[i]</c> denotes the sibling of category
     /// ordinal <c>i</c>.</description></item>
     /// </list>
-    /// 
+    ///
     /// To traverse the taxonomy tree, you typically start with <c>Children[0]</c>
     /// (ordinal 0 is reserved for ROOT), and then depends if you want to do DFS or
     /// BFS, you call <c>Children[Children[0]]</c> or <c>Siblings[Children[0]]</c>
     /// and so forth, respectively.
-    /// 
+    ///
     /// <para>
     /// <b>NOTE:</b> you are not expected to modify the values of the arrays, since
     /// the arrays are shared with other threads.
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>

@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.Lucene40
     ///    <item><description>Attributes: a key-value map of codec-private attributes.</description></item>
     /// </list>
     ///
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [Obsolete("Only for reading old 4.0 and 4.1 segments")]
     public class Lucene40FieldInfosFormat : FieldInfosFormat

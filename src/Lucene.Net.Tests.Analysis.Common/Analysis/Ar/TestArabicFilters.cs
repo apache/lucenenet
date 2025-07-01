@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Ar
     {
         /// <summary>
         /// Test ArabicLetterTokenizerFactory </summary>
-        /// @deprecated (3.1) Remove in Lucene 5.0 
+        /// @deprecated (3.1) Remove in Lucene 5.0
         [Test]
         [Obsolete("(3.1) Remove in Lucene 5.0")]
         public virtual void TestTokenizer()

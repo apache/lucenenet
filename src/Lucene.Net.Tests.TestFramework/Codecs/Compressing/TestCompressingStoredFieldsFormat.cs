@@ -41,7 +41,7 @@
 //            return CompressingCodec.RandomInstance(Random);
 //        }
 
-//        //        public void testDeletePartiallyWrittenFilesIfAbort() 
+//        //        public void testDeletePartiallyWrittenFilesIfAbort()
 //        //        {
 //        //            Directory dir = NewDirectory();
 //        //    IndexWriterConfig iwConf = NewIndexWriterConfig(new MockAnalyzer(Random));

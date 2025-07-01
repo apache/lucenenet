@@ -7,9 +7,9 @@
 # The ASF licenses this file to You under the Apache License, Version 2.0
 # (the ""License""); you may not use this file except in compliance with
 # the License.  You may obtain a copy of the License at
-# 
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an ""AS IS"" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,7 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-namespace TagSoup 
+namespace TagSoup
 {
     /// <summary>
     /// This class provides a Schema that has been preinitialized with HTML
@@ -35,7 +35,7 @@ namespace TagSoup
     /// and NS4-specific.  Attribute declarations of type CDATA with no default
     /// value are not included.
     /// </summary>
-    public class HTMLSchema : Schema 
+    public class HTMLSchema : Schema
     {
         // HTMLModels begin
             public const int M_AREA = 1 << 1;
@@ -66,7 +66,7 @@ namespace TagSoup
         /// Returns a newly constructed HTMLSchema object independent of
         /// any existing ones.
         /// </summary>
-        public HTMLSchema() 
+        public HTMLSchema()
         {
                     Uri = "http://www.w3.org/1999/xhtml";
         Prefix = "html";

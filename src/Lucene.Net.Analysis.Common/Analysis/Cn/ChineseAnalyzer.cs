@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Cn
     /// filters with <see cref="ChineseFilter"/>
     /// </summary>
     /// @deprecated (3.1) Use <see cref="Standard.StandardAnalyzer"/> instead, which has the same functionality.
-    /// This analyzer will be removed in Lucene 5.0 
+    /// This analyzer will be removed in Lucene 5.0
     [Obsolete("(3.1) Use StandardAnalyzer instead, which has the same functionality.")]
     public sealed class ChineseAnalyzer : Analyzer
     {

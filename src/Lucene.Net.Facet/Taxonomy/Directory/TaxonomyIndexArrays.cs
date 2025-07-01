@@ -36,7 +36,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// <summary>
     /// A <see cref="ParallelTaxonomyArrays"/> that are initialized from the taxonomy
     /// index.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     internal class TaxonomyIndexArrays : ParallelTaxonomyArrays

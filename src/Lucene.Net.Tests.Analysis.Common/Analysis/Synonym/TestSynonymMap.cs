@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Synonym
      * limitations under the License.
      */
 
-    /// @deprecated Remove this test in Lucene 5.0 
+    /// @deprecated Remove this test in Lucene 5.0
     [Obsolete("Remove this test in Lucene 5.0")]
     public class TestSynonymMap : LuceneTestCase
     {

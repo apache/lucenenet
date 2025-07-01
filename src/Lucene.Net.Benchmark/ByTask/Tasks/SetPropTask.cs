@@ -21,13 +21,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
     /// <summary>
     /// Set a performance test configuration property.
-    /// A property may have a single value, or a sequence of values, separated by ":". 
-    /// If a sequence of values is specified, each time a new round starts, 
+    /// A property may have a single value, or a sequence of values, separated by ":".
+    /// If a sequence of values is specified, each time a new round starts,
     /// the next (cyclic) value is taken.
     /// <para/>
     /// Other side effects: none.
     /// <para/>
-    /// Takes mandatory param: "name,value" pair. 
+    /// Takes mandatory param: "name,value" pair.
     /// </summary>
     /// <seealso cref="NewRoundTask"/>
     public class SetPropTask : PerfTask

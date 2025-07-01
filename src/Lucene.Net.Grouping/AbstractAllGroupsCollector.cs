@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Grouping
     /// query. Only the group value is collected, and the order
     /// is undefined.  This collector does not determine
     /// the most relevant document of a group.
-    /// 
+    ///
     /// <para>
     /// This is an abstract version. Concrete implementations define
     /// what a group actually is and how it is internally collected.

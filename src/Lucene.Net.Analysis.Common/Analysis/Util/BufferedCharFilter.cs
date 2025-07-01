@@ -31,8 +31,8 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// LUCENENET specific class to mimic Java's BufferedReader (that is, a reader that is seekable) 
-    /// so it supports Mark() and Reset() (which are part of the Java Reader class), but also 
+    /// LUCENENET specific class to mimic Java's BufferedReader (that is, a reader that is seekable)
+    /// so it supports Mark() and Reset() (which are part of the Java Reader class), but also
     /// provide the Correct() method of BaseCharFilter.
     /// </summary>
     public class BufferedCharFilter : BaseCharFilter
@@ -59,10 +59,10 @@ namespace Lucene.Net.Analysis.Util
         /// last readable character.When<c> pos == end</c>, the buffer is empty and
         /// must be <see cref="FillBuf()"/> before characters can be read.
         ///
-        /// <para/> Mark is the value pos will be set to on calls to 
+        /// <para/> Mark is the value pos will be set to on calls to
         /// <see cref="Reset()"/>. Its value is in the range <c>[0...pos]</c>. If the mark is <c>-1</c>, the
         /// buffer cannot be reset.
-        /// 
+        ///
         /// <para/> MarkLimit limits the distance between the mark and the pos.When this
         /// limit is exceeded, <see cref="Reset()"/> is permitted (but not required) to
         /// throw an exception. For shorter distances, <see cref="Reset()"/> shall not throw
@@ -393,7 +393,7 @@ namespace Lucene.Net.Analysis.Util
         /// <c>'\r'</c>, <c>"\r\n"</c> or the end of the reader. The string does
         /// not include the newline sequence.
         /// </summary>
-        /// <returns>The contents of the line or <c>null</c> if no characters were 
+        /// <returns>The contents of the line or <c>null</c> if no characters were
         /// read before the end of the reader has been reached.</returns>
         /// <exception cref="IOException">if this reader is disposed or some other I/O error occurs.</exception>
         public override string ReadLine()

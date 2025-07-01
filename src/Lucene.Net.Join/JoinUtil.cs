@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Join
 
     /// <summary>
     /// Utility for query time joining using <see cref="TermsQuery"/> and <see cref="TermsCollector"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public sealed class JoinUtil

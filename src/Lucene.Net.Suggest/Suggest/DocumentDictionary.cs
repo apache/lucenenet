@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Suggest
     /// Dictionary with terms, weights, payload (optional) and contexts (optional)
     /// information taken from stored/indexed fields in a Lucene index.
     /// </para>
-    /// <b>NOTE:</b> 
+    /// <b>NOTE:</b>
     ///  <list type="bullet">
     ///    <item><description>
     ///      The term and (optionally) payload fields have to be
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest
     ///    </description></item>
     ///    <item><description>
     ///      if any of the term or (optionally) payload fields supplied
-    ///      do not have a value for a document, then the document is 
+    ///      do not have a value for a document, then the document is
     ///      skipped by the dictionary
     ///    </description></item>
     ///  </list>
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
-        /// for the terms, <paramref name="weightField"/> for the weights that will be used for the 
+        /// for the terms, <paramref name="weightField"/> for the weights that will be used for the
         /// the corresponding terms and <paramref name="payloadField"/> for the corresponding payloads
         /// for the entry.
         /// </summary>
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
-        /// for the terms, <paramref name="weightField"/> for the weights that will be used for the 
+        /// for the terms, <paramref name="weightField"/> for the weights that will be used for the
         /// the corresponding terms, <paramref name="payloadField"/> for the corresponding payloads
         /// for the entry and <paramref name="contextsField"/> for associated contexts.
         /// </summary>

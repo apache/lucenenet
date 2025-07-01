@@ -27,7 +27,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
      */
 
     /// <summary>
-    /// A <see cref="IQueryMaker"/> that makes queries for a collection created 
+    /// A <see cref="IQueryMaker"/> that makes queries for a collection created
     /// using <see cref="SingleDocSource"/>.
     /// </summary>
     public class SimpleQueryMaker : AbstractQueryMaker, IQueryMaker

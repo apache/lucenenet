@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     public class WildcardQueryNode : FieldQueryNode
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value that contains one or more wild card characters (? or *)</param>
@@ -43,7 +43,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value that contains one or more wild card characters (? or *)</param>
@@ -57,7 +57,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value that contains one or more wild card characters (? or *)</param>

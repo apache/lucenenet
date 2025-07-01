@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Join
 
     /// <summary>
     /// A collector that collects all terms from a specified field matching the query.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     internal abstract class TermsCollector : ICollector

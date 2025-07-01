@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Similarities
     /// <para/>
     /// The rationale supporting such lossy compression of norm values is that given
     /// the difficulty (and inaccuracy) of users to express their true information
-    /// need by a query, only big differences matter. 
+    /// need by a query, only big differences matter.
     /// <para/>
     /// Last, note that search time is too late to modify this <i>norm</i> part of
     /// scoring, e.g. by using a different <see cref="Similarity"/> for search.
@@ -110,9 +110,9 @@ namespace Lucene.Net.Search.Similarities
         /// <summary>
         /// Implemented as
         /// <c>state.Boost * LengthNorm(numTerms)</c>, where
-        /// <c>numTerms</c> is <see cref="FieldInvertState.Length"/> if 
-        /// <see cref="DiscountOverlaps"/> is <c>false</c>, else it's 
-        /// <see cref="FieldInvertState.Length"/> - 
+        /// <c>numTerms</c> is <see cref="FieldInvertState.Length"/> if
+        /// <see cref="DiscountOverlaps"/> is <c>false</c>, else it's
+        /// <see cref="FieldInvertState.Length"/> -
         /// <see cref="FieldInvertState.NumOverlap"/>.
         ///
         /// <para/>

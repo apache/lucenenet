@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.CharFilters
      */
 
     /// <summary>
-    /// Factory for <see cref="MappingCharFilter"/>. 
+    /// Factory for <see cref="MappingCharFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_map" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.CharFilters
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;
     /// </code>
-    /// 
+    ///
     /// @since Solr 1.4
     /// </summary>
     public class MappingCharFilterFactory : CharFilterFactory, IResourceLoaderAware, IMultiTermAwareComponent

@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Test CapitalizationFilterFactory's minWordLength option.
-        /// 
+        ///
         /// This is very weird when combined with ONLY_FIRST_WORD!!!
         /// </summary>
         [Test]
@@ -224,7 +224,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Test CapitalizationFilterFactory's maxTokenLength option when exceeded
-        /// 
+        ///
         /// This is weird, it is not really a max, but inclusive (look at 'is')
         /// </summary>
         [Test]

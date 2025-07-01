@@ -45,7 +45,7 @@ namespace Lucene
     /// <see cref="ClassNotFoundException"/> in Java. If the method is expected to throw <see cref="ClassNotFoundException"/>
     /// when the type cannot be resolved, then we must explictly throw it when <see cref="Type.GetType(string)"/> returns <c>null</c>.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

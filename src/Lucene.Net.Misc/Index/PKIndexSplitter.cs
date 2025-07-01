@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Split an index based on a  given primary key term 
+        /// Split an index based on a  given primary key term
         /// and a 'middle' term.  If the middle term is present, it's
         /// sent to dir2.
         /// </summary>

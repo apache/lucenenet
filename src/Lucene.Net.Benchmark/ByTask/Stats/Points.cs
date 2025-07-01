@@ -28,7 +28,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
     /// </summary>
     public class Points
     {
-        // stat points ordered by their start time. 
+        // stat points ordered by their start time.
         // for now we collect points as TaskStats objects.
         // later might optimize to collect only native data.
         private readonly IList<TaskStats> points = new JCG.List<TaskStats>(); // LUCENENET: marked readonly
@@ -100,7 +100,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             try
             {
                 int numParallelTasks = nextTaskRunNum - 1 - stats.TaskRunNum;
-                // note: if the stats were cleared, might be that this stats object is 
+                // note: if the stats were cleared, might be that this stats object is
                 // no longer in points, but this is just ok.
                 stats.MarkEnd(numParallelTasks, count);
             }

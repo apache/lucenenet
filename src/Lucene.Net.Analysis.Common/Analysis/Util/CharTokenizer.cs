@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// An abstract base class for simple, character-oriented tokenizers. 
+    /// An abstract base class for simple, character-oriented tokenizers.
     /// <para>
     /// You must specify the required <see cref="LuceneVersion"/> compatibility
     /// when creating <see cref="CharTokenizer"/>:

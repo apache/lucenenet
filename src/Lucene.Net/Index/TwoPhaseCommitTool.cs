@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
         /// Thrown by <see cref="TwoPhaseCommitTool.Execute(ITwoPhaseCommit[])"/> when an
         /// object fails to <see cref="ITwoPhaseCommit.PrepareCommit()"/>.
         /// </summary>
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
         /// Thrown by <see cref="TwoPhaseCommitTool.Execute(ITwoPhaseCommit[])"/> when an
         /// object fails to <see cref="ITwoPhaseCommit.Commit()"/>.
         /// </summary>
-        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // LUCENENET: It is no longer good practice to use binary serialization.
         // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]

@@ -31,7 +31,7 @@ namespace Lucene.Net.Cli.SourceCode
         protected SourceCodeSectionParser sectionParser = new SourceCodeSectionParser();
 
         /// <summary>
-        /// Reads the provided source code <paramref name="files"/> from the 
+        /// Reads the provided source code <paramref name="files"/> from the
         /// embeded resources within this assembly
         /// and writes them out to the <paramref name="outputPath"/>.
         /// </summary>

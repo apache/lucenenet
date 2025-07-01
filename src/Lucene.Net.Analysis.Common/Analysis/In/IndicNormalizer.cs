@@ -34,9 +34,9 @@ namespace Lucene.Net.Analysis.In
     public class IndicNormalizer
     {
         // LUCENENET NOTE: This class was refactored from its Java couterpart,
-        // favoring the .NET Regex class to determine the "Unicode Block" rather than 
+        // favoring the .NET Regex class to determine the "Unicode Block" rather than
         // porting over that part of the Java Character class.
-        // References: 
+        // References:
         // https://msdn.microsoft.com/en-us/library/20bw873z.aspx#SupportedNamedBlocks
         // http://stackoverflow.com/a/11414800/181087
 
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.In
         // LUCENENET: static initialization done inline instead of in constructor
 
         /// <summary>
-        /// Decompositions according to Unicode 5.2, 
+        /// Decompositions according to Unicode 5.2,
         /// and http://ldc.upenn.edu/myl/IndianScriptsUnicode.html
         /// <para/>
         /// Most of these are not handled by unicode normalization anyway.
@@ -91,13 +91,13 @@ namespace Lucene.Net.Analysis.In
             /* devanagari, gujarati vowel candra O */
             new int[] { 0x05, 0x3E, 0x45, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
             /* devanagari short O */
-            new int[] { 0x05, 0x3E, 0x46, 0x12, (int)UnicodeBlock.DEVANAGARI }, 
+            new int[] { 0x05, 0x3E, 0x46, 0x12, (int)UnicodeBlock.DEVANAGARI },
             /* devanagari, gujarati letter O */
             new int[] { 0x05, 0x3E, 0x47, 0x13, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
             /* devanagari letter AI, gujarati letter AU */
-            new int[] { 0x05, 0x3E, 0x48, 0x14, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI }, 
+            new int[] { 0x05, 0x3E, 0x48, 0x14, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
             /* devanagari, bengali, gurmukhi, gujarati, oriya AA */
-            new int[] { 0x05, 0x3E,   -1, 0x06, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI | (int)UnicodeBlock.ORIYA }, 
+            new int[] { 0x05, 0x3E,   -1, 0x06, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI | (int)UnicodeBlock.ORIYA },
             /* devanagari letter candra A */
             new int[] { 0x05, 0x45,   -1, 0x72, (int)UnicodeBlock.DEVANAGARI },
             /* gujarati vowel candra E */
@@ -105,19 +105,19 @@ namespace Lucene.Net.Analysis.In
             /* devanagari letter short A */
             new int[] { 0x05, 0x46,   -1, 0x04, (int)UnicodeBlock.DEVANAGARI },
             /* gujarati letter E */
-            new int[] { 0x05, 0x47,   -1, 0x0F, (int)UnicodeBlock.GUJARATI }, 
+            new int[] { 0x05, 0x47,   -1, 0x0F, (int)UnicodeBlock.GUJARATI },
             /* gurmukhi, gujarati letter AI */
-            new int[] { 0x05, 0x48,   -1, 0x10, (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI }, 
+            new int[] { 0x05, 0x48,   -1, 0x10, (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI },
             /* devanagari, gujarati vowel candra O */
-            new int[] { 0x05, 0x49,   -1, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI }, 
+            new int[] { 0x05, 0x49,   -1, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
             /* devanagari short O */
-            new int[] { 0x05, 0x4A,   -1, 0x12, (int)UnicodeBlock.DEVANAGARI }, 
+            new int[] { 0x05, 0x4A,   -1, 0x12, (int)UnicodeBlock.DEVANAGARI },
             /* devanagari, gujarati letter O */
-            new int[] { 0x05, 0x4B,   -1, 0x13, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI }, 
+            new int[] { 0x05, 0x4B,   -1, 0x13, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
             /* devanagari letter AI, gurmukhi letter AU, gujarati letter AU */
-            new int[] { 0x05, 0x4C,   -1, 0x14, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI }, 
+            new int[] { 0x05, 0x4C,   -1, 0x14, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI },
             /* devanagari, gujarati vowel candra O */
-            new int[] { 0x06, 0x45,   -1, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },  
+            new int[] { 0x06, 0x45,   -1, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
             /* devanagari short O */
             new int[] { 0x06, 0x46,   -1, 0x12, (int)UnicodeBlock.DEVANAGARI },
             /* devanagari, gujarati letter O */
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.In
             /* malayalam letter AI */
             new int[] { 0x0E, 0x46,   -1, 0x10, (int)UnicodeBlock.MALAYALAM },
             /* devanagari candra E */
-            new int[] { 0x0F, 0x45,   -1, 0x0D, (int)UnicodeBlock.DEVANAGARI }, 
+            new int[] { 0x0F, 0x45,   -1, 0x0D, (int)UnicodeBlock.DEVANAGARI },
             /* devanagari short E */
             new int[] { 0x0F, 0x46,   -1, 0x0E, (int)UnicodeBlock.DEVANAGARI },
             /* devanagari AI */
@@ -141,9 +141,9 @@ namespace Lucene.Net.Analysis.In
             /* oriya AI */
             new int[] { 0x0F, 0x57,   -1, 0x10, (int)UnicodeBlock.ORIYA },
             /* malayalam letter OO */
-            new int[] { 0x12, 0x3E,   -1, 0x13, (int)UnicodeBlock.MALAYALAM }, 
+            new int[] { 0x12, 0x3E,   -1, 0x13, (int)UnicodeBlock.MALAYALAM },
             /* telugu, kannada letter AU */
-            new int[] { 0x12, 0x4C,   -1, 0x14, (int)UnicodeBlock.TELUGU | (int)UnicodeBlock.KANNADA }, 
+            new int[] { 0x12, 0x4C,   -1, 0x14, (int)UnicodeBlock.TELUGU | (int)UnicodeBlock.KANNADA },
             /* telugu letter OO */
             new int[] { 0x12, 0x55,   -1, 0x13, (int)UnicodeBlock.TELUGU },
             /* tamil, malayalam letter AU */
@@ -186,7 +186,7 @@ namespace Lucene.Net.Analysis.In
             new int[] { 0x33, 0x3C,   -1, 0x34, (int)UnicodeBlock.DEVANAGARI },
             /* malayalam chillu ll */
             new int[] { 0x33, 0x4D, 0xFF, 0x7E, (int)UnicodeBlock.MALAYALAM },
-            /* telugu letter MA */ 
+            /* telugu letter MA */
             new int[] { 0x35, 0x41,   -1, 0x2E, (int)UnicodeBlock.TELUGU },
             /* devanagari, gujarati vowel sign candra O */
             new int[] { 0x3E, 0x45,   -1, 0x49, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
@@ -194,9 +194,9 @@ namespace Lucene.Net.Analysis.In
             new int[] { 0x3E, 0x46,   -1, 0x4A, (int)UnicodeBlock.DEVANAGARI },
             /* devanagari, gujarati vowel sign O */
             new int[] { 0x3E, 0x47,   -1, 0x4B, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
-            /* devanagari, gujarati vowel sign AU */ 
+            /* devanagari, gujarati vowel sign AU */
             new int[] { 0x3E, 0x48,   -1, 0x4C, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
-            /* kannada vowel sign II */ 
+            /* kannada vowel sign II */
             new int[] { 0x3F, 0x55,   -1, 0x40, (int)UnicodeBlock.KANNADA },
             /* gurmukhi vowel sign UU (when stacking) */
             new int[] { 0x41, 0x41,   -1, 0x42, (int)UnicodeBlock.GURMUKHI },
@@ -218,7 +218,7 @@ namespace Lucene.Net.Analysis.In
             new int[] { 0x47, 0x3E,   -1, 0x4B, (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.ORIYA | (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
             /* bengali, oriya vowel sign AU */
             new int[] { 0x47, 0x57,   -1, 0x4C, (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.ORIYA },
-            /* kannada vowel sign OO */   
+            /* kannada vowel sign OO */
             new int[] { 0x4A, 0x55,   -1, 0x4B, (int)UnicodeBlock.KANNADA },
             /* gurmukhi letter I */
             new int[] { 0x72, 0x3F,   -1, 0x07, (int)UnicodeBlock.GURMUKHI },

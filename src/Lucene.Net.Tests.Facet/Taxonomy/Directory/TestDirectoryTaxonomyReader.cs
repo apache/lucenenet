@@ -128,7 +128,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// recreating a taxonomy should work well with a freshly opened taxonomy reader 
+        /// recreating a taxonomy should work well with a freshly opened taxonomy reader
         /// </summary>
         [Test]
         public virtual void TestFreshReadRecreatedTaxonomy()
@@ -360,7 +360,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             var writer = new DirectoryTaxonomyWriter(indexWriterFactory, dir);
             Assert.NotNull(indexWriterFactory.iw, "iw should be set via DirectoryTaxonomyIndexWriter constructor calling factory");
 
-            // add a category so that the following DTR open will cause a flush and 
+            // add a category so that the following DTR open will cause a flush and
             // a new segment will be created
             writer.AddCategory(new FacetLabel("a"));
 
@@ -368,7 +368,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Assert.AreEqual(2, reader.Count);
             Assert.AreEqual(2, reader.ParallelTaxonomyArrays.Parents.Length);
 
-            // merge all the segments so that NRT reader thinks there's a change 
+            // merge all the segments so that NRT reader thinks there's a change
             indexWriterFactory.iw.ForceMerge(1);
 
             // now calling openIfChanged should trip on the wrong assert in ParetArray's ctor

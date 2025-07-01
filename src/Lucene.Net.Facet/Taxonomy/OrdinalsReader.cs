@@ -23,7 +23,7 @@ namespace Lucene.Net.Facet.Taxonomy
     using Int32sRef = Lucene.Net.Util.Int32sRef;
 
     /// <summary>
-    /// Provides per-document ordinals. 
+    /// Provides per-document ordinals.
     /// </summary>
     public abstract class OrdinalsReader
     {
@@ -34,12 +34,12 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             /// <summary>
             /// Get the ordinals for this document. The <paramref name="ordinals"/>.<see cref="Int32sRef.Offset"/>
-            /// must always be 0! 
+            /// must always be 0!
             /// </summary>
             public abstract void Get(int doc, Int32sRef ordinals);
 
             /// <summary>
-            /// Default constructor. 
+            /// Default constructor.
             /// </summary>
             protected OrdinalsSegmentReader() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
@@ -47,20 +47,20 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         /// <summary>
-        /// Default constructor. 
+        /// Default constructor.
         /// </summary>
         protected OrdinalsReader() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 
         /// <summary>
-        /// Set current atomic reader. 
+        /// Set current atomic reader.
         /// </summary>
         public abstract OrdinalsSegmentReader GetReader(AtomicReaderContext context);
 
         /// <summary>
         /// Returns the indexed field name this <see cref="OrdinalsReader"/>
-        /// is reading from. 
+        /// is reading from.
         /// </summary>
         public abstract string IndexFieldName { get; }
     }

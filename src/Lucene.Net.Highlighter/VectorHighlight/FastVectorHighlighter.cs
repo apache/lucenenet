@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <returns>the created <see cref="FieldQuery"/> object</returns>
         public virtual FieldQuery GetFieldQuery(Query query)
         {
-            // TODO: should we deprecate this? 
+            // TODO: should we deprecate this?
             // because if there is no reader, then we cannot rewrite MTQ.
             try
             {

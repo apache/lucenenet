@@ -38,7 +38,7 @@ namespace Lucene.Net.Codecs.IntBlock
     /// <remarks>
     /// Naive int block API that writes vInts.  This is
     /// expected to give poor performance; it's really only for
-    /// testing the pluggability.  One should typically use pfor instead. 
+    /// testing the pluggability.  One should typically use pfor instead.
     /// </remarks>
     public abstract class VariableInt32BlockIndexOutput : Int32IndexOutput
     {
@@ -51,10 +51,10 @@ namespace Lucene.Net.Codecs.IntBlock
         // if its less than 128 we should set that as max and use byte?
 
         /// <summary>
-        /// NOTE: <paramref name="maxBlockSize"/> must be the maximum block size 
+        /// NOTE: <paramref name="maxBlockSize"/> must be the maximum block size
         /// plus the max non-causal lookahead of your codec.  EG Simple9
         /// requires lookahead=1 because on seeing the Nth value
-        /// it knows it must now encode the N-1 values before it. 
+        /// it knows it must now encode the N-1 values before it.
         /// </summary>
         protected VariableInt32BlockIndexOutput(IndexOutput output, int maxBlockSize)
         {
@@ -64,7 +64,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
         /// <summary>
         /// Called one value at a time.  Return the number of
-        /// buffered input values that have been written to out. 
+        /// buffered input values that have been written to out.
         /// </summary>
         protected abstract int Add(int value);
 

@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         public int StartOffset => startOffset;
 
         /// <summary>
-        /// Gets the end index (exclusive) of the passage in the 
+        /// Gets the end index (exclusive) of the passage in the
         ///  original content: always &gt;= <see cref="StartOffset"/>
         /// </summary>
         public int EndOffset => endOffset;
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         public float Score => score;
 
         /// <summary>
-        /// Number of term matches available in 
+        /// Number of term matches available in
         /// <see cref="MatchStarts"/>, <see cref="MatchEnds"/>,
         /// <see cref="MatchTerms"/>
         /// </summary>
@@ -149,10 +149,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         public IReadOnlyList<int> MatchStarts => matchStarts;
 
         /// <summary>
-        /// End offsets of the term matches, corresponding with <see cref="MatchStarts"/>. 
+        /// End offsets of the term matches, corresponding with <see cref="MatchStarts"/>.
         /// <para/>
-        /// Only <see cref="NumMatches"/> are valid. Note that its possible that an end offset 
-        /// could exceed beyond the bounds of the passage <see cref="EndOffset"/>, if the 
+        /// Only <see cref="NumMatches"/> are valid. Note that its possible that an end offset
+        /// could exceed beyond the bounds of the passage <see cref="EndOffset"/>, if the
         /// <see cref="Analysis.Analyzer"/> produced a term which spans a passage boundary.
         /// </summary>
         public IReadOnlyList<int> MatchEnds => matchEnds;

@@ -38,7 +38,7 @@ namespace Lucene.Net.Documents
     ///     Document document = new Document();
     ///     document.Add(field);
     ///
-    ///     for (all documents) 
+    ///     for (all documents)
     ///     {
     ///         ...
     ///         field.SetInt32Value(value)
@@ -47,11 +47,11 @@ namespace Lucene.Net.Documents
     ///     }
     /// </code>
     ///
-    /// See also <see cref="Int64Field"/>, <see cref="SingleField"/>, 
+    /// See also <see cref="Int64Field"/>, <see cref="SingleField"/>,
     /// <see cref="DoubleField"/>.</para>
     ///
     /// <para>To perform range querying or filtering against a
-    /// <see cref="Int32Field"/>, use <see cref="Search.NumericRangeQuery{T}"/> or 
+    /// <see cref="Int32Field"/>, use <see cref="Search.NumericRangeQuery{T}"/> or
     /// <see cref="Search.NumericRangeFilter{T}"/>.  To sort according to a
     /// <see cref="Int32Field"/>, use the normal numeric sort types, eg
     /// <see cref="Lucene.Net.Search.SortFieldType.INT32"/>. <see cref="Int32Field"/>
@@ -81,10 +81,10 @@ namespace Lucene.Net.Documents
     /// but may result in faster range search performance.  The
     /// default value, 4, was selected for a reasonable tradeoff
     /// of disk space consumption versus performance.  You can
-    /// create a custom <see cref="FieldType"/> and invoke the 
+    /// create a custom <see cref="FieldType"/> and invoke the
     /// <see cref="FieldType.NumericPrecisionStep"/> setter if you'd
     /// like to change the value.  Note that you must also
-    /// specify a congruent value when creating 
+    /// specify a congruent value when creating
     /// <see cref="Search.NumericRangeQuery{T}"/> or <see cref="Search.NumericRangeFilter{T}"/>.
     /// For low cardinality fields larger precision steps are good.
     /// If the cardinality is &lt; 100, it is fair
@@ -102,8 +102,8 @@ namespace Lucene.Net.Documents
     /// <c>precisionStep</c> of <see cref="int.MaxValue"/>.
     /// this will minimize disk space consumed. </para>
     ///
-    /// <para>More advanced users can instead use 
-    /// <see cref="Analysis.NumericTokenStream"/> directly, 
+    /// <para>More advanced users can instead use
+    /// <see cref="Analysis.NumericTokenStream"/> directly,
     /// when indexing numbers. this
     /// class is a wrapper around this token stream type for
     /// easier, more intuitive usage.</para>
@@ -145,8 +145,8 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Creates a stored or un-stored <see cref="Int32Field"/> with the provided value
-        /// and default <c>precisionStep</c> 
-        /// <see cref="Util.NumericUtils.PRECISION_STEP_DEFAULT"/> (4). 
+        /// and default <c>precisionStep</c>
+        /// <see cref="Util.NumericUtils.PRECISION_STEP_DEFAULT"/> (4).
         /// </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 32-bit <see cref="int"/> value </param>
@@ -159,7 +159,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Expert: allows you to customize the 
+        /// Expert: allows you to customize the
         /// <see cref="FieldType"/>.
         /// </summary>
         /// <param name="name"> field name </param>
@@ -167,7 +167,7 @@ namespace Lucene.Net.Documents
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.INT32"/>. </param>
         /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c>. </exception>
-        /// <exception cref="ArgumentException">if the field type does not have a 
+        /// <exception cref="ArgumentException">if the field type does not have a
         ///         <see cref="FieldType.NumericType"/> of <see cref="NumericType.INT32"/> </exception>
         public Int32Field(string name, int value, FieldType type)
             : base(name, type)

@@ -24,14 +24,14 @@ namespace Lucene.Net.Codecs
     /// codec. For example, if you want to build a codec that redefines Lucene46's
     /// <see cref="Codecs.LiveDocsFormat"/>:
     /// <code>
-    ///     public sealed class CustomCodec : FilterCodec 
+    ///     public sealed class CustomCodec : FilterCodec
     ///     {
     ///         public CustomCodec()
     ///             : base("CustomCodec", new Lucene46Codec())
     ///         {
     ///         }
     ///
-    ///         public override LiveDocsFormat LiveDocsFormat 
+    ///         public override LiveDocsFormat LiveDocsFormat
     ///         {
     ///             get { return new CustomLiveDocsFormat(); }
     ///         }

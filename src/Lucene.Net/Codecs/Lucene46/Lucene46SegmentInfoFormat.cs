@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs.Lucene46
     ///   <item><description>Files is a list of files referred to by this segment.</description></item>
     /// </list>
     /// </para>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     /// <seealso cref="Index.SegmentInfos"/>
     public class Lucene46SegmentInfoFormat : SegmentInfoFormat

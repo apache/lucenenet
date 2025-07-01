@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
     /// Once you have a new <see cref="Index.IndexReader"/>, it's relatively
     /// cheap to create a new <see cref="IndexSearcher"/> from it.
     ///
-    /// <para/><a name="thread-safety"></a><p><b>NOTE</b>: 
+    /// <para/><a name="thread-safety"></a><p><b>NOTE</b>:
     /// <see cref="IndexSearcher"/> instances are completely
     /// thread safe, meaning multiple threads can call any of its
     /// methods, concurrently.  If your application requires
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
         /// <see cref="IndexSearcher"/> will not shutdown/awaitTermination this <see cref="TaskScheduler"/> on
         /// close; you must do so, eventually, on your own.
         /// <para/>
-        /// @lucene.experimental 
+        /// @lucene.experimental
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="context"/> is <c>null</c>.</exception>
         /// <seealso cref="IndexReaderContext"/>
@@ -588,7 +588,7 @@ namespace Lucene.Net.Search
         /// the top <paramref name="nDocs"/> hits for <c>query</c> and sorting the hits
         /// by the criteria in <paramref name="sort"/>.
         ///
-        /// <para/>Applications should usually call 
+        /// <para/>Applications should usually call
         /// <see cref="IndexSearcher.Search(Query,Filter,int,Sort)"/> instead.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
@@ -689,7 +689,7 @@ namespace Lucene.Net.Search
         /// Lower-level search API.
         ///
         /// <para/>
-        /// <seealso cref="ICollector.Collect(int)"/> is called for every document. 
+        /// <seealso cref="ICollector.Collect(int)"/> is called for every document.
         ///
         /// <para/>
         /// NOTE: this method executes the searches on all given leaves exclusively.

@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             // LUCENENET specific - To avoid boxing/unboxing, we don't
             // call GetNumericValue(). Instead, we check the field.NumericType and then
-            // call the appropriate conversion method. 
+            // call the appropriate conversion method.
             if (field.NumericType != NumericFieldType.NONE)
             {
                 switch (field.NumericType)

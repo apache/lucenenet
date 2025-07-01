@@ -42,10 +42,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         //    StringReader r = new StringReader(s);
         //    TokenStream ts = new WhitespaceTokenizer(r);
         //    ts = new WordDelimiterFilter(ts, 1,1,1,1,0);
-        // 
+        //
         //    while (ts.next(tok) != null) ret++;
         //  }
-        // 
+        //
         //  System.out.println("ret="+ret+" time="+(J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond-start)); // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
         // }
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             doSplit("camelCase", "camel", "Case");
 
             // non-space marking symbol shouldn't cause split
-            // this is an example in Thai    
+            // this is an example in Thai
             doSplit("\u0e1a\u0e49\u0e32\u0e19", "\u0e1a\u0e49\u0e32\u0e19");
             // possessive followed by delimiter
             doSplit("test's'", "test");
@@ -186,7 +186,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /*
-         * Test option that allows disabling the special "'s" stemming, instead treating the single quote like other delimiters. 
+         * Test option that allows disabling the special "'s" stemming, instead treating the single quote like other delimiters.
          */
         [Test]
         public virtual void TestPossessives()

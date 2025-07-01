@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         private int value = 0;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="query"></param>
         /// <param name="value"></param>

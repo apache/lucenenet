@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Read the <see cref="FieldInfos"/> previously written with 
+        /// Read the <see cref="FieldInfos"/> previously written with
         /// <see cref="FieldInfosWriter"/>.
         /// </summary>
         public abstract FieldInfos Read(Directory directory, string segmentName, string segmentSuffix, IOContext iocontext);

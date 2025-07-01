@@ -27,12 +27,12 @@ namespace Lucene.Net.Analysis.Ar
      */
 
     /// <summary>
-    /// <see cref="Analyzer"/> for Arabic. 
+    /// <see cref="Analyzer"/> for Arabic.
     /// <para/>
     /// This analyzer implements light-stemming as specified by:
     /// <c>
     /// Light Stemming for Arabic Information Retrieval
-    /// </c>    
+    /// </c>
     /// http://www.mtholyoke.edu/~lballest/Pubs/arab_stem05.pdf
     /// <para/>
     /// The analysis package contains three primary components:
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Ar
 
         /// <summary>
         /// File containing default Arabic stopwords.
-        /// 
+        ///
         /// Default stopword list is from http://members.unine.ch/jacques.savoy/clef/index.html
         /// The stopword list is BSD-Licensed.
         /// </summary>
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Ar
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class 
+        /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultSetHolder

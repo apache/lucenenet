@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     public class OrQueryNode : BooleanQueryNode
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="clauses">the query nodes to be or'ed</param>
         public OrQueryNode(IList<IQueryNode> clauses)

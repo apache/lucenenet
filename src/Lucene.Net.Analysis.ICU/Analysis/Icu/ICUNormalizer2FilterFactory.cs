@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Icu
     ///     <item>
     ///         <term>name</term>
     ///         <description>
-    ///             A <a href="http://unicode.org/reports/tr15/">Unicode Normalization Form</a>, 
+    ///             A <a href="http://unicode.org/reports/tr15/">Unicode Normalization Form</a>,
     ///             one of 'nfc','nfkc', 'nfkc_cf'. Default is nfkc_cf.
     ///         </description>
     ///     </item>

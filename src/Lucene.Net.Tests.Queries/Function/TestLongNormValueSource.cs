@@ -169,12 +169,12 @@ namespace Lucene.Net.Tests.Queries.Function
         /// <summary>
         /// Implemented as
         /// <c>state.Boost*LengthNorm(numTerms)</c>, where
-        /// <c>numTerms</c> is <see cref="FieldInvertState.Length"/> if 
-        /// <see cref="DiscountOverlaps"/># is false, else it's 
-        /// <see cref="FieldInvertState.Length"/> - 
+        /// <c>numTerms</c> is <see cref="FieldInvertState.Length"/> if
+        /// <see cref="DiscountOverlaps"/># is false, else it's
+        /// <see cref="FieldInvertState.Length"/> -
         /// <see cref="FieldInvertState.NumOverlap"/>.
         /// <para/>
-        /// @lucene.experimental 
+        /// @lucene.experimental
         /// </summary>
         public override float LengthNorm(FieldInvertState state)
         {
@@ -198,7 +198,7 @@ namespace Lucene.Net.Tests.Queries.Function
         }
 
         /// <summary>
-        /// Implemented as <code>1 / (distance + 1)</code>. 
+        /// Implemented as <code>1 / (distance + 1)</code>.
         /// </summary>
         public override float SloppyFreq(int distance)
         {
@@ -214,7 +214,7 @@ namespace Lucene.Net.Tests.Queries.Function
         }
 
         /// <summary>
-        /// Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>. 
+        /// Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>.
         /// </summary>
         public override float Idf(long docFreq, long numDocs)
         {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Tests.Queries.Function
         ///  0 position increment) are ignored when computing
         ///  norm.  By default this is true, meaning overlap
         ///  tokens do not count when computing norms.
-        /// 
+        ///
         ///  @lucene.experimental
         /// </summary>
         ///  <seealso cref= #computeNorm </seealso>

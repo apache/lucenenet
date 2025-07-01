@@ -42,9 +42,9 @@ namespace Lucene.Net.Codecs.PerField
     /// <para/>
     /// Files written by each posting format have an additional suffix containing the
     /// format name. For example, in a per-field configuration instead of <c>_1.prx</c>
-    /// filenames would look like <c>_1_Lucene40_0.prx</c>. 
+    /// filenames would look like <c>_1_Lucene40_0.prx</c>.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     /// <seealso cref="IPostingsFormatFactory"/>
     /// <seealso cref="DefaultPostingsFormatFactory"/>

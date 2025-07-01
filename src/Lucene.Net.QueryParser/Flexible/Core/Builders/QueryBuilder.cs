@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
     /// <summary>
     /// This interface is used by implementors classes that builds some kind of
     /// object from a query tree.
-    /// 
+    ///
     /// <seealso cref="QueryTreeBuilder"/>
     /// </summary>
     public interface IQueryBuilder<TQuery> // LUCENENET specific - made generic so we don't need to deal with cast

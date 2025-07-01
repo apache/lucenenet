@@ -11,9 +11,9 @@ namespace org.apache.lucene.store
 	 * licenses this file to You under the Apache License, Version 2.0 (the
 	 * "License"); you may not use this file except in compliance with the License.
 	 * You may obtain a copy of the License at
-	 * 
+	 *
 	 * http://www.apache.org/licenses/LICENSE-2.0
-	 * 
+	 *
 	 * Unless required by applicable law or agreed to in writing, software
 	 * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -39,11 +39,11 @@ namespace org.apache.lucene.store
 	/// DIRECT I/O to bypass OS level IO caching during
 	/// merging.  For all other cases (searching, writing) we delegate
 	/// to the provided Directory instance.
-	/// 
+	///
 	/// <para>See <a
 	/// href="{@docRoot}/overview-summary.html#NativeUnixDirectory">Overview</a>
 	/// for more details.
-	/// 
+	///
 	/// </para>
 	/// <para>To use this you must compile
 	/// NativePosixUtil.cpp (exposes Linux-specific APIs through
@@ -52,7 +52,7 @@ namespace org.apache.lucene.store
 	/// <code>libNativePosixUtil.so</code> (from
 	/// <code>lucene/build/native</code>) onto your dynamic
 	/// linker search path.
-	/// 
+	///
 	/// </para>
 	/// <para><b>WARNING</b>: this code is very new and quite easily
 	/// could contain horrible bugs.  For example, here's one
@@ -60,12 +60,12 @@ namespace org.apache.lucene.store
 	/// write more than one buffer's worth of bytes, then the
 	/// file will be wrong.  Lucene does not do this today (only writes
 	/// small number of bytes after seek), but that may change.
-	/// 
+	///
 	/// </para>
 	/// <para>This directory passes Solr and Lucene tests on Linux
 	/// and OS X; other Unixes should work but have not been
 	/// tested!  Use at your own risk.
-	/// 
+	///
 	/// @lucene.experimental
 	/// </para>
 	/// </summary>
@@ -79,14 +79,14 @@ namespace org.apache.lucene.store
 	  /// <summary>
 	  /// Default buffer size before writing to disk (256 KB);
 	  ///  larger means less IO load but more RAM and direct
-	  ///  buffer storage space consumed during merging. 
+	  ///  buffer storage space consumed during merging.
 	  /// </summary>
 
 	  public final static int DEFAULT_MERGE_BUFFER_SIZE = 262144;
 
 	  /// <summary>
 	  /// Default min expected merge size before direct IO is
-	  ///  used (10 MB): 
+	  ///  used (10 MB):
 	  /// </summary>
 	  public final static long DEFAULT_MIN_BYTES_DIRECT = 10 * 1024 * 1024;
 

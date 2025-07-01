@@ -32,7 +32,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Retrieves the <see cref="RandomizedContext"/> instance for a given <see cref="Test"/>.
         /// <para/>
-        /// 
+        ///
         /// </summary>
         /// <param name="test"></param>
         /// <returns>The <see cref="RandomizedContext"/>. If the <paramref name="test"/> is <c>null</c>

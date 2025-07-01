@@ -28,8 +28,8 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <summary>
     /// Reads from any <see cref="OrdinalsReader"/>; use <see cref="FastTaxonomyFacetCounts"/>
     /// if you are using the default encoding from <see cref="BinaryDocValues"/>.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public class TaxonomyFacetCounts : Int32TaxonomyFacets
     {
@@ -38,7 +38,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Create <see cref="TaxonomyFacetCounts"/>, which also
         /// counts all facet labels.  Use this for a non-default
-        /// <see cref="OrdinalsReader"/>; otherwise use <see cref="FastTaxonomyFacetCounts"/>. 
+        /// <see cref="OrdinalsReader"/>; otherwise use <see cref="FastTaxonomyFacetCounts"/>.
         /// </summary>
         public TaxonomyFacetCounts(OrdinalsReader ordinalsReader, TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector fc)
             : base(ordinalsReader.IndexFieldName, taxoReader, config)

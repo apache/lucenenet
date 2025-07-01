@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
         // LUCENENET specific - since strings are sealed in .NET, there
         // is no point in implementing IEncoder or running these tests.
-        // Our version only accepts strings 
+        // Our version only accepts strings
         [Test]
         public virtual void TestEncodeNull()
         {

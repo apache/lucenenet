@@ -22,12 +22,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
      */
 
     /// <summary>
-    /// An efficient implementation of JavaCC's <see cref="ICharStream"/> interface.  
+    /// An efficient implementation of JavaCC's <see cref="ICharStream"/> interface.
     /// <para/>
     /// Note that
     /// this does not do line-number counting, but instead keeps track of the
     /// character position of the token in the input, as required by Lucene's
-    /// <see cref="Token"/> API. 
+    /// <see cref="Token"/> API.
     /// </summary>
     public sealed class FastCharStream : ICharStream
     {

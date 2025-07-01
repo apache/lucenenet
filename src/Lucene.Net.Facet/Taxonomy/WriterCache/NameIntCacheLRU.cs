@@ -109,7 +109,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         /// <summary>
         /// Add a new value to cache.
-        /// Return true if cache became full and some room need to be made. 
+        /// Return true if cache became full and some room need to be made.
         /// </summary>
         bool Put(FacetLabel name, int val);
 
@@ -185,7 +185,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         /// <summary>
         /// Add a new value to cache.
-        /// Return true if cache became full and some room need to be made. 
+        /// Return true if cache became full and some room need to be made.
         /// </summary>
         bool IInternalNameInt32CacheLru.Put(FacetLabel name, int val)
         {

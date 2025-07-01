@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Memory
      */
 
     /// <summary>
-    /// Tests FSTOrdPulsing41PostingsFormat 
+    /// Tests FSTOrdPulsing41PostingsFormat
     /// </summary>
     public class TestFSTOrdPulsing41PostingsFormat : BasePostingsFormatTestCase
     {

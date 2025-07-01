@@ -11,8 +11,8 @@
 namespace Lucene.Net.Cli.Resources {
     using System;
     using System.Reflection;
-    
-    
+
+
     /// <summary>
     ///    A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,14 +23,14 @@ namespace Lucene.Net.Cli.Resources {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Strings {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         internal Strings() {
         }
-        
+
         /// <summary>
         ///    Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -44,7 +44,7 @@ namespace Lucene.Net.Cli.Resources {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///    Overrides the current thread's CurrentUICulture property for all
         ///    resource lookups using this strongly typed resource class.
@@ -58,7 +58,7 @@ namespace Lucene.Net.Cli.Resources {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Utilities to manage specialized analyzers..
         /// </summary>
@@ -67,7 +67,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Generates a set of custom dictionary files for the Lucene.Net.Analysis.Kuromoji library..
         /// </summary>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to  Generates the following set of binary files:
         ///
@@ -97,7 +97,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The dictionary format. Valid values are IPADIC and UNIDIC. If an invalid value is passed, IPADIC is assumed..
         /// </summary>
@@ -106,7 +106,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandFormatDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The directory where the dictionary input files are located..
         /// </summary>
@@ -115,7 +115,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandInputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The file encoding used by the input files. If not supplied, the default value is EUC-JP..
         /// </summary>
@@ -124,7 +124,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandInputDirectoryEncodingDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Normalize the entries using normalization form KC..
         /// </summary>
@@ -133,7 +133,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandNormalizeDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The directory to put the dictionary output..
         /// </summary>
@@ -142,7 +142,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandOutputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Compiles a stemmer table for the Egothor stemmer..
         /// </summary>
@@ -151,7 +151,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisStempelCompileStemsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The path to a file containing a stemmer table. Multiple values are allowed..
         /// </summary>
@@ -160,7 +160,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisStempelCompileStemsCommandStemmerTableFilesDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The encoding to use for the stemmer table files. If not supplied, defaults to UTF-8..
         /// </summary>
@@ -169,7 +169,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisStempelCompileStemsCommandStemmerTableFilesEncodingDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The name of the desired stemming algorithm to use..
         /// </summary>
@@ -178,7 +178,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisStempelCompileStemsCommandStemmingAlgorithmDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Generates patch commands from an already prepared stemmer table..
         /// </summary>
@@ -187,7 +187,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisStempelPatchStemsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The path to a file containing a stemmer table. Multiple values are allowed..
         /// </summary>
@@ -196,7 +196,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisStempelPatchStemsCommandStemmerTableFilesDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The encoding to use for the stemmer table files. If not supplied, defaults to UTF-8..
         /// </summary>
@@ -205,7 +205,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("AnalysisStempelPatchStemsCommandStemmerTableFilesEncodingDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Utilities for benchmarking Lucene.Net..
         /// </summary>
@@ -214,7 +214,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Splits Reuters SGML documents into simple text files containing: Title, Date, Dateline, Body..
         /// </summary>
@@ -223,7 +223,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkExtractReutersCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Path to Reuters SGML files..
         /// </summary>
@@ -232,7 +232,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkExtractReutersCommandInputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Path to a directory where the output files will be written..
         /// </summary>
@@ -241,7 +241,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkExtractReutersCommandOutputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Extracts a downloaded Wikipedia dump into separate files for indexing..
         /// </summary>
@@ -250,7 +250,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkExtractWikipediaCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Tells the extractor to skip WIKI docs that contain only images..
         /// </summary>
@@ -259,7 +259,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkExtractWikipediaCommandDiscardImageOnlyDocsDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Input path to a Wikipedia XML file..
         /// </summary>
@@ -268,7 +268,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkExtractWikipediaCommandInputWikipediaFileDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Path to a directory where the output files will be written..
         /// </summary>
@@ -277,7 +277,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkExtractWikipediaCommandOutputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Suggests quality queries based on index contents. Used for making quality test benchmarks..
         /// </summary>
@@ -286,7 +286,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkFindQualityQueriesCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to An algorithm file specifying the parameters of the benchmark to run..
         /// </summary>
@@ -295,7 +295,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkRunCommandAlgorithmFileDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Runs a benchmark based on an algorithm file..
         /// </summary>
@@ -304,7 +304,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkRunCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Runs a TREC evaluation..
         /// </summary>
@@ -313,7 +313,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkRunTrecEvalCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Output submission file for TREC evaluation..
         /// </summary>
@@ -322,7 +322,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkRunTrecEvalCommandOutputSubmissionFileDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Use description field in query..
         /// </summary>
@@ -331,7 +331,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkRunTrecEvalCommandQueryOnDescriptionDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Use narrative field in query..
         /// </summary>
@@ -340,7 +340,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkRunTrecEvalCommandQueryOnNarrativeDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Use title field in query. This flag will automatically be on if no other field is specified..
         /// </summary>
@@ -349,7 +349,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkRunTrecEvalCommandQueryOnTitleDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Input file conataining relevance judgements..
         /// </summary>
@@ -358,7 +358,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkRunTrecEvalCommandQueryRelevanceFileDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Input file containing queries..
         /// </summary>
@@ -367,7 +367,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkRunTrecEvalCommandTopicsFileDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Sample of a performance test written programatically instead of using an algorithm file..
         /// </summary>
@@ -376,7 +376,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("BenchmarkSampleCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Cross check term vectors..
         /// </summary>
@@ -385,7 +385,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("CrossCheckTermVectorsDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Shows example usage of category associations..
         /// </summary>
@@ -394,7 +394,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoAssociationsFacetsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Demos for various Lucene.Net functionality including C# code samples..
         /// </summary>
@@ -403,7 +403,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Shows simple usage of dynamic range faceting, using the expressions module to calculate distance..
         /// </summary>
@@ -412,7 +412,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoDistanceFacetsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Shows facets aggregation by an expression..
         /// </summary>
@@ -421,7 +421,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoExpressionAggregationFacetsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Index all text files under a directory..
         /// </summary>
@@ -430,7 +430,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoIndexFilesCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to This demo can be used to learn how to build a Lucene.Net index. After the index is built, you can run the search-files demo to run queries against it..
         /// </summary>
@@ -439,7 +439,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoIndexFilesCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The source directory containing files to index. This operation is recursive..
         /// </summary>
@@ -448,7 +448,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoIndexFilesCommandSourceDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Adds new documents to an existing index. If not supplied, any existing index in the &lt;INDEX_DIRECTORY&gt; will be overwritten..
         /// </summary>
@@ -457,7 +457,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoIndexFilesCommandUpdateDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Demonstrates indexing categories into different indexed fields..
         /// </summary>
@@ -466,7 +466,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoMultiCategoryListsFacetsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Shows simple usage of dynamic range faceting..
         /// </summary>
@@ -475,7 +475,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoRangeFacetsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Simple command-line based search demo. Run index-files demo first..
         /// </summary>
@@ -484,7 +484,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoSearchFilesCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Run the index-files demo first to create an index to run this command against. You can either use a file containing many queries (each on a single line), a single query on the command line, or omit both options to run queries interactively..
         /// </summary>
@@ -493,7 +493,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoSearchFilesCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The index field to use in the search. If not supplied, defaults to &quot;contents&quot;..
         /// </summary>
@@ -502,7 +502,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoSearchFilesCommandFieldDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Hits per page to display..
         /// </summary>
@@ -511,7 +511,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoSearchFilesCommandPageSizeDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to A file containing the queries to perform..
         /// </summary>
@@ -520,7 +520,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoSearchFilesCommandQueriesFileDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to A query to perform..
         /// </summary>
@@ -529,7 +529,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoSearchFilesCommandQueryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Output raw format..
         /// </summary>
@@ -538,7 +538,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoSearchFilesCommandRawDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Repeat the search and time as a benchmark..
         /// </summary>
@@ -547,7 +547,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoSearchFilesCommandRepeatDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Shows simple usage of faceted indexing and search..
         /// </summary>
@@ -556,7 +556,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoSimpleFacetsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Shows simple usage of faceted indexing and search using SortedSetDocValuesFacetField and SortedSetDocValuesFacetCounts..
         /// </summary>
@@ -565,7 +565,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DemoSimpleSortedSetFacetsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The FSDirectory implementation to use. Defaults to the optimal FSDirectory for your OS platform..
         /// </summary>
@@ -574,7 +574,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("DirectoryTypeOptionDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Source code exported to &apos;{0}&apos;..
         /// </summary>
@@ -583,7 +583,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("ExportingSourceCodeCompleteMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Exporting source code....
         /// </summary>
@@ -592,7 +592,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("ExportingSourceCodeMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to An error occurred:.
         /// </summary>
@@ -601,7 +601,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("GeneralExceptionMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Specify --help for a list of available options and commands..
         /// </summary>
@@ -610,7 +610,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("HelpCommandsMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Checks an index for problematic segments..
         /// </summary>
@@ -619,9 +619,9 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexCheckCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
-        ///    Looks up a localized string similar to Basic tool to check the health of an index. 
+        ///    Looks up a localized string similar to Basic tool to check the health of an index.
         ///
         ///As this tool checks every byte in the index, on a large index it can take quite a long time to run..
         /// </summary>
@@ -630,7 +630,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexCheckCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Only check the specified segment(s). This can be specified multiple times, to check more than one segment, eg --segment _2 --segment _a..
         /// </summary>
@@ -639,7 +639,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexCheckCommandSegmentsDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Utilities to analyze or maintain an index..
         /// </summary>
@@ -648,7 +648,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Copies segments from one index to another index..
         /// </summary>
@@ -657,7 +657,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexCopySegmentsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to This tool does file-level copying of segments files. This means it&apos;s unable to split apart a single segment into multiple segments. For example if your index is a single segment, this tool won&apos;t help. Also, it does basic file-level copying (using a simple FileStream) so it will not work with non FSDirectory Directory implementations..
         /// </summary>
@@ -666,7 +666,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexCopySegmentsCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The directory of the index to copy..
         /// </summary>
@@ -675,7 +675,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexCopySegmentsCommandInputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The directory of the destination index..
         /// </summary>
@@ -684,7 +684,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexCopySegmentsCommandOutputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The segments to copy, separated by a space..
         /// </summary>
@@ -693,7 +693,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexCopySegmentsCommandSegmentsDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Deletes segments from an index..
         /// </summary>
@@ -702,7 +702,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexDeleteSegmentsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to You can easily accidentally remove segments from your index so be careful! Always make a backup of your index first..
         /// </summary>
@@ -711,7 +711,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexDeleteSegmentsCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The segments to delete, separated by a space..
         /// </summary>
@@ -720,7 +720,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexDeleteSegmentsCommandSegmentsDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The directory of the index..
         /// </summary>
@@ -729,7 +729,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexDirectoryArgumentDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to If omitted, it defaults to the current working directory..
         /// </summary>
@@ -738,7 +738,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexDirectoryOptionalArgumentDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The .cfs compound file containing words to parse..
         /// </summary>
@@ -747,7 +747,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexExtractCfsCommandCFSFileNameDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Extracts sub-files from a .cfs compound file..
         /// </summary>
@@ -756,7 +756,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexExtractCfsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Extracts `.cfs` compound files (that were created using the CompoundFileDirectory from Lucene.Net.Misc) to the current working directory.
         ///
@@ -767,7 +767,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexExtractCfsCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Fixes an index by removing problematic segments..
         /// </summary>
@@ -776,7 +776,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexFixCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Doesn&apos;t change the index, but reports any actions that would be taken if this option were not supplied..
         /// </summary>
@@ -785,11 +785,11 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexFixCommandDryRunDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to  Basic tool to check and fix the health of an index and write a new segments file that removes reference to problematic segments.
         ///
-        ///As this tool checks every byte in the index, on a large index it can take quite a long time to run. 
+        ///As this tool checks every byte in the index, on a large index it can take quite a long time to run.
         ///
         ///WARNING: This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. [rest of string was truncated]&quot;;.
         /// </summary>
@@ -798,7 +798,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexFixCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The .cfs compound file containing words to parse..
         /// </summary>
@@ -807,7 +807,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListCfsCommandCFSFileNameDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Lists sub-files out of a .cfs compound file..
         /// </summary>
@@ -816,7 +816,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListCfsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Prints the filename and size of each file within a given `.cfs` compound file. The .cfs compound file format is created using the CompoundFileDirectory from Lucene.Net.Misc..
         /// </summary>
@@ -825,7 +825,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListCfsCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Lists the top N most frequent terms by document frequency..
         /// </summary>
@@ -834,7 +834,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListHighFreqTermsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Extracts the top N most frequent terms (by document frequency) from an index and reports thier document frequency..
         /// </summary>
@@ -843,7 +843,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListHighFreqTermsCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The field to consider. If omitted, considers all fields..
         /// </summary>
@@ -852,7 +852,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListHighFreqTermsCommandFieldDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The number of terms to consider. If omitted, defaults to 100..
         /// </summary>
@@ -861,7 +861,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListHighFreqTermsCommandNumberOfTermsDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Specifies that both the document frequency &amp; term frequency are reported, ordered by descending total term frequency..
         /// </summary>
@@ -870,7 +870,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListHighFreqTermsCommandTotalTermFrequencyDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Lists segments in an index..
         /// </summary>
@@ -879,7 +879,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListSegmentsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to After running this command to view segments, use copy-segments to copy segments from one index directory to another or delete-segments to remove segments from an index..
         /// </summary>
@@ -888,7 +888,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListSegmentsExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Displays the taxonomy statistical information for a taxonomy index..
         /// </summary>
@@ -897,7 +897,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListTaxonomyStatsCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Prints how many ords are under each dimension..
         /// </summary>
@@ -906,7 +906,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListTaxonomyStatsCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Recursively lists all descendant nodes..
         /// </summary>
@@ -915,7 +915,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListTaxonomyStatsCommandShowTreeDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Gets document frequency and total number of occurrences of a term..
         /// </summary>
@@ -924,7 +924,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListTermInfoCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Gets document frequency and total number of occurrences (sum of the term frequency for each document) of a term..
         /// </summary>
@@ -933,7 +933,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListTermInfoCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The field to consider..
         /// </summary>
@@ -942,7 +942,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListTermInfoCommandFieldDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The directory of the index..
         /// </summary>
@@ -951,7 +951,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListTermInfoCommandIndexDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The term to consider..
         /// </summary>
@@ -960,7 +960,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexListTermInfoCommandTermDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Merges multiple indexes into a single index..
         /// </summary>
@@ -969,7 +969,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexMergeCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Two or more source index directories separated by a space..
         /// </summary>
@@ -978,7 +978,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexMergeCommandInputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The output directory to merge the input indexes into..
         /// </summary>
@@ -987,7 +987,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexMergeCommandOutputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Splits an index into multiple parts..
         /// </summary>
@@ -996,7 +996,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexSplitCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to  Splits the input index into multiple equal parts. The method employed here uses IndexWriter.AddIndexes(IndexReader[]) where the input data comes from the input index with artificially applied deletes to the document ids that fall outside the selected partition.
         ///
@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexSplitCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The path of the source index, which can have deletions and can have multiple segments (or multiple readers). Multiple values can be supplied separated by a space..
         /// </summary>
@@ -1018,7 +1018,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexSplitCommandInputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The number of parts (output indices) to produce. If omitted, defaults to 2..
         /// </summary>
@@ -1027,7 +1027,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexSplitCommandNumberOfPartsDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Path to output directory to contain partial indexes..
         /// </summary>
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexSplitCommandOutputDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Sequential doc-id range split (default is round-robin)..
         /// </summary>
@@ -1045,7 +1045,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexSplitCommandSequentialDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Deletes prior commits..
         /// </summary>
@@ -1054,7 +1054,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexUpgradeCommandDeleteDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Upgrades all segments of an index from previous Lucene.Net versions to the current segment file format..
         /// </summary>
@@ -1063,11 +1063,11 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexUpgradeCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
-        ///    Looks up a localized string similar to  This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit. 
+        ///    Looks up a localized string similar to  This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit.
         ///
-        ///Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used. 
+        ///Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used.
         ///
         ///WARNING: This tool may reorder document IDs! Be sure to make a backup of your in [rest of string was truncated]&quot;;.
         /// </summary>
@@ -1076,7 +1076,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("IndexUpgradeCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Utilities for verifying concurrent locking integrity..
         /// </summary>
@@ -1085,7 +1085,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Simple tool that forever acquires and releases a lock using a specific LockFactory..
         /// </summary>
@@ -1094,7 +1094,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockStressTestCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to You should run multiple instances of this process, each with its own unique ID, and each pointing to the same lock directory, to verify that locking is working correctly. Make sure you are first running verify-server..
         /// </summary>
@@ -1103,7 +1103,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockStressTestCommandExtendedHelpText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to An integer from 0 - 255 (should be unique for test process)..
         /// </summary>
@@ -1112,7 +1112,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockStressTestCommandIDDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The path to the lock directory (only utilized if LOCK_FACTORY_TYPE is set to SimpleFSLockFactory or NativeFSLockFactory)..
         /// </summary>
@@ -1121,7 +1121,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockStressTestCommandLockDirectoryDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The primary LockFactory implementation that we will use..
         /// </summary>
@@ -1130,7 +1130,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockStressTestCommandLockFactoryTypeDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Milliseconds to pause between each lock obtain/release..
         /// </summary>
@@ -1139,7 +1139,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockStressTestCommandSleepTimeMSDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Number of locking tries..
         /// </summary>
@@ -1148,7 +1148,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockStressTestCommandTriesDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Port that verify-server is listening on..
         /// </summary>
@@ -1157,7 +1157,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockStressTestCommandVerfierPortDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Hostname or IP address that verify-server is listening on..
         /// </summary>
@@ -1166,7 +1166,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockStressTestCommandVerifierHostDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Simple server that must be running when you use VerifyingLockFactory (or stress-test). This server verifies at most one process holds the lock at a time..
         /// </summary>
@@ -1175,7 +1175,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockVerifyServerCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Hostname or IP address that verify-server will listen on..
         /// </summary>
@@ -1184,7 +1184,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockVerifyServerCommandIPHostnameDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to The maximum number of connected clients..
         /// </summary>
@@ -1193,7 +1193,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("LockVerifyServerCommandMaxClientsDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to {0} arguments are required..
         /// </summary>
@@ -1202,7 +1202,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("NotEnoughArguments", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Output the source code of the demo to the specified directory..
         /// </summary>
@@ -1211,7 +1211,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("OutputSourceCodeDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Run &apos;demo {0} --view-source-code&apos; to see the C# code or &apos;demo {0} --output-source-code &lt;DIRECTORY&gt;&apos; to export the code to a local directory..
         /// </summary>
@@ -1220,7 +1220,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("OutputSourceCodeMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Utilities and demos for Lucene.Net..
         /// </summary>
@@ -1229,7 +1229,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("RootCommandDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to One or more segments, separated by a space..
         /// </summary>
@@ -1238,7 +1238,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("SegmentsArgumentDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to An index segment..
         /// </summary>
@@ -1247,7 +1247,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("SegmentsOptionDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Multiple segments are allowed..
         /// </summary>
@@ -1256,7 +1256,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("SegmentsOptionMultipleDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to Verbose output..
         /// </summary>
@@ -1265,7 +1265,7 @@ namespace Lucene.Net.Cli.Resources {
                 return ResourceManager.GetString("VerboseOptionDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///    Looks up a localized string similar to View the source code of the demo..
         /// </summary>

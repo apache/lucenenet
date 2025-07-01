@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// If not null is the set of tokens to protect from being delimited
-        /// 
+        ///
         /// </summary>
         private readonly CharArraySet protWords;
 
@@ -562,7 +562,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             if (hasIllegalOffsets)
             {
-                // historically this filter did this regardless for 'isSingleWord', 
+                // historically this filter did this regardless for 'isSingleWord',
                 // but we must do a sanity check:
                 if (isSingleWord && startOffset <= savedEndOffset)
                 {

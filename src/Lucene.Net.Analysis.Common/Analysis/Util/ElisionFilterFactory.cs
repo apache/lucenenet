@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Util
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
-    ///     &lt;filter class="solr.ElisionFilterFactory" 
+    ///     &lt;filter class="solr.ElisionFilterFactory"
     ///       articles="stopwordarticles.txt" ignoreCase="true"/&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>

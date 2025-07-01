@@ -223,7 +223,7 @@ namespace Lucene.Net.Search.VectorHighlight
             assertEquals("sppeeeed(1.0)((88,93))", fpl.PhraseList[0].ToString(CultureInfo.InvariantCulture)); // LUCENENET specific: use invariant culture, since we are culture-aware
         }
 
-        /* This test shows a big speedup from limiting the number of analyzed phrases in 
+        /* This test shows a big speedup from limiting the number of analyzed phrases in
          * this bad case for FieldPhraseList */
         /* But it is not reliable as a unit test since it is timing-dependent
         public void TestManyRepeatedTerms() throws Exception {
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 assertEquals( 16000, fpl.phraseList.size() );
             else
                 assertEquals( limit, fpl.phraseList.size() );
-            assertEquals( "a(1.0)((0,1))", fpl.phraseList.Get( 0 ).toString() );      
+            assertEquals( "a(1.0)((0,1))", fpl.phraseList.Get( 0 ).toString() );
         }
         */
 

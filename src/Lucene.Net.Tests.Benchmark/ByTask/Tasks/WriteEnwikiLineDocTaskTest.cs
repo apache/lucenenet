@@ -110,7 +110,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             PerfRunData runData = createPerfRunData(file, typeof(WriteLineCategoryDocMaker).AssemblyQualifiedName);
             WriteLineDocTask wldt = new WriteEnwikiLineDocTask(runData);
             for (int i = 0; i < 4; i++)
-            { // four times so that each file should have 2 lines. 
+            { // four times so that each file should have 2 lines.
                 wldt.DoLogic();
             }
             wldt.Dispose();

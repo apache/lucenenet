@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         private int minimumMatchingmElements = 0;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="clauses">the query nodes to be or'ed</param>
         /// <param name="field"></param>

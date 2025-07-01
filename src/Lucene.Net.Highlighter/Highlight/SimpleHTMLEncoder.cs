@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Highlight
                         break;
 
                     default:
-                        // LUCENENET TODO: This logic appears to be correct, but need to 
+                        // LUCENENET TODO: This logic appears to be correct, but need to
                         // verify and create/alter unit tests to accommodate this change
                         if (ch < 128)
                         {

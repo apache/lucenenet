@@ -487,7 +487,7 @@ namespace Lucene.Net.Analysis
             public override sealed void End()
             {
                 base.End();
-                // set final offset 
+                // set final offset
                 offsetAtt.SetOffset(finalOffset, finalOffset);
             }
 

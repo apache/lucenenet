@@ -33,8 +33,8 @@ namespace Lucene.Net.Facet.Range
     /// Represents a range over <see cref="long"/> values.
     /// <para/>
     /// NOTE: This was LongRange in Lucene
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public sealed class Int64Range : Range
     {

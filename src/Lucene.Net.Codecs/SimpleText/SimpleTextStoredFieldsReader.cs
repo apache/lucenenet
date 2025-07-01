@@ -96,8 +96,8 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         /// <remarks>
-        /// We don't actually write a .fdx-like index, instead we read the 
-        /// stored fields file in entirety up-front and save the offsets 
+        /// We don't actually write a .fdx-like index, instead we read the
+        /// stored fields file in entirety up-front and save the offsets
         /// so we can seek to the documents later.
         /// </remarks>
         private void ReadIndex(int size)

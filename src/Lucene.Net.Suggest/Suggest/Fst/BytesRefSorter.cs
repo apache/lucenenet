@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         void Add(BytesRef utf8);
 
         /// <summary>
-        /// Sorts the entries added in <see cref="Add(BytesRef)"/> and returns 
+        /// Sorts the entries added in <see cref="Add(BytesRef)"/> and returns
         /// an enumerator over all sorted entries.
         /// </summary>
         /// <exception cref="IOException"> If an I/O exception occurs. </exception>

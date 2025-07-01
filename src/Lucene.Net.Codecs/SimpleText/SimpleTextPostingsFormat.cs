@@ -24,12 +24,12 @@ namespace Lucene.Net.Codecs.SimpleText
     /// <summary>
     /// For debugging, curiosity, transparency only!!  Do not
     /// use this codec in production.
-    /// 
+    ///
     /// <para>This codec stores all postings data in a single
     /// human-readable text file (_N.pst).  You can view this in
     /// any text editor, and even edit it to alter your index.
     /// </para>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [PostingsFormatName("SimpleText")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class SimpleTextPostingsFormat : PostingsFormat

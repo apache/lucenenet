@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Core
         private readonly ITypeAttribute typeAttribute;
         private readonly bool useWhiteList;
 
-        /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4. 
+        /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4.
         [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4.")]
         public TypeTokenFilter(LuceneVersion version, bool enablePositionIncrements, TokenStream input, ICollection<string> stopTypes, bool useWhiteList)
             : base(version, enablePositionIncrements, input)
@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Core
             this.useWhiteList = useWhiteList;
         }
 
-        /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4. 
+        /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4.
         [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4.")]
         public TypeTokenFilter(LuceneVersion version, bool enablePositionIncrements, TokenStream input, ICollection<string> stopTypes)
             : this(version, enablePositionIncrements, input, stopTypes, false)

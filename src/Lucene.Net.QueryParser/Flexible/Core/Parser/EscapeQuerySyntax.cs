@@ -21,13 +21,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Parser
      */
 
     /// <summary>
-    /// A parser needs to implement <see cref="IEscapeQuerySyntax"/> to allow the <see cref="Nodes.IQueryNode"/> 
+    /// A parser needs to implement <see cref="IEscapeQuerySyntax"/> to allow the <see cref="Nodes.IQueryNode"/>
     /// to escape the queries, when the ToQueryString method is called.
     /// </summary>
     public interface IEscapeQuerySyntax
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="text"> text to be escaped</param>
         /// <param name="locale">locale for the current query</param>
@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Parser
         string Escape(string text, CultureInfo locale, EscapeQuerySyntaxType type);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="text"> text to be escaped</param>
         /// <param name="locale">locale for the current query</param>

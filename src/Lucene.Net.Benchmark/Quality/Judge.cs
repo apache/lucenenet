@@ -34,10 +34,10 @@ namespace Lucene.Net.Benchmarks.Quality
 
         /// <summary>
         /// Validate that queries and this <see cref="IJudge"/> match each other.
-        /// To be perfectly valid, this Judge must have some data for each and every 
-        /// input quality query, and must not have any data on any other quality query. 
+        /// To be perfectly valid, this Judge must have some data for each and every
+        /// input quality query, and must not have any data on any other quality query.
         /// <b>Note</b>: the quality benchmark run would not fail in case of imperfect
-        /// validity, just a warning message would be logged.  
+        /// validity, just a warning message would be logged.
         /// </summary>
         /// <param name="qq">Quality queries to be validated.</param>
         /// <param name="logger">If not <c>null</c>, validation issues are logged.</param>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Benchmarks.Quality
         bool ValidateData(QualityQuery[] qq, TextWriter logger);
 
         /// <summary>
-        /// Return the maximal recall for the input quality query. 
+        /// Return the maximal recall for the input quality query.
         /// It is the number of relevant docs this <see cref="IJudge"/> "knows" for the query.
         /// </summary>
         /// <param name="query">The query whose maximal recall is needed.</param>

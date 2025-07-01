@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Open a near real time <see cref="IndexReader"/> from the <see cref="IndexWriter"/>.
         /// <para/>
-        /// @lucene.experimental 
+        /// @lucene.experimental
         /// </summary>
         /// <param name="writer"> The <see cref="IndexWriter"/> to open from </param>
         /// <param name="applyAllDeletes"> If <c>true</c>, all buffered deletes will
@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
         /// outstanding readers may continue to be used.  However,
         /// if you attempt to reopen any of those readers, you'll
         /// hit an <see cref="ObjectDisposedException"/>.</para>
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         /// <returns> <see cref="DirectoryReader"/> that covers entire index plus all
@@ -258,14 +258,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns all commit points that exist in the <see cref="Store.Directory"/>.
-        /// Normally, because the default is 
+        /// Normally, because the default is
         /// <see cref="KeepOnlyLastCommitDeletionPolicy"/>, there would be only
         /// one commit point.  But if you're using a custom
         /// <see cref="IndexDeletionPolicy"/> then there could be many commits.
         /// Once you have a given commit, you can open a reader on
         /// it by calling <see cref="DirectoryReader.Open(IndexCommit)"/>
         /// There must be at least one commit in
-        /// the <see cref="Store.Directory"/>, else this method throws 
+        /// the <see cref="Store.Directory"/>, else this method throws
         /// <see cref="IndexNotFoundException"/>.  Note that if a commit is in
         /// progress while this method is running, that commit
         /// may or may not be returned.
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
         /// directory.</para>
         ///
         /// <para>If instead this reader is a near real-time reader
-        /// (ie, obtained by a call to 
+        /// (ie, obtained by a call to
         /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/>, or by calling an overload of <see cref="OpenIfChanged(DirectoryReader)"/>
         /// on a near real-time reader), then this method checks if
         /// either a new commit has occurred, or any new

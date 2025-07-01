@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Id
         /// <summary>
         /// Create a new <see cref="IndonesianStemFilter"/>.
         /// <para>
-        /// If <paramref name="stemDerivational"/> is false, 
+        /// If <paramref name="stemDerivational"/> is false,
         /// only inflectional suffixes (particles and possessive pronouns) are stemmed.
         /// </para>
         /// </summary>

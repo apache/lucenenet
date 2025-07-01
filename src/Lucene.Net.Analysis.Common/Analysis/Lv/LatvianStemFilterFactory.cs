@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Lv
      */
 
     /// <summary>
-    /// Factory for <see cref="LatvianStemFilter"/>. 
+    /// Factory for <see cref="LatvianStemFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_lvstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

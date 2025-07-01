@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Ru
      */
 
     /// <summary>
-    /// <see cref="Analyzer"/> for Russian language. 
+    /// <see cref="Analyzer"/> for Russian language.
     /// <para>
     /// Supports an external list of stopwords (words that
     /// will not be indexed at all).
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Ru
     {
         /// <summary>
         /// List of typical Russian stopwords. (for backwards compatibility) </summary>
-        /// @deprecated (3.1) Remove this for LUCENE 5.0 
+        /// @deprecated (3.1) Remove this for LUCENE 5.0
         [Obsolete("(3.1) Remove this for LUCENE 5.0")]
         private static readonly string[] RUSSIAN_STOP_WORDS_30 = new string[] {
             "а", "без", "более", "бы", "был", "была", "были", "было", "быть", "в",
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Ru
 
         private static class DefaultSetHolder
         {
-            /// @deprecated (3.1) remove this for Lucene 5.0 
+            /// @deprecated (3.1) remove this for Lucene 5.0
             [Obsolete("(3.1) remove this for Lucene 5.0")]
             internal static readonly CharArraySet DEFAULT_STOP_SET_30 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, RUSSIAN_STOP_WORDS_30, false).AsReadOnly();
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();

@@ -24,7 +24,7 @@ namespace Lucene.Net.Join
     /// <summary>
     /// A special sort field that allows sorting parent docs based on nested / child level fields.
     /// Based on the sort order it either takes the document with the lowest or highest field value into account.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     [Obsolete("Use Lucene.Net.Search.Join.ToParentBlockJoinSortField instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]

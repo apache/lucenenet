@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// <summary>
     /// Token Manager Error.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
@@ -144,9 +144,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// You can also modify the body of this method to customize your error messages.
         /// For example, cases like LOOP_DETECTED and INVALID_LEXICAL_STATE are not
         /// of end-users concern, so you can return something like :
-        /// 
+        ///
         ///     "Internal Error : Please file a bug report .... "
-        ///     
+        ///
         /// from this method for such cases in the release version of your parser.
         /// </summary>
         public override string Message => base.Message;

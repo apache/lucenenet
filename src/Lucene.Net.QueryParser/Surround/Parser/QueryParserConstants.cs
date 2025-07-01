@@ -75,9 +75,9 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         public const int DEFAULT = 2;
     }
 
-    // NOTE: In Java, this was an interface. However, in 
+    // NOTE: In Java, this was an interface. However, in
     // .NET we cannot define constants in an interface.
-    // So, instead we are making it a static class so it 
+    // So, instead we are making it a static class so it
     // can be shared between classes with different base classes.
 
     // public interface QueryParserConstants

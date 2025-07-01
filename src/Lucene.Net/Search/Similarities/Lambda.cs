@@ -19,11 +19,11 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// The <em>lambda (&#955;<sub>w</sub>)</em> parameter in information-based
-    /// models. 
+    /// models.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    /// <seealso cref="IBSimilarity"/> 
+    /// <seealso cref="IBSimilarity"/>
     public abstract class Lambda
     {
         /// <summary>

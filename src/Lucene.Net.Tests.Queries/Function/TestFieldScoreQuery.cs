@@ -33,7 +33,7 @@ namespace Lucene.Net.Tests.Queries.Function
     /// <p>
     /// The rank tests use Hits to verify that docs are ordered (by score) as expected.
     /// <p>
-    /// The exact score tests use TopDocs top to verify the exact score.  
+    /// The exact score tests use TopDocs top to verify the exact score.
     /// </summary>
     public class TestFieldScoreQuery : FunctionTestSetup
     {

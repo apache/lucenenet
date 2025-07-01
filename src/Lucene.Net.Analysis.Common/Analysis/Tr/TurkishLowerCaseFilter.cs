@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Tr
         private static readonly CultureInfo culture = new CultureInfo("tr"); // LUCENENET specific - we need to do a culture-sensitive lowercase operation in Turkish
 
         /// <summary>
-        /// Create a new <see cref="TurkishLowerCaseFilter"/>, that normalizes Turkish token text 
+        /// Create a new <see cref="TurkishLowerCaseFilter"/>, that normalizes Turkish token text
         /// to lower case.
         /// </summary>
         /// <param name="in"> <see cref="TokenStream"/> to filter </param>

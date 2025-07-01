@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Hi
      */
 
     /// <summary>
-    /// Factory for <see cref="HindiStemFilter"/>. 
+    /// Factory for <see cref="HindiStemFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_histem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

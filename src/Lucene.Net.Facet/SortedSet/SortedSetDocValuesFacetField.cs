@@ -24,7 +24,7 @@ namespace Lucene.Net.Facet.SortedSet
 
     /// <summary>
     /// Add an instance of this to your <see cref="Documents.Document"/> for every facet
-    /// label to be indexed via <see cref="Index.SortedSetDocValues"/>. 
+    /// label to be indexed via <see cref="Index.SortedSetDocValues"/>.
     /// </summary>
     public class SortedSetDocValuesFacetField : Field
     {

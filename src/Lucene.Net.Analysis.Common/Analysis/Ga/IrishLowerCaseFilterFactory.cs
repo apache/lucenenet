@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Ga
      */
 
     /// <summary>
-    /// Factory for <see cref="IrishLowerCaseFilter"/>. 
+    /// Factory for <see cref="IrishLowerCaseFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_ga" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

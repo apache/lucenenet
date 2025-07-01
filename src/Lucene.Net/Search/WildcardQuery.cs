@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
     /// needs to iterate over many terms. In order to prevent extremely slow WildcardQueries,
     /// a Wildcard term should not start with the wildcard <c>*</c>
     ///
-    /// <para/>This query uses the 
+    /// <para/>This query uses the
     /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>
     /// rewrite method.
     /// </summary>

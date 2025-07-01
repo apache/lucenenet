@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
      */
 
     /// <summary>
-    /// Suggest implementation based on 
+    /// Suggest implementation based on
     /// <a href="http://jaspell.sourceforge.net/">JaSpell</a>.
     /// </summary>
     /// <seealso cref="JaspellTernarySearchTrie"/>

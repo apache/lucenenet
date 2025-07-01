@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         /// a reference object to the node containing character smaller than this node's character. </summary>
         internal TernaryTreeNode loKid;
         /// <summary>
-        ///  a reference object to the node containing character next to this node's character as 
+        ///  a reference object to the node containing character next to this node's character as
         ///  occurring in the inserted token.
         /// </summary>
         internal TernaryTreeNode eqKid;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         /// a reference object to the node containing character higher than this node's character. </summary>
         internal TernaryTreeNode hiKid;
         /// <summary>
-        /// used by leaf nodes to store the complete tokens to be added to suggest list while 
+        /// used by leaf nodes to store the complete tokens to be added to suggest list while
         /// auto-completing the prefix.
         /// </summary>
         internal string token;

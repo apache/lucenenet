@@ -127,7 +127,7 @@ namespace Lucene.Net.Tests.ICU.Support
         {
             BreakIterator bi = GetWordInstance(new System.Globalization.CultureInfo("th"));
             bi.SetText("");
-            
+
 
             // Test empty
             Assert.AreEqual(0, bi.Current);

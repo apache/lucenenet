@@ -18,7 +18,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks.Alt
      */
 
     /// <summary>
-    /// {@link PerfTask} which does nothing, but is in a different package 
+    /// {@link PerfTask} which does nothing, but is in a different package
     /// </summary>
     public class AltTestTask : PerfTask
     {

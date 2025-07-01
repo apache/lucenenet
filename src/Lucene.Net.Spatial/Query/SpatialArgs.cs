@@ -24,7 +24,7 @@ namespace Lucene.Net.Spatial.Queries
     /// <summary>
     /// Principally holds the query <see cref="IShape"/> and the <see cref="SpatialOperation"/>.
     /// It's used as an argument to some methods on <see cref="SpatialStrategy"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class SpatialArgs
@@ -81,7 +81,7 @@ namespace Lucene.Net.Spatial.Queries
 
         /// <summary>
         /// Gets the error distance that specifies how precise the query shape is. This
-        /// looks at <see cref="DistErr"/>, <see cref="DistErrPct"/>, and 
+        /// looks at <see cref="DistErr"/>, <see cref="DistErrPct"/>, and
         /// <paramref name="defaultDistErrPct"/>.
         /// </summary>
         /// <param name="ctx"></param>

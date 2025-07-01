@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using Term = Lucene.Net.Index.Term;
 
     /// <summary>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [Obsolete("(4.0)")]
     internal sealed class TermBuffer // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation

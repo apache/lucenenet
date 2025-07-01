@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// A <see cref="ProximityQueryNode"/> represents a query where the terms should meet
     /// specific distance conditions. (a b c) WITHIN [SENTENCE|PARAGRAPH|NUMBER]
     /// [INORDER] ("a" "b" "c") WITHIN [SENTENCE|PARAGRAPH|NUMBER] [INORDER]
-    /// 
+    ///
     /// TODO: Add this to the future standard Lucene parser/processor/builder
     /// </summary>
     public class ProximityQueryNode : BooleanQueryNode
@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         private string field = null;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="clauses">QueryNode children</param>
         /// <param name="field">field name</param>
@@ -84,7 +84,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="clauses">QueryNode children</param>
         /// <param name="field">field name</param>

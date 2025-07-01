@@ -32,7 +32,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <para/>
     /// Note that the configured Similarity for the field must be
     /// a subclass of <see cref="TFIDFSimilarity"/>
-    /// @lucene.internal 
+    /// @lucene.internal
     /// </summary>
     [ExceptionToClassNameConvention]
     public class IDFValueSource : DocFreqValueSource

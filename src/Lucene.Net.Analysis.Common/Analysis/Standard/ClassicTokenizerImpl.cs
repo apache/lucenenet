@@ -25,13 +25,13 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /*
-    
+
     WARNING: if you change ClassicTokenizerImpl.jflex and need to regenerate
           the tokenizer, only use the trunk version of JFlex 1.5 at the moment!
-    
+
     */
     /// <summary>
-    /// This class implements the classic lucene <see cref="StandardTokenizer"/> up until 3.0 
+    /// This class implements the classic lucene <see cref="StandardTokenizer"/> up until 3.0
     /// </summary>
 
     internal class ClassicTokenizerImpl : IStandardTokenizerInterface
@@ -332,7 +332,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// this buffer contains the current text to be matched and is
-        ///    the source of the YyText string 
+        ///    the source of the YyText string
         /// </summary>
         private char[] zzBuffer = new char[ZZ_BUFFERSIZE];
 
@@ -350,7 +350,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// endRead marks the last character in the buffer, that has been read
-        ///    from input 
+        ///    from input
         /// </summary>
         private int zzEndRead;
 
@@ -363,7 +363,7 @@ namespace Lucene.Net.Analysis.Standard
         private int yyChar;
 
         ///// <summary>
-        ///// the number of characters from the last newline up to the start of the 
+        ///// the number of characters from the last newline up to the start of the
         ///// matched text
         ///// </summary>
         //private int yycolumn; // LUCENENET: Never read
@@ -481,7 +481,7 @@ namespace Lucene.Net.Analysis.Standard
                 zzEndRead += numRead;
                 return false;
             }
-            // unlikely but not impossible: read 0 characters, but not at end of stream    
+            // unlikely but not impossible: read 0 characters, but not at end of stream
             if (numRead == 0)
             {
                 int c = zzReader.Read();
@@ -520,7 +520,7 @@ namespace Lucene.Net.Analysis.Standard
         /// Resets the scanner to read from a new input stream.
         /// Does not close the old reader.
         /// <para/>
-        /// All internal variables are reset, the old input stream 
+        /// All internal variables are reset, the old input stream
         /// <b>cannot</b> be reused (internal buffer is discarded and lost).
         /// Lexical state is set to <see cref="YYINITIAL"/>.
         /// <para/>
@@ -568,12 +568,12 @@ namespace Lucene.Net.Analysis.Standard
 
 
         /// <summary>
-        /// Returns the character at position <tt>pos</tt> from the 
-        /// matched text. 
-        /// 
+        /// Returns the character at position <tt>pos</tt> from the
+        /// matched text.
+        ///
         /// It is equivalent to YyText[pos], but faster
         /// </summary>
-        /// <param name="pos"> the position of the character to fetch. 
+        /// <param name="pos"> the position of the character to fetch.
         ///            A value from 0 to YyLength-1.
         /// </param>
         /// <returns> the character at position pos </returns>
@@ -592,8 +592,8 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Reports an error that occured while scanning.
         /// <para/>
-        /// In a wellformed scanner (no or only correct usage of 
-        /// YyPushBack(int) and a match-all fallback rule) this method 
+        /// In a wellformed scanner (no or only correct usage of
+        /// YyPushBack(int) and a match-all fallback rule) this method
         /// will only be called with things that "Can't Possibly Happen".
         /// If this method is called, something is seriously wrong
         /// (e.g. a JFlex bug producing a faulty scanner etc.).
@@ -621,7 +621,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// Pushes the specified amount of characters back into the input stream.
-        /// 
+        ///
         /// They will be read again by then next call of the scanning method
         /// </summary>
         /// <param name="number">  the number of characters to be read again.

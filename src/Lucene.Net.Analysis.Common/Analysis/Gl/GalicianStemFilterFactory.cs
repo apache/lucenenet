@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Gl
      */
 
     /// <summary>
-    /// Factory for <see cref="GalicianStemFilter"/>. 
+    /// Factory for <see cref="GalicianStemFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_glstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

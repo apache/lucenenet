@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Sep
     /// <para/>
     /// NOTE: This was IntIndexInput in Lucene
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     public abstract class Int32IndexInput : IDisposable
     {

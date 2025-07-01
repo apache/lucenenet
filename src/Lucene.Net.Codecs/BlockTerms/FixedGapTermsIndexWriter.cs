@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// <summary>
     /// Selects every Nth term as and index term, and hold term
     /// bytes (mostly) fully expanded in memory.  This terms index
-    /// supports seeking by ord.  See 
+    /// supports seeking by ord.  See
     /// <see cref="VariableGapTermsIndexWriter"/> for a more memory efficient
     /// terms index that does not support seeking by ord.
     /// <para/>

@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// An arbitrary byte[] to record per suggestion.  See
         /// <see cref="Lookup.LookupResult.Payload"/> to retrieve the payload
-        /// for each suggestion. 
+        /// for each suggestion.
         /// </summary>
         BytesRef Payload { get; }
 
@@ -71,8 +71,8 @@ namespace Lucene.Net.Search.Suggest
         internal readonly IBytesRefEnumerator wrapped;
 
         /// <summary>
-        /// Creates a new wrapper, wrapping the specified iterator and 
-        /// specifying a weight value of <c>1</c> for all terms 
+        /// Creates a new wrapper, wrapping the specified iterator and
+        /// specifying a weight value of <c>1</c> for all terms
         /// and nullifies associated payloads.
         /// </summary>
         public InputEnumeratorWrapper(IBytesRefEnumerator wrapped)

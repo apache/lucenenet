@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function
     /// <summary>
     /// <see cref="Scorer"/> which returns the result of <see cref="FunctionValues.SingleVal(int)"/> as
     /// the score for a document.
-    /// 
+    ///
     /// When overriding this class, be aware that ValueSourceScorer constructor is calling
     /// its private SetCheckDeletesInternal method as opposed to virtual SetCheckDeletes method.
     /// This is done to avoid virtual call in constructor. You can call your own private

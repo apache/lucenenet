@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Phonetic
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.BeiderMorseFilterFactory"
-    ///        nameType="GENERIC" ruleType="APPROX" 
+    ///        nameType="GENERIC" ruleType="APPROX"
     ///        concat="true" languageSet="auto"
     ///     &lt;/filter&gt;
     ///   &lt;/analyzer&gt;

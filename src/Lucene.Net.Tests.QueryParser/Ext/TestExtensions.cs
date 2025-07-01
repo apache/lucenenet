@@ -89,7 +89,7 @@ namespace Lucene.Net.QueryParsers.Ext
             }
             catch (ArgumentNullException /*e*/) // LUCENENET specific - Added guard clause to throw ArgumentNullException instead of letting NullReferenceException happen.
             {
-                // 
+                //
             }
         }
     }

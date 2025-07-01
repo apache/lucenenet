@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Phonetic
             assertTrue(factory.inject); // default
         }
 
-        /** 
+        /**
          * we use "Caverphone2" as it is registered in the REGISTRY as Caverphone,
          * so this effectively tests reflection without package name
          */

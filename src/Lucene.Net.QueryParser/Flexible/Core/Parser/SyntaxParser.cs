@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Parser
     public interface ISyntaxParser
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="query">query data to be parsed</param>
         /// <param name="field">default field name</param>

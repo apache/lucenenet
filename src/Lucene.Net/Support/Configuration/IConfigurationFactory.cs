@@ -24,7 +24,7 @@ namespace Lucene.Net.Configuration
     /// Contract for extending the functionality of system properties by providing an application-defined
     /// <see cref="IConfiguration"/> instance.
     /// <para/>
-    /// Usage: Implement this interface and set the implementation at application startup using 
+    /// Usage: Implement this interface and set the implementation at application startup using
     /// <see cref="ConfigurationSettings.SetConfigurationFactory(IConfigurationFactory)"/>.
     /// </summary>
     [CLSCompliant(false)]

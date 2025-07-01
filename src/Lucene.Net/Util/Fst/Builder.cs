@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Fst
         /// </param>
         /// <param name="doPackFST"> Pass <c>true</c> to create a packed FST.
         /// </param>
-        /// <param name="acceptableOverheadRatio"> How to trade speed for space when building the FST. this option 
+        /// <param name="acceptableOverheadRatio"> How to trade speed for space when building the FST. this option
         ///    is only relevant when doPackFST is true. <see cref="PackedInt32s.GetMutable(int, int, float)"/>
         /// </param>
         /// <param name="allowArrayArcs"> Pass false to disable the array arc optimization
@@ -345,7 +345,7 @@ namespace Lucene.Net.Util.Fst
         /// method. Note that input is fully consumed after this
         /// method is returned (so caller is free to reuse), but
         /// output is not.  So if your outputs are changeable (eg
-        /// <see cref="ByteSequenceOutputs"/> or 
+        /// <see cref="ByteSequenceOutputs"/> or
         /// <see cref="Int32SequenceOutputs"/>) then you cannot reuse across
         /// calls.
         /// </summary>

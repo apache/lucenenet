@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Tr
         /// File containing default Turkish stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
         /// <summary>
-        /// The comment character in the stopwords file.  
+        /// The comment character in the stopwords file.
         /// All lines prefixed with this will be ignored.
         /// </summary>
         private const string STOPWORDS_COMMENT = "#";
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Tr
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultSetHolder

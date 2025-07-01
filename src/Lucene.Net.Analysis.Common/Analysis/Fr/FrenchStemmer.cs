@@ -23,14 +23,14 @@ namespace Lucene.Net.Analysis.Fr
      */
 
     /// <summary>
-    /// A stemmer for French words. 
+    /// A stemmer for French words.
     /// <para/>
     /// The algorithm is based on the work of
     /// Dr Martin Porter on his snowball project<para/>
     /// refer to http://snowball.sourceforge.net/french/stemmer.html
     /// (French stemming algorithm) for details
     /// </summary>
-    /// @deprecated Use <see cref="Tartarus.Snowball.Ext.FrenchStemmer"/> instead, 
+    /// @deprecated Use <see cref="Tartarus.Snowball.Ext.FrenchStemmer"/> instead,
     /// which has the same functionality. This filter will be removed in Lucene 4.0
     [Obsolete("Use FrenchStemmer instead, which has the same functionality.")]
     public class FrenchStemmer
