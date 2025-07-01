@@ -46,7 +46,7 @@ namespace Lucene.Net
     public abstract class BaseConcurrentSetTestCase : JSR166TestCase
     {
 
-#region Factory Methods
+        #region Factory Methods
 
         /// <summary>
         /// Creates a new instance of a set type.
@@ -65,7 +65,7 @@ namespace Lucene.Net
 
 
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Used by <see cref="TestSynchronizedSet"/>

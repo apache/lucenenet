@@ -395,7 +395,7 @@ namespace Lucene.Net.Search
 
             public int HitCount()
             {
-                return (int) bits.Cardinality;
+                return (int)bits.Cardinality;
             }
 
             public int LastDocCollected => lastDocCollected;
@@ -422,7 +422,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(docId >= 0," base={0} doc={1}", docBase, doc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docId >= 0, " base={0} doc={1}", docBase, doc);
                 bits.Set(docId);
                 lastDocCollected = docId;
             }

@@ -28,7 +28,7 @@ namespace Lucene.Net
 
         // LUCENENET: removed unused string argument and overload
         public Support_CollectionTest(/*String p1,*/ ICollection<int> c)
-            //: base(p1)
+        //: base(p1)
         {
             col = c;
         }
