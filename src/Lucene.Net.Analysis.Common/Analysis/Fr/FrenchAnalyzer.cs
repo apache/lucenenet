@@ -115,6 +115,7 @@ namespace Lucene.Net.Analysis.Fr
             [Obsolete("(3.1) remove this in Lucene 5.0, index bw compat")]
             internal static readonly CharArraySet DEFAULT_STOP_SET_30 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, FRENCH_STOP_WORDS, false).AsReadOnly();
             internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
+
             private static CharArraySet LoadDefaultStopSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
                 try
@@ -139,8 +140,8 @@ namespace Lucene.Net.Analysis.Fr
         /// </summary>
         public FrenchAnalyzer(LuceneVersion matchVersion)
 #pragma warning disable 612, 618
-              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ?
-                    DefaultSetHolder.DEFAULT_STOP_SET : DefaultSetHolder.DEFAULT_STOP_SET_30)
+            : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ?
+                  DefaultSetHolder.DEFAULT_STOP_SET : DefaultSetHolder.DEFAULT_STOP_SET_30)
 #pragma warning restore 612, 618
         {
         }
@@ -153,7 +154,7 @@ namespace Lucene.Net.Analysis.Fr
         /// <param name="stopwords">
         ///          a stopword set </param>
         public FrenchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 
@@ -167,7 +168,7 @@ namespace Lucene.Net.Analysis.Fr
         /// <param name="stemExclutionSet">
         ///          a stemming exclusion set </param>
         public FrenchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclutionSet)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             this.excltable = CharArraySet.Copy(matchVersion, stemExclutionSet).AsReadOnly();
         }

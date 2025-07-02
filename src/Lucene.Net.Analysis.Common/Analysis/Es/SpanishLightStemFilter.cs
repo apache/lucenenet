@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Es
         private readonly IKeywordAttribute keywordAttr;
 
         public SpanishLightStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

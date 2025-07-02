@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Bg
         private readonly IKeywordAttribute keywordAttr;
 
         public BulgarianStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

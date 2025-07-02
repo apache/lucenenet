@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.De
         private readonly ICharTermAttribute termAtt;
 
         public GermanNormalizationFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
         }

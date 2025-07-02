@@ -38,13 +38,14 @@ namespace Lucene.Net.Analysis.Gl
         /// <summary>
         /// Creates a new <see cref="GalicianStemFilterFactory"/> </summary>
         public GalicianStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {
                 throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
+
         public override TokenStream Create(TokenStream input)
         {
             return new GalicianStemFilter(input);

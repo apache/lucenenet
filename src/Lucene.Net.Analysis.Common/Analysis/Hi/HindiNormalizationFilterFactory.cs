@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Hi
         /// <summary>
         /// Creates a new <see cref="HindiNormalizationFilterFactory"/> </summary>
         public HindiNormalizationFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Lv
         /// <summary>
         /// Creates a new <see cref="LatvianStemFilterFactory"/> </summary>
         public LatvianStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

@@ -77,6 +77,7 @@ namespace Lucene.Net.Analysis.No
             {
                 throw new ArgumentException("invalid flags");
             }
+
             //useBokmaal = (flags & NorwegianStandard.BOKMAAL) != 0; // LUCENENET: Never read
             useNynorsk = (flags & NorwegianStandard.NYNORSK) != 0;
         }
@@ -89,12 +90,20 @@ namespace Lucene.Net.Analysis.No
                 len--;
             }
 
-            if (len > 5 && (StemmerUtil.EndsWith(s, len, "ene") || (StemmerUtil.EndsWith(s, len, "ane") && useNynorsk))) // masc pl definite (gut-ane) -  masc/fem/neutr pl definite (hus-ene)
+            if (len > 5 &&
+                (StemmerUtil.EndsWith(s, len, "ene") ||  // masc/fem/neutr pl definite (hus-ene)
+                (StemmerUtil.EndsWith(s, len, "ane") &&
+                useNynorsk)))                            // masc pl definite (gut-ane)
             {
                 return len - 3;
             }
 
-            if (len > 4 && (StemmerUtil.EndsWith(s, len, "er") || StemmerUtil.EndsWith(s, len, "en") || StemmerUtil.EndsWith(s, len, "et") || (StemmerUtil.EndsWith(s, len, "ar") && useNynorsk))) // masc pl indefinite -  neutr definite -  masc/fem definite -  masc/fem indefinite
+            if (len > 4 &&
+                (StemmerUtil.EndsWith(s, len, "er") ||  // masc/fem indefinite
+                StemmerUtil.EndsWith(s, len, "en") ||   // masc/fem definite
+                StemmerUtil.EndsWith(s, len, "et") ||   // neutr definite
+                (StemmerUtil.EndsWith(s, len, "ar") &&
+                useNynorsk)))                           // masc pl indefinite
             {
                 return len - 2;
             }

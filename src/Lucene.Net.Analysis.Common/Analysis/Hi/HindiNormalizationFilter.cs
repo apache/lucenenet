@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Hi
         private readonly IKeywordAttribute keywordAtt;
 
         public HindiNormalizationFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAtt = AddAttribute<IKeywordAttribute>();

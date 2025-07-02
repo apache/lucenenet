@@ -123,8 +123,8 @@ namespace Lucene.Net.Analysis.De
         /// </summary>
         public GermanAnalyzer(LuceneVersion matchVersion)
 #pragma warning disable 612, 618
-              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ?
-                    DefaultSetHolder.DEFAULT_SET : DefaultSetHolder.DEFAULT_SET_30)
+            : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ?
+                  DefaultSetHolder.DEFAULT_SET : DefaultSetHolder.DEFAULT_SET_30)
 #pragma warning restore 612, 618
         {
         }
@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.De
         /// <param name="stopwords">
         ///          a stopword set </param>
         public GermanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.De
         /// <param name="stemExclusionSet">
         ///          a stemming exclusion set </param>
         public GermanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             exclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }

@@ -204,7 +204,10 @@ namespace Lucene.Net.Analysis.Pt
 
         private static int NormFeminine(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
-            if (len > 7 && (StemmerUtil.EndsWith(s, len, "inha") || StemmerUtil.EndsWith(s, len, "iaca") || StemmerUtil.EndsWith(s, len, "eira")))
+            if (len > 7 &&
+                (StemmerUtil.EndsWith(s, len, "inha") ||
+                StemmerUtil.EndsWith(s, len, "iaca") ||
+                StemmerUtil.EndsWith(s, len, "eira")))
             {
                 s[len - 1] = 'o';
                 return len;
@@ -212,7 +215,12 @@ namespace Lucene.Net.Analysis.Pt
 
             if (len > 6)
             {
-                if (StemmerUtil.EndsWith(s, len, "osa") || StemmerUtil.EndsWith(s, len, "ica") || StemmerUtil.EndsWith(s, len, "ida") || StemmerUtil.EndsWith(s, len, "ada") || StemmerUtil.EndsWith(s, len, "iva") || StemmerUtil.EndsWith(s, len, "ama"))
+                if (StemmerUtil.EndsWith(s, len, "osa") ||
+                    StemmerUtil.EndsWith(s, len, "ica") ||
+                    StemmerUtil.EndsWith(s, len, "ida") ||
+                    StemmerUtil.EndsWith(s, len, "ada") ||
+                    StemmerUtil.EndsWith(s, len, "iva") ||
+                    StemmerUtil.EndsWith(s, len, "ama"))
                 {
                     s[len - 1] = 'o';
                     return len;

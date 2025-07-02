@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </para>
         /// </summary>
         public StemmerOverrideFilter(TokenStream input, StemmerOverrideMap stemmerOverrideMap)
-              : base(input)
+            : base(input)
         {
             this.stemmerOverrideMap = stemmerOverrideMap;
             fstReader = stemmerOverrideMap.GetBytesReader();

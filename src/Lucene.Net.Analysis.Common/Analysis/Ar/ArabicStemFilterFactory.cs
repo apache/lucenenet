@@ -36,11 +36,10 @@ namespace Lucene.Net.Analysis.Ar
     /// </summary>
     public class ArabicStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
         /// Creates a new <see cref="ArabicStemFilterFactory"/> </summary>
         public ArabicStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

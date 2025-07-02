@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.El
         /// <param name="matchVersion"> Lucene compatibility version,
         ///   See <see cref="LuceneVersion"/> </param>
         public GreekAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_SET)
         {
         }
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.El
         ///   See <see cref="LuceneVersion"/> </param>
         /// <param name="stopwords"> a stopword set </param>
         public GreekAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
         }
 

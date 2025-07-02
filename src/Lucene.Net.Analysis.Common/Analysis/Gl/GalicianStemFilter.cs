@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Gl
         private readonly IKeywordAttribute keywordAttr;
 
         public GalicianStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

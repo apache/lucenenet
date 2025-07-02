@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.El
         private readonly IKeywordAttribute keywordAttr;
 
         public GreekStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

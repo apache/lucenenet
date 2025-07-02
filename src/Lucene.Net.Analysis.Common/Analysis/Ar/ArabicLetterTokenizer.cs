@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Ar
         /// <param name="in">
         ///          the input to split up into tokens </param>
         public ArabicLetterTokenizer(LuceneVersion matchVersion, TextReader @in)
-              : base(matchVersion, @in)
+            : base(matchVersion, @in)
         {
         }
 

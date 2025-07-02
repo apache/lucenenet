@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis.NGram
         private IOffsetAttribute offsetAtt;
 
         internal NGramTokenizer(LuceneVersion version, TextReader input, int minGram, int maxGram, bool edgesOnly)
-              : base(input)
+            : base(input)
         {
             Init(version, minGram, maxGram, edgesOnly);
         }
@@ -141,12 +141,12 @@ namespace Lucene.Net.Analysis.NGram
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public NGramTokenizer(LuceneVersion version, TextReader input, int minGram, int maxGram)
-              : this(version, input, minGram, maxGram, false)
+            : this(version, input, minGram, maxGram, false)
         {
         }
 
         internal NGramTokenizer(LuceneVersion version, AttributeFactory factory, TextReader input, int minGram, int maxGram, bool edgesOnly)
-              : base(factory, input)
+            : base(factory, input)
         {
             Init(version, minGram, maxGram, edgesOnly);
         }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis.NGram
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public NGramTokenizer(LuceneVersion version, AttributeFactory factory, TextReader input, int minGram, int maxGram)
-              : this(version, factory, input, minGram, maxGram, false)
+            : this(version, factory, input, minGram, maxGram, false)
         {
         }
 
@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.NGram
         /// <param name="version"> the lucene compatibility version </param>
         /// <param name="input"> <see cref="TextReader"/> holding the input to be tokenized </param>
         public NGramTokenizer(LuceneVersion version, TextReader input)
-              : this(version, input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)
+            : this(version, input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)
         {
         }
 

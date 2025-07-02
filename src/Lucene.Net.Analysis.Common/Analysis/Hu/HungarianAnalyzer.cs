@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Hu
         /// </summary>
         /// <param name="matchVersion"> lucene compatibility version </param>
         public HungarianAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Hu
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public HungarianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis.Hu
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
         public HungarianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
