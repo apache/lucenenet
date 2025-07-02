@@ -246,6 +246,13 @@ insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
+# Exclude *.dat (copied directly from Lucene)
+[**/*.dat]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
 # Exclude Phonetic language bm files (Copied directly from commons-codec)
 [**/Language/**/*.txt]
 trim_trailing_whitespace = unset
