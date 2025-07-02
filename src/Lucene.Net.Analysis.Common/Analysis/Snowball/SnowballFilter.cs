@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Snowball
         private readonly IKeywordAttribute keywordAttr;
 
         public SnowballFilter(TokenStream input, SnowballProgram stemmer)
-              : base(input)
+            : base(input)
         {
             this.stemmer = stemmer;
             this.termAtt = AddAttribute<ICharTermAttribute>();

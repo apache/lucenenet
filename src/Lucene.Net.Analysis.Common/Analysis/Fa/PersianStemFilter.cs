@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Fa
         private readonly IKeywordAttribute keywordAttr;
 
         public PersianStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

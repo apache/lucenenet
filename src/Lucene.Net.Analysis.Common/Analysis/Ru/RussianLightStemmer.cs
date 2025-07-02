@@ -93,17 +93,64 @@ namespace Lucene.Net.Analysis.Ru
 
         private static int RemoveCase(char[] s, int len) // LUCENENET: CA1822: Mark members as static
         {
-            if (len > 6 && (StemmerUtil.EndsWith(s, len, "иями") || StemmerUtil.EndsWith(s, len, "оями")))
+            if (len > 6 &&
+                (StemmerUtil.EndsWith(s, len, "иями") ||
+                StemmerUtil.EndsWith(s, len, "оями")))
             {
                 return len - 4;
             }
 
-            if (len > 5 && (StemmerUtil.EndsWith(s, len, "иям") || StemmerUtil.EndsWith(s, len, "иях") || StemmerUtil.EndsWith(s, len, "оях") || StemmerUtil.EndsWith(s, len, "ями") || StemmerUtil.EndsWith(s, len, "оям") || StemmerUtil.EndsWith(s, len, "оьв") || StemmerUtil.EndsWith(s, len, "ами") || StemmerUtil.EndsWith(s, len, "его") || StemmerUtil.EndsWith(s, len, "ему") || StemmerUtil.EndsWith(s, len, "ери") || StemmerUtil.EndsWith(s, len, "ими") || StemmerUtil.EndsWith(s, len, "ого") || StemmerUtil.EndsWith(s, len, "ому") || StemmerUtil.EndsWith(s, len, "ыми") || StemmerUtil.EndsWith(s, len, "оев")))
+            if (len > 5 &&
+                (StemmerUtil.EndsWith(s, len, "иям") ||
+                StemmerUtil.EndsWith(s, len, "иях") ||
+                StemmerUtil.EndsWith(s, len, "оях") ||
+                StemmerUtil.EndsWith(s, len, "ями") ||
+                StemmerUtil.EndsWith(s, len, "оям") ||
+                StemmerUtil.EndsWith(s, len, "оьв") ||
+                StemmerUtil.EndsWith(s, len, "ами") ||
+                StemmerUtil.EndsWith(s, len, "его") ||
+                StemmerUtil.EndsWith(s, len, "ему") ||
+                StemmerUtil.EndsWith(s, len, "ери") ||
+                StemmerUtil.EndsWith(s, len, "ими") ||
+                StemmerUtil.EndsWith(s, len, "ого") ||
+                StemmerUtil.EndsWith(s, len, "ому") ||
+                StemmerUtil.EndsWith(s, len, "ыми") ||
+                StemmerUtil.EndsWith(s, len, "оев")))
             {
                 return len - 3;
             }
 
-            if (len > 4 && (StemmerUtil.EndsWith(s, len, "ая") || StemmerUtil.EndsWith(s, len, "яя") || StemmerUtil.EndsWith(s, len, "ях") || StemmerUtil.EndsWith(s, len, "юю") || StemmerUtil.EndsWith(s, len, "ах") || StemmerUtil.EndsWith(s, len, "ею") || StemmerUtil.EndsWith(s, len, "их") || StemmerUtil.EndsWith(s, len, "ия") || StemmerUtil.EndsWith(s, len, "ию") || StemmerUtil.EndsWith(s, len, "ьв") || StemmerUtil.EndsWith(s, len, "ою") || StemmerUtil.EndsWith(s, len, "ую") || StemmerUtil.EndsWith(s, len, "ям") || StemmerUtil.EndsWith(s, len, "ых") || StemmerUtil.EndsWith(s, len, "ея") || StemmerUtil.EndsWith(s, len, "ам") || StemmerUtil.EndsWith(s, len, "ем") || StemmerUtil.EndsWith(s, len, "ей") || StemmerUtil.EndsWith(s, len, "ём") || StemmerUtil.EndsWith(s, len, "ев") || StemmerUtil.EndsWith(s, len, "ий") || StemmerUtil.EndsWith(s, len, "им") || StemmerUtil.EndsWith(s, len, "ое") || StemmerUtil.EndsWith(s, len, "ой") || StemmerUtil.EndsWith(s, len, "ом") || StemmerUtil.EndsWith(s, len, "ов") || StemmerUtil.EndsWith(s, len, "ые") || StemmerUtil.EndsWith(s, len, "ый") || StemmerUtil.EndsWith(s, len, "ым") || StemmerUtil.EndsWith(s, len, "ми")))
+            if (len > 4 &&
+                (StemmerUtil.EndsWith(s, len, "ая") ||
+                StemmerUtil.EndsWith(s, len, "яя") ||
+                StemmerUtil.EndsWith(s, len, "ях") ||
+                StemmerUtil.EndsWith(s, len, "юю") ||
+                StemmerUtil.EndsWith(s, len, "ах") ||
+                StemmerUtil.EndsWith(s, len, "ею") ||
+                StemmerUtil.EndsWith(s, len, "их") ||
+                StemmerUtil.EndsWith(s, len, "ия") ||
+                StemmerUtil.EndsWith(s, len, "ию") ||
+                StemmerUtil.EndsWith(s, len, "ьв") ||
+                StemmerUtil.EndsWith(s, len, "ою") ||
+                StemmerUtil.EndsWith(s, len, "ую") ||
+                StemmerUtil.EndsWith(s, len, "ям") ||
+                StemmerUtil.EndsWith(s, len, "ых") ||
+                StemmerUtil.EndsWith(s, len, "ея") ||
+                StemmerUtil.EndsWith(s, len, "ам") ||
+                StemmerUtil.EndsWith(s, len, "ем") ||
+                StemmerUtil.EndsWith(s, len, "ей") ||
+                StemmerUtil.EndsWith(s, len, "ём") ||
+                StemmerUtil.EndsWith(s, len, "ев") ||
+                StemmerUtil.EndsWith(s, len, "ий") ||
+                StemmerUtil.EndsWith(s, len, "им") ||
+                StemmerUtil.EndsWith(s, len, "ое") ||
+                StemmerUtil.EndsWith(s, len, "ой") ||
+                StemmerUtil.EndsWith(s, len, "ом") ||
+                StemmerUtil.EndsWith(s, len, "ов") ||
+                StemmerUtil.EndsWith(s, len, "ые") ||
+                StemmerUtil.EndsWith(s, len, "ый") ||
+                StemmerUtil.EndsWith(s, len, "ым") ||
+                StemmerUtil.EndsWith(s, len, "ми")))
             {
                 return len - 2;
             }

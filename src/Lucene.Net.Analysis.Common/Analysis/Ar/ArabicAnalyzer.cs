@@ -44,7 +44,6 @@ namespace Lucene.Net.Analysis.Ar
     /// </summary>
     public sealed class ArabicAnalyzer : StopwordAnalyzerBase
     {
-
         /// <summary>
         /// File containing default Arabic stopwords.
         ///
@@ -87,7 +86,7 @@ namespace Lucene.Net.Analysis.Ar
         /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public ArabicAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -99,7 +98,7 @@ namespace Lucene.Net.Analysis.Ar
         /// <param name="stopwords">
         ///          a stopword set </param>
         public ArabicAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 
@@ -115,7 +114,7 @@ namespace Lucene.Net.Analysis.Ar
         /// <param name="stemExclusionSet">
         ///          a set of terms not to be stemmed </param>
         public ArabicAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }

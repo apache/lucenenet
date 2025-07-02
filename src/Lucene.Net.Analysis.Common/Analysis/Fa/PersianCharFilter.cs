@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Fa
     public class PersianCharFilter : CharFilter
     {
         public PersianCharFilter(TextReader @in)
-              : base(@in)
+            : base(@in)
         {
         }
 
@@ -62,6 +62,7 @@ namespace Lucene.Net.Analysis.Fa
                 return ch;
             }
         }
+
         protected override int Correct(int currentOff)
         {
             return currentOff; // we don't change the length of the string

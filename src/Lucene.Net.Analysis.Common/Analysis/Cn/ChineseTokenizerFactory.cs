@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Cn
         /// <summary>
         /// Creates a new <see cref="ChineseTokenizerFactory"/> </summary>
         public ChineseTokenizerFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

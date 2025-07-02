@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.En
         /// </summary>
         /// <param name="matchVersion"> lucene compatibility version </param>
         public EnglishAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.En
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public EnglishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

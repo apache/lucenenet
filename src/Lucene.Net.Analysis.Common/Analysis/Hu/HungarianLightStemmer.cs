@@ -112,7 +112,20 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 5)
             {
-                if (StemmerUtil.EndsWith(s, len, "nak") || StemmerUtil.EndsWith(s, len, "nek") || StemmerUtil.EndsWith(s, len, "val") || StemmerUtil.EndsWith(s, len, "vel") || StemmerUtil.EndsWith(s, len, "ert") || StemmerUtil.EndsWith(s, len, "rol") || StemmerUtil.EndsWith(s, len, "ban") || StemmerUtil.EndsWith(s, len, "ben") || StemmerUtil.EndsWith(s, len, "bol") || StemmerUtil.EndsWith(s, len, "nal") || StemmerUtil.EndsWith(s, len, "nel") || StemmerUtil.EndsWith(s, len, "hoz") || StemmerUtil.EndsWith(s, len, "hez") || StemmerUtil.EndsWith(s, len, "tol"))
+                if (StemmerUtil.EndsWith(s, len, "nak") ||
+                    StemmerUtil.EndsWith(s, len, "nek") ||
+                    StemmerUtil.EndsWith(s, len, "val") ||
+                    StemmerUtil.EndsWith(s, len, "vel") ||
+                    StemmerUtil.EndsWith(s, len, "ert") ||
+                    StemmerUtil.EndsWith(s, len, "rol") ||
+                    StemmerUtil.EndsWith(s, len, "ban") ||
+                    StemmerUtil.EndsWith(s, len, "ben") ||
+                    StemmerUtil.EndsWith(s, len, "bol") ||
+                    StemmerUtil.EndsWith(s, len, "nal") ||
+                    StemmerUtil.EndsWith(s, len, "nel") ||
+                    StemmerUtil.EndsWith(s, len, "hoz") ||
+                    StemmerUtil.EndsWith(s, len, "hez") ||
+                    StemmerUtil.EndsWith(s, len, "tol"))
                 {
                     return len - 3;
                 }
@@ -128,7 +141,17 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 4)
             {
-                if (StemmerUtil.EndsWith(s, len, "at") || StemmerUtil.EndsWith(s, len, "et") || StemmerUtil.EndsWith(s, len, "ot") || StemmerUtil.EndsWith(s, len, "va") || StemmerUtil.EndsWith(s, len, "ve") || StemmerUtil.EndsWith(s, len, "ra") || StemmerUtil.EndsWith(s, len, "re") || StemmerUtil.EndsWith(s, len, "ba") || StemmerUtil.EndsWith(s, len, "be") || StemmerUtil.EndsWith(s, len, "ul") || StemmerUtil.EndsWith(s, len, "ig"))
+                if (StemmerUtil.EndsWith(s, len, "at") ||
+                    StemmerUtil.EndsWith(s, len, "et") ||
+                    StemmerUtil.EndsWith(s, len, "ot") ||
+                    StemmerUtil.EndsWith(s, len, "va") ||
+                    StemmerUtil.EndsWith(s, len, "ve") ||
+                    StemmerUtil.EndsWith(s, len, "ra") ||
+                    StemmerUtil.EndsWith(s, len, "re") ||
+                    StemmerUtil.EndsWith(s, len, "ba") ||
+                    StemmerUtil.EndsWith(s, len, "be") ||
+                    StemmerUtil.EndsWith(s, len, "ul") ||
+                    StemmerUtil.EndsWith(s, len, "ig"))
                 {
                     return len - 2;
                 }
@@ -160,7 +183,10 @@ namespace Lucene.Net.Analysis.Hu
         {
             if (len > 6)
             {
-                if (!IsVowel(s[len - 5]) && (StemmerUtil.EndsWith(s, len, "atok") || StemmerUtil.EndsWith(s, len, "otok") || StemmerUtil.EndsWith(s, len, "etek")))
+                if (!IsVowel(s[len - 5]) &&
+                    (StemmerUtil.EndsWith(s, len, "atok") ||
+                    StemmerUtil.EndsWith(s, len, "otok") ||
+                    StemmerUtil.EndsWith(s, len, "etek")))
                 {
                     return len - 4;
                 }
@@ -173,7 +199,10 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 5)
             {
-                if (!IsVowel(s[len - 4]) && (StemmerUtil.EndsWith(s, len, "unk") || StemmerUtil.EndsWith(s, len, "tok") || StemmerUtil.EndsWith(s, len, "tek")))
+                if (!IsVowel(s[len - 4]) && 
+                    (StemmerUtil.EndsWith(s, len, "unk") ||
+                    StemmerUtil.EndsWith(s, len, "tok") ||
+                    StemmerUtil.EndsWith(s, len, "tek")))
                 {
                     return len - 3;
                 }
@@ -191,17 +220,29 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 4)
             {
-                if (!IsVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "am") || StemmerUtil.EndsWith(s, len, "em") || StemmerUtil.EndsWith(s, len, "om") || StemmerUtil.EndsWith(s, len, "ad") || StemmerUtil.EndsWith(s, len, "ed") || StemmerUtil.EndsWith(s, len, "od") || StemmerUtil.EndsWith(s, len, "uk")))
+                if (!IsVowel(s[len - 3]) &&
+                    (StemmerUtil.EndsWith(s, len, "am") ||
+                    StemmerUtil.EndsWith(s, len, "em") ||
+                    StemmerUtil.EndsWith(s, len, "om") ||
+                    StemmerUtil.EndsWith(s, len, "ad") ||
+                    StemmerUtil.EndsWith(s, len, "ed") ||
+                    StemmerUtil.EndsWith(s, len, "od") ||
+                    StemmerUtil.EndsWith(s, len, "uk")))
                 {
                     return len - 2;
                 }
 
-                if (IsVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "nk") || StemmerUtil.EndsWith(s, len, "ja") || StemmerUtil.EndsWith(s, len, "je")))
+                if (IsVowel(s[len - 3]) &&
+                    (StemmerUtil.EndsWith(s, len, "nk") ||
+                    StemmerUtil.EndsWith(s, len, "ja") ||
+                    StemmerUtil.EndsWith(s, len, "je")))
                 {
                     return len - 2;
                 }
 
-                if (StemmerUtil.EndsWith(s, len, "im") || StemmerUtil.EndsWith(s, len, "id") || StemmerUtil.EndsWith(s, len, "ik"))
+                if (StemmerUtil.EndsWith(s, len, "im") ||
+                    StemmerUtil.EndsWith(s, len, "id") ||
+                    StemmerUtil.EndsWith(s, len, "ik"))
                 {
                     return len - 2;
                 }
@@ -246,7 +287,7 @@ namespace Lucene.Net.Analysis.Hu
                         {
                             return len - 2;
                         }
-                        return len - 1;// LUCENENET NOTE: Cannot fall through, so need to return the same value as default
+                        return len - 1; // LUCENENET NOTE: Cannot fall through, so need to return the same value as default
                     default:
                         return len - 1;
                 }

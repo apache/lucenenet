@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// <param name="in">
         ///          Input <see cref="TokenStream"/> </param>
         public CJKBigramFilter(TokenStream @in)
-              : this(@in, CJKScript.HAN | CJKScript.HIRAGANA | CJKScript.KATAKANA | CJKScript.HANGUL)
+            : this(@in, CJKScript.HAN | CJKScript.HIRAGANA | CJKScript.KATAKANA | CJKScript.HANGUL)
         {
         }
 
@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// <param name="flags"> OR'ed set from <see cref="CJKScript.HAN"/>, <see cref="CJKScript.HIRAGANA"/>,
         ///        <see cref="CJKScript.KATAKANA"/>, <see cref="CJKScript.HANGUL"/> </param>
         public CJKBigramFilter(TokenStream @in, CJKScript flags)
-              : this(@in, flags, false)
+            : this(@in, flags, false)
         {
         }
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.Cjk
         ///        when this is false, this is only done when there are no adjacent characters to form
         ///        a bigram. </param>
         public CJKBigramFilter(TokenStream @in, CJKScript flags, bool outputUnigrams)
-              : base(@in)
+            : base(@in)
         {
             doHan = (flags & CJKScript.HAN) == 0 ? NO : HAN_TYPE;
             doHiragana = (flags & CJKScript.HIRAGANA) == 0 ? NO : HIRAGANA_TYPE;
@@ -176,13 +176,11 @@ namespace Lucene.Net.Analysis.Cjk
             {
                 if (HasBufferedBigram)
                 {
-
                     // case 1: we have multiple remaining codepoints buffered,
                     // so we can emit a bigram here.
 
                     if (outputUnigrams)
                     {
-
                         // when also outputting unigrams, we output the unigram first,
                         // then rewind back to revisit the bigram.
                         // so an input of ABC is A + (rewind)AB + B + (rewind)BC + C
@@ -208,13 +206,11 @@ namespace Lucene.Net.Analysis.Cjk
                 }
                 else if (DoNext())
                 {
-
                     // case 2: look at the token type. should we form any n-grams?
 
                     string type = typeAtt.Type;
                     if (type == doHan || type == doHiragana || type == doKatakana || type == doHangul)
                     {
-
                         // acceptable CJK type: we form n-grams from these.
                         // as long as the offsets are aligned, we just add these to our current buffer.
                         // otherwise, we clear the buffer and start over.
@@ -223,7 +219,6 @@ namespace Lucene.Net.Analysis.Cjk
                         {
                             if (HasBufferedUnigram)
                             {
-
                                 // we have a buffered unigram, and we peeked ahead to see if we could form
                                 // a bigram, but we can't, because the offsets are unaligned. capture the state
                                 // of this peeked data to be revisited next time thru the loop, and dump our unigram.
@@ -239,12 +234,10 @@ namespace Lucene.Net.Analysis.Cjk
                     }
                     else
                     {
-
                         // not a CJK type: we just return these as-is.
 
                         if (HasBufferedUnigram)
                         {
-
                             // we have a buffered unigram, and we peeked ahead to see if we could form
                             // a bigram, but we can't, because its not a CJK type. capture the state
                             // of this peeked data to be revisited next time thru the loop, and dump our unigram.
@@ -258,7 +251,6 @@ namespace Lucene.Net.Analysis.Cjk
                 }
                 else
                 {
-
                     // case 3: we have only zero or 1 codepoints buffered,
                     // so not enough to form a bigram. But, we also have no
                     // more input. So if we have a buffered codepoint, emit

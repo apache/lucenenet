@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Ckb
         /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public SoraniAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Ckb
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public SoraniAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 

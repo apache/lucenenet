@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Id
         /// Calls <see cref="IndonesianStemFilter(TokenStream, bool)">IndonesianStemFilter(input, true)</see>
         /// </summary>
         public IndonesianStemFilter(TokenStream input)
-              : this(input, true)
+            : this(input, true)
         {
         }
 
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Id
         /// </para>
         /// </summary>
         public IndonesianStemFilter(TokenStream input, bool stemDerivational)
-              : base(input)
+            : base(input)
         {
             this.stemDerivational = stemDerivational;
             termAtt = AddAttribute<ICharTermAttribute>();

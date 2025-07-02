@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// Builds an analyzer which removes words in <see cref="DefaultStopSet"/>.
         /// </summary>
         public CJKAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// <param name="stopwords">
         ///          a stopword set </param>
         public CJKAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
         }
 

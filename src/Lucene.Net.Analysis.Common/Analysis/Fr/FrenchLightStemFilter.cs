@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Fr
         private readonly IKeywordAttribute keywordAttr;
 
         public FrenchLightStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

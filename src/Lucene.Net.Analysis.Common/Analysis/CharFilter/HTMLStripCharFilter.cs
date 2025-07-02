@@ -30811,7 +30811,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// </summary>
         /// <param name="source"><see cref="TextReader"/> to strip html tags from.</param>
         public HTMLStripCharFilter(TextReader source)
-                    : base(source)
+            : base(source)
         {
             this.outputSegment = inputSegment;
             this.zzReader = GetBufferedReader(source);
@@ -30824,7 +30824,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// <param name="source"><see cref="TextReader"/> to strip html tags from.</param>
         /// <param name="escapedTags">Tags in this set (both start and end tags) will not be filtered out.</param>
         public HTMLStripCharFilter(TextReader source, ICollection<string> escapedTags)
-                    : base(source)
+            : base(source)
         {
             this.outputSegment = inputSegment;
             this.zzReader = GetBufferedReader(source);
@@ -30924,13 +30924,15 @@ namespace Lucene.Net.Analysis.CharFilters
             /// <summary>
             /// Wraps the given <paramref name="buffer"/> and sets this.len to the given <paramref name="length"/>.
             /// </summary>
-            internal TextSegment(char[] buffer, int length) : base(buffer, length)
+            internal TextSegment(char[] buffer, int length)
+                : base(buffer, length)
             { }
 
             /// <summary>
             /// Allocates an internal buffer of the given size.
             /// </summary>
-            internal TextSegment(int size) : base(size)
+            internal TextSegment(int size)
+                : base(size)
             { }
 
             /// <summary>

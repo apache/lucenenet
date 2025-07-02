@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Bg
         /// <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public BulgarianAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Bg
         /// Builds an analyzer with the given stop words.
         /// </summary>
         public BulgarianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Bg
         /// before <see cref="BulgarianStemFilter"/>.
         /// </summary>
         public BulgarianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }

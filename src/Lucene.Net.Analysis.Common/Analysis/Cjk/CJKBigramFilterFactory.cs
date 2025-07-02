@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// <summary>
         /// Creates a new <see cref="CJKBigramFilterFactory"/> </summary>
         public CJKBigramFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             CJKScript flags = 0;
             if (GetBoolean(args, "han", true))

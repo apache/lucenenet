@@ -62,6 +62,7 @@ namespace Lucene.Net.Analysis.No
         /// <summary>
         /// Constant to remove Bokmål-specific endings </summary>
         BOKMAAL = 1,
+
         /// <summary>
         /// Constant to remove Nynorsk-specific endings </summary>
         NYNORSK = 2
@@ -91,6 +92,7 @@ namespace Lucene.Net.Analysis.No
             {
                 throw new ArgumentException("invalid flags");
             }
+
             useBokmaal = (flags & NorwegianStandard.BOKMAAL) != 0;
             useNynorsk = (flags & NorwegianStandard.NYNORSK) != 0;
         }
@@ -104,43 +106,92 @@ namespace Lucene.Net.Analysis.No
             }
 
             // Remove common endings, single-pass
-            if (len > 7 && ((StemmerUtil.EndsWith(s, len, "heter") && useBokmaal) || (StemmerUtil.EndsWith(s, len, "heten") && useBokmaal) || (StemmerUtil.EndsWith(s, len, "heita") && useNynorsk))) // general ending (hemmeleg-heita -> hemmeleg) -  general ending (hemmelig-heten -> hemmelig) -  general ending (hemmelig-heter -> hemmelig)
+            if (len > 7 &&
+                ((StemmerUtil.EndsWith(s, len, "heter") &&
+                useBokmaal) ||  // general ending (hemmeleg-heita -> hemmeleg)
+                (StemmerUtil.EndsWith(s, len, "heten") &&
+                useBokmaal) ||  // general ending (hemmelig-heten -> hemmelig)
+                (StemmerUtil.EndsWith(s, len, "heita") &&
+                useNynorsk)))   // general ending (hemmeleg-heita -> hemmeleg)
             {
                 return len - 5;
             }
 
             // Remove Nynorsk common endings, single-pass
-            if (len > 8 && useNynorsk && (StemmerUtil.EndsWith(s, len, "heiter") || StemmerUtil.EndsWith(s, len, "leiken") || StemmerUtil.EndsWith(s, len, "leikar"))) // general ending (trygg-leikar -> trygg) -  general ending (trygg-leiken -> trygg) -  general ending (hemmeleg-heiter -> hemmeleg)
+            if (len > 8 && useNynorsk &&
+                (StemmerUtil.EndsWith(s, len, "heiter") || // general ending (hemmeleg-heiter -> hemmeleg)
+                StemmerUtil.EndsWith(s, len, "leiken") ||  // general ending (trygg-leiken -> trygg)
+                StemmerUtil.EndsWith(s, len, "leikar")))   // general ending (trygg-leikar -> trygg)
             {
                 return len - 6;
             }
 
-            if (len > 5 && (StemmerUtil.EndsWith(s, len, "dom") || (StemmerUtil.EndsWith(s, len, "het") && useBokmaal))) // general ending (hemmelig-het -> hemmelig) -  general ending (kristen-dom -> kristen)
+            if (len > 5 && 
+                (StemmerUtil.EndsWith(s, len, "dom") ||  // general ending (kristen-dom -> kristen)
+                (StemmerUtil.EndsWith(s, len, "het") &&
+                useBokmaal)))                            // general ending (hemmelig-het -> hemmelig)
             {
                 return len - 3;
             }
 
-            if (len > 6 && useNynorsk && (StemmerUtil.EndsWith(s, len, "heit") || StemmerUtil.EndsWith(s, len, "semd") || StemmerUtil.EndsWith(s, len, "leik"))) // general ending (trygg-leik -> trygg) -  general ending (verk-semd -> verk) -  general ending (hemmeleg-heit -> hemmeleg)
+            if (len > 6 && useNynorsk &&
+                (StemmerUtil.EndsWith(s, len, "heit") ||  // general ending (hemmeleg-heit -> hemmeleg)
+                StemmerUtil.EndsWith(s, len, "semd") ||   // general ending (verk-semd -> verk)
+                StemmerUtil.EndsWith(s, len,"leik")))     // general ending (trygg-leik -> trygg)
             {
                 return len - 4;
             }
 
-            if (len > 7 && (StemmerUtil.EndsWith(s, len, "elser") || StemmerUtil.EndsWith(s, len, "elsen"))) // general ending (føl-elsen -> føl) -  general ending (føl-elser -> føl)
+            if (len > 7 &&
+                (StemmerUtil.EndsWith(s, len, "elser") ||   // general ending (føl-elser -> føl)
+                StemmerUtil.EndsWith(s, len, "elsen")))     // general ending (føl-elsen -> føl)
             {
                 return len - 5;
             }
 
-            if (len > 6 && ((StemmerUtil.EndsWith(s, len, "ende") && useBokmaal) || (StemmerUtil.EndsWith(s, len, "ande") && useNynorsk) || StemmerUtil.EndsWith(s, len, "else") || (StemmerUtil.EndsWith(s, len, "este") && useBokmaal) || (StemmerUtil.EndsWith(s, len, "aste") && useNynorsk) || (StemmerUtil.EndsWith(s, len, "eren") && useBokmaal) || (StemmerUtil.EndsWith(s, len, "aren") && useNynorsk))) // masc -  masc -  adj (fin-aste -> fin) -  adj (fin-este -> fin) -  general ending (føl-else -> føl) -  (sov-ande -> sov) -  (sov-ende -> sov)
+            if (len > 6 && 
+                ((StemmerUtil.EndsWith(s, len, "ende") &&
+                useBokmaal) ||      // (sov-ende -> sov)
+                (StemmerUtil.EndsWith(s, len, "ande") &&
+                useNynorsk) ||      // (sov-ande -> sov)
+                StemmerUtil.EndsWith(s, len, "else") ||  // general ending (føl-else -> føl)
+                (StemmerUtil.EndsWith(s, len, "este") &&
+                useBokmaal) ||      // adj (fin-este -> fin)
+                (StemmerUtil.EndsWith(s, len, "aste") &&
+                useNynorsk) ||      // adj (fin-aste -> fin)
+                (StemmerUtil.EndsWith(s, len, "eren") &&
+                useBokmaal) ||      // masc
+                (StemmerUtil.EndsWith(s, len, "aren") &&
+                    useNynorsk)))       // masc
             {
                 return len - 4;
             }
 
-            if (len > 5 && ((StemmerUtil.EndsWith(s, len, "ere") && useBokmaal) || (StemmerUtil.EndsWith(s, len, "are") && useNynorsk) || (StemmerUtil.EndsWith(s, len, "est") && useBokmaal) || (StemmerUtil.EndsWith(s, len, "ast") && useNynorsk) || StemmerUtil.EndsWith(s, len, "ene") || (StemmerUtil.EndsWith(s, len, "ane") && useNynorsk))) // masc pl definite (gut-ane) -  masc/fem/neutr pl definite (hus-ene) -  adj (fin-ast -> fin) -  adj (fin-est -> fin) -  adj (fin-are -> fin) -  adj (fin-ere -> fin)
+            if (len > 5 &&
+                ((StemmerUtil.EndsWith(s, len, "ere") &&
+                useBokmaal) ||     // adj (fin-ere -> fin)
+                (StemmerUtil.EndsWith(s, len, "are") &&
+                useNynorsk) ||    // adj (fin-are -> fin)
+                (StemmerUtil.EndsWith(s, len, "est") &&
+                useBokmaal) ||    // adj (fin-est -> fin)
+                (StemmerUtil.EndsWith(s, len, "ast") &&
+                useNynorsk) ||    // adj (fin-ast -> fin)
+                StemmerUtil.EndsWith(s, len, "ene") || // masc/fem/neutr pl definite (hus-ene)
+                (StemmerUtil.EndsWith(s, len, "ane") &&
+                useNynorsk)))     // masc pl definite (gut-ane)
             {
                 return len - 3;
             }
 
-            if (len > 4 && (StemmerUtil.EndsWith(s, len, "er") || StemmerUtil.EndsWith(s, len, "en") || StemmerUtil.EndsWith(s, len, "et") || (StemmerUtil.EndsWith(s, len, "ar") && useNynorsk) || (StemmerUtil.EndsWith(s, len, "st") && useBokmaal) || StemmerUtil.EndsWith(s, len, "te"))) // adj (billig-st -> billig) -  masc pl indefinite -  neutr definite -  masc/fem definite -  masc/fem indefinite
+            if (len > 4 &&
+                (StemmerUtil.EndsWith(s, len, "er") ||  // masc/fem indefinite
+                StemmerUtil.EndsWith(s, len, "en") ||   // masc/fem definite
+                StemmerUtil.EndsWith(s, len, "et") ||   // neutr definite
+                (StemmerUtil.EndsWith(s, len, "ar") &&
+                useNynorsk) ||    // masc pl indefinite
+                (StemmerUtil.EndsWith(s, len, "st") &&
+                useBokmaal) ||    // adj (billig-st -> billig)
+                StemmerUtil.EndsWith(s, len, "te")))
             {
                 return len - 2;
             }

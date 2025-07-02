@@ -102,6 +102,7 @@ namespace Lucene.Net.Analysis.Fi
                 {
                     return Step1(s, len - 3);
                 }
+
                 if (StemmerUtil.EndsWith(s, len, "ko"))
                 {
                     return Step1(s, len - 2);
@@ -114,11 +115,13 @@ namespace Lucene.Net.Analysis.Fi
                 {
                     return len - 8;
                 }
+
                 if (StemmerUtil.EndsWith(s, len, "dellisuus"))
                 {
                     return len - 9;
                 }
             }
+
             return len;
         }
 
@@ -126,7 +129,9 @@ namespace Lucene.Net.Analysis.Fi
         {
             if (len > 5)
             {
-                if (StemmerUtil.EndsWith(s, len, "lla") || StemmerUtil.EndsWith(s, len, "tse") || StemmerUtil.EndsWith(s, len, "sti"))
+                if (StemmerUtil.EndsWith(s, len, "lla") ||
+                    StemmerUtil.EndsWith(s, len, "tse") ||
+                    StemmerUtil.EndsWith(s, len, "sti"))
                 {
                     return len - 3;
                 }
@@ -174,7 +179,11 @@ namespace Lucene.Net.Analysis.Fi
 
             if (len > 6)
             {
-                if (StemmerUtil.EndsWith(s, len, "neen") || StemmerUtil.EndsWith(s, len, "niin") || StemmerUtil.EndsWith(s, len, "seen") || StemmerUtil.EndsWith(s, len, "teen") || StemmerUtil.EndsWith(s, len, "inen"))
+                if (StemmerUtil.EndsWith(s, len, "neen") ||
+                    StemmerUtil.EndsWith(s, len, "niin") ||
+                    StemmerUtil.EndsWith(s, len, "seen") ||
+                    StemmerUtil.EndsWith(s, len, "teen") ||
+                    StemmerUtil.EndsWith(s, len, "inen"))
                 {
                     return len - 4;
                 }
@@ -196,7 +205,13 @@ namespace Lucene.Net.Analysis.Fi
                     return len - 3;
                 }
 
-                if (StemmerUtil.EndsWith(s, len, "ssa") || StemmerUtil.EndsWith(s, len, "sta") || StemmerUtil.EndsWith(s, len, "lla") || StemmerUtil.EndsWith(s, len, "lta") || StemmerUtil.EndsWith(s, len, "tta") || StemmerUtil.EndsWith(s, len, "ksi") || StemmerUtil.EndsWith(s, len, "lle"))
+                if (StemmerUtil.EndsWith(s, len, "ssa") ||
+                    StemmerUtil.EndsWith(s, len, "sta") ||
+                    StemmerUtil.EndsWith(s, len, "lla") ||
+                    StemmerUtil.EndsWith(s, len, "lta") ||
+                    StemmerUtil.EndsWith(s, len, "tta") ||
+                    StemmerUtil.EndsWith(s, len, "ksi") ||
+                    StemmerUtil.EndsWith(s, len, "lle"))
                 {
                     return len - 3;
                 }

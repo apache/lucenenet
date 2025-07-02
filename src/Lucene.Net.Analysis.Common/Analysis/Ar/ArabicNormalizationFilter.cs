@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Ar
         private readonly ICharTermAttribute termAtt;
 
         public ArabicNormalizationFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
         }

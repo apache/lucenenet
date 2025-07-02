@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Fr
         private readonly IKeywordAttribute keywordAttr;
 
         public FrenchStemFilter(TokenStream @in)
-              : base(@in)
+            : base(@in)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();
@@ -79,6 +79,7 @@ namespace Lucene.Net.Analysis.Fr
                 return false;
             }
         }
+
         /// <summary>
         /// Set a alternative/custom <see cref="FrenchStemmer"/> for this filter.
         /// </summary>

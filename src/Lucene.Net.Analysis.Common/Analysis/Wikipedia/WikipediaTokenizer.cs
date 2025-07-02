@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         /// <param name="tokenOutput"> One of <see cref="TOKENS_ONLY"/>, <see cref="UNTOKENIZED_ONLY"/>, <see cref="BOTH"/> </param>
         /// <param name="untokenizedTypes"> Untokenized types </param>
         public WikipediaTokenizer(AttributeFactory factory, TextReader input, int tokenOutput, ICollection<string> untokenizedTypes)
-              : base(factory, input)
+            : base(factory, input)
         {
             this.scanner = new WikipediaTokenizerImpl(this.m_input);
             Init(tokenOutput, untokenizedTypes);

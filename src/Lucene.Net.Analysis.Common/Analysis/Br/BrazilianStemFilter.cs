@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Br
         /// </summary>
         /// <param name="in"> the source <see cref="TokenStream"/>  </param>
         public BrazilianStemFilter(TokenStream @in)
-              : base(@in)
+            : base(@in)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

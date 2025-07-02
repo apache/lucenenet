@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.El
         ///   See <see cref="LuceneVersion"/> </param>
         /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         public GreekLowerCaseFilter(LuceneVersion matchVersion, TokenStream @in)
-              : base(@in)
+            : base(@in)
         {
             this.charUtils = CharacterUtils.GetInstance(matchVersion);
             termAtt = AddAttribute<ICharTermAttribute>();
