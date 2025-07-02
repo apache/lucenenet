@@ -253,6 +253,27 @@ insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
+# Exclude *.brk (copied directly from Lucene)
+[**/*.brk]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.rbbi (copied directly from Lucene)
+[**/*.rbbi]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.nrm (copied directly from Lucene)
+[**/*.nrm]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
 # Exclude Phonetic language bm files (Copied directly from commons-codec)
 [**/Language/**/*.txt]
 trim_trailing_whitespace = unset
