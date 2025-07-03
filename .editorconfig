@@ -496,6 +496,34 @@ insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
+# Exclude TagSoup stml files (copied directly from TagSoup)
+[**/TagSoup/stml/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude TagSoup tssl files (copied directly from TagSoup)
+[**/TagSoup/tssl/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude TagSoup .tt files (copied directly from TagSoup)
+[**/TagSoup/*.tt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude TagSoup .Generated.cs files (copied directly from TagSoup)
+[**/TagSoup/*.Generated.cs]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
 # Exclude *.tssl files (xml copied directly from TagSoup)
 [**/*.tssl]
 trim_trailing_whitespace = unset
