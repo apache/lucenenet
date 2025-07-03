@@ -9,7 +9,8 @@
   "PassedFiles": [],
   "Disable": {
     "EndOfLine": false,
-    "Indentation": true,
+    "Indentation": false,
+    "IndentSize": true,
     "InsertFinalNewline": false,
     "TrimTrailingWhitespace": false
   }
