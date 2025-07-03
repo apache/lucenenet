@@ -11,20 +11,35 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 resharper_enforce_empty_line_at_end_of_file = true
 indent_style = space
+indent_size = 4
+
+# ========================================
+# Windows Batch and Command files
+# ========================================
+[*.bat]
+end_of_line = crlf
+trim_trailing_whitespace = false
+
+[*.cmd]
+end_of_line = crlf
+trim_trailing_whitespace = false
 
 # ========================================
 # Markdown files
 # ========================================
 [*.md]
 indent_size = 2
+trim_trailing_whitespace = false
 
 # ========================================
 # YAML files (preserve trailing spaces for indented script blocks)
 # ========================================
 [*.yml]
+indent_size = 2
 trim_trailing_whitespace = false
 
 [*.yaml]
+indent_size = 2
 trim_trailing_whitespace = false
 
 # ========================================
@@ -45,6 +60,22 @@ indent_size = 2
 [*.fsproj]
 indent_size = 2
 
+[*.config]
+indent_size = 2
+
+# Apache-specific file
+[*.rdf]
+indent_size = 2
+
+[*.resx]
+indent_size = 2
+
+[*.trx]
+indent_size = 2
+
+[*.user]
+indent_size = 2
+
 [*.vbproj]
 indent_size = 2
 
@@ -53,6 +84,98 @@ indent_size = 2
 
 [*.sln]
 indent_style = tab
+
+# ========================================
+# DTD files
+# ========================================
+[*.dtd]
+indent_size = 2
+
+# ========================================
+# XSLT files
+# ========================================
+[*.xsl]
+indent_size = 2
+
+[*.xslt]
+indent_size = 2
+
+# ========================================
+# JSON files
+# ========================================
+[*.json]
+indent_size = 2
+trim_trailing_whitespace = false
+
+# ========================================
+# DocFx files
+# ========================================
+[*.liquid]
+indent_size = 2
+
+# JSON format, different extension
+[*.map]
+indent_size = 2
+trim_trailing_whitespace = false
+
+[*.partial]
+indent_size = 2
+
+[*.tmpl]
+indent_size = 2
+
+# ========================================
+# Python files
+# ========================================
+[*.py]
+# PEP 8 and black defaults are indent_size = 4, but this is a compromise because the files we inherited have indentation of 2
+indent_size = 2
+
+# ========================================
+# HTML files
+# ========================================
+[*.html]
+indent_size = 2
+
+[*.htm]
+indent_size = 2
+
+# ========================================
+# CSS files
+# ========================================
+[*.css]
+indent_size = 2
+
+[*.min.css]
+trim_trailing_whitespace = false
+insert_final_newline = false
+indent_style = unset
+indent_size = unset
+
+# ========================================
+# JavaScript files
+# ========================================
+[*.js]
+indent_size = 2
+
+# ========================================
+# Java properties files
+# ========================================
+[*.properties]
+trim_trailing_whitespace = false
+
+# *.info (properties file copied directly from Lucene for Morfologik)
+[*.info]
+trim_trailing_whitespace = false
+
+# ========================================
+# Git files
+# ========================================
+[.gitignore]
+end_of_line = lf
+
+[.gitattributes]
+end_of_line = lf
 
 # ========================================
 # C# files
@@ -165,139 +288,400 @@ dotnet_diagnostic.S907.severity = none
 
 # Files that tests read should not change from Lucene
 [**/src/Lucene.Net.Tests.*/**.txt]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
-resharper_enforce_empty_line_at_end_of_file = false
-indent_style = unset
-
-[**/src/**/Lucene.Net.Tests.*/**.txt]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude all files under /lib (3rd party binaries)
 [**/lib/**]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude all files under /.build/psake (3rd party code)
 [**/.build/psake/**]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude CHANGES.txt (we don't care about formatting here)
 [**/CHANGES.txt]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude LICENSE.txt (we should preserve original formatting here)
 [**/LICENSE.txt]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude *.snk (we don't care about formatting here)
 [**/*.snk]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude package.md (these are auto-generated)
 [**/package.md]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude overview.md (these are auto-generated)
 [**/overview.md]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude *.rslp (copied directly from Lucene)
 [**/*.rslp]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude stopwords.txt (copied directly from Lucene)
 [**/stopwords.txt]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude Snowball stopwords (copied directly from Lucene)
 [**/Snowball/*_stop.txt]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude *.dat (copied directly from Lucene)
 [**/*.dat]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude *.brk (copied directly from Lucene)
 [**/*.brk]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude *.rbbi (copied directly from Lucene)
 [**/*.rbbi]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
-# Exclude *.nrm (copied directly from Lucene)
+# Exclude *.nrm (binary copied directly from Lucene)
 [**/*.nrm]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
-# Exclude Phonetic language bm files (Copied directly from commons-codec)
+# Exclude *.utf8 (binary copied directly from Lucene)
+[**/*.utf8]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.utf-8 (binary copied directly from Lucene)
+[**/*.utf-8]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.aff (copied for directly from Lucene for testing Hunspell)
+[**/*.aff]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.dic (downloaded for testing Hunspell)
+[**/*.dic]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.xpi (downloaded for testing Hunspell)
+[**/*.xpi]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.tbl (binary copied directly from Lucene for Stempel)
+[**/*.tbl]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.bz2 (binary copied directly from Lucene for Benchmark)
+[**/*.bz2]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.rnc (binary copied directly from Lucene for Benchmark)
+[**/*.rnc]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.mem (binary copied directly from Lucene for SmartCn)
+[**/*.mem]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.input (copied directly from Lucene for Morfologik)
+[**/*.input]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.input (binary copied directly from Lucene for Morfologik)
+[**/*.dict]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.dict (binary copied directly from Lucene for Morfologik)
+[**/*.dict]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .svg files (XML copied dirctly from Lucene to Misc)
+[**/*.svg]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .svg files (text copied dirctly from Lucene to Misc)
+[**/*.gnuplot]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude Phonetic language bm files (copied directly from commons-codec)
 [**/Language/**/*.txt]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.tssl files (xml copied directly from TagSoup)
+[**/*.tssl]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.stml files (copied directly from TagSoup)
+[**/*.stml]
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude .Designer.cs files (these are auto-generated)
 [**/*.Designer.cs]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude .idea files (these are auto-generated)
 [**/.idea/**]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # For now, exclude entire websites directory (maybe we can fix these later)
 [**/websites/**]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+
+# Exclude .zip files
+[**/*.zip]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .gz files
+[**/*.gz]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .woff files (glyph icons)
+[**/*.woff]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .woff2 files (glyph icons)
+[**/*.woff2]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .ttf files (TrueType fonts)
+[**/*.ttf]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .eot files (Embedded OpenType fonts)
+[**/*.eot]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .nupkg files (NuGet package)
+[**/*.nupkg]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .snupkg files (NuGet symbols package)
+[**/*.snupkg]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .asc files
+[**/*.asc]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .md5 files
+[**/*.md5]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .sha1 files
+[**/*.sha1]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .sha512 files
+[**/*.sha512]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .ico files (image)
+[**/*.ico]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .psd files (Photoshop)
+[**/*.psd]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .ai files (Adobe Illustrator)
+[**/*.ai]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .png files (image)
+[**/*.png]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .pdb files (program debug database)
+[**/*.pdb]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .log files
+[**/*.log]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .jar files (Java executable)
+[**/*.jar]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .exe files (Windows executable)
+[**/*.exe]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .dll files (dynamic link library)
+[**/*.dll]
+trim_trailing_whitespace = false
+insert_final_newline = false
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .bin files (generic binary data)
+[**/*.bin]
+trim_trailing_whitespace = false
+insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
