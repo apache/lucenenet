@@ -301,7 +301,7 @@ resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
 # Exclude all files under /.build/psake (3rd party code)
-[.build/psake/**]
+[**/.build/psake/**]
 trim_trailing_whitespace = false
 insert_final_newline = false
 resharper_enforce_empty_line_at_end_of_file = false
