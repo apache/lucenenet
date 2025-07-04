@@ -38,8 +38,6 @@ jobs:
             echo "✅ EditorConfig Checker Success"
           else
             echo ""
-            echo "❌ One or more files do not conform to .editorconfig rules."
-            echo ""
             echo "📘 Common IDE Setup Help"
             echo ""
             echo "🧠 Visual Studio:"
