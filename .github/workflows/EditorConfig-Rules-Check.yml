@@ -35,7 +35,9 @@ jobs:
         continue-on-error: true
         run: |
           echo "::group::Running editorconfig-checker"
-          ec || echo "::set-output name=result::fail"
+          if ! ec --debug; then
+            echo "result=fail" >> $GITHUB_OUTPUT
+          fi
           echo "::endgroup::"
 
       - name: Show IDE troubleshooting help
