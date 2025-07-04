@@ -35,7 +35,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "::group::Running editorconfig-checker"
-          if ! ec --debug; then
+          if ! ec; then
             echo "result=fail" >> $GITHUB_OUTPUT
           fi
           echo "::endgroup::"
