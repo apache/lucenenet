@@ -580,13 +580,12 @@ insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
-# For now, exclude entire websites directory (maybe we can fix these later)
-[**/websites/**]
+# Exclude the generated static website files
+[**/websites/**/_site/**]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
-
 
 # Exclude .zip files
 [**/*.zip]
