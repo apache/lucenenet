@@ -293,6 +293,18 @@ insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
+[**/src/Lucene.Net.Tests.*/**.xml]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+[**/src/Lucene.Net.Tests.*/**.xsl]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
 # Exclude all files under /lib (3rd party binaries)
 [**/lib/**]
 trim_trailing_whitespace = unset
@@ -309,6 +321,13 @@ indent_style = unset
 
 # Exclude CHANGES.txt (we don't care about formatting here)
 [**/CHANGES.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude ChangeNotes.txt (we don't care about formatting here)
+[**/ChangeNotes.txt]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
