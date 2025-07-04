@@ -51,7 +51,7 @@
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>
   </ItemGroup>
-  
+
   <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
 
   <ItemGroup>
