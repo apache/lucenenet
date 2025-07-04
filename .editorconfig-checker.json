@@ -4,7 +4,9 @@
   "IgnoreDefaults": false,
   "SpacesAfterTabs": false,
   "NoColor": false,
-  "Exclude": [],
+  "Exclude": [
+    "**/*.resx"
+  ],
   "AllowedContentTypes": [],
   "PassedFiles": [],
   "Disable": {
