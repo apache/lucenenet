@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis.No
                 return len - 6;
             }
 
-            if (len > 5 && 
+            if (len > 5 &&
                 (StemmerUtil.EndsWith(s, len, "dom") ||  // general ending (kristen-dom -> kristen)
                 (StemmerUtil.EndsWith(s, len, "het") &&
                 useBokmaal)))                            // general ending (hemmelig-het -> hemmelig)
@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis.No
                 return len - 5;
             }
 
-            if (len > 6 && 
+            if (len > 6 &&
                 ((StemmerUtil.EndsWith(s, len, "ende") &&
                 useBokmaal) ||      // (sov-ende -> sov)
                 (StemmerUtil.EndsWith(s, len, "ande") &&
