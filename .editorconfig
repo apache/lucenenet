@@ -305,6 +305,12 @@ insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
+[**/src/Lucene.Net.Tests.*/**.html]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
 # Exclude all files under /lib (3rd party binaries)
 [**/lib/**]
 trim_trailing_whitespace = unset
