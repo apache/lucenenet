@@ -30,40 +30,45 @@ jobs:
           # Clean up the temp dir
           rm -rf ec-temp ec.tar.gz
 
-      - name: Run EditorConfig Checker
-        id: check
-        continue-on-error: true
+      - name: Run EditorConfig Checker and Show Help
         run: |
-          echo "::group::Running editorconfig-checker"
+          echo "🔍 Running EditorConfig Checker..."
           if ! ec; then
-            echo "result=fail" >> $GITHUB_OUTPUT
+            echo ""
+            echo "❌ One or more files do not conform to .editorconfig rules."
+            echo ""
+            echo "📘 Common IDE Setup Help"
+            echo ""
+            echo "🧠 Visual Studio:"
+            echo "  ➤ Tools > Options > Text Editor > [Language] > Code Style > General"
+            echo "  ➤ Enable: 'Detect EditorConfig settings'"
+            echo "  ➤ Optionally enable: 'Reformat on save' under Code Cleanup"
+            echo ""
+            echo "🧰 JetBrains Rider:"
+            echo "  ➤ Preferences > Editor > Code Style"
+            echo "  ➤ Enable: 'Enable EditorConfig support'"
+            echo "  ➤ Re-save affected files to apply formatting"
+            echo ""
+            echo "💡 Visual Studio Code:"
+            echo "  ➤ Install the 'EditorConfig for VS Code' extension"
+            echo "  ➤ Enable 'files.insertFinalNewline' and 'files.trimTrailingWhitespace'"
+            echo ""
+            echo "📝 Notepad++:"
+            echo "  ➤ Settings > Preferences > MISC → Enable 'Final line ending'"
+            echo "  ➤ Settings > Preferences > Language → Tab Settings → Enable 'Replace by space'"
+            echo ""
+            echo "🔧 Other Common Editors for .NET:"
+            echo "  • JetBrains ReSharper (Visual Studio extension)"
+            echo "  • OmniSharp-enabled editors (like NeoVim, Sublime Text)"
+            echo "  • Emacs (with editorconfig plugin)"
+            echo "  • Vim (with editorconfig-vim plugin)"
+            echo ""
+            echo "🌍 Other editors:"
+            echo "  ➤ Check if your editor supports .editorconfig:"
+            echo "    → https://editorconfig.org/#pre-installed"
+            echo "    → https://editorconfig.org/#download"
+            echo ""
+            echo "✅ After configuration, open the file and make a whitespace-only edit, then save."
+            echo "   This will apply your configured formatting and resolve the error."
+            exit 1
           fi
-          echo "::endgroup::"
-
-      - name: Show IDE troubleshooting help
-        if: steps.check.outputs.result == 'fail'
-        run: |
-          echo ""
-          echo "❌ One or more files do not conform to .editorconfig rules."
-          echo ""
-          echo "🧩 If you're using JetBrains Rider *without* ReSharper:"
-          echo "  ➤ Go to: Preferences > Editor > Code Style"
-          echo "  ➤ Enable: 'Enable EditorConfig support'"
-          echo "  ➤ Then re-save the affected file to apply final newlines."
-          echo ""
-          echo "💡 If you're using Visual Studio Code:"
-          echo "  ➤ Make sure the 'EditorConfig for VS Code' extension is installed."
-          echo "  ➤ Ensure 'editor.insertFinalNewline' is not overridden in your settings.json."
-          echo ""
-          echo "💡 If you're using Vim:"
-          echo "  ➤ Use a plugin like 'editorconfig-vim'."
-          echo ""
-          echo "💡 If you're using Emacs:"
-          echo "  ➤ Use the 'editorconfig' package from MELPA."
-          echo ""
-          echo "✅ After configuring your editor, open the file and make a whitespace-only edit, then save."
-          echo "   This will ensure the file ends with a newline."
-          echo ""
-          echo "🔁 Finally, commit and push your changes to update the PR."
-          echo ""
-          exit 1
