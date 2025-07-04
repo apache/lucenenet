@@ -741,3 +741,10 @@ trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
+
+# Exclude .resx files (VS editor doesn't respect .editorconfig)
+[**/*.resx]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
