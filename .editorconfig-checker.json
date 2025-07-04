@@ -5,7 +5,8 @@
   "SpacesAfterTabs": false,
   "NoColor": false,
   "Exclude": [
-    "**/*.resx"
+    "**/*.resx",
+    "**/*.DotSettings"
   ],
   "AllowedContentTypes": [],
   "PassedFiles": [],
