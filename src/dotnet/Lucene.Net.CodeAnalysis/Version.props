@@ -26,7 +26,7 @@
 
     <AssemblyMajorMinorPatchPattern>^\d+\.\d+\.\d+</AssemblyMajorMinorPatchPattern>
     <AssemblyMajorMinorPatch>$([System.Text.RegularExpressions.Regex]::Match($(AssemblyVersion), $(AssemblyMajorMinorPatchPattern)))</AssemblyMajorMinorPatch>
-    
+
     <AssemblyVersion>$(AssemblyMajorMinorPatch).$(AssemblyVersionRevision)</AssemblyVersion>
   </PropertyGroup>
 </Project>
