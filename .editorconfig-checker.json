@@ -5,8 +5,11 @@
   "SpacesAfterTabs": false,
   "NoColor": false,
   "Exclude": [
+    "*.resx",
     "**/*.resx",
+    "*.DotSettings",
     "**/*.DotSettings",
+    "App.config",
     "**/App.config"
   ],
   "AllowedContentTypes": [],
