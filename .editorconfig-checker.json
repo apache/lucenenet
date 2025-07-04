@@ -7,7 +7,7 @@
   "Exclude": [
     "\\.resx$",
     "\\.DotSettings$",
-    "App\\.config$",
+    "App\\.config$"
   ],
   "AllowedContentTypes": [],
   "PassedFiles": [],
