@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
@@ -36,7 +36,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// <summary>
     /// A <see cref="ParallelTaxonomyArrays"/> that are initialized from the taxonomy
     /// index.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     internal class TaxonomyIndexArrays : ParallelTaxonomyArrays

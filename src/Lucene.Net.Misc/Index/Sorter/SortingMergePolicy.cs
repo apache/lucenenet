@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
@@ -33,15 +33,15 @@ namespace Lucene.Net.Index.Sorter
     /// will be sorted while segments resulting from a flush will be in the order
     /// in which documents have been added.
     /// <para><b>NOTE</b>: Never use this policy if you rely on
-    /// <see cref="Index.IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)">IndexWriter.AddDocuments</see> 
+    /// <see cref="Index.IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)">IndexWriter.AddDocuments</see>
     /// to have sequentially-assigned doc IDs, this policy will scatter doc IDs.
     /// </para>
-    /// <para><b>NOTE</b>: This policy should only be used with idempotent <see cref="Sort"/>s 
-    /// so that the order of segments is predictable. For example, using 
-    /// <see cref="Sort.INDEXORDER"/> in reverse (which is not idempotent) will make 
-    /// the order of documents in a segment depend on the number of times the segment 
+    /// <para><b>NOTE</b>: This policy should only be used with idempotent <see cref="Sort"/>s
+    /// so that the order of segments is predictable. For example, using
+    /// <see cref="Sort.INDEXORDER"/> in reverse (which is not idempotent) will make
+    /// the order of documents in a segment depend on the number of times the segment
     /// has been merged.
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </para>
     /// </summary>
     public sealed class SortingMergePolicy : MergePolicy

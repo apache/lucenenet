@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
     /// rely on a given document having the same number between sessions.
     ///
     /// <para/>
-    /// <b>NOTE</b>: 
+    /// <b>NOTE</b>:
     /// <see cref="IndexReader"/> instances are completely thread
     /// safe, meaning multiple threads can call any of its methods,
     /// concurrently.  If your application requires external

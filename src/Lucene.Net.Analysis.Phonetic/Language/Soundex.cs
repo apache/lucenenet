@@ -1,4 +1,4 @@
-﻿// commons-codec version compatibility level: 1.10
+// commons-codec version compatibility level: 1.10
 using Lucene.Net.Support;
 using System;
 
@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// Such letters are ignored (after the first) and do not
         /// act as separators when dropping duplicate codes.
         /// <para/>
-        /// The codes for consonants are otherwise the same as for 
+        /// The codes for consonants are otherwise the same as for
         /// <see cref="US_ENGLISH_MAPPING_STRING"/> and <see cref="US_ENGLISH_SIMPLIFIED"/>.
         /// <para/>
         /// since 1.11

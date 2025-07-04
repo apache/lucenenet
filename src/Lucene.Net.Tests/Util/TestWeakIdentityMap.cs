@@ -1,4 +1,4 @@
-﻿// LUCENENET specific - factored out this WeakIdentityMap<TKey, TValue> and replaced it with ConditionalWeakTable<TKey, TValue>.
+// LUCENENET specific - factored out this WeakIdentityMap<TKey, TValue> and replaced it with ConditionalWeakTable<TKey, TValue>.
 // ConditionalWeakTable<TKey, TValue> is thread-safe and internally uses RuntimeHelpers.GetHashCode()
 // to lookup the key, so it can be used as a direct replacement for WeakIdentityMap<TKey, TValue>
 // in most cases.

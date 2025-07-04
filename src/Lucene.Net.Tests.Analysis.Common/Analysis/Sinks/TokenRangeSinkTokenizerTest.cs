@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -54,7 +54,8 @@ namespace Lucene.Net.Analysis.Sinks
         [Test]
         public virtual void TestIllegalArguments()
         {
-            Assert.Throws<ArgumentException>(() => {
+            Assert.Throws<ArgumentException>(() =>
+            {
                 new TokenRangeSinkFilter(4, 2);
             });
         }

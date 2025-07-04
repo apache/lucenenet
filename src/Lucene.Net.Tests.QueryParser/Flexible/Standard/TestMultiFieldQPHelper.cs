@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     /// <summary>
     /// This test case is a copy of the core Lucene query parser test, it was adapted
     /// to use new QueryParserHelper instead of the old query parser.
-    /// 
+    ///
     /// Tests QueryParser.
     /// </summary>
     public class TestMultiFieldQPHelper : LuceneTestCase
@@ -264,7 +264,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             Query q = QueryParserUtil.Parse("one", fields, flags,
                 new MockAnalyzer(Random));// , fields, flags, new
-                                            // MockAnalyzer());
+                                          // MockAnalyzer());
             assertEquals("+b:one -t:one", q.toString());
 
             q = QueryParserUtil.Parse("one two", fields, flags, new MockAnalyzer(Random));

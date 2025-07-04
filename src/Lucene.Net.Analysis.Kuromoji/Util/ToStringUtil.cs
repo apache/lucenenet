@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -1391,7 +1391,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                         builder.Append(ch);
                         break;
                 }
-                break_main: { /* LUCENENET: intentionally empty */ }
+            break_main: { /* LUCENENET: intentionally empty */ }
             }
         }
     }

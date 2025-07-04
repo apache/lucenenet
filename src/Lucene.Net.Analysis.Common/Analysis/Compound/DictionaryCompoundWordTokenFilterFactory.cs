@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Compound
      */
 
     /// <summary>
-    /// Factory for <see cref="DictionaryCompoundWordTokenFilter"/>. 
+    /// Factory for <see cref="DictionaryCompoundWordTokenFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_dictcomp" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

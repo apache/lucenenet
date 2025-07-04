@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Synonym
     /// <summary>
     /// Mapping rules for use with <see cref="SlowSynonymFilter"/>
     /// </summary>
-    /// @deprecated (3.4) use <see cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
+    /// @deprecated (3.4) use <see cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0
     [Obsolete("(3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal class SlowSynonymMap
     {
@@ -157,7 +157,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// <summary>
         /// Merge two lists of tokens, producing a single list with manipulated positionIncrements so that
         /// the tokens end up at the same position.
-        /// 
+        ///
         /// Example:  [a b] merged with [c d] produces [a/b c/d]  ('/' denotes tokens in the same position)
         /// Example:  [a,5 b,2] merged with [c d,4 e,4] produces [c a,5/d b,2 e,2]  (a,n means a has posInc=n)
         /// </summary>

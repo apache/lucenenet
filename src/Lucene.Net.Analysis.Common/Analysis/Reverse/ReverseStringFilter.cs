@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Reverse
         private const char NOMARKER = '\uFFFF';
 
         /// <summary>
-        /// Example marker character: U+0001 (START OF HEADING) 
+        /// Example marker character: U+0001 (START OF HEADING)
         /// </summary>
         public const char START_OF_HEADING_MARKER = '\u0001';
 
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Reverse
         public const char INFORMATION_SEPARATOR_MARKER = '\u001F';
 
         /// <summary>
-        /// Example marker character: U+EC00 (PRIVATE USE AREA: EC00) 
+        /// Example marker character: U+EC00 (PRIVATE USE AREA: EC00)
         /// </summary>
         public const char PUA_EC00_MARKER = '\uEC00';
 
@@ -66,15 +66,15 @@ namespace Lucene.Net.Analysis.Reverse
         public const char RTL_DIRECTION_MARKER = '\u200F';
 
         /// <summary>
-        /// Create a new <see cref="ReverseStringFilter"/> that reverses all tokens in the 
+        /// Create a new <see cref="ReverseStringFilter"/> that reverses all tokens in the
         /// supplied <see cref="TokenStream"/>.
         /// <para>
-        /// The reversed tokens will not be marked. 
+        /// The reversed tokens will not be marked.
         /// </para>
         /// </summary>
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="in"> <see cref="TokenStream"/> to filter </param>
-        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in) 
+        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in)
             : this(matchVersion, @in, NOMARKER)
         {
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Reverse
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         /// <param name="marker"> A character used to mark reversed tokens </param>
-        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in, char marker) 
+        public ReverseStringFilter(LuceneVersion matchVersion, TokenStream @in, char marker)
             : base(@in)
         {
             this.matchVersion = matchVersion;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Reverse
             Reverse(matchVersion, buffer, 0, len);
         }
 
-        /// @deprecated (3.1) Remove this when support for 3.0 indexes is no longer needed. 
+        /// @deprecated (3.1) Remove this when support for 3.0 indexes is no longer needed.
         [Obsolete("(3.1) Remove this when support for 3.0 indexes is no longer needed.")]
         private static void ReverseUnicode3(char[] buffer, int start, int len)
         {

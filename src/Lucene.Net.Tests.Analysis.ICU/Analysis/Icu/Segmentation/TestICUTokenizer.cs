@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level < 7.1.0
+// Lucene version compatibility level < 7.1.0
 using ICU4N.Globalization;
 using J2N.Threading;
 using Lucene.Net.Analysis.Icu.TokenAttributes;

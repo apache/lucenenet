@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Parser;
+using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     public class OrQueryNode : BooleanQueryNode
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="clauses">the query nodes to be or'ed</param>
         public OrQueryNode(IList<IQueryNode> clauses)

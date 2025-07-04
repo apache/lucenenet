@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;

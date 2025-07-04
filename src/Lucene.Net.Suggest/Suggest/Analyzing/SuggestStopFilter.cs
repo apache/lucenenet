@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Diagnostics;
@@ -31,11 +31,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// punctuation or something, and mark it KEYWORD so future
     /// stemmers won't touch it either while a query like "find
     /// the popsicle' would remove 'the' as a stopword.
-    /// 
+    ///
     /// <para>
     /// Normally you'd use the ordinary <see cref="Analysis.Core.StopFilter"/>
     /// in your indexAnalyzer and then this class in your
-    /// queryAnalyzer, when using one of the analyzing suggesters. 
+    /// queryAnalyzer, when using one of the analyzing suggesters.
     /// </para>
     /// </summary>
 

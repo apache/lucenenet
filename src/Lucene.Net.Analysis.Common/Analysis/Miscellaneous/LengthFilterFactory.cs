@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <see cref="LengthFilter"/>. 
+    /// Factory for <see cref="LengthFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_lngth" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

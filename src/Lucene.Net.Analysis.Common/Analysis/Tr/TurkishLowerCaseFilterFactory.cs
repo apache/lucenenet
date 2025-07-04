@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Tr
     {
         /// <summary>
         /// Creates a new <see cref="TurkishLowerCaseFilterFactory"/> </summary>
-        public TurkishLowerCaseFilterFactory(IDictionary<string, string> args) 
+        public TurkishLowerCaseFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)

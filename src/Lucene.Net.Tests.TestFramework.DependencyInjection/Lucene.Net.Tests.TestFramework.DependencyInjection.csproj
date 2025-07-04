@@ -23,7 +23,7 @@
 
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
 
-  <PropertyGroup>   
+  <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.TestFramework.DependencyInjection</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
 

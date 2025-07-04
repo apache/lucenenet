@@ -23,14 +23,14 @@ namespace Lucene.Net.Analysis.Ar
 
     /// <summary>
     /// Test the Arabic Analyzer
-    /// 
+    ///
     /// </summary>
     public class TestArabicAnalyzer : BaseTokenStreamTestCase
     {
 
         /// <summary>
-        /// This test fails with NPE when the 
-        /// stopwords file is missing in classpath 
+        /// This test fails with NPE when the
+        /// stopwords file is missing in classpath
         /// </summary>
         [Test]
         public virtual void TestResourcesAvailable()

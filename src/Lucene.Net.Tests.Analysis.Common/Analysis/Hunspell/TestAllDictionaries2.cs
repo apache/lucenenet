@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.10.4
+// Lucene version compatibility level 4.10.4
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using NUnit.Framework;

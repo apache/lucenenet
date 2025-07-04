@@ -83,15 +83,15 @@ namespace Lucene.Net.QueryParsers.Classic
             assertEquals("\"(multi multi2) foo\"^2.0", qp.Parse("\"multi foo\"^2").toString());
 
             // phrase after changing default slop
-            qp.PhraseSlop=(99);
+            qp.PhraseSlop = (99);
             assertEquals("\"(multi multi2) foo\"~99 bar",
                          qp.Parse("\"multi foo\" bar").toString());
             assertEquals("\"(multi multi2) foo\"~99 \"foo bar\"~2",
                          qp.Parse("\"multi foo\" \"foo bar\"~2").toString());
-            qp.PhraseSlop=(0);
+            qp.PhraseSlop = (0);
 
             // non-default operator:
-            qp.DefaultOperator=(QueryParserBase.AND_OPERATOR);
+            qp.DefaultOperator = (QueryParserBase.AND_OPERATOR);
             assertEquals("+(multi multi2) +foo", qp.Parse("multi foo").toString());
 
         }

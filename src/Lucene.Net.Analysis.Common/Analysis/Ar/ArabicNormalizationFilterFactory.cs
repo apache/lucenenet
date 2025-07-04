@@ -35,11 +35,10 @@ namespace Lucene.Net.Analysis.Ar
     /// </summary>
     public class ArabicNormalizationFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
-
         /// <summary>
         /// Creates a new <see cref="ArabicNormalizationFilterFactory"/> </summary>
         public ArabicNormalizationFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

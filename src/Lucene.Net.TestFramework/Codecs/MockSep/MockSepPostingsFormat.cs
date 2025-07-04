@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.BlockTerms;
+using Lucene.Net.Codecs.BlockTerms;
 using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Index;
 using Lucene.Net.Util;

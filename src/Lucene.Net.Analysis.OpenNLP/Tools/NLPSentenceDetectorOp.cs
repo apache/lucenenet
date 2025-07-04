@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 using Lucene.Net.Support.Threading;
 using opennlp.tools.sentdetect;
 using opennlp.tools.util;

@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Ar
 
     /// <summary>
     /// Test the Arabic Normalization Filter
-    /// 
+    ///
     /// </summary>
     public class TestArabicStemFilter : BaseTokenStreamTestCase
     {

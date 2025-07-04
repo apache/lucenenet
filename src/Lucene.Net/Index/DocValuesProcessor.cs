@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Documents.Extensions;
 using System;
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(false,"unrecognized DocValues.Type: {0}", dvType);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "unrecognized DocValues.Type: {0}", dvType);
                 }
             }
         }

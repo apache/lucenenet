@@ -1,4 +1,4 @@
-﻿using J2N.Threading.Atomic;
+using J2N.Threading.Atomic;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;

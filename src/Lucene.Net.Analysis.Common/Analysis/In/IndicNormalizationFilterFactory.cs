@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.In
      */
 
     /// <summary>
-    /// Factory for <see cref="IndicNormalizationFilter"/>. 
+    /// Factory for <see cref="IndicNormalizationFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_innormal" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

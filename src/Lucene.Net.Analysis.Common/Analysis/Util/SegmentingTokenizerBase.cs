@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -186,7 +186,7 @@ namespace Lucene.Net.Analysis.Util
         /// commons-io's readFully, but without bugs if offset != 0 </summary>
         private static int Read(TextReader input, char[] buffer, int offset, int length)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0,"length must not be negative: {0}", length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0, "length must not be negative: {0}", length);
 
             int remaining = length;
             while (remaining > 0)

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Tests.Queries.Function
         internal static IndexReader reader;
         internal static IndexSearcher searcher;
         private static Similarity sim = new PreciseDefaultSimilarity();
-        
+
         [SetUp]
         public override void SetUp()
         {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Tests.Queries.Function
             searcher = NewSearcher(reader);
             iw.Dispose();
         }
-        
+
         [TearDown]
         public override void TearDown()
         {
@@ -73,7 +73,7 @@ namespace Lucene.Net.Tests.Queries.Function
             dir = null;
             base.TearDown();
         }
-        
+
         [Test]
         public void TestNorm()
         {
@@ -91,7 +91,7 @@ namespace Lucene.Net.Tests.Queries.Function
                 searcher.Similarity = saved;
             }
         }
-        
+
         internal void AssertHits(Query q, float[] scores)
         {
             ScoreDoc[] expected = new ScoreDoc[scores.Length];
@@ -169,12 +169,12 @@ namespace Lucene.Net.Tests.Queries.Function
         /// <summary>
         /// Implemented as
         /// <c>state.Boost*LengthNorm(numTerms)</c>, where
-        /// <c>numTerms</c> is <see cref="FieldInvertState.Length"/> if 
-        /// <see cref="DiscountOverlaps"/># is false, else it's 
-        /// <see cref="FieldInvertState.Length"/> - 
+        /// <c>numTerms</c> is <see cref="FieldInvertState.Length"/> if
+        /// <see cref="DiscountOverlaps"/># is false, else it's
+        /// <see cref="FieldInvertState.Length"/> -
         /// <see cref="FieldInvertState.NumOverlap"/>.
         /// <para/>
-        /// @lucene.experimental 
+        /// @lucene.experimental
         /// </summary>
         public override float LengthNorm(FieldInvertState state)
         {
@@ -198,7 +198,7 @@ namespace Lucene.Net.Tests.Queries.Function
         }
 
         /// <summary>
-        /// Implemented as <code>1 / (distance + 1)</code>. 
+        /// Implemented as <code>1 / (distance + 1)</code>.
         /// </summary>
         public override float SloppyFreq(int distance)
         {
@@ -214,7 +214,7 @@ namespace Lucene.Net.Tests.Queries.Function
         }
 
         /// <summary>
-        /// Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>. 
+        /// Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>.
         /// </summary>
         public override float Idf(long docFreq, long numDocs)
         {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Tests.Queries.Function
         ///  0 position increment) are ignored when computing
         ///  norm.  By default this is true, meaning overlap
         ///  tokens do not count when computing norms.
-        /// 
+        ///
         ///  @lucene.experimental
         /// </summary>
         ///  <seealso cref= #computeNorm </seealso>

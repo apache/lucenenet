@@ -1,4 +1,4 @@
-﻿// Source: https://github.com/PrismLibrary/Prism/blob/7f0b1680bbe754da790274f80851265f808d9bbf
+// Source: https://github.com/PrismLibrary/Prism/blob/7f0b1680bbe754da790274f80851265f808d9bbf
 
 #region Copyright .NET Foundation, Licensed under the MIT License (MIT)
 // The MIT License (MIT)
@@ -8,7 +8,7 @@
 // All rights reserved. Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 // documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use,
 // copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
-// is furnished to do so, subject to the following conditions: 
+// is furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 //
@@ -70,7 +70,7 @@ namespace Lucene.Net.Util.Events
         }
 
         /// <summary>
-        /// Serves as a hash function for a particular type. 
+        /// Serves as a hash function for a particular type.
         /// </summary>
         /// <returns>
         /// A hash code for the current <see cref="T:System.Object" />.
@@ -87,9 +87,9 @@ namespace Lucene.Net.Util.Events
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Should never have need for a finalizer, hence no need for Dispose(bool).")]
         public virtual void Dispose()
         {
-            // While the SubscriptionToken class implements IDisposable, in the case of weak subscriptions 
+            // While the SubscriptionToken class implements IDisposable, in the case of weak subscriptions
             // (i.e. keepSubscriberReferenceAlive set to false in the Subscribe method) it's not necessary to unsubscribe,
-            // as no resources should be kept alive by the event subscription. 
+            // as no resources should be kept alive by the event subscription.
             // In such cases, if a warning is issued, it could be suppressed.
 
             if (this._unsubscribeAction != null)

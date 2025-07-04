@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Snowball;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Tr
         /// File containing default Turkish stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
         /// <summary>
-        /// The comment character in the stopwords file.  
+        /// The comment character in the stopwords file.
         /// All lines prefixed with this will be ignored.
         /// </summary>
         private const string STOPWORDS_COMMENT = "#";
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Tr
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultSetHolder
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Tr
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
-        public TurkishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet) 
+        public TurkishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
             : base(matchVersion, stopwords)
         {
             this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();

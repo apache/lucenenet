@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;

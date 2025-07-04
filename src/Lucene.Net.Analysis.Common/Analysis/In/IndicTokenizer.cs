@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.In
 
     /// <summary>
     /// Simple Tokenizer for text in Indian Languages. </summary>
-    /// @deprecated (3.6) Use <see cref="Standard.StandardTokenizer"/> instead. 
+    /// @deprecated (3.6) Use <see cref="Standard.StandardTokenizer"/> instead.
     [Obsolete("(3.6) Use StandardTokenizer instead.")]
     public sealed class IndicTokenizer : CharTokenizer
     {

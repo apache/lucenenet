@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
                 foreach (long gen in dvProducersGens)
                 {
                     genDVProducers.TryGetValue(gen, out RefCount<DocValuesProducer> dvp);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(dvp != null,"gen={0}", gen);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(dvp != null, "gen={0}", gen);
                     try
                     {
                         dvp.DecRef();

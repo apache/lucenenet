@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -509,7 +509,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer());
                         // }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0,"got {0}", newDocUpto);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0, "got {0}", newDocUpto);
                         docUpto = newDocUpto;
 
                         // Force to read next block
@@ -878,7 +878,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         //   System.out.println("    skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer() + " pos.fp=" + skipper.getPosPointer() + " pos.bufferUpto=" + skipper.getPosBufferUpto());
                         // }
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0,"got {0}", newDocUpto);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0, "got {0}", newDocUpto);
                         docUpto = newDocUpto;
 
                         // Force to read next block
@@ -1457,7 +1457,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("    skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer() + " pos.fp=" + skipper.getPosPointer() + " pos.bufferUpto=" + skipper.getPosBufferUpto() + " pay.fp=" + skipper.getPayPointer() + " lastStartOffset=" + lastStartOffset);
                         // }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0,"got {0}", newDocUpto);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0, "got {0}", newDocUpto);
                         docUpto = newDocUpto;
 
                         // Force to read next block

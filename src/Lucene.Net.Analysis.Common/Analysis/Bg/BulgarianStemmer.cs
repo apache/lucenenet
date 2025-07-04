@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Bg
     /// <summary>
     /// Light Stemmer for Bulgarian.
     /// <para>
-    /// Implements the algorithm described in:  
+    /// Implements the algorithm described in:
     /// <c>
     /// Searching Strategies for the Bulgarian Language
     /// </c>
@@ -32,7 +32,6 @@ namespace Lucene.Net.Analysis.Bg
     /// </summary>
     public class BulgarianStemmer
     {
-
         /// <summary>
         /// Stem an input buffer of Bulgarian text.
         /// </summary>
@@ -60,7 +59,10 @@ namespace Lucene.Net.Analysis.Bg
                 {
                     len--;
                 }
-                if (StemmerUtil.EndsWith(s, len, "а") || StemmerUtil.EndsWith(s, len, "о") || StemmerUtil.EndsWith(s, len, "е"))
+
+                if (StemmerUtil.EndsWith(s, len, "а") ||
+                    StemmerUtil.EndsWith(s, len, "о") ||
+                    StemmerUtil.EndsWith(s, len, "е"))
                 {
                     len--;
                 }
@@ -98,7 +100,11 @@ namespace Lucene.Net.Analysis.Bg
 
             if (len > 5)
             {
-                if (StemmerUtil.EndsWith(s, len, "ът") || StemmerUtil.EndsWith(s, len, "то") || StemmerUtil.EndsWith(s, len, "те") || StemmerUtil.EndsWith(s, len, "та") || StemmerUtil.EndsWith(s, len, "ия"))
+                if (StemmerUtil.EndsWith(s, len, "ът") ||
+                    StemmerUtil.EndsWith(s, len, "то") ||
+                    StemmerUtil.EndsWith(s, len, "те") ||
+                    StemmerUtil.EndsWith(s, len, "та") ||
+                    StemmerUtil.EndsWith(s, len, "ия"))
                 {
                     return len - 2;
                 }

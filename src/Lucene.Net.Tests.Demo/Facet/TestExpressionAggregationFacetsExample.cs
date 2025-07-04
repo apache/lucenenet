@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Facet;
+using Lucene.Net.Facet;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Globalization;

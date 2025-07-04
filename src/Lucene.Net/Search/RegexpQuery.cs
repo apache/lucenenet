@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util.Automaton;
+using Lucene.Net.Util.Automaton;
 using System;
 using System.Text;
 

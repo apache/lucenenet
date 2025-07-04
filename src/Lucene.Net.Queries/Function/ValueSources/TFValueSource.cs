@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
@@ -26,14 +26,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// Function that returns <see cref="TFIDFSimilarity.Tf(float)"/>
     /// for every document.
     /// <para/>
     /// Note that the configured Similarity for the field must be
     /// a subclass of <see cref="TFIDFSimilarity"/>
-    /// @lucene.internal 
+    /// @lucene.internal
     /// </summary>
     public class TFValueSource : TermFreqValueSource
     {

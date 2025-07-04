@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.Lucene41;
+using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Index;
 
 namespace Lucene.Net.Codecs.Bloom

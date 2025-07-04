@@ -87,7 +87,7 @@ namespace Lucene.Net.Util
         }
 
 
-       [Test]
+        [Test]
         public virtual void TestReferenceSize()
         {
             //LUCENENET: The JVM is obviously not relevant to our purposes

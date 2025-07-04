@@ -95,9 +95,9 @@ namespace Lucene.Net.QueryParsers.Classic
         public const int DEFAULT = 2;
     }
 
-    // LUCENENET NOTE: In Java, this was an interface. However, in 
+    // LUCENENET NOTE: In Java, this was an interface. However, in
     // .NET we cannot define constants in an interface.
-    // So, instead we are making it a static class so it 
+    // So, instead we are making it a static class so it
     // can be shared between classes with different base classes.
 
     // public interface QueryParserConstants
@@ -109,40 +109,40 @@ namespace Lucene.Net.QueryParsers.Classic
     {
         /// <summary>Literal token values. </summary>
         public static string[] TokenImage = new string[] {
-            "<EOF>", 
-            "<_NUM_CHAR>", 
-            "<_ESCAPED_CHAR>", 
-            "<_TERM_START_CHAR>", 
-            "<_TERM_CHAR>", 
-            "<_WHITESPACE>", 
-            "<_QUOTED_CHAR>", 
-            "<token of kind 7>", 
-            "<AND>", 
-            "<OR>", 
-            "<NOT>", 
-            "\"+\"", 
-            "\"-\"", 
+            "<EOF>",
+            "<_NUM_CHAR>",
+            "<_ESCAPED_CHAR>",
+            "<_TERM_START_CHAR>",
+            "<_TERM_CHAR>",
+            "<_WHITESPACE>",
+            "<_QUOTED_CHAR>",
+            "<token of kind 7>",
+            "<AND>",
+            "<OR>",
+            "<NOT>",
+            "\"+\"",
+            "\"-\"",
             "<BAREOPER>",
-            "\"(\"", 
-            "\")\"", 
-            "\":\"", 
-            "\"*\"", 
-            "\"^\"", 
-            "<QUOTED>", 
-            "<TERM>", 
-            "<FUZZY_SLOP>", 
-            "<PREFIXTERM>", 
-            "<WILDTERM>", 
+            "\"(\"",
+            "\")\"",
+            "\":\"",
+            "\"*\"",
+            "\"^\"",
+            "<QUOTED>",
+            "<TERM>",
+            "<FUZZY_SLOP>",
+            "<PREFIXTERM>",
+            "<WILDTERM>",
             "<REGEXPTERM>",
-            "\"[\"", 
-            "\"{\"", 
-            "<NUMBER>", 
-            "\"TO\"", 
-            "\"]\"", 
-            "<RANGEIN_QUOTED>", 
-            "<RANGEIN_GOOP>", 
-            "\"TO\"", 
-            "\"}\"", 
+            "\"[\"",
+            "\"{\"",
+            "<NUMBER>",
+            "\"TO\"",
+            "\"]\"",
+            "<RANGEIN_QUOTED>",
+            "<RANGEIN_GOOP>",
+            "\"TO\"",
+            "\"}\"",
             "<RANGE_QUOTED>",
             "<RANGE_GOOP>"
         };

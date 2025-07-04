@@ -1,4 +1,4 @@
-﻿// XMLFilterImpl.java - base SAX2 filter implementation.
+// XMLFilterImpl.java - base SAX2 filter implementation.
 // http://www.saxproject.org
 // Written by David Megginson
 // NO WARRANTY!  This class is in the Public Domain.
@@ -66,8 +66,8 @@ namespace Sax.Helpers
         /// Gets or sets the parent reader.
         /// </summary>
         /// <remarks>
-        /// This is the <see cref="IXMLReader"/> from which 
-        /// this filter will obtain its events and to which it will pass its 
+        /// This is the <see cref="IXMLReader"/> from which
+        /// this filter will obtain its events and to which it will pass its
         /// configuration requests.  The parent may itself be another filter.
         /// <para/>
         /// If there is no parent reader set, any attempt to parse

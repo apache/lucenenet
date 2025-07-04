@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// If not null is the set of tokens to protect from being delimited
-        /// 
+        ///
         /// </summary>
         private readonly CharArraySet protWords;
 
@@ -229,9 +229,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             this.flags = configurationFlags;
             this.protWords = protWords;
-            this.iterator = new WordDelimiterIterator(charTypeTable, 
-                Has(WordDelimiterFlags.SPLIT_ON_CASE_CHANGE), 
-                Has(WordDelimiterFlags.SPLIT_ON_NUMERICS), 
+            this.iterator = new WordDelimiterIterator(charTypeTable,
+                Has(WordDelimiterFlags.SPLIT_ON_CASE_CHANGE),
+                Has(WordDelimiterFlags.SPLIT_ON_NUMERICS),
                 Has(WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE));
         }
 
@@ -530,7 +530,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> <c>true</c> if a word/number part should be generated, <c>false</c> otherwise </returns>
         private bool ShouldGenerateParts(int wordType)
         {
-            return (Has(WordDelimiterFlags.GENERATE_WORD_PARTS) && IsAlpha(wordType)) || 
+            return (Has(WordDelimiterFlags.GENERATE_WORD_PARTS) && IsAlpha(wordType)) ||
                 (Has(WordDelimiterFlags.GENERATE_NUMBER_PARTS) && IsDigit(wordType));
         }
 
@@ -562,7 +562,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             if (hasIllegalOffsets)
             {
-                // historically this filter did this regardless for 'isSingleWord', 
+                // historically this filter did this regardless for 'isSingleWord',
                 // but we must do a sanity check:
                 if (isSingleWord && startOffset <= savedEndOffset)
                 {

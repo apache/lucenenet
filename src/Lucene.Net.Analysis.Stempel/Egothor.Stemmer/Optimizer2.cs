@@ -1,4 +1,4 @@
-﻿/*
+/*
                     Egothor Software License version 1.00
                     Copyright (C) 1997-2004 Leo Galambos.
                  Copyright (C) 2002-2004 "Egothor developers"
@@ -80,11 +80,14 @@ namespace Egothor.Stemmer
         /// <returns>the resulting <see cref="Cell"/>, or <c>null</c> if the operation cannot be realized</returns>
         public override Cell Merge(Cell m, Cell e)
         {
-            if (m.cmd == e.cmd && m.@ref == e.@ref && m.skip == e.skip) {
+            if (m.cmd == e.cmd && m.@ref == e.@ref && m.skip == e.skip)
+            {
                 Cell c = new Cell(m);
                 c.cnt += e.cnt;
                 return c;
-            } else {
+            }
+            else
+            {
                 return null;
             }
         }

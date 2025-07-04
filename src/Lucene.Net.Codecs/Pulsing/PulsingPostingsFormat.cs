@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Pulsing
     /// low docFreq.  It wraps another postings format, which is used for
     /// writing the non-inlined terms.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     public abstract class PulsingPostingsFormat : PostingsFormat
     {

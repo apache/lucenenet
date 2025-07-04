@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Codecs;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
@@ -384,7 +384,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("RIW: doRandomForceMerge(" + limit + ")");
                     }
                     IndexWriter.ForceMerge(limit);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!doRandomForceMergeAssert || IndexWriter.SegmentCount <= limit,"limit={0} actual={1}", limit, IndexWriter.SegmentCount);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(!doRandomForceMergeAssert || IndexWriter.SegmentCount <= limit, "limit={0} actual={1}", limit, IndexWriter.SegmentCount);
                 }
             }
         }

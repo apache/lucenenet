@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.El
      */
 
     /// <summary>
-    /// Factory for <see cref="GreekStemFilter"/>. 
+    /// Factory for <see cref="GreekStemFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_gstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.El
     {
         /// <summary>
         /// Creates a new <see cref="GreekStemFilterFactory"/> </summary>
-        public GreekStemFilterFactory(IDictionary<string, string> args) 
+        public GreekStemFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)

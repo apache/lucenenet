@@ -1,4 +1,4 @@
-﻿using J2N.Runtime.CompilerServices;
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Analysis;
 using Lucene.Net.Codecs.NestedPulsing;
 using Lucene.Net.Documents;

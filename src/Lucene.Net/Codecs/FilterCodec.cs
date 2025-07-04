@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Codecs
+namespace Lucene.Net.Codecs
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,14 +24,14 @@
     /// codec. For example, if you want to build a codec that redefines Lucene46's
     /// <see cref="Codecs.LiveDocsFormat"/>:
     /// <code>
-    ///     public sealed class CustomCodec : FilterCodec 
+    ///     public sealed class CustomCodec : FilterCodec
     ///     {
     ///         public CustomCodec()
     ///             : base("CustomCodec", new Lucene46Codec())
     ///         {
     ///         }
     ///
-    ///         public override LiveDocsFormat LiveDocsFormat 
+    ///         public override LiveDocsFormat LiveDocsFormat
     ///         {
     ///             get { return new CustomLiveDocsFormat(); }
     ///         }

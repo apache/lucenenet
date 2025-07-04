@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Codecs.Lucene45;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;

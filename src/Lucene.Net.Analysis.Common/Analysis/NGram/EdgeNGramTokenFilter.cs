@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.NGram
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
         public EdgeNGramTokenFilter(LuceneVersion version, TokenStream input, Side side, int minGram, int maxGram)
-              : base(input)
+            : base(input)
         {
             // LUCENENET specific - version cannot be null because it is a value type.
 
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.NGram
         /// <param name="maxGram"> the largest n-gram to generate </param>
         [Obsolete]
         public EdgeNGramTokenFilter(LuceneVersion version, TokenStream input, string sideLabel, int minGram, int maxGram)
-              : this(version, input, GetSide(sideLabel), minGram, maxGram)
+            : this(version, input, GetSide(sideLabel), minGram, maxGram)
         {
         }
 
@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.NGram
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public EdgeNGramTokenFilter(LuceneVersion version, TokenStream input, int minGram, int maxGram)
 #pragma warning disable 612, 618
-              : this(version, input, Side.FRONT, minGram, maxGram)
+            : this(version, input, Side.FRONT, minGram, maxGram)
 #pragma warning restore 612, 618
         {
         }

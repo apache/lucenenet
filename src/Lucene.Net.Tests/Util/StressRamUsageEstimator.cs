@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Globalization;

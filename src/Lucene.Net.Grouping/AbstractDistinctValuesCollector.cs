@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// A second pass grouping collector that keeps track of distinct values for a specified field for the top N group.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="GC"></typeparam>
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Grouping
     /// <summary>
     /// LUCENENET specific class used to nest the <see cref="GroupCount{TGroupValue}"/>
     /// class so it has similar syntax to that in Java Lucene
-    /// (AbstractDistinctValuesCollector.GroupCount{TGroupValue} rather than 
+    /// (AbstractDistinctValuesCollector.GroupCount{TGroupValue} rather than
     /// AbstractDistinctValuesCollector{GC}.GroupCount{TGroupValue}).
     /// </summary>
     public static class AbstractDistinctValuesCollector // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search.Grouping
         /// </summary>
         /// <typeparam name="TGroupValue"></typeparam>
         /// <remarks>
-        /// LUCENENET - removed this class from being a nested class of 
+        /// LUCENENET - removed this class from being a nested class of
         /// <see cref="AbstractDistinctValuesCollector{GC}"/> and renamed
         /// from GroupCount to AbstractGroupCount
         /// </remarks>

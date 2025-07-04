@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.El
 
     /// <summary>
     /// A unit test class for verifying the correct operation of the GreekAnalyzer.
-    /// 
+    ///
     /// </summary>
     public class GreekAnalyzerTest : BaseTokenStreamTestCase
     {
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.El
         /// Test the analysis of various greek strings.
         /// </summary>
         /// <exception cref="Exception"> in case an error occurs </exception>
-        /// @deprecated (3.1) Remove this test when support for 3.0 is no longer needed 
+        /// @deprecated (3.1) Remove this test when support for 3.0 is no longer needed
         [Test]
         [Obsolete("(3.1) Remove this test when support for 3.0 is no longer needed")]
         public virtual void TestAnalyzerBWCompat()

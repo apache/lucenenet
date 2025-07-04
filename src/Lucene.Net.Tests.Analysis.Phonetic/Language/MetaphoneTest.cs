@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -54,14 +54,14 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             }
         }
 
-        
-    protected override Metaphone CreateStringEncoder()
+
+        protected override Metaphone CreateStringEncoder()
         {
             return new Metaphone();
         }
 
         [Test]
-    public void TestIsMetaphoneEqual1()
+        public void TestIsMetaphoneEqual1()
         {
             this.AssertMetaphoneEqual(new String[][] { new string[] {
                 "Case", "case" }, new string[] {
@@ -497,7 +497,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         public void TestSetMaxLengthWithTruncation()
         {
             // should be AKSKS, but istruncated by Max Code Length
-            this.StringEncoder.MaxCodeLen=(6);
+            this.StringEncoder.MaxCodeLen = (6);
             Assert.AreEqual("AKSKSK", this.StringEncoder.GetMetaphone("AXEAXEAXE"));
         }
 

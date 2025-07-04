@@ -1,4 +1,4 @@
-﻿// LUCENENET specific - commented this because we already have an ObjectDisposedException in .NET.
+// LUCENENET specific - commented this because we already have an ObjectDisposedException in .NET.
 // This is just reinventing the wheel. However ObjectDisposedException subclasses InvalidOperationException,
 // while AlreadyClosedException, subclasses IOException, so we patch this behavior in ExceptionExtensions.
 // There is a duplicate type in the Lucene namespace that acts as a static factory to create ObjectDisposedException,
@@ -32,7 +32,7 @@
 //    /// this exception is thrown when there is an attempt to
 //    /// access something that has already been closed.
 //    /// </summary>
-//    // LUCENENET: It is no longer good practice to use binary serialization. 
+//    // LUCENENET: It is no longer good practice to use binary serialization.
 //    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 //#if FEATURE_SERIALIZABLE_EXCEPTIONS
 //    [Serializable]

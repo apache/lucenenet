@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Ru
     {
         /// <summary>
         /// Creates a new <see cref="RussianLightStemFilterFactory"/> </summary>
-        public RussianLightStemFilterFactory(IDictionary<string, string> args) 
+        public RussianLightStemFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)

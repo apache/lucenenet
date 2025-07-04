@@ -92,10 +92,10 @@
       <DotNet_8_0_OrGreater Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' And ($(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) Or ($(TargetFramework.StartsWith('net')) And $(TargetFramework.IndexOf('.')) > 4))">true</DotNet_8_0_OrGreater>
     </PropertyGroup>
 
-    <UpdateRuntimeConfigProperty 
-        RuntimeConfigFile="$(RuntimeConfigFile)" 
-        PropertyName="System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization" 
-        PropertyValue="true" 
+    <UpdateRuntimeConfigProperty
+        RuntimeConfigFile="$(RuntimeConfigFile)"
+        PropertyName="System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization"
+        PropertyValue="true"
         Condition="Exists('$(RuntimeConfigFile)') And '$(DotNet_8_0_OrGreater)' == 'true'" />
   </Target>
 

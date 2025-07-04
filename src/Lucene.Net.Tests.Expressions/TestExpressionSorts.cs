@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Expressions
             }
         }
 
-        
+
         internal virtual void AssertQuery(Query query, Filter filter)
         {
             for (int i = 0; i < 10; i++)
@@ -125,13 +125,13 @@ namespace Lucene.Net.Expressions
             }
         }
 
-        
+
         internal virtual void AssertQuery(Query query, Filter filter, Sort sort)
         {
             int size = TestUtil.NextInt32(Random, 1, searcher.IndexReader.MaxDoc / 5);
             TopDocs expected = searcher.Search(query, filter, size, sort, Random.NextBoolean(), Random.NextBoolean());
 
-            // make our actual sort, mutating original by replacing some of the 
+            // make our actual sort, mutating original by replacing some of the
             // sortfields with equivalent expressions
 
             SortField[] original = sort.GetSort();

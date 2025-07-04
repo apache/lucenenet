@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Bloom
      */
 
     /// <summary>
-    /// 
+    ///
     /// A <see cref="PostingsFormat"/> useful for low doc-frequency fields such as primary
     /// keys. Bloom filters are maintained in a ".blm" file which offers "fast-fail"
     /// for reads in segments known to have no record of the key. A choice of
@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// Used only by core Lucene at read-time via Service Provider instantiation -
         /// do not use at Write-time in application code.
         /// </summary>
-        public BloomFilteringPostingsFormat() 
+        public BloomFilteringPostingsFormat()
             : base()
         {
         }
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Bloom
                         var fieldInfo = state.FieldInfos.FieldInfo(fieldNum);
                         _bloomsByFieldName.Add(fieldInfo.Name, bloom);
                     }
-                    
+
                     if (version >= VERSION_CHECKSUM)
                     {
                         CodecUtil.CheckFooter(bloomIn);
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Bloom
                 private Terms _delegateTerms;
                 internal TermsEnum delegateTermsEnum;
                 private TermsEnum _reuseDelegate;
-                internal readonly FuzzySet filter; 
+                internal readonly FuzzySet filter;
 
                 public BloomFilteredTermsEnum(Terms delegateTerms, TermsEnum reuseDelegate, FuzzySet filter)
                 {
@@ -289,7 +289,7 @@ namespace Lucene.Net.Codecs.Bloom
 
                 private TermsEnum @delegate =>
                     // pull the iterator only if we really need it -
-                    // this can be a relativly heavy operation depending on the 
+                    // this can be a relativly heavy operation depending on the
                     // delegate postings format and they underlying directory
                     // (clone IndexInput)
                     delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetEnumerator(_reuseDelegate));
@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.Bloom
             private readonly FieldsConsumer _delegateFieldsConsumer;
             private readonly Dictionary<FieldInfo, FuzzySet> _bloomFilters = new Dictionary<FieldInfo, FuzzySet>();
             private readonly SegmentWriteState _state;
-            
+
             public BloomFilteredFieldsConsumer(BloomFilteringPostingsFormat outerInstance, FieldsConsumer fieldsConsumer,
                 SegmentWriteState state)
             {

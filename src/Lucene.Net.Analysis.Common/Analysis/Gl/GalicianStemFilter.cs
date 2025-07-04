@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Gl
@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Gl
      */
 
     /// <summary>
-    /// A <see cref="TokenFilter"/> that applies <see cref="GalicianStemmer"/> to stem 
+    /// A <see cref="TokenFilter"/> that applies <see cref="GalicianStemmer"/> to stem
     /// Galician words.
     /// <para>
     /// To prevent terms from being stemmed use an instance of
@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Gl
         private readonly IKeywordAttribute keywordAttr;
 
         public GalicianStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

@@ -24,10 +24,10 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Filters <see cref="ClassicTokenizer"/> with <see cref="ClassicFilter"/>, 
+    /// Filters <see cref="ClassicTokenizer"/> with <see cref="ClassicFilter"/>,
     /// <see cref="LowerCaseFilter"/> and <see cref="StopFilter"/>, using a list of
     /// English stop words.
-    /// 
+    ///
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="ClassicAnalyzer"/>:
     /// <list type="bullet">
@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis.Standard
     ///     <item><description> As of 2.4, <see cref="Token"/>s incorrectly identified as acronyms
     ///        are corrected (see <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)</description></item>
     /// </list>
-    /// 
-    /// <see cref="ClassicAnalyzer"/> was named <see cref="StandardAnalyzer"/> in Lucene versions prior to 3.1. 
+    ///
+    /// <see cref="ClassicAnalyzer"/> was named <see cref="StandardAnalyzer"/> in Lucene versions prior to 3.1.
     /// As of 3.1, <see cref="StandardAnalyzer"/> implements Unicode text segmentation,
     /// as specified by UAX#29.
     /// </para>
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// An unmodifiable set containing some common English words that are usually not
-        /// useful for searching. 
+        /// useful for searching.
         /// </summary>
         public static readonly CharArraySet STOP_WORDS_SET = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
 

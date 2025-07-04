@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
@@ -556,7 +556,7 @@ namespace Lucene.Net.Index
                     }
 
                     docFreq++;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docID < state.SegmentInfo.DocCount,"doc={0} maxDoc={1}", docID, state.SegmentInfo.DocCount);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(docID < state.SegmentInfo.DocCount, "doc={0} maxDoc={1}", docID, state.SegmentInfo.DocCount);
 
                     // NOTE: we could check here if the docID was
                     // deleted, and skip it.  However, this is somewhat

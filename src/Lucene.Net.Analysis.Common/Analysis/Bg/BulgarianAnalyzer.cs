@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Standard;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Bg
     {
         /// <summary>
         /// File containing default Bulgarian stopwords.
-        /// 
+        ///
         /// Default stopword list is from
         /// http://members.unine.ch/jacques.savoy/clef/index.html The stopword list is
         /// BSD-Licensed.
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Bg
         /// <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public BulgarianAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -89,17 +89,17 @@ namespace Lucene.Net.Analysis.Bg
         /// Builds an analyzer with the given stop words.
         /// </summary>
         public BulgarianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 
         /// <summary>
         /// Builds an analyzer with the given stop words and a stem exclusion set.
-        /// If a stem exclusion set is provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/> 
+        /// If a stem exclusion set is provided this analyzer will add a <see cref="SetKeywordMarkerFilter"/>
         /// before <see cref="BulgarianStemFilter"/>.
         /// </summary>
         public BulgarianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Bg
         /// <returns> A
         ///         <see cref="TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
-        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, 
+        ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
         ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided and <see cref="BulgarianStemFilter"/>. </returns>
         protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)

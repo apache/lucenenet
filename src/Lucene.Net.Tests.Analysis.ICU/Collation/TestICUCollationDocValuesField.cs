@@ -1,4 +1,4 @@
-﻿using ICU4N.Text;
+using ICU4N.Text;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;

@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Creates a new <see cref="TruncateTokenFilterFactory"/> </summary>
-        public TruncateTokenFilterFactory(IDictionary<string, string> args) 
+        public TruncateTokenFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             var prefixLengthString = Get(args, PREFIX_LENGTH_KEY, "5");

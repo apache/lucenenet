@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
      */
 
     /// <summary>
-    /// This processor verifies if 
+    /// This processor verifies if
     /// <see cref="ConfigurationKeys.LOWERCASE_EXPANDED_TERMS"/> is defined in the
     /// <see cref="Core.Config.QueryConfigHandler"/>. If it is and the expanded terms should be
     /// lower-cased, it looks for every <see cref="WildcardQueryNode"/>,

@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -420,7 +420,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (matchingVectorsReader != null)
             {
                 // We can bulk-copy because the fieldInfos are "congruent"
-                for (int docNum = 0; docNum < maxDoc; )
+                for (int docNum = 0; docNum < maxDoc;)
                 {
                     if (!liveDocs.Get(docNum))
                     {

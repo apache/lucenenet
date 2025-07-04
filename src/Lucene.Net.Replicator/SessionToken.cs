@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
@@ -36,7 +36,7 @@ namespace Lucene.Net.Replicator
     {
         /// <summary>
         /// Id of this session.
-        /// Should be passed when releasing the session, thereby acknowledging the 
+        /// Should be passed when releasing the session, thereby acknowledging the
         /// <see cref="IReplicator"/> that this session is no longer in use.
         /// </summary>
         /// <seealso cref="IReplicator.Release"/>

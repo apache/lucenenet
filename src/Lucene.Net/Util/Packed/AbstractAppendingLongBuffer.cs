@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.Util.Packed
                 else
                 {
                     currentCount = outerInstance.values[vOff].Count;
-                    for (int k = 0; k < currentCount; )
+                    for (int k = 0; k < currentCount;)
                     {
                         k += outerInstance.Get(vOff, k, currentValues, k, currentCount - k);
                     }

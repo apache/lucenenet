@@ -24,10 +24,10 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /// <summary>
-    /// Filters <see cref="StandardTokenizer"/> with <see cref="StandardFilter"/>, 
+    /// Filters <see cref="StandardTokenizer"/> with <see cref="StandardFilter"/>,
     /// <see cref="LowerCaseFilter"/> and <see cref="StopFilter"/>, using a list of
     /// English stop words.
-    /// 
+    ///
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="StandardAnalyzer"/>:
     /// <list type="bullet">
@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Standard
     ///        you get the exact broken behavior for backwards compatibility.</description></item>
     ///   <item><description> As of 3.1, <see cref="StandardTokenizer"/> implements Unicode text segmentation,
     ///        and <see cref="StopFilter"/> correctly handles Unicode 4.0 supplementary characters
-    ///        in stopwords.  <see cref="ClassicTokenizer"/> and <see cref="ClassicAnalyzer"/> 
+    ///        in stopwords.  <see cref="ClassicTokenizer"/> and <see cref="ClassicAnalyzer"/>
     ///        are the pre-3.1 implementations of <see cref="StandardTokenizer"/> and
     ///        <see cref="StandardAnalyzer"/>.</description></item>
     ///   <item><description> As of 2.9, <see cref="StopFilter"/> preserves position increments</description></item>
@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// An unmodifiable set containing some common English words that are usually not
-        /// useful for searching. 
+        /// useful for searching.
         /// </summary>
         public static readonly CharArraySet STOP_WORDS_SET = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
 

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -142,13 +142,13 @@ namespace Lucene.Net.Replicator
             // all files have been successfully copied + sync'd. update the handler's state
             currentRevisionFiles = revisionFiles;
             currentVersion = version;
-            
+
             WriteToInfoStream("revisionReady(): currentVersion=" + currentVersion + " currentRevisionFiles=" + currentRevisionFiles);
-            
+
             // update the segments.gen file
             IndexReplicationHandler.WriteSegmentsGen(taxonomySegmentsFile, taxonomyDirectory);
             IndexReplicationHandler.WriteSegmentsGen(indexSegmentsFile, indexDirectory);
-            
+
             // Cleanup the index directory from old and unused index files.
             // NOTE: we don't use IndexWriter.deleteUnusedFiles here since it may have
             // side-effects, e.g. if it hits sudden IO errors while opening the index

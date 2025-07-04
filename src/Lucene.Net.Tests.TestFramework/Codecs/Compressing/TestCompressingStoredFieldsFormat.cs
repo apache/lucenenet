@@ -1,4 +1,4 @@
-﻿//LUCENENET UPGRADE TODO: Incompatibility issues because this was ported from Lucene 8.2.0, and we are 4.8.0
+//LUCENENET UPGRADE TODO: Incompatibility issues because this was ported from Lucene 8.2.0, and we are 4.8.0
 
 //Lucene version compatibility level 8.2.0
 //using Lucene.Net.Analysis;
@@ -41,7 +41,7 @@
 //            return CompressingCodec.RandomInstance(Random);
 //        }
 
-//        //        public void testDeletePartiallyWrittenFilesIfAbort() 
+//        //        public void testDeletePartiallyWrittenFilesIfAbort()
 //        //        {
 //        //            Directory dir = NewDirectory();
 //        //    IndexWriterConfig iwConf = NewIndexWriterConfig(new MockAnalyzer(Random));

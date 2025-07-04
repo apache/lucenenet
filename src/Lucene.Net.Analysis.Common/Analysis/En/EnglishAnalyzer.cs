@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Standard;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.En
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultSetHolder
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.En
         /// </summary>
         /// <param name="matchVersion"> lucene compatibility version </param>
         public EnglishAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.En
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public EnglishAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.En
         /// <returns> A
         ///         <see cref="TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
-        ///         <see cref="StandardFilter"/>, <see cref="EnglishPossessiveFilter"/>, 
+        ///         <see cref="StandardFilter"/>, <see cref="EnglishPossessiveFilter"/>,
         ///         <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
         ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided and <see cref="PorterStemFilter"/>. </returns>

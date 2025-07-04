@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
     /// values in a given field.
     ///
     /// <para/>This filter matches the documents looking for terms that fall into the
-    /// supplied range according to 
+    /// supplied range according to
     /// <see cref="byte.CompareTo(byte)"/>,  It is not intended
     /// for numerical ranges; use <see cref="NumericRangeFilter"/> instead.
     ///

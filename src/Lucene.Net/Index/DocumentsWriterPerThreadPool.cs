@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level: 4.8.1
+// Lucene version compatibility level: 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System;
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
                 {
                     // unreleased thread states are deactivated during DW#close()
                     numThreadStatesActive++; // increment will publish the ThreadState
-                                                    //System.out.println("activeCount=" + numThreadStatesActive);
+                                             //System.out.println("activeCount=" + numThreadStatesActive);
                     if (Debugging.AssertsEnabled) Debugging.Assert(threadState.dwpt is null);
                     unlock = false;
                     return threadState;
@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
             {
                 if (unlock)
                 {
-                    // in any case make sure we unlock if we fail 
+                    // in any case make sure we unlock if we fail
                     threadState.Unlock();
                 }
             }
@@ -319,7 +319,7 @@ namespace Lucene.Net.Index
             UninterruptableMonitor.Enter(this);
             try
             {
-                for (;;)
+                for (; ; )
                 {
                     if (freeCount > 0)
                     {

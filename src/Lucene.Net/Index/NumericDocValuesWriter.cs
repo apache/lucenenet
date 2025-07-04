@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util.Packed;
+using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
 
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    value = docsWithField != null ? (long?) null : MISSING;
+                    value = docsWithField != null ? (long?)null : MISSING;
                 }
                 upto++;
                 // TODO: make reusable Number

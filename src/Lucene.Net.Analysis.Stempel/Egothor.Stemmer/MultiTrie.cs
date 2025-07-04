@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;

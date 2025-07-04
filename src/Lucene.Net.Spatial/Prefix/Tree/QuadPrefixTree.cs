@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;
@@ -50,7 +50,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         private readonly double gridW;
         public double GridH => gridH;
         private readonly double gridH;
-        
+
         internal readonly double[] levelW;
         internal readonly double[] levelH;
         internal readonly int[] levelS; // side
@@ -179,12 +179,12 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         private void Build(
-            double x, 
-            double y, 
-            int level, 
-            IList<Cell> matches, 
-            StringBuilder str, 
-            IShape shape, 
+            double x,
+            double y,
+            int level,
+            IList<Cell> matches,
+            StringBuilder str,
+            IShape shape,
             int maxLevel)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(str.Length == level);
@@ -204,13 +204,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         // http://blog.notdot.net/2009/11/Damn-Cool-Algorithms-Spatial-indexing-with-Quadtrees-and-Hilbert-Curves
         // if we actually use the range property in the query, this could be useful
         private void CheckBattenberg(
-            char c, 
-            double cx, 
-            double cy, 
-            int level, 
-            IList<Cell> matches, 
+            char c,
+            double cx,
+            double cy,
+            int level,
+            IList<Cell> matches,
             StringBuilder str,
-            IShape shape, 
+            IShape shape,
             int maxLevel)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(str.Length == level);

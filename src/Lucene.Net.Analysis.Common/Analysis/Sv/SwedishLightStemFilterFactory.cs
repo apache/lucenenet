@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Sv
     {
         /// <summary>
         /// Creates a new <see cref="SwedishLightStemFilterFactory"/> </summary>
-        public SwedishLightStemFilterFactory(IDictionary<string, string> args) 
+        public SwedishLightStemFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)

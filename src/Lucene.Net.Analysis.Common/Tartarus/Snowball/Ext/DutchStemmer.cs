@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 /*
 
 Copyright (c) 2001, Dr Martin Porter
@@ -189,12 +189,12 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto end_of_outer_loop;
 
                 } while (false);
-                lab1:
+            lab1:
                 m_cursor = v_2;
                 goto replab0;
-                end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
+            end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
             }
-            replab0:
+        replab0:
             m_cursor = v_1;
             // try, line 57
             v_3 = m_cursor;
@@ -215,7 +215,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 // <-, line 57
                 SliceFrom("Y");
             } while (false);
-            lab2:
+        lab2:
             // repeat, line 58
 
             while (true)
@@ -263,7 +263,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                                     SliceFrom("I");
                                     goto lab7;
                                 } while (false);
-                                lab8:
+                            lab8:
                                 m_cursor = v_6;
                                 // (, line 60
                                 // literal, line 60
@@ -276,11 +276,11 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                                 // <-, line 60
                                 SliceFrom("Y");
                             } while (false);
-                            lab7:
+                        lab7:
                             m_cursor = v_5;
                             goto golab5;
                         } while (false);
-                        lab6:
+                    lab6:
                         m_cursor = v_5;
                         if (m_cursor >= m_limit)
                         {
@@ -288,7 +288,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         }
                         m_cursor++;
                     }
-                    golab5:
+                golab5:
                     // LUCENENET NOTE: continue label is not supported directly in .NET,
                     // so we just need to add another goto to get to the end of the outer loop.
                     // See: http://stackoverflow.com/a/359449/181087
@@ -299,12 +299,12 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto end_of_outer_loop;
 
                 } while (false);
-                lab4:
+            lab4:
                 m_cursor = v_4;
                 goto replab3;
-                end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
+            end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
             }
-            replab3:
+        replab3:
             return true;
         }
 
@@ -326,14 +326,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     }
                     goto golab0;
                 } while (false);
-                lab1:
+            lab1:
                 if (m_cursor >= m_limit)
                 {
                     return false;
                 }
                 m_cursor++;
             }
-            golab0:
+        golab0:
             // gopast, line 69
 
             while (true)
@@ -347,14 +347,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     }
                     goto golab2;
                 } while (false);
-                lab3:
+            lab3:
                 if (m_cursor >= m_limit)
                 {
                     return false;
                 }
                 m_cursor++;
             }
-            golab2:
+        golab2:
             // setmark p1, line 69
             I_p1 = m_cursor;
             // try, line 70
@@ -368,7 +368,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 }
                 I_p1 = 3;
             } while (false);
-            lab4:
+        lab4:
             // gopast, line 71
 
             while (true)
@@ -382,14 +382,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     }
                     goto golab5;
                 } while (false);
-                lab6:
+            lab6:
                 if (m_cursor >= m_limit)
                 {
                     return false;
                 }
                 m_cursor++;
             }
-            golab5:
+        golab5:
             // gopast, line 71
 
             while (true)
@@ -403,14 +403,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     }
                     goto golab7;
                 } while (false);
-                lab8:
+            lab8:
                 if (m_cursor >= m_limit)
                 {
                     return false;
                 }
                 m_cursor++;
             }
-            golab7:
+        golab7:
             // setmark p2, line 71
             I_p2 = m_cursor;
             return true;
@@ -473,12 +473,12 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto end_of_outer_loop;
 
                 } while (false);
-                lab1:
+            lab1:
                 m_cursor = v_1;
                 goto replab0;
-                end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
+            end_of_outer_loop: { /* LUCENENET: intentionally empty */ }
             }
-            replab0:
+        replab0:
             return true;
         }
 
@@ -596,7 +596,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     }
                     return false;
                 } while (false);
-                lab0:
+            lab0:
                 m_cursor = m_limit - v_2;
             }
             // delete, line 102
@@ -677,7 +677,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         break;
                 }
             } while (false);
-            lab0:
+        lab0:
             m_cursor = m_limit - v_1;
             // do, line 120
             v_2 = m_limit - m_cursor;
@@ -690,7 +690,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto lab1;
                 }
             } while (false);
-            lab1:
+        lab1:
             m_cursor = m_limit - v_2;
             // do, line 122
             v_3 = m_limit - m_cursor;
@@ -725,7 +725,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         }
                         goto lab2;
                     } while (false);
-                    lab3:
+                lab3:
                     m_cursor = m_limit - v_4;
                 }
                 // delete, line 122
@@ -745,7 +745,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto lab2;
                 }
             } while (false);
-            lab2:
+        lab2:
             m_cursor = m_limit - v_3;
             // do, line 126
             v_5 = m_limit - m_cursor;
@@ -812,14 +812,14 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                                         }
                                         goto lab6;
                                     } while (false);
-                                    lab7:
+                                lab7:
                                     m_cursor = m_limit - v_7;
                                 }
                                 // delete, line 130
                                 SliceDel();
                                 goto lab5;
                             } while (false);
-                            lab6:
+                        lab6:
                             m_cursor = m_limit - v_6;
                             // call undouble, line 130
                             if (!r_undouble())
@@ -827,7 +827,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                                 goto lab4;
                             }
                         } while (false);
-                        lab5:
+                    lab5:
                         break;
                     case 2:
                         // (, line 133
@@ -849,7 +849,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                                 }
                                 goto lab4;
                             } while (false);
-                            lab8:
+                        lab8:
                             m_cursor = m_limit - v_8;
                         }
                         // delete, line 133
@@ -897,7 +897,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                         break;
                 }
             } while (false);
-            lab4:
+        lab4:
             m_cursor = m_limit - v_5;
             // do, line 146
             v_9 = m_limit - m_cursor;
@@ -935,7 +935,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 // delete, line 152
                 SliceDel();
             } while (false);
-            lab9:
+        lab9:
             m_cursor = m_limit - v_9;
             return true;
         }
@@ -959,7 +959,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto lab0;
                 }
             } while (false);
-            lab0:
+        lab0:
             m_cursor = v_1;
             // do, line 160
             v_2 = m_cursor;
@@ -972,7 +972,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto lab1;
                 }
             } while (false);
-            lab1:
+        lab1:
             m_cursor = v_2;
             // backwards, line 161
             m_limit_backward = m_cursor; m_cursor = m_limit;
@@ -987,7 +987,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto lab2;
                 }
             } while (false);
-            lab2:
+        lab2:
             m_cursor = m_limit - v_3;
             m_cursor = m_limit_backward;                    // do, line 163
             v_4 = m_cursor;
@@ -1000,7 +1000,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                     goto lab3;
                 }
             } while (false);
-            lab3:
+        lab3:
             m_cursor = v_4;
             return true;
         }

@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 namespace Lucene.Net.Analysis.Cn.Smart
 {
     /*
@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         SENTENCE_END = 1,
 
         /// <summary>
-        /// Chinese Word 
+        /// Chinese Word
         /// </summary>
         CHINESE_WORD = 2,
 

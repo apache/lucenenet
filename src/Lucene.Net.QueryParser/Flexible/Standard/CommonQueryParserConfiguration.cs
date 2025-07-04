@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using System;
@@ -58,7 +58,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         bool EnablePositionIncrements { get; set; }
 
         /// <summary>
-        /// By default, it uses 
+        /// By default, it uses
         /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/> when creating a
         /// prefix, wildcard and range queries. This implementation is generally
         /// preferable because it a) Runs faster b) Does not have the scarcity of terms

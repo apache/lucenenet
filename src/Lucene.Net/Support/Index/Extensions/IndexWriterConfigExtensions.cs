@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs;
+using Lucene.Net.Codecs;
 using Lucene.Net.Search.Similarities;
 
 namespace Lucene.Net.Index.Extensions

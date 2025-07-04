@@ -1,4 +1,4 @@
-﻿using ICU4N.Text;
+using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Benchmarks.ByTask.Feeds;

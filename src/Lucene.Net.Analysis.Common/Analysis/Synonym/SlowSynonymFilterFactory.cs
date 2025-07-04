@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using System;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Synonym
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// </summary>
-    /// @deprecated (3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
+    /// @deprecated (3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0
     [Obsolete("(3.4) use SynonymFilterFactory instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
     internal sealed class SlowSynonymFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Synonym
             public static readonly Regex TOKENIZER_FACTORY_REPLACEMENT_PATTERN = new Regex("^tokenizerFactory\\.", RegexOptions.Compiled);
         }
 
-        public SlowSynonymFilterFactory(IDictionary<string, string> args) 
+        public SlowSynonymFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             synonyms = Require(args, "synonyms");

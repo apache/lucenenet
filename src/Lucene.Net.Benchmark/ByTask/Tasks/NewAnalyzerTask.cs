@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using Lucene.Net.Analysis;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Util;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <para/>
         /// Analyzer names may also refer to previously defined AnalyzerFactory's.
         /// <para/>
-        /// Example Declaration: 
+        /// Example Declaration:
         /// <code>
         /// {"NewAnalyzer" NewAnalyzer(WhitespaceAnalyzer, SimpleAnalyzer, StopAnalyzer, Standard.StandardAnalyzer) >
         /// </code>

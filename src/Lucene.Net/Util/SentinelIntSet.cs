@@ -33,7 +33,7 @@ namespace Lucene.Net.Util
     /// To iterate over the integers held in this set, simply use code like this:
     /// <code>
     /// SentinelIntSet set = ...
-    /// foreach (int v in set.keys) 
+    /// foreach (int v in set.keys)
     /// {
     ///     if (v == set.EmptyVal)
     ///         continue;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         ///
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls
         /// a private method and not this virtual method. So if you need to override
         /// the behavior during the initialization, call your own private method from the constructor
         /// with whatever custom behavior you need.

@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Codecs.SimpleText
+namespace Lucene.Net.Codecs.SimpleText
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -36,7 +36,7 @@
         private readonly LiveDocsFormat _liveDocs = new SimpleTextLiveDocsFormat();
         private readonly DocValuesFormat _dvFormat = new SimpleTextDocValuesFormat();
 
-        public SimpleTextCodec() 
+        public SimpleTextCodec()
             : base()
         {
         }

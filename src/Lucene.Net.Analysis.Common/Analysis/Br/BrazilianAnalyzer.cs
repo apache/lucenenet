@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Standard;
@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.Br
         /// Builds an analyzer with the default stop words (<see cref="DefaultStopSet"/>).
         /// </summary>
         public BrazilianAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Br
         /// <param name="stopwords">
         ///          a stopword set </param>
         public BrazilianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
         }
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Br
         ///          a stopword set </param>
         /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
         public BrazilianAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : this(matchVersion, stopwords)
+            : this(matchVersion, stopwords)
         {
             excltable = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }

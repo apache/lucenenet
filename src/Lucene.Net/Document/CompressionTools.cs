@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using System.IO;
 using System.IO.Compression;
 
@@ -50,7 +50,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Compresses the specified <see cref="byte"/> range, with default <see cref="CompressionLevel.Optimal"/> level 
+        /// Compresses the specified <see cref="byte"/> range, with default <see cref="CompressionLevel.Optimal"/> level
         /// </summary>
         public static byte[] Compress(byte[] value, int offset, int length)
         {

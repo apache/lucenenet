@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Search.Similarities;
 using System;
 
@@ -97,13 +97,13 @@ namespace Lucene.Net.Misc
         }
 
         /// <summary>
-        /// Implemented as 
+        /// Implemented as
         /// <c>
-        /// state.Boost * ComputeLengthNorm(numTokens) 
-        /// </c> 
+        /// state.Boost * ComputeLengthNorm(numTokens)
+        /// </c>
         /// where numTokens does not count overlap tokens if
         /// discountOverlaps is true by default or true for this
-        /// specific field. 
+        /// specific field.
         /// </summary>
         public override float LengthNorm(FieldInvertState state)
         {
@@ -126,12 +126,12 @@ namespace Lucene.Net.Misc
         /// <code>
         /// 1/sqrt( steepness * (Math.Abs(x-min) + Math.Abs(x-max) - (max-min)) + 1 )
         /// </code>.
-        /// 
+        ///
         /// <para>
         /// This degrades to <code>1/Math.Sqrt(x)</code> when min and max are both 1 and
         /// steepness is 0.5
         /// </para>
-        /// 
+        ///
         /// <para>
         /// :TODO: potential optimization is to just flat out return 1.0f if numTerms
         /// is between min and max.
@@ -181,11 +181,11 @@ namespace Lucene.Net.Misc
 
         /// <summary>
         /// Uses a hyperbolic tangent function that allows for a hard max...
-        /// 
+        ///
         /// <code>
         /// tf(x)=min+(max-min)/2*(((base**(x-xoffset)-base**-(x-xoffset))/(base**(x-xoffset)+base**-(x-xoffset)))+1)
         /// </code>
-        /// 
+        ///
         /// <para>
         /// This code is provided as a convenience for subclasses that want
         /// to use a hyperbolic tf function.

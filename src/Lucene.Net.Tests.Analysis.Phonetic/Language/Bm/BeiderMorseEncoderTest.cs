@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -39,8 +39,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         private BeiderMorseEncoder CreateGenericApproxEncoder()
         {
             BeiderMorseEncoder encoder = new BeiderMorseEncoder();
-            encoder.NameType=(NameType.GENERIC);
-            encoder.RuleType=(RuleType.APPROX);
+            encoder.NameType = (NameType.GENERIC);
+            encoder.RuleType = (RuleType.APPROX);
             return encoder;
         }
 
@@ -162,8 +162,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                        + "<script><!-- f(';<    cf aefbeef = \"bfabadcf\" ebbfeedd = fccabeb >";
 
             BeiderMorseEncoder encoder = new BeiderMorseEncoder();
-            encoder.NameType=(NameType.GENERIC);
-            encoder.RuleType=(RuleType.EXACT);
+            encoder.NameType = (NameType.GENERIC);
+            encoder.RuleType = (RuleType.EXACT);
             encoder.SetMaxPhonemes(10);
 
             String phonemes = encoder.Encode(phrase);
@@ -177,7 +177,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         public void TestSetConcat()
         {
             BeiderMorseEncoder bmpm = new BeiderMorseEncoder();
-            bmpm.IsConcat=(false);
+            bmpm.IsConcat = (false);
             Assert.False(bmpm.IsConcat, "Should be able to set concat to false");
         }
 
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         public void TestSetNameTypeAsh()
         {
             BeiderMorseEncoder bmpm = new BeiderMorseEncoder();
-            bmpm.NameType=(NameType.ASHKENAZI);
+            bmpm.NameType = (NameType.ASHKENAZI);
             Assert.AreEqual(NameType.ASHKENAZI, bmpm.NameType, "Name type should have been set to ash");
         }
 
@@ -193,7 +193,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         public void TestSetRuleTypeExact()
         {
             BeiderMorseEncoder bmpm = new BeiderMorseEncoder();
-            bmpm.RuleType=(RuleType.EXACT);
+            bmpm.RuleType = (RuleType.EXACT);
             Assert.AreEqual(RuleType.EXACT, bmpm.RuleType, "Rule type should have been set to exact");
         }
 
@@ -203,7 +203,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             Assert.Throws<ArgumentException>(() =>
             {
                 BeiderMorseEncoder bmpm = new BeiderMorseEncoder();
-                bmpm.RuleType=(RuleType.RULES);
+                bmpm.RuleType = (RuleType.RULES);
             });
         }
 

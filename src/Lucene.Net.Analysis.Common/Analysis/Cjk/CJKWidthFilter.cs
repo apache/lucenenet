@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Cjk
         };
 
         public CJKWidthFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
         }
@@ -118,7 +118,9 @@ namespace Lucene.Net.Analysis.Cjk
             char prev = text[pos - 1];
             if (prev >= 0x30A6 && prev <= 0x30FD)
             {
-                text[pos - 1] += (char)((ch == 0xFF9F) ? KANA_COMBINE_HALF_VOICED[prev - 0x30A6] : KANA_COMBINE_VOICED[prev - 0x30A6]);
+                text[pos - 1] += (char)((ch == 0xFF9F)
+                    ? KANA_COMBINE_HALF_VOICED[prev - 0x30A6]
+                    : KANA_COMBINE_VOICED[prev - 0x30A6]);
                 return text[pos - 1] != prev;
             }
             return false;

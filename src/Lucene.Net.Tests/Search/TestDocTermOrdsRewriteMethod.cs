@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;

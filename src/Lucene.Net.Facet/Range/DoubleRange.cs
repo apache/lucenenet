@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System;
@@ -33,8 +33,8 @@ namespace Lucene.Net.Facet.Range
 
     /// <summary>
     /// Represents a range over double values.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public sealed class DoubleRange : Range
     {
@@ -71,7 +71,7 @@ namespace Lucene.Net.Facet.Range
             // TODO: if DoubleDocValuesField used
             // NumericUtils.doubleToSortableLong format (instead of
             // Double.doubleToRawLongBits) we could do comparisons
-            // in long space 
+            // in long space
 
             if (double.IsNaN(Min))
             {

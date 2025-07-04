@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the number of documents containing the <paramref name="term"/>. 
+        /// Returns the number of documents containing the <paramref name="term"/>.
         /// This method returns 0 if the term or
         /// field does not exist. This method does not take into
         /// account deleted documents that have not yet been merged

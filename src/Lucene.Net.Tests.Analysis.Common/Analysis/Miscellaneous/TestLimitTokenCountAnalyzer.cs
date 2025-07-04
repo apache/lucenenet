@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 MockAnalyzer mock = new MockAnalyzer(Random);
 
-                // if we are consuming all tokens, we can use the checks, 
+                // if we are consuming all tokens, we can use the checks,
                 // otherwise we can't
                 mock.EnableChecks = consumeAll;
                 Analyzer a = new LimitTokenCountAnalyzer(mock, 2, consumeAll);
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 int limit = TestUtil.NextInt32(Random, 50, 101000);
                 MockAnalyzer mock = new MockAnalyzer(Random);
 
-                // if we are consuming all tokens, we can use the checks, 
+                // if we are consuming all tokens, we can use the checks,
                 // otherwise we can't
                 mock.EnableChecks = consumeAll;
                 Analyzer a = new LimitTokenCountAnalyzer(mock, limit, consumeAll);

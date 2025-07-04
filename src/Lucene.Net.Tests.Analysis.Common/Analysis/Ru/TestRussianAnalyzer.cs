@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Ru
             AssertAnalyzesTo(ra, "text 1000", new string[] { "text", "1000" });
         }
 
-        /// @deprecated (3.1) remove this test in Lucene 5.0: stopwords changed 
+        /// @deprecated (3.1) remove this test in Lucene 5.0: stopwords changed
         [Test]
         [Obsolete("(3.1) remove this test in Lucene 5.0: stopwords changed")]
         public virtual void TestReusableTokenStream30()

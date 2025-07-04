@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using System.IO;
 
 namespace Lucene.Net.Search.Highlight
@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Highlight
         /// either a <see cref="TokenStream"/> that the <see cref="Highlighter"/> should continue using (eg
         /// if you read the tokenSream in this method) or null to continue
         /// using the same <see cref="TokenStream"/> that was passed in.
-        /// </returns> 
+        /// </returns>
         /// <exception cref="IOException">If there is a low-level I/O error</exception>
         TokenStream Init(TokenStream tokenStream);
 
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         /// <returns>a score which is passed to the <see cref="Highlighter"/> class to influence the
         /// mark-up of the text (this return value is NOT used to score the
-        /// fragment)</returns> 
+        /// fragment)</returns>
         float GetTokenScore();
 
         ///<summary>

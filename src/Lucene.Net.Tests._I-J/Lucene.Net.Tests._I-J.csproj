@@ -22,7 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
-  
+
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests._I-J</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
@@ -85,7 +85,7 @@
   </ItemGroup>
 
   <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
-  
+
   <ItemGroup>
     <!-- Add the target framework as metadata so our assembly knows which target it is testing -->
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
@@ -93,7 +93,7 @@
       <_Parameter2>$(TargetFramework)</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
-  
+
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>

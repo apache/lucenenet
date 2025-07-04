@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Codecs.Memory
+namespace Lucene.Net.Codecs.Memory
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -29,13 +29,13 @@
     /// byte[], short[], int[], long[] as necessary to fit the
     /// range of the values.  For binary values, there is an <see cref="int"/>
     /// (4 bytes) overhead per value.
-    /// 
+    ///
     /// <para>Limitations:
     /// <list type="bullet">
     ///    <item><description>For binary and sorted fields the total space
     ///        required for all binary values cannot exceed about
     ///        2.1 GB (see <see cref="MAX_TOTAL_BYTES_LENGTH"/>).</description></item>
-    /// 
+    ///
     ///    <item><description>For sorted set fields, the sum of the size of each
     ///        document's set of values cannot exceed about 2.1 B
     ///        values (see <see cref="MAX_SORTED_SET_ORDS"/>).  For example,
@@ -43,7 +43,7 @@
     ///        <see cref="Documents.SortedSetDocValuesField"/>) added, then no
     ///        more than ~210 M documents can be added to one
     ///        segment. </description></item>
-    /// </list> 
+    /// </list>
     /// </para>
     /// </summary>
     [DocValuesFormatName("Direct")] // LUCENENET specific - using DocValuesFormatName attribute to ensure the default name passed from subclasses is the same as this class name
@@ -52,19 +52,19 @@
         /// <summary>
         /// The sum of all byte lengths for binary field, or for
         /// the unique values in sorted or sorted set fields, cannot
-        /// exceed this. 
+        /// exceed this.
         /// </summary>
         public static readonly int MAX_TOTAL_BYTES_LENGTH = ArrayUtil.MAX_ARRAY_LENGTH;
 
         /// <summary>
         /// The sum of the number of values across all documents
-        /// in a sorted set field cannot exceed this. 
+        /// in a sorted set field cannot exceed this.
         /// </summary>
         public static readonly int MAX_SORTED_SET_ORDS = ArrayUtil.MAX_ARRAY_LENGTH;
 
         /// <summary>
         /// Sole constructor. </summary>
-        public DirectDocValuesFormat() 
+        public DirectDocValuesFormat()
             : base()
         {
         }

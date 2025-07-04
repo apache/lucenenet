@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Ja.Dict;
+using Lucene.Net.Analysis.Ja.Dict;
 
 namespace Lucene.Net.Analysis.Ja.Util
 {

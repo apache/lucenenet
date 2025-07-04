@@ -1,4 +1,4 @@
-﻿using ICU4N.Text;
+using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -74,9 +74,9 @@ namespace Lucene.Net.Collation
         // Test using various international locales with accented characters (which
         // sort differently depending on locale)
         //
-        // Copied (and slightly modified) from 
+        // Copied (and slightly modified) from
         // org.apache.lucene.search.TestSort.testInternationalSort()
-        //  
+        //
         [Test]
         public void TestCollationKeySort()
         {

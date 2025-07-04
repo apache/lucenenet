@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 // LUCENENET NOTE: Ported because Lucene.Net.Analysis.OpenNLP requires this to be useful.
 using Lucene.Net.Analysis.Util;
 using System;
@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;
     /// </code>
-    /// 
+    ///
     /// <para/>
     /// If the optional <c>prefix</c> parameter is used, the specified value will be prepended
     /// to the type, e.g.with prefix = "_type_", for a token "example.com" with type "&lt;URL&gt;",

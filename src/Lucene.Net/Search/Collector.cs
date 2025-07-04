@@ -40,12 +40,12 @@ namespace Lucene.Net.Search
     ///
     ///   <item><description><see cref="TopScoreDocCollector"/> is a concrete subclass
     ///   <see cref="TopDocsCollector{T}"/> and sorts according to score +
-    ///   docID.  This is used internally by the 
+    ///   docID.  This is used internally by the
     ///   <see cref="IndexSearcher"/> search methods that do not take an
     ///   explicit <see cref="Sort"/>. It is likely the most frequently
     ///   used collector.</description></item>
     ///
-    ///   <item><description><see cref="TopFieldCollector"/> subclasses 
+    ///   <item><description><see cref="TopFieldCollector"/> subclasses
     ///   <see cref="TopDocsCollector{T}"/> and sorts according to a specified
     ///   <see cref="Sort"/> object (sort by field).  This is used
     ///   internally by the <see cref="IndexSearcher"/> search methods
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
     /// the score computation is skipped entirely if it's not
     /// needed.  Collectors that do need the score should
     /// implement the <see cref="SetScorer(Scorer)"/> method, to hold onto the
-    /// passed <see cref="Scorer"/> instance, and call 
+    /// passed <see cref="Scorer"/> instance, and call
     /// <see cref="Scorer.GetScore()"/> within the collect method to compute the
     /// current hit's score.  If your collector may request the
     /// score for a single hit multiple times, you should use
@@ -85,35 +85,35 @@ namespace Lucene.Net.Search
     /// {
     ///     private readonly OpenBitSet bits;
     ///     private int docBase;
-    /// 
+    ///
     ///     public MySearchCollector(OpenBitSet bits)
     ///     {
     ///         if (bits is null) throw new ArgumentNullException("bits");
     ///         this.bits = bits;
     ///     }
-    /// 
+    ///
     ///     // ignore scorer
     ///     public void SetScorer(Scorer scorer)
-    ///     { 
+    ///     {
     ///     }
-    ///     
+    ///
     ///     // accept docs out of order (for a BitSet it doesn't matter)
     ///     public bool AcceptDocsOutOfOrder
     ///     {
     ///         get { return true; }
     ///     }
-    ///     
+    ///
     ///     public void Collect(int doc)
     ///     {
     ///         bits.Set(doc + docBase);
     ///     }
-    ///     
+    ///
     ///     public void SetNextReader(AtomicReaderContext context)
     ///     {
     ///         this.docBase = context.DocBase;
     ///     }
     /// }
-    /// 
+    ///
     /// IndexSearcher searcher = new IndexSearcher(indexReader);
     /// OpenBitSet bits = new OpenBitSet(indexReader.MaxDoc);
     /// searcher.Search(query, new MySearchCollector(bits));
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search
     /// no longer do that.  It's very unusual to have such hits
     /// (a negative query boost, or function query returning
     /// negative custom scores, could cause it to happen).  If
-    /// you need that behavior, use 
+    /// you need that behavior, use
     /// <see cref="PositiveScoresOnlyCollector"/>.</para>
     ///
     /// @lucene.experimental
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
         ///
         /// <para> Most Lucene Query implementations will visit
         /// matching docIDs in order.  However, some queries
-        /// (currently limited to certain cases of <see cref="BooleanQuery"/>) 
+        /// (currently limited to certain cases of <see cref="BooleanQuery"/>)
         /// can achieve faster searching if the
         /// <see cref="ICollector"/> allows them to deliver the
         /// docIDs out of order.</para>
@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
     }
 
     /// <summary>
-    /// LUCENENET specific class used to hold the 
+    /// LUCENENET specific class used to hold the
     /// <see cref="NewAnonymous(Action{Scorer}, Action{int}, Action{AtomicReaderContext}, Func{bool})"/> static method.
     /// </summary>
     public static class Collector
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search
         ///     IndexSearcher searcher = new IndexSearcher(indexReader);
         ///     OpenBitSet bits = new OpenBitSet(indexReader.MaxDoc);
         ///     int docBase;
-        ///     searcher.Search(query, 
+        ///     searcher.Search(query,
         ///         Collector.NewAnonymous(setScorer: (scorer) =>
         ///         {
         ///             // ignore scorer
@@ -224,22 +224,22 @@ namespace Lucene.Net.Search
         /// </code>
         /// </summary>
         /// <param name="setScorer">
-        /// A delegate method that represents (is called by) the <see cref="ICollector.SetScorer(Scorer)"/> 
-        /// method. It accepts a <see cref="Scorer"/> scorer and 
+        /// A delegate method that represents (is called by) the <see cref="ICollector.SetScorer(Scorer)"/>
+        /// method. It accepts a <see cref="Scorer"/> scorer and
         /// has no return value.
         /// </param>
         /// <param name="collect">
-        /// A delegate method that represents (is called by) the <see cref="ICollector.Collect(int)"/> 
-        /// method. It accepts an <see cref="int"/> doc and 
+        /// A delegate method that represents (is called by) the <see cref="ICollector.Collect(int)"/>
+        /// method. It accepts an <see cref="int"/> doc and
         /// has no return value.
         /// </param>
         /// <param name="setNextReader">
-        /// A delegate method that represents (is called by) the <see cref="ICollector.SetNextReader(AtomicReaderContext)"/> 
-        /// method. It accepts a <see cref="AtomicReaderContext"/> context and 
+        /// A delegate method that represents (is called by) the <see cref="ICollector.SetNextReader(AtomicReaderContext)"/>
+        /// method. It accepts a <see cref="AtomicReaderContext"/> context and
         /// has no return value.
         /// </param>
         /// <param name="acceptsDocsOutOfOrder">
-        /// A delegate method that represents (is called by) the <see cref="ICollector.AcceptsDocsOutOfOrder"/> 
+        /// A delegate method that represents (is called by) the <see cref="ICollector.AcceptsDocsOutOfOrder"/>
         /// property. It returns a <see cref="bool"/> value.
         /// </param>
         /// <returns> A new <see cref="AnonymousCollector"/> instance. </returns>

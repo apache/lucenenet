@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using System;
@@ -26,12 +26,12 @@ namespace Lucene.Net.Search.Suggest
 
     /// <summary>
     /// <para>
-    /// Dictionary with terms and optionally payload information 
-    /// taken from stored fields in a Lucene index. Similar to 
+    /// Dictionary with terms and optionally payload information
+    /// taken from stored fields in a Lucene index. Similar to
     /// <see cref="DocumentDictionary"/>, except it obtains the weight
     /// of the terms in a document based on a <see cref="ValueSource"/>.
     /// </para>
-    /// <b>NOTE:</b> 
+    /// <b>NOTE:</b>
     ///  <list type="bullet">
     ///    <item><description>
     ///      The term and (optionally) payload fields have to be
@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Suggest
     ///    </description></item>
     ///    <item><description>
     ///      if the term or (optionally) payload fields supplied
-    ///      do not have a value for a document, then the document is 
+    ///      do not have a value for a document, then the document is
     ///      rejected by the dictionary
     ///    </description></item>
     ///  </list>
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Suggest
     ///    ValueSource valueSource = expression.GetValueSource(bindings);
     ///  </code>
     ///  </para>
-    /// 
+    ///
     /// </summary>
     public class DocumentValueSourceDictionary : DocumentDictionary
     {
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
         /// for the terms, <paramref name="payload"/> for the corresponding payloads, <paramref name="contexts"/>
-        /// for the associated contexts and uses the <paramref name="weightsValueSource"/> supplied 
+        /// for the associated contexts and uses the <paramref name="weightsValueSource"/> supplied
         /// to determine the score.
         /// </summary>
         public DocumentValueSourceDictionary(IndexReader reader, string field, ValueSource weightsValueSource, string payload, string contexts)
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
         /// for the terms, <paramref name="payload"/> for the corresponding payloads
-        /// and uses the <paramref name="weightsValueSource"/> supplied to determine the 
+        /// and uses the <paramref name="weightsValueSource"/> supplied to determine the
         /// score.
         /// </summary>
         public DocumentValueSourceDictionary(IndexReader reader, string field, ValueSource weightsValueSource, string payload)
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
-        /// for the terms and uses the <paramref name="weightsValueSource"/> supplied to determine the 
+        /// for the terms and uses the <paramref name="weightsValueSource"/> supplied to determine the
         /// score.
         /// </summary>
         public DocumentValueSourceDictionary(IndexReader reader, string field, ValueSource weightsValueSource)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         public override IInputEnumerator GetEntryEnumerator()
-        { 
+        {
             return new DocumentValueSourceInputEnumerator(this, m_payloadField != null, m_contextsField != null);
         }
 
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search.Suggest
             }
 
             /// <summary>
-            /// Returns the weight for the current <paramref name="docId"/> as computed 
+            /// Returns the weight for the current <paramref name="docId"/> as computed
             /// by the <see cref="weightsValueSource"/>
             /// </summary>
             protected internal override long GetWeight(Document doc, int docId)

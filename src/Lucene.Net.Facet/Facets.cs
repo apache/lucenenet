@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System.Collections.Generic;
 
 namespace Lucene.Net.Facet
@@ -22,8 +22,8 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Common base class for all facets implementations.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public abstract class Facets
     {
@@ -37,14 +37,14 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Returns the topN child labels under the specified
         /// path.  Returns null if the specified path doesn't
-        /// exist or if this dimension was never seen. 
+        /// exist or if this dimension was never seen.
         /// </summary>
         public abstract FacetResult GetTopChildren(int topN, string dim, params string[] path);
 
         /// <summary>
         /// Return the count or value
         /// for a specific path.  Returns -1 if
-        /// this path doesn't exist, else the count. 
+        /// this path doesn't exist, else the count.
         /// </summary>
         public abstract float GetSpecificValue(string dim, params string[] path);
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Facet
         /// sorted by the number of hits that dimension matched;
         /// this is used for "sparse" faceting, where many
         /// different dimensions were indexed, for example
-        /// depending on the type of document. 
+        /// depending on the type of document.
         /// </summary>
         public abstract IList<FacetResult> GetAllDims(int topN);
     }

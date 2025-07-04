@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core;
+using Lucene.Net.QueryParsers.Flexible.Core;
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.Support;
 using System;
@@ -38,11 +38,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// You can explicitly create objects of this exception type by
     /// calling the method generateParseException in the generated
     /// parser.
-    /// 
+    ///
     /// You can modify this class to customize your error reporting
     /// mechanisms so long as you retain the public fields.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

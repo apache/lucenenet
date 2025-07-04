@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
     /// top few hundred hits perhaps, and then use this class to
     /// mix in a more costly second pass scoring.
     ///
-    /// <para/>See 
+    /// <para/>See
     /// <see cref="QueryRescorer.Rescore(IndexSearcher, TopDocs, Query, double, int)"/>
     /// for a simple static method to call to rescore using a 2nd
     /// pass <see cref="Query"/>.

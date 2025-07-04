@@ -1,4 +1,4 @@
-﻿// AttributesImpl.java - default implementation of Attributes.
+// AttributesImpl.java - default implementation of Attributes.
 // http://www.saxproject.org
 // Written by David Megginson
 // NO WARRANTY!  This class is in the public domain.

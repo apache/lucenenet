@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using System;
 using System.Collections;
@@ -125,8 +125,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             Init();
         }
 
-         // LUCENENET specific - S1699 - marked non-virtual because calling
-         // virtual members from the constructor is not a safe operation in .NET
+        // LUCENENET specific - S1699 - marked non-virtual because calling
+        // virtual members from the constructor is not a safe operation in .NET
         protected void Init()
         {
             m_root = (char)0;

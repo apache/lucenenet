@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <seealso cref="ScandinavianFoldingFilter"/>
     public sealed class ScandinavianNormalizationFilter : TokenFilter
     {
-        public ScandinavianNormalizationFilter(TokenStream input) 
+        public ScandinavianNormalizationFilter(TokenStream input)
             : base(input)
         {
             charTermAttribute = AddAttribute<ICharTermAttribute>();

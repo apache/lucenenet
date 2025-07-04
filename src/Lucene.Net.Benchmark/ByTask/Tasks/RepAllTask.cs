@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Stats;
+using Lucene.Net.Benchmarks.ByTask.Stats;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -37,19 +37,19 @@ namespace Lucene.Net.Facet.Range
     /// using <see cref="FunctionValues.Int64Val(int)"/> or <see cref="FunctionValues.Int64Val(int, long[])"/>.  Use
     /// this for dimensions that change in real-time (e.g. a
     /// relative time based dimension like "Past day", "Past 2
-    /// days", etc.) or that change for each request (e.g. 
+    /// days", etc.) or that change for each request (e.g.
     /// distance from the user's location, "&lt; 1 km", "&lt; 2 km",
     /// etc.).
     /// <para/>
     /// NOTE: This was LongRangeFacetCounts in Lucene
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public class Int64RangeFacetCounts : RangeFacetCounts
     {
         /// <summary>
         /// Create <see cref="Int64RangeFacetCounts"/>, using
-        /// <see cref="Int64FieldSource"/> from the specified field. 
+        /// <see cref="Int64FieldSource"/> from the specified field.
         /// </summary>
         public Int64RangeFacetCounts(string field, FacetsCollector hits, params Int64Range[] ranges)
             : this(field, new Int64FieldSource(field), hits, ranges)
@@ -58,7 +58,7 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Create <see cref="Int64RangeFacetCounts"/>, using the provided
-        /// <see cref="ValueSource"/>. 
+        /// <see cref="ValueSource"/>.
         /// </summary>
         public Int64RangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, params Int64Range[] ranges)
             : this(field, valueSource, hits, null, ranges)
@@ -70,9 +70,9 @@ namespace Lucene.Net.Facet.Range
         /// <see cref="ValueSource"/>, and using the provided Filter as
         /// a fastmatch: only documents passing the filter are
         /// checked for the matching ranges.  The filter must be
-        /// random access (implement <see cref="DocIdSet.Bits"/>). 
+        /// random access (implement <see cref="DocIdSet.Bits"/>).
         /// </summary>
-        public Int64RangeFacetCounts(string field, ValueSource valueSource, 
+        public Int64RangeFacetCounts(string field, ValueSource valueSource,
             FacetsCollector hits, Filter fastMatchFilter, params Int64Range[] ranges)
             : base(field, ranges, fastMatchFilter)
         {

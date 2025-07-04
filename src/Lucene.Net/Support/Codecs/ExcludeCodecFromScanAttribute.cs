@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using System;
 
 namespace Lucene.Net.Codecs
@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// When placed on a class that subclasses <see cref="Codec"/>, adding this
-    /// attribute will exclude the type from consideration in the 
+    /// attribute will exclude the type from consideration in the
     /// <see cref="DefaultCodecFactory.ScanForCodecs(System.Reflection.Assembly)"/> method.
     /// <para/>
     /// However, the <see cref="Codec"/> type can still be added manually using

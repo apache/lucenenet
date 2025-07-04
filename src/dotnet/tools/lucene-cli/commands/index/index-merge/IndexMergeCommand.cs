@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Misc;
+using Lucene.Net.Misc;
 
 namespace Lucene.Net.Cli
 {

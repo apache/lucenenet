@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 9.2
+// Lucene version compatibility level 9.2
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -36,11 +36,10 @@ namespace Lucene.Net.Analysis.Fa
     /// </summary>
     public class PersianStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
         /// Creates a new <see cref="PersianStemFilterFactory"/> </summary>
         public PersianStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

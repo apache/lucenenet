@@ -25,14 +25,14 @@ namespace Lucene.Net.Analysis.Cz
 
     /// <summary>
     /// Test the CzechAnalyzer
-    /// 
-    /// Before Lucene 3.1, CzechAnalyzer was a StandardAnalyzer with a custom 
+    ///
+    /// Before Lucene 3.1, CzechAnalyzer was a StandardAnalyzer with a custom
     /// stopword list. As of 3.1 it also includes a stemmer.
-    /// 
+    ///
     /// </summary>
     public class TestCzechAnalyzer : BaseTokenStreamTestCase
     {
-        /// @deprecated (3.1) Remove this test when support for 3.0 indexes is no longer needed. 
+        /// @deprecated (3.1) Remove this test when support for 3.0 indexes is no longer needed.
         [Test]
         [Obsolete("(3.1) Remove this test when support for 3.0 indexes is no longer needed.")]
         public virtual void TestStopWordLegacy()
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Cz
             AssertAnalyzesTo(new CzechAnalyzer(TEST_VERSION_CURRENT), "Pokud mluvime o volnem", new string[] { "mluvim", "voln" });
         }
 
-        /// @deprecated (3.1) Remove this test when support for 3.0 indexes is no longer needed. 
+        /// @deprecated (3.1) Remove this test when support for 3.0 indexes is no longer needed.
         [Test]
         [Obsolete("(3.1) Remove this test when support for 3.0 indexes is no longer needed.")]
         public virtual void TestReusableTokenStreamLegacy()

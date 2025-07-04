@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using System.Collections.Generic;
