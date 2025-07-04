@@ -22,7 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
-  
+
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests._A-D</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
@@ -31,7 +31,7 @@
   <ItemGroup>
     <PackageReference Include="TimeZoneConverter" Version="$(TimeZoneConverterPackageVersion)" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Compile Include="..\Lucene.Net.Tests\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
     <Compile Include="..\Lucene.Net.Tests\*.cs" />
@@ -39,7 +39,7 @@
     <Compile Include="..\Lucene.Net.Tests\Codecs\**\*.cs" LinkBase="Codecs" />
     <Compile Include="..\Lucene.Net.Tests\Document\**\*.cs" LinkBase="Document" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
@@ -72,9 +72,9 @@
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>
   </ItemGroup>
-  
+
   <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
-  
+
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
