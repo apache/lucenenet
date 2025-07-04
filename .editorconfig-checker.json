@@ -6,7 +6,8 @@
   "NoColor": false,
   "Exclude": [
     "**/*.resx",
-    "**/*.DotSettings"
+    "**/*.DotSettings",
+    "**/App.config"
   ],
   "AllowedContentTypes": [],
   "PassedFiles": [],
