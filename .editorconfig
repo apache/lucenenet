@@ -164,10 +164,6 @@ indent_size = 2
 [*.properties]
 trim_trailing_whitespace = false
 
-# *.info (properties file copied directly from Lucene for Morfologik)
-[*.info]
-trim_trailing_whitespace = false
-
 # ========================================
 # Git files
 # ========================================
@@ -486,8 +482,8 @@ insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
-# Exclude *.input (binary copied directly from Lucene for Morfologik)
-[**/*.dict]
+# Exclude *.info (properties file copied directly from Lucene for Morfologik)
+[**/*.info]
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
