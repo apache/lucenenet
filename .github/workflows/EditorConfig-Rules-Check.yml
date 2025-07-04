@@ -32,8 +32,13 @@ jobs:
 
       - name: Run EditorConfig Checker and Show Help
         run: |
-          echo "🔍 Running EditorConfig Checker..."
-          if ! ec; then
+          echo "::group::🔍 Running EditorConfig Checker..."
+
+          if ec; then
+            echo "✅ EditorConfig Checker Success"
+            echo "::endgroup::"
+          else
+            echo "::endgroup::"
             echo ""
             echo "❌ One or more files do not conform to .editorconfig rules."
             echo ""
