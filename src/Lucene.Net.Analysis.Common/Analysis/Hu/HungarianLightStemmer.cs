@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 5)
             {
-                if (!IsVowel(s[len - 4]) && 
+                if (!IsVowel(s[len - 4]) &&
                     (StemmerUtil.EndsWith(s, len, "unk") ||
                     StemmerUtil.EndsWith(s, len, "tok") ||
                     StemmerUtil.EndsWith(s, len, "tek")))
