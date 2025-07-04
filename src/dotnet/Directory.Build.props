@@ -22,7 +22,7 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
   <PropertyGroup>
-    <!-- According to the docs (https://docs.microsoft.com/en-us/cpp/build/reference/common-macros-for-build-commands-and-properties?view=vs-2019), the 
+    <!-- According to the docs (https://docs.microsoft.com/en-us/cpp/build/reference/common-macros-for-build-commands-and-properties?view=vs-2019), the
       SolutionDir is only available when running in the IDE, so we patch to ensure it also works when using dotnet.exe -->
     <SolutionDir>$(MSBuildThisFileDirectory)../../</SolutionDir>
   </PropertyGroup>
