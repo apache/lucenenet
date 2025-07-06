@@ -283,7 +283,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                     sb.Append(CSVUtil.QuoteEscape(allFeatures[field])).Append(',');
                 }
             }
-            return sb.Remove(sb.Length - 1, 1).ToString();
+            return sb.Delete(sb.Length - 1, 1).ToString();
         }
     }
 }

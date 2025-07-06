@@ -1,4 +1,6 @@
 // Lucene version compatibility level 4.8.1
+
+using J2N.Text;
 using System;
 using System.Globalization;
 using System.Text;
@@ -25,7 +27,7 @@ namespace Lucene.Net.Analysis.De
      */
 
     /// <summary>
-    /// A stemmer for German words. 
+    /// A stemmer for German words.
     /// <para>
     /// The algorithm is based on the report
     /// "A Fast and Simple Stemming Algorithm for German Words" by Jörg
@@ -60,8 +62,7 @@ namespace Lucene.Net.Analysis.De
                 return term;
             }
             // Reset the StringBuilder.
-            sb.Remove(0, sb.Length);
-            sb.Insert(0, term);
+            sb.Replace(0, sb.Length, term);
             // Stemming starts here...
             Substitute(sb);
             Strip(sb);
@@ -102,32 +103,32 @@ namespace Lucene.Net.Analysis.De
             {
                 if ((buffer.Length + substCount > 5) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("nd", StringComparison.Ordinal))
                 {
-                    buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
+                    buffer.Delete(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
                 }
                 else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("em", StringComparison.Ordinal))
                 {
-                    buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
+                    buffer.Delete(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
                 }
                 else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("er", StringComparison.Ordinal))
                 {
-                    buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
+                    buffer.Delete(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
                 }
                 else if (buffer[buffer.Length - 1] == 'e')
                 {
-                    buffer.Remove(buffer.Length - 1, 1);
+                    buffer.Delete(buffer.Length - 1, 1);
                 }
                 else if (buffer[buffer.Length - 1] == 's')
                 {
-                    buffer.Remove(buffer.Length - 1, 1);
+                    buffer.Delete(buffer.Length - 1, 1);
                 }
                 else if (buffer[buffer.Length - 1] == 'n')
                 {
-                    buffer.Remove(buffer.Length - 1, 1);
+                    buffer.Delete(buffer.Length - 1, 1);
                 }
                 // "t" occurs only as suffix of verbs.
                 else if (buffer[buffer.Length - 1] == 't')
                 {
-                    buffer.Remove(buffer.Length - 1, 1);
+                    buffer.Delete(buffer.Length - 1, 1);
                 }
                 else
                 {
@@ -145,7 +146,7 @@ namespace Lucene.Net.Analysis.De
             // Additional step for female plurals of professions and inhabitants.
             if (buffer.Length > 5 && buffer.ToString(buffer.Length - 5, buffer.Length - (buffer.Length - 5)).Equals("erin*", StringComparison.Ordinal))
             {
-                buffer.Remove(buffer.Length - 1, 1);
+                buffer.Delete(buffer.Length - 1, 1);
                 Strip(buffer);
             }
             // Additional step for irregular plural nouns like "Matrizen -> Matrix".
@@ -167,7 +168,7 @@ namespace Lucene.Net.Analysis.De
                 {
                     if (buffer.ToString(c, 4).Equals("gege", StringComparison.Ordinal))
                     {
-                        buffer.Remove(c, (c + 2) - c);
+                        buffer.Delete(c, (c + 2) - c);
                         return;
                     }
                 }
@@ -176,7 +177,7 @@ namespace Lucene.Net.Analysis.De
 
         /// <summary>
         /// Do some substitutions for the term to reduce overstemming:
-        /// 
+        ///
         /// <list type="bullet">
         /// <item><description>Substitute Umlauts with their corresponding vowel: äöü -> aou,
         ///   "ß" is substituted by "ss"</description></item>
@@ -223,37 +224,37 @@ namespace Lucene.Net.Analysis.De
                     if ((c < buffer.Length - 2) && buffer[c] == 's' && buffer[c + 1] == 'c' && buffer[c + 2] == 'h')
                     {
                         buffer[c] = '$';
-                        buffer.Remove(c + 1, (c + 3) - (c + 1));
+                        buffer.Delete(c + 1, (c + 3) - (c + 1));
                         substCount = +2;
                     }
                     else if (buffer[c] == 'c' && buffer[c + 1] == 'h')
                     {
                         buffer[c] = '§';
-                        buffer.Remove(c + 1, 1);
+                        buffer.Delete(c + 1, 1);
                         substCount++;
                     }
                     else if (buffer[c] == 'e' && buffer[c + 1] == 'i')
                     {
                         buffer[c] = '%';
-                        buffer.Remove(c + 1, 1);
+                        buffer.Delete(c + 1, 1);
                         substCount++;
                     }
                     else if (buffer[c] == 'i' && buffer[c + 1] == 'e')
                     {
                         buffer[c] = '&';
-                        buffer.Remove(c + 1, 1);
+                        buffer.Delete(c + 1, 1);
                         substCount++;
                     }
                     else if (buffer[c] == 'i' && buffer[c + 1] == 'g')
                     {
                         buffer[c] = '#';
-                        buffer.Remove(c + 1, 1);
+                        buffer.Delete(c + 1, 1);
                         substCount++;
                     }
                     else if (buffer[c] == 's' && buffer[c + 1] == 't')
                     {
                         buffer[c] = '!';
-                        buffer.Remove(c + 1, 1);
+                        buffer.Delete(c + 1, 1);
                         substCount++;
                     }
                 }

@@ -1,4 +1,5 @@
 ﻿using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
@@ -1307,7 +1308,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         b.Append(c);
                         Generate(@out, b, from, c == to ? to : from, depth - 1);
-                        b.Remove(b.Length - 1, 1);//remove last char
+                        b.Delete(b.Length - 1, 1);//remove last char
                     }
                 }
             }
