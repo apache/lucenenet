@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using RandomizedTesting.Generators;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
@@ -100,10 +101,10 @@ namespace Lucene.Net.Search
             return (filter is null) ? query : new FilteredQuery(query, filter, TestUtil.RandomFilterStrategy(random));
         }
 
-        protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
+        protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector, CancellationToken cancellationToken = default)
         {
             // TODO: shouldn't we AssertingCollector.wrap(collector) here?
-            base.Search(leaves, AssertingWeight.Wrap(random, weight), collector);
+            base.Search(leaves, AssertingWeight.Wrap(random, weight), collector, cancellationToken);
         }
 
         public override string ToString()

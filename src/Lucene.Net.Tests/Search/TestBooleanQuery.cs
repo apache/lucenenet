@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -395,10 +396,10 @@ namespace Lucene.Net.Search
             {
             }
 
-            protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
+            protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector, CancellationToken cancellationToken = default)
             {
                 Assert.AreEqual(-1, collector.GetType().Name.IndexOf("OutOfOrder", StringComparison.Ordinal));
-                base.Search(leaves, weight, collector);
+                base.Search(leaves, weight, collector, cancellationToken);
             }
         }
     }
