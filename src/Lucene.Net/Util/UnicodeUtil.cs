@@ -855,7 +855,7 @@ namespace Lucene.Net.Util
         /// <returns> a char array representing the code points between offset and count. </returns>
         // LUCENENET NOTE: This code was originally in the NewString() method (above).
         // It has been refactored from the original to remove the exception throw/catch and
-        // instead proactively resizes the array instead of relying on excpetions + copy operations
+        // instead proactively resizes the array instead of relying on exceptions + copy operations
         public static char[] ToCharArray(int[] codePoints, int offset, int count)
         {
             if (count < 0)

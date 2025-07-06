@@ -140,7 +140,7 @@ namespace Lucene.Net.Store
         /// Helper method that reads CFS entries from an input stream </summary>
         private static IDictionary<string, FileEntry> ReadEntries(IndexInputSlicer handle, Directory dir, string name)
         {
-            Exception priorE = null; // LUCENENET: No need to cast to IOExcpetion
+            Exception priorE = null; // LUCENENET: No need to cast to IOException
             IndexInput stream = null;
             ChecksumIndexInput entriesStream = null;
             // read the first VInt. If it is negative, it's the version number
