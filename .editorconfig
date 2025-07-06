@@ -328,13 +328,6 @@ insert_final_newline = unset
 resharper_enforce_empty_line_at_end_of_file = false
 indent_style = unset
 
-# Exclude CHANGES.txt (we don't care about formatting here)
-[**/CHANGES.txt]
-trim_trailing_whitespace = unset
-insert_final_newline = unset
-resharper_enforce_empty_line_at_end_of_file = false
-indent_style = unset
-
 # Exclude ChangeNotes.txt (we don't care about formatting here)
 [**/ChangeNotes.txt]
 trim_trailing_whitespace = unset
