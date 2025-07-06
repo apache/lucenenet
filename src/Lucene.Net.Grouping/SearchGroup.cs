@@ -2,9 +2,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -28,14 +26,14 @@ namespace Lucene.Net.Search.Grouping
 
     /// <summary>
     /// Represents a group that is found during the first pass search.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public class SearchGroup<TGroupValue> : ISearchGroup<TGroupValue>
+    public class SearchGroup<TGroupValue> : ISearchGroup
     {
         /// <summary>
-        /// The value that defines this group 
+        /// The value that defines this group
         /// </summary>
         public TGroupValue GroupValue { get; set; }
 
@@ -81,33 +79,46 @@ namespace Lucene.Net.Search.Grouping
         {
             return GroupValue != null ? GroupValue.GetHashCode() : 0;
         }
+
+        #region Explicit interface implementations
+
+        /// <summary>
+        /// LUCENENET specific implementation to provide an object-based implementation of <see cref="GroupValue"/>.
+        /// </summary>
+        object ISearchGroup.GroupValue
+        {
+            get => GroupValue;
+            set => GroupValue = (TGroupValue)value;
+        }
+
+        #endregion
     }
 
     /// <summary>
-    /// LUCENENET specific class used to nest types to mimic the syntax used 
+    /// LUCENENET specific class used to nest types to mimic the syntax used
     /// by Lucene (that is, without specifying the generic closing type of <see cref="SearchGroup{TGroupValue}"/>)
     /// </summary>
     public static class SearchGroup // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         private class ShardIter<T>
         {
-            public IEnumerator<ISearchGroup<T>> Iter => iter;
-            private readonly IEnumerator<ISearchGroup<T>> iter;
+            public IEnumerator<SearchGroup<T>> Iter => iter;
+            private readonly IEnumerator<SearchGroup<T>> iter;
 
             public int ShardIndex => shardIndex;
             private readonly int shardIndex;
 
-            public ShardIter(IEnumerable<ISearchGroup<T>> shard, int shardIndex)
+            public ShardIter(ICollection<SearchGroup<T>> shard, int shardIndex)
             {
                 this.shardIndex = shardIndex;
                 iter = shard.GetEnumerator();
                 //if (Debugging.AssertsEnabled) Debugging.Assert(iter.hasNext()); // No reasonable way to do this in .NET
             }
 
-            public ISearchGroup<T> Next()
+            public SearchGroup<T> Next()
             {
                 //if (Debugging.AssertsEnabled) Debugging.Assert(iter.hasNext()); // No reasonable way to do this in .NET
-                ISearchGroup<T> group = iter.Current;
+                SearchGroup<T> group = iter.Current;
                 if (group.SortValues is null)
                 {
                     throw new ArgumentException("group.sortValues is null; you must pass fillFields=true to the first pass collector");
@@ -185,8 +196,8 @@ namespace Lucene.Net.Search.Grouping
                     }
                     else
                     {
-                        
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!groupValueIsValueType 
+
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!groupValueIsValueType
                             ? JCG.EqualityComparer<T>.Default.Equals(groupValue, otherMergedGroup.groupValue)
 
                             // LUCENENET specific - use J2N.Collections.StructuralEqualityComparer.Default.Equals() if we have a reference type
@@ -312,7 +323,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 while (shard.Iter.MoveNext())
                 {
-                    ISearchGroup<T> group = shard.Next();
+                    SearchGroup<T> group = shard.Next();
                     bool isNew = !groupsSeen.TryGetValue(group.GroupValue, out MergedGroup<T> mergedGroup) || mergedGroup is null;
                     //System.out.println("    next group=" + (group.groupValue is null ? "null" : ((BytesRef) group.groupValue).utf8ToString()) + " sort=" + Arrays.toString(group.sortValues));
 
@@ -392,7 +403,7 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            public virtual ICollection<SearchGroup<T>> Merge(IList<IEnumerable<ISearchGroup<T>>> shards, int offset, int topN)
+            public virtual ICollection<SearchGroup<T>> Merge(IList<ICollection<SearchGroup<T>>> shards, int offset, int topN)
             {
 
                 int maxQueueSize = offset + topN;
@@ -401,8 +412,8 @@ namespace Lucene.Net.Search.Grouping
                 // Init queue:
                 for (int shardIDX = 0; shardIDX < shards.Count; shardIDX++)
                 {
-                    IEnumerable<ISearchGroup<T>> shard = shards[shardIDX];
-                    if (shard.Any()) // LUCENENET TODO: Change back to .Count if/when IEnumerable<T> is changed to ICollection<T> or IReadOnlyCollection<T>
+                    ICollection<SearchGroup<T>> shard = shards[shardIDX];
+                    if (shard.Count > 0)
                     {
                         //System.out.println("  insert shard=" + shardIDX);
                         UpdateNextGroup(maxQueueSize, new ShardIter<T>(shard, shardIDX));
@@ -463,7 +474,7 @@ namespace Lucene.Net.Search.Grouping
         /// NOTE: this returns null if the topGroups is empty.
         /// </para>
         /// </summary>
-        public static ICollection<SearchGroup<T>> Merge<T>(IList<IEnumerable<ISearchGroup<T>>> topGroups, int offset, int topN, Sort groupSort)
+        public static ICollection<SearchGroup<T>> Merge<T>(IList<ICollection<SearchGroup<T>>> topGroups, int offset, int topN, Sort groupSort)
         {
             if (topGroups.Count == 0)
             {
@@ -476,18 +487,16 @@ namespace Lucene.Net.Search.Grouping
         }
     }
 
-
     /// <summary>
-    /// LUCENENET specific interface used to provide covariance
-    /// with the TGroupValue type to simulate Java's wildcard generics.
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="SearchGroup{TGroupValue}"/>.
     /// </summary>
-    /// <typeparam name="TGroupValue"></typeparam>
-    public interface ISearchGroup<out TGroupValue>
+    public interface ISearchGroup
     {
         /// <summary>
-        /// The value that defines this group 
+        /// The value that defines this group
         /// </summary>
-        TGroupValue GroupValue { get; }
+        object GroupValue { get; set; }
 
         /// <summary>
         /// The sort values used during sorting. These are the
