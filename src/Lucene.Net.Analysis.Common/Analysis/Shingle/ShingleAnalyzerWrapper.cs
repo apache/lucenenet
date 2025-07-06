@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Util;
 using System;
@@ -68,8 +68,8 @@ namespace Lucene.Net.Analysis.Shingle
         ///        Note that if outputUnigrams==true, then unigrams are always output,
         ///        regardless of whether any shingles are available. </param>
         /// <param name="fillerToken"> filler token to use when positionIncrement is more than 1 </param>
-        public ShingleAnalyzerWrapper(Analyzer @delegate, int minShingleSize, int maxShingleSize, 
-            string tokenSeparator, bool outputUnigrams, bool outputUnigramsIfNoShingles, string fillerToken) 
+        public ShingleAnalyzerWrapper(Analyzer @delegate, int minShingleSize, int maxShingleSize,
+            string tokenSeparator, bool outputUnigrams, bool outputUnigramsIfNoShingles, string fillerToken)
             : base(@delegate.Strategy)
         {
             this.@delegate = @delegate;
@@ -97,18 +97,18 @@ namespace Lucene.Net.Analysis.Shingle
         }
 
         /// <summary>
-        /// Wraps <see cref="StandardAnalyzer"/>. 
+        /// Wraps <see cref="StandardAnalyzer"/>.
         /// </summary>
         public ShingleAnalyzerWrapper(LuceneVersion matchVersion)
-              : this(matchVersion, ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE, ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE)
+            : this(matchVersion, ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE, ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE)
         {
         }
 
         /// <summary>
-        /// Wraps <see cref="StandardAnalyzer"/>. 
+        /// Wraps <see cref="StandardAnalyzer"/>.
         /// </summary>
         public ShingleAnalyzerWrapper(LuceneVersion matchVersion, int minShingleSize, int maxShingleSize)
-              : this(new StandardAnalyzer(matchVersion), minShingleSize, maxShingleSize)
+            : this(new StandardAnalyzer(matchVersion), minShingleSize, maxShingleSize)
         {
         }
 

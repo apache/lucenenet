@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using SubInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo.SubInfo;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.VectorHighlight
             }
 
             // We want that terms per fragment (length) is included into the weight. Otherwise a one-word-query
-            // would cause an equal weight for all fragments regardless of how much words they contain.  
+            // would cause an equal weight for all fragments regardless of how much words they contain.
             // To avoid that fragments containing a high number of words possibly "outrank" more relevant fragments
             // we "bend" the length with a standard-normalization a little bit.
             float norm = length * (1 / (float)Math.Sqrt(length));

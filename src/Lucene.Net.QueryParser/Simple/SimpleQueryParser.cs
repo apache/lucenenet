@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -698,13 +698,13 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual Occur DefaultOperator
         {
             get => defaultOperator;
-            set 
+            set
             {
                 if (value != Occur.SHOULD && value != Occur.MUST)
                 {
                     throw new ArgumentException("invalid operator: only SHOULD or MUST are allowed");
                 }
-                defaultOperator = value; 
+                defaultOperator = value;
             }
         }
 
@@ -735,7 +735,7 @@ namespace Lucene.Net.QueryParsers.Simple
             internal int Index { get; set; }
             internal int Length { get; set; }
 
-            internal Occur CurrentOperation 
+            internal Occur CurrentOperation
             {
                 get => currentOperation;
                 set

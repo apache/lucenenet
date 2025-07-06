@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
         ///
         /// <para>This method is only called when
         /// <see cref="IndexWriter.Commit()"/>} or <see cref="IndexWriter.Dispose()"/> is
-        /// called, or possibly not at all if the 
+        /// called, or possibly not at all if the
         /// <see cref="IndexWriter.Rollback()"/>} method is called.</para>
         ///
         /// <para><u>Note:</u> the last CommitPoint is the most recent one,

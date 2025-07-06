@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using NUnit.Framework;
 
@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Memory
      */
 
     /// <summary>
-    /// Tests FSTOrdPostingsFormat 
+    /// Tests FSTOrdPostingsFormat
     /// </summary>
     public class TestFSTOrdPostingsFormat : BasePostingsFormatTestCase
     {

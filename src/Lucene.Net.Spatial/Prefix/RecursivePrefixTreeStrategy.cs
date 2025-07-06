@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search;
+using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
 using Spatial4n.Shapes;
@@ -84,7 +84,7 @@ namespace Lucene.Net.Spatial.Prefix
             IShape shape = args.Shape;
             int detailLevel = m_grid.GetLevelForDistance(args.ResolveDistErr(m_ctx, m_distErrPct));
 
-        
+
             if (m_pointsOnly || op == SpatialOperation.Intersects)
             {
                 return new IntersectsPrefixTreeFilter(
@@ -93,12 +93,12 @@ namespace Lucene.Net.Spatial.Prefix
             else if (op == SpatialOperation.IsWithin)
             {
                 return new WithinPrefixTreeFilter(
-                    shape, FieldName, m_grid, detailLevel, prefixGridScanLevel, 
+                    shape, FieldName, m_grid, detailLevel, prefixGridScanLevel,
                     -1); //-1 flag is slower but ensures correct results
             }
             else if (op == SpatialOperation.Contains)
             {
-                return new ContainsPrefixTreeFilter(shape, FieldName, m_grid, detailLevel, 
+                return new ContainsPrefixTreeFilter(shape, FieldName, m_grid, detailLevel,
                     m_multiOverlappingIndexedShapes);
             }
             throw new UnsupportedSpatialOperationException(op);

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -28,14 +28,14 @@ namespace Lucene.Net.Search.Suggest.Fst
      */
 
     /// <summary>
-    /// Suggester based on a weighted FST: it first traverses the prefix, 
+    /// Suggester based on a weighted FST: it first traverses the prefix,
     /// then walks the <i>n</i> shortest paths to retrieve top-ranked
     /// suggestions.
     /// <para>
     /// <b>NOTE</b>:
     /// Input weights must be between 0 and <see cref="int.MaxValue"/>, any
     /// other values will be rejected.
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Creates a new suggester.
         /// </summary>
-        /// <param name="exactFirst"> <code>true</code> if suggestions that match the 
+        /// <param name="exactFirst"> <code>true</code> if suggestions that match the
         ///        prefix exactly should always be returned first, regardless
         ///        of score. This has no performance impact, but could result
         ///        in low-quality suggestions. </param>
@@ -323,7 +323,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         internal static readonly IComparer<Int64> weightComparer = Comparer<Int64>.Create((left, right) => Comparer<Int64>.Default.Compare(left, right));
-        
+
         /// <summary>
         /// Returns byte size of the underlying FST. </summary>
         public override long GetSizeInBytes()

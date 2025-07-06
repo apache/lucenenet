@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level < 7.1.0
+// Lucene version compatibility level < 7.1.0
 using Lucene.Net.Analysis.Cjk;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
             /**
              * ICUTokenizer+ICUNormalizer2Filter+CJKBigramFilter.
-             * 
+             *
              * ICUNormalizer2Filter uses nfkc_casefold by default, so this is a language-independent
              * superset of CJKWidthFilter's foldings.
              */
@@ -104,7 +104,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         }
 
         /**
-         * LUCENE-2207: wrong offset calculated by end() 
+         * LUCENE-2207: wrong offset calculated by end()
          */
         [Test]
         public void TestFinalOffset()
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         }
 
         /**
-         * Non-english text (outside of CJK) is treated normally, according to unicode rules 
+         * Non-english text (outside of CJK) is treated normally, according to unicode rules
          */
         [Test]
         public void TestNonIdeographic()

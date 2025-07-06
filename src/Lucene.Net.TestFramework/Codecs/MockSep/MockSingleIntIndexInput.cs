@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Store;
 
 namespace Lucene.Net.Codecs.MockSep
@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.MockSep
      */
 
     /// <summary>
-    /// Reads IndexInputs written with 
+    /// Reads IndexInputs written with
     /// <see cref="MockSingleInt32IndexOutput"/>.  NOTE: this class is just for
     /// demonstration purposes(it is a very slow way to read a
     /// block of ints).

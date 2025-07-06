@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.Quality.Utils;
+using Lucene.Net.Benchmarks.Quality.Utils;
 using Lucene.Net.Search;
 using System;
 using System.IO;
@@ -94,11 +94,11 @@ namespace Lucene.Net.Benchmarks.Quality
                 QualityQuery qq = m_qualityQueries[i];
                 // generate query
                 Query q = m_qqParser.Parse(qq);
-                // search with this query 
+                // search with this query
                 long t1 = J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
                 TopDocs td = m_searcher.Search(q, null, maxResults);
                 long searchTime = (J2N.Time.NanoTime() / J2N.Time.MillisecondsPerNanosecond) - t1; // LUCENENET: Use NanoTime() rather than CurrentTimeMilliseconds() for more accurate/reliable results
-                //most likely we either submit or judge, but check both 
+                //most likely we either submit or judge, but check both
                 if (judge != null)
                 {
                     stats[i] = AnalyzeQueryResults(qq, q, td, judge, qualityLog, searchTime);

@@ -26,9 +26,9 @@ namespace Lucene.Net.Analysis.Cz
 
     /// <summary>
     /// Test the Czech Stemmer.
-    /// 
+    ///
     /// Note: its algorithmic, so some stems are nonsense
-    /// 
+    ///
     /// </summary>
     public class TestCzechStemmer : BaseTokenStreamTestCase
     {

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Queries;
+using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
@@ -29,7 +29,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// <summary>
     /// A basic implementation of <see cref="PrefixTreeStrategy"/> using a large
     /// <see cref="TermsFilter"/> of all the cells from
-    /// <see cref="SpatialPrefixTree.GetCells(IShape, int, bool, bool)"/>. 
+    /// <see cref="SpatialPrefixTree.GetCells(IShape, int, bool, bool)"/>.
     /// It only supports the search of indexed Point shapes.
     /// <para/>
     /// The precision of query shapes (DistErrPct) is an important factor in using

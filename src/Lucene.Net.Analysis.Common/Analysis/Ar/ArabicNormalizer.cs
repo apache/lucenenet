@@ -66,7 +66,6 @@ namespace Lucene.Net.Analysis.Ar
         /// <returns> length of input buffer after normalization </returns>
         public virtual int Normalize(char[] s, int len)
         {
-
             for (int i = 0; i < len; i++)
             {
                 switch (s[i])

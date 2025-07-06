@@ -1,4 +1,4 @@
-﻿using ICU4N.Text;
+using ICU4N.Text;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -127,7 +127,7 @@ namespace Lucene.Net.Tests.ICU.Support
         {
             BreakIterator bi = GetWordInstance(new System.Globalization.CultureInfo("th"));
             bi.SetText("");
-            
+
 
             // Test empty
             Assert.AreEqual(0, bi.Current);

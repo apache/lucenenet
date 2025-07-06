@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Cn
 
     /// <summary>
     /// Factory for <see cref="ChineseFilter"/> </summary>
-    /// @deprecated Use <see cref="Core.StopFilterFactory"/> instead. 
+    /// @deprecated Use <see cref="Core.StopFilterFactory"/> instead.
     [Obsolete("Use StopFilterFactory instead.")]
     public class ChineseFilterFactory : TokenFilterFactory
     {

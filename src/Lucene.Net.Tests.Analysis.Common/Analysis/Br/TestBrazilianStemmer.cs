@@ -26,9 +26,9 @@ namespace Lucene.Net.Analysis.Br
 
     /// <summary>
     /// Test the Brazilian Stem Filter, which only modifies the term text.
-    /// 
+    ///
     /// It is very similar to the snowball portuguese algorithm but not exactly the same.
-    /// 
+    ///
     /// </summary>
     public class TestBrazilianStemmer : BaseTokenStreamTestCase
     {

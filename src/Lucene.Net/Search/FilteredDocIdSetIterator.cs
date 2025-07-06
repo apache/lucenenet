@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Abstract decorator class of a <see cref="DocIdSetIterator"/>
     /// implementation that provides on-demand filter/validation
-    /// mechanism on an underlying <see cref="DocIdSetIterator"/>.  See 
+    /// mechanism on an underlying <see cref="DocIdSetIterator"/>.  See
     /// <see cref="DocIdSetIterator"/>.
     /// </summary>
     public abstract class FilteredDocIdSetIterator : DocIdSetIterator

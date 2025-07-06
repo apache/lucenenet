@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Standard
     /// <see cref="LowerCaseFilter"/> and
     /// <see cref="StopFilter"/>, using a list of
     /// English stop words.
-    /// 
+    ///
     /// <para>
     ///   You must specify the required <see cref="LuceneVersion"/>
     ///   compatibility when creating <see cref="UAX29URLEmailAnalyzer"/>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// An unmodifiable set containing some common English words that are usually not
-        /// useful for searching. 
+        /// useful for searching.
         /// </summary>
         public static readonly CharArraySet STOP_WORDS_SET = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
 

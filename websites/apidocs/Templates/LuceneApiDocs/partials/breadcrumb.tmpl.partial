@@ -9,7 +9,7 @@
                 <ul class="breadcrumb">
                   <li>{{_tocTitle}}</li>
                 </ul>
-            </span>   
+            </span>
         </li>
     </ul>
   </div>

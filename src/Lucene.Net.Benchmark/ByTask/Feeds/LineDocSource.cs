@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Support;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
             }
 
-            // if this the simple case,   
+            // if this the simple case,
             if (Arrays.Equals(header, WriteLineDocTask.DEFAULT_FIELDS))
             {
                 return new SimpleLineParser(header);
@@ -189,7 +189,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         protected readonly string[] m_header;
 
         /// <summary>
-        /// Construct with the header 
+        /// Construct with the header
         /// </summary>
         /// <param name="header">header line found in the input file, or <c>null</c> if none.</param>
         protected LineParser(string[] header) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
@@ -205,8 +205,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
     /// <summary>
     /// <see cref="LineParser"/> which ignores the header passed to its constructor
-    /// and assumes simply that field names and their order are the same 
-    /// as in <see cref="WriteLineDocTask.DEFAULT_FIELDS"/>. 
+    /// and assumes simply that field names and their order are the same
+    /// as in <see cref="WriteLineDocTask.DEFAULT_FIELDS"/>.
     /// </summary>
     public class SimpleLineParser : LineParser
     {
@@ -243,11 +243,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     }
 
     /// <summary>
-    /// <see cref="LineParser"/> which sets field names and order by 
+    /// <see cref="LineParser"/> which sets field names and order by
     /// the header - any header - of the lines file.
     /// It is less efficient than <see cref="SimpleLineParser"/> but more powerful.
     /// </summary>
-    public class HeaderLineParser : LineParser 
+    public class HeaderLineParser : LineParser
     {
         private enum FieldName { NAME, TITLE, DATE, BODY, PROP }
         private readonly FieldName[] posToF;

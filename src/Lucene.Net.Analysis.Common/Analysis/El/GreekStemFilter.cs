@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.El
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.El
     /// </para>
     /// <para>
     /// NOTE: Input is expected to be casefolded for Greek (including folding of final
-    /// sigma to sigma), and with diacritics removed. This can be achieved by using 
+    /// sigma to sigma), and with diacritics removed. This can be achieved by using
     /// either <see cref="GreekLowerCaseFilter"/> or ICUFoldingFilter before <see cref="GreekStemFilter"/>.
     /// @lucene.experimental
     /// </para>
@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.El
         private readonly IKeywordAttribute keywordAttr;
 
         public GreekStemFilter(TokenStream input)
-              : base(input)
+            : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             keywordAttr = AddAttribute<IKeywordAttribute>();

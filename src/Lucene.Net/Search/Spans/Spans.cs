@@ -45,12 +45,12 @@ namespace Lucene.Net.Search.Spans
         /// <c> target &lt;= current</c>, or after the iterator has exhausted.
         /// Both cases may result in unpredicted behavior.
         /// <para/>Returns <c>true</c> if there is such
-        /// a match.  
-        /// <para/>Behaves as if written: 
+        /// a match.
+        /// <para/>Behaves as if written:
         /// <code>
-        ///     bool SkipTo(int target) 
+        ///     bool SkipTo(int target)
         ///     {
-        ///         do 
+        ///         do
         ///         {
         ///             if (!Next())
         ///                 return false;
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Spans
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        /// <returns> A <see cref="T:ICollection{byte[]}"/> of byte arrays containing the data of this payload, 
+        /// <returns> A <see cref="T:ICollection{byte[]}"/> of byte arrays containing the data of this payload,
         /// otherwise <c>null</c> if <see cref="IsPayloadAvailable"/> is <c>false</c> </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         // TODO: Remove warning after API has been finalized

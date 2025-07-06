@@ -26,9 +26,9 @@ namespace Lucene.Net.Codecs.Bloom
     /// The C version of MurmurHash 2.0 found at that site was ported to Java by
     /// Andrzej Bialecki (ab at getopt org).
     /// <para/>
-    /// The code from getopt.org was adapted by Mark Harwood in the form here as one of a pluggable choice of 
+    /// The code from getopt.org was adapted by Mark Harwood in the form here as one of a pluggable choice of
     /// hashing functions as the core function had to be adapted to work with <see cref="BytesRef"/>s with offsets and lengths
-    /// rather than raw byte arrays.  
+    /// rather than raw byte arrays.
     /// <para/>
     /// @lucene.experimental
     /// </summary>

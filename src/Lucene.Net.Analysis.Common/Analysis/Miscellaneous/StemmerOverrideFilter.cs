@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N;
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </para>
         /// </summary>
         public StemmerOverrideFilter(TokenStream input, StemmerOverrideMap stemmerOverrideMap)
-              : base(input)
+            : base(input)
         {
             this.stemmerOverrideMap = stemmerOverrideMap;
             fstReader = stemmerOverrideMap.GetBytesReader();

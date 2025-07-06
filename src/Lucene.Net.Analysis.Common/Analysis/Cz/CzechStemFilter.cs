@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Cz
@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Cz
     /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="IKeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </para>
-    /// <para><b>NOTE</b>: Input is expected to be in lowercase, 
+    /// <para><b>NOTE</b>: Input is expected to be in lowercase,
     /// but with diacritical marks</para> </summary>
     /// <seealso cref="Miscellaneous.SetKeywordMarkerFilter"/>
     public sealed class CzechStemFilter : TokenFilter

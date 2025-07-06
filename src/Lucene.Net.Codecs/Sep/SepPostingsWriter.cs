@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Sep
     /// Writes frq to .frq, docs to .doc, pos to .pos, payloads
     /// to .pyl, skip data to .skp
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     public sealed class SepPostingsWriter : PostingsWriterBase
     {
@@ -66,7 +66,7 @@ namespace Lucene.Net.Codecs.Sep
         /// used to accelerate <see cref="Lucene.Net.Search.DocIdSetIterator.Advance(int)"/>.  Larger values result in
         /// smaller indexes, greater acceleration, but fewer accelerable cases, while
         /// smaller values result in bigger indexes, less acceleration and more
-        /// accelerable cases. More detailed experiments would be useful here. 
+        /// accelerable cases. More detailed experiments would be useful here.
         /// </summary>
         private readonly int skipInterval;
         private const int DEFAULT_SKIP_INTERVAL = 16;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Sep
         private readonly int skipMinimum;
 
         /// <summary>
-        /// Expert: The maximum number of skip levels. Smaller values result in 
+        /// Expert: The maximum number of skip levels. Smaller values result in
         /// slightly smaller indexes, but slower skipping in big posting lists.
         /// </summary>
         private readonly int maxSkipLevels = 10;
@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Sep
 
         /// <summary>
         /// Adds a new doc in this term.  If this returns <c>null</c>
-        /// then we just skip consuming positions/payloads. 
+        /// then we just skip consuming positions/payloads.
         /// </summary>
         public override void StartDoc(int docID, int termDocFreq)
         {

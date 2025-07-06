@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Concurrent;
+using J2N.Collections.Concurrent;
 using Lucene.Net.Search;
 using Lucene.Net.Support.Threading;
 using System.Xml;

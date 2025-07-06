@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using System;
 using Double = J2N.Numerics.Double;
 using Int32 = J2N.Numerics.Int32;
@@ -25,7 +25,7 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// A field whose value is stored so that 
+    /// A field whose value is stored so that
     /// <see cref="Search.IndexSearcher.Doc(int)"/> and <see cref="Index.IndexReader.Document(int)"/> will
     /// return the field and its value.
     /// </summary>

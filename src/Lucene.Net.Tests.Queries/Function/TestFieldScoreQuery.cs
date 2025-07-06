@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
@@ -33,7 +33,7 @@ namespace Lucene.Net.Tests.Queries.Function
     /// <p>
     /// The rank tests use Hits to verify that docs are ordered (by score) as expected.
     /// <p>
-    /// The exact score tests use TopDocs top to verify the exact score.  
+    /// The exact score tests use TopDocs top to verify the exact score.
     /// </summary>
     public class TestFieldScoreQuery : FunctionTestSetup
     {

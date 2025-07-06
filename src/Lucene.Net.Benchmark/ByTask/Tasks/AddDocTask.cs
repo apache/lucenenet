@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
+using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Documents;
 using System.Globalization;
 
@@ -39,7 +39,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         /// <summary>
         /// Volatile data passed between <see cref="Setup()"/>, <see cref="DoLogic()"/>, <see cref="TearDown()"/>.
-        /// The doc is created at <see cref="Setup()"/> and added at <see cref="DoLogic()"/>. 
+        /// The doc is created at <see cref="Setup()"/> and added at <see cref="DoLogic()"/>.
         /// </summary>
         protected Document m_doc = null;
 

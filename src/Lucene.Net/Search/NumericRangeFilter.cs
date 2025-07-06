@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// A <see cref="Filter"/> that only accepts numeric values within
     /// a specified range. To use this, you must first index the
-    /// numeric values using <see cref="Documents.Int32Field"/>, 
+    /// numeric values using <see cref="Documents.Int32Field"/>,
     /// <see cref="Documents.SingleField"/>, <see cref="Documents.Int64Field"/> or <see cref="Documents.DoubleField"/> (expert:
     /// <see cref="Analysis.NumericTokenStream"/>).
     ///
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public sealed class NumericRangeFilter<T> : MultiTermQueryWrapperFilter<NumericRangeQuery<T>>
         where T : struct, IComparable<T>
-    // real numbers in C# are structs and IComparable with themselves, best constraint we have
+        // real numbers in C# are structs and IComparable with themselves, best constraint we have
     {
         internal NumericRangeFilter(NumericRangeQuery<T> query)
             : base(query)

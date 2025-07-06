@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Index.Sorter
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     [SuppressCodecs("Lucene3x")]
     public class TestSortingMergePolicy : LuceneTestCase
     {

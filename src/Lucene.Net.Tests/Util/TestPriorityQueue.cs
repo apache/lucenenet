@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Attributes;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -1033,13 +1033,13 @@ namespace Lucene.Net.Util
             }
 
             // Pop some of them
-            while (pq.Count > atLeast/2)
+            while (pq.Count > atLeast / 2)
             {
                 pq.Pop();
             }
 
             // Add some more
-            while (pq.Count < (atLeast*3)/4)
+            while (pq.Count < (atLeast * 3) / 4)
             {
                 pq.Add(Random.Next());
             }
@@ -1195,6 +1195,6 @@ namespace Lucene.Net.Util
             return PriorityQueue.GetArrayHeapSize(maxSize);
         }
 
-#endregion
+        #endregion
     }
 }

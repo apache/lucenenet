@@ -1,161 +1,260 @@
-﻿# You can modify the rules from these initially generated values to suit your own policies
+# You can modify the rules from these initially generated values to suit your own policies
 # You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
 
+
+# ========================================
+# Global defaults
+# ========================================
 [*]
-charset = utf-8-bom
+charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 resharper_enforce_empty_line_at_end_of_file = true
+indent_style = space
+indent_size = 4
 
+# ========================================
+# Windows Batch and Command files
+# ========================================
+[*.bat]
+end_of_line = crlf
+trim_trailing_whitespace = false
+
+[*.cmd]
+end_of_line = crlf
+trim_trailing_whitespace = false
+
+# ========================================
+# Markdown files
+# ========================================
 [*.md]
-indent_style = space
-indent_size = 4
+indent_size = 2
+trim_trailing_whitespace = false
 
+# ========================================
+# YAML files (preserve trailing spaces for indented script blocks)
+# ========================================
+[*.yml]
+indent_size = 2
+trim_trailing_whitespace = false
+
+[*.yaml]
+indent_size = 2
+trim_trailing_whitespace = false
+
+# ========================================
+# XML, MSBuild files
+# ========================================
+[*.props]
+indent_size = 2
+
+[*.targets]
+indent_size = 2
+
+[*.csproj]
+indent_size = 2
+
+[*.msbuildproj]
+indent_size = 2
+
+[*.fsproj]
+indent_size = 2
+
+[*.config]
+indent_size = 2
+
+# Apache-specific file
+[*.rdf]
+indent_size = 2
+
+[*.resx]
+indent_size = 2
+
+[*.trx]
+indent_size = 2
+
+[*.user]
+indent_size = 2
+
+[*.vbproj]
+indent_size = 2
+
+[*.xml]
+indent_size = 2
+
+[*.sln]
+indent_style = tab
+
+# ========================================
+# DTD files
+# ========================================
+[*.dtd]
+indent_size = 2
+
+# ========================================
+# XSLT files
+# ========================================
+[*.xsl]
+indent_size = 2
+
+[*.xslt]
+indent_size = 2
+
+# ========================================
+# JSON files
+# ========================================
+[*.json]
+indent_size = 2
+trim_trailing_whitespace = false
+
+# ========================================
+# DocFx files
+# ========================================
+[*.liquid]
+indent_size = 2
+
+# JSON format, different extension
+[*.map]
+indent_size = 2
+trim_trailing_whitespace = false
+
+[*.partial]
+indent_size = 2
+
+[*.tmpl]
+indent_size = 2
+
+# ========================================
+# Python files
+# ========================================
+[*.py]
+# PEP 8 and black defaults are indent_size = 4, but this is a compromise because the files we inherited have indentation of 2
+indent_size = 2
+
+# ========================================
+# .htaccess files
+# ========================================
+[.htaccess]
+indent_style = unset
+indent_size = unset
+
+# ========================================
+# HTML files
+# ========================================
+[*.html]
+indent_size = 2
+
+[*.htm]
+indent_size = 2
+
+# ========================================
+# CSS files
+# ========================================
+[*.css]
+indent_size = 2
+
+[*.min.css]
+trim_trailing_whitespace = false
+insert_final_newline = false
+indent_style = unset
+indent_size = unset
+
+# ========================================
+# JavaScript files
+# ========================================
+[*.js]
+indent_size = 2
+
+# ========================================
+# Java properties files
+# ========================================
+[*.properties]
+trim_trailing_whitespace = false
+
+# ========================================
+# Git files
+# ========================================
+[.gitignore]
+end_of_line = lf
+
+[.gitattributes]
+end_of_line = lf
+
+# ========================================
 # C# files
+# ========================================
 [*.cs]
-indent_style = space
 indent_size = 4
 
-#### Core EditorConfig Options ####
-
-#Formatting - indentation
-
-#use soft tabs (spaces) for indentation
-indent_style = space
-
-#Formatting - indentation options
-
-#indent switch case contents.
+# C# Formatting
 csharp_indent_case_contents = true
-#indent switch labels
 csharp_indent_switch_labels = true
-
-#Formatting - new line options
-
-#place catch statements on a new line
 csharp_new_line_before_catch = true
-#place else statements on a new line
 csharp_new_line_before_else = true
-#require finally statements to be on a new line after the closing brace
 csharp_new_line_before_finally = true
-#require members of object initializers to be on the same line
 csharp_new_line_before_members_in_object_initializers = false
-#require braces to be on a new line for control_blocks, types, properties, and methods (also known as "Allman" style)
 csharp_new_line_before_open_brace = accessors, anonymous_methods, control_blocks, lambdas, methods, object_collection_array_initializers, properties, types
 
-#Formatting - organize using options
-
-#do not place System.* using directives before other using directives
+# Organize using options
 dotnet_sort_system_directives_first = false
 
-#Formatting - spacing options
-
-#require NO space between a cast and the value
+# Spacing
 csharp_space_after_cast = false
-#require a space before the colon for bases or interfaces in a type declaration
 csharp_space_after_colon_in_inheritance_clause = true
-#require a space after a keyword in a control flow statement such as a for loop
 csharp_space_after_keywords_in_control_flow_statements = true
-#require a space before the colon for bases or interfaces in a type declaration
 csharp_space_before_colon_in_inheritance_clause = true
-#remove space within empty argument list parentheses
 csharp_space_between_method_call_empty_parameter_list_parentheses = false
-#remove space between method call name and opening parenthesis
 csharp_space_between_method_call_name_and_opening_parenthesis = false
-#do not place space characters after the opening parenthesis and before the closing parenthesis of a method call
 csharp_space_between_method_call_parameter_list_parentheses = false
-#remove space within empty parameter list parentheses for a method declaration
 csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
-#place a space character after the opening parenthesis and before the closing parenthesis of a method declaration parameter list.
 csharp_space_between_method_declaration_parameter_list_parentheses = false
 
-#Formatting - wrapping options
-
-#leave code block on separate lines
+# Wrapping
 csharp_preserve_single_line_blocks = true
-#leave statements and member declarations on the same line
 csharp_preserve_single_line_statements = true
 
-#Style - Code block preferences
-
-#prefer curly braces even for one line of code
+# Braces
 csharp_prefer_braces = when_multiline:silent
 
-#Style - expression bodied member options
-
-#prefer expression-bodied members for accessors
+# Expression-bodied members
 csharp_style_expression_bodied_accessors = when_on_single_line:suggestion
-#prefer block bodies for constructors
-csharp_style_expression_bodied_constructors = false:suggestion
-#prefer expression-bodied members for indexers
 csharp_style_expression_bodied_indexers = true:suggestion
-#prefer block bodies for methods
 csharp_style_expression_bodied_methods = when_on_single_line:silent
-#prefer expression-bodied members for properties
 csharp_style_expression_bodied_properties = when_on_single_line:suggestion
+csharp_style_expression_bodied_constructors = false:suggestion
 
-#Style - expression level options
-
-#prefer out variables to be declared inline in the argument list of a method call when possible
+# Expression-level preferences
 csharp_style_inlined_variable_declaration = true:suggestion
-#prefer the language keyword for member access expressions, instead of the type name, for types that have a keyword to represent them
-dotnet_style_predefined_type_for_member_access = true:suggestion
-
-#Style - Expression-level  preferences
-
-#prefer objects to not be initialized using object initializers, but do not warn
-dotnet_style_object_initializer = true:silent
-#prefer objects to use auto properties, but turn off the warnings (we want to keep backing fields from Java for the most part)
-dotnet_style_prefer_auto_properties = true:silent
-
-#Style - implicit and explicit types
-
-#prefer explicit type over var in all cases, unless overridden by another code style rule
-csharp_style_var_elsewhere = false:silent
-#prefer explicit type over var to declare variables with built-in system types such as int
-csharp_style_var_for_built_in_types = false:silent
-#prefer explicit type over var when the type is already mentioned on the right-hand side of a declaration
-csharp_style_var_when_type_is_apparent = false:silent
-
-#Style - language keyword and framework type options
-
-#prefer the language keyword for local variables, method parameters, and class members, instead of the type name, for types that have a keyword to represent them
-dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
-
-#Style - modifier options
-
-#prefer accessibility modifiers to be declared except for public interface members. This will currently not differ from always and will act as future proofing for if C# adds default interface methods.
-dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
-
-#Style - Modifier preferences
-
-#when this rule is set to a list of modifiers, prefer the specified ordering.
-csharp_preferred_modifier_order = public,private,protected,internal,virtual,readonly,override,static,abstract,new,sealed,volatile:silent
-
-#Style - Pattern matching
-
-#prefer pattern matching instead of is expression with type casts
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
-
-#Style -Pattern matcing preferences
-
-#prefer expression-style for switch case
 csharp_style_prefer_switch_expression = false:suggestion
 
-#Style - qualification options
-
-#prefer fields not to be prefaced with this. or Me. in Visual Basic
+# Qualification preferences
 dotnet_style_qualification_for_field = false:none
-#prefer methods not to be prefaced with this. or Me. in Visual Basic
 dotnet_style_qualification_for_method = false:none
-#prefer properties not to be prefaced with this. or Me. in Visual Basic
 dotnet_style_qualification_for_property = false:none
+dotnet_style_predefined_type_for_member_access = true:suggestion
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
 
-#Style - assignment options
+# Object and property preferences
+dotnet_style_object_initializer = true:silent
+dotnet_style_prefer_auto_properties = true:silent
+
+# Type declaration preferences
+csharp_style_var_elsewhere = false:silent
+csharp_style_var_for_built_in_types = false:silent
+csharp_style_var_when_type_is_apparent = false:silent
+
+# Modifiers
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
+csharp_preferred_modifier_order = public,private,protected,internal,virtual,readonly,override,static,abstract,new,sealed,volatile:silent
+
+# Assignments
+
 #prefer compound asignment x += 1 rather than x = x + 1.
 dotnet_style_prefer_compound_assignment = true:silent
 
-#### General Code Quality Preferences ####
+# Code quality (warnings)
+# -----------------------
 
 # Warn about any performance category issues across the entire API
 dotnet_code_quality.Performance.api_surface = all:warning
@@ -166,17 +265,11 @@ dotnet_diagnostic.CA1031.severity = none
 # CA1034: Do not nest types
 dotnet_diagnostic.CA1034.severity = none
 
-#### Style ####
+# CA2249: Consider using String.Contains instead of String.IndexOf
+dotnet_diagnostic.CA2249.severity = none
 
 # IDE0090: Simplify new expression
-dotnet_diagnostic.IDE0090.severity=none
-
-#### Usage ####
-# CA2249: Consider using String.Contains instead of String.IndexOf
-dotnet_diagnostic.CA2249.severity=none
-
-
-# Features that require .NET Standard 2.1+
+dotnet_diagnostic.IDE0090.severity = none
 
 # IDE0056: Use index operator
 dotnet_diagnostic.IDE0056.severity = none
@@ -187,8 +280,463 @@ dotnet_diagnostic.IDE0057.severity = none
 # IDE0070: Use 'System.HashCode.Combine'
 dotnet_diagnostic.IDE0070.severity = none
 
-
 ### SonarCloud Issues ###
 
 # S907: Remove this use of 'goto'
 dotnet_diagnostic.S907.severity = none
+
+# ========================================
+# Exclusions
+# ========================================
+
+# Files that tests read should not change from Lucene
+[**/src/Lucene.Net.Tests.*/**.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+[**/src/Lucene.Net.Tests.*/**.xml]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+[**/src/Lucene.Net.Tests.*/**.xsl]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+[**/src/Lucene.Net.Tests.*/**.html]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude all files under /lib (3rd party binaries)
+[**/lib/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude all files under /.build/psake (3rd party code)
+[**/.build/psake/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude CHANGES.txt (we don't care about formatting here)
+[**/CHANGES.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude ChangeNotes.txt (we don't care about formatting here)
+[**/ChangeNotes.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.snk (we don't care about formatting here)
+[**/*.snk]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude package.md (these are auto-generated)
+[**/package.md]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude overview.md (these are auto-generated)
+[**/overview.md]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.rslp (copied directly from Lucene)
+[**/*.rslp]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude stopwords.txt (copied directly from Lucene)
+[**/stopwords.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude Snowball stopwords (copied directly from Lucene)
+[**/Snowball/*_stop.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude stoptags.txt (copied directly from Lucene for Kuromoji)
+[**/stoptags.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.dat (copied directly from Lucene)
+[**/*.dat]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.brk (copied directly from Lucene)
+[**/*.brk]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.rbbi (copied directly from Lucene)
+[**/*.rbbi]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.nrm (binary copied directly from Lucene)
+[**/*.nrm]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.utf8 (binary copied directly from Lucene)
+[**/*.utf8]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.utf-8 (binary copied directly from Lucene)
+[**/*.utf-8]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.aff (copied for directly from Lucene for testing Hunspell)
+[**/*.aff]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.dic (downloaded for testing Hunspell)
+[**/*.dic]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.xpi (downloaded for testing Hunspell)
+[**/*.xpi]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.tbl (binary copied directly from Lucene for Stempel)
+[**/*.tbl]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.bz2 (binary copied directly from Lucene for Benchmark)
+[**/*.bz2]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.rnc (binary copied directly from Lucene for Benchmark)
+[**/*.rnc]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.mem (binary copied directly from Lucene for SmartCn)
+[**/*.mem]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.input (copied directly from Lucene for Morfologik)
+[**/*.input]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.info (properties file copied directly from Lucene for Morfologik)
+[**/*.info]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.dict (binary copied directly from Lucene for Morfologik)
+[**/*.dict]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .svg files (XML copied dirctly from Lucene to Misc)
+[**/*.svg]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .svg files (text copied dirctly from Lucene to Misc)
+[**/*.gnuplot]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude Phonetic language bm files (copied directly from commons-codec)
+[**/Language/**/*.txt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude TagSoup stml files (copied directly from TagSoup)
+[**/TagSoup/stml/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude TagSoup tssl files (copied directly from TagSoup)
+[**/TagSoup/tssl/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude TagSoup .tt files (copied directly from TagSoup)
+[**/TagSoup/*.tt]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude TagSoup .Generated.cs files (copied directly from TagSoup)
+[**/TagSoup/*.Generated.cs]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.tssl files (xml copied directly from TagSoup)
+[**/*.tssl]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude *.stml files (copied directly from TagSoup)
+[**/*.stml]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .Designer.cs files (these are auto-generated)
+[**/*.Designer.cs]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .idea files (these are auto-generated)
+[**/.idea/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude the generated static website files
+[**/websites/**/_site/**]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .zip files
+[**/*.zip]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .gz files
+[**/*.gz]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .woff files (glyph icons)
+[**/*.woff]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .woff2 files (glyph icons)
+[**/*.woff2]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .ttf files (TrueType fonts)
+[**/*.ttf]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .eot files (Embedded OpenType fonts)
+[**/*.eot]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .nupkg files (NuGet package)
+[**/*.nupkg]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .snupkg files (NuGet symbols package)
+[**/*.snupkg]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .asc files
+[**/*.asc]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .md5 files
+[**/*.md5]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .sha1 files
+[**/*.sha1]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .sha512 files
+[**/*.sha512]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .ico files (image)
+[**/*.ico]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .psd files (Photoshop)
+[**/*.psd]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .ai files (Adobe Illustrator)
+[**/*.ai]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .png files (image)
+[**/*.png]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .pdb files (program debug database)
+[**/*.pdb]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .log files
+[**/*.log]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .jar files (Java executable)
+[**/*.jar]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .exe files (Windows executable)
+[**/*.exe]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .dll files (dynamic link library)
+[**/*.dll]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset
+
+# Exclude .bin files (generic binary data)
+[**/*.bin]
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+resharper_enforce_empty_line_at_end_of_file = false
+indent_style = unset

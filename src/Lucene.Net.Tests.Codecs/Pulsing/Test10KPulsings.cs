@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs.Pulsing
      */
 
     /// <summary>
-    /// Pulses 10k terms/docs, 
+    /// Pulses 10k terms/docs,
     /// originally designed to find JRE bugs (https://issues.apache.org/jira/browse/LUCENE-3335)
     /// <para/>
     /// @lucene.experimental

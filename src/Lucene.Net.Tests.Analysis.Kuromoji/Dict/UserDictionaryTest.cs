@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
             s = "関西国際空港と関西国際空港に行った";
             int[][] dictionaryEntryResult2 = dictionary.Lookup(s.toCharArray(), 0, s.Length);
-            // Length should be six 
+            // Length should be six
             assertEquals(6, dictionaryEntryResult2.Length);
         }
 

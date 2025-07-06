@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 
@@ -35,12 +35,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         private readonly int length;
 
-        public TruncateTokenFilter(TokenStream input, int length) 
+        public TruncateTokenFilter(TokenStream input, int length)
             : base(input)
         {
             if (length < 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(length),"length parameter must be a positive number: " + length); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
+                throw new ArgumentOutOfRangeException(nameof(length), "length parameter must be a positive number: " + length); // LUCENENET specific - changed from IllegalArgumentException to ArgumentOutOfRangeException (.NET convention)
             }
             this.length = length;
             this.termAttribute = AddAttribute<ICharTermAttribute>();

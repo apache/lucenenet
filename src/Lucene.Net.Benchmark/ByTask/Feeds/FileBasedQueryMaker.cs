@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using Lucene.Net.Analysis;
 using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.QueryParsers.Classic;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.MockSep;
+using Lucene.Net.Codecs.MockSep;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 

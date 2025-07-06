@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     lastDocID = docID;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docID < outerInstance.outerInstance.totalNumDocs,"docID={0} totalNumDocs={1}", docID, outerInstance.outerInstance.totalNumDocs);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(docID < outerInstance.outerInstance.totalNumDocs, "docID={0} totalNumDocs={1}", docID, outerInstance.outerInstance.totalNumDocs);
 
                     if (outerInstance.omitTF)
                     {

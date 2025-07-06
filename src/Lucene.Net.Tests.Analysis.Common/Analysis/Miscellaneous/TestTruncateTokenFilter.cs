@@ -39,7 +39,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestNonPositiveLength()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
                 new TruncateTokenFilter(new MockTokenizer(new StringReader("length must be a positive number")), -48);
             });
         }

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search.Spell;
+using Lucene.Net.Search.Spell;
 using Lucene.Net.Store;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;

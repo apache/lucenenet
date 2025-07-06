@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Cli.SourceCode
@@ -21,7 +21,7 @@ namespace Lucene.Net.Cli.SourceCode
      */
 
     /// <summary>
-    /// Idenitifies sections of code based on tokens to transform 
+    /// Idenitifies sections of code based on tokens to transform
     /// the output code to either contain extra code sections or
     /// remove unwanted code sections.
     /// <para/>
@@ -30,25 +30,25 @@ namespace Lucene.Net.Cli.SourceCode
     ///     <item>
     ///         <term>// &lt;comment&gt;</term>
     ///         <description>
-    ///             Beginning of commented block. This line and all lines 
+    ///             Beginning of commented block. This line and all lines
     ///             until the end of a comment block are ignored.
     ///             </description>
     ///     </item>
     ///     <item>
     ///         <term>// &lt;\comment&gt;</term>
     ///         <description>
-    ///             End of a commented block. This line is ignored, but any 
+    ///             End of a commented block. This line is ignored, but any
     ///             lines following will be included.
     ///         </description>
     ///     </item>
     ///     <item>
     ///         <term>// &lt;include&gt;</term>
     ///         <description>
-    ///             Beginning of an include block. This line is ignored, but 
-    ///             all lines following will have the //// comment marker 
-    ///             removed from the beginning of the line. Effectively, 
-    ///             it uncomments lines of code that were previously commented 
-    ///             and ignored by the compiler. All normal C# comments (// and ///) 
+    ///             Beginning of an include block. This line is ignored, but
+    ///             all lines following will have the //// comment marker
+    ///             removed from the beginning of the line. Effectively,
+    ///             it uncomments lines of code that were previously commented
+    ///             and ignored by the compiler. All normal C# comments (// and ///)
     ///             are ignored and left in place.
     ///         </description>
     ///     </item>

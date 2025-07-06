@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
@@ -107,8 +107,8 @@ namespace Lucene.Net.Search.Join
             unchecked
             {
                 int hashCode = base.GetHashCode();
-                hashCode = (hashCode*397) ^ (_field != null ? _field.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^
+                hashCode = (hashCode * 397) ^ (_field != null ? _field.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^
                            (_unwrittenOriginalQuery != null ? _unwrittenOriginalQuery.GetHashCode() : 0);
                 return hashCode;
             }
@@ -134,10 +134,10 @@ namespace Lucene.Net.Search.Join
 
 
             private TermsEnum segmentTermsEnum;
-            
+
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                SVInnerScorer scorer = (SVInnerScorer) GetBulkScorer(context, false, null);
+                SVInnerScorer scorer = (SVInnerScorer)GetBulkScorer(context, false, null);
                 if (scorer != null)
                 {
                     return scorer.Explain(doc);
@@ -154,14 +154,14 @@ namespace Lucene.Net.Search.Join
 
             public override float GetValueForNormalization()
             {
-                return originalWeight.GetValueForNormalization() * outerInstance.Boost*outerInstance.Boost;
+                return originalWeight.GetValueForNormalization() * outerInstance.Boost * outerInstance.Boost;
             }
 
             public override void Normalize(float norm, float topLevelBoost)
             {
-                originalWeight.Normalize(norm, topLevelBoost*outerInstance.Boost);
+                originalWeight.Normalize(norm, topLevelBoost * outerInstance.Boost);
             }
-            
+
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Terms terms = context.AtomicReader.GetTerms(outerInstance._field);
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search.Join
 
                 return new SVInOrderScorer(outerInstance, this, acceptDocs, segmentTermsEnum, context.AtomicReader.MaxDoc, cost);
             }
-            
+
             public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
                 if (scoreDocsInOrder)
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search.Join
                 //_cost = cost; // LUCENENET: Never read
                 _doc = -1;
             }
-            
+
             public override bool Score(ICollector collector, int max)
             {
                 FakeScorer fakeScorer = new FakeScorer();
@@ -285,12 +285,12 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             protected virtual int DocsEnumNextDoc()
             {
                 return docsEnum.NextDoc();
             }
-            
+
             internal Explanation Explain(int target) // LUCENENET NOTE: changed accessibility from private to internal
             {
                 int docId;
@@ -326,13 +326,13 @@ namespace Lucene.Net.Search.Join
             internal readonly FixedBitSet alreadyEmittedDocs;
 
             internal MVInnerScorer(TermsIncludingScoreQuery outerInstance, /* Weight weight, // LUCENENET: Never read */
-                IBits acceptDocs, TermsEnum termsEnum, int maxDoc /*, long cost // LUCENENET: Never read */) 
+                IBits acceptDocs, TermsEnum termsEnum, int maxDoc /*, long cost // LUCENENET: Never read */)
                 : base(outerInstance, /*weight, // LUCENENET: Never read */
                       acceptDocs, termsEnum /*, cost // LUCENENET: Never read */)
             {
                 alreadyEmittedDocs = new FixedBitSet(maxDoc);
             }
-            
+
             protected override int DocsEnumNextDoc()
             {
                 while (true)
@@ -360,11 +360,11 @@ namespace Lucene.Net.Search.Join
             internal readonly long cost;
 
             internal int currentDoc = -1;
-            
+
             [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
             [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "Internal class")]
             internal SVInOrderScorer(TermsIncludingScoreQuery outerInstance, Weight weight, IBits acceptDocs,
-                TermsEnum termsEnum, int maxDoc, long cost) 
+                TermsEnum termsEnum, int maxDoc, long cost)
                 : base(weight)
             {
                 this.m_outerInstance = outerInstance;
@@ -374,7 +374,7 @@ namespace Lucene.Net.Search.Join
                 matchingDocsIterator = matchingDocs.GetIterator();
                 this.cost = cost;
             }
-            
+
             protected virtual void FillDocsAndScores(FixedBitSet matchingDocs, IBits acceptDocs,
                 TermsEnum termsEnum)
             {
@@ -398,12 +398,12 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public override float GetScore()
             {
                 return scores[currentDoc];
             }
-            
+
             public override int Freq => 1;
 
             public override int DocID => currentDoc;
@@ -412,7 +412,7 @@ namespace Lucene.Net.Search.Join
             {
                 return currentDoc = matchingDocsIterator.NextDoc();
             }
-            
+
             public override int Advance(int target)
             {
                 return currentDoc = matchingDocsIterator.Advance(target);
@@ -432,7 +432,7 @@ namespace Lucene.Net.Search.Join
                 : base(outerInstance, weight, acceptDocs, termsEnum, maxDoc, cost)
             {
             }
-            
+
             protected override void FillDocsAndScores(FixedBitSet matchingDocs, IBits acceptDocs,
                 TermsEnum termsEnum)
             {

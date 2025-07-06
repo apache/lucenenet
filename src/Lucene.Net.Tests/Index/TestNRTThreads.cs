@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;

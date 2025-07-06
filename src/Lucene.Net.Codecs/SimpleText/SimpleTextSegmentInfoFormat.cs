@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Codecs.SimpleText
+namespace Lucene.Net.Codecs.SimpleText
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

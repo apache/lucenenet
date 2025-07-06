@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.Cjk
      * limitations under the License.
      */
 
-    /// @deprecated Remove when CJKTokenizer is removed (5.0) 
+    /// @deprecated Remove when CJKTokenizer is removed (5.0)
     [Obsolete("Remove when CJKTokenizer is removed (5.0)")]
     public class TestCJKTokenizer : BaseTokenStreamTestCase
     {
@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /*
-         * Full-width text is normalized to half-width 
+         * Full-width text is normalized to half-width
          */
         [Test]
         public virtual void TestFullWidth()
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /*
-         * Non-english text (not just CJK) is treated the same as CJK: C1C2 C2C3 
+         * Non-english text (not just CJK) is treated the same as CJK: C1C2 C2C3
          */
         [Test]
         public virtual void TestNonIdeographic()
@@ -189,7 +189,7 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /// <summary>
-        /// LUCENE-2207: wrong offset calculated by end() 
+        /// LUCENE-2207: wrong offset calculated by end()
         /// </summary>
         [Test]
         public virtual void TestFinalOffset()

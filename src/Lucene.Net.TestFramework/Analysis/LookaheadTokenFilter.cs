@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
@@ -359,7 +359,7 @@ namespace Lucene.Net.Analysis
             int posLen = m_posLenAtt.PositionLength;
             Position endPosData = m_positions.Get(m_outputPos + posLen);
             if (Debugging.AssertsEnabled) Debugging.Assert(endPosData.EndOffset != -1);
-            if (Debugging.AssertsEnabled) Debugging.Assert(m_offsetAtt.EndOffset == endPosData.EndOffset,"offsetAtt.endOffset={0} vs expected={1}", m_offsetAtt.EndOffset, endPosData.EndOffset);
+            if (Debugging.AssertsEnabled) Debugging.Assert(m_offsetAtt.EndOffset == endPosData.EndOffset, "offsetAtt.endOffset={0} vs expected={1}", m_offsetAtt.EndOffset, endPosData.EndOffset);
             return true;
         }
 

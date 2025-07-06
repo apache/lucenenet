@@ -1,4 +1,4 @@
-﻿// Locator2Impl.java - extended LocatorImpl
+// Locator2Impl.java - extended LocatorImpl
 // http://www.saxproject.org
 // Public Domain: no warranty.
 // $Id: Locator2Impl.java,v 1.3 2004/04/26 17:34:35 dmegginson Exp $
@@ -37,7 +37,7 @@ namespace Sax.Ext
         /// Copy an existing <see cref="Locator"/> or <see cref="Locator2"/> object.
         /// If the object implements <see cref="Locator2"/>, values of the
         /// <em>encoding</em> and <em>version</em>strings are copied,
-        /// otherwise they set to <em>null</em>. 
+        /// otherwise they set to <em>null</em>.
         /// </summary>
         /// <param name="locator">The existing Locator object.</param>
         public Locator2(ILocator locator)
@@ -58,7 +58,7 @@ namespace Sax.Ext
         /// Gets the current value of the version property.
         /// </summary>
         public string XMLVersion
-        { 
+        {
             get => version;
             set => version = value;
         }
@@ -67,7 +67,7 @@ namespace Sax.Ext
         /// Gets the current value of the encoding property.
         /// </summary>
         public Encoding Encoding
-        { 
+        {
             get => encoding;
             set => encoding = value;
         }

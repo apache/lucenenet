@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -24,35 +24,35 @@ namespace Lucene.Net.Analysis.En
      */
 
     /*
-    
+
        Porter stemmer in .NET. The original paper is in
-    
+
            Porter, 1980, An algorithm for suffix stripping, Program, Vol. 14,
            no. 3, pp 130-137,
-    
+
        See also http://www.tartarus.org/~martin/PorterStemmer/index.html
-    
+
        Bug 1 (reported by Gonzalo Parra 16/10/99) fixed as marked below.
        Tthe words 'aed', 'eed', 'oed' leave k at 'a' for step 3, and b[k-1]
        is then out outside the bounds of b.
-    
+
        Similarly,
-    
+
        Bug 2 (reported by Steve Dyrdahl 22/2/00) fixed as marked below.
        'ion' by itself leaves j = -1 in the test for 'ion' in step 5, and
        b[j] is then outside the bounds of b.
-    
+
        Release 3.
-    
+
        [ This version is derived from Release 3, modified by Brian Goetz to
          optimize for fewer object creations.  ]
-    
+
     */
 
-    /// 
+    ///
     /// <summary>
     /// Stemmer, implementing the Porter Stemming Algorithm
-    /// 
+    ///
     /// The Stemmer class transforms a word into its root form.  The input
     /// word can be provided a character at time (by calling <see cref="Add"/>), or at once
     /// by calling one of the various Stem methods, such as <see cref="Stem(string)"/>.

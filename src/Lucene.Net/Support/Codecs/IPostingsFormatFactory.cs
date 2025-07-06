@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Codecs
 {

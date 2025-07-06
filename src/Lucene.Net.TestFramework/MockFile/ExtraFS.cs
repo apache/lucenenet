@@ -26,7 +26,7 @@ namespace Lucene.Net.MockFile
         private const string EXTRA_FILE_NAME = "extra0";
 
         // TODO: would be great if we overrode attributes, so file size was always zero for
-        // our fake files. But this is tricky because its hooked into several places. 
+        // our fake files. But this is tricky because its hooked into several places.
         // Currently MDW has a hack so we don't break disk full tests.
 
         /// <summary>

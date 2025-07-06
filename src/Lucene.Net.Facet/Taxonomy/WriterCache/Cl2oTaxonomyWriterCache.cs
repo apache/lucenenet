@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
@@ -27,7 +27,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// called cache, it maintains in memory all the mappings from category to
     /// ordinal, relying on that <see cref="CompactLabelToOrdinal"/> is an efficient
     /// mapping for this purpose.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class Cl2oTaxonomyWriterCache : ITaxonomyWriterCache
@@ -74,7 +74,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         protected virtual void Dispose(bool disposing) // LUCENENET specific - use proper dispose pattern
         {
-            
+
             if (disposing)
             {
                 if (isDisposed) return;

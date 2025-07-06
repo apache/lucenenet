@@ -1,4 +1,4 @@
-﻿using J2N.Threading;
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -232,11 +232,11 @@ namespace Lucene.Net.Index
                 {
                     threads[i] = new IndexerThread(writer, false)
 
-                        // LUCENENET NOTE - ConcurrentMergeScheduler
-                        // used to take too long for this test to index a single document
-                        // so, increased the time from 200 to 300 ms.
-                        // But it has now been restored to 200 ms like Lucene.
-                        { timeToRunInMilliseconds = 200 };
+                    // LUCENENET NOTE - ConcurrentMergeScheduler
+                    // used to take too long for this test to index a single document
+                    // so, increased the time from 200 to 300 ms.
+                    // But it has now been restored to 200 ms like Lucene.
+                    { timeToRunInMilliseconds = 200 };
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -482,7 +482,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestIOExceptionDuringAbortWithThreadsOnlyOnce()
         {
-            TestMultipleThreadsFailure( new FailOnlyOnAbortOrFlush(true));
+            TestMultipleThreadsFailure(new FailOnlyOnAbortOrFlush(true));
         }
 
         // Throws IOException during DocumentsWriter.writeSegment

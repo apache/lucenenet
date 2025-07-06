@@ -1,4 +1,4 @@
-﻿// commons-codec version compatibility level: 1.9
+// commons-codec version compatibility level: 1.9
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;

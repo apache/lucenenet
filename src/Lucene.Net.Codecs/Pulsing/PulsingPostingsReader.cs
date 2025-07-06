@@ -1,4 +1,4 @@
-﻿using J2N.Runtime.CompilerServices;
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -162,13 +162,13 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override BlockTermState NewTermState()
         {
-            return new PulsingTermState {WrappedTermState = _wrappedPostingsReader.NewTermState()};
+            return new PulsingTermState { WrappedTermState = _wrappedPostingsReader.NewTermState() };
         }
 
         public override void DecodeTerm(long[] empty, DataInput input, FieldInfo fieldInfo, BlockTermState termState,
             bool absolute)
         {
-            var termState2 = (PulsingTermState) termState;
+            var termState2 = (PulsingTermState)termState;
 
             if (Debugging.AssertsEnabled) Debugging.Assert(empty.Length == 0);
 
@@ -223,7 +223,7 @@ namespace Lucene.Net.Codecs.Pulsing
         public override DocsEnum Docs(FieldInfo field, BlockTermState termState, IBits liveDocs, DocsEnum reuse,
             DocsFlags flags)
         {
-            var termState2 = (PulsingTermState) termState;
+            var termState2 = (PulsingTermState)termState;
             if (termState2.PostingsSize != -1)
             {
                 if (reuse is PulsingDocsEnum postings)
@@ -236,7 +236,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 else
                 {
                     // the 'reuse' is actually the wrapped enum
-                    var previous = (PulsingDocsEnum) GetOther(reuse);
+                    var previous = (PulsingDocsEnum)GetOther(reuse);
                     if (previous != null && previous.CanReuse(field))
                     {
                         postings = previous;
@@ -268,7 +268,7 @@ namespace Lucene.Net.Codecs.Pulsing
             DocsAndPositionsFlags flags)
         {
 
-            var termState2 = (PulsingTermState) termState;
+            var termState2 = (PulsingTermState)termState;
 
             if (termState2.PostingsSize != -1)
             {
@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 else
                 {
                     // the 'reuse' is actually the wrapped enum
-                    var previous = (PulsingDocsAndPositionsEnum) GetOther(reuse);
+                    var previous = (PulsingDocsAndPositionsEnum)GetOther(reuse);
                     if (previous != null && previous.CanReuse(field))
                     {
                         postings = previous;
@@ -305,7 +305,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             var wrapped = _wrappedPostingsReader.DocsAndPositions(field,
                 termState2.WrappedTermState,
-                liveDocs, (DocsAndPositionsEnum) GetOther(reuse),
+                liveDocs, (DocsAndPositionsEnum)GetOther(reuse),
                 flags);
             SetOther(wrapped, reuse); // wrapped.other = reuse
             return wrapped;

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System;
 using System.IO;
 
@@ -25,12 +25,12 @@ namespace Lucene.Net.Analysis.Util
     /// Simple <see cref="IResourceLoader"/> that opens resource files
     /// from the local file system, optionally resolving against
     /// a base directory.
-    /// 
+    ///
     /// <para>This loader wraps a delegate <see cref="IResourceLoader"/>
     /// that is used to resolve all files, the current base directory
     /// does not contain. <see cref="NewInstance"/> is always resolved
     /// against the delegate, as an <see cref="T:System.Assembly"/> is needed.
-    /// 
+    ///
     /// </para>
     /// <para>You can chain several <see cref="FilesystemResourceLoader"/>s
     /// to allow lookup of files in more than one base directory.

@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         // on the Field class and return FieldType instead of IIndexableFieldType
         // to avoid a bunch of casting. In Java, it compiles when you implement this
         // property with a class that derives from IIndexableFieldType, but in .NET it
-        // does not. 
+        // does not.
         IIndexableFieldType IndexableFieldType { get; }
 
         /// <summary>
@@ -127,15 +127,15 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Gets the <see cref="NumericFieldType"/> of the underlying value, or <see cref="NumericFieldType.NONE"/> if the value is not set or non-numeric.
         /// <para/>
-        /// Expert: The difference between this property and <see cref="FieldType.NumericType"/> is 
+        /// Expert: The difference between this property and <see cref="FieldType.NumericType"/> is
         /// this is represents the current state of the field (whether being written or read) and the
         /// <see cref="FieldType"/> property represents instructions on how the field will be written,
         /// but does not re-populate when reading back from an index (it is write-only).
         /// <para/>
-        /// In Java, the numeric type was determined by checking the type of  
+        /// In Java, the numeric type was determined by checking the type of
         /// <see cref="GetNumericValue()"/>. However, since there are no reference number
         /// types in .NET, using <see cref="GetNumericValue()"/> so will cause boxing/unboxing. It is
-        /// therefore recommended to use this property to check the underlying type and the corresponding 
+        /// therefore recommended to use this property to check the underlying type and the corresponding
         /// <c>Get*Value()</c> method to retrieve the value.
         /// <para/>
         /// NOTE: Since Lucene codecs do not support <see cref="NumericFieldType.BYTE"/> or <see cref="NumericFieldType.INT16"/>,

@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Benchmarks.ByTask.Tasks
+namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -18,10 +18,10 @@
      */
 
     /// <summary>
-    /// Search and Traverse and Retrieve docs task. 
+    /// Search and Traverse and Retrieve docs task.
     /// </summary>
     /// <remarks>
-    /// Note: This task reuses the reader if it is already open. 
+    /// Note: This task reuses the reader if it is already open.
     /// Otherwise a reader is opened at start and closed at the end.
     /// <para/>
     /// Takes optional param: traversal size (otherwise all results are traversed).

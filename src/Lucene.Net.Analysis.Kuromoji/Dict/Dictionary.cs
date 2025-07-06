@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Analysis.Ja.Dict
+namespace Lucene.Net.Analysis.Ja.Dict
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

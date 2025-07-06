@@ -30,8 +30,8 @@ namespace Lucene.Net.Analysis.Cjk
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.CJKWidthFilterFactory"/&gt;
     ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
-    ///     &lt;filter class="solr.CJKBigramFilterFactory" 
-    ///       han="true" hiragana="true" 
+    ///     &lt;filter class="solr.CJKBigramFilterFactory"
+    ///       han="true" hiragana="true"
     ///       katakana="true" hangul="true" outputUnigrams="false" /&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// <summary>
         /// Creates a new <see cref="CJKBigramFilterFactory"/> </summary>
         public CJKBigramFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             CJKScript flags = 0;
             if (GetBoolean(args, "han", true))

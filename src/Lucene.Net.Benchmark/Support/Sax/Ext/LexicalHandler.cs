@@ -1,4 +1,4 @@
-﻿// LexicalHandler.java - optional handler for lexical parse events.
+// LexicalHandler.java - optional handler for lexical parse events.
 // http://www.saxproject.org
 // Public Domain: no warranty.
 // $Id: LexicalHandler.java,v 1.5 2002/01/30 21:00:44 dbrownell Exp $
@@ -47,7 +47,7 @@ namespace Sax.Ext
         /// DOCTYPE declaration; if the document has no DOCTYPE declaration,
         /// this method will not be invoked.
         /// <para/>
-        /// All declarations reported through 
+        /// All declarations reported through
         /// <see cref="IDTDHandler"/> or
         /// <see cref="Ext.IDeclHandler"/> events must appear
         /// between the startDTD and <see cref="EndDTD()"/> events.
@@ -100,12 +100,12 @@ namespace Sax.Ext
         /// feature to query or control the reporting of parameter entities.
         /// <para/>
         /// General entities are reported with their regular names,
-        /// parameter entities have '%' prepended to their names, and 
+        /// parameter entities have '%' prepended to their names, and
         /// the external DTD subset has the pseudo-entity name "[dtd]".
         /// <para/>
-        /// When a SAX2 driver is providing these events, all other 
-        /// events must be properly nested within start/end entity 
-        /// events. There is no additional requirement that events from 
+        /// When a SAX2 driver is providing these events, all other
+        /// events must be properly nested within start/end entity
+        /// events. There is no additional requirement that events from
         /// <see cref="IDeclHandler"/> or
         /// <see cref="IDTDHandler"/> be properly ordered.
         /// <para/>

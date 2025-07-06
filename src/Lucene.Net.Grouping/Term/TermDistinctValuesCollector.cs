@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// <summary>
     /// A term based implementation of <see cref="T:AbstractDistinctValuesCollector{TermDistinctValuesCollector.GroupCount}"/> that relies
     /// on <see cref="SortedDocValues"/> to count the distinct values per group.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class TermDistinctValuesCollector : AbstractDistinctValuesCollector<TermDistinctValuesCollector.GroupCount>
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
         /// <summary>
         /// Holds distinct values for a single group.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public class GroupCount : AbstractDistinctValuesCollector.GroupCount<BytesRef>

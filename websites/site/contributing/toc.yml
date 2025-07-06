@@ -1,4 +1,4 @@
-﻿- name: Community Links
+- name: Community Links
   href: community-links.md
 - name: Mailing Lists
   href: mailing-lists.md
@@ -8,6 +8,8 @@
   href: issue-tracker.md
 - name: Website & Docs
   href: documentation.md
+- name: EditorConfig Setup
+  href: editorconfig-setup.md
 - name: Current status
   href: current-status.md
 - name: Making a release

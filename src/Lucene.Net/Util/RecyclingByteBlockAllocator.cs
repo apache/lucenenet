@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 
@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
         {
         }
 
-        public override byte[] GetByteBlock() 
+        public override byte[] GetByteBlock()
         {
             if (freeBlocks == 0)
             {

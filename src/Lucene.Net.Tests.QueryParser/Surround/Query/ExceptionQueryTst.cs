@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Surround.Parser;
+using Lucene.Net.QueryParsers.Surround.Parser;
 using System;
 using System.Text;
 

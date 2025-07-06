@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System.Text;
 
@@ -28,7 +28,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     public class QuotedFieldQueryNode : FieldQueryNode
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value</param>
@@ -42,7 +42,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value</param>
@@ -56,7 +56,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value</param>

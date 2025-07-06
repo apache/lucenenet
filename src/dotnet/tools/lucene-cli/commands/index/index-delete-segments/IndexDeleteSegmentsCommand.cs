@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -52,7 +52,7 @@ namespace Lucene.Net.Cli
             var segmentsArgument = cmd.GetArgument<SegmentsArgument>();
             if (segmentsArgument != null)
             {
-                foreach(var segment in segmentsArgument.Values)
+                foreach (var segment in segmentsArgument.Values)
                 {
                     args.Add("-d");
                     args.Add(segment);

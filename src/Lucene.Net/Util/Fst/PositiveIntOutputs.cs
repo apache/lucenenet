@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Util.Fst
         private static bool Valid(Int64 o) // LUCENENET: CA1822: Mark members as static
         {
             Debugging.Assert(o != null, "PositiveIntOutput precondition fail");
-            Debugging.Assert(o == NO_OUTPUT || o > 0,"o={0}", o);
+            Debugging.Assert(o == NO_OUTPUT || o > 0, "o={0}", o);
             return true;
         }
 

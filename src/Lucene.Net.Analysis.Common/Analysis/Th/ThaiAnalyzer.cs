@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Th
         /// File containing default Thai stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
         /// <summary>
-        /// The comment character in the stopwords file.  
+        /// The comment character in the stopwords file.
         /// All lines prefixed with this will be ignored.
         /// </summary>
         private const string STOPWORDS_COMMENT = "#";
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Th
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultSetHolder

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 #nullable enable
@@ -70,7 +70,7 @@ namespace Lucene.Net.Support.Threading
 
         /// <summary>
         /// Releases the lock when called the same number of times as <see cref="Lock()"/>, <see cref="LockInterruptibly()"/>
-        /// and <see cref="TryLock()"/> for the current task/thread. 
+        /// and <see cref="TryLock()"/> for the current task/thread.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Unlock()

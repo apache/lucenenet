@@ -1,4 +1,4 @@
-﻿// DefaultHandler.java - default implementation of the core handlers.
+// DefaultHandler.java - default implementation of the core handlers.
 // http://www.saxproject.org
 // Written by David Megginson
 // NO WARRANTY!  This class is in the public domain.

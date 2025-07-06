@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Ckb
         /// <summary>
         /// Creates a new <see cref="SoraniNormalizationFilterFactory"/> </summary>
         public SoraniNormalizationFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

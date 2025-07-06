@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <see cref="LimitTokenPositionFilter"/>. 
+    /// Factory for <see cref="LimitTokenPositionFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_limit_pos" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
     /// <para>
-    /// The <see cref="consumeAllTokens"/> property is optional and defaults to <c>false</c>.  
+    /// The <see cref="consumeAllTokens"/> property is optional and defaults to <c>false</c>.
     /// See <see cref="LimitTokenPositionFilter"/> for an explanation of its use.
     /// </para>
     /// </summary>

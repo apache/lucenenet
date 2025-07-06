@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Search.Grouping
+namespace Lucene.Net.Search.Grouping
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

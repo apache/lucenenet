@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Search.Highlight
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         public virtual bool IsNewFragment()
         {
-            bool isNewFrag = offsetAtt.EndOffset >= (FragmentSize*currentNumFrags);
+            bool isNewFrag = offsetAtt.EndOffset >= (FragmentSize * currentNumFrags);
             if (isNewFrag)
             {
                 currentNumFrags++;

@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 using Lucene.Net.Analysis.Phonetic.Language;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Phonetic
         public const string ENCODER = "encoder";
         /// <summary>parameter name: true if encoded tokens should be added as synonyms</summary>
         public const string INJECT = "inject"; // boolean
-                                                         /** parameter name: restricts the length of the phonetic code */
+        /** parameter name: restricts the length of the phonetic code */
         public const string MAX_CODE_LENGTH = "maxCodeLength";
         private const string PACKAGE_CONTAINING_ENCODERS = "Lucene.Net.Analysis.Phonetic.Language.";
 

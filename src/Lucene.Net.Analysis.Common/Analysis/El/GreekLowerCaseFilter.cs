@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.El
 
     /// <summary>
     /// Normalizes token text to lower case, removes some Greek diacritics,
-    /// and standardizes final sigma to sigma. 
+    /// and standardizes final sigma to sigma.
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="GreekLowerCaseFilter"/>:
     /// <list type="bullet">
@@ -44,11 +44,11 @@ namespace Lucene.Net.Analysis.El
         /// <summary>
         /// Create a <see cref="GreekLowerCaseFilter"/> that normalizes Greek token text.
         /// </summary>
-        /// <param name="matchVersion"> Lucene compatibility version, 
+        /// <param name="matchVersion"> Lucene compatibility version,
         ///   See <see cref="LuceneVersion"/> </param>
         /// <param name="in"> <see cref="TokenStream"/> to filter </param>
         public GreekLowerCaseFilter(LuceneVersion matchVersion, TokenStream @in)
-              : base(@in)
+            : base(@in)
         {
             this.charUtils = CharacterUtils.GetInstance(matchVersion);
             termAtt = AddAttribute<ICharTermAttribute>();
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.El
                 /* There are two lowercase forms of sigma:
                  *   U+03C2: small final sigma (end of word)
                  *   U+03C3: small sigma (otherwise)
-                 *   
+                 *
                  * Standardize both to U+03C3
                  */
                 case '\u03C2': // small final sigma

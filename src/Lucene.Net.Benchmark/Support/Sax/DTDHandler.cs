@@ -1,4 +1,4 @@
-﻿// SAX DTD handler.
+// SAX DTD handler.
 // http://www.saxproject.org
 // No warranty; no copyright -- use this as you will.
 // $Id: DTDHandler.java,v 1.8 2002/01/30 21:13:43 dbrownell Exp $
@@ -17,8 +17,8 @@ namespace Sax
     /// <para/>
     /// If a SAX application needs information about notations and
     /// unparsed entities, then the application implements this
-    /// interface and registers an instance with the SAX parser using 
-    /// the parser's setDTDHandler method.  The parser uses the 
+    /// interface and registers an instance with the SAX parser using
+    /// the parser's setDTDHandler method.  The parser uses the
     /// instance to report notation and unparsed entity declarations to
     /// the application.
     /// <para/>
@@ -34,7 +34,7 @@ namespace Sax
     /// (If the <see cref="Ext.ILexicalHandler"/> is
     /// used, these events must also be reported before the endDTD event.)
     /// <para/>
-    /// It is up to the application to store the information for 
+    /// It is up to the application to store the information for
     /// future use(perhaps in a hash table or object tree).
     /// If the application encounters attributes of type "NOTATION",
     /// "ENTITY", or "ENTITIES", it can use the information that it
@@ -77,7 +77,7 @@ namespace Sax
         /// </summary>
         /// <remarks>
         /// Note that the notation name corresponds to a notation
-        /// reported by the <see cref="NotationDecl(string, string, string)"/> event.  
+        /// reported by the <see cref="NotationDecl(string, string, string)"/> event.
         /// It is up to the application to record the entity for later
         /// reference, if necessary;
         /// unparsed entities may appear as attribute values.

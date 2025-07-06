@@ -28,7 +28,7 @@ namespace Lucene.Net.Documents
     /// </code>
     ///
     /// If you also need to store the value, you should add a
-    /// separate <see cref="StoredField"/> instance. 
+    /// separate <see cref="StoredField"/> instance.
     /// <para/>
     /// NOTE: This was IntDocValuesField in Lucene
     /// </summary>

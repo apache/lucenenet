@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.Utils;
+using Lucene.Net.Benchmarks.Utils;
 
 namespace Lucene.Net.Cli
 {

@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Determines if the current word contains only one subword.  Note, it could be potentially surrounded by delimiters
         /// </summary>
         /// <returns> <c>true</c> if the current word contains only one subword, <c>false</c> otherwise </returns>
-        internal bool IsSingleWord() 
+        internal bool IsSingleWord()
         {
             if (hasFinalPossessive)
             {
@@ -291,11 +291,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> <c>true</c> if the text at the position indicates an English posessive, <c>false</c> otherwise </returns>
         private bool EndsWithPossessive(int pos)
         {
-            return (stemEnglishPossessive && 
-                pos > 2 && 
-                text[pos - 2] == '\'' && 
-                (text[pos - 1] == 's' || text[pos - 1] == 'S') && 
-                WordDelimiterFilter.IsAlpha(CharType(text[pos - 3])) && 
+            return (stemEnglishPossessive &&
+                pos > 2 &&
+                text[pos - 2] == '\'' &&
+                (text[pos - 1] == 's' || text[pos - 1] == 'S') &&
+                WordDelimiterFilter.IsAlpha(CharType(text[pos - 3])) &&
                 (pos == endBounds || WordDelimiterFilter.IsSubwordDelim(CharType(text[pos]))));
         }
 

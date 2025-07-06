@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using NUnit.Framework;
@@ -218,7 +218,7 @@ namespace Lucene.Net.QueryParsers.Ext
         }
 
         /// <summary>
-        /// synonyms with default OR operator 
+        /// synonyms with default OR operator
         /// </summary>
         [Test]
         public override void TestCJKSynonymsOR()

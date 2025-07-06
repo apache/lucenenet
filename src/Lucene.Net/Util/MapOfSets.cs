@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
         private readonly IDictionary<TKey, ISet<TValue>> theMap;
 
         /// <param name="m"> The backing store for this object. </param>
-        public MapOfSets(IDictionary<TKey, ISet<TValue>> m) 
+        public MapOfSets(IDictionary<TKey, ISet<TValue>> m)
         {
             theMap = m;
         }
@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
         public virtual IDictionary<TKey, ISet<TValue>> Map => theMap;
 
         /// <summary>
-        /// Adds <paramref name="val"/> to the <see cref="ISet{T}"/> associated with key in the <see cref="IDictionary{TKey, TValue}"/>.  
+        /// Adds <paramref name="val"/> to the <see cref="ISet{T}"/> associated with key in the <see cref="IDictionary{TKey, TValue}"/>.
         /// If <paramref name="key"/> is not
         /// already in the map, a new <see cref="ISet{T}"/> will first be created. </summary>
         /// <returns> The size of the <see cref="ISet{T}"/> associated with key once val is added to it. </returns>

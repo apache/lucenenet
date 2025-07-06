@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -82,7 +82,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads two bytes and returns a <see cref="short"/>. 
+        /// Reads two bytes and returns a <see cref="short"/>.
         /// <para/>
         /// LUCENENET NOTE: Important - always cast to ushort (System.UInt16) before using to ensure
         /// the value is positive!
@@ -96,14 +96,14 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads four bytes and returns an <see cref="int"/>. 
+        /// Reads four bytes and returns an <see cref="int"/>.
         /// <para/>
         /// NOTE: this was readInt() in Lucene
         /// </summary>
         /// <seealso cref="DataOutput.WriteInt32(int)"/>
         public virtual int ReadInt32()
         {
-            return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16) 
+            return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16)
                 | ((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF);
         }
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads eight bytes and returns a <see cref="long"/>. 
+        /// Reads eight bytes and returns a <see cref="long"/>.
         /// <para/>
         /// NOTE: this was readLong() in Lucene
         /// </summary>
@@ -322,7 +322,7 @@ namespace Lucene.Net.Store
                 skipBuffer = new byte[SKIP_BUFFER_SIZE];
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(skipBuffer.Length == SKIP_BUFFER_SIZE);
-            for (long skipped = 0; skipped < numBytes; )
+            for (long skipped = 0; skipped < numBytes;)
             {
                 var step = (int)Math.Min(SKIP_BUFFER_SIZE, numBytes - skipped);
                 ReadBytes(skipBuffer, 0, step, false);

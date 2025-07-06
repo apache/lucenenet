@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /// <summary>
-        /// LUCENE-2207: wrong offset calculated by end() 
+        /// LUCENE-2207: wrong offset calculated by end()
         /// </summary>
         [Test]
         public virtual void TestFinalOffset()
@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /// <summary>
-        /// Non-english text (outside of CJK) is treated normally, according to unicode rules 
+        /// Non-english text (outside of CJK) is treated normally, according to unicode rules
         /// </summary>
         [Test]
         public virtual void TestNonIdeographic()
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Cjk
 
             AssertAnalyzesTo(analyzer, "ab", new string[] { "一二", "二二", "二三" }, new int[] { 0, 0, 1 }, new int[] { 1, 1, 2 });
 
-            // note: offsets are strange since this is how the charfilter maps them... 
+            // note: offsets are strange since this is how the charfilter maps them...
             // before bigramming, the 4 tokens look like:
             //   { 0, 0, 1, 1 },
             //   { 0, 1, 1, 2 }

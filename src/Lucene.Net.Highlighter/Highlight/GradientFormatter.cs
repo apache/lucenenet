@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Integer = J2N.Numerics.Int32;
 
@@ -56,8 +56,8 @@ namespace Lucene.Net.Search.Highlight
         /// The largest hex color used for representing IDF scores eg
         /// #000000 (black) or null if no background color required
         /// </param>
-        public GradientFormatter(float maxScore, string minForegroundColor, 
-            string maxForegroundColor, string minBackgroundColor, 
+        public GradientFormatter(float maxScore, string minForegroundColor,
+            string maxForegroundColor, string minBackgroundColor,
             string maxBackgroundColor)
         {
             m_highlightForeground = (minForegroundColor != null) && (maxForegroundColor != null);
@@ -66,12 +66,12 @@ namespace Lucene.Net.Search.Highlight
             {
                 if (minForegroundColor.Length != 7)
                 {
-                    throw new ArgumentException("minForegroundColor is not 7 bytes long eg a hex " 
+                    throw new ArgumentException("minForegroundColor is not 7 bytes long eg a hex "
                         + "RGB value such as #FFFFFF");
                 }
                 if (maxForegroundColor.Length != 7)
                 {
-                    throw new ArgumentException("minForegroundColor is not 7 bytes long eg a hex " 
+                    throw new ArgumentException("minForegroundColor is not 7 bytes long eg a hex "
                         + "RGB value such as #FFFFFF");
                 }
                 m_fgRMin = HexToInt32(minForegroundColor, 1, 3 - 1);
@@ -83,18 +83,18 @@ namespace Lucene.Net.Search.Highlight
                 m_fgBMax = HexToInt32(maxForegroundColor, 5, 7 - 5);
             }
 
-            m_highlightBackground = (minBackgroundColor != null) 
+            m_highlightBackground = (minBackgroundColor != null)
                 && (maxBackgroundColor != null);
             if (m_highlightBackground)
             {
                 if (minBackgroundColor.Length != 7)
                 {
-                    throw new ArgumentException("minBackgroundColor is not 7 bytes long eg a hex " 
+                    throw new ArgumentException("minBackgroundColor is not 7 bytes long eg a hex "
                         + "RGB value such as #FFFFFF");
                 }
                 if (maxBackgroundColor.Length != 7)
                 {
-                    throw new ArgumentException("minBackgroundColor is not 7 bytes long eg a hex " 
+                    throw new ArgumentException("minBackgroundColor is not 7 bytes long eg a hex "
                         + "RGB value such as #FFFFFF");
                 }
                 m_bgRMin = HexToInt32(minBackgroundColor, 1, 3 - 1);
@@ -190,7 +190,7 @@ namespace Lucene.Net.Search.Highlight
             return "" + hexDigits[(i & 0xF0) >> 4] + hexDigits[i & 0x0F];
         }
 
-        /// <summary> 
+        /// <summary>
         /// Converts a hex string into an <see cref="int"/>.
         /// <para/>
         /// NOTE: This was hexToInt() in Lucene
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search.Highlight
             return result;
         }
 
-        /// <summary> 
+        /// <summary>
         /// Converts a hex string at the specified index and length of <paramref name="hex"/>
         /// into an <see cref="int"/>.
         /// <para/>

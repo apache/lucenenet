@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using System.Text;
 
@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     public class PrefixWildcardQueryNode : WildcardQueryNode
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value including the wildcard</param>
@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value including the wildcard</param>
@@ -58,7 +58,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="field">field name</param>
         /// <param name="text">value including the wildcard</param>

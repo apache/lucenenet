@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Facet.SortedSet;
@@ -33,17 +33,17 @@ namespace Lucene.Net.Facet
     /// alternative values/aggregates for the drill-down
     /// dimensions so that a dimension does not disappear after
     /// the user drills down into it.
-    /// 
+    ///
     /// <para> Use one of the static search
     /// methods to do the search, and then get the hits and facet
     /// results from the returned <see cref="DrillSidewaysResult"/>.
-    /// 
+    ///
     /// </para>
     /// <para><b>NOTE</b>: this allocates one <see cref="FacetsCollector"/>
     /// for each drill-down, plus one.  If your
     /// index has high number of facet labels then this will
     /// multiply your memory usage.
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>
@@ -61,7 +61,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// <see cref="SortedSetDocValuesReaderState"/> passed to
-        /// constructor; can be <c>null</c>. 
+        /// constructor; can be <c>null</c>.
         /// </summary>
         protected readonly SortedSetDocValuesReaderState m_state;
 
@@ -80,7 +80,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Create a new <see cref="DrillSideways"/> instance, assuming the categories were
-        /// indexed with <see cref="SortedSetDocValuesFacetField"/>. 
+        /// indexed with <see cref="SortedSetDocValuesFacetField"/>.
         /// </summary>
         public DrillSideways(IndexSearcher searcher, FacetsConfig config, SortedSetDocValuesReaderState state)
             : this(searcher, config, null, state)
@@ -90,7 +90,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Create a new <see cref="DrillSideways"/> instance, where some
         /// dimensions were indexed with <see cref="SortedSetDocValuesFacetField"/>
-        /// and others were indexed with <see cref="FacetField"/>. 
+        /// and others were indexed with <see cref="FacetField"/>.
         /// </summary>
         public DrillSideways(IndexSearcher searcher, FacetsConfig config, TaxonomyReader taxoReader, SortedSetDocValuesReaderState state)
         {
@@ -102,7 +102,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Subclass can override to customize per-dim Facets
-        /// impl. 
+        /// impl.
         /// </summary>
         protected virtual Facets BuildFacetsResult(FacetsCollector drillDowns, FacetsCollector[] drillSideways, string[] drillSidewaysDims)
         {
@@ -259,16 +259,16 @@ namespace Lucene.Net.Facet
         /// collected.  This will cause some performance loss;
         /// default is <c>false</c>.  Note that if you return true from
         /// this method (in a subclass) be sure your collector
-        /// also returns <c>false</c> from <see cref="ICollector.AcceptsDocsOutOfOrder"/>: 
+        /// also returns <c>false</c> from <see cref="ICollector.AcceptsDocsOutOfOrder"/>:
         /// this will trick <see cref="BooleanQuery"/> into also scoring all subDocs at
-        /// once. 
+        /// once.
         /// </summary>
         protected virtual bool ScoreSubDocsAtOnce => false;
     }
 
     /// <summary>
     /// Result of a drill sideways search, including the
-    /// <see cref="Facet.Facets"/> and <see cref="TopDocs"/>. 
+    /// <see cref="Facet.Facets"/> and <see cref="TopDocs"/>.
     /// </summary>
     public class DrillSidewaysResult
     {

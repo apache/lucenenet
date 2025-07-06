@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Sep
      * limitations under the License.
      */
 
-    // TODO: -- skip data should somehow be more local to the particular stream 
+    // TODO: -- skip data should somehow be more local to the particular stream
     // (doc, freq, pos, payload)
 
     /// <summary>
@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         /// <summary>
-        /// Sets the values for the current skip data. 
+        /// Sets the values for the current skip data.
         /// </summary>
         // Called @ every index interval (every 128th (by default)
         // doc)
@@ -165,12 +165,12 @@ namespace Lucene.Net.Codecs.Sep
             // Case 1: current field does not store payloads
             //           SkipDatum                 --> DocSkip, FreqSkip, ProxSkip
             //           DocSkip,FreqSkip,ProxSkip --> VInt
-            //           DocSkip records the document number before every SkipInterval th  document in TermFreqs. 
+            //           DocSkip records the document number before every SkipInterval th  document in TermFreqs.
             //           Document numbers are represented as differences from the previous value in the sequence.
             // Case 2: current field stores payloads
             //           SkipDatum                 --> DocSkip, PayloadLength?, FreqSkip,ProxSkip
             //           DocSkip,FreqSkip,ProxSkip --> VInt
-            //           PayloadLength             --> VInt    
+            //           PayloadLength             --> VInt
             //         In this case DocSkip/2 is the difference between
             //         the current and the previous value. If DocSkip
             //         is odd, then a PayloadLength encoded as VInt follows,
@@ -191,7 +191,7 @@ namespace Lucene.Net.Codecs.Sep
                 }
                 else
                 {
-                    // the payload length is different from the previous one. We shift the DocSkip, 
+                    // the payload length is different from the previous one. We shift the DocSkip,
                     // set the lowest bit and store the current payload length as VInt.
                     skipBuffer.WriteVInt32(delta << 1 | 1);
                     skipBuffer.WriteVInt32(curPayloadLength);

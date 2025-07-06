@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     {
         /// <summary>
         /// Creates a new <see cref="HyphenatedWordsFilterFactory"/> </summary>
-        public HyphenatedWordsFilterFactory(IDictionary<string, string> args) 
+        public HyphenatedWordsFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)

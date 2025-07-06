@@ -22,7 +22,7 @@ namespace Lucene.Net.Replicator
      */
 
     // LUCENENET specific - refactored SnapshotDirectoryTaxonomyWriter into SnapshotDirectoryTaxonomyIndexWriterFactory and de-nested
-    
+
     /// <summary>
     /// An implementation of <see cref="DirectoryTaxonomyIndexWriterFactory"/>
     /// which sets the underlying <see cref="Index.IndexWriter"/>'s <see cref="IndexDeletionPolicy"/> to

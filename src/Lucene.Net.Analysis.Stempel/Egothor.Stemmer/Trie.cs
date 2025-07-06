@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
@@ -268,7 +268,8 @@ namespace Egothor.Stemmer
                 {
                     if (i < key.Length)
                     {
-                        /*aux =*/e.Next(); // LUCENENET: IDE0059: Remove unnecessary value assignment
+                        /*aux =*/
+                        e.Next(); // LUCENENET: IDE0059: Remove unnecessary value assignment
                     }
                     else
                     {

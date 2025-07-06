@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using Lucene.Net.Util;
 using System;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.Synonym
     {
         private readonly bool expand;
 
-        public SolrSynonymParser(bool dedup, bool expand, Analyzer analyzer) 
+        public SolrSynonymParser(bool dedup, bool expand, Analyzer analyzer)
             : base(dedup, analyzer)
         {
             this.expand = expand;

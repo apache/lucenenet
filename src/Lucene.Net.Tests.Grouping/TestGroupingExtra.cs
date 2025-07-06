@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             
+
                 Group: Audi
                 Audi A3 Orange
                 Audi A3 Green
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search.Grouping
             //as a 8 term trie structure by default.  But by specifying int.MaxValue as the NumericPrecisionStep
             //we force the inverted index to store the value as a single term. This allows us to use it for
             //grouping via FieldCache (although it's no longer good for range queries as they will be slow if
-            //the range is large). 
+            //the range is large).
 
             var int32OneTerm = new FieldType
             {
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -326,7 +326,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             
+
                 Group: Audi
                 Audi A3 Orange
                 Audi A3 Green
@@ -421,7 +421,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             
+
                 Group: Audi
                 Audi A3 Orange
                 Audi A3 Green
@@ -464,7 +464,7 @@ namespace Lucene.Net.Search.Grouping
             //as a 8 term trie structure by default.  But by specifying int.MaxValue as the NumericPrecisionStep
             //we force the inverted index to store the value as a single term. This allows us to use it for
             //grouping via FieldCache (although it's no longer good for range queries as they will be slow if
-            //the range is large). 
+            //the range is large).
 
             var int32OneTerm = new FieldType
             {
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search.Grouping
             //as a 8 term trie structure by default.  But by specifying int.MaxValue as the NumericPrecisionStep
             //we force the inverted index to store the value as a single term. This allows us to use it for
             //grouping via FieldCache (although it's no longer good for range queries as they will be slow if
-            //the range is large). 
+            //the range is large).
 
             var int32OneTerm = new FieldType
             {
@@ -639,7 +639,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -734,7 +734,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -828,7 +828,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -852,7 +852,7 @@ namespace Lucene.Net.Search.Grouping
         /// LUCENENET: Additional Unit Test.  Low Level test that does not use GroupingSearch
         /// Class. Tests grouping by an StringField via the
         /// 2 pass by field name approach. Uses DocValues, not FieldCache.
-        /// Demonstrates grouping returning ITopGroups<BytesRef> 
+        /// Demonstrates grouping returning ITopGroups<BytesRef>
         /// </summary>
         [Test]
         [LuceneNetSpecific]
@@ -939,7 +939,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             
+
                 Group: Audi
                 Audi A3 Orange
                 Audi A3 Green
@@ -982,7 +982,7 @@ namespace Lucene.Net.Search.Grouping
             //Normally we can not group on a Int32Field because it's stored as a 8 term trie structure
             //by default.  But by specifying int.MaxValue as the NumericPrecisionStep we force the inverted
             //index to store the value as a single term. This allows us to use it for grouping (although
-            //it's no longer good for range queries as they will be slow if the range is large). 
+            //it's no longer good for range queries as they will be slow if the range is large).
 
             var int32OneTerm = new FieldType
             {
@@ -1065,7 +1065,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -1105,7 +1105,7 @@ namespace Lucene.Net.Search.Grouping
             //Normally we can not group on a Int32Field because it's stored as a 8 term trie structure
             //by default.  But by specifying int.MaxValue as the NumericPrecisionStep we force the inverted
             //index to store the value as a single term. This allows us to use it for grouping (although
-            //it's no longer good for range queries as they will be slow if the range is large). 
+            //it's no longer good for range queries as they will be slow if the range is large).
 
             var int32OneTerm = new FieldType
             {
@@ -1192,7 +1192,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45
@@ -1216,7 +1216,7 @@ namespace Lucene.Net.Search.Grouping
         /// LUCENENET: Additional Unit Test.  Low Level test that does not use GroupingSearch
         /// Class. Tests grouping by an Int32 via the
         /// 2 pass by fuction/valueSource approach. Uses DocValues, not FieldCache.
-        /// Demonstrates grouping returning ITopGroups<MutableValueInt32> 
+        /// Demonstrates grouping returning ITopGroups<MutableValueInt32>
         /// </summary>
         [Test]
         [LuceneNetSpecific]
@@ -1305,7 +1305,7 @@ namespace Lucene.Net.Search.Grouping
             assertEquals(expectdValue, output);
 
             /*  Output:
-             *  
+             *
                 Group: 1000
                 1000 1102 21
                 1000 1123 45

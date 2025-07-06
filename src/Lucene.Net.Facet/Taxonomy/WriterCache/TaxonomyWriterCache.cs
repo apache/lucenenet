@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
@@ -45,7 +45,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// <para>
     /// <b>NOTE:</b> the cache may be accessed concurrently by multiple threads,
     /// therefore cache implementations should take this into consideration.
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>

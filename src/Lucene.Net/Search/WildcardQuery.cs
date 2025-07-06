@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
     /// needs to iterate over many terms. In order to prevent extremely slow WildcardQueries,
     /// a Wildcard term should not start with the wildcard <c>*</c>
     ///
-    /// <para/>This query uses the 
+    /// <para/>This query uses the
     /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>
     /// rewrite method.
     /// </summary>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 
             string wildcardText = wildcardquery.Text;
 
-            for (int i = 0; i < wildcardText.Length; )
+            for (int i = 0; i < wildcardText.Length;)
             {
                 int c = Character.CodePointAt(wildcardText, i);
                 int length = Character.CharCount(c);

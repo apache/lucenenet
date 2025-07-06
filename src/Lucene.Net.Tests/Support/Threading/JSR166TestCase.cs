@@ -1,4 +1,4 @@
-﻿// From Apache Harmony tests:
+// From Apache Harmony tests:
 // https://github.com/apache/harmony/blob/trunk/classlib/modules/concurrent/src/test/java/JSR166TestCase.java
 using Lucene.Net.Util;
 using System;
@@ -315,8 +315,8 @@ namespace Lucene.Net.Support.Threading
         {
             //try
             //{
-                threadFailed = true;
-                fail("should throw exception");
+            threadFailed = true;
+            fail("should throw exception");
             //}
             //catch (AssertionFailedError e)
             //{
@@ -384,9 +384,9 @@ namespace Lucene.Net.Support.Threading
         protected static readonly int zero = 0;
         protected static readonly int one = 1;
         protected static readonly int two = 2;
-        protected static readonly int three  = 3;
-        protected static readonly int four  = 4;
-        protected static readonly int five  = 5;
+        protected static readonly int three = 3;
+        protected static readonly int four = 4;
+        protected static readonly int five = 5;
         protected static readonly int six = 6;
         protected static readonly int seven = 7;
         protected static readonly int eight = 8;

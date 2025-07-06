@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis
                 ret = currentOff;
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(ret >= 0,"currentOff={0},diff={1}", currentOff, (ret - currentOff));
+            if (Debugging.AssertsEnabled) Debugging.Assert(ret >= 0, "currentOff={0},diff={1}", currentOff, (ret - currentOff));
             return ret;
         }
 

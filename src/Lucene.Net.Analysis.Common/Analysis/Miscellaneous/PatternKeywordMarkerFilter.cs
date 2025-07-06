@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using System.Text.RegularExpressions;
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         protected override bool IsKeyword()
         {
-            matcher = pattern.Match(termAtt.ToString()); 
+            matcher = pattern.Match(termAtt.ToString());
             return matcher.Success;
         }
     }

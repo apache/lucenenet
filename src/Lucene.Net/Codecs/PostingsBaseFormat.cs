@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Codecs
+namespace Lucene.Net.Codecs
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -21,7 +21,7 @@
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
     /// <summary>
-    /// Provides a <see cref="Codecs.PostingsReaderBase"/> and 
+    /// Provides a <see cref="Codecs.PostingsReaderBase"/> and
     /// <see cref="Codecs.PostingsWriterBase"/>.
     /// <para/>
     /// @lucene.experimental

@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -217,7 +217,7 @@ namespace Lucene.Net
 
         public static T[] clone<T>(this T[] e)
         {
-            return (T[]) e.Clone();
+            return (T[])e.Clone();
         }
 
         public static void add<T>(this ISet<T> s, T item)

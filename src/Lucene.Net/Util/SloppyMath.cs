@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
         /// Special cases:
         /// <list type="bullet">
         ///     <item><description>If the argument is <see cref="double.NaN"/> or an infinity, then the result is <see cref="double.NaN"/>.</description></item>
-        /// </list> 
+        /// </list>
         /// </summary>
         /// <param name="a"> An angle, in radians. </param>
         /// <returns> The cosine of the argument. </returns>
@@ -102,7 +102,7 @@ namespace Lucene.Net.Util
         /// Special cases:
         /// <list type="bullet">
         ///     <item><description>If the argument is <see cref="double.NaN"/> or its absolute value is greater than 1, then the result is <see cref="double.NaN"/>.</description></item>
-        /// </list> 
+        /// </list>
         /// </summary>
         /// <param name="a"> the value whose arc sine is to be returned. </param>
         /// <returns> arc sine of the argument </returns>
@@ -162,7 +162,7 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double EarthDiameter(double latitude)
         {
-            if(double.IsNaN(latitude)) 
+            if (double.IsNaN(latitude))
                 return double.NaN;
             int index = (int)(Math.Abs(latitude) * RADIUS_INDEXER + 0.5) % earthDiameterPerLatitude.Length;
             return earthDiameterPerLatitude[index];

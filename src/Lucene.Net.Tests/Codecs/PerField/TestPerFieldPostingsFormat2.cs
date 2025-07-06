@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Lucene46;
@@ -314,8 +314,8 @@ namespace Lucene.Net.Codecs.PerField
         [Test]
         public virtual void TestSameCodecDifferentParams()
         {
-          Codec codec = new Lucene46CodecAnonymousClass2();
-          DoTestMixedPostings(codec);
+            Codec codec = new Lucene46CodecAnonymousClass2();
+            DoTestMixedPostings(codec);
         }
 
         private sealed class Lucene46CodecAnonymousClass2 : Lucene46Codec

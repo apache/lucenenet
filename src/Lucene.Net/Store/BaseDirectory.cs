@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Threading;
 
@@ -57,7 +57,7 @@ namespace Lucene.Net.Store
         /// protected override void Dispose(bool disposing)
         /// {
         ///     if (!CompareAndSetIsOpen(expect: true, update: false)) return;
-        /// 
+        ///
         ///     // Dispose unmanaged resources
         ///     if (disposing)
         ///     {

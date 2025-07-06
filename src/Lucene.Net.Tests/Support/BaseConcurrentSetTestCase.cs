@@ -1,4 +1,4 @@
-﻿// Some tests adapted from Apache Harmony:
+// Some tests adapted from Apache Harmony:
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/concurrent/src/test/java/ConcurrentHashMapTest.java
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/util/CollectionsTest.java
 
@@ -46,7 +46,7 @@ namespace Lucene.Net
     public abstract class BaseConcurrentSetTestCase : JSR166TestCase
     {
 
-#region Factory Methods
+        #region Factory Methods
 
         /// <summary>
         /// Creates a new instance of a set type.
@@ -65,7 +65,7 @@ namespace Lucene.Net
 
 
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Used by <see cref="TestSynchronizedSet"/>

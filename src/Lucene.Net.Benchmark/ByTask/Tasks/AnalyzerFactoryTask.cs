@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Util;
@@ -468,7 +468,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             }
                     }
                 }
-                WHILE_LOOP_BREAK: { /* LUCENENET: intentionally empty */ }
+            WHILE_LOOP_BREAK: { /* LUCENENET: intentionally empty */ }
 
                 if (!argMap.ContainsKey("luceneMatchVersion"))
                 {

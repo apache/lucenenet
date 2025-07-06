@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -353,7 +353,7 @@ namespace Lucene.Net.Util
 
         public static int[] Grow(int[] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, "size must be positive (got {0}): likely integer overflow?" , minSize);
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, "size must be positive (got {0}): likely integer overflow?", minSize);
             if (array.Length < minSize)
             {
                 int[] newArray = new int[Oversize(minSize, RamUsageEstimator.NUM_BYTES_INT32)];
@@ -846,7 +846,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was naturalComparer() in Lucene
         /// </summary>
         public static IComparer<T> GetNaturalComparer<T>()
-            //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
+        //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             Type genericClosingType = typeof(T);
 

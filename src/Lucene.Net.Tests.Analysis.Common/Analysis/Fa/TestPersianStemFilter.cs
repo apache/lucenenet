@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 9.2
+// Lucene version compatibility level 9.2
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Util;

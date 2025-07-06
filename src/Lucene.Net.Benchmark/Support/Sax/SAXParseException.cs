@@ -1,4 +1,4 @@
-﻿// SAX exception class.
+// SAX exception class.
 // http://www.saxproject.org
 // No warranty; no copyright -- use this as you will.
 // $Id: SAXParseException.java,v 1.11 2004/04/21 13:05:02 dmegginson Exp $
@@ -27,12 +27,12 @@ namespace Sax
     /// in the original XML document, as if it came from a <see cref="ILocator"/>
     /// object.  Note that although the application
     /// will receive a SAXParseException as the argument to the handlers
-    /// in the <see cref="IErrorHandler"/> interface, 
+    /// in the <see cref="IErrorHandler"/> interface,
     /// the application is not actually required to throw the exception;
     /// instead, it can simply read the information in it and take a
     /// different action.
     /// <para/>
-    /// Since this exception is a subclass of <see cref="SAXException"/>, 
+    /// Since this exception is a subclass of <see cref="SAXException"/>,
     /// it inherits the ability to wrap another exception.
     /// </remarks>
     /// <since>SAX 1.0</since>
@@ -41,7 +41,7 @@ namespace Sax
     /// <seealso cref="SAXException"/>
     /// <seealso cref="ILocator"/>
     /// <seealso cref="IErrorHandler"/>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

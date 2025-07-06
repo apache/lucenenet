@@ -34,19 +34,19 @@ namespace Lucene.Net.Analysis.Id
         /// Calls <see cref="IndonesianStemFilter(TokenStream, bool)">IndonesianStemFilter(input, true)</see>
         /// </summary>
         public IndonesianStemFilter(TokenStream input)
-              : this(input, true)
+            : this(input, true)
         {
         }
 
         /// <summary>
         /// Create a new <see cref="IndonesianStemFilter"/>.
         /// <para>
-        /// If <paramref name="stemDerivational"/> is false, 
+        /// If <paramref name="stemDerivational"/> is false,
         /// only inflectional suffixes (particles and possessive pronouns) are stemmed.
         /// </para>
         /// </summary>
         public IndonesianStemFilter(TokenStream input, bool stemDerivational)
-              : base(input)
+            : base(input)
         {
             this.stemDerivational = stemDerivational;
             termAtt = AddAttribute<ICharTermAttribute>();

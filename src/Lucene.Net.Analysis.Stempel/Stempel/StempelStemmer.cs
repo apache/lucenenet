@@ -1,4 +1,4 @@
-﻿using Egothor.Stemmer;
+using Egothor.Stemmer;
 using J2N.IO;
 using System.IO;
 using System.Text;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -293,7 +293,7 @@ namespace Lucene.Net.Util.Automaton
                 AUTOMATON_TYPE.ALL => terms.GetEnumerator(),
                 AUTOMATON_TYPE.SINGLE => new SingleTermsEnum(terms.GetEnumerator(), Term),
                 AUTOMATON_TYPE.PREFIX => new PrefixTermsEnum(terms.GetEnumerator(), Term),// TODO: this is very likely faster than .intersect,
-                                                                                            // but we should test and maybe cutover
+                                                                                          // but we should test and maybe cutover
                 AUTOMATON_TYPE.NORMAL => terms.Intersect(this, null),
                 _ => throw RuntimeException.Create("unhandled case"),// unreachable
             };

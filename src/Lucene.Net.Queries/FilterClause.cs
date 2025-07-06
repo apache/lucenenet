@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Search;
 
 namespace Lucene.Net.Queries
@@ -19,11 +19,11 @@ namespace Lucene.Net.Queries
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// A <see cref="Search.Filter"/> that wrapped with an indication of how that filter
     /// is used when composed with another filter.
-    /// (Follows the boolean logic in <see cref="BooleanClause"/> for composition 
+    /// (Follows the boolean logic in <see cref="BooleanClause"/> for composition
     /// of queries.)
     /// </summary>
     public sealed class FilterClause
@@ -62,7 +62,7 @@ namespace Lucene.Net.Queries
             {
                 return false;
             }
-            return this.filter.Equals(other.filter) 
+            return this.filter.Equals(other.filter)
                 && this.occur == other.occur;
         }
 

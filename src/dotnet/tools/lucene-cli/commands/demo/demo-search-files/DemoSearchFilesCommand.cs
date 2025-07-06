@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Cli.CommandLine;
+using Lucene.Net.Cli.CommandLine;
 using Lucene.Net.Demo;
 using System.Collections.Generic;
 
@@ -37,7 +37,7 @@ namespace Lucene.Net.Cli
                 this.Arguments.Add(IndexDirectoryArgument);
                 this.FieldOption = this.Option(
                     "-f|--field <FIELD>",
-                    FromResource("FieldDescription"), 
+                    FromResource("FieldDescription"),
                     CommandOptionType.SingleValue);
                 this.RepeatOption = this.Option(
                     "-r|--repeat <NUMBER>",

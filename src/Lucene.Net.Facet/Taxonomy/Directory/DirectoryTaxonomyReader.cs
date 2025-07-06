@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// results, while other methods prefetch all the data into memory and then
     /// provide answers directly from in-memory tables. See the documentation of
     /// individual methods for comments on their performance.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class DirectoryTaxonomyReader : TaxonomyReader
@@ -85,8 +85,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// recreated, you should pass <c>null</c> as the caches and parent/children
         /// arrays.
         /// </summary>
-        private DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter, 
-            LruDictionary<FacetLabel, Int32Class> ordinalCache, LruDictionary<int, FacetLabel> categoryCache, 
+        private DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter,
+            LruDictionary<FacetLabel, Int32Class> ordinalCache, LruDictionary<int, FacetLabel> categoryCache,
             TaxonomyIndexArrays taxoArrays)
         {
             this.indexReader = indexReader;
@@ -163,7 +163,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             if (taxoWriter is null) throw new ArgumentNullException(nameof(taxoWriter));
             this.taxoWriter = taxoWriter;
             taxoEpoch = taxoWriter.TaxonomyEpoch;
-            
+
             // LUCENENET specific - uses indexReaderFactory to open the index reader instead of
             // calling virtual method
             if (indexReaderFactory is null) throw new ArgumentNullException(nameof(indexReaderFactory));
@@ -196,7 +196,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Implements the opening of a new <see cref="DirectoryTaxonomyReader"/> instance if
         /// the taxonomy has changed.
-        /// 
+        ///
         /// <para>
         /// <b>NOTE:</b> the returned <see cref="DirectoryTaxonomyReader"/> shares the
         /// ordinal and category caches with this reader. This is not expected to cause
@@ -473,7 +473,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Returns ordinal -> label mapping, up to the provided
         /// max ordinal or number of ordinals, whichever is
-        /// smaller. 
+        /// smaller.
         /// </summary>
         public virtual string ToString(int max)
         {

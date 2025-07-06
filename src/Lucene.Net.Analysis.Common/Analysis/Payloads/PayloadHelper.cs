@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Payloads
 
         /// <summary>
         /// Decode the payload that was encoded using <see cref="EncodeSingle(float)"/>.
-        /// NOTE: the length of the array must be at least offset + 4 long. 
+        /// NOTE: the length of the array must be at least offset + 4 long.
         /// <para/>
         /// NOTE: This was decodeFloat() in Lucene
         /// </summary>

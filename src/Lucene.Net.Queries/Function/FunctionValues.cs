@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System;
 using System.Globalization;
 using J2N.Globalization;
@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries.Function
         /// <summary>
         /// NOTE: This was shortVal() in Lucene
         /// </summary>
-        public virtual short Int16Val(int doc) 
+        public virtual short Int16Val(int doc)
         {
             throw UnsupportedOperationException.Create();
         }
@@ -139,7 +139,7 @@ namespace Lucene.Net.Queries.Function
         /// a reusable <see cref="MutableValue"/>.  Implementations of <see cref="FunctionValues"/>
         /// are encouraged to define their own implementations of <see cref="ValueFiller"/> if their
         /// value is not a <see cref="float"/>.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public abstract class ValueFiller

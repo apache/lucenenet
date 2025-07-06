@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <summary>
     /// A <see cref="TokenFilter"/> that only keeps tokens with text contained in the
     /// required words.  This filter behaves like the inverse of <see cref="Core.StopFilter"/>.
-    /// 
+    ///
     /// @since solr 1.3
     /// </summary>
     public sealed class KeepWordFilter : FilteringTokenFilter
@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly CharArraySet words;
         private readonly ICharTermAttribute termAtt;
 
-        /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4. 
+        /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4.
         [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4.")]
         public KeepWordFilter(LuceneVersion version, bool enablePositionIncrements, TokenStream @in, CharArraySet words)
             : base(version, enablePositionIncrements, @in)

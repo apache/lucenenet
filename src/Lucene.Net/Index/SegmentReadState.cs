@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         public FieldInfos FieldInfos { get; private set; }
 
         /// <summary>
-        /// <see cref="IOContext"/> to pass to 
+        /// <see cref="IOContext"/> to pass to
         /// <see cref="Directory.OpenInput(string, IOContext)"/>.
         /// </summary>
         public IOContext Context { get; private set; }
@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
         /// that must do so), then it should negate this value to
         /// get the app's terms divisor
         /// </summary>
-        public int TermsIndexDivisor { get; set; } 
+        public int TermsIndexDivisor { get; set; }
 
         /// <summary>
         /// Unique suffix for any postings files read for this

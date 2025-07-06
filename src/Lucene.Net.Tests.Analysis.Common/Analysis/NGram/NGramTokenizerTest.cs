@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N;
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.NGram
                     assertEquals(1, posLenAtt.PositionLength);
                     assertEquals(offsets[start], offsetAtt.StartOffset);
                     assertEquals(offsets[end], offsetAtt.EndOffset);
-                    nextGramContinue:;
+                nextGramContinue:;
                 }
                 //nextGramBreak:;
             }

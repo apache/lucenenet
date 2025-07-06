@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
@@ -55,8 +55,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         public override void SetParams(string @params)
         {
-                base.SetParams(@params);
-                doWait = bool.Parse(@params);
+            base.SetParams(@params);
+            doWait = bool.Parse(@params);
         }
 
         public override bool SupportsParams => true;

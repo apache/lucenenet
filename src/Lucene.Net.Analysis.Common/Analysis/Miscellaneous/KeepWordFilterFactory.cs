@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <see cref="KeepWordFilter"/>. 
+    /// Factory for <see cref="KeepWordFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_keepword" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

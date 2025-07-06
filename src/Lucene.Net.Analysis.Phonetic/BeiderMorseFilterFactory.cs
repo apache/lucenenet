@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 using Lucene.Net.Analysis.Phonetic.Language.Bm;
 using Lucene.Net.Analysis.Util;
 using System;
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Phonetic
     ///   &lt;analyzer&gt;
     ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
     ///     &lt;filter class="solr.BeiderMorseFilterFactory"
-    ///        nameType="GENERIC" ruleType="APPROX" 
+    ///        nameType="GENERIC" ruleType="APPROX"
     ///        concat="true" languageSet="auto"
     ///     &lt;/filter&gt;
     ///   &lt;/analyzer&gt;

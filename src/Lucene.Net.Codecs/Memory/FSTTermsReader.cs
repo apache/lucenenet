@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
@@ -498,7 +498,8 @@ namespace Lucene.Net.Codecs.Memory
                     }
 
                     Frame frame;
-                    /*frame = */LoadVirtualFrame(NewFrame()); // LUCENENET: IDE0059: Remove unnecessary value assignment
+                    /*frame = */
+                    LoadVirtualFrame(NewFrame()); // LUCENENET: IDE0059: Remove unnecessary value assignment
                     this.level++;
                     frame = LoadFirstFrame(NewFrame());
                     PushFrame(frame);

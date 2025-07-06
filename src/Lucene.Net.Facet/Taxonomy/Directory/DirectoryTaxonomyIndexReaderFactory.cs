@@ -1,5 +1,5 @@
 using Lucene.Net.Index;
-    
+
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
     /*
@@ -31,9 +31,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     public class DirectoryTaxonomyIndexReaderFactory
     {
         public static DirectoryTaxonomyIndexReaderFactory Default { get; } = new DirectoryTaxonomyIndexReaderFactory();
-        
+
         /// <summary>
-        /// Open the <see cref="DirectoryReader"/> from this <see cref="Directory"/>. 
+        /// Open the <see cref="DirectoryReader"/> from this <see cref="Directory"/>.
         /// </summary>
         public virtual DirectoryReader OpenIndexReader(Directory directory)
         {
@@ -43,7 +43,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// Open the <see cref="DirectoryReader"/> from this <see cref="IndexWriter"/>. 
+        /// Open the <see cref="DirectoryReader"/> from this <see cref="IndexWriter"/>.
         /// </summary>
         public virtual DirectoryReader OpenIndexReader(IndexWriter writer)
         {

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System;
 using Lucene.Net.Analysis.TokenAttributes;
 
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Position
     ///             QueryParser
     ///             generate boolean queries instead of phrase queries, it is now advised to use
     ///             <c>QueryParser.AutoGeneratePhraseQueries = true</c>
-    ///             (for simple cases) or to override <c>QueryParser.NewFieldQuery</c>. 
+    ///             (for simple cases) or to override <c>QueryParser.NewFieldQuery</c>.
     [Obsolete("(4.4) PositionFilter makes TokenStream graphs inconsistent")]
     public sealed class PositionFilter : TokenFilter
     {

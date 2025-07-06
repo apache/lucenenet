@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using System.Collections.Generic;
 
@@ -99,15 +99,15 @@ namespace Lucene.Net.Codecs.Lucene3x
                         normType = input.ReadByte() != 0 ? DocValuesType.NUMERIC : DocValuesType.NONE;
                     }
 
-                    infos[i] = new FieldInfo(name, 
-                                            isIndexed, 
-                                            fieldNumber, 
-                                            storeTermVector, 
-                                            omitNorms, 
-                                            storePayloads, 
-                                            indexOptions, 
-                                            DocValuesType.NONE, 
-                                            normType, 
+                    infos[i] = new FieldInfo(name,
+                                            isIndexed,
+                                            fieldNumber,
+                                            storeTermVector,
+                                            omitNorms,
+                                            storePayloads,
+                                            indexOptions,
+                                            DocValuesType.NONE,
+                                            normType,
                                             null);
                 }
 

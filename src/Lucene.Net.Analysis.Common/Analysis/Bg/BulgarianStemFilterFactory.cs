@@ -36,11 +36,10 @@ namespace Lucene.Net.Analysis.Bg
     /// </summary>
     public class BulgarianStemFilterFactory : TokenFilterFactory
     {
-
         /// <summary>
         /// Creates a new <see cref="BulgarianStemFilterFactory"/> </summary>
         public BulgarianStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

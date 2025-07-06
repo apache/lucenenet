@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Runtime.CompilerServices;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;

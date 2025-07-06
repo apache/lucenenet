@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -96,8 +96,8 @@ namespace Lucene.Net.Codecs.SimpleText
                         // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
                         if (Debugging.AssertsEnabled) Debugging.Assert(IndexOptionsComparer.Default.Compare(fi.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads);
                         SimpleTextUtil.Write(output, INDEXOPTIONS);
-                        SimpleTextUtil.Write(output, 
-                            fi.IndexOptions != IndexOptions.NONE ? fi.IndexOptions.ToString() : string.Empty, 
+                        SimpleTextUtil.Write(output,
+                            fi.IndexOptions != IndexOptions.NONE ? fi.IndexOptions.ToString() : string.Empty,
                             scratch);
                         SimpleTextUtil.WriteNewline(output);
                     }

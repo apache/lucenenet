@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
     ///
     /// <para><b>NOTE</b>: The values <see cref="float.NaN"/>,
     /// <see cref="float.NegativeInfinity"/> and <see cref="float.PositiveInfinity"/> are
-    /// not valid scores.  Certain collectors (eg 
+    /// not valid scores.  Certain collectors (eg
     /// <see cref="TopScoreDocCollector"/>) will not properly collect hits
     /// with these scores.
     /// </para>

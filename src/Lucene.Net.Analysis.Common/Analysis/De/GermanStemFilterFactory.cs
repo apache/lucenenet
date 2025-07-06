@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.De
      */
 
     /// <summary>
-    /// Factory for <see cref="GermanStemFilter"/>. 
+    /// Factory for <see cref="GermanStemFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_destem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.De
     {
         /// <summary>
         /// Creates a new <see cref="GermanStemFilterFactory"/> </summary>
-        public GermanStemFilterFactory(IDictionary<string, string> args) 
+        public GermanStemFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)

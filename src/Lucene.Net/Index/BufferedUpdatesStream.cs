@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
                     }
                     else if (packet != null && segGen == packet.DelGen)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(packet.isSegmentPrivate,"Packet and Segments deletegen can only match on a segment private del packet gen={0}", segGen);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(packet.isSegmentPrivate, "Packet and Segments deletegen can only match on a segment private del packet gen={0}", segGen);
                         //System.out.println("  eq");
 
                         // Lock order: IW -> BD -> RP
@@ -750,8 +750,8 @@ namespace Lucene.Net.Index
             }
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(numTerms2 == numTerms,"numTerms2={0} vs {1}", numTerms2, numTerms);
-                Debugging.Assert(bytesUsed2 == bytesUsed,"bytesUsed2={0} vs {1}", bytesUsed2, bytesUsed);
+                Debugging.Assert(numTerms2 == numTerms, "numTerms2={0} vs {1}", numTerms2, numTerms);
+                Debugging.Assert(bytesUsed2 == bytesUsed, "bytesUsed2={0} vs {1}", bytesUsed2, bytesUsed);
             }
             return true;
         }

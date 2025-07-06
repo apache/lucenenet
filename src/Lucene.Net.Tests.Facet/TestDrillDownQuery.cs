@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System;

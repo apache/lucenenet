@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Suggest
 
         public bool MoveNext()
         {
-            // LUCENENET NOTE: We moved the cursor when 
+            // LUCENENET NOTE: We moved the cursor when
             // the instance was created. Make sure we don't
             // move it again until the second call to Next().
             if (first && current != null)

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
+using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Standard.Parser;
 using System;
@@ -25,7 +25,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
     /// <summary>
     /// This class should be used when there is a builder for each type of node.
-    /// 
+    ///
     /// <para>
     /// The type of node may be defined in 2 different ways: - by the field name,
     /// when the node implements the <see cref="IFieldableNode"/> interface - by its class,
@@ -195,7 +195,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         /// </summary>
         /// <param name="queryNode">the query tree root node</param>
         /// <returns>the built object</returns>
-        /// <exception cref="QueryNodeException">if some node builder throws a 
+        /// <exception cref="QueryNodeException">if some node builder throws a
         /// <see cref="QueryNodeException"/> or if there is a node which had no
         /// builder associated to it</exception>
         public virtual TQuery Build(IQueryNode queryNode)

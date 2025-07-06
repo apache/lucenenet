@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Analysis;
@@ -34,7 +34,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
         private Directory directory;
         private IndexReader reader;
         private IndexSearcher searcher;
-        
+
         [SetUp]
         public override void SetUp()
         {
@@ -50,7 +50,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
             writer.Dispose();
             searcher = NewSearcher(reader);
         }
-        
+
         [TearDown]
         public override void TearDown()
         {
@@ -58,14 +58,14 @@ namespace Lucene.Net.Tests.Queries.Mlt
             directory.Dispose();
             base.TearDown();
         }
-        
+
         private void AddDoc(RandomIndexWriter writer, string text)
         {
             Document doc = new Document();
             doc.Add(NewTextField("text", text, Field.Store.YES));
             writer.AddDocument(doc);
         }
-        
+
         [Test]
         public void TestBoostFactor()
         {
@@ -95,12 +95,12 @@ namespace Lucene.Net.Tests.Queries.Mlt
                 float termBoost = originalValues[tq.Term.Text];
                 assertNotNull("Expected term " + tq.Term.Text, termBoost);
 
-                float totalBoost = (float) (termBoost * boostFactor);
+                float totalBoost = (float)(termBoost * boostFactor);
                 assertEquals("Expected boost of " + totalBoost + " for term '"
                     + tq.Term.Text + "' got " + tq.Boost, totalBoost, tq.Boost, 0.0001);
             }
         }
-        
+
         private IDictionary<string, float> GetOriginalValues()
         {
             IDictionary<string, float> originalValues = new Dictionary<string, float>();

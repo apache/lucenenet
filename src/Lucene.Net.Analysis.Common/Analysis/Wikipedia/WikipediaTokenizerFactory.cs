@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         /// <summary>
         /// Creates a new <see cref="WikipediaTokenizerFactory"/> </summary>
         public WikipediaTokenizerFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             if (args.Count > 0)
             {

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.Quality.Trec;
+using Lucene.Net.Benchmarks.Quality.Trec;
 using Lucene.Net.Benchmarks.Quality.Utils;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -49,7 +49,7 @@ namespace Lucene.Net.Benchmarks.Quality
 
 
             int maxResults = 1000;
-            String docNameField = "doctitle"; // orig docID is in the linedoc format title 
+            String docNameField = "doctitle"; // orig docID is in the linedoc format title
 
             TextWriter logger = Verbose ? Console.Out : null;
 

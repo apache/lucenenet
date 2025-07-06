@@ -18,9 +18,9 @@
 # -----------------------------------------------------------------------------------
 
 param (
-	[Parameter(Mandatory)]
-	[string]
-	$JavaLuceneVersion
+    [Parameter(Mandatory)]
+    [string]
+    $JavaLuceneVersion
 )
 
 # TODO: Convert this script to use the https://github.com/NightOwl888/lucenenet-javadoc2markdown CLI

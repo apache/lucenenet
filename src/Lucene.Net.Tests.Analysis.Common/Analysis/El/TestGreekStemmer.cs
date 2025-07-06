@@ -485,7 +485,7 @@ namespace Lucene.Net.Analysis.El
 
             CheckOneTerm(a, "κρατούμαι", "κρατ");
             CheckOneTerm(a, "κρατιέμαι", "κρατ");
-            // this imperfect form doesnt conflate 
+            // this imperfect form doesnt conflate
             CheckOneTerm(a, "κρατούμουν", "κρατουμ");
             CheckOneTerm(a, "κρατιόμουν", "κρατ");
             // this imp. prog form doesnt conflate

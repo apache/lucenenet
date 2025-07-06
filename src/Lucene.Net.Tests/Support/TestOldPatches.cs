@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -159,7 +159,7 @@ namespace Lucene.Net.Support
         private class TestAnalyzer : Analyzer
         {
             public TestAnalyzer()
-                //: base(new TestReuseStrategy())
+            //: base(new TestReuseStrategy())
             { }
 
             // Lucene.Net 3.0.3:

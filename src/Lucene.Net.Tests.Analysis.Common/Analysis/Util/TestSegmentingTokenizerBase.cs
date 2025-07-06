@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// simple tokenizer, that bumps posinc + 1 for tokens after a 
+        /// simple tokenizer, that bumps posinc + 1 for tokens after a
         /// sentence boundary to inhibit phrase queries without slop.
         /// </summary>
         sealed class SentenceAndWordTokenizer : SegmentingTokenizerBase

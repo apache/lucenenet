@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
     /// this rule keeps a count of failed tests (suites) and will result in an
     /// <seealso cref="AssumptionViolatedException"/> after a given number of failures for all
     /// tests following this condition.
-    /// 
+    ///
     /// <p>
     /// Aborting quickly on failed tests can be useful when used in combination with
     /// test repeats (via the <seealso cref="Repeat"/> annotation or system property).

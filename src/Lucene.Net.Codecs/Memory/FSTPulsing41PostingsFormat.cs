@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Codecs.Memory
+namespace Lucene.Net.Codecs.Memory
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,7 +28,7 @@
     /// FST + Pulsing41, test only, since
     /// FST does no delta encoding here!
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [PostingsFormatName("FSTPulsing41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class FSTPulsing41PostingsFormat : PostingsFormat
@@ -36,12 +36,12 @@
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
         private readonly int _freqCutoff;
 
-        public FSTPulsing41PostingsFormat() 
+        public FSTPulsing41PostingsFormat()
             : this(1)
         {
         }
 
-        public FSTPulsing41PostingsFormat(int freqCutoff) 
+        public FSTPulsing41PostingsFormat(int freqCutoff)
             : base()
         {
             _wrappedPostingsBaseFormat = new Lucene41PostingsBaseFormat();

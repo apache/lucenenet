@@ -1,4 +1,4 @@
-﻿// SAX exception class.
+// SAX exception class.
 // http://www.saxproject.org
 // No warranty; no copyright -- use this as you will.
 // $Id: SAXException.java,v 1.7 2002/01/30 21:13:48 dbrownell Exp $
@@ -38,7 +38,7 @@ namespace Sax
     /// specific location in an XML document, it should use the
     /// <see cref="SAXParseException"/> subclass.
     /// </remarks>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

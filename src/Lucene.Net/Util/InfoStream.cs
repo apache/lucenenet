@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 

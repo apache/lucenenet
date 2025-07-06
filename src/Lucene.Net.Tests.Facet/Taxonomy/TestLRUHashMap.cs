@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 

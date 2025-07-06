@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util.Fst;
 using System.Diagnostics;
 using Int64 = J2N.Numerics.Int64;
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
     {
         private readonly FST<Int64> fst;
 
-        // depending upon fasterButMoreRam, we cache root arcs for either 
+        // depending upon fasterButMoreRam, we cache root arcs for either
         // kana (0x3040-0x30FF) or kana + han (0x3040-0x9FFF)
         // false: 191 arcs
         // true:  28,607 arcs (costs ~1.5MB)
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         /// <summary>
         /// for testing only
         /// <para/>
-        /// @lucene.internal 
+        /// @lucene.internal
         /// </summary>
         internal FST<Int64> InternalFST => fst;
     }

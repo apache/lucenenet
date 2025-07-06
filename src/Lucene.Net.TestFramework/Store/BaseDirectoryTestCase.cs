@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 // LUCENENET NOTE: This class now exists both here and in Lucene.Net.Tests
 using J2N.Threading;
 using Lucene.Net.Attributes;
@@ -451,7 +451,8 @@ namespace Lucene.Net.Store
             Directory dir = GetDirectory(CreateTempDir("testDetectClose"));
             dir.Dispose();
 
-            Assert.Throws<ObjectDisposedException>(() => {
+            Assert.Throws<ObjectDisposedException>(() =>
+            {
                 dir.CreateOutput("test", NewIOContext(Random));
             });
         }

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Util.Mutable;
 using System.Collections;
@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.Grouping.Function
     /// <summary>
     /// Concrete implementation of <see cref="AbstractSecondPassGroupingCollector{TGroupValue}"/> that groups based on
     /// <see cref="ValueSource"/> instances.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     // LUCENENET Specific - Made generic to reduce need for casting.
@@ -52,10 +52,10 @@ namespace Lucene.Net.Search.Grouping.Function
         /// <param name="groupByVS">The <see cref="ValueSource"/> to group by</param>
         /// <param name="vsContext">The value source context</param>
         /// <exception cref="IOException">When I/O related errors occur</exception>
-        public FunctionSecondPassGroupingCollector(IEnumerable<ISearchGroup<TMutableValue>> searchGroups, 
-            Sort groupSort, Sort withinGroupSort, int maxDocsPerGroup, bool getScores, bool getMaxScores, 
+        public FunctionSecondPassGroupingCollector(IEnumerable<ISearchGroup<TMutableValue>> searchGroups,
+            Sort groupSort, Sort withinGroupSort, int maxDocsPerGroup, bool getScores, bool getMaxScores,
             bool fillSortFields, ValueSource groupByVS, IDictionary /* Map<?, ?> */ vsContext)
-            : base(searchGroups, groupSort, withinGroupSort, maxDocsPerGroup, getScores, getMaxScores, fillSortFields) 
+            : base(searchGroups, groupSort, withinGroupSort, maxDocsPerGroup, getScores, getMaxScores, fillSortFields)
         {
             this.groupByVS = groupByVS;
             this.vsContext = vsContext;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search.Grouping.Function
             base.SetNextReader(context);
             FunctionValues values = groupByVS.GetValues(vsContext, context);
             filler = values.GetValueFiller();
-            mval = (TMutableValue) filler.Value;
+            mval = (TMutableValue)filler.Value;
         }
     }
 }

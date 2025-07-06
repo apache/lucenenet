@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -20,7 +20,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
      */
 
     /// <summary>
-    /// Parser for trec docs which selects the parser to apply according 
+    /// Parser for trec docs which selects the parser to apply according
     /// to the source files path, defaulting to <see cref="TrecGov2Parser"/>.
     /// </summary>
     public class TrecParserByPath : TrecDocParser

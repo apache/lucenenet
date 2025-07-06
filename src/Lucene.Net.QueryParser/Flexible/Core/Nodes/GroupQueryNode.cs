@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
+using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// A <see cref="GroupQueryNode"/> represents a location where the original user typed
     /// real parenthesis on the query string. This class is useful for queries like:
     /// a) a AND b OR c b) ( a AND b) OR c
-    /// 
+    ///
     /// Parenthesis might be used to define the boolean operation precedence.
     /// </summary>
     public class GroupQueryNode : QueryNode

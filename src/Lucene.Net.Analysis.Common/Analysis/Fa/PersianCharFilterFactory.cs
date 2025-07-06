@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Fa
     {
         /// <summary>
         /// Creates a new <see cref="PersianCharFilterFactory"/> </summary>
-        public PersianCharFilterFactory(IDictionary<string, string> args) 
+        public PersianCharFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             if (args.Count > 0)

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -96,7 +96,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(0, p1.Length);
             Assert.AreEqual("FacetLabel: []", p1.ToString());
 
-            // with all the following lengths, the prefix should be the whole path 
+            // with all the following lengths, the prefix should be the whole path
             int[] lengths = new int[] { 3, -1, 4 };
             for (int i = 0; i < lengths.Length; i++)
             {

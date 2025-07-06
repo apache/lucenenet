@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     try
                     {
                         Dispose();
-                    } 
+                    }
                     catch (Exception t) when (t.IsThrowable())
                     {
                         // ensure we throw our original exception
@@ -94,8 +94,8 @@ namespace Lucene.Net.Codecs.SimpleText
             _input = input;
         }
 
-        // we don't actually write a .tvx-like index, instead we read the 
-        // vectors file in entirety up-front and save the offsets 
+        // we don't actually write a .tvx-like index, instead we read the
+        // vectors file in entirety up-front and save the offsets
         // so we can seek to the data later.
         private void ReadIndex(int maxDoc)
         {
@@ -343,7 +343,7 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             internal int freq;
             internal int[] positions;
-            internal int[] startOffsets; 
+            internal int[] startOffsets;
             internal int[] endOffsets;
             internal BytesRef[] payloads;
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
@@ -27,7 +27,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     {
         /// <summary>
         /// Parse the input TextReader and return DocData.
-        /// The provided name, title, date are used for the result, unless when they're null, 
+        /// The provided name, title, date are used for the result, unless when they're null,
         /// in which case an attempt is made to set them from the parsed data.
         /// </summary>
         /// <param name="docData">Result reused.</param>

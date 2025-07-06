@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.Sv
@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Sv
         private readonly ICharTermAttribute termAtt;
         private readonly IKeywordAttribute keywordAttr;
 
-        public SwedishLightStemFilter(TokenStream input) 
+        public SwedishLightStemFilter(TokenStream input)
             : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();

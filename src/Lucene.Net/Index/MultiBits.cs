@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(reader != -1);
-                Debugging.Assert(reader < subs.Length,"slice={0} starts[-1]={1}", slice, starts[starts.Length - 1]);
+                Debugging.Assert(reader < subs.Length, "slice={0} starts[-1]={1}", slice, starts[starts.Length - 1]);
             }
             SubResult subResult = new SubResult();
             if (starts[reader] == slice.Start && starts[1 + reader] == slice.Start + slice.Length)

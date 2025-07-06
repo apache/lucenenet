@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 using J2N;
 using J2N.IO;
 using Lucene.Net.Support.Threading;

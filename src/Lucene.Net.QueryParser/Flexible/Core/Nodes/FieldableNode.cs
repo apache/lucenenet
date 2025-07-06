@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
+namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,7 +20,7 @@
     /// <summary>
     /// A query node implements <see cref="IFieldableNode"/> interface to indicate that its
     /// children and itself are associated to a specific field.
-    /// 
+    ///
     /// If it has any children which also implements this interface, it must ensure
     /// the children are associated to the same field.
     /// </summary>

@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System;
 using System.Collections.Generic;
@@ -60,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             private int end;
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="value">text value</param>
             /// <param name="begin">position in the query string</param>
@@ -107,7 +107,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         private IList<QueryText> values = null;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="pathElements">List of QueryText objects</param>
         public PathQueryNode(IList<QueryText> pathElements)
@@ -151,7 +151,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         }
 
         /// <summary>
-        /// Returns a List QueryText element from position <paramref name="startIndex"/> 
+        /// Returns a List QueryText element from position <paramref name="startIndex"/>
         /// </summary>
         /// <param name="startIndex"></param>
         /// <returns>a List QueryText element from position <paramref name="startIndex"/></returns>
@@ -184,7 +184,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             foreach (QueryText pathelement in GetPathElements(1))
             {
-                string value = escaper.Escape(new StringCharSequence(pathelement.Value), 
+                string value = escaper.Escape(new StringCharSequence(pathelement.Value),
                     CultureInfo.InvariantCulture, EscapeQuerySyntaxType.STRING).ToString();
                 path.Append("/\"").Append(value).Append("\"");
             }
