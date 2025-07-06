@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
     /// An in-place update to a numeric <see cref="DocValues"/> field </summary>
     internal sealed class NumericDocValuesUpdate : DocValuesUpdate
     {
-        internal static readonly long MISSING = 0;
+        internal const long MISSING = 0;
 
         internal readonly long value;
 

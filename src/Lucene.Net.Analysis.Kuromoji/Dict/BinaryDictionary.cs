@@ -38,13 +38,14 @@ namespace Lucene.Net.Analysis.Ja.Dict
     /// </summary>
     public abstract class BinaryDictionary : IDictionary
     {
-        public static readonly string DICT_FILENAME_SUFFIX = "$buffer.dat";
-        public static readonly string TARGETMAP_FILENAME_SUFFIX = "$targetMap.dat";
-        public static readonly string POSDICT_FILENAME_SUFFIX = "$posDict.dat";
+        public const string DICT_FILENAME_SUFFIX = "$buffer.dat";
+        public const string TARGETMAP_FILENAME_SUFFIX = "$targetMap.dat";
+        public const string POSDICT_FILENAME_SUFFIX = "$posDict.dat";
 
-        public static readonly string DICT_HEADER = "kuromoji_dict";
-        public static readonly string TARGETMAP_HEADER = "kuromoji_dict_map";
-        public static readonly string POSDICT_HEADER = "kuromoji_dict_pos";
+        public const string DICT_HEADER = "kuromoji_dict";
+        public const string TARGETMAP_HEADER = "kuromoji_dict_map";
+        public const string POSDICT_HEADER = "kuromoji_dict_pos";
+        // ReSharper disable once ConvertToConstant.Global - VERSION should be a field
         public static readonly int VERSION = 1;
 
         private readonly ByteBuffer buffer;
@@ -387,10 +388,12 @@ namespace Lucene.Net.Analysis.Ja.Dict
         }
 
         /// <summary>flag that the entry has baseform data. otherwise its not inflected (same as surface form)</summary>
-        public static readonly int HAS_BASEFORM = 1;
+        public const int HAS_BASEFORM = 1;
+
         /// <summary>flag that the entry has reading data. otherwise reading is surface form converted to katakana</summary>
-        public static readonly int HAS_READING = 2;
+        public const int HAS_READING = 2;
+
         /// <summary>flag that the entry has pronunciation data. otherwise pronunciation is the reading</summary>
-        public static readonly int HAS_PRONUNCIATION = 4;
+        public const int HAS_PRONUNCIATION = 4;
     }
 }

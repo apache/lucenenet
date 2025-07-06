@@ -131,10 +131,10 @@ namespace Lucene.Net.Store
         }
 
         // LUCENENET NOTE: These MUST be sbyte because they can be negative
-        private static readonly sbyte CODEC_MAGIC_BYTE1 = (sbyte)(CodecUtil.CODEC_MAGIC >>> 24);
-        private static readonly sbyte CODEC_MAGIC_BYTE2 = (sbyte)(CodecUtil.CODEC_MAGIC >>> 16);
-        private static readonly sbyte CODEC_MAGIC_BYTE3 = (sbyte)(CodecUtil.CODEC_MAGIC >>> 8);
-        private static readonly sbyte CODEC_MAGIC_BYTE4 = (sbyte)CodecUtil.CODEC_MAGIC;
+        private const sbyte CODEC_MAGIC_BYTE1 = (sbyte)(CodecUtil.CODEC_MAGIC >>> 24);
+        private const sbyte CODEC_MAGIC_BYTE2 = unchecked((sbyte)(CodecUtil.CODEC_MAGIC >>> 16));
+        private const sbyte CODEC_MAGIC_BYTE3 = unchecked((sbyte)(CodecUtil.CODEC_MAGIC >>> 8));
+        private const sbyte CODEC_MAGIC_BYTE4 = unchecked((sbyte)CodecUtil.CODEC_MAGIC);
 
         /// <summary>
         /// Helper method that reads CFS entries from an input stream </summary>

@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// a single packed block.
         /// </summary>
         // NOTE: must be multiple of 64 because of PackedInts long-aligned encoding/decoding
-        public static int BLOCK_SIZE = 128;
+        public const int BLOCK_SIZE = 128;
 
         /// <summary>
         /// Creates <see cref="Lucene41PostingsFormat"/> with default
@@ -385,7 +385,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         /// <summary>
         /// Creates <see cref="Lucene41PostingsFormat"/> with custom
-        /// values for <paramref name="minTermBlockSize"/> and 
+        /// values for <paramref name="minTermBlockSize"/> and
         /// <paramref name="maxTermBlockSize"/> passed to block terms dictionary. </summary>
         /// <seealso cref="BlockTreeTermsWriter{TSubclassState}.BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int,TSubclassState)"/>
         public Lucene41PostingsFormat(int minTermBlockSize, int maxTermBlockSize)
