@@ -185,7 +185,7 @@ namespace Egothor.Stemmer
             int y;
             int maxx;
             int maxy;
-            int[] go = new int[4];
+            Span<int> go = stackalloc int[4]; // LUCENENET: optimize for Span and stackalloc
             const int X = 1;
             const int Y = 2;
             const int R = 3;
