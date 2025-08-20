@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;

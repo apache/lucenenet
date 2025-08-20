@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level < 7.1.0
+// Lucene version compatibility level < 7.1.0
 using NUnit.Framework;
 
 namespace Lucene.Net.Analysis.Icu.Segmentation
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             AssertAnalyzesTo(a, "သက်ဝင်လှုပ်ရှားစေပြီး", new string[] { "သက်", "ဝင်", "လှုပ်", "ရှား", "စေ", "ပြီး" });
         }
 
-        // simple tests from "A Rule-based Syllable Segmentation of Myanmar Text" 
+        // simple tests from "A Rule-based Syllable Segmentation of Myanmar Text"
         // * http://www.aclweb.org/anthology/I08-3010
         // (see also the presentation: http://gii2.nagaokaut.ac.jp/gii/media/share/20080901-ZMM%20Presentation.pdf)
         // The words are fake, we just test the categories.

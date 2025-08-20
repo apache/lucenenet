@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.ComponentModel;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Replicator
     /// </remarks>
     /// <seealso cref="LocalReplicator.DEFAULT_SESSION_EXPIRATION_THRESHOLD"/>
     /// <seealso cref="LocalReplicator.ExpirationThreshold"/>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
@@ -50,12 +50,12 @@ namespace Lucene.Net.Replicator
         {
         }
 
-        public SessionExpiredException(string message) 
+        public SessionExpiredException(string message)
             : base(message)
         {
         }
 
-        public SessionExpiredException(string message, Exception inner) 
+        public SessionExpiredException(string message, Exception inner)
             : base(message, inner)
         {
         }

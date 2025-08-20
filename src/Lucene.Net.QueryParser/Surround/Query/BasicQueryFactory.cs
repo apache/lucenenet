@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Support.Threading;
@@ -24,13 +24,13 @@ namespace Lucene.Net.QueryParsers.Surround.Query
      */
 
 
-     // Create basic queries to be used during rewrite.
-     // The basic queries are TermQuery and SpanTermQuery.
-     // An exception can be thrown when too many of these are used.
-     // SpanTermQuery and TermQuery use IndexReader.termEnum(Term), which causes the buffer usage.
+    // Create basic queries to be used during rewrite.
+    // The basic queries are TermQuery and SpanTermQuery.
+    // An exception can be thrown when too many of these are used.
+    // SpanTermQuery and TermQuery use IndexReader.termEnum(Term), which causes the buffer usage.
 
-     // Use this class to limit the buffer usage for reading terms from an index.
-     // Default is 1024, the same as the max. number of subqueries for a BooleanQuery.
+    // Use this class to limit the buffer usage for reading terms from an index.
+    // Default is 1024, the same as the max. number of subqueries for a BooleanQuery.
 
 
 

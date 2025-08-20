@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core;
+using Lucene.Net.QueryParsers.Flexible.Core;
 using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
@@ -205,7 +205,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 clauses.Add(c);
             }
-            label_1_break:
+        label_1_break:
             if (clauses != null)
             {
                 { if (true) return new BooleanQueryNode(clauses); }
@@ -242,7 +242,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 clauses.Add(c);
             }
-            label_2_break:
+        label_2_break:
             if (clauses != null)
             {
                 { if (true) return new OrQueryNode(clauses); }
@@ -279,7 +279,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 clauses.Add(c);
             }
-            label_3_break:
+        label_3_break:
             if (clauses != null)
             {
                 { if (true) return new AndQueryNode(clauses); }
@@ -1201,10 +1201,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                             jj_expentries.Add(jj_expentry);
                             goto jj_entries_loop_break;
                         }
-                        jj_entries_loop_continue: { /* LUCENENET: intentionally empty */ }
+                    jj_entries_loop_continue: { /* LUCENENET: intentionally empty */ }
                     }
-                    jj_entries_loop_break:
-                        if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
+                jj_entries_loop_break:
+                    if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
                 }
             }
         }

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Lucene.Net.Analysis.No
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.No
         /// <summary>
         /// Creates a new <see cref="NorwegianLightStemFilter"/> </summary>
         /// <param name="input"> the source <see cref="TokenStream"/> to filter </param>
-        /// <param name="flags"> set to <see cref="NorwegianStandard.BOKMAAL"/>, 
+        /// <param name="flags"> set to <see cref="NorwegianStandard.BOKMAAL"/>,
         ///                     <see cref="NorwegianStandard.NYNORSK"/>, or both. </param>
         public NorwegianMinimalStemFilter(TokenStream input, NorwegianStandard flags)
             : base(input)

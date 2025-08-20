@@ -1,4 +1,4 @@
-﻿// Some tests adapted from Apache Harmony:
+// Some tests adapted from Apache Harmony:
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/concurrent/src/test/java/ConcurrentHashMapTest.java
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/util/CollectionsTest.java
 
@@ -45,7 +45,8 @@ namespace Lucene.Net
         /// Cannot create with negative capacity
         /// </summary>
         [Test]
-        public void TestConstructor1() {
+        public void TestConstructor1()
+        {
             try
             {
                 _ = new ConcurrentHashSet<object>(8, -1);

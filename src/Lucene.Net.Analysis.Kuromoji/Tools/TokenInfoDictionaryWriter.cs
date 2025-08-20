@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Ja.Dict;
+using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Util.Fst;
 using System.IO;
 using Int64 = J2N.Numerics.Int64;

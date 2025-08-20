@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// If the underlying type is <see cref="List{T}"/>,
-        /// calls <see cref="List{T}.Sort()"/>. If not, 
+        /// calls <see cref="List{T}.Sort()"/>. If not,
         /// uses <see cref="Util.CollectionUtil.TimSort{T}(IList{T})"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -84,7 +84,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// If the underlying type is <see cref="List{T}"/>,
-        /// calls <see cref="List{T}.Sort(IComparer{T})"/>. If not, 
+        /// calls <see cref="List{T}.Sort(IComparer{T})"/>. If not,
         /// uses <see cref="Util.CollectionUtil.TimSort{T}(IList{T}, IComparer{T})"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -108,7 +108,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// If the underlying type is <see cref="List{T}"/>,
-        /// calls <see cref="List{T}.Sort(IComparer{T})"/>. If not, 
+        /// calls <see cref="List{T}.Sort(IComparer{T})"/>. If not,
         /// uses <see cref="Util.CollectionUtil.TimSort{T}(IList{T}, IComparer{T})"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -148,7 +148,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
         /// This method uses the intro sort
-        /// algorithm, but falls back to insertion sort for small lists. 
+        /// algorithm, but falls back to insertion sort for small lists.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list">this <see cref="IList{T}"/></param>
@@ -160,7 +160,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
         /// This method uses the intro sort
-        /// algorithm, but falls back to insertion sort for small lists. 
+        /// algorithm, but falls back to insertion sort for small lists.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list">this <see cref="IList{T}"/></param>

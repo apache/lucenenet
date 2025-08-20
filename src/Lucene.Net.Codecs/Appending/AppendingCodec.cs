@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Lucene.Net.Codecs.Lucene40;
 
 namespace Lucene.Net.Codecs.Appending
@@ -21,8 +21,8 @@ namespace Lucene.Net.Codecs.Appending
      */
 
     /// <summary>
-    /// This codec uses an index format that is very similar to <see cref="Lucene40Codec"/> 
-    /// but works on append-only outputs, such as plain output streams and 
+    /// This codec uses an index format that is very similar to <see cref="Lucene40Codec"/>
+    /// but works on append-only outputs, such as plain output streams and
     /// append-only filesystems.
     /// <para/>
     /// @lucene.experimental
@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.Appending
     {
         private readonly PostingsFormat _postings = new AppendingPostingsFormat();
 
-        public AppendingCodec() 
+        public AppendingCodec()
             : base(new Lucene40Codec())
         {
         }

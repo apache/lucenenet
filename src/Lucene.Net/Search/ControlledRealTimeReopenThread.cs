@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Support.Threading;
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
             UninterruptableMonitor.Enter(this);
             try
             {
-				// if we're finishing, make it out so that all waiting search threads will return
+                // if we're finishing, make it out so that all waiting search threads will return
                 searchingGen = finish ? long.MaxValue : refreshStartGen;
                 m_notify.Set();                        // LUCENENET NOTE:  Will notify all and remain signaled, so it must be reset in WaitForGeneration
             }
@@ -288,16 +288,16 @@ namespace Lucene.Net.Search
                     {
                         // Need lock before finding out if has waiting
                         bool hasWaiting;
-                		UninterruptableMonitor.Enter(this);
-                		try
-                		{
+                        UninterruptableMonitor.Enter(this);
+                        try
+                        {
                             // True if we have someone waiting for reopened searcher:
                             hasWaiting = waitingGen > searchingGen;
-                		}
-                		finally
-                		{
-                    		UninterruptableMonitor.Exit(this);
-                		}
+                        }
+                        finally
+                        {
+                            UninterruptableMonitor.Exit(this);
+                        }
 
                         long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
                         long sleepNS = nextReopenStartNS - Time.NanoTime();

@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Benchmarks.ByTask.Feeds
+namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -30,7 +30,7 @@
     {
         /// <summary>
         /// Returns the next <see cref="DocData"/> from the content source.
-        /// Implementations must account for multi-threading, as multiple threads 
+        /// Implementations must account for multi-threading, as multiple threads
         /// can call this method simultaneously.
         /// </summary>
         public abstract DocData GetNextDocData(DocData docData);

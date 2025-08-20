@@ -1,4 +1,4 @@
-﻿using J2N.Threading.Atomic;
+using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
                     }
                     else if (targets.Get(target))
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false,  "{0} is already taken ({1})", target, i);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(false, "{0} is already taken ({1})", target, i);
                         return false;
                     }
                 }

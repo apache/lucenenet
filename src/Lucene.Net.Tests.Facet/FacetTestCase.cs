@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -155,7 +155,8 @@ namespace Lucene.Net.Facet
                 {
                     if (numInRow > 1)
                     {
-                        Array.Sort(labelValues, i - numInRow, i - (i - numInRow), Comparer<LabelAndValue>.Create((a,b) => {
+                        Array.Sort(labelValues, i - numInRow, i - (i - numInRow), Comparer<LabelAndValue>.Create((a, b) =>
+                        {
                             if (Debugging.AssertsEnabled) Debugging.Assert((double)a.Value == (double)b.Value);
                             return new BytesRef(a.Label).CompareTo(new BytesRef(b.Label));
                         }));
@@ -172,7 +173,8 @@ namespace Lucene.Net.Facet
 
         protected internal virtual void SortLabelValues(JCG.List<LabelAndValue> labelValues)
         {
-            labelValues.Sort(Comparer<LabelAndValue>.Create((a,b) => {
+            labelValues.Sort(Comparer<LabelAndValue>.Create((a, b) =>
+            {
                 if ((double)a.Value > (double)b.Value)
                 {
                     return -1;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.Lucene41;
+using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Pulsing;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.NestedPulsing
                 pulsingWriterInner = new PulsingPostingsWriter(state, 2, docsWriter);
                 pulsingWriter = new PulsingPostingsWriter(state, 1, pulsingWriterInner);
                 FieldsConsumer ret = new BlockTreeTermsWriter<object>(state, pulsingWriter,
-                    BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE, BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE, subclassState:null);
+                    BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE, BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE, subclassState: null);
                 success = true;
                 return ret;
             }

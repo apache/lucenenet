@@ -1,4 +1,4 @@
-﻿#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;

@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Benchmarks.ByTask.Tasks
+namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -18,7 +18,7 @@
      */
 
     /// <summary>
-    /// Reset inputs so that the test run would behave, input wise, 
+    /// Reset inputs so that the test run would behave, input wise,
     /// as if it just started. This affects e.g. the generation of docs and queries.
     /// </summary>
     public class ResetInputsTask : PerfTask

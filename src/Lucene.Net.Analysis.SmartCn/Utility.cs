@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 namespace Lucene.Net.Analysis.Cn.Smart
 {
     /*
@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// <param name="lstartIndex">start offset into <paramref name="larray"/></param>
         /// <param name="rarray">right array</param>
         /// <param name="rstartIndex">start offset into <paramref name="rarray"/></param>
-        /// <returns>0 if the arrays are equal，1 if <paramref name="larray"/> &gt; 
+        /// <returns>0 if the arrays are equal，1 if <paramref name="larray"/> &gt;
         /// <paramref name="rarray"/>, -1 if <paramref name="larray"/> &lt; <paramref name="rarray"/></returns>
         public static int CompareArray(char[] larray, int lstartIndex, char[] rarray,
             int rstartIndex)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// <param name="shortIndex">offset into <paramref name="shortArray"/></param>
         /// <param name="longArray">long array (word)</param>
         /// <param name="longIndex">offset into <paramref name="longArray"/></param>
-        /// <returns>0 if <paramref name="shortArray"/> is a prefix of <paramref name="longArray"/>, 
+        /// <returns>0 if <paramref name="shortArray"/> is a prefix of <paramref name="longArray"/>,
         /// otherwise act as <see cref="CompareArray(char[], int, char[], int)"/>.</returns>
         public static int CompareArrayByPrefix(char[] shortArray, int shortIndex,
             char[] longArray, int longIndex)
@@ -163,7 +163,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         }
 
         /// <summary>
-        /// Return the internal <see cref="CharType"/> constant of a given character. 
+        /// Return the internal <see cref="CharType"/> constant of a given character.
         /// </summary>
         /// <param name="ch">input character</param>
         /// <returns>Constant from <see cref="CharType"/> describing the character type.</returns>

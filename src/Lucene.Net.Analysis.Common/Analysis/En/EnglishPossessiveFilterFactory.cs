@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.En
     //using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
 
     /// <summary>
-    /// Factory for <see cref="EnglishPossessiveFilter"/>. 
+    /// Factory for <see cref="EnglishPossessiveFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_enpossessive" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

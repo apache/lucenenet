@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using System.Collections;
@@ -24,7 +24,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// Converts individual <see cref="ValueSource"/> instances to leverage the FunctionValues *Val functions that work with multiple values,
     /// i.e. <see cref="FunctionValues.DoubleVal(int, double[])"/>

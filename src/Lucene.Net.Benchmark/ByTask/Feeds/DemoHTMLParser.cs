@@ -1,4 +1,4 @@
-﻿// LUCENENET TODO: Use HTML Agility pack instead of SAX ?
+// LUCENENET TODO: Use HTML Agility pack instead of SAX ?
 
 using J2N.Collections.Generic.Extensions;
 using Sax;
@@ -227,7 +227,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             Parser p = new Parser(source);
 
-            // properties 
+            // properties
             IDictionary<string, string> props = p.MetaTags;
             if (props.TryGetValue("date", out string dateStr) && dateStr != null)
             {

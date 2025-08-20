@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Attributes;
 using Lucene.Net.Diagnostics;
@@ -379,7 +379,7 @@ namespace Lucene.Net.Analysis
                     return new TokenStreamComponents(t, t2);
                 });
 
-                 Random random = Random;
+                Random random = Random;
                 CheckRandomData(random, a, 5, AtLeast(100));
             }
         }

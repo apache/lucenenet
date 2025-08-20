@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Spatial.Prefix
         {
             SpatialContext ctx = SpatialContext.Geo;
             TermQueryPrefixTreeStrategy prefixGridStrategy = new TermQueryPrefixTreeStrategy(new QuadPrefixTree(ctx), "geo");
-            
+
             IShape point = ctx.MakePoint(-118.243680, 34.052230);
 
             Document losAngeles = new Document();

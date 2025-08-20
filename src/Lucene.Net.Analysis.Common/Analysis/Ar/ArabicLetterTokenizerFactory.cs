@@ -31,11 +31,10 @@ namespace Lucene.Net.Analysis.Ar
     [Obsolete("(3.1) Use StandardTokenizerFactory instead.")]
     public class ArabicLetterTokenizerFactory : TokenizerFactory
     {
-
         /// <summary>
         /// Creates a new <see cref="ArabicNormalizationFilterFactory"/> </summary>
         public ArabicLetterTokenizerFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             AssureMatchVersion();
             if (args.Count > 0)

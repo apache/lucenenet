@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 using Lucene.Net.Analysis.Payloads;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.OpenNlp
     /// <summary>
     /// Needs the OpenNLP Tokenizer because it creates full streams of punctuation.
     /// The POS model is based on this tokenization.
-    /// 
+    ///
     /// <para/>Tagging models are created from tiny test data in opennlp/tools/test-model-data/ and are not very accurate.
     /// </summary>
     public class TestOpenNLPPOSFilterFactory : BaseTokenStreamTestCase
@@ -66,7 +66,8 @@ namespace Lucene.Net.Analysis.OpenNlp
         public void TestBasic()
         {
             var loader = new ClasspathResourceLoader(GetType());
-            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldname, reader) => {
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldname, reader) =>
+            {
                 var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 tokenizerFactory.Inform(loader);
                 var tokenizer = tokenizerFactory.Create(reader);
@@ -77,10 +78,10 @@ namespace Lucene.Net.Analysis.OpenNlp
 
                 return new TokenStreamComponents(tokenizer, filter1);
             });
-        //    CustomAnalyzer analyzer = CustomAnalyzer.builder(new ClasspathResourceLoader(GetType()))
-        //.withTokenizer("opennlp", "tokenizerModel", tokenizerModelFile, "sentenceModel", sentenceModelFile)
-        //.addTokenFilter("opennlpPOS", "posTaggerModel", posTaggerModelFile)
-        //.build();
+            //    CustomAnalyzer analyzer = CustomAnalyzer.builder(new ClasspathResourceLoader(GetType()))
+            //.withTokenizer("opennlp", "tokenizerModel", tokenizerModelFile, "sentenceModel", sentenceModelFile)
+            //.addTokenFilter("opennlpPOS", "posTaggerModel", posTaggerModelFile)
+            //.build();
             AssertAnalyzesTo(analyzer, SENTENCES, SENTENCES_punc, SENTENCES_startOffsets, SENTENCES_endOffsets);
         }
 
@@ -141,11 +142,11 @@ namespace Lucene.Net.Analysis.OpenNlp
                 var tokenizerFactory = new OpenNLPTokenizerFactory(new Dictionary<string, string> { { "tokenizerModel", tokenizerModelFile }, { "sentenceModel", sentenceModelFile } });
                 tokenizerFactory.Inform(loader);
                 var tokenizer = tokenizerFactory.Create(reader);
-                
+
                 var tokenFilterFactory = new OpenNLPPOSFilterFactory(new Dictionary<string, string> { { "posTaggerModel", posTaggerModelFile } });
                 tokenFilterFactory.Inform(loader);
                 var tokenFilter = tokenFilterFactory.Create(tokenizer);
-                
+
                 return new TokenStreamComponents(tokenizer, tokenFilter);
             });
 

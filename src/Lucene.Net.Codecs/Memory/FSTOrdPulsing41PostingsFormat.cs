@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Codecs.Memory
+namespace Lucene.Net.Codecs.Memory
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -27,7 +27,7 @@
     /// <summary>
     /// FSTOrd + Pulsing41
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     [PostingsFormatName("FSTOrdPulsing41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class FSTOrdPulsing41PostingsFormat : PostingsFormat
@@ -35,12 +35,12 @@
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
         private readonly int _freqCutoff;
 
-        public FSTOrdPulsing41PostingsFormat() 
+        public FSTOrdPulsing41PostingsFormat()
             : this(1)
         {
         }
 
-        public FSTOrdPulsing41PostingsFormat(int freqCutoff) 
+        public FSTOrdPulsing41PostingsFormat(int freqCutoff)
             : base()
         {
             _wrappedPostingsBaseFormat = new Lucene41PostingsBaseFormat();

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 7.1.0
+// Lucene version compatibility level 7.1.0
 using ICU4N.Text;
 using J2N;
 using Lucene.Net.Support;

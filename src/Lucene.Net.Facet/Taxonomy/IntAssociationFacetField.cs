@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -30,13 +30,13 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <para/>
     /// NOTE: This was IntAssociationFacetField in Lucene
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     public class Int32AssociationFacetField : AssociationFacetField
     {
         /// <summary>
         /// Creates this from <paramref name="dim"/> and <paramref name="path"/> and an
-        /// int association 
+        /// int association
         /// </summary>
         public Int32AssociationFacetField(int assoc, string dim, params string[] path)
             : base(Int32ToBytesRef(assoc), dim, path)
@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public static int BytesRefToInt32(BytesRef b)
         {
-            return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) | 
+            return ((b.Bytes[b.Offset] & 0xFF) << 24) | ((b.Bytes[b.Offset + 1] & 0xFF) << 16) |
                 ((b.Bytes[b.Offset + 2] & 0xFF) << 8) | (b.Bytes[b.Offset + 3] & 0xFF);
         }
 

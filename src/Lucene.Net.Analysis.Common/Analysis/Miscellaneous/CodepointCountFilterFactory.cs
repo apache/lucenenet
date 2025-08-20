@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      */
 
     /// <summary>
-    /// Factory for <see cref="CodepointCountFilter"/>. 
+    /// Factory for <see cref="CodepointCountFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_lngth" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Creates a new <see cref="CodepointCountFilterFactory"/> </summary>
-        public CodepointCountFilterFactory(IDictionary<string, string> args) 
+        public CodepointCountFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             min = RequireInt32(args, MIN_KEY);

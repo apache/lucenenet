@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -558,7 +558,8 @@ namespace Lucene.Net.Search.Grouping
         private IComparer<GroupDoc> GetComparer(Sort sort, bool sortByScoreOnly, int[] fieldIdToDocID)
         {
             SortField[] sortFields = sort.GetSort();
-            return Comparer<GroupDoc>.Create((d1,d2)=> {
+            return Comparer<GroupDoc>.Create((d1, d2) =>
+            {
                 foreach (SortField sf in sortFields)
                 {
                     int cmp;

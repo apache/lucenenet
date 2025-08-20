@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Join
         private IndexReader indexReader;
         private IndexSearcher indexSearcher;
         private Filter parentsFilter;
-        
+
         [SetUp]
         public override void SetUp()
         {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.Join
                 assertTrue(ise.Message.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE));
             }
         }
-        
+
         [Test]
         public void TestAdvanceValidationForToChildBjq()
         {
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search.Join
             var childQuery = new WildcardQuery(new Term("child", CreateFieldValue(randomChildNumber)));
             conjunctionQuery.Add(new BooleanClause(childQuery, Occur.MUST));
             conjunctionQuery.Add(new BooleanClause(blockJoinQuery, Occur.MUST));
-            
+
             // LUCENENET: Refactored to allow us to use our IsIllegalStateException() extension method
             try
             {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Search.Join
             return childQueryWithRandomParent;
         }
 
-        private static int GetRandomParentId() => Random.Next(AMOUNT_OF_PARENT_DOCS*AMOUNT_OF_SEGMENTS);
+        private static int GetRandomParentId() => Random.Next(AMOUNT_OF_PARENT_DOCS * AMOUNT_OF_SEGMENTS);
 
         private static int GetRandomParentNumber() => Random.Next(AMOUNT_OF_PARENT_DOCS);
 

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
+using Lucene.Net.Benchmarks.ByTask.Feeds;
 using System.Globalization;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
@@ -24,7 +24,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// Search and Traverse task.
     /// </summary>
     /// <remarks>
-    /// Note: This task reuses the reader if it is already open. 
+    /// Note: This task reuses the reader if it is already open.
     /// Otherwise a reader is opened at start and closed at the end.
     /// <para/>
     /// Takes optional param: traversal size (otherwise all results are traversed).

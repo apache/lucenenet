@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Attributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Cli.CommandLine;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -50,7 +50,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         /// <summary>
-        /// Ensures the current working directory is used when index directory is not supplied. 
+        /// Ensures the current working directory is used when index directory is not supplied.
         /// </summary>
         [Test]
         [LuceneNetSpecific]

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Support
@@ -27,7 +27,7 @@ namespace Lucene.Net.Support
     internal static class EnumerableExtensions
     {
         /// <summary>
-        /// Enumerates a sequence in pairs  
+        /// Enumerates a sequence in pairs
         /// </summary>
         /// <remarks>
         /// In the case of an uneven amount of elements, the list call to <paramref name="join" /> pases <code>default</code> as the second parameter.

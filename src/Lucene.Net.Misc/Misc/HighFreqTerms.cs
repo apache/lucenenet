@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;

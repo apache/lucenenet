@@ -34,7 +34,7 @@ namespace Lucene.Net.Store
     ///
     /// <para>If you suspect that some <see cref="LockFactory"/> implementation is
     /// not working properly in your environment, you can easily
-    /// test it by using <see cref="VerifyingLockFactory"/>, 
+    /// test it by using <see cref="VerifyingLockFactory"/>,
     /// <see cref="LockVerifyServer"/> and <see cref="LockStressTest"/>.</para>
     /// </summary>
     /// <seealso cref="LockVerifyServer"/>

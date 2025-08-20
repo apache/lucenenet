@@ -22,7 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
-  
+
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.Queries</AssemblyTitle>
   </PropertyGroup>

@@ -1,4 +1,4 @@
-﻿using J2N.Numerics;
+using J2N.Numerics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
      */
 
     /// <summary>
-    /// Suggest implementation based on 
+    /// Suggest implementation based on
     /// <a href="http://jaspell.sourceforge.net/">JaSpell</a>.
     /// </summary>
     /// <seealso cref="JaspellTernarySearchTrie"/>

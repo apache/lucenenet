@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -24,10 +24,10 @@ namespace Lucene.Net.QueryParsers.Xml
      */
 
     /// <summary>
-    /// Thrown when the xml queryparser encounters 
+    /// Thrown when the xml queryparser encounters
     /// invalid syntax/configuration.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]

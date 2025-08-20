@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using J2N.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;

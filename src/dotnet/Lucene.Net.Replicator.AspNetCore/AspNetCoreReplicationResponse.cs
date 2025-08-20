@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Replicator.Http.Abstractions;
+using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 
@@ -25,7 +25,7 @@ namespace Lucene.Net.Replicator.AspNetCore
     /// Implementation of the <see cref="IReplicationResponse"/> abstraction for the AspNetCore framework.
     /// </summary>
     /// <remarks>
-    /// .NET Specific Implementation of the Lucene Replicator using AspNetCore  
+    /// .NET Specific Implementation of the Lucene Replicator using AspNetCore
     /// </remarks>
     //Note: LUCENENET specific
     public class AspNetCoreReplicationResponse : IReplicationResponse

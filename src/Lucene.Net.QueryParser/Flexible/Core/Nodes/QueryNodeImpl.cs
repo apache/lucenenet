@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
+using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using System;
@@ -212,9 +212,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         /// <param name="fld">field name</param>
         /// <returns>true if fld is the default field</returns>
-        // TODO: remove this method, it's commonly used by 
+        // TODO: remove this method, it's commonly used by
         // <see cref="ToQueryString(IEscapeQuerySyntax)"/>
-        // to figure out what is the default field, however, 
+        // to figure out what is the default field, however,
         // <see cref="ToQueryString(IEscapeQuerySyntax)"/>
         // should receive the default field value directly by parameter
         protected virtual bool IsDefaultField(string fld)
@@ -230,7 +230,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         /// <summary>
         /// Every implementation of this class should return pseudo xml like this:
-        /// 
+        ///
         /// For FieldQueryNode: &lt;field start='1' end='2' field='subject' text='foo'/&gt;
         /// </summary>
         /// <seealso cref="IQueryNode.ToString()"/>

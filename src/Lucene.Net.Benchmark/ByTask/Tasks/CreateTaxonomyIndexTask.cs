@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Facet.Taxonomy.Directory;
+using Lucene.Net.Facet.Taxonomy.Directory;
 using Lucene.Net.Index;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks

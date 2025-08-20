@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
@@ -170,7 +170,8 @@ namespace Lucene.Net.Search.Highlight
             tokenStream.Reset();
             var currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
 
-            if (_fragmentScorer is QueryScorer queryScorer) {
+            if (_fragmentScorer is QueryScorer queryScorer)
+            {
                 queryScorer.SetMaxDocCharsToAnalyze(_maxDocCharsToAnalyze);
             }
 

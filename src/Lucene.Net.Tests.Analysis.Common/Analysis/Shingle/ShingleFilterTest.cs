@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
@@ -632,8 +632,8 @@ namespace Lucene.Net.Analysis.Shingle
             });
 
             AssertTokenStreamContents(a.GetTokenStream("", "to be or not to be"),
-                new string[] {"to be or not", "be or not to", "or not to be"},
-                new int[] {0, 3, 6},
+                new string[] { "to be or not", "be or not to", "or not to be" },
+                new int[] { 0, 3, 6 },
                 new int[] { 12, 15, 18 },
                 null,
                 new int[] { 1, 1, 1 },

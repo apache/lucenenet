@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -442,7 +442,8 @@ namespace Lucene.Net.Index
         private IndexReader MakeIndex(params string[] terms)
         {
             // LUCENENET specific: clean up reader/directory before creating a new one, moved from below
-            if (r != null) {
+            if (r != null)
+            {
                 Close();
             }
 

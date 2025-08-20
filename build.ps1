@@ -8,9 +8,9 @@
 # The ASF licenses this file to You under the Apache License, Version 2.0
 # (the ""License""); you may not use this file except in compliance with
 # the License.  You may obtain a copy of the License at
-# 
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an ""AS IS"" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ function Get-NextArg([string[]]$arguments, [int]$i, [string]$argName) {
 for ([int]$i = 0; $i -lt $args.Length; $i++) {
     $arg = $args[$i]
     $loweredArg =  "$arg".ToLowerInvariant()
-    
+
     if ($loweredArg -eq '-t' -or $loweredArg -eq '--test') {
         $runTests = $true
     } elseif ($loweredArg -eq '-mp' -or $loweredArg -eq '--maximum-parallel-jobs' -or $loweredArg -eq '--maximumparalleljobs') {

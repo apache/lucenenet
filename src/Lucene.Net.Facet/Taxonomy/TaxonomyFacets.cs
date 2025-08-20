@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N.Text;
 using System;
 using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return a.Dim.CompareToOrdinal(b.Dim);
             }
         });
-                
+
         /// <summary>
         /// Index field name provided to the constructor.
         /// </summary>
@@ -63,18 +63,18 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Maps parent ordinal to its child, or -1 if the parent
-        /// is childless. 
+        /// is childless.
         /// </summary>
         protected readonly int[] m_children;
 
         /// <summary>
         /// Maps an ordinal to its sibling, or -1 if there is no
-        /// sibling. 
+        /// sibling.
         /// </summary>
         protected readonly int[] m_siblings;
 
         /// <summary>
-        /// Sole constructor. 
+        /// Sole constructor.
         /// </summary>
         protected TaxonomyFacets(string indexFieldName, TaxonomyReader taxoReader, FacetsConfig config)
         {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Throws <see cref="ArgumentException"/> if the
         /// dimension is not recognized.  Otherwise, returns the
-        /// <see cref="DimConfig"/> for this dimension. 
+        /// <see cref="DimConfig"/> for this dimension.
         /// </summary>
         protected virtual DimConfig VerifyDim(string dim)
         {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -75,11 +75,11 @@ namespace Lucene.Net.Search.Similarities
     ///         </term>
     ///     </item>
     /// </list>
-    /// 
+    ///
     /// </para>
     /// <para>Note that <em>qtf</em>, the multiplicity of term-occurrence in the query,
     /// is not handled by this implementation.
-    /// </para> 
+    /// </para>
     /// @lucene.experimental
     /// </summary>
     /// <seealso cref="Similarities.BasicModel"/>

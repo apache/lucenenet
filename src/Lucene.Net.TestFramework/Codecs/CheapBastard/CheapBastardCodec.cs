@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.CheapBastard
     /// <summary>
     /// Codec that tries to use as little ram as possible because he spent all his money on beer
     /// </summary>
-    // TODO: better name :) 
+    // TODO: better name :)
     // but if we named it "LowMemory" in codecs/ package, it would be irresistible like optimize()!
     public class CheapBastardCodec : FilterCodec
     {

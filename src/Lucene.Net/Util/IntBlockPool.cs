@@ -129,7 +129,7 @@ namespace Lucene.Net.Util
         private int[] buffer;
 
         /// <summary>
-        /// Current head offset. 
+        /// Current head offset.
         /// <para/>
         /// NOTE: This was intOffset in Lucene
         /// </summary>
@@ -315,7 +315,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// @lucene.internal
         /// </summary>
-        /// <seealso cref="SliceReader"/> 
+        /// <seealso cref="SliceReader"/>
         public class SliceWriter
         {
             private int offset;
@@ -439,7 +439,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Reads the next <see cref="int"/> from the current slice and returns it. 
+            /// Reads the next <see cref="int"/> from the current slice and returns it.
             /// <para/>
             /// NOTE: This was readInt() in Lucene
             /// </summary>

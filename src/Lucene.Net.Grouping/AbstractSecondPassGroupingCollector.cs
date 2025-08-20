@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -147,11 +147,11 @@ namespace Lucene.Net.Search.Grouping
         }
 
 
-        
+
     }
 
     /// <summary>
-    /// LUCENENET specific class used to simulate the syntax used 
+    /// LUCENENET specific class used to simulate the syntax used
     /// to access nested classes of <see cref="AbstractAllGroupHeadsCollector{GH}"/>
     /// without referencing the generic closing type.
     /// </summary>

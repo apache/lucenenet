@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs.Lucene42
     /// <para/>
     /// See <see cref="Lucene.Net.Codecs.Lucene42"/> package documentation for file format details.
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     // NOTE: if we make largish changes in a minor release, easier to just make Lucene43Codec or whatever
     // if they are backwards compatible or smallish we can probably do the backwards in the postingsreader

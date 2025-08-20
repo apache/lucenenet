@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search;
+using Lucene.Net.Search;
 using System;
 using System.Globalization;
 using System.IO;
@@ -26,7 +26,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
     /// Create a log ready for submission.
     /// Extend this class and override
     /// <see cref="Report(QualityQuery, TopDocs, string, IndexSearcher)"/>
-    /// to create different reports. 
+    /// to create different reports.
     /// </summary>
     public class SubmissionReport
     {

@@ -24,14 +24,14 @@ namespace Lucene.Net.Analysis.Nl
      */
 
     /// <summary>
-    /// A stemmer for Dutch words. 
+    /// A stemmer for Dutch words.
     /// <para>
     /// The algorithm is an implementation of
     /// the <a href="http://snowball.tartarus.org/algorithms/dutch/stemmer.html">dutch stemming</a>
     /// algorithm in Martin Porter's snowball project.
     /// </para> </summary>
-    /// @deprecated (3.1) Use <see cref="Tartarus.Snowball.Ext.DutchStemmer"/> instead, 
-    /// which has the same functionality. This filter will be removed in Lucene 5.0 
+    /// @deprecated (3.1) Use <see cref="Tartarus.Snowball.Ext.DutchStemmer"/> instead,
+    /// which has the same functionality. This filter will be removed in Lucene 5.0
     [Obsolete("(3.1) Use Tartarus.Snowball.Ext.DutchStemmer instead, which has the same functionality. This filter will be removed in Lucene 5.0")]
     public class DutchStemmer
     {

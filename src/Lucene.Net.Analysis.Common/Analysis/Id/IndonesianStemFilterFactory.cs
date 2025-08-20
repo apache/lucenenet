@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Id
      */
 
     /// <summary>
-    /// Factory for <see cref="IndonesianStemFilter"/>. 
+    /// Factory for <see cref="IndonesianStemFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_idstem" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1 + LUCENE-10059 (https://github.com/apache/lucene/pull/254 only)
+// Lucene version compatibility level 4.8.1 + LUCENE-10059 (https://github.com/apache/lucene/pull/254 only)
 
 using J2N;
 using J2N.Collections.Generic.Extensions;

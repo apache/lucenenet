@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level < 7.1.0
+// Lucene version compatibility level < 7.1.0
 using NUnit.Framework;
 using System;
 
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         }
 
         [Test]
-        public void TestTraditionalChinese() 
+        public void TestTraditionalChinese()
         {
             AssertAnalyzesTo(a, "我購買了道具和服裝。",
                 new string[] { "我", "購買", "了", "道具", "和", "服裝"});

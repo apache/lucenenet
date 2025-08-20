@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Config;
+using Lucene.Net.QueryParsers.Flexible.Core.Config;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using System.Collections;
 using System.Collections.Generic;
@@ -105,7 +105,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         }
 
         /// <summary>
-        /// <see cref="ICollection{IQueryNodeProcessor}.Add(IQueryNodeProcessor)"/> 
+        /// <see cref="ICollection{IQueryNodeProcessor}.Add(IQueryNodeProcessor)"/>
         /// </summary>
         public virtual bool Add(IQueryNodeProcessor processor)
         {
@@ -121,7 +121,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         }
 
         /// <summary>
-        /// <see cref="ICollection{IQueryNodeProcessor}.Clear()"/> 
+        /// <see cref="ICollection{IQueryNodeProcessor}.Clear()"/>
         /// </summary>
         public virtual void Clear()
         {
@@ -137,7 +137,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         }
 
         /// <summary>
-        /// <see cref="IList{IQueryNodeProcessor}.this[int]"/> 
+        /// <see cref="IList{IQueryNodeProcessor}.this[int]"/>
         /// </summary>
         public virtual IQueryNodeProcessor this[int index]
         {
@@ -171,7 +171,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         }
 
         /// <summary>
-        /// <see cref="ICollection{IQueryNodeProcessor}.Remove(IQueryNodeProcessor)"/> 
+        /// <see cref="ICollection{IQueryNodeProcessor}.Remove(IQueryNodeProcessor)"/>
         /// </summary>
         public virtual bool Remove(IQueryNodeProcessor o)
         {
@@ -179,7 +179,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         }
 
         /// <summary>
-        /// <see cref="IList{IQueryNodeProcessor}.RemoveAt(int)"/> 
+        /// <see cref="IList{IQueryNodeProcessor}.RemoveAt(int)"/>
         /// </summary>
         /// <param name="index"></param>
         public virtual void RemoveAt(int index)
@@ -206,12 +206,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         }
 
         /// <summary>
-        /// <see cref="ICollection{IQueryNodeProcessor}.Count"/> 
+        /// <see cref="ICollection{IQueryNodeProcessor}.Count"/>
         /// </summary>
         public virtual int Count => this.processors.Count;
 
         /// <summary>
-        /// <see cref="ICollection{IQueryNodeProcessor}.IsReadOnly"/> 
+        /// <see cref="ICollection{IQueryNodeProcessor}.IsReadOnly"/>
         /// </summary>
         public virtual bool IsReadOnly => false;
 
@@ -235,7 +235,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         }
 
         /// <summary>
-        /// <see cref="ICollection{IQueryNodeProcessor}.Add(IQueryNodeProcessor)"/> 
+        /// <see cref="ICollection{IQueryNodeProcessor}.Add(IQueryNodeProcessor)"/>
         /// </summary>
         void ICollection<IQueryNodeProcessor>.Add(IQueryNodeProcessor item)
         {
@@ -243,7 +243,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         }
 
         /// <summary>
-        /// <see cref="ICollection{IQueryNodeProcessor}.Contains(IQueryNodeProcessor)"/> 
+        /// <see cref="ICollection{IQueryNodeProcessor}.Contains(IQueryNodeProcessor)"/>
         /// </summary>
         public virtual bool Contains(IQueryNodeProcessor item)
         {
@@ -251,7 +251,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         }
 
         /// <summary>
-        /// <see cref="ICollection{IQueryNodeProcessor}.CopyTo(IQueryNodeProcessor[], int)"/> 
+        /// <see cref="ICollection{IQueryNodeProcessor}.CopyTo(IQueryNodeProcessor[], int)"/>
         /// </summary>
         public virtual void CopyTo(IQueryNodeProcessor[] array, int arrayIndex)
         {
@@ -259,7 +259,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         }
 
         /// <summary>
-        /// <see cref="IEnumerable.GetEnumerator()"/> 
+        /// <see cref="IEnumerable.GetEnumerator()"/>
         /// </summary>
         /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()

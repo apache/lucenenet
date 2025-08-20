@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
                             }
                             else if (fi.IsIndexed)
                             {
-                                if (Debugging.AssertsEnabled) Debugging.Assert(fi.NormType == DocValuesType.NONE,"got {0}; field={1}", fi.NormType, fi.Name);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(fi.NormType == DocValuesType.NONE, "got {0}; field={1}", fi.NormType, fi.Name);
                             }
                         }
                     }

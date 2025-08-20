@@ -25,16 +25,16 @@ namespace Lucene.Net.Analysis.Pattern
      */
 
     /// <summary>
-    /// Factory for <see cref="PatternReplaceCharFilter"/>. 
+    /// Factory for <see cref="PatternReplaceCharFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_ptnreplace" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;
-    ///     &lt;charFilter class="solr.PatternReplaceCharFilterFactory" 
+    ///     &lt;charFilter class="solr.PatternReplaceCharFilterFactory"
     ///                    pattern="([^a-z])" replacement=""/&gt;
     ///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</code>
-    /// 
+    ///
     /// @since Solr 3.1
     /// </summary>
     public class PatternReplaceCharFilterFactory : CharFilterFactory

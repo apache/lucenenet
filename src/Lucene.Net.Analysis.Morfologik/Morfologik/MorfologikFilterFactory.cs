@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 using Lucene.Net.Analysis.Util;
 using Morfologik.Stemming;
 using Morfologik.Stemming.Polish;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Morfologik
     /// <summary>
     /// Filter factory for <see cref="MorfologikFilter"/>.
     /// <para/>
-    /// An explicit resource name of the dictionary (<c>".dict"</c>) can be 
+    /// An explicit resource name of the dictionary (<c>".dict"</c>) can be
     /// provided via the <code>dictionary</code> attribute, as the example below demonstrates:
     /// <code>
     /// &lt;fieldType name="text_mylang" class="solr.TextField" positionIncrementGap="100"&gt;

@@ -1,4 +1,4 @@
-﻿#if FEATURE_BREAKITERATOR
+#if FEATURE_BREAKITERATOR
 using J2N;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// org.ibm.icu.BreakIterator version 60.1 instead of java.text.BreakIterator and modified the original Lucene
     /// tests to pass, then ported to .NET. There are no changes in this class from that of Lucene 4.8.1.
     /// <para/>
-    /// Although the ICU <see cref="ICU4N.Text.BreakIterator"/> acts slightly different than the JDK's verision, using the default 
+    /// Although the ICU <see cref="ICU4N.Text.BreakIterator"/> acts slightly different than the JDK's verision, using the default
     /// behavior of the ICU <see cref="ICU4N.Text.BreakIterator"/> is the most logical default to use in .NET. It is the same
     /// default that was chosen in Apache Harmony.
     /// </summary>
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        /** 
+        /**
          * returns a new random sentence, up to maxSentenceLength "words" in length.
          * each word is a single character (a-z). The first one is capitalized.
          */
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             return sb.toString();
         }
 
-        /** 
+        /**
          * a fake formatter that doesn't actually format passages.
          * instead it just collects them for asserts!
          */

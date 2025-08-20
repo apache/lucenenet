@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -201,12 +201,12 @@ namespace Lucene.Net.Search.Spans
         /// <c> target &lt;= current</c>, or after the iterator has exhausted.
         /// Both cases may result in unpredicted behavior.
         /// <para/>Returns <c>true</c> if there is such
-        /// a match.  
-        /// <para/>Behaves as if written: 
+        /// a match.
+        /// <para/>Behaves as if written:
         /// <code>
-        ///     bool SkipTo(int target) 
+        ///     bool SkipTo(int target)
         ///     {
-        ///         do 
+        ///         do
         ///         {
         ///             if (!Next())
         ///                 return false;
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search.Spans
         ///              and <paramref name="spans1"/> ends before <paramref name="spans2"/>. </returns>
         internal static bool DocSpansOrdered(Spans spans1, Spans spans2)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(spans1.Doc == spans2.Doc,"doc1 {0} != doc2 {1}", spans1.Doc, spans2.Doc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(spans1.Doc == spans2.Doc, "doc1 {0} != doc2 {1}", spans1.Doc, spans2.Doc);
             int start1 = spans1.Start;
             int start2 = spans2.Start;
             /* Do not call docSpansOrdered(int,int,int,int) to avoid invoking .end() : */

@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Set of common english stopwords </summary>
-        public static readonly CharacterRunAutomaton ENGLISH_STOPSET = 
+        public static readonly CharacterRunAutomaton ENGLISH_STOPSET =
             new CharacterRunAutomaton(BasicOperations.Union(new Automaton[] {
                 BasicAutomata.MakeString("a"), BasicAutomata.MakeString("an"), BasicAutomata.MakeString("and"), BasicAutomata.MakeString("are"),
                 BasicAutomata.MakeString("as"), BasicAutomata.MakeString("at"), BasicAutomata.MakeString("be"), BasicAutomata.MakeString("but"),
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis
                 BasicAutomata.MakeString("such"), BasicAutomata.MakeString("that"), BasicAutomata.MakeString("the"), BasicAutomata.MakeString("their"),
                 BasicAutomata.MakeString("then"), BasicAutomata.MakeString("there"), BasicAutomata.MakeString("these"), BasicAutomata.MakeString("they"),
                 BasicAutomata.MakeString("this"), BasicAutomata.MakeString("to"), BasicAutomata.MakeString("was"), BasicAutomata.MakeString("will"),
-                BasicAutomata.MakeString("with") } ));
+                BasicAutomata.MakeString("with") }));
 
         private readonly CharacterRunAutomaton filter;
 

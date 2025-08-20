@@ -21,7 +21,7 @@ namespace Lucene.Net.Replicator
      */
 
     /// <summary>
-    /// An interface for replicating files. Allows a producer to 
+    /// An interface for replicating files. Allows a producer to
     /// <see cref="Publish(IRevision)"/> <see cref="IRevision"/>s and consumers to
     /// <see cref="CheckForUpdate(string)"/>. When a client needs to be
     /// updated, it is given a <see cref="SessionToken"/> through which it can

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Store;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.IO;

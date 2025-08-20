@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 using System.Collections.Generic;
 using System.Text;
 using JCG = J2N.Collections.Generic;
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         public virtual int MaxStart => maxStart;
 
         /// <summary>
-        /// Set the <see cref="SegToken.Index"/> for each token, based upon its order by startOffset. 
+        /// Set the <see cref="SegToken.Index"/> for each token, based upon its order by startOffset.
         /// </summary>
         /// <returns>a <see cref="T:IList{SegToken}"/> of these ordered tokens.</returns>
         public virtual IList<SegToken> MakeIndex()
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         }
 
         /// <summary>
-        /// Add a <see cref="SegToken"/> to the mapping, creating a new mapping at the token's startOffset if one does not exist. 
+        /// Add a <see cref="SegToken"/> to the mapping, creating a new mapping at the token's startOffset if one does not exist.
         /// </summary>
         /// <param name="token">token <see cref="SegToken"/>.</param>
         public virtual void AddToken(SegToken token)

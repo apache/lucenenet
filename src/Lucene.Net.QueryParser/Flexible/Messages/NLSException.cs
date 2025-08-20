@@ -1,4 +1,4 @@
-﻿// LUCENENET specific - Factored out NLS so end users can elect to use .NET localization or not
+// LUCENENET specific - Factored out NLS so end users can elect to use .NET localization or not
 // rather than forcing them to use it.
 
 //namespace Lucene.Net.QueryParsers.Flexible.Messages
@@ -22,9 +22,9 @@
 
 //    /// <summary>
 //    /// Interface that exceptions should implement to support lazy loading of messages.
-//    /// 
+//    ///
 //    /// For Native Language Support (NLS), system of software internationalization.
-//    /// 
+//    ///
 //    /// This Interface should be implemented by all exceptions that require
 //    /// translation
 //    /// </summary>

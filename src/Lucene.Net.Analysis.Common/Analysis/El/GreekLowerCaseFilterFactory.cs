@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.El
      */
 
     /// <summary>
-    /// Factory for <see cref="GreekLowerCaseFilter"/>. 
+    /// Factory for <see cref="GreekLowerCaseFilter"/>.
     /// <code>
     /// &lt;fieldType name="text_glc" class="solr.TextField" positionIncrementGap="100"&gt;
     ///   &lt;analyzer&gt;

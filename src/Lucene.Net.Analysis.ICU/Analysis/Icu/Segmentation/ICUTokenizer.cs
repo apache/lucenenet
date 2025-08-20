@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.6.1
+// Lucene version compatibility level 8.6.1
 using ICU4N;
 using ICU4N.Text;
 using Lucene.Net.Analysis.Icu.TokenAttributes;

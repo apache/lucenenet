@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -57,19 +57,19 @@ namespace Lucene.Net.Index.Sorter
         {
             /// <summary>
             /// Given a doc ID from the original index, return its ordinal in the
-            /// sorted index. 
+            /// sorted index.
             /// </summary>
             public abstract int OldToNew(int docID);
 
             /// <summary>
-            /// Given the ordinal of a doc ID, return its doc ID in the original index. 
+            /// Given the ordinal of a doc ID, return its doc ID in the original index.
             /// </summary>
             public abstract int NewToOld(int docID);
 
             /// <summary>
             /// Return the number of documents in this map. This must be equal to the
             /// <see cref="IndexReader.MaxDoc"/> number of documents of the
-            /// <see cref="AtomicReader"/> which is sorted. 
+            /// <see cref="AtomicReader"/> which is sorted.
             /// </summary>
             public abstract int Count { get; }
         }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index.Sorter
         {
             /// <summary>
             /// Compare <paramref name="docID1"/> against <paramref name="docID2"/>. The contract for the return value is the
-            /// same as <see cref="IComparer{T}.Compare(T, T)"/>. 
+            /// same as <see cref="IComparer{T}.Compare(T, T)"/>.
             /// </summary>
             public abstract int Compare(int docID1, int docID2);
         }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index.Sorter
             private readonly Sorter.DocComparer comparer;
             private readonly int[] tmp;
 
-            internal DocValueSorter(int[] docs, Sorter.DocComparer comparer) 
+            internal DocValueSorter(int[] docs, Sorter.DocComparer comparer)
                 : base(docs.Length / 64)
             {
                 this.docs = docs;
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index.Sorter
 
         private sealed class ScorerAnonymousClass : Scorer
         {
-            public ScorerAnonymousClass() 
+            public ScorerAnonymousClass()
                 : base(null)
             {
             }

@@ -1,4 +1,4 @@
-﻿#if FEATURE_BREAKITERATOR
+#if FEATURE_BREAKITERATOR
 namespace Lucene.Net.Search.PostingsHighlight
 {
     /*
@@ -20,7 +20,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
     /// <summary>
     /// Creates a formatted snippet from the top passages.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class PassageFormatter

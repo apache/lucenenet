@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using J2N;
 using Lucene.Net.Util;
 using System;
@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// Base class for <see cref="Analyzer"/>s that need to make use of stopword sets. 
+    /// Base class for <see cref="Analyzer"/>s that need to make use of stopword sets.
     /// </summary>
     public abstract class StopwordAnalyzerBase : Analyzer
     {

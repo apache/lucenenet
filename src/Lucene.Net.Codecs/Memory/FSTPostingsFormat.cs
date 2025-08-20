@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Codecs.Memory
+namespace Lucene.Net.Codecs.Memory
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -29,7 +29,7 @@
     [PostingsFormatName("FST41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class FSTPostingsFormat : PostingsFormat
     {
-        public FSTPostingsFormat() 
+        public FSTPostingsFormat()
             : base()
         {
         }

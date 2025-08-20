@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Facet.Taxonomy;
+using Lucene.Net.Facet.Taxonomy;
 using System;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks

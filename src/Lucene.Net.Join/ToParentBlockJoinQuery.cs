@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search.Join
 
             public override float GetValueForNormalization()
             {
-                return childWeight.GetValueForNormalization() * joinQuery.Boost*joinQuery.Boost;
+                return childWeight.GetValueForNormalization() * joinQuery.Boost * joinQuery.Boost;
             }
 
             public override void Normalize(float norm, float topLevelBoost)
@@ -490,9 +490,9 @@ namespace Lucene.Net.Search.Join
             unchecked
             {
                 int hashCode = base.GetHashCode();
-                hashCode = (hashCode*397) ^ (_parentsFilter != null ? _parentsFilter.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (int) _scoreMode;
-                hashCode = (hashCode*397) ^ (_origChildQuery != null ? _origChildQuery.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_parentsFilter != null ? _parentsFilter.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (int)_scoreMode;
+                hashCode = (hashCode * 397) ^ (_origChildQuery != null ? _origChildQuery.GetHashCode() : 0);
                 return hashCode;
             }
         }

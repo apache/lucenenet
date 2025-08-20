@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
+using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
@@ -23,7 +23,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// <summary>
     /// A <see cref="StandardBooleanQueryNode"/> has the same behavior as
     /// <see cref="BooleanQueryNode"/>. It only indicates if the coord should be enabled or
-    /// not for this boolean query. 
+    /// not for this boolean query.
     /// </summary>
     /// <seealso cref="Search.Similarities.Similarity.Coord(int, int)"/>
     /// <seealso cref="Search.BooleanQuery"/>

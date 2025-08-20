@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Classic;
+using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 
 namespace Lucene.Net.QueryParsers.Ext

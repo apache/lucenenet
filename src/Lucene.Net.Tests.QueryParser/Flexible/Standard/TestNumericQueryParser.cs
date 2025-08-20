@@ -1,4 +1,4 @@
-﻿using J2N.Numerics;
+using J2N.Numerics;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;

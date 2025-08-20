@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Util
     /// characters that haven't been freed yet.  This is like a
     /// PushbackReader, except you don't have to specify
     /// up-front the max size of the buffer, but you do have to
-    /// periodically call <see cref="FreeBefore"/>. 
+    /// periodically call <see cref="FreeBefore"/>.
     /// </summary>
     public sealed class RollingCharBuffer
     {
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Absolute position read.  NOTE: pos must not jump
         /// ahead by more than 1!  Ie, it's OK to read arbitarily
-        /// far back (just not prior to the last <see cref="FreeBefore(int)"/>, 
+        /// far back (just not prior to the last <see cref="FreeBefore(int)"/>,
         /// but NOT ok to read arbitrarily far
         /// ahead.  Returns -1 if you hit EOF.
         /// </summary>
@@ -170,7 +170,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Call this to notify us that no chars before this
-        /// absolute position are needed anymore. 
+        /// absolute position are needed anymore.
         /// </summary>
         public void FreeBefore(int pos)
         {

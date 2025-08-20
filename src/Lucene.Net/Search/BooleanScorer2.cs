@@ -1,4 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
+using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -317,7 +317,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), optionalScorers.Count == 1 ? new SingleMatchScorer(this, optionalScorers[0])
-                        // require 1 in combined, optional scorer.
+                                    // require 1 in combined, optional scorer.
                                     : CountingDisjunctionSumScorer(optionalScorers, 1));
                 }
             }

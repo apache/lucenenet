@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using System;
@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
      */
 
     /// <summary>
-    /// This class implements UAX29URLEmailTokenizer, except with a bug 
+    /// This class implements UAX29URLEmailTokenizer, except with a bug
     /// (https://issues.apache.org/jira/browse/LUCENE-3358) where Han and Hiragana
     /// characters would be split from combining characters:
     /// @deprecated This class is only for exact backwards compatibility
@@ -3240,7 +3240,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
         private int yychar;
 
         ///// <summary>
-        ///// the number of characters from the last newline up to the start of the 
+        ///// the number of characters from the last newline up to the start of the
         ///// matched text
         ///// </summary>
         //private int yycolumn; // LUCENENET: Never read
@@ -3264,7 +3264,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
 
         /// <summary>
         /// Chars in class \p{Line_Break = Complex_Context} are from South East Asian
-        /// scripts (Thai, Lao, Myanmar, Khmer, etc.).  Sequences of these are kept 
+        /// scripts (Thai, Lao, Myanmar, Khmer, etc.).  Sequences of these are kept
         /// together as as a single token rather than broken up, because the logic
         /// required to break them at word boundaries is too complex for UAX#29.
         /// <para/>
@@ -3360,7 +3360,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
                 zzEndRead += numRead;
                 return false;
             }
-            // unlikely but not impossible: read 0 characters, but not at end of stream    
+            // unlikely but not impossible: read 0 characters, but not at end of stream
             if (numRead == 0)
             {
                 int c = zzReader.Read();
@@ -3383,8 +3383,8 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /// <summary>Closes the input stream.</summary>
         public void YyClose()
         {
-            zzAtEOF = true;            // indicate end of file 
-            zzEndRead = zzStartRead;  // invalidate buffer    
+            zzAtEOF = true;            // indicate end of file
+            zzEndRead = zzStartRead;  // invalidate buffer
 
             if (zzReader != null)
             {
@@ -3395,11 +3395,11 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /// <summary>
         /// Resets the scanner to read from a new input stream.
         /// Does not close the old reader.
-        /// 
-        /// All internal variables are reset, the old input stream 
+        ///
+        /// All internal variables are reset, the old input stream
         /// <b>cannot</b> be reused (internal buffer is discarded and lost).
         /// Lexical state is set to <see cref="YYINITIAL"/>.
-        /// 
+        ///
         /// Internal scan buffer is resized down to its initial length, if it has grown.
         /// </summary>
         /// <param name="reader">the new input stream </param>
@@ -3438,12 +3438,12 @@ namespace Lucene.Net.Analysis.Standard.Std31
         public string YyText => new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
 
         /// <summary>
-        /// Returns the character at position <tt>pos</tt> from the 
-        /// matched text. 
-        /// 
+        /// Returns the character at position <tt>pos</tt> from the
+        /// matched text.
+        ///
         /// It is equivalent to YyText[pos], but faster
         /// </summary>
-        /// <param name="pos">the position of the character to fetch. 
+        /// <param name="pos">the position of the character to fetch.
         /// A value from 0 to YyLength-1.</param>
         /// <returns>the character at position pos</returns>
         public char YyCharAt(int pos)
@@ -3457,13 +3457,13 @@ namespace Lucene.Net.Analysis.Standard.Std31
 
         /// <summary>
         /// Reports an error that occured while scanning.
-        /// 
-        /// In a wellformed scanner (no or only correct usage of 
-        /// YyPushBack(int) and a match-all fallback rule) this method 
+        ///
+        /// In a wellformed scanner (no or only correct usage of
+        /// YyPushBack(int) and a match-all fallback rule) this method
         /// will only be called with things that "Can't Possibly Happen".
         /// If this method is called, something is seriously wrong
         /// (e.g. a JFlex bug producing a faulty scanner etc.).
-        /// 
+        ///
         /// Usual syntax/scanner level error handling should be done
         /// in error fallback rules.
         /// </summary>
@@ -3486,7 +3486,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
 
         /// <summary>
         /// Pushes the specified amount of characters back into the input stream.
-        /// 
+        ///
         /// They will be read again by then next call of the scanning method
         /// </summary>
         /// <param name="number">the number of characters to be read again.

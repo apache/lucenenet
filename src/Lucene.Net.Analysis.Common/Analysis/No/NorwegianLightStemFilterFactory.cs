@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.No
         /// <summary>
         /// Creates a new <see cref="NorwegianLightStemFilterFactory"/> </summary>
         public NorwegianLightStemFilterFactory(IDictionary<string, string> args)
-              : base(args)
+            : base(args)
         {
             string variant = Get(args, "variant");
             if (variant is null || "nb".Equals(variant, StringComparison.Ordinal))

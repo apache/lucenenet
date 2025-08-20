@@ -1,0 +1,75 @@
+name: EditorConfig Rules Check
+
+on: [pull_request]
+
+jobs:
+  check-editorconfig:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install EditorConfig Checker
+        run: |
+          curl -sSfL https://github.com/editorconfig-checker/editorconfig-checker/releases/latest/download/ec-linux-amd64.tar.gz -o ec.tar.gz
+          mkdir -p ec-temp
+          tar -xzf ec.tar.gz -C ec-temp
+          
+          # Dynamically find the binary
+          EC_PATH=$(find ec-temp -type f -name "ec-linux-amd64" -perm -111 | head -n 1)
+          
+          if [ -z "$EC_PATH" ]; then
+            echo "❌ Could not locate ec-linux-amd64 binary in archive"
+            exit 1
+          fi
+          
+          # Move and rename to /usr/local/bin/ec
+          sudo mv "$EC_PATH" /usr/local/bin/ec
+          sudo chmod +x /usr/local/bin/ec
+          
+          # Clean up the temp dir
+          rm -rf ec-temp ec.tar.gz
+
+      - name: Run EditorConfig Checker and Show Help
+        run: |
+          echo "🔍 Running EditorConfig Checker..."
+
+          if ec; then
+            echo "✅ EditorConfig Checker Success"
+          else
+            echo ""
+            echo "📘 Common IDE Setup Help"
+            echo ""
+            echo "🧠 Visual Studio:"
+            echo "  ➤ Tools > Options > Text Editor > [Language] > Code Style > General"
+            echo "  ➤ Enable: 'Detect EditorConfig settings'"
+            echo "  ➤ Optionally enable: 'Reformat on save' under Code Cleanup"
+            echo ""
+            echo "🧰 JetBrains Rider:"
+            echo "  ➤ Preferences > Editor > Code Style"
+            echo "  ➤ Enable: 'Enable EditorConfig support'"
+            echo "  ➤ Re-save affected files to apply formatting"
+            echo ""
+            echo "💡 Visual Studio Code:"
+            echo "  ➤ Install the 'EditorConfig for VS Code' extension"
+            echo "  ➤ Enable 'files.insertFinalNewline' and 'files.trimTrailingWhitespace'"
+            echo ""
+            echo "📝 Notepad++:"
+            echo "  ➤ Settings > Preferences > MISC → Enable 'Final line ending'"
+            echo "  ➤ Settings > Preferences > Language → Tab Settings → Enable 'Replace by space'"
+            echo ""
+            echo "🔧 Other Common Editors for .NET:"
+            echo "  • JetBrains ReSharper (Visual Studio extension)"
+            echo "  • OmniSharp-enabled editors (like NeoVim, Sublime Text)"
+            echo "  • Emacs (with editorconfig plugin)"
+            echo "  • Vim (with editorconfig-vim plugin)"
+            echo ""
+            echo "🌍 Other editors:"
+            echo "  ➤ Check if your editor supports .editorconfig:"
+            echo "    → https://editorconfig.org/#pre-installed"
+            echo "    → https://editorconfig.org/#download"
+            echo ""
+            echo "✅ After configuration, open the file and make a whitespace-only edit, then save."
+            echo "   This will apply your configured formatting and resolve the error."
+            exit 1
+          fi

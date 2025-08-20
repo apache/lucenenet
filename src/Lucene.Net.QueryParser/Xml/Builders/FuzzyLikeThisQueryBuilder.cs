@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Sandbox.Queries;
 using Lucene.Net.Search;
 using System.Xml;

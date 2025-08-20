@@ -1,4 +1,4 @@
-﻿using ICSharpCode.SharpZipLib.BZip2;
+using ICSharpCode.SharpZipLib.BZip2;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         {
             FileInfo f = new FileInfo(Path.Combine(testDir.FullName, "testfile." + ext));
             Stream os = new BZip2OutputStream(new FileStream(f.FullName, FileMode.Create, FileAccess.Write));  // new CompressorStreamFactory().createCompressorOutputStream(CompressorStreamFactory.BZIP2, new FileOutputStream(f));
-                writeText(os);
+            writeText(os);
             return f;
         }
 

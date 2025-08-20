@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Memory;
@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Highlight
      */
 
     /// <summary>
-    /// Class used to extract <see cref="WeightedSpanTerm"/>s from a <see cref="Query"/> based on whether 
+    /// Class used to extract <see cref="WeightedSpanTerm"/>s from a <see cref="Query"/> based on whether
     /// <see cref="Term"/>s from the <see cref="Query"/> are contained in a supplied <see cref="Analysis.TokenStream"/>.
     /// </summary>
     public class WeightedSpanTermExtractor
@@ -137,10 +137,10 @@ namespace Lucene.Net.Search.Highlight
             }
             else if (query is CommonTermsQuery)
             {
-                // specialized since rewriting would change the result query 
+                // specialized since rewriting would change the result query
                 // this query is TermContext sensitive.
                 ExtractWeightedTerms(terms, query);
-            } 
+            }
             else if (query is DisjunctionMaxQuery disjunctionMaxQuery)
             {
                 foreach (var q in disjunctionMaxQuery)
@@ -214,7 +214,7 @@ namespace Lucene.Net.Search.Highlight
                     {
                         return;
                     }
-                    MultiTermQuery copy = (MultiTermQuery) query.Clone();
+                    MultiTermQuery copy = (MultiTermQuery)query.Clone();
                     copy.MultiTermRewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
                     origQuery = copy;
                 }
@@ -336,7 +336,7 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <summary>
-        /// Fills a <see cref="T:IDictionary{string,WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from 
+        /// Fills a <see cref="T:IDictionary{string,WeightedSpanTerm}"/> with <see cref="WeightedSpanTerm"/>s using the terms from
         /// the supplied <see cref="Search.Spans.SpanQuery"/>.
         /// </summary>
         /// <param name="terms"><see cref="T:IDictionary{string,WeightedSpanTerm}"/> to place created <see cref="WeightedSpanTerm"/>s in</param>
@@ -382,7 +382,7 @@ namespace Lucene.Net.Search.Highlight
                 tokenStream.Reset();
                 IndexSearcher searcher = indexer.CreateSearcher();
                 // MEM index has only atomic ctx
-                var reader = ((AtomicReaderContext) searcher.TopReaderContext).AtomicReader;
+                var reader = ((AtomicReaderContext)searcher.TopReaderContext).AtomicReader;
                 internalReader = new DelegatingAtomicReader(reader);
             }
             return internalReader.AtomicContext;
@@ -430,7 +430,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 return base.GetBinaryDocValues(FIELD_NAME);
             }
-           
+
             public override SortedDocValues GetSortedDocValues(string field)
             {
                 return base.GetSortedDocValues(FIELD_NAME);

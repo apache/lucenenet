@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 
 namespace Lucene.Net.Search.Highlight
 {

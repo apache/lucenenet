@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Store;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using RandomizedTesting.Generators;

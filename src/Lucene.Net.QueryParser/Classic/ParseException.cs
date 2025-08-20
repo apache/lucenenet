@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -29,16 +29,16 @@ namespace Lucene.Net.QueryParsers.Classic
      * limitations under the License.
      */
 
-    /// <summary> 
+    /// <summary>
     /// This exception is thrown when parse errors are encountered.
     /// You can explicitly create objects of this exception type by
     /// calling the method GenerateParseException in the generated
     /// parser.
-    /// 
+    ///
     /// You can modify this class to customize your error reporting
     /// mechanisms so long as you retain the public fields.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
@@ -114,14 +114,14 @@ namespace Lucene.Net.QueryParsers.Classic
         }
 #endif
 
-        /// <summary> 
+        /// <summary>
         /// This is the last token that has been consumed successfully.  If
         /// this object has been created due to a parse error, the token
         /// following this token will (therefore) be the first error token.
         /// </summary>
         public Token CurrentToken { get; set; }
 
-        /// <summary> 
+        /// <summary>
         /// Each entry in this array is an array of integers.  Each array
         /// of integers represents a sequence of tokens (by their ordinal
         /// values) that is expected at this point of the parse.
@@ -130,7 +130,7 @@ namespace Lucene.Net.QueryParsers.Classic
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[][] ExpectedTokenSequences { get; set; }
 
-        /// <summary> 
+        /// <summary>
         /// This is a reference to the "tokenImage" array of the generated
         /// parser within which the parse error occurred.  This array is
         /// defined in the generated ...Constants interface.
@@ -200,13 +200,13 @@ namespace Lucene.Net.QueryParsers.Classic
             retval += expected.ToString();
             return retval;
         }
-        
-        /// <summary> 
+
+        /// <summary>
         /// The end of line string for this machine.
         /// </summary>
         protected static string eol = Environment.NewLine;
-        
-        /// <summary> 
+
+        /// <summary>
         /// Used to convert raw characters to their escaped version
         /// when these raw version cannot be used as part of an ASCII
         /// string literal.
@@ -219,43 +219,43 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 switch (str[i])
                 {
-                    
-                    case (char) (0): 
+
+                    case (char)(0):
                         continue;
-                    
-                    case '\b': 
+
+                    case '\b':
                         retval.Append("\\b");
                         continue;
-                    
-                    case '\t': 
+
+                    case '\t':
                         retval.Append("\\t");
                         continue;
-                    
-                    case '\n': 
+
+                    case '\n':
                         retval.Append("\\n");
                         continue;
-                    
-                    case '\f': 
+
+                    case '\f':
                         retval.Append("\\f");
                         continue;
-                    
-                    case '\r': 
+
+                    case '\r':
                         retval.Append("\\r");
                         continue;
-                    
-                    case '\"': 
+
+                    case '\"':
                         retval.Append("\\\"");
                         continue;
-                    
-                    case '\'': 
+
+                    case '\'':
                         retval.Append("\\\'");
                         continue;
-                    
-                    case '\\': 
+
+                    case '\\':
                         retval.Append("\\\\");
                         continue;
-                    
-                    default: 
+
+                    default:
                         if ((ch = str[i]) < 0x20 || ch > 0x7e)
                         {
                             string s = "0000" + Convert.ToString(ch, 16);
@@ -266,7 +266,7 @@ namespace Lucene.Net.QueryParsers.Classic
                             retval.Append(ch);
                         }
                         continue;
-                    
+
                 }
             }
             return retval.ToString();

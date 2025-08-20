@@ -1,4 +1,4 @@
-﻿using J2N.Runtime.CompilerServices;
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.PerField
     /// <para/>
     /// Files written by each docvalues format have an additional suffix containing the
     /// format name. For example, in a per-field configuration instead of <c>_1.dat</c>
-    /// filenames would look like <c>_1_Lucene40_0.dat</c>. 
+    /// filenames would look like <c>_1_Lucene40_0.dat</c>.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.PerField
                 string formatName_ = format.Name;
 
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName_);
-                if (Debugging.AssertsEnabled) Debugging.Assert(field.DocValuesGen != -1 || previousValue is null,"formatName={0} prevValue={1}", formatName_, previousValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(field.DocValuesGen != -1 || previousValue is null, "formatName={0} prevValue={1}", formatName_, previousValue);
 
                 int? suffix = null;
 
@@ -217,7 +217,7 @@ namespace Lucene.Net.Codecs.PerField
                 }
 
                 previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix, CultureInfo.InvariantCulture));
-                if (Debugging.AssertsEnabled) Debugging.Assert(field.DocValuesGen != -1 || previousValue is null,"suffix={0} prevValue={1}", suffix, previousValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(field.DocValuesGen != -1 || previousValue is null, "suffix={0} prevValue={1}", suffix, previousValue);
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this DVF actually sees ...
@@ -396,7 +396,7 @@ namespace Lucene.Net.Codecs.PerField
                 long size = 0;
                 foreach (KeyValuePair<string, DocValuesProducer> entry in formats)
                 {
-                    size += (entry.Key.Length * RamUsageEstimator.NUM_BYTES_CHAR) 
+                    size += (entry.Key.Length * RamUsageEstimator.NUM_BYTES_CHAR)
                         + entry.Value.RamBytesUsed();
                 }
                 return size;

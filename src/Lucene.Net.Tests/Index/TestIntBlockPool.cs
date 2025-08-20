@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using RandomizedTesting.Generators;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search.Spans;
+using Lucene.Net.Search.Spans;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Xml;

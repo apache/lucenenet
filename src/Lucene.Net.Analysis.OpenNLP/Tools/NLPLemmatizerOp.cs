@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 8.2.0
+// Lucene version compatibility level 8.2.0
 using opennlp.tools.lemmatizer;
 using System.Diagnostics;
 using System.IO;

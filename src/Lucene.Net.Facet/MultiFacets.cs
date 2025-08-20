@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
@@ -24,7 +24,7 @@ namespace Lucene.Net.Facet
 
     /// <summary>
     /// Maps specified dims to provided <see cref="Facets"/> impls; else, uses
-    /// the default <see cref="Facets"/> impl. 
+    /// the default <see cref="Facets"/> impl.
     /// </summary>
     public class MultiFacets : Facets
     {
@@ -33,7 +33,7 @@ namespace Lucene.Net.Facet
 
         /// <summary>
         /// Create this, with the specified default <see cref="Facets"/>
-        /// for fields not included in <paramref name="dimToFacets"/>. 
+        /// for fields not included in <paramref name="dimToFacets"/>.
         /// </summary>
         public MultiFacets(IDictionary<string, Facets> dimToFacets, Facets defaultFacets = null)
         {
@@ -54,7 +54,7 @@ namespace Lucene.Net.Facet
             return facets.GetTopChildren(topN, dim, path);
         }
 
-        
+
         public override float GetSpecificValue(string dim, params string[] path)
         {
             if (!dimToFacets.TryGetValue(dim, out Facets facets))

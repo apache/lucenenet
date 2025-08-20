@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using RandomizedTesting.Generators;
 using System;
 using System.Diagnostics.CodeAnalysis;

@@ -1,4 +1,4 @@
-﻿// EntityResolver2.java - Extended SAX entity resolver.
+// EntityResolver2.java - Extended SAX entity resolver.
 // http://www.saxproject.org
 // No warranty; no copyright -- use this as you will.
 // $Id: EntityResolver2.java,v 1.2 2002/01/12 19:20:08 dbrownell Exp $
@@ -105,7 +105,7 @@ namespace Sax.Ext
         /// <param name="name">
         /// Identifies the document root element.  This name comes
         /// from a DOCTYPE declaration (where available) or from the actual
-        /// root element. 
+        /// root element.
         /// </param>
         /// <param name="baseURI">
         /// The document's base URI, serving as an additional
@@ -140,7 +140,7 @@ namespace Sax.Ext
         /// by <see cref="GetExternalSubset(string, string)"/>.
         /// When a(non - validating) processor is configured not to include
         /// a class of entities(parameter or general) through use of feature
-        /// flags, this method is not invoked for such entities. 
+        /// flags, this method is not invoked for such entities.
         /// <para/>
         /// Note that the entity naming scheme used here is the same one
         /// used in the <see cref="ILexicalHandler"/>, or in the <see cref="IContentHandler.SkippedEntity(string)"/>

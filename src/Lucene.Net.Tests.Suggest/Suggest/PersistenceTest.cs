@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search.Suggest.Fst;
+using Lucene.Net.Search.Suggest.Fst;
 using Lucene.Net.Search.Suggest.Jaspell;
 using Lucene.Net.Search.Suggest.Tst;
 using Lucene.Net.Util;

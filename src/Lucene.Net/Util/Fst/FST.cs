@@ -1,4 +1,4 @@
-﻿using J2N.Collections;
+using J2N.Collections;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Buffers;
@@ -593,15 +593,15 @@ namespace Lucene.Net.Util.Fst
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLabel(DataOutput @out, int v)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(v >= 0,"v={0}", v);
+            if (Debugging.AssertsEnabled) Debugging.Assert(v >= 0, "v={0}", v);
             if (inputType == FST.INPUT_TYPE.BYTE1)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(v <= 255,"v={0}", v);
+                if (Debugging.AssertsEnabled) Debugging.Assert(v <= 255, "v={0}", v);
                 @out.WriteByte((byte)v);
             }
             else if (inputType == FST.INPUT_TYPE.BYTE2)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(v <= 65535,"v={0}", v);
+                if (Debugging.AssertsEnabled) Debugging.Assert(v <= 65535, "v={0}", v);
                 @out.WriteInt16((short)v);
             }
             else
@@ -2065,9 +2065,9 @@ namespace Lucene.Net.Util.Fst
 
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(fst.nodeCount == nodeCount,"fst.nodeCount={0} nodeCount={1}", fst.nodeCount, nodeCount);
+                Debugging.Assert(fst.nodeCount == nodeCount, "fst.nodeCount={0} nodeCount={1}", fst.nodeCount, nodeCount);
                 Debugging.Assert(fst.arcCount == arcCount);
-                Debugging.Assert(fst.arcWithOutputCount == arcWithOutputCount,"fst.arcWithOutputCount={0} arcWithOutputCount={1}", fst.arcWithOutputCount, arcWithOutputCount);
+                Debugging.Assert(fst.arcWithOutputCount == arcWithOutputCount, "fst.arcWithOutputCount={0} arcWithOutputCount={1}", fst.arcWithOutputCount, arcWithOutputCount);
             }
 
             fst.bytes.Finish();
@@ -2396,13 +2396,13 @@ namespace Lucene.Net.Util.Fst
 
             protected internal override bool LessThan(NodeAndInCount? a, NodeAndInCount? b)
             {
-                    // LUCENENET specific - added guard clauses
-                    if (a is null)
-                        throw new ArgumentNullException(nameof(a));
-                    if (b is null)
-                        throw new ArgumentNullException(nameof(b));
+                // LUCENENET specific - added guard clauses
+                if (a is null)
+                    throw new ArgumentNullException(nameof(a));
+                if (b is null)
+                    throw new ArgumentNullException(nameof(b));
 
-                    int cmp = a.Value.CompareTo(b.Value);
+                int cmp = a.Value.CompareTo(b.Value);
                 if (Debugging.AssertsEnabled) Debugging.Assert(cmp != 0);
                 return cmp < 0;
             }

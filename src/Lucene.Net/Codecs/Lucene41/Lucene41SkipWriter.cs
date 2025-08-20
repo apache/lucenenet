@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene41

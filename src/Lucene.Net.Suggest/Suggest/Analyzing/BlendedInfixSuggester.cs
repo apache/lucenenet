@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
@@ -260,7 +260,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 string docTerm = it.Term.Utf8ToString();
 
-                if (matchedTokens.Contains(docTerm) || prefixToken != null &&  docTerm.StartsWith(prefixToken, StringComparison.Ordinal))
+                if (matchedTokens.Contains(docTerm) || prefixToken != null && docTerm.StartsWith(prefixToken, StringComparison.Ordinal))
                 {
                     DocsAndPositionsEnum docPosEnum = it.DocsAndPositions(null, null, DocsAndPositionsFlags.OFFSETS);
                     docPosEnum.NextDoc();

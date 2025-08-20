@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
@@ -331,7 +331,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-                if (_numTerms > 0 && _numTerms%SKIP_INTERVAL == 0)
+                if (_numTerms > 0 && _numTerms % SKIP_INTERVAL == 0)
                 {
                     BufferSkip();
                 }

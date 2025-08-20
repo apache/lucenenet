@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using Lucene.Net.Attributes;
 using Lucene.Net.Configuration;
 using Microsoft.Extensions.Configuration;

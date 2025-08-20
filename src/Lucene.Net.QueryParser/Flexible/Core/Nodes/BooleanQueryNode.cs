@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Parser;
+using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System.Collections.Generic;
 using System.Text;
 
@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     public class BooleanQueryNode : QueryNode
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="clauses">the query nodes to be and'ed</param>
         public BooleanQueryNode(IList<IQueryNode> clauses)

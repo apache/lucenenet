@@ -1,4 +1,4 @@
-﻿using Spatial4n.Context;
+using Spatial4n.Context;
 using Spatial4n.Shapes;
 using Spatial4n.Util;
 using System;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
     /// A <see cref="SpatialPrefixTree">SpatialPrefixTree</see> based on
     /// <a href="http://en.wikipedia.org/wiki/Geohash">Geohashes</a>.
     /// Uses <see cref="GeohashUtils"/> to do all the geohash work.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class GeohashPrefixTree : SpatialPrefixTree
@@ -67,7 +67,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 return m_maxLevels;//short circuit
             }
-            
+
             int level = GeohashUtils.LookupHashLenForWidthHeight(dist, dist);
             return Math.Max(Math.Min(level, m_maxLevels), 1);
         }

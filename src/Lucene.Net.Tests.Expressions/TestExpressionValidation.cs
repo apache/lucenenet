@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Expressions.JS;
+using Lucene.Net.Expressions.JS;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Expressions
             }
         }
 
-        [Test,Ignore("StackOverflowException can't be caught in .NET")]
+        [Test, Ignore("StackOverflowException can't be caught in .NET")]
         public virtual void TestSelfRecursion()
         {
             SimpleBindings bindings = new SimpleBindings();

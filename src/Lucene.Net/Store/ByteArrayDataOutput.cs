@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 
@@ -56,8 +56,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// 
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        ///
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls
         /// a private method and not this virtual method. So if you need to override
         /// the behavior during the initialization, call your own private method from the constructor
         /// with whatever custom behavior you need.
@@ -66,8 +66,8 @@ namespace Lucene.Net.Store
             ResetInternal(bytes, 0, bytes?.Length ?? 0);
 
         /// <summary>
-        /// 
-        /// NOTE: When overriding this method, be aware that the constructor of this class calls 
+        ///
+        /// NOTE: When overriding this method, be aware that the constructor of this class calls
         /// a private method and not this virtual method. So if you need to override
         /// the behavior during the initialization, call your own private method from the constructor
         /// with whatever custom behavior you need.
@@ -89,7 +89,7 @@ namespace Lucene.Net.Store
                 throw new ArgumentOutOfRangeException(nameof(len), len, "Non-negative number required.");
             if (bytes.Length - offset < len)
                 throw new ArgumentException("Offset and length were out of bounds for the array or length is greater than the number of elements from index to the end of the source array.");
-                
+
             this.bytes = bytes;
             pos = offset;
             limit = offset + len;

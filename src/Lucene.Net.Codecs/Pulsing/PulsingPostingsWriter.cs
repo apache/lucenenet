@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -31,10 +31,10 @@ namespace Lucene.Net.Codecs.Pulsing
     // presumably rare in practice...
 
     /// <summary>
-    /// Writer for the pulsing format. 
+    /// Writer for the pulsing format.
     /// <para/>
-    /// Wraps another postings implementation and decides 
-    /// (based on total number of occurrences), whether a terms 
+    /// Wraps another postings implementation and decides
+    /// (based on total number of occurrences), whether a terms
     /// postings should be inlined into the term dictionary,
     /// or passed through to the wrapped writer.
     /// <para/>

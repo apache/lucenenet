@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System.IO;
 
@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// Concrete implementation of <see cref="AbstractFirstPassGroupingCollector{BytesRef}"/> that groups based on
     /// field values and more specifically uses <see cref="SortedDocValues"/>
     /// to collect groups.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class TermFirstPassGroupingCollector : AbstractFirstPassGroupingCollector<BytesRef>

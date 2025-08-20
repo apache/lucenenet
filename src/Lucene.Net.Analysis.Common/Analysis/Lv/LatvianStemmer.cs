@@ -125,7 +125,8 @@ namespace Lucene.Net.Analysis.Lv
             }
 
             // otherwise all other rules
-            if (StemmerUtil.EndsWith(s, len, "pj") || StemmerUtil.EndsWith(s, len, "bj") || StemmerUtil.EndsWith(s, len, "mj") || StemmerUtil.EndsWith(s, len, "vj"))
+            if (StemmerUtil.EndsWith(s, len, "pj") || StemmerUtil.EndsWith(s, len, "bj")
+                || StemmerUtil.EndsWith(s, len, "mj") || StemmerUtil.EndsWith(s, len, "vj"))
             {
                 // labial consonant
                 return len - 1;

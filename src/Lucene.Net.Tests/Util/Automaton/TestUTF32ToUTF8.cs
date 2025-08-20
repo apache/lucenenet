@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using NUnit.Framework;
@@ -182,7 +182,7 @@ namespace Lucene.Net.Util.Automaton
                 }
 
                 var a = new Automaton();
-                var end = new State {Accept = true};
+                var end = new State { Accept = true };
                 a.GetInitialState().AddTransition(new Transition(startCode, endCode, end));
                 a.IsDeterministic = true;
 

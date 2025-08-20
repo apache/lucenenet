@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
+using Lucene.Net.Benchmarks.ByTask.Feeds;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -23,10 +23,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// Warm reader task: retrieve all reader documents.
     /// </summary>
     /// <remarks>
-    /// Note: This task reuses the reader if it is already open. 
+    /// Note: This task reuses the reader if it is already open.
     /// Otherwise a reader is opened at start and closed at the end.
     /// <para/>
-    /// Other side effects: counts additional 1 (record) for each 
+    /// Other side effects: counts additional 1 (record) for each
     /// retrieved (non null) document.
     /// </remarks>
     public class WarmTask : ReadTask

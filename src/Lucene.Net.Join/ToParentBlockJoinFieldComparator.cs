@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Join
     /// <summary>
     /// A field comparer that allows parent documents to be sorted by fields
     /// from the nested / child documents.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class ToParentBlockJoinFieldComparer : FieldComparer<object>
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Join
         {
             _wrappedComparer.SetTopValue(value);
         }
-        
+
         public override FieldComparer SetNextReader(AtomicReaderContext context)
         {
             DocIdSet innerDocuments = _childFilter.GetDocIdSet(context, null);
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Join
         {
             return set is null;
         }
-        
+
         private static FixedBitSet ToFixedBitSet(DocIdSetIterator iterator, int numBits)
         {
             var set = new FixedBitSet(numBits);
@@ -129,11 +129,11 @@ namespace Lucene.Net.Search.Join
             /// <param name="childFilter"><see cref="Filter"/> that defines which child / nested documents participates in sorting. </param>
             /// <param name="spareSlot">The extra slot inside the wrapped comparer that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
-            public Lowest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot) 
+            public Lowest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot)
                 : base(wrappedComparer, parentFilter, childFilter, spareSlot)
             {
             }
-            
+
             public override int CompareBottom(int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public override void Copy(int slot, int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public override int CompareTop(int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
@@ -264,11 +264,11 @@ namespace Lucene.Net.Search.Join
             /// <param name="childFilter"><see cref="Filter"/> that defines which child / nested documents participates in sorting. </param>
             /// <param name="spareSlot">The extra slot inside the wrapped comparer that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
-            public Highest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot) 
+            public Highest(FieldComparer wrappedComparer, Filter parentFilter, Filter childFilter, int spareSlot)
                 : base(wrappedComparer, parentFilter, childFilter, spareSlot)
             {
             }
-            
+
             public override int CompareBottom(int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
@@ -310,7 +310,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public override void Copy(int slot, int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)
@@ -341,7 +341,7 @@ namespace Lucene.Net.Search.Join
                     }
                 }
             }
-            
+
             public override int CompareTop(int parentDoc)
             {
                 if (parentDoc == 0 || _parentDocuments is null || _childDocuments is null)

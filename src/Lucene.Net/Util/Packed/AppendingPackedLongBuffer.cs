@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Util.Packed
@@ -99,7 +99,7 @@ namespace Lucene.Net.Util.Packed
             // build a new packed reader
             int bitsRequired = minValue < 0 ? 64 : PackedInt32s.BitsRequired(maxValue);
             PackedInt32s.Mutable mutable = PackedInt32s.GetMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
-            for (int i = 0; i < pendingOff; )
+            for (int i = 0; i < pendingOff;)
             {
                 i += mutable.Set(i, pending, i, pendingOff - i);
             }

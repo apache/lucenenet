@@ -1,4 +1,4 @@
-﻿// DefaultHandler2.java - extended DefaultHandler
+// DefaultHandler2.java - extended DefaultHandler
 // http://www.saxproject.org
 // Public Domain: no warranty.
 // $Id: DefaultHandler2.java,v 1.3 2002/01/12 19:04:19 dbrownell Exp $
@@ -89,7 +89,7 @@ namespace Sax.Ext
         /// Tells the parser to resolve the systemId against the baseURI
         /// and read the entity text from that resulting absolute URI.
         /// Note that because the older <see cref="DefaultHandler.ResolveEntity(string, string)"/>,
-        /// method is overridden to call this one, this method may sometimes 
+        /// method is overridden to call this one, this method may sometimes
         /// be invoked with null <paramref name="name"/> and <paramref name="baseURI"/>, and
         /// with the <paramref name="systemId"/> already absolutized.
         /// </summary>

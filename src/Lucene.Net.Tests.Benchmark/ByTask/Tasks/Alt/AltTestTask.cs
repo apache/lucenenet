@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Benchmarks.ByTask.Tasks.Alt
+namespace Lucene.Net.Benchmarks.ByTask.Tasks.Alt
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -18,7 +18,7 @@
      */
 
     /// <summary>
-    /// {@link PerfTask} which does nothing, but is in a different package 
+    /// {@link PerfTask} which does nothing, but is in a different package
     /// </summary>
     public class AltTestTask : PerfTask
     {

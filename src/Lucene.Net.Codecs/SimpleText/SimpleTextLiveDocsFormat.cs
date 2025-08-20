@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override IMutableBits NewLiveDocs(IBits existing)
         {
-            var bits = (SimpleTextBits) existing;
+            var bits = (SimpleTextBits)existing;
             return new SimpleTextMutableBits((BitSet)bits.bits.Clone(), bits.Length);
         }
 
@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void WriteLiveDocs(IMutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount,
             IOContext context)
         {
-            var set = ((SimpleTextBits) bits).bits;
+            var set = ((SimpleTextBits)bits).bits;
             var size = bits.Length;
             var scratch = new BytesRef();
 
@@ -195,13 +195,13 @@ namespace Lucene.Net.Codecs.SimpleText
         internal class SimpleTextMutableBits : SimpleTextBits, IMutableBits
         {
 
-            internal SimpleTextMutableBits(int size) 
+            internal SimpleTextMutableBits(int size)
                 : this(new BitSet(size), size)
             {
                 bits.Set(0, size);
             }
 
-            internal SimpleTextMutableBits(BitSet bits, int size) 
+            internal SimpleTextMutableBits(BitSet bits, int size)
                 : base(bits, size)
             {
             }

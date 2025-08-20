@@ -20,10 +20,10 @@ namespace Lucene.Net.Analysis.Hu
      * limitations under the License.
      */
 
-    /* 
+    /*
      * This algorithm is updated based on code located at:
      * http://members.unine.ch/jacques.savoy/clef/
-     * 
+     *
      * Full copyright for that code follows:
      */
 
@@ -31,26 +31,26 @@ namespace Lucene.Net.Analysis.Hu
      * Copyright (c) 2005, Jacques Savoy
      * All rights reserved.
      *
-     * Redistribution and use in source and binary forms, with or without 
+     * Redistribution and use in source and binary forms, with or without
      * modification, are permitted provided that the following conditions are met:
      *
-     * Redistributions of source code must retain the above copyright notice, this 
-     * list of conditions and the following disclaimer. Redistributions in binary 
+     * Redistributions of source code must retain the above copyright notice, this
+     * list of conditions and the following disclaimer. Redistributions in binary
      * form must reproduce the above copyright notice, this list of conditions and
-     * the following disclaimer in the documentation and/or other materials 
-     * provided with the distribution. Neither the name of the author nor the names 
-     * of its contributors may be used to endorse or promote products derived from 
+     * the following disclaimer in the documentation and/or other materials
+     * provided with the distribution. Neither the name of the author nor the names
+     * of its contributors may be used to endorse or promote products derived from
      * this software without specific prior written permission.
-     * 
-     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-     * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-     * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-     * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE 
-     * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-     * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-     * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-     * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+     *
+     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+     * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+     * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+     * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+     * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+     * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+     * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+     * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
      * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
      * POSSIBILITY OF SUCH DAMAGE.
      */
@@ -112,7 +112,20 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 5)
             {
-                if (StemmerUtil.EndsWith(s, len, "nak") || StemmerUtil.EndsWith(s, len, "nek") || StemmerUtil.EndsWith(s, len, "val") || StemmerUtil.EndsWith(s, len, "vel") || StemmerUtil.EndsWith(s, len, "ert") || StemmerUtil.EndsWith(s, len, "rol") || StemmerUtil.EndsWith(s, len, "ban") || StemmerUtil.EndsWith(s, len, "ben") || StemmerUtil.EndsWith(s, len, "bol") || StemmerUtil.EndsWith(s, len, "nal") || StemmerUtil.EndsWith(s, len, "nel") || StemmerUtil.EndsWith(s, len, "hoz") || StemmerUtil.EndsWith(s, len, "hez") || StemmerUtil.EndsWith(s, len, "tol"))
+                if (StemmerUtil.EndsWith(s, len, "nak") ||
+                    StemmerUtil.EndsWith(s, len, "nek") ||
+                    StemmerUtil.EndsWith(s, len, "val") ||
+                    StemmerUtil.EndsWith(s, len, "vel") ||
+                    StemmerUtil.EndsWith(s, len, "ert") ||
+                    StemmerUtil.EndsWith(s, len, "rol") ||
+                    StemmerUtil.EndsWith(s, len, "ban") ||
+                    StemmerUtil.EndsWith(s, len, "ben") ||
+                    StemmerUtil.EndsWith(s, len, "bol") ||
+                    StemmerUtil.EndsWith(s, len, "nal") ||
+                    StemmerUtil.EndsWith(s, len, "nel") ||
+                    StemmerUtil.EndsWith(s, len, "hoz") ||
+                    StemmerUtil.EndsWith(s, len, "hez") ||
+                    StemmerUtil.EndsWith(s, len, "tol"))
                 {
                     return len - 3;
                 }
@@ -128,7 +141,17 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 4)
             {
-                if (StemmerUtil.EndsWith(s, len, "at") || StemmerUtil.EndsWith(s, len, "et") || StemmerUtil.EndsWith(s, len, "ot") || StemmerUtil.EndsWith(s, len, "va") || StemmerUtil.EndsWith(s, len, "ve") || StemmerUtil.EndsWith(s, len, "ra") || StemmerUtil.EndsWith(s, len, "re") || StemmerUtil.EndsWith(s, len, "ba") || StemmerUtil.EndsWith(s, len, "be") || StemmerUtil.EndsWith(s, len, "ul") || StemmerUtil.EndsWith(s, len, "ig"))
+                if (StemmerUtil.EndsWith(s, len, "at") ||
+                    StemmerUtil.EndsWith(s, len, "et") ||
+                    StemmerUtil.EndsWith(s, len, "ot") ||
+                    StemmerUtil.EndsWith(s, len, "va") ||
+                    StemmerUtil.EndsWith(s, len, "ve") ||
+                    StemmerUtil.EndsWith(s, len, "ra") ||
+                    StemmerUtil.EndsWith(s, len, "re") ||
+                    StemmerUtil.EndsWith(s, len, "ba") ||
+                    StemmerUtil.EndsWith(s, len, "be") ||
+                    StemmerUtil.EndsWith(s, len, "ul") ||
+                    StemmerUtil.EndsWith(s, len, "ig"))
                 {
                     return len - 2;
                 }
@@ -160,7 +183,10 @@ namespace Lucene.Net.Analysis.Hu
         {
             if (len > 6)
             {
-                if (!IsVowel(s[len - 5]) && (StemmerUtil.EndsWith(s, len, "atok") || StemmerUtil.EndsWith(s, len, "otok") || StemmerUtil.EndsWith(s, len, "etek")))
+                if (!IsVowel(s[len - 5]) &&
+                    (StemmerUtil.EndsWith(s, len, "atok") ||
+                    StemmerUtil.EndsWith(s, len, "otok") ||
+                    StemmerUtil.EndsWith(s, len, "etek")))
                 {
                     return len - 4;
                 }
@@ -173,7 +199,10 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 5)
             {
-                if (!IsVowel(s[len - 4]) && (StemmerUtil.EndsWith(s, len, "unk") || StemmerUtil.EndsWith(s, len, "tok") || StemmerUtil.EndsWith(s, len, "tek")))
+                if (!IsVowel(s[len - 4]) &&
+                    (StemmerUtil.EndsWith(s, len, "unk") ||
+                    StemmerUtil.EndsWith(s, len, "tok") ||
+                    StemmerUtil.EndsWith(s, len, "tek")))
                 {
                     return len - 3;
                 }
@@ -191,17 +220,29 @@ namespace Lucene.Net.Analysis.Hu
 
             if (len > 4)
             {
-                if (!IsVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "am") || StemmerUtil.EndsWith(s, len, "em") || StemmerUtil.EndsWith(s, len, "om") || StemmerUtil.EndsWith(s, len, "ad") || StemmerUtil.EndsWith(s, len, "ed") || StemmerUtil.EndsWith(s, len, "od") || StemmerUtil.EndsWith(s, len, "uk")))
+                if (!IsVowel(s[len - 3]) &&
+                    (StemmerUtil.EndsWith(s, len, "am") ||
+                    StemmerUtil.EndsWith(s, len, "em") ||
+                    StemmerUtil.EndsWith(s, len, "om") ||
+                    StemmerUtil.EndsWith(s, len, "ad") ||
+                    StemmerUtil.EndsWith(s, len, "ed") ||
+                    StemmerUtil.EndsWith(s, len, "od") ||
+                    StemmerUtil.EndsWith(s, len, "uk")))
                 {
                     return len - 2;
                 }
 
-                if (IsVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "nk") || StemmerUtil.EndsWith(s, len, "ja") || StemmerUtil.EndsWith(s, len, "je")))
+                if (IsVowel(s[len - 3]) &&
+                    (StemmerUtil.EndsWith(s, len, "nk") ||
+                    StemmerUtil.EndsWith(s, len, "ja") ||
+                    StemmerUtil.EndsWith(s, len, "je")))
                 {
                     return len - 2;
                 }
 
-                if (StemmerUtil.EndsWith(s, len, "im") || StemmerUtil.EndsWith(s, len, "id") || StemmerUtil.EndsWith(s, len, "ik"))
+                if (StemmerUtil.EndsWith(s, len, "im") ||
+                    StemmerUtil.EndsWith(s, len, "id") ||
+                    StemmerUtil.EndsWith(s, len, "ik"))
                 {
                     return len - 2;
                 }
@@ -246,7 +287,7 @@ namespace Lucene.Net.Analysis.Hu
                         {
                             return len - 2;
                         }
-                        return len - 1;// LUCENENET NOTE: Cannot fall through, so need to return the same value as default
+                        return len - 1; // LUCENENET NOTE: Cannot fall through, so need to return the same value as default
                     default:
                         return len - 1;
                 }

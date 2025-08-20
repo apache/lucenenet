@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Snowball;
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Ca
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating CatalanAnalyzer:
     /// <list>
-    ///   <item><description> As of 3.6, <see cref="ElisionFilter"/> with a set of Catalan 
+    ///   <item><description> As of 3.6, <see cref="ElisionFilter"/> with a set of Catalan
     ///        contractions is used by default.</description></item>
     /// </list>
     /// </para>
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Ca
         /// File containing default Catalan stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
 
-        private static readonly CharArraySet DEFAULT_ARTICLES = 
+        private static readonly CharArraySet DEFAULT_ARTICLES =
 #pragma warning disable 612, 618
             new CharArraySet(LuceneVersion.LUCENE_CURRENT, new string[] { "d", "l", "m", "n", "s", "t" }, true).AsReadOnly();
 #pragma warning restore 612, 618
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Ca
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultSetHolder
@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.Ca
         /// Builds an analyzer with the default stop words: <see cref="DEFAULT_STOPWORD_FILE"/>.
         /// </summary>
         public CatalanAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET)
         {
         }
 
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Ca
         /// <param name="matchVersion"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>
         public CatalanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty)
+            : this(matchVersion, stopwords, CharArraySet.Empty)
         {
         }
 
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Ca
         /// <param name="stopwords"> a stopword set </param>
         /// <param name="stemExclusionSet"> a set of terms not to be stemmed </param>
         public CatalanAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionSet)
-              : base(matchVersion, stopwords)
+            : base(matchVersion, stopwords)
         {
             this.stemExclusionSet = CharArraySet.Copy(matchVersion, stemExclusionSet).AsReadOnly();
         }
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Ca
         /// <returns> A
         ///         <see cref="TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
-        ///         <see cref="StandardFilter"/>, <see cref="ElisionFilter"/>, <see cref="LowerCaseFilter"/>, 
+        ///         <see cref="StandardFilter"/>, <see cref="ElisionFilter"/>, <see cref="LowerCaseFilter"/>,
         ///         <see cref="StopFilter"/>, <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is
         ///         provided and <see cref="SnowballFilter"/>. </returns>
         protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)

@@ -1,4 +1,4 @@
-﻿using Antlr4.Runtime;
+using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using J2N;
 using J2N.Text;
@@ -144,7 +144,8 @@ namespace Lucene.Net.Expressions.JS
 #pragma warning restore IDE0051 // Remove unused private members
         {
             FunctionValues f = null;
-            /*double ret = */f.DoubleVal(2); // LUCENENET: IDE0059: Remove unnecessary value assignment
+            /*double ret = */
+            f.DoubleVal(2); // LUCENENET: IDE0059: Remove unnecessary value assignment
         }
 
         /// <summary>Constructs a compiler for expressions.</summary>
@@ -180,7 +181,7 @@ namespace Lucene.Net.Expressions.JS
 
             }
             catch (Exception exception) when (exception.IsInstantiationException() || exception.IsIllegalAccessException() ||
-                                              exception.IsNoSuchMethodException()  || exception.IsInvocationTargetException())
+                                              exception.IsNoSuchMethodException() || exception.IsInvocationTargetException())
             {
                 throw IllegalStateException.Create("An internal error occurred attempting to compile the expression (" + sourceText + ").", exception);
             }
@@ -462,7 +463,8 @@ namespace Lucene.Net.Expressions.JS
 
             public override void EnterRelational(JavascriptParser.RelationalContext context)
             {
-                CompileBinary(context, context.shift, EnterShift, terminalNode => {
+                CompileBinary(context, context.shift, EnterShift, terminalNode =>
+                {
                     if (terminalNode.Symbol.Type == JavascriptParser.AT_COMP_LT)
                     {
                         compiler.PushOpWithConvert(OpCodes.Clt);

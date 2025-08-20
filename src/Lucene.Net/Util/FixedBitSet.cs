@@ -1,4 +1,4 @@
-﻿using J2N.Numerics;
+using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -727,7 +727,7 @@ namespace Lucene.Net.Util
             unchecked
             {
                 long h = 0;
-                for (int i = numWords; --i >= 0; )
+                for (int i = numWords; --i >= 0;)
                 {
                     h ^= bits[i];
                     h = (h << 1) | (h >>> 63); // rotate left

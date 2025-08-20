@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Store;
+using Lucene.Net.Store;
 
 namespace Lucene.Net.Codecs.Sep
 {
@@ -24,17 +24,17 @@ namespace Lucene.Net.Codecs.Sep
     /// <para/>
     /// NOTE: This was IntStreamFactory in Lucene
     /// <para/>
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     public abstract class Int32StreamFactory
     {
         /// <summary>
-        /// Create an <see cref="Int32IndexInput"/> on the provided fileName. 
+        /// Create an <see cref="Int32IndexInput"/> on the provided fileName.
         /// </summary>
         public abstract Int32IndexInput OpenInput(Directory dir, string fileName, IOContext context);
 
         /// <summary>
-        /// Create an <see cref="Int32IndexOutput"/> on the provided fileName. 
+        /// Create an <see cref="Int32IndexOutput"/> on the provided fileName.
         /// </summary>
         public abstract Int32IndexOutput CreateOutput(Directory dir, string fileName, IOContext context);
     }

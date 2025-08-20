@@ -37,9 +37,9 @@ namespace Lucene.Net.Codecs
     /// <list type="number">
     ///     <item><description>Subclass this class.</description></item>
     ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/>, override the <see cref="DefaultDocValuesFormatFactory.Initialize()"/> method,
-    ///         and add the line <c>base.ScanForDocValuesFormats(typeof(YourDocValuesFormat).Assembly)</c>. 
-    ///         If you have any format classes in your assembly 
-    ///         that are not meant for reading, you can add the <see cref="ExcludeDocValuesFormatFromScanAttribute"/> 
+    ///         and add the line <c>base.ScanForDocValuesFormats(typeof(YourDocValuesFormat).Assembly)</c>.
+    ///         If you have any format classes in your assembly
+    ///         that are not meant for reading, you can add the <see cref="ExcludeDocValuesFormatFromScanAttribute"/>
     ///         to them so they are ignored by the scan.</description></item>
     ///     <item><description>Set the new <see cref="IDocValuesFormatFactory"/> by calling <see cref="SetDocValuesFormatFactory(IDocValuesFormatFactory)"/>
     ///         at application startup.</description></item>
@@ -50,12 +50,12 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// <b>DocValuesFormat Names</b>
     /// <para/>
-    /// Unlike the Java version, format names are by default convention-based on the class name. 
-    /// If you name your custom format class "MyCustomDocValuesFormat", the format name will the same name 
+    /// Unlike the Java version, format names are by default convention-based on the class name.
+    /// If you name your custom format class "MyCustomDocValuesFormat", the format name will the same name
     /// without the "DocValuesFormat" suffix: "MyCustom".
     /// <para/>
     /// You can override this default behavior by using the <see cref="DocValuesFormatNameAttribute"/> to
-    /// name the format differently than this convention. Format names must be all ASCII alphanumeric, 
+    /// name the format differently than this convention. Format names must be all ASCII alphanumeric,
     /// and less than 128 characters in length.
     /// <para/>
     /// @lucene.experimental

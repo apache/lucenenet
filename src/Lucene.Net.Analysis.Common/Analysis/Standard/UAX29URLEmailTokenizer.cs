@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Standard.Std31;
 using Lucene.Net.Analysis.Standard.Std34;
 using Lucene.Net.Analysis.Standard.Std36;

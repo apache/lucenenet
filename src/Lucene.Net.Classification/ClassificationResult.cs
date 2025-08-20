@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Classification
+namespace Lucene.Net.Classification
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -32,7 +32,7 @@
         /// <param name="assignedClass">the class <typeparamref name="T"/> assigned by a <see cref="IClassifier{T}"/></param>
         /// <param name="score">score the score for the <paramref name="assignedClass"/> as a <see cref="double"/></param>
         /// </summary>
-        public ClassificationResult(T assignedClass, double score) 
+        public ClassificationResult(T assignedClass, double score)
         {
             this.assignedClass = assignedClass;
             this.score = score;

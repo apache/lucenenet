@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Ar
 
     /// <summary>
     /// Testcase for <seealso cref="TestArabicLetterTokenizer"/> </summary>
-    /// @deprecated (3.1) Remove in Lucene 5.0 
+    /// @deprecated (3.1) Remove in Lucene 5.0
     [Obsolete("(3.1) Remove in Lucene 5.0")]
     public class TestArabicLetterTokenizer : BaseTokenStreamTestCase
     {

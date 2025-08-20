@@ -1,4 +1,4 @@
-﻿// commons-codec version compatibility level: 1.9
+// commons-codec version compatibility level: 1.9
 using System;
 
 namespace Lucene.Net.Analysis.Phonetic.Language
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <param name="str1">First of two strings to compare.</param>
         /// <param name="str2">Second of two strings to compare.</param>
         /// <returns><c>true</c> if the encodings of these strings are identical, <c>false</c> otherwise.</returns>
-        public virtual bool IsEncodeEqual(string str1, string str2) 
+        public virtual bool IsEncodeEqual(string str1, string str2)
         {
             return this.Encode(str1).Equals(this.Encode(str2), StringComparison.Ordinal);
         }

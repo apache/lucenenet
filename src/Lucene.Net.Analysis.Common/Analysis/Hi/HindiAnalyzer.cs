@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.In;
 using Lucene.Net.Analysis.Miscellaneous;
@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Hi
         public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
-        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class 
+        /// Atomically loads the <see cref="DEFAULT_STOP_SET"/> in a lazy fashion once the outer class
         /// accesses the static final set the first time.;
         /// </summary>
         private static class DefaultSetHolder
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Hi
         }
 
         /// <summary>
-        /// Builds an analyzer with the given stop words 
+        /// Builds an analyzer with the given stop words
         /// </summary>
         /// <param name="version"> lucene compatibility version </param>
         /// <param name="stopwords"> a stopword set </param>

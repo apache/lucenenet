@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search.Suggest.Fst;
+using Lucene.Net.Search.Suggest.Fst;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;

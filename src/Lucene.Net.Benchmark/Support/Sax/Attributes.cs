@@ -1,4 +1,4 @@
-﻿// Attributes.java - attribute list with Namespace support
+// Attributes.java - attribute list with Namespace support
 // http://www.saxproject.org
 // Written by David Megginson
 // NO WARRANTY!  This class is in the public domain.

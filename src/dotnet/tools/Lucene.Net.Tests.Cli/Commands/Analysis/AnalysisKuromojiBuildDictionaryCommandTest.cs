@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Attributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Cli.CommandLine;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -63,7 +63,7 @@ namespace Lucene.Net.Cli.Commands
                 AssertCommandTranslation(
                     string.Join(" ", requiredArg.Select(x => x.InputPattern).ToArray()),
                     requiredArg.SelectMany(x => x.Output)
-                    
+
                     .Concat(new string[] {
                         // Special case: the encoding must always be supplied
                         "euc-jp",

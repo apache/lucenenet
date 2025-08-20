@@ -1,4 +1,4 @@
-﻿namespace Lucene.Net.Search.Highlight
+namespace Lucene.Net.Search.Highlight
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

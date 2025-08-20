@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Ja.Dict;
+using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Codecs;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;

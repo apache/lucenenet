@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
+using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// <summary>
     /// A <see cref="BooleanModifierNode"/> has the same behaviour as
     /// <see cref="ModifierQueryNode"/>, it only indicates that this modifier was added by
-    /// <see cref="Processors.GroupQueryNodeProcessor"/> and not by the user. 
+    /// <see cref="Processors.GroupQueryNodeProcessor"/> and not by the user.
     /// </summary>
     /// <seealso cref="ModifierQueryNode"/>
     public class BooleanModifierNode : ModifierQueryNode

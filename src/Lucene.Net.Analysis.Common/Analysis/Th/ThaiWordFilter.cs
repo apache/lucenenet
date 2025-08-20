@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 #if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using Lucene.Net.Analysis.Core;
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Th
     // </para>
 
     /// <summary>
-    /// <see cref="TokenFilter"/> that use <see cref="BreakIterator"/> to break each 
+    /// <see cref="TokenFilter"/> that use <see cref="BreakIterator"/> to break each
     /// Token that is Thai into separate Token(s) for each Thai word.
     /// <para>Please note: Since matchVersion 3.1 on, this filter no longer lowercases non-thai text.
     /// <see cref="ThaiAnalyzer"/> will insert a <see cref="LowerCaseFilter"/> before this filter
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Th
     /// position increments correctly.
     /// </para>
     /// </summary>
-    /// @deprecated Use <see cref="ThaiTokenizer"/> instead. 
+    /// @deprecated Use <see cref="ThaiTokenizer"/> instead.
     [Obsolete("Use ThaiTokenizer instead.")]
     public sealed class ThaiWordFilter : TokenFilter
     {

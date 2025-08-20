@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Xml
     /// <summary>
     /// This class illustrates how form input (such as from a web page or Swing gui) can be
     /// turned into Lucene queries using a choice of XSL templates for different styles of queries.
-    /// 
+    ///
     /// LUCENENET (.NET Standard 1.x):  This is not compiled this because .NET Standard 1.x
     /// does not support XSL Transform.
     /// </summary>

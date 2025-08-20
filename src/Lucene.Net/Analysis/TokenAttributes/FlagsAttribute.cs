@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Util;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     /// eg from one TokenFilter to another one.
     /// <para/>
     /// This is completely distinct from <see cref="ITypeAttribute"/>, although they do share similar purposes.
-    /// The flags can be used to encode information about the token for use by other 
+    /// The flags can be used to encode information about the token for use by other
     /// <see cref="TokenFilter"/>s.
     /// <para/>
     /// @lucene.experimental While we think this is here to stay, we may want to change it to be a long.

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Cjk;
+using Lucene.Net.Analysis.Cjk;
 using Lucene.Net.Analysis.Core;
 using NUnit.Framework;
 using System;

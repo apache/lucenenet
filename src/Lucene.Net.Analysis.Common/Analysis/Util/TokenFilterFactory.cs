@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public abstract class TokenFilterFactory : AbstractAnalysisFactory
     {
-        private static readonly AnalysisSPILoader<TokenFilterFactory> loader = 
+        private static readonly AnalysisSPILoader<TokenFilterFactory> loader =
             new AnalysisSPILoader<TokenFilterFactory>(new string[] { "TokenFilterFactory", "FilterFactory" });
 
         /// <summary>
@@ -51,11 +51,11 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Reloads the factory list.
         /// Changes to the factories are visible after the method ends, all
-        /// iterators (<see cref="AvailableTokenFilters"/>,...) stay consistent. 
-        /// 
+        /// iterators (<see cref="AvailableTokenFilters"/>,...) stay consistent.
+        ///
         /// <para><b>NOTE:</b> Only new factories are added, existing ones are
         /// never removed or replaced.
-        /// 
+        ///
         /// </para>
         /// <para><em>This method is expensive and should only be called for discovery
         /// of new factories on the given classpath/classloader!</em>

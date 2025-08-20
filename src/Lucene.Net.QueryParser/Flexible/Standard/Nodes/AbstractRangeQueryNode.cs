@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
+using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using System;
@@ -96,7 +96,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         public virtual IFieldableNode UpperBound => (IFieldableNode)GetChildren()[1];
 
         /// <summary>
-        /// Gets whether the lower bound is inclusive or exclusive. 
+        /// Gets whether the lower bound is inclusive or exclusive.
         /// </summary>
         /// <remarks>
         /// <c>true</c> if the lower bound is inclusive, otherwise, <c>false</c>
@@ -215,7 +215,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
     /// <summary>
     /// LUCENENET specific interface used to identify
-    /// an AbstractRangeQueryNode without referring to 
+    /// an AbstractRangeQueryNode without referring to
     /// its generic closing type
     /// </summary>
     public interface IAbstractRangeQueryNode : IRangeQueryNode<IFieldableNode>

@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Spatial4n.Context;
 using Spatial4n.Shapes;
 using System;

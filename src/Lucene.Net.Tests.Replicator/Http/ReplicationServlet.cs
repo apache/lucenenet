@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Replicator.AspNetCore;
+using Lucene.Net.Replicator.AspNetCore;
 using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features;

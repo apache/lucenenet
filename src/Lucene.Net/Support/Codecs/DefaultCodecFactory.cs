@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support.Threading;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -59,17 +59,17 @@ namespace Lucene.Net.Codecs
     ///         PutCodecType(typeof(MyCodec));
     ///         PutCodecType(typeof(AnotherCodec));
     ///     }
-    ///     
+    ///
     ///     protected override Codec NewCodec(Type type)
     ///     {
     ///         // Special case: AnotherCodec has a required dependency
     ///         if (typeof(AnotherCodec).Equals(type))
     ///             return new AnotherCodec(new SomeDependency());
-    ///         
+    ///
     ///         return base.NewCodec(type);
     ///     }
     /// }
-    /// 
+    ///
     /// // Register the factory at application start up.
     /// Codec.SetCodecFactory(new ExplicitCodecFactory());
     /// </code>
@@ -88,12 +88,12 @@ namespace Lucene.Net.Codecs
     ///     {
     ///         // Load all default codecs
     ///         base.Initialize();
-    ///         
+    ///
     ///         // Load all of the codecs inside of the same assembly that MyCodec is defined in
     ///         ScanForCodecs(typeof(MyCodec).Assembly);
     ///     }
     /// }
-    /// 
+    ///
     /// // Register the factory at application start up.
     /// Codec.SetCodecFactory(new ScanningCodecFactory());
     /// </code>
@@ -137,7 +137,7 @@ namespace Lucene.Net.Codecs
         /// to make your custom codecs known to Lucene.
         /// <para/>
         /// These types will be registered after the default Lucene types, so if a custom type has the same
-        /// name as a Lucene <see cref="Codec"/> (via <see cref="CodecNameAttribute"/>) 
+        /// name as a Lucene <see cref="Codec"/> (via <see cref="CodecNameAttribute"/>)
         /// the custom type will replace the Lucene type with the same name.
         /// </summary>
         public IEnumerable<Type> CustomCodecTypes { get; set; }
@@ -145,7 +145,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Initializes the codec type cache with the known <see cref="Codec"/> types.
         /// Override this method (and optionally call <c>base.Initialize()</c>) to add your
-        /// own <see cref="Codec"/> types by calling <see cref="PutCodecType(Type)"/> 
+        /// own <see cref="Codec"/> types by calling <see cref="PutCodecType(Type)"/>
         /// or <see cref="ScanForCodecs(Assembly)"/>.
         /// <para/>
         /// If two types have the same name by using the <see cref="CodecNameAttribute"/>, the
@@ -168,7 +168,7 @@ namespace Lucene.Net.Codecs
         /// and adds their names to the <see cref="codecNameToTypeMap"/>. Note that names will be
         /// automatically overridden if the <see cref="Codec"/> name appears multiple times - the last match wins.
         /// </summary>
-        /// <param name="assemblies">A list of assemblies to scan. The assemblies will be scanned from first to last, 
+        /// <param name="assemblies">A list of assemblies to scan. The assemblies will be scanned from first to last,
         /// and the last match for each <see cref="Codec"/> name wins.</param>
         protected virtual void ScanForCodecs(IEnumerable<Assembly> assemblies)
         {
@@ -198,7 +198,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Adds a <see cref="Codec"/> type to the <see cref="codecNameToTypeMap"/>, using 
+        /// Adds a <see cref="Codec"/> type to the <see cref="codecNameToTypeMap"/>, using
         /// the name provided in the <see cref="CodecNameAttribute"/>, if present, or the name
         /// of the codec class minus the "Codec" suffix as the name by default.
         /// <para/>

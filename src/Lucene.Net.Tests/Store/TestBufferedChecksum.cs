@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 

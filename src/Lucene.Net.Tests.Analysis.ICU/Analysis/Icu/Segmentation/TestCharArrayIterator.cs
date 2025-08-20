@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 7.1.0
+// Lucene version compatibility level 7.1.0
 #if FEATURE_BREAKITERATOR
 using ICU4N.Support.Text;
 using Lucene.Net.Util;
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             CharArrayIterator ci = new CharArrayIterator();
             ci.SetText("testing".toCharArray(), 0, "testing".Length);
             ci.Next();
-            // Sets the position to getBeginIndex() and returns the character at that position. 
+            // Sets the position to getBeginIndex() and returns the character at that position.
             assertEquals('t', ci.First());
             assertEquals(ci.BeginIndex, ci.Index);
             // or DONE if the text is empty
@@ -61,8 +61,8 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         {
             CharArrayIterator ci = new CharArrayIterator();
             ci.SetText("testing".toCharArray(), 0, "testing".Length);
-            // Sets the position to getEndIndex()-1 (getEndIndex() if the text is empty) 
-            // and returns the character at that position. 
+            // Sets the position to getEndIndex()-1 (getEndIndex() if the text is empty)
+            // and returns the character at that position.
             assertEquals('g', ci.Last());
             assertEquals(ci.Index, ci.EndIndex - 1);
             // or DONE if the text is empty
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         public void TestCurrent()
         {
             CharArrayIterator ci = new CharArrayIterator();
-            // Gets the character at the current position (as returned by getIndex()). 
+            // Gets the character at the current position (as returned by getIndex()).
             ci.SetText("testing".toCharArray(), 0, "testing".Length);
             assertEquals('t', ci.Current);
             ci.Last();

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.IO;
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search.Grouping
                 if (facetEntries.Count == maxSize)
                 {
                     var max = facetEntries.Max;
-                    currentMin =  max != null ? max.Count : 0;
+                    currentMin = max != null ? max.Count : 0;
                 }
             }
 

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Demo.Facet;
+using Lucene.Net.Demo.Facet;
 using System;
 using System.Collections.Generic;
 

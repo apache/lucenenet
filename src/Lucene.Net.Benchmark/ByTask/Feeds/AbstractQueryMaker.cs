@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Search;
 using Lucene.Net.Support.Threading;
 using System;
@@ -24,7 +24,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
      */
 
     /// <summary>
-    /// Abstract base query maker. 
+    /// Abstract base query maker.
     /// Each query maker should just implement the <see cref="PrepareQueries()"/> method.
     /// </summary>
     public abstract class AbstractQueryMaker : IQueryMaker

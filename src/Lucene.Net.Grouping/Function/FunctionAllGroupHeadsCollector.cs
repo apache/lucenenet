@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Index;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Util.Mutable;
 using System.Collections;
@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Grouping.Function
     /// <summary>
     /// An implementation of <see cref="AbstractAllGroupHeadsCollector"/> for retrieving the most relevant groups when grouping
     /// by <see cref="ValueSource"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class FunctionAllGroupHeadsCollector : AbstractAllGroupHeadsCollector<FunctionAllGroupHeadsCollector.GroupHead>
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search.Grouping.Function
 
         /// <summary>
         /// Holds current head document for a single group.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public class GroupHead : AbstractAllGroupHeadsCollector_GroupHead

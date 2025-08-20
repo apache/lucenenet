@@ -1,4 +1,4 @@
-﻿using J2N.IO;
+using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Replicator.Http.Abstractions;
@@ -173,7 +173,7 @@ namespace Lucene.Net.Replicator.Http
                         }
                         break;
 
-                        // LUCENENET specific:
+                    // LUCENENET specific:
                     default:
                         if (Debugging.AssertsEnabled) Debugging.Assert(false, "Invalid ReplicationAction specified");
                         break;

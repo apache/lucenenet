@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.No
 
         /// <summary>
         /// Creates a new <see cref="NorwegianMinimalStemFilterFactory"/> </summary>
-        public NorwegianMinimalStemFilterFactory(IDictionary<string, string> args) 
+        public NorwegianMinimalStemFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
             string variant = Get(args, "variant");

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Config
@@ -39,7 +39,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         }
 
         /// <summary>
-        /// Gets the value associated with the specified key. 
+        /// Gets the value associated with the specified key.
         /// </summary>
         /// <typeparam name="T">the value's type</typeparam>
         /// <param name="key">the key, cannot be <c>null</c></param>

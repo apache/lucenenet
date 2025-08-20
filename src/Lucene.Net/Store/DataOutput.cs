@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 
@@ -262,7 +262,7 @@ namespace Lucene.Net.Store
         /// Copy numBytes bytes from input to ourself. </summary>
         public virtual void CopyBytes(DataInput input, long numBytes)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(numBytes >= 0,"numBytes={0}", numBytes);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numBytes >= 0, "numBytes={0}", numBytes);
             long left = numBytes;
             if (copyBuffer is null)
             {

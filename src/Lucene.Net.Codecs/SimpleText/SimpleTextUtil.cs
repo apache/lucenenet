@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 
 namespace Lucene.Net.Codecs.SimpleText
@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         break;
                     }
-                    
+
                     scratch.Bytes[upto++] = b;
                 }
             }

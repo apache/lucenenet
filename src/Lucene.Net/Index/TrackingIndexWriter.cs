@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Class that tracks changes to a delegated
-    /// <see cref="Index.IndexWriter"/>, used by 
+    /// <see cref="Index.IndexWriter"/>, used by
     /// <see cref="Search.ControlledRealTimeReopenThread{T}"/> to ensure specific
     /// changes are visible.   Create this class (passing your
     /// <see cref="Index.IndexWriter"/>), and then pass this class to
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls 
+        /// Calls
         /// <see cref="IndexWriter.UpdateDocument(Term, IEnumerable{IIndexableField}, Analyzer)"/>
         /// and returns the generation that reflects this change.
         /// </summary>
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls 
+        /// Calls
         /// <see cref="IndexWriter.UpdateDocument(Term, IEnumerable{IIndexableField})"/> and
         /// returns the generation that reflects this change.
         /// </summary>
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls 
+        /// Calls
         /// <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analyzer)"/>
         /// and returns the generation that reflects this change.
         /// </summary>
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls 
+        /// Calls
         /// <see cref="IndexWriter.AddDocument(IEnumerable{IIndexableField}, Analyzer)"/> and
         /// returns the generation that reflects this change.
         /// </summary>
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls 
+        /// Calls
         /// <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analyzer)"/> and
         /// returns the generation that reflects this change.
         /// </summary>

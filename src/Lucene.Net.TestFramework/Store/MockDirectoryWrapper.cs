@@ -1,4 +1,4 @@
-﻿using J2N.Runtime.CompilerServices;
+using J2N.Runtime.CompilerServices;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
@@ -1097,7 +1097,7 @@ namespace Lucene.Net.Store
                                 DirectoryReader ir2 = DirectoryReader.Open(this);
                                 int numDocs2 = ir2.NumDocs;
                                 ir2.Dispose();
-                                if (Debugging.AssertsEnabled) Debugging.Assert(numDocs1 == numDocs2,"numDocs changed after opening/closing IW: before={0} after={1}", numDocs1, numDocs2);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(numDocs1 == numDocs2, "numDocs changed after opening/closing IW: before={0} after={1}", numDocs1, numDocs2);
                             }
                         }
                     }

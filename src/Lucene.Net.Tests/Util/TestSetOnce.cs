@@ -1,4 +1,4 @@
-﻿using J2N.Threading;
+using J2N.Threading;
 using NUnit.Framework;
 using System;
 using System.Globalization;

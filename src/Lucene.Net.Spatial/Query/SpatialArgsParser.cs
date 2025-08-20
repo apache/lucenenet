@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Spatial4n.Context;
 using Spatial4n.Exceptions;
 using Spatial4n.Shapes;
@@ -147,14 +147,14 @@ namespace Lucene.Net.Spatial.Queries
         }
 
         /// <exception cref="ArgumentNullException"><paramref name="str"/> or <paramref name="ctx"/> is <c>null</c>.</exception>
-        protected virtual IShape ParseShape(string str, SpatialContext ctx) 
+        protected virtual IShape ParseShape(string str, SpatialContext ctx)
         {
             // LUCENENET specific - added guard clauses
             if (str is null)
                 throw new ArgumentNullException(nameof(str));
             if (ctx is null)
                 throw new ArgumentNullException(nameof(ctx));
-            
+
             //return ctx.readShape(str);//still in Spatial4n 0.4 but will be deleted
             return ctx.ReadShapeFromWkt(str);
         }

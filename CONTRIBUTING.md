@@ -1,4 +1,4 @@
-﻿# Lucene.NET Contributor's Guide
+# Lucene.NET Contributor's Guide
 
 Have you found a bug or do you have an idea for a cool new enhancement? Contributing code is a great way to give something back to the open-source community. Before you dig right into the code there are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
 
@@ -7,6 +7,7 @@ Have you found a bug or do you have an idea for a cool new enhancement? Contribu
 - Read [Open Source Contribution Etiquette](http://tirania.org/blog/archive/2010/Dec-31.html) and [Don't "Push" Your Pull Requests](http://www.igvita.com/2011/12/19/dont-push-your-pull-requests/).
 - Make sure you have a [GitHub account](https://github.com/signup/free). NOTE: Although this is a mirror of our Git repository, pull requests are accepted through GitHub.
 - If you are thinking of adding a feature, we would appreciate you opening a discussion on our [developer mailing list](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) before you start writing. It could save both you and our team quite a bit of work if the code doesn't have to be rewritten to fit in with our overall objectives.
+- [Set Up .editorconfig support](https://lucenenet.apache.org/contributing/editorconfig-setup.html) in your editor to ensure common styles (such as whitespace handling) are respected.
 - Submit a [new issue on GitHub](https://github.com/apache/lucenenet/issues), assuming one doesn't exist already.
   - If reporting a bug, clearly describe the issue including steps to reproduce, observed behavior, and expected behavior.
   - If reporting a bug, provide source code that we can run without any alteration demonstrating the issue. Issues submitted with runnable code will be given a higher priority than those submitted without.

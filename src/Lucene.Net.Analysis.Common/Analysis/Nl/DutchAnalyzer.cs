@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Snowball;
@@ -125,28 +125,28 @@ namespace Lucene.Net.Analysis.Nl
         /// and a few default entries for the stem exclusion table.
         /// </summary>
         public DutchAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET, CharArraySet.Empty, DefaultSetHolder.DEFAULT_STEM_DICT)
+            : this(matchVersion, DefaultSetHolder.DEFAULT_STOP_SET, CharArraySet.Empty, DefaultSetHolder.DEFAULT_STEM_DICT)
         {
             // historically, only this ctor populated the stem dict!!!!!
         }
 
         public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
-              : this(matchVersion, stopwords, CharArraySet.Empty,
+            : this(matchVersion, stopwords, CharArraySet.Empty,
 #pragma warning disable 612, 618
-                    matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
+                matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
 #pragma warning restore 612, 618
-                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.Empty)
+                DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.Empty)
         {
             // historically, this ctor never the stem dict!!!!!
             // so we populate it only for >= 3.6
         }
 
         public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable)
-              : this(matchVersion, stopwords, stemExclusionTable,
+            : this(matchVersion, stopwords, stemExclusionTable,
 #pragma warning disable 612, 618
-                    matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
+                matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
 #pragma warning restore 612, 618
-                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.Empty)
+                DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayDictionary<string>.Empty)
         {
             // historically, this ctor never the stem dict!!!!!
             // so we populate it only for >= 3.6

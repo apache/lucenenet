@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+using Lucene.Net.Support;
 using System;
 using System.IO;
 
@@ -56,7 +56,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return buffer[bufferPosition++];
         }
 
-        private void  Refill()
+        private void Refill()
         {
             int newPosition = bufferLength - tokenStart;
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.QueryParsers.Classic
             return ReadChar();
         }
 
-        public void  BackUp(int amount)
+        public void BackUp(int amount)
         {
             bufferPosition -= amount;
         }

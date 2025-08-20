@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using Lucene.Net.Support.Threading;
 using System;
 
@@ -37,13 +37,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             /// <summary>
             /// Use the label's hash as the key; this can lead to
-            ///  silent conflicts! 
+            ///  silent conflicts!
             /// </summary>
             LRU_HASHED,
 
             /// <summary>
             /// Use the label as the hash key; this is always
-            ///  correct but will usually use more RAM. 
+            ///  correct but will usually use more RAM.
             /// </summary>
             LRU_STRING
         }

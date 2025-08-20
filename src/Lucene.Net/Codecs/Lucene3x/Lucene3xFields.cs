@@ -1,4 +1,4 @@
-﻿using J2N.Text;
+using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support.Threading;
@@ -934,7 +934,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     else
                     {
                         current = t2.Bytes;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!unicodeSortOrder || term.CompareTo(current) < 0,"term={0} vs current={1}",
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!unicodeSortOrder || term.CompareTo(current) < 0, "term={0} vs current={1}",
                             // LUCENENET specific - use wrapper BytesRefFormatter struct to defer building the string unless string.Format() is called
                             new BytesRefFormatter(term, BytesRefFormat.UTF8AsHex), new BytesRefFormatter(current, BytesRefFormat.UTF8AsHex));
                         return SeekStatus.NOT_FOUND;

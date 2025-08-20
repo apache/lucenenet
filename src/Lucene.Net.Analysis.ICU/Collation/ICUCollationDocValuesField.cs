@@ -1,4 +1,4 @@
-﻿// lucene version compatibility level: 4.8.1
+// lucene version compatibility level: 4.8.1
 using ICU4N.Text;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
@@ -28,10 +28,10 @@ namespace Lucene.Net.Collation
     /// Indexes sort keys as a single-valued <see cref="SortedDocValuesField"/>.
     /// </summary>
     /// <remarks>
-    /// This is more efficient that <see cref="ICUCollationKeyAnalyzer"/> if the field 
-    /// only has one value: no uninversion is necessary to sort on the field, 
-    /// locale-sensitive range queries can still work via <see cref="Search.FieldCacheRangeFilter"/>, 
-    /// and the underlying data structures built at index-time are likely more efficient 
+    /// This is more efficient that <see cref="ICUCollationKeyAnalyzer"/> if the field
+    /// only has one value: no uninversion is necessary to sort on the field,
+    /// locale-sensitive range queries can still work via <see cref="Search.FieldCacheRangeFilter"/>,
+    /// and the underlying data structures built at index-time are likely more efficient
     /// and use less memory than FieldCache.
     /// </remarks>
     [ExceptionToClassNameConvention]
@@ -53,7 +53,7 @@ namespace Lucene.Net.Collation
         /// <param name="collator">Collator for generating collation keys.</param>
         /// <exception cref="ArgumentNullException">if <paramref name="name"/> or <paramref name="collator"/> is <c>null</c>.</exception>
         // TODO: can we make this trap-free? maybe just synchronize on the collator
-        // instead? 
+        // instead?
         public ICUCollationDocValuesField(string name, Collator collator)
             : base(name, SortedDocValuesField.TYPE)
         {

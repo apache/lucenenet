@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Hi
             // vowel shortening
             Check("आईऊॠॡऐऔीूॄॣैौ", "अइउऋऌएओिुृॢेो");
         }
-        
+
         private void Check(string input, string output)
         {
             Tokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.WHITESPACE, false);

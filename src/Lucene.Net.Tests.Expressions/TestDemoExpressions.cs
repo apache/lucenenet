@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Documents;
+using Lucene.Net.Documents;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -177,7 +177,7 @@ namespace Lucene.Net.Expressions
             // so if we want to test such huge expressions, we need to instead change parser to use an explicit Stack
         }
 
-        
+
         private void DoTestLotsOfBindings(int n)
         {
             SimpleBindings bindings = new SimpleBindings();

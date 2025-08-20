@@ -1,4 +1,4 @@
-﻿using ICU4N.Globalization;
+using ICU4N.Globalization;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -94,8 +94,8 @@ namespace Lucene.Net.Analysis.Icu.TokenAttributes
             if (reflector is null)
                 throw new ArgumentNullException(nameof(reflector));
 
-            // when wordbreaking CJK, we use the 15924 code Japanese (Han+Hiragana+Katakana) to 
-            // mark runs of Chinese/Japanese. our use is correct (as for chinese Han is a subset), 
+            // when wordbreaking CJK, we use the 15924 code Japanese (Han+Hiragana+Katakana) to
+            // mark runs of Chinese/Japanese. our use is correct (as for chinese Han is a subset),
             // but this is just to help prevent confusion.
             string name = code == UScript.Japanese ? "Chinese/Japanese" : GetName();
             reflector.Reflect<IScriptAttribute>("script", name);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.ComponentModel;
@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
     /// This exception is thrown when Lucene detects
     /// an inconsistency in the index.
     /// </summary>
-    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // LUCENENET: It is no longer good practice to use binary serialization.
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Constructor. </summary>
-        public CorruptIndexException(string message, Exception ex) 
+        public CorruptIndexException(string message, Exception ex)
             : base(message, ex)
         {
         }

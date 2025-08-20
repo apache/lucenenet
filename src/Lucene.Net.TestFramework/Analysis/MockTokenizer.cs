@@ -1,4 +1,4 @@
-﻿using J2N;
+using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis
 
         public sealed override bool IncrementToken()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || (streamState == State.RESET || streamState == State.INCREMENT),"IncrementToken() called while in wrong state: {0}", streamState);
+            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || (streamState == State.RESET || streamState == State.INCREMENT), "IncrementToken() called while in wrong state: {0}", streamState);
             ClearAttributes();
             for (; ; )
             {
@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!char.IsLowSurrogate((char)ch),"unpaired low surrogate: {0:x}", ch);
+                if (Debugging.AssertsEnabled) Debugging.Assert(!char.IsLowSurrogate((char)ch), "unpaired low surrogate: {0:x}", ch);
                 off++;
                 if (char.IsHighSurrogate((char)ch))
                 {
@@ -228,12 +228,12 @@ namespace Lucene.Net.Analysis
                     if (ch2 >= 0)
                     {
                         off++;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(char.IsLowSurrogate((char)ch2),"unpaired high surrogate: {0:x}, followed by: {1:x}", ch, ch2);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(char.IsLowSurrogate((char)ch2), "unpaired high surrogate: {0:x}, followed by: {1:x}", ch, ch2);
                         return Character.ToCodePoint((char)ch, (char)ch2);
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false,"stream ends with unpaired high surrogate: {0:x}", ch);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(false, "stream ends with unpaired high surrogate: {0:x}", ch);
                     }
                 }
                 return ch;

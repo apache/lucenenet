@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
@@ -916,7 +916,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 posPendingCount--;
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(posPendingCount >= 0,"NextPosition() was called too many times (more than Freq( times) posPendingCount={0}", posPendingCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(posPendingCount >= 0, "NextPosition() was called too many times (more than Freq( times) posPendingCount={0}", posPendingCount);
 
                 return position;
             }
@@ -1215,7 +1215,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 posPendingCount--;
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(posPendingCount >= 0,"NextPosition() was called too many times (more than Freq times) posPendingCount={0}", posPendingCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(posPendingCount >= 0, "NextPosition() was called too many times (more than Freq times) posPendingCount={0}", posPendingCount);
 
                 //System.out.println("StandardR.D&PE nextPos   return pos=" + position);
                 return position;

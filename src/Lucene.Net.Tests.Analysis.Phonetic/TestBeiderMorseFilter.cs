@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Phonetic.Language.Bm;
 using Lucene.Net.Analysis.TokenAttributes;

@@ -1,4 +1,4 @@
-﻿// LUCENENET specific - removed this class and replaced it with abstract factories
+// LUCENENET specific - removed this class and replaced it with abstract factories
 // DefaultCodecFactory, DefaultDocValuesFormatFactory, and DefaultPostingsFormatFactory
 // and their common base class, NamedServiceFactory<TService>.
 // The factories have a more efficient default scanning implementation and make

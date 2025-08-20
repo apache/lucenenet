@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using System;
 
 #if !FEATURE_RANDOM_NEXTINT64_NEXTSINGLE

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Search;
+using Lucene.Net.Search;
 using System;
 
 namespace Lucene.Net.Index.Sorter
@@ -24,11 +24,11 @@ namespace Lucene.Net.Index.Sorter
     /// A <see cref="ICollector"/> that early terminates collection of documents on a
     /// per-segment basis, if the segment was sorted according to the given
     /// <see cref="Sort"/>.
-    /// 
+    ///
     /// <para>
     /// <b>NOTE:</b> the <see cref="ICollector"/> detects sorted segments according to
     /// <see cref="SortingMergePolicy"/>, so it's best used in conjunction with it. Also,
-    /// it collects up to a specified <see cref="m_numDocsToCollect"/> from each segment, 
+    /// it collects up to a specified <see cref="m_numDocsToCollect"/> from each segment,
     /// and therefore is mostly suitable for use in conjunction with collectors such as
     /// <see cref="Search.TopDocsCollector{T}"/>, and not e.g. <see cref="TotalHitCountCollector"/>.
     /// </para>
@@ -52,7 +52,7 @@ namespace Lucene.Net.Index.Sorter
     /// the old and the new <see cref="Sort"/>s have the same identifier, this
     /// <see cref="ICollector"/> will incorrectly detect sorted segments.</li>
     /// </ul>
-    /// 
+    ///
     /// @lucene.experimental
     /// </para>
     /// </summary>

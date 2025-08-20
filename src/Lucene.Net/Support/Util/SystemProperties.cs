@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Configuration;
+using Lucene.Net.Configuration;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Security;
@@ -48,12 +48,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Retrieves the value of a property from the current process, 
-        /// with a default value if it doens't exist or the caller doesn't have 
+        /// Retrieves the value of a property from the current process,
+        /// with a default value if it doens't exist or the caller doesn't have
         /// permission to read the value.
         /// </summary>
         /// <param name="key">The name of the property.</param>
-        /// <param name="defaultValue">The value to use if the property does not exist 
+        /// <param name="defaultValue">The value to use if the property does not exist
         /// or the caller doesn't have permission to read the value.</param>
         /// <returns>The property value.</returns>
         public static string GetProperty(string key, string defaultValue)
@@ -73,8 +73,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Retrieves the value of a property from the current process as <see cref="bool"/>, 
-        /// with a default value if it doens't exist, the caller doesn't have permission to read the value, 
+        /// Retrieves the value of a property from the current process as <see cref="bool"/>,
+        /// with a default value if it doens't exist, the caller doesn't have permission to read the value,
         /// or the value cannot be cast to a <see cref="bool"/>.
         /// </summary>
         /// <param name="key">The name of the property.</param>
@@ -98,8 +98,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Retrieves the value of a property from the current process as <see cref="int"/>, 
-        /// with a default value if it doens't exist, the caller doesn't have permission to read the value, 
+        /// Retrieves the value of a property from the current process as <see cref="int"/>,
+        /// with a default value if it doens't exist, the caller doesn't have permission to read the value,
         /// or the value cannot be cast to a <see cref="int"/>.
         /// </summary>
         /// <param name="key">The name of the property.</param>

@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+// Lucene version compatibility level 4.8.1
 using System;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
@@ -21,7 +21,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
      */
 
     /// <summary>
-    /// Abstract class for storing Label->Ordinal mappings in a taxonomy. 
+    /// Abstract class for storing Label->Ordinal mappings in a taxonomy.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
@@ -33,7 +33,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         /// <summary>
         /// Returned by <see cref="GetOrdinal"/> when the label isn't
-        /// recognized. 
+        /// recognized.
         /// </summary>
         public const int INVALID_ORDINAL = -2;
 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         public abstract void AddLabel(FacetLabel label, int ordinal);
 
         /// <summary>
-        /// Returns the ordinal assigned to the given label, 
+        /// Returns the ordinal assigned to the given label,
         /// or <see cref="INVALID_ORDINAL"/> if the label cannot be found in this table.
         /// </summary>
         public abstract int GetOrdinal(FacetLabel label);

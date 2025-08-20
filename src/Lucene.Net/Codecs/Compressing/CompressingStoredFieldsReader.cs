@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Codecs.Lucene40;
+using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
@@ -360,7 +360,7 @@ namespace Lucene.Net.Codecs.Compressing
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = (int)(infoAndBits & CompressingStoredFieldsWriter.TYPE_MASK);
-                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= CompressingStoredFieldsWriter.NUMERIC_DOUBLE,"bits={0:x}", bits);
+                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= CompressingStoredFieldsWriter.NUMERIC_DOUBLE, "bits={0:x}", bits);
 
                 switch (visitor.NeedsField(fieldInfo))
                 {
@@ -567,7 +567,7 @@ namespace Lucene.Net.Codecs.Compressing
                 if (outerInstance.version >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS && chunkSize >= 2 * outerInstance.chunkSize)
                 {
                     bytes.Offset = bytes.Length = 0;
-                    for (int decompressed = 0; decompressed < chunkSize; )
+                    for (int decompressed = 0; decompressed < chunkSize;)
                     {
                         int toDecompress = Math.Min(chunkSize - decompressed, outerInstance.chunkSize);
                         outerInstance.decompressor.Decompress(fieldsStream, toDecompress, 0, toDecompress, spare);
