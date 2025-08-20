@@ -25,6 +25,6 @@ github:
     # Enable projects for project management boards
     projects: false
 
-    # Disallow forced pushes
+  # Disallow forced pushes
   protected_branches:
-    master
+    master: {}
