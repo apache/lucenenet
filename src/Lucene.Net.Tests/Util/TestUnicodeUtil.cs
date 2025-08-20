@@ -353,7 +353,7 @@ namespace Lucene.Net.Util
         public void TestTryUTF8toUTF16()
         {
             string unicode = TestUtil.RandomRealisticUnicodeString(Random);
-            var utf8 = new BytesRef(IOUtils.CHARSET_UTF_8.GetBytes(unicode));
+            var utf8 = new BytesRef(IOUtils.ENCODING_UTF_8_NO_BOM.GetBytes(unicode));
 
             bool success = UnicodeUtil.TryUTF8toUTF16(utf8, out var chars);
 
