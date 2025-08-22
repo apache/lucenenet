@@ -96,7 +96,8 @@ namespace Lucene.Net.Queries
         /// </summary>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            int[] index = new int[1]; // use array as reference to modifiable int;
+            // LUCENENET specific - use stackalloc and Span instead of new int[1]
+            Span<int> index = stackalloc int[1]; // use array as reference to modifiable int;
             index[0] = 0; // an object attribute would not be thread safe.
             if (logic != -1)
             {
@@ -132,7 +133,7 @@ namespace Lucene.Net.Queries
             }
         }
 
-        private FixedBitSet InitialResult(AtomicReaderContext context, int logic, int[] index)
+        private FixedBitSet InitialResult(AtomicReaderContext context, int logic, Span<int> index)
         {
             AtomicReader reader = context.AtomicReader;
             FixedBitSet result = new FixedBitSet(reader.MaxDoc);
@@ -157,7 +158,7 @@ namespace Lucene.Net.Queries
         /// <param name="logic"> Logical operation </param>
         /// <param name="index"></param>
         /// <returns> DocIdSet </returns>
-        private DocIdSet GetDocIdSet(AtomicReaderContext context, int logic, int[] index)
+        private DocIdSet GetDocIdSet(AtomicReaderContext context, int logic, Span<int> index)
         {
             FixedBitSet result = InitialResult(context, logic, index);
             for (; index[0] < chain.Length; index[0]++)
@@ -175,7 +176,7 @@ namespace Lucene.Net.Queries
         /// <param name="logic"> Logical operation </param>
         /// <param name="index"></param>
         /// <returns> DocIdSet </returns>
-        private DocIdSet GetDocIdSet(AtomicReaderContext context, int[] logic, int[] index)
+        private DocIdSet GetDocIdSet(AtomicReaderContext context, int[] logic, Span<int> index)
         {
             if (logic.Length != chain.Length)
             {
