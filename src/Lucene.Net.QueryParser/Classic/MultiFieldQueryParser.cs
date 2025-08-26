@@ -120,8 +120,10 @@ namespace Lucene.Net.QueryParsers.Classic
                         if (m_boosts != null)
                         {
                             //Get the boost from the map and apply them
-                            float boost = m_boosts[m_fields[i]];
-                            q.Boost = boost;
+                            if (m_boosts.TryGetValue(m_fields[i], out float boost))
+                            {
+                                q.Boost = boost;
+                            }
                         }
                         ApplySlop(q, slop);
                         clauses.Add(new BooleanClause(q, Occur.SHOULD));
@@ -163,8 +165,10 @@ namespace Lucene.Net.QueryParsers.Classic
                         if (m_boosts != null)
                         {
                             //Get the boost from the map and apply them
-                            float boost = m_boosts[m_fields[i]];
-                            q.Boost = boost;
+                            if (m_boosts.TryGetValue(m_fields[i], out float boost))
+                            {
+                                q.Boost = boost;
+                            }
                         }
                         clauses.Add(new BooleanClause(q, Occur.SHOULD));
                     }
