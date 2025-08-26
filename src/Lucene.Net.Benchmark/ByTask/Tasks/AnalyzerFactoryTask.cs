@@ -487,7 +487,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 if (instance is IResourceLoaderAware resourceLoaderAware)
                 {
-                    DirectoryInfo baseDir = new DirectoryInfo(RunData.Config.Get("work.dir", "work"));
+                    string baseDir = RunData.Config.Get("work.dir", "work"); // LUCENENET specific: changed to use string directory name instead of allocating a DirectoryInfo (#832)
                     resourceLoaderAware.Inform(new FilesystemResourceLoader(baseDir));
                 }
                 if (typeof(CharFilterFactory).IsAssignableFrom(clazz))
