@@ -6,6 +6,8 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
+#nullable enable
+
 namespace Lucene.Net.Analysis.Util
 {
     /*
@@ -52,7 +54,7 @@ namespace Lucene.Net.Analysis.Util
         ///          the Lucene version for cross version compatibility </param>
         /// <param name="stopwords">
         ///          the analyzer's stopword set </param>
-        protected StopwordAnalyzerBase(LuceneVersion version, CharArraySet stopwords)
+        protected StopwordAnalyzerBase(LuceneVersion version, CharArraySet? stopwords)
         {
             m_matchVersion = version;
             // analyzers should use char array set for stopwords!
@@ -88,7 +90,7 @@ namespace Lucene.Net.Analysis.Util
         ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
         protected static CharArraySet LoadStopwordSet(bool ignoreCase, Type aClass, string resource, string comment)
         {
-            TextReader reader = null;
+            TextReader? reader = null;
             try
             {
                 var resourceStream = aClass.FindAndGetManifestResourceStream(resource);
@@ -121,7 +123,7 @@ namespace Lucene.Net.Analysis.Util
         /// </remarks>
         protected static CharArraySet LoadStopwordSet(string stopwordsFileName, LuceneVersion matchVersion)
         {
-            TextReader reader = null;
+            TextReader? reader = null;
             try
             {
                 reader = IOUtils.GetDecodingReader(stopwordsFileName, Encoding.UTF8);
@@ -147,7 +149,7 @@ namespace Lucene.Net.Analysis.Util
         ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
         protected static CharArraySet LoadStopwordSet(FileInfo stopwords, LuceneVersion matchVersion)
         {
-            TextReader reader = null;
+            TextReader? reader = null;
             try
             {
                 reader = IOUtils.GetDecodingReader(stopwords, Encoding.UTF8);
