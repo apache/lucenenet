@@ -319,7 +319,7 @@ namespace Lucene.Net.Queries
                     }
                     first = false;
                     builder.Append(current.field).Append(':');
-                    builder.Append(spare.Utf8ToString());
+                    builder.Append(spare.Utf8ToStringWithFallback()); // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
                 }
             }
 

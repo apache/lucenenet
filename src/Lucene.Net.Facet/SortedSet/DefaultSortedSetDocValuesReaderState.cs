@@ -79,7 +79,8 @@ namespace Lucene.Net.Facet.SortedSet
                 string[] components = FacetsConfig.StringToPath(spare.Utf8ToString());
                 if (components.Length != 2)
                 {
-                    throw new ArgumentException("this class can only handle 2 level hierarchy (dim/value); got: " + Arrays.ToString(components) + " " + spare.Utf8ToString());
+                    // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+                    throw new ArgumentException("this class can only handle 2 level hierarchy (dim/value); got: " + Arrays.ToString(components) + " " + spare.Utf8ToStringWithFallback());
                 }
                 if (!components[0].Equals(lastDim, StringComparison.Ordinal))
                 {

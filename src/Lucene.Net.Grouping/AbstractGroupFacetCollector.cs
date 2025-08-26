@@ -278,7 +278,7 @@ namespace Lucene.Net.Search.Grouping
             public override string ToString()
             {
                 return "FacetEntry{" +
-                    "value=" + value.Utf8ToString() +
+                    "value=" + value.Utf8ToStringWithFallback() + // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
                     ", count=" + count +
                     '}';
             }

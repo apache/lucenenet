@@ -45,7 +45,8 @@ namespace Lucene.Net.Misc
 
         public override string ToString()
         {
-            return ("TermStats: Term=" + TermText.Utf8ToString() + " DocFreq=" + DocFreq + " TotalTermFreq=" + TotalTermFreq);
+            // LUCENENET specific - use Utf8ToStringWithFallback() to handle invalid UTF-8 bytes
+            return "TermStats: Term=" + TermText.Utf8ToStringWithFallback() + " DocFreq=" + DocFreq + " TotalTermFreq=" + TotalTermFreq;
         }
     }
 }

@@ -411,10 +411,10 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(_input, _scratch);
                     try
                     {
-                        // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
+                        // LUCENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
                         return int.Parse(_scratch.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture) - 1;
                     }
-                    catch (Exception pe) when (pe.IsParseException())
+                    catch (Exception pe) when (pe.IsParseException() || pe.IsNumberFormatException())
                     {
                         var e = new CorruptIndexException($"failed to parse ord (resource={_input})", pe);
                         throw e;
