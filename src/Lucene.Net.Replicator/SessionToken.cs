@@ -2,6 +2,8 @@ using J2N.IO;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Replicator
 {
@@ -110,6 +112,33 @@ namespace Lucene.Net.Replicator
                     writer.WriteInt64(file.Length);
                 }
             }
+        }
+
+        /// <summary>
+        /// Asynchronously serialize the token data for communication between server and client.
+        /// </summary>
+        /// <param name="output">The <see cref="Stream"/> to write the token data to.</param>
+        /// <param name="cancellationToken">A cancellation token to observe while waiting for the flush to complete.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public async Task SerializeAsync(Stream output, CancellationToken cancellationToken = default)
+        {
+            using var writer = new DataOutputStream(output);
+            writer.WriteUTF(Id);
+            writer.WriteUTF(Version);
+            writer.WriteInt32(SourceFiles.Count);
+
+            foreach (var pair in SourceFiles)
+            {
+                writer.WriteUTF(pair.Key);
+                writer.WriteInt32(pair.Value.Count);
+                foreach (var file in pair.Value)
+                {
+                    writer.WriteUTF(file.FileName);
+                    writer.WriteInt64(file.Length);
+                }
+            }
+
+            await output.FlushAsync(cancellationToken);
         }
 
         public override string ToString()
