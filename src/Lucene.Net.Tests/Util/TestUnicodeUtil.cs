@@ -3,6 +3,7 @@ using J2N.Text;
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
+using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -339,7 +340,7 @@ namespace Lucene.Net.Util
 
             if (shouldThrow)
             {
-                Assert.Throws<FormatException>(() => UnicodeUtil.UTF8toUTF16(invalidUtf8, scratch));
+                Assert.Throws<DecoderFallbackException>(() => UnicodeUtil.UTF8toUTF16(invalidUtf8, scratch));
             }
             else
             {
