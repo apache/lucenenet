@@ -81,10 +81,7 @@ namespace Lucene.Net.Replicator.AspNetCore
         /// </remarks>
         public async Task FlushAsync(CancellationToken cancellationToken = default)
         {
-            if (response.Body.CanWrite)
-            {
-                await response.Body.FlushAsync(cancellationToken);
-            }
+            await response.Body.FlushAsync(cancellationToken);
         }
     }
 }

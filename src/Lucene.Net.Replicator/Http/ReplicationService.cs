@@ -121,85 +121,13 @@ namespace Lucene.Net.Replicator.Http
             return param;
         }
 
-        // LUCENENET specific - copy method not used
-
-        /// <summary>
-        /// Executes the replication task.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">required parameters are missing</exception>
-        public virtual void Perform(IReplicationRequest request, IReplicationResponse response)
-        {
-            string[] pathElements = GetPathElements(request);
-            if (pathElements.Length != 2)
-            {
-                throw ServletException.Create("invalid path, must contain shard ID and action, e.g. */s1/update");
-            }
-
-            if (!Enum.TryParse(pathElements[ACTION_IDX], true, out ReplicationAction action))
-            {
-                throw ServletException.Create("Unsupported action provided: " + pathElements[ACTION_IDX]);
-            }
-
-            if (!replicators.TryGetValue(pathElements[SHARD_IDX], out IReplicator replicator))
-            {
-                throw ServletException.Create("unrecognized shard ID " + pathElements[SHARD_IDX]);
-            }
-
-            // SOLR-8933 Don't close this stream.
-            try
-            {
-                switch (action)
-                {
-                    case ReplicationAction.OBTAIN:
-                        string sessionId = ExtractRequestParam(request, REPLICATE_SESSION_ID_PARAM);
-                        string fileName = ExtractRequestParam(request, REPLICATE_FILENAME_PARAM);
-                        string source = ExtractRequestParam(request, REPLICATE_SOURCE_PARAM);
-                        using (Stream stream = replicator.ObtainFile(sessionId, source, fileName))
-                            stream.CopyTo(response.Body);
-                        break;
-
-                    case ReplicationAction.RELEASE:
-                        replicator.Release(ExtractRequestParam(request, REPLICATE_SESSION_ID_PARAM));
-                        break;
-
-                    case ReplicationAction.UPDATE:
-                        string currentVersion = request.QueryParam(REPLICATE_VERSION_PARAM);
-                        SessionToken token = replicator.CheckForUpdate(currentVersion);
-                        if (token is null)
-                        {
-                            response.Body.Write(new byte[] { 0 }, 0, 1); // marker for null token
-                        }
-                        else
-                        {
-                            response.Body.Write(new byte[] { 1 }, 0, 1);
-                            token.Serialize(new DataOutputStream(response.Body));
-                        }
-                        break;
-
-                    // LUCENENET specific:
-                    default:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false, "Invalid ReplicationAction specified");
-                        break;
-                }
-            }
-            catch (Exception)
-            {
-                response.StatusCode = (int)HttpStatusCode.InternalServerError; // propagate the failure
-            }
-            finally
-            {
-                response.Flush();
-            }
-        }
-
-        /// <summary>
-        /// Executes the replication task asynchronously.
-        /// </summary>
-        /// <param name="request">The replication request containing action and parameters.</param>
-        /// <param name="response">The replication response used to send data back to the client.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while performing the replication.</param>
-        /// <exception cref="InvalidOperationException">Thrown when required parameters are missing or invalid.</exception>
-        public virtual async Task PerformAsync(IReplicationRequest request, IReplicationResponse response, CancellationToken cancellationToken = default)
+        // method to avoid code duplication in sync and async Perform methods
+        private async Task ExecuteReplicationAsync(
+            IReplicationRequest request,
+            IReplicationResponse response,
+            Func<Stream, Task> copyStreamFunc,
+            Func<SessionToken, Task> writeTokenFunc,
+            Func<Task> flushFunc)
         {
             string[] pathElements = GetPathElements(request);
             if (pathElements.Length != 2)
@@ -216,30 +144,29 @@ namespace Lucene.Net.Replicator.Http
                 switch (action)
                 {
                     case ReplicationAction.OBTAIN:
-                        string sessionId = ExtractRequestParam(request, REPLICATE_SESSION_ID_PARAM);
-                        string fileName = ExtractRequestParam(request, REPLICATE_FILENAME_PARAM);
-                        string source = ExtractRequestParam(request, REPLICATE_SOURCE_PARAM);
-                        using (Stream stream = replicator.ObtainFile(sessionId, source, fileName))
-                            await stream.CopyToAsync(response.Body, 81920, cancellationToken);
-                        break;
+                        {
+                            string sessionId = ExtractRequestParam(request, REPLICATE_SESSION_ID_PARAM);
+                            string fileName = ExtractRequestParam(request, REPLICATE_FILENAME_PARAM);
+                            string source = ExtractRequestParam(request, REPLICATE_SOURCE_PARAM);
+
+                            using (Stream stream = replicator.ObtainFile(sessionId, source, fileName))
+                                await copyStreamFunc(stream);
+                            break;
+                        }
 
                     case ReplicationAction.RELEASE:
-                        replicator.Release(ExtractRequestParam(request, REPLICATE_SESSION_ID_PARAM));
-                        break;
+                        {
+                            replicator.Release(ExtractRequestParam(request, REPLICATE_SESSION_ID_PARAM));
+                            break;
+                        }
 
                     case ReplicationAction.UPDATE:
-                        string currentVersion = request.QueryParam(REPLICATE_VERSION_PARAM);
-                        SessionToken token = replicator.CheckForUpdate(currentVersion);
-                        if (token is null)
                         {
-                            await response.Body.WriteAsync(new byte[] { 0 }, 0, 1, cancellationToken);
+                            string currentVersion = request.QueryParam(REPLICATE_VERSION_PARAM);
+                            SessionToken token = replicator.CheckForUpdate(currentVersion);
+                            await writeTokenFunc(token);
+                            break;
                         }
-                        else
-                        {
-                            await response.Body.WriteAsync(new byte[] { 1 }, 0, 1, cancellationToken);
-                            await token.SerializeAsync(response.Body, cancellationToken);
-                        }
-                        break;
 
                     default:
                         if (Debugging.AssertsEnabled) Debugging.Assert(false, "Invalid ReplicationAction specified");
@@ -252,9 +179,70 @@ namespace Lucene.Net.Replicator.Http
             }
             finally
             {
-                await response.FlushAsync(cancellationToken);
+                await flushFunc();
             }
         }
 
+        // LUCENENET specific - copy method not used
+
+        /// <summary>
+        /// Executes the replication task.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">required parameters are missing</exception>
+        public virtual void Perform(IReplicationRequest request, IReplicationResponse response)
+        {
+            ExecuteReplicationAsync(
+                request,
+                response,
+                stream => { stream.CopyTo(response.Body); return Task.CompletedTask; },
+                token =>
+                {
+                    if (token == null)
+                    {
+                        response.Body.Write(new byte[] { 0 }, 0, 1);
+                    }
+                    else
+                    {
+                        response.Body.Write(new byte[] { 1 }, 0, 1);
+                        token.Serialize(new DataOutputStream(response.Body));
+                    }
+                    return Task.CompletedTask;
+                },
+                () => { response.Flush(); return Task.CompletedTask; }
+            ).GetAwaiter().GetResult(); // // keep sync behavior
+        }
+
+
+        /// <summary>
+        /// Executes the replication task asynchronously.
+        /// </summary>
+        /// <param name="request">The replication request containing action and parameters.</param>
+        /// <param name="response">The replication response used to send data back to the client.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while performing the replication.</param>
+        /// <exception cref="InvalidOperationException">Thrown when required parameters are missing or invalid.</exception>
+        public virtual Task PerformAsync(
+            IReplicationRequest request,
+            IReplicationResponse response,
+            CancellationToken cancellationToken = default)
+        {
+            return ExecuteReplicationAsync(
+                request,
+                response,
+                stream => stream.CopyToAsync(response.Body, 81920, cancellationToken),
+                async token =>
+                {
+                    if (token == null)
+                    {
+                        await response.Body.WriteAsync(new byte[] { 0 }, 0, 1, cancellationToken);
+                    }
+                    else
+                    {
+                        await response.Body.WriteAsync(new byte[] { 1 }, 0, 1, cancellationToken);
+                        await token.SerializeAsync(response.Body, cancellationToken);
+                    }
+                },
+                () => response.FlushAsync(cancellationToken)
+            );
+        }
     }
 }
