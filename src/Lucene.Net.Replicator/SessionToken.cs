@@ -117,30 +117,30 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// Asynchronously serializes the token's properties, including ID, version, and source files, 
+        /// Asynchronously serializes the token's properties, including ID, version, and source files,
         /// to the provided <see cref="Stream"/> for transmission or storage.
         /// </summary>
         /// <param name="output">The <see cref="Stream"/> to write the token data to.</param>
         /// <param name="cancellationToken">A cancellation token to observe while writing and flushing the stream.</param>
         /// <returns>A task representing the asynchronous serialization operation.</returns>
-        public async Task SerializeAsync(Stream output, CancellationToken cancellationToken = default)
+        internal async Task SerializeAsync(Stream output, CancellationToken cancellationToken = default)
         {
             if (output is null)
                 throw new ArgumentNullException(nameof(output));
 
             await output.WriteUTFAsync(Id, cancellationToken).ConfigureAwait(false);
             await output.WriteUTFAsync(Version, cancellationToken).ConfigureAwait(false);
-            await output.WriteInt32Async(SourceFiles.Count, cancellationToken).ConfigureAwait(false);
+            await output.WriteInt32BigEndianAsync(SourceFiles.Count, cancellationToken).ConfigureAwait(false);
 
             foreach (var pair in SourceFiles)
             {
                 await output.WriteUTFAsync(pair.Key, cancellationToken).ConfigureAwait(false);
-                await output.WriteInt32Async(pair.Value.Count, cancellationToken).ConfigureAwait(false);
+                await output.WriteInt32BigEndianAsync(pair.Value.Count, cancellationToken).ConfigureAwait(false);
 
                 foreach (var file in pair.Value)
                 {
                     await output.WriteUTFAsync(file.FileName, cancellationToken).ConfigureAwait(false);
-                    await output.WriteInt64Async(file.Length, cancellationToken).ConfigureAwait(false);
+                    await output.WriteInt64BigEndianAsync(file.Length, cancellationToken).ConfigureAwait(false);
                 }
             }
 

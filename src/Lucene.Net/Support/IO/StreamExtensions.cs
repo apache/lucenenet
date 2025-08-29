@@ -1,6 +1,7 @@
 using J2N.IO;
 using Lucene.Net.Support.Threading;
 using System;
+using System.Buffers;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -215,7 +216,7 @@ namespace Lucene.Net.Support.IO
         }
 
         //async versions of the above methods
-        public static async Task WriteInt32Async(this Stream output, int value, CancellationToken cancellationToken = default)
+        public static async Task WriteInt32BigEndianAsync(this Stream output, int value, CancellationToken cancellationToken = default)
         {
             if (output is null)
                 throw new ArgumentNullException(nameof(output));
@@ -229,7 +230,7 @@ namespace Lucene.Net.Support.IO
             await output.WriteAsync(buff, 0, buff.Length, cancellationToken).ConfigureAwait(false);
         }
 
-        public static async Task WriteInt64Async(this Stream output, long value, CancellationToken cancellationToken = default)
+        public static async Task WriteInt64BigEndianAsync(this Stream output, long value, CancellationToken cancellationToken = default)
         {
             if (output is null)
                 throw new ArgumentNullException(nameof(output));
@@ -258,15 +259,21 @@ namespace Lucene.Net.Support.IO
             if (utfCount > ushort.MaxValue)
                 throw new EncoderFallbackException("Encoded string too long.");
 
-            byte[] buffer = new byte[(int)utfCount + 2];
-            int offset = 0;
-            offset = WriteInt16ToBuffer((int)utfCount, buffer, offset);
-            offset = WriteUTFBytesToBuffer(value, (int)utfCount, buffer, offset);
+            byte[] buffer = ArrayPool<byte>.Shared.Rent((int)utfCount + 2);
+            try
+            {
+                int offset = 0;
+                offset = WriteInt16BigEndianToBuffer((int)utfCount, buffer, offset);
+                offset = WriteUTFBytesToBuffer(value, (int)utfCount, buffer, offset);
 
-            await output.WriteAsync(buffer, 0, offset, cancellationToken).ConfigureAwait(false);
+                await output.WriteAsync(buffer, 0, offset, cancellationToken).ConfigureAwait(false);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
         }
-
-        public static async Task<int> ReadInt32Async(this Stream input, CancellationToken cancellationToken = default)
+        public static async Task<int> ReadInt32BigEndianAsync(this Stream input, CancellationToken cancellationToken = default)
         {
             if (input is null)
                 throw new ArgumentNullException(nameof(input));
@@ -278,7 +285,7 @@ namespace Lucene.Net.Support.IO
             return (buff[0] << 24) | (buff[1] << 16) | (buff[2] << 8) | buff[3];
         }
 
-        public static async Task<long> ReadInt64Async(this Stream input, CancellationToken cancellationToken = default)
+        public static async Task<long> ReadInt64BigEndianAsync(this Stream input, CancellationToken cancellationToken = default)
         {
             if (input is null)
                 throw new ArgumentNullException(nameof(input));
@@ -302,18 +309,35 @@ namespace Lucene.Net.Support.IO
             if (input is null)
                 throw new ArgumentNullException(nameof(input));
 
-            byte[] lenBuff = new byte[2];
-            int readLen = await input.ReadAsync(lenBuff, 0, lenBuff.Length, cancellationToken).ConfigureAwait(false);
-            if (readLen < lenBuff.Length) throw new EndOfStreamException();
+            byte[] lenBuff = ArrayPool<byte>.Shared.Rent(2);
+            try
+            {
+                int readLen = await input.ReadAsync(lenBuff, 0, 2, cancellationToken).ConfigureAwait(false);
+                if (readLen < 2)
+                    throw new EndOfStreamException("Unexpected end of stream while reading UTF length.");
 
-            int length = (lenBuff[0] << 8) | lenBuff[1];
-            byte[] buffer = new byte[length];
-            int read = await input.ReadAsync(buffer, 0, length, cancellationToken).ConfigureAwait(false);
-            if (read < length)
-                throw new EndOfStreamException("Unexpected end of stream while reading UTF string.");
+                int length = (lenBuff[0] << 8) | lenBuff[1];
 
-            return Encoding.UTF8.GetString(buffer);
+                byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
+                try
+                {
+                    int read = await input.ReadAsync(buffer, 0, length, cancellationToken).ConfigureAwait(false);
+                    if (read < length)
+                        throw new EndOfStreamException("Unexpected end of stream while reading UTF string.");
+
+                    return Encoding.UTF8.GetString(buffer, 0, length);
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(lenBuff);
+            }
         }
+
 
         // ========================
         // Helper methods for UTF
@@ -333,7 +357,7 @@ namespace Lucene.Net.Support.IO
             return utfCount;
         }
 
-        private static int WriteInt16ToBuffer(int value, byte[] buffer, int offset)
+        private static int WriteInt16BigEndianToBuffer(int value, byte[] buffer, int offset)
         {
             buffer[offset++] = (byte)(value >> 8);
             buffer[offset++] = (byte)value;
