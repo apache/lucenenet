@@ -29,20 +29,18 @@ namespace Lucene.Net.Replicator.AspNetCore
         /// <summary>
         /// Extension method that mirrors the signature of <see cref="IReplicationService.Perform"/> using AspNetCore as implementation.
         /// </summary>
-        // public static void Perform(this IReplicationService self, HttpRequest request, HttpResponse response)
-        // {
-        //     self.Perform(new AspNetCoreReplicationRequest(request), new AspNetCoreReplicationResponse(response));
-        // }
         public static void Perform(this IReplicationService self, HttpRequest request, HttpResponse response)
         {
             self.Perform(new AspNetCoreReplicationRequest(request), new AspNetCoreReplicationResponse(response));
         }
-
+        /// <summary>
+        /// Extension method that mirrors the signature of <see cref="IReplicationService.PerformAsync"/> using AspNetCore as implementation.
+        /// </summary>
         public static async Task PerformAsync(
-       this IReplicationService self,
-       HttpRequest request,
-       HttpResponse response,
-       CancellationToken cancellationToken = default)
+            this IReplicationService self,
+            HttpRequest request,
+            HttpResponse response,
+            CancellationToken cancellationToken = default)
         {
             await self.PerformAsync(
                 new AspNetCoreReplicationRequest(request),
