@@ -52,14 +52,16 @@ namespace Lucene.Net.Replicator.Http
             {
                 // LUCENENET: This is to allow synchronous IO to happen for these requests.
                 // LUCENENET TODO: Allow async operations from Replicator.
-                var syncIoFeature = context.Features.Get<IHttpBodyControlFeature>();
-                if (syncIoFeature != null)
-                {
-                    syncIoFeature.AllowSynchronousIO = true;
-                }
+                // var syncIoFeature = context.Features.Get<IHttpBodyControlFeature>();
+                // if (syncIoFeature != null)
+                // {
+                //     syncIoFeature.AllowSynchronousIO = false;
+                // }
 
-                await Task.Yield();
-                service.Perform(context.Request, context.Response);
+                // await Task.Yield();
+                // service.Perform(context.Request, context.Response);
+                await service.PerformAsync(context.Request, context.Response, context.RequestAborted);
+
             });
         }
     }
@@ -84,14 +86,15 @@ namespace Lucene.Net.Replicator.Http
         {
             // LUCENENET: This is to allow synchronous IO to happen for these requests.
             // LUCENENET TODO: Allow async operations from Replicator.
-            var syncIoFeature = context.Features.Get<IHttpBodyControlFeature>();
-            if (syncIoFeature != null)
-            {
-                syncIoFeature.AllowSynchronousIO = true;
-            }
+            // var syncIoFeature = context.Features.Get<IHttpBodyControlFeature>();
+            // if (syncIoFeature != null)
+            // {
+            //     syncIoFeature.AllowSynchronousIO = false;
+            // }
 
-            await Task.Yield();
-            service.Perform(context.Request, context.Response);
+            // await Task.Yield();
+            // service.Perform(context.Request, context.Response);
+             await service.PerformAsync(context.Request, context.Response, context.RequestAborted);
 
             // This is a terminating endpoint. Do not call the next delegate/middleware in the pipeline.
         }
