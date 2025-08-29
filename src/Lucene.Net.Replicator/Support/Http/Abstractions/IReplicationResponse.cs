@@ -1,4 +1,6 @@
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Replicator.Http.Abstractions
 {
@@ -42,5 +44,12 @@ namespace Lucene.Net.Replicator.Http.Abstractions
         /// Flushes the reponse to the underlying response stream.
         /// </summary>
         void Flush();
+
+        /// <summary>
+        /// Flushes the response to the underlying response stream asynchronously.
+        /// </summary>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task FlushAsync(CancellationToken cancellationToken = default);
     }
 }
