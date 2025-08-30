@@ -2,13 +2,19 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using Microsoft.AspNetCore.TestHost;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Directory = Lucene.Net.Store.Directory;
+
+#if FEATURE_ASPNETCORE_TESTHOST
+using Microsoft.AspNetCore.TestHost;
+#else
+using Lucene.Net.Replicator.Net;
+#endif
+
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -29,9 +35,11 @@ namespace Lucene.Net.Replicator.Http
      * limitations under the License.
      */
 
+    // Technically, the ConfigOption is only supported by ASP.NET Core
+    // so we just ignore the other option when running on HttpListener.
     [TestFixture(IOOption.Synchronous, ConfigOption.StartupClass)]
     [TestFixture(IOOption.Asynchronous, ConfigOption.StartupClass)]
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
+#if FEATURE_ASPNETCORE_TESTHOST
     [TestFixture(IOOption.Synchronous, ConfigOption.Middleware)]
     [TestFixture(IOOption.Asynchronous, ConfigOption.Middleware)]
 #endif

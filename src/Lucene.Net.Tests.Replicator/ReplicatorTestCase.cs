@@ -1,18 +1,21 @@
 using Lucene.Net.Replicator.Http;
 using Lucene.Net.Replicator.Http.Abstractions;
 using Lucene.Net.Util;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
+#if FEATURE_ASPNETCORE_TESTHOST
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+#else
+using Lucene.Net.Replicator.Net;
 #endif
+
 
 namespace Lucene.Net.Replicator
 {
@@ -34,7 +37,49 @@ namespace Lucene.Net.Replicator
      */
 
     [SuppressCodecs("Lucene3x")]
-    public class ReplicatorTestCase : LuceneTestCase
+    public partial class ReplicatorTestCase : LuceneTestCase
+    {
+        // LUCENENET: Moved NewHttpServer() implementations into partial classes for different server stacks
+
+        /// <summary>
+        /// Returns a <see cref="server"/>'s port.
+        /// </summary>
+        public static int ServerPort(TestServer server)
+        {
+            return server.BaseAddress.Port;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="server"/>'s host.
+        /// </summary>
+        public static string ServerHost(TestServer server)
+        {
+            return server.BaseAddress.Host;
+        }
+
+        /// <summary>
+        /// Stops the given HTTP Server instance.
+        /// </summary>
+        public static void StopHttpServer(TestServer server)
+        {
+            server.Dispose();
+        }
+
+        public class HttpResponseException : Exception
+        {
+            public int Status { get; set; } = 500;
+
+            public object Value { get; set; }
+        }
+
+        public class MockErrorConfig
+        {
+            public bool RespondWithError { get; set; } = false;
+        }
+    }
+
+#if FEATURE_ASPNETCORE_TESTHOST
+    public partial class ReplicatorTestCase
     {
         public static TestServer NewHttpServer(IReplicationService service, MockErrorConfig mockErrorConfig, bool useSynchronousIO, bool useStartupClass)
         {
@@ -62,7 +107,6 @@ namespace Lucene.Net.Replicator
             }
             else
             {
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
                 var builder = new WebHostBuilder()
                     .ConfigureServices(container =>
                     {
@@ -113,41 +157,32 @@ namespace Lucene.Net.Replicator
                     });
                 var server = new TestServer(builder);
                 return server;
-#else
-                throw new PlatformNotSupportedException("Endpoint configuration is not supported prior to .NET 5.0");
-#endif
             }
         }
 
-        /// <summary>
-        /// Returns a <see cref="server"/>'s port.
-        /// </summary>
-        public static int ServerPort(TestServer server)
+        public class EnableSynchronousIOMiddleware
         {
-            return server.BaseAddress.Port;
-        }
+            private readonly RequestDelegate next;
 
-        /// <summary>
-        /// Returns a <see cref="server"/>'s host.
-        /// </summary>
-        public static string ServerHost(TestServer server)
-        {
-            return server.BaseAddress.Host;
-        }
+            public EnableSynchronousIOMiddleware(RequestDelegate next)
+            {
+                this.next = next ?? throw new ArgumentNullException(nameof(next));
+            }
 
-        /// <summary>
-        /// Stops the given HTTP Server instance.
-        /// </summary>
-        public static void StopHttpServer(TestServer server)
-        {
-            server.Dispose();
-        }
+            public async Task InvokeAsync(HttpContext context)
+            {
+                // LUCENENET: This is to allow synchronous IO to happen for these requests.
+                // Note that in a real-world app this would be set in the configuration, not
+                // per HTTP request. However, this setting is not recommended in modern production
+                // applications.
+                var syncIoFeature = context.Features.Get<IHttpBodyControlFeature>();
+                if (syncIoFeature != null)
+                {
+                    syncIoFeature.AllowSynchronousIO = true;
+                }
 
-        public class HttpResponseException : Exception
-        {
-            public int Status { get; set; } = 500;
-
-            public object Value { get; set; }
+                await next(context);
+            }
         }
 
         public class MockErrorMiddleware
@@ -176,35 +211,15 @@ namespace Lucene.Net.Replicator
                 await next(context);
             }
         }
-
-        public class MockErrorConfig
+    }
+#else
+    public partial class ReplicatorTestCase
+    {
+        // LUCENENET: This uses HttpListener from System.Net to test the service where ASP.NET Core is not supported.
+        public static TestServer NewHttpServer(IReplicationService service, MockErrorConfig mockErrorConfig, bool useSynchronousIO, bool useStartupClass)
         {
-            public bool RespondWithError { get; set; } = false;
-        }
-
-        public class EnableSynchronousIOMiddleware
-        {
-            private readonly RequestDelegate next;
-
-            public EnableSynchronousIOMiddleware(RequestDelegate next)
-            {
-                this.next = next ?? throw new ArgumentNullException(nameof(next));
-            }
-
-            public async Task InvokeAsync(HttpContext context)
-            {
-                // LUCENENET: This is to allow synchronous IO to happen for these requests.
-                // Note that in a real-world app this would be set in the configuration, not
-                // per HTTP request. However, this setting is not recommended in modern production
-                // applications.
-                var syncIoFeature = context.Features.Get<IHttpBodyControlFeature>();
-                if (syncIoFeature != null)
-                {
-                    syncIoFeature.AllowSynchronousIO = true;
-                }
-
-                await next(context);
-            }
+            return new TestServer(service, mockErrorConfig, useSynchronousIO);
         }
     }
+#endif
 }

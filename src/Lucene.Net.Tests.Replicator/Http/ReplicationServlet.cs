@@ -1,14 +1,12 @@
+#if FEATURE_ASPNETCORE_TESTHOST
 using Lucene.Net.Replicator.AspNetCore;
 using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Builder;
-using System;
-using System.Threading.Tasks;
-
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-#endif
+using System;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -62,7 +60,6 @@ namespace Lucene.Net.Replicator.Http
     // Running ReplicationService as middleware allows registering other URL patterns so other services
     // (such as controllers or razor pages) can be served from the same application.
 
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG // Only available in .NET 5+
     public class ReplicationServiceMiddleware
     {
         private readonly RequestDelegate next;
@@ -97,5 +94,5 @@ namespace Lucene.Net.Replicator.Http
                 .WithDisplayName("Replication Service");
         }
     }
-#endif
 }
+#endif
