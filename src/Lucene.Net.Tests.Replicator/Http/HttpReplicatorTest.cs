@@ -29,6 +29,12 @@ namespace Lucene.Net.Replicator.Http
      * limitations under the License.
      */
 
+    [TestFixture(IOOption.Synchronous, ConfigOption.StartupClass)]
+    [TestFixture(IOOption.Asynchronous, ConfigOption.StartupClass)]
+#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
+    [TestFixture(IOOption.Synchronous, ConfigOption.Middleware)]
+    [TestFixture(IOOption.Asynchronous, ConfigOption.Middleware)]
+#endif
     public class HttpReplicatorTest : ReplicatorTestCase
     {
         private DirectoryInfo clientWorkDir;
@@ -45,16 +51,31 @@ namespace Lucene.Net.Replicator.Http
 
         private MockErrorConfig mockErrorConfig;
 
+        private readonly bool useSynchronousIO;
+        private readonly bool useStartupClass;
+
+        public enum IOOption
+        {
+            Synchronous,
+            Asynchronous,
+        }
+
+        public enum ConfigOption
+        {
+            StartupClass,
+            Middleware
+        }
+
+        public HttpReplicatorTest(IOOption ioOption, ConfigOption configOption)
+        {
+            this.useSynchronousIO = ioOption == IOOption.Synchronous;
+            this.useStartupClass = configOption == ConfigOption.StartupClass;
+        }
+
         private void StartServer()
         {
             ReplicationService service = new ReplicationService(new Dictionary<string, IReplicator> { { "s1", serverReplicator } });
-
-#if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
-            server = NewHttpServer(service, mockErrorConfig); // Call like this to use ReplicationServerMiddleware on the specific path /replicate/{shard?}/{action?}, but allow other paths to be served
-#else
-            server = NewHttpServer<ReplicationServlet>(service, mockErrorConfig); // Call like this to use ReplicationServlet as a Startup Class
-#endif
-
+            server = NewHttpServer(service, mockErrorConfig, useSynchronousIO, useStartupClass);
             port = ServerPort(server);
             host = ServerHost(server);
         }
@@ -144,7 +165,7 @@ namespace Lucene.Net.Replicator.Http
                 mockErrorConfig.RespondWithError = false;
                 client.UpdateNow(); // now it should work
                 ReopenReader();
-                assertEquals(5, J2N.Numerics.Int32.Parse(reader.IndexCommit.UserData["ID"], 16));
+                assertEquals(5, int.Parse(reader.IndexCommit.UserData["ID"], NumberStyles.HexNumber));
 
                 client.Dispose();
             }

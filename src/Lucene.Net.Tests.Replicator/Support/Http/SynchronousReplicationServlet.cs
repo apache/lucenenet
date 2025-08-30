@@ -1,11 +1,11 @@
 using Lucene.Net.Replicator.AspNetCore;
 using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http.Features;
 using System;
 using System.Threading.Tasks;
 
 #if FEATURE_ASPNETCORE_ENDPOINT_CONFIG
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 #endif
@@ -29,10 +29,14 @@ namespace Lucene.Net.Replicator.Http
      * limitations under the License.
      */
 
-    // ********************** Option 1: Use a Startup Class ********************************************
-    // The startup class must define all middleware (app.Use) before the terminating endpoint (app.Run).
+    // IMPORTANT: These tests are primarily to test the synchronous methods that are a direct port from Java.
+    // However, modern ASP.NET development is primarily done asynchronously, so it is recommended to follow
+    // the patterns in the ReplicationServlet.cs class rather than this one in most cases.
 
-    public class ReplicationServlet
+    // ********************** Option 1: Use a Startup Class ********************************************
+    // The startup class must define all middleware (app.Use) before the terminating endpoint (app.Run)
+
+    public class SynchronousReplicationServlet
     {
         public void Configure(IApplicationBuilder app, IReplicationService service, ReplicatorTestCase.MockErrorConfig mockErrorConfig)
         {
@@ -46,14 +50,26 @@ namespace Lucene.Net.Replicator.Http
 
                 await next();
             });
+            app.Use(async (context, next) =>
+            {
+                // LUCENENET: This is to allow synchronous IO to happen for these requests.
+                var syncIoFeature = context.Features.Get<IHttpBodyControlFeature>();
+                if (syncIoFeature != null)
+                {
+                    syncIoFeature.AllowSynchronousIO = true;
+                }
+
+                await next();
+            });
+
 
             app.Run(async (context) =>
             {
-                // LUCENENET: Although the async/await pattern doesn't exist in Java Lucene, this is the recommended
-                // approach for modern .NET development.
-                await service.PerformAsync(context.Request, context.Response, context.RequestAborted);
+                await Task.Yield();
+                service.Perform(context.Request, context.Response);
 
                 // This is a terminating endpoint. Do not call the next delegate/middleware in the pipeline.
+
             });
         }
     }
@@ -63,12 +79,12 @@ namespace Lucene.Net.Replicator.Http
     // (such as controllers or razor pages) can be served from the same application.
 
 #if FEATURE_ASPNETCORE_ENDPOINT_CONFIG // Only available in .NET 5+
-    public class ReplicationServiceMiddleware
+    public class SynchronousReplicationServiceMiddleware
     {
         private readonly RequestDelegate next;
         private readonly IReplicationService service;
 
-        public ReplicationServiceMiddleware(RequestDelegate next, IReplicationService service)
+        public SynchronousReplicationServiceMiddleware(RequestDelegate next, IReplicationService service)
         {
             this.next = next ?? throw new ArgumentNullException(nameof(next));
             this.service = service ?? throw new ArgumentNullException(nameof(service));
@@ -76,25 +92,12 @@ namespace Lucene.Net.Replicator.Http
 
         public async Task InvokeAsync(HttpContext context)
         {
-            // LUCENENET: Although the async/await pattern doesn't exist in Java Lucene, this is the recommended
-            // approach for modern .NET development.
-            await service.PerformAsync(context.Request, context.Response, context.RequestAborted);
+            // NOTE: SynchronousIO enabled by middleware
+
+            await Task.Yield();
+            service.Perform(context.Request, context.Response);
 
             // This is a terminating endpoint. Do not call the next delegate/middleware in the pipeline.
-        }
-    }
-
-    public static partial class ReplicationServiceRouteBuilderExtensions
-    {
-        public static IEndpointConventionBuilder MapReplicator<TReplicationServiceMiddleware>(this IEndpointRouteBuilder endpoints, string pattern) where TReplicationServiceMiddleware : class
-        {
-            var pipeline = endpoints.CreateApplicationBuilder()
-                .UseMiddleware<TReplicationServiceMiddleware>()
-                .Build();
-
-            return endpoints
-                .Map(pattern, pipeline)
-                .WithDisplayName("Replication Service");
         }
     }
 #endif
