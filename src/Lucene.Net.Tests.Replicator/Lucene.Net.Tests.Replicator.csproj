@@ -52,12 +52,13 @@
     <ProjectReference Include="..\Lucene.Net.Replicator\Lucene.Net.Replicator.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>
-    <ProjectReference Include="..\dotnet\Lucene.Net.Replicator.AspNetCore\Lucene.Net.Replicator.AspNetCore.csproj">
-      <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
-    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
       <SetTargetFramework>$(SetTargetFramework)</SetTargetFramework>
     </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net8.') Or $(TargetFramework.StartsWith('net9.')">
+    <ProjectReference Include="..\dotnet\Lucene.Net.Replicator.AspNetCore\Lucene.Net.Replicator.AspNetCore.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir).build/TestReferences.Common.targets" />
