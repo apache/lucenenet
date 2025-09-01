@@ -32,15 +32,5 @@ namespace Lucene.Net.Replicator.Http.Abstractions
         /// </summary>
         /// <exception cref="InvalidOperationException">required parameters are missing</exception>
         void Perform(IReplicationRequest request, IReplicationResponse response);
-
-        /// <summary>
-        /// Executes the replication task asynchronously.
-        /// </summary>
-        /// <param name="request">The replication request.</param>
-        /// <param name="response">The replication response.</param>
-        /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        Task PerformAsync(IReplicationRequest request, IReplicationResponse response, CancellationToken cancellationToken = default);
-
     }
 }

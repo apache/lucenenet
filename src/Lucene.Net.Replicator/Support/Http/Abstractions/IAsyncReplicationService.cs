@@ -1,6 +1,7 @@
-using System.IO;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace Lucene.Net.Replicator.Http.Abstractions
 {
@@ -22,17 +23,17 @@ namespace Lucene.Net.Replicator.Http.Abstractions
      */
 
     /// <summary>
-    /// Abstraction for remote replication response, allows easy integration into any hosting frameworks.
+    /// Contract for a replication service.
     /// </summary>
-    /// <remarks>
-    /// .NET Specific Abstraction
-    /// </remarks>
-    //Note: LUCENENET specific
-    public interface IReplicationResponse: IBaseReplicationResponse
+    public interface IAsyncReplicationService
     {
         /// <summary>
-        /// Flushes the reponse to the underlying response stream.
+        /// Executes the replication task asynchronously.
         /// </summary>
-        void Flush();
+        /// <param name="request">The replication request.</param>
+        /// <param name="response">The replication response.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task PerformAsync(IReplicationRequest request, IAsyncReplicationResponse response, CancellationToken cancellationToken = default);
     }
 }

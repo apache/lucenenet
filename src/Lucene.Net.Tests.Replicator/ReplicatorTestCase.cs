@@ -81,15 +81,17 @@ namespace Lucene.Net.Replicator
 #if FEATURE_ASPNETCORE_TESTHOST
     public partial class ReplicatorTestCase
     {
-        public static TestServer NewHttpServer(IReplicationService service, MockErrorConfig mockErrorConfig, bool useSynchronousIO, bool useStartupClass)
+        public static TestServer NewHttpServer(ReplicationService  service, MockErrorConfig mockErrorConfig, bool useSynchronousIO, bool useStartupClass)
         {
             if (useStartupClass)
             {
                 var builder = new WebHostBuilder()
                     .ConfigureServices(container =>
                     {
-                        container.AddSingleton(service);
-                        container.AddSingleton(mockErrorConfig);
+                        // Register concrete services
+                    container.AddSingleton<IAsyncReplicationService>(service);
+                    container.AddSingleton<IReplicationService>(service);
+                    container.AddSingleton(mockErrorConfig);
                     });
 
                 if (useSynchronousIO)
@@ -111,7 +113,8 @@ namespace Lucene.Net.Replicator
                     .ConfigureServices(container =>
                     {
                         container.AddRouting();
-                        container.AddSingleton(service);
+                        container.AddSingleton<IAsyncReplicationService>(service);
+                        container.AddSingleton<IReplicationService>(service);
                         container.AddSingleton(mockErrorConfig);
                         if (useSynchronousIO)
                         {
@@ -216,7 +219,7 @@ namespace Lucene.Net.Replicator
     public partial class ReplicatorTestCase
     {
         // LUCENENET: This uses HttpListener from System.Net to test the service where ASP.NET Core is not supported.
-        public static TestServer NewHttpServer(IReplicationService service, MockErrorConfig mockErrorConfig, bool useSynchronousIO, bool useStartupClass)
+        public static TestServer NewHttpServer(ReplicationService service, MockErrorConfig mockErrorConfig, bool useSynchronousIO, bool useStartupClass)
         {
             return new TestServer(service, mockErrorConfig, useSynchronousIO);
         }

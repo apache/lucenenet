@@ -28,11 +28,13 @@ namespace Lucene.Net.Replicator.Http.Abstractions
     /// .NET Specific Abstraction
     /// </remarks>
     //Note: LUCENENET specific
-    public interface IReplicationResponse: IBaseReplicationResponse
+    public interface IAsyncReplicationResponse: IBaseReplicationResponse
     {
         /// <summary>
-        /// Flushes the reponse to the underlying response stream.
+        /// Flushes the response to the underlying response stream asynchronously.
         /// </summary>
-        void Flush();
+        /// <param name="cancellationToken">Optional cancellation token.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task FlushAsync(CancellationToken cancellationToken = default);
     }
 }

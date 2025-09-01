@@ -30,7 +30,7 @@ namespace Lucene.Net.Replicator.AspNetCore
     /// .NET Specific Implementation of the Lucene Replicator using AspNetCore
     /// </remarks>
     //Note: LUCENENET specific
-    public class AspNetCoreReplicationResponse : IReplicationResponse
+    public class AspNetCoreReplicationResponse : IReplicationResponse, IAsyncReplicationResponse
     {
         private readonly HttpResponse response;
 
