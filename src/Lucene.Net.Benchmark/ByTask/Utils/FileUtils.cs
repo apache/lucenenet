@@ -36,7 +36,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         /// <summary>
         /// Delete files and directories, even if non-empty.
         /// </summary>
-        /// <param name="dirName">Directory path to delete.</param>
+        /// <param name="dirName">Directory path to delete. The path is not normalized by this method.</param>
         /// <returns><c>true</c> on success, <c>false</c> if no or part of files have been deleted.</returns>
         /// <exception cref="IOException">If there is a low-level I/O error.</exception>
         /// <remarks>

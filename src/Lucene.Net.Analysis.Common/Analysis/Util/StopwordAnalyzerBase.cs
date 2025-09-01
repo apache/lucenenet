@@ -109,9 +109,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Creates a <see cref="CharArraySet"/> from a file.
         /// </summary>
-        /// <param name="stopwordsFileName">
-        ///          the stopwords file name to load
-        /// </param>
+        /// <param name="stopwordsFileName">The file name to load stopwords from. The path is not normalized by this method.</param>
         /// <param name="matchVersion">
         ///          the Lucene version for cross version compatibility </param>
         /// <returns> a <see cref="CharArraySet"/> containing the distinct stopwords from the given

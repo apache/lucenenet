@@ -492,9 +492,12 @@ namespace Lucene.Net.Util
         /// Decoding readers are useful to load configuration files, stopword lists or synonym files
         /// to detect character set problems. However, its not recommended to use as a common purpose
         /// reader. </summary>
-        /// <param name="fileName"> The file name to open a reader on </param>
+        /// <param name="fileName"> The file name to open a reader on. The path is not normalized by this method. </param>
         /// <param name="charSet"> The expected charset </param>
         /// <returns> A reader to read the given file </returns>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
+        /// </remarks>
         public static TextReader GetDecodingReader(string fileName, Encoding charSet)
         {
             FileStream stream = null;
