@@ -58,6 +58,10 @@ namespace Lucene.Net.Analysis.Util
         /// Files not found in file system and class lookups are delegated to context
         /// classloader.
         /// </summary>
+        /// <param name="baseDirectory">The base directory path. The path is not normalized by this method.</param>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string to avoid allocating a <see cref="DirectoryInfo"/> object.
+        /// </remarks>
         public FilesystemResourceLoader(string? baseDirectory)
             : this(baseDirectory, new ClasspathResourceLoader(typeof(FilesystemResourceLoader)))
         {
@@ -91,6 +95,11 @@ namespace Lucene.Net.Analysis.Util
         /// Files not found in file system and class lookups are delegated
         /// to the given delegate <see cref="IResourceLoader"/>.
         /// </summary>
+        /// <param name="baseDirectory">The base directory path. The path is not normalized by this method.</param>
+        /// <param name="delegate">The delegate resource loader.</param>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string to avoid allocating a <see cref="DirectoryInfo"/> object.
+        /// </remarks>
         public FilesystemResourceLoader(string? baseDirectory, IResourceLoader @delegate)
         {
             // LUCENENET NOTE: If you call DirectoryInfo.Create() it doesn't set the DirectoryInfo.Exists

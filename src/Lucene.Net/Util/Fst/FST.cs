@@ -567,6 +567,7 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// Writes an automaton to a file.
         /// </summary>
+        /// <param name="fileName">The file name. The path is not normalized by this method.</param>
         /// <remarks>
         /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
         /// </remarks>

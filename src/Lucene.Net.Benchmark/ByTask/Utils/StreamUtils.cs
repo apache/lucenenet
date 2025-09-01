@@ -47,6 +47,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         /// based on the file name (e.g., if it ends with .bz2 or .bzip, return a
         /// 'bzip' <see cref="Stream"/>).
         /// </summary>
+        /// <param name="fileName">The file name. The path is not normalized by this method.</param>
         /// <remarks>
         /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
         /// </remarks>
@@ -83,6 +84,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         /// Returns an <see cref="Stream"/> over the requested file, identifying
         /// the appropriate <see cref="Stream"/> instance similar to <see cref="GetInputStream(string)"/>.
         /// </summary>
+        /// <param name="fileName">The file name. The path is not normalized by this method.</param>
         /// <remarks>
         /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
         /// </remarks>

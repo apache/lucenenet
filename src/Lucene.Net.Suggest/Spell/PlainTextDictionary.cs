@@ -42,6 +42,7 @@ namespace Lucene.Net.Search.Spell
         /// NOTE: content is treated as UTF-8
         /// </para>
         /// </summary>
+        /// <param name="fileName">The file name. The path is not normalized by this method.</param>
         /// <remarks>
         /// LUCENENET: This overload takes a string to avoid having to allocate a <see cref="FileInfo"/> object.
         /// </remarks>

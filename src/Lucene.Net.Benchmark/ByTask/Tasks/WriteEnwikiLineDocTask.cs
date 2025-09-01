@@ -44,7 +44,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         }
 
         /// <summary>Compose categories line file out of original line file</summary>
-        // LUCENENET specific: changed to use string fileName instead of allocating a FileInfo (#832)
+        /// <param name="fileName">The file name. The path is not normalized by this method.</param>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string fileName instead of allocating a FileInfo.
+        /// </remarks>
         public static string CategoriesLineFile(string fileName)
         {
             string dir = Path.GetDirectoryName(fileName);

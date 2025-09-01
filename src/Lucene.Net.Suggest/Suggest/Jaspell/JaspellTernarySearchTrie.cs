@@ -233,7 +233,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <para>Uses the culture of the current thread to lowercase words before comparing.</para>
         /// </summary>
         /// <param name="fileName">
-        ///          The file name with the data to load into the Trie. </param>
+        ///          The file name with the data to load into the Trie. The path is not normalized by this method. </param>
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         /// <remarks>
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <para>Uses the supplied culture to lowercase words before comparing.</para>
         /// </summary>
         /// <param name="fileName">
-        ///          The file name with the data to load into the Trie. </param>
+        ///          The file name with the data to load into the Trie. The path is not normalized by this method. </param>
         /// <param name="culture">The culture used for lowercasing.</param>
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <para>Uses the culture of the current thread to lowercase words before comparing.</para>
         /// </summary>
         /// <param name="fileName">
-        ///          The file name with the data to load into the Trie. </param>
+        ///          The file name with the data to load into the Trie. The path is not normalized by this method. </param>
         /// <param name="compression">
         ///          If true, the file is compressed with the GZIP algorithm, and if
         ///          false, the file is a normal text document. </param>
@@ -356,7 +356,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// </para>
         /// </summary>
         /// <param name="fileName">
-        ///          The file name with the data to load into the Trie. </param>
+        ///          The file name with the data to load into the Trie. The path is not normalized by this method. </param>
         /// <param name="compression">
         ///          If true, the file is compressed with the GZIP algorithm, and if
         ///          false, the file is a normal text document. </param>
