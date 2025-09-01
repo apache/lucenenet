@@ -36,6 +36,7 @@ packages/
 .vs/
 *.lock.json
 TestResults/
+.idea/
 test-files/analysis/data/
 [Nn]u[Gg]et[Pp]ackages/
 out.dot
