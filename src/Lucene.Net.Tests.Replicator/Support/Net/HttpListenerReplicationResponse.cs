@@ -40,10 +40,5 @@ namespace Lucene.Net.Replicator.Net
         }
 
         public Stream Body => _response.OutputStream;
-
-        public void Flush() => _response.OutputStream.Flush();
-
-        public Task FlushAsync(CancellationToken cancellationToken = default) =>
-            _response.OutputStream.FlushAsync(cancellationToken);
     }
 }

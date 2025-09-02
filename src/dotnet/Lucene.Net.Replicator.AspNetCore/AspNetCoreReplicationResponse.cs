@@ -1,8 +1,6 @@
 using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Replicator.AspNetCore
 {
@@ -59,29 +57,5 @@ namespace Lucene.Net.Replicator.AspNetCore
         /// This simply returns the <see cref="HttpResponse.Body"/>.
         /// </remarks>
         public Stream Body => response.Body;
-
-        /// <summary>
-        /// Flushes the reponse to the underlying response stream.
-        /// </summary>
-        /// <remarks>
-        /// This simply calls <see cref="Stream.Flush"/> on the <see cref="HttpResponse.Body"/>.
-        /// </remarks>
-        public void Flush()
-        {
-            response.Body.Flush();
-        }
-
-        /// <summary>
-        /// Flushes the response to the underlying response stream asynchronously.
-        /// </summary>
-        /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        /// <remarks>
-        /// This simply calls <see cref="Stream.FlushAsync(CancellationToken)"/> on the <see cref="HttpResponse.Body"/>.
-        /// </remarks>
-        public async Task FlushAsync(CancellationToken cancellationToken = default)
-        {
-            await response.Body.FlushAsync(cancellationToken);
-        }
     }
 }

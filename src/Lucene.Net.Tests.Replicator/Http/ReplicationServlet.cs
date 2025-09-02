@@ -2,9 +2,9 @@
 using Lucene.Net.Replicator.AspNetCore;
 using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using System;
 using System.Threading.Tasks;
 

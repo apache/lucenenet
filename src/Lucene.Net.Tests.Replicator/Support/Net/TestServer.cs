@@ -107,7 +107,7 @@ namespace Lucene.Net.Replicator.Net
                         }
                         finally
                         {
-                            await response.FlushAsync(token);
+                            await response.Body.FlushAsync(token);
                             context.Response.Close();
                         }
                     }, token);

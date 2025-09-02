@@ -139,6 +139,7 @@ namespace Lucene.Net.Replicator.Http
             if (!replicators.TryGetValue(pathElements[SHARD_IDX], out IReplicator replicator))
                 throw ServletException.Create("unrecognized shard ID " + pathElements[SHARD_IDX]);
 
+            // SOLR-8933 Don't close this stream.
             try
             {
                 switch (action)
@@ -175,7 +176,7 @@ namespace Lucene.Net.Replicator.Http
             }
             catch (Exception)
             {
-                response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                response.StatusCode = (int)HttpStatusCode.InternalServerError; // propagate the failure
             }
             finally
             {
@@ -208,8 +209,8 @@ namespace Lucene.Net.Replicator.Http
                     }
                     return Task.CompletedTask;
                 },
-                () => { response.Flush(); return Task.CompletedTask; }
-            ).GetAwaiter().GetResult(); // // keep sync behavior
+                () => { response.Body.Flush(); return Task.CompletedTask; }
+            ).ConfigureAwait(false).GetAwaiter().GetResult(); // keep sync behavior
         }
 
 
@@ -241,7 +242,7 @@ namespace Lucene.Net.Replicator.Http
                         await token.SerializeAsync(response.Body, cancellationToken);
                     }
                 },
-                () => response.FlushAsync(cancellationToken)
+                () => response.Body.FlushAsync(cancellationToken)
             );
         }
     }
