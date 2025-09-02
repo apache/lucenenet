@@ -2175,7 +2175,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// If arc has this label then that arc is final/accepted </summary>
-        public static readonly int END_LABEL = -1;
+        public const int END_LABEL = -1;
 
         /// <summary>
         /// returns <c>true</c> if the node at this address has any

@@ -74,16 +74,18 @@ namespace Lucene.Net.Util.Automaton
     /// </summary>
     public class Automaton // LUCENENET specific: Not implementing ICloneable per Microsoft's recommendation
     {
-        /// <summary>
-        /// Minimize using Hopcroft's O(n log n) algorithm. this is regarded as one of
-        /// the most generally efficient algorithms that exist.
-        /// </summary>
-        /// <seealso cref="SetMinimization(int)"/>
-        public const int MINIMIZE_HOPCROFT = 2;
+        // LUCENENET specific - commented out; unused and removed in later Lucene versions
+        // /// <summary>
+        // /// Minimize using Hopcroft's O(n log n) algorithm. this is regarded as one of
+        // /// the most generally efficient algorithms that exist.
+        // /// </summary>
+        // /// <seealso cref="SetMinimization(int)"/>
+        // public const int MINIMIZE_HOPCROFT = 2;
 
-        /// <summary>
-        /// Selects minimization algorithm (default: <c>MINIMIZE_HOPCROFT</c>). </summary>
-        internal static int minimization = MINIMIZE_HOPCROFT;
+        // LUCENENET specific - commented out; unused and removed in later Lucene versions
+        // /// <summary>
+        // /// Selects minimization algorithm (default: <c>MINIMIZE_HOPCROFT</c>). </summary>
+        // internal static int minimization = MINIMIZE_HOPCROFT;
 
         /// <summary>
         /// Initial state of this automaton. </summary>
@@ -110,13 +112,15 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Minimize always flag. </summary>
-        internal static bool minimize_always = false;
+        // LUCENENET specific - made private
+        private static bool minimize_always = false;
 
         /// <summary>
         /// Selects whether operations may modify the input automata (default:
         /// <c>false</c>).
         /// </summary>
-        internal static bool allow_mutation = false;
+        // LUCENENET specific - made private
+        private static bool allow_mutation = false;
 
         /// <summary>
         /// Constructs a new automaton that accepts the empty language. Using this
@@ -137,15 +141,16 @@ namespace Lucene.Net.Util.Automaton
         {
         }
 
-        /// <summary>
-        /// Selects minimization algorithm (default: <c>MINIMIZE_HOPCROFT</c>).
-        /// </summary>
-        /// <param name="algorithm"> minimization algorithm </param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetMinimization(int algorithm)
-        {
-            minimization = algorithm;
-        }
+        // LUCENENET specific - commented out; unused and removed in later Lucene versions
+        // /// <summary>
+        // /// Selects minimization algorithm (default: <c>MINIMIZE_HOPCROFT</c>).
+        // /// </summary>
+        // /// <param name="algorithm"> minimization algorithm </param>
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // public static void SetMinimization(int algorithm)
+        // {
+        //     minimization = algorithm;
+        // }
 
         /// <summary>
         /// Sets or resets minimize always flag. If this flag is set, then

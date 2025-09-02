@@ -28,8 +28,8 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public abstract class BaseFragListBuilder : IFragListBuilder
     {
-        public static readonly int MARGIN_DEFAULT = 6;
-        public static readonly int MIN_FRAG_CHAR_SIZE_FACTOR = 3;
+        public const int MARGIN_DEFAULT = 6;
+        public const int MIN_FRAG_CHAR_SIZE_FACTOR = 3;
 
         internal readonly int margin;
         internal readonly int minFragCharSize;
