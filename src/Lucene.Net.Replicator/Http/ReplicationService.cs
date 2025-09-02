@@ -49,7 +49,7 @@ namespace Lucene.Net.Replicator.Http
     /// <para/>
     /// @lucene.experimental
     /// </remarks>
-    public class ReplicationService : IReplicationService, IAsyncReplicationService // LUCENENET specific: added interface so we can mock easier.
+    public class ReplicationService : IReplicationService // LUCENENET specific: added interface so we can mock easier.
     {
         /// <summary>
         /// Actions supported by the <see cref="ReplicationService"/>.
@@ -121,14 +121,13 @@ namespace Lucene.Net.Replicator.Http
             return param;
         }
 
-        // Shared internal logic (generic on response)
-        private async Task ExecuteReplicationInternal<TResponse>(
+        // method to avoid code duplication in sync and async Perform methods
+        private async Task ExecuteReplicationAsync(
             IReplicationRequest request,
-            TResponse response,
+            IReplicationResponse response,
             Func<Stream, Task> copyStreamFunc,
             Func<SessionToken, Task> writeTokenFunc,
             Func<Task> flushFunc)
-            where TResponse : IBaseReplicationResponse
         {
             string[] pathElements = GetPathElements(request);
             if (pathElements.Length != 2)
@@ -184,28 +183,6 @@ namespace Lucene.Net.Replicator.Http
             }
         }
 
-        // For sync
-        private async Task ExecuteReplicationAsync(
-            IReplicationRequest request,
-            IReplicationResponse response,
-            Func<Stream, Task> copyStreamFunc,
-            Func<SessionToken, Task> writeTokenFunc,
-            Func<Task> flushFunc)
-        {
-            await ExecuteReplicationInternal(request, response, copyStreamFunc, writeTokenFunc, flushFunc);
-        }
-
-        // For async
-        private async Task ExecuteReplicationAsync(
-            IReplicationRequest request,
-            IAsyncReplicationResponse response,
-            Func<Stream, Task> copyStreamFunc,
-            Func<SessionToken, Task> writeTokenFunc,
-            Func<Task> flushFunc)
-        {
-            await ExecuteReplicationInternal(request, response, copyStreamFunc, writeTokenFunc, flushFunc);
-        }
-
         // LUCENENET specific - copy method not used
 
         /// <summary>
@@ -245,7 +222,7 @@ namespace Lucene.Net.Replicator.Http
         /// <exception cref="InvalidOperationException">Thrown when required parameters are missing or invalid.</exception>
         public virtual Task PerformAsync(
             IReplicationRequest request,
-            IAsyncReplicationResponse response,
+            IReplicationResponse response,
             CancellationToken cancellationToken = default)
         {
             return ExecuteReplicationAsync(

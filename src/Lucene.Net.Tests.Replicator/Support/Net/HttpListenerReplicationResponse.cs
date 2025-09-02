@@ -27,7 +27,7 @@ namespace Lucene.Net.Replicator.Net
     /// A concrete implementation of <see cref="IReplicationResponse"/> for supporting
     /// <see cref="HttpListener"/>.
     /// </summary>
-    public class HttpListenerReplicationResponse : IReplicationResponse, IAsyncReplicationResponse
+    public class HttpListenerReplicationResponse : IReplicationResponse
     {
         private readonly HttpListenerResponse _response;
 

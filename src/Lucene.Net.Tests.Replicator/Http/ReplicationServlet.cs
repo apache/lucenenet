@@ -32,7 +32,7 @@ namespace Lucene.Net.Replicator.Http
 
     public class ReplicationServlet
     {
-        public void Configure(IApplicationBuilder app, IAsyncReplicationService service, ReplicatorTestCase.MockErrorConfig mockErrorConfig)
+        public void Configure(IApplicationBuilder app, IReplicationService service, ReplicatorTestCase.MockErrorConfig mockErrorConfig)
         {
             // Middleware to throw an exception conditionally from our test server.
             app.Use(async (context, next) =>
@@ -63,9 +63,9 @@ namespace Lucene.Net.Replicator.Http
     public class ReplicationServiceMiddleware
     {
         private readonly RequestDelegate next;
-        private readonly IAsyncReplicationService  service;
+        private readonly IReplicationService service;
 
-        public ReplicationServiceMiddleware(RequestDelegate next, IAsyncReplicationService  service)
+        public ReplicationServiceMiddleware(RequestDelegate next, IReplicationService service)
         {
             this.next = next ?? throw new ArgumentNullException(nameof(next));
             this.service = service ?? throw new ArgumentNullException(nameof(service));

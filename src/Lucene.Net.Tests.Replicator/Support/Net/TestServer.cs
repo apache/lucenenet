@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Lucene.Net.Replicator.Http;
 
 namespace Lucene.Net.Replicator.Net
 {
@@ -35,9 +34,7 @@ namespace Lucene.Net.Replicator.Net
     public class TestServer : IDisposable
     {
         private readonly HttpListener _listener;
-        private readonly IAsyncReplicationService _asyncService;
-        private readonly IReplicationService _syncService;
-
+        private readonly IReplicationService _service;
         private readonly ReplicatorTestCase.MockErrorConfig _mockErrorConfig;
         private readonly bool _useSynchronousIO;
         private readonly CancellationTokenSource _cancellationTokenSource = new();
@@ -46,15 +43,12 @@ namespace Lucene.Net.Replicator.Net
         public Uri BaseAddress { get; }
 
         public TestServer(
-            ReplicationService service, // concrete type implements both sync + async
+            IReplicationService service,
             ReplicatorTestCase.MockErrorConfig mockErrorConfig,
             bool useSynchronousIO,
             string prefix = "http://localhost:0/")
         {
-            if (service == null) throw new ArgumentNullException(nameof(service));
-            _asyncService = service;
-            _syncService = service;
-
+            _service = service ?? throw new ArgumentNullException(nameof(service));
             _mockErrorConfig = mockErrorConfig ?? throw new ArgumentNullException(nameof(mockErrorConfig));
             _useSynchronousIO = useSynchronousIO;
 
@@ -98,11 +92,11 @@ namespace Lucene.Net.Replicator.Net
 
                             if (_useSynchronousIO)
                             {
-                                _syncService.Perform(request, response);
+                                _service.Perform(request, response);
                             }
                             else
                             {
-                                await _asyncService.PerformAsync(request, response, token);
+                                await _service.PerformAsync(request, response, token);
                             }
                         }
                         catch

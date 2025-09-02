@@ -28,11 +28,28 @@ namespace Lucene.Net.Replicator.Http.Abstractions
     /// .NET Specific Abstraction
     /// </remarks>
     //Note: LUCENENET specific
-    public interface IReplicationResponse: IBaseReplicationResponse
+    public interface IReplicationResponse
     {
+        /// <summary>
+        /// Gets or sets the http status code of the response.
+        /// </summary>
+        int StatusCode { get; set; }
+
+        /// <summary>
+        /// The response content.
+        /// </summary>
+        Stream Body { get; }
+
         /// <summary>
         /// Flushes the reponse to the underlying response stream.
         /// </summary>
         void Flush();
+
+        /// <summary>
+        /// Flushes the response to the underlying response stream asynchronously.
+        /// </summary>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task FlushAsync(CancellationToken cancellationToken = default);
     }
 }
