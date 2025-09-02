@@ -1,8 +1,12 @@
 using J2N.IO;
 using Lucene.Net.Support.Threading;
 using System;
+using System.Buffers;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Support.IO
 {
@@ -209,6 +213,178 @@ namespace Lucene.Net.Support.IO
             uint hi = (uint)(buff[4] | buff[5] << 8 |
                              buff[6] << 16 | buff[7] << 24);
             return (long)((ulong)hi) << 32 | lo;
+        }
+
+        //async versions of the above methods
+        public static async Task WriteInt32BigEndianAsync(this Stream output, int value, CancellationToken cancellationToken = default)
+        {
+            if (output is null)
+                throw new ArgumentNullException(nameof(output));
+
+            byte[] buff = new byte[4];
+            buff[0] = (byte)(value >> 24);
+            buff[1] = (byte)(value >> 16);
+            buff[2] = (byte)(value >> 8);
+            buff[3] = (byte)value;
+
+            await output.WriteAsync(buff, 0, buff.Length, cancellationToken).ConfigureAwait(false);
+        }
+
+        public static async Task WriteInt64BigEndianAsync(this Stream output, long value, CancellationToken cancellationToken = default)
+        {
+            if (output is null)
+                throw new ArgumentNullException(nameof(output));
+
+            byte[] buff = new byte[8];
+            buff[0] = (byte)(value >> 56);
+            buff[1] = (byte)(value >> 48);
+            buff[2] = (byte)(value >> 40);
+            buff[3] = (byte)(value >> 32);
+            buff[4] = (byte)(value >> 24);
+            buff[5] = (byte)(value >> 16);
+            buff[6] = (byte)(value >> 8);
+            buff[7] = (byte)value;
+
+            await output.WriteAsync(buff, 0, buff.Length, cancellationToken).ConfigureAwait(false);
+        }
+
+        public static async Task WriteUTFAsync(this Stream output, string value, CancellationToken cancellationToken = default)
+        {
+            if (output is null)
+                throw new ArgumentNullException(nameof(output));
+            if (value is null)
+                throw new ArgumentNullException(nameof(value));
+
+            long utfCount = CountUTFBytes(value);
+            if (utfCount > ushort.MaxValue)
+                throw new EncoderFallbackException("Encoded string too long.");
+
+            byte[] buffer = ArrayPool<byte>.Shared.Rent((int)utfCount + 2);
+            try
+            {
+                int offset = 0;
+                offset = WriteInt16BigEndianToBuffer((int)utfCount, buffer, offset);
+                offset = WriteUTFBytesToBuffer(value, (int)utfCount, buffer, offset);
+
+                await output.WriteAsync(buffer, 0, offset, cancellationToken).ConfigureAwait(false);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
+        }
+        public static async Task<int> ReadInt32BigEndianAsync(this Stream input, CancellationToken cancellationToken = default)
+        {
+            if (input is null)
+                throw new ArgumentNullException(nameof(input));
+
+            byte[] buff = new byte[4];
+            int read = await input.ReadAsync(buff, 0, buff.Length, cancellationToken).ConfigureAwait(false);
+            if (read < buff.Length) throw new EndOfStreamException();
+
+            return (buff[0] << 24) | (buff[1] << 16) | (buff[2] << 8) | buff[3];
+        }
+
+        public static async Task<long> ReadInt64BigEndianAsync(this Stream input, CancellationToken cancellationToken = default)
+        {
+            if (input is null)
+                throw new ArgumentNullException(nameof(input));
+
+            byte[] buff = new byte[8];
+            int read = await input.ReadAsync(buff, 0, buff.Length, cancellationToken).ConfigureAwait(false);
+            if (read < buff.Length) throw new EndOfStreamException();
+
+            return ((long)buff[0] << 56) |
+                   ((long)buff[1] << 48) |
+                   ((long)buff[2] << 40) |
+                   ((long)buff[3] << 32) |
+                   ((long)buff[4] << 24) |
+                   ((long)buff[5] << 16) |
+                   ((long)buff[6] << 8) |
+                   buff[7];
+        }
+
+        public static async Task<string> ReadUTFAsync(this Stream input, CancellationToken cancellationToken = default)
+        {
+            if (input is null)
+                throw new ArgumentNullException(nameof(input));
+
+            byte[] lenBuff = ArrayPool<byte>.Shared.Rent(2);
+            try
+            {
+                int readLen = await input.ReadAsync(lenBuff, 0, 2, cancellationToken).ConfigureAwait(false);
+                if (readLen < 2)
+                    throw new EndOfStreamException("Unexpected end of stream while reading UTF length.");
+
+                int length = (lenBuff[0] << 8) | lenBuff[1];
+
+                byte[] buffer = ArrayPool<byte>.Shared.Rent(length);
+                try
+                {
+                    int read = await input.ReadAsync(buffer, 0, length, cancellationToken).ConfigureAwait(false);
+                    if (read < length)
+                        throw new EndOfStreamException("Unexpected end of stream while reading UTF string.");
+
+                    return Encoding.UTF8.GetString(buffer, 0, length);
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(lenBuff);
+            }
+        }
+
+
+        // ========================
+        // Helper methods for UTF
+        // ========================
+        private static long CountUTFBytes(string value)
+        {
+            long utfCount = 0;
+            foreach (char ch in value)
+            {
+                if (ch > 0 && ch <= 127)
+                    utfCount++;
+                else if (ch <= 2047)
+                    utfCount += 2;
+                else
+                    utfCount += 3;
+            }
+            return utfCount;
+        }
+
+        private static int WriteInt16BigEndianToBuffer(int value, byte[] buffer, int offset)
+        {
+            buffer[offset++] = (byte)(value >> 8);
+            buffer[offset++] = (byte)value;
+            return offset;
+        }
+
+        private static int WriteUTFBytesToBuffer(string value, long count, byte[] buffer, int offset)
+        {
+            foreach (char ch in value)
+            {
+                if (ch > 0 && ch <= 127)
+                {
+                    buffer[offset++] = (byte)ch;
+                }
+                else if (ch <= 2047)
+                {
+                    buffer[offset++] = (byte)(0xc0 | (0x1f & (ch >> 6)));
+                    buffer[offset++] = (byte)(0x80 | (0x3f & ch));
+                }
+                else
+                {
+                    buffer[offset++] = (byte)(0xe0 | (0x0f & (ch >> 12)));
+                    buffer[offset++] = (byte)(0x80 | (0x3f & (ch >> 6)));
+                    buffer[offset++] = (byte)(0x80 | (0x3f & ch));
+                }
+            }
+            return offset;
         }
     }
 }

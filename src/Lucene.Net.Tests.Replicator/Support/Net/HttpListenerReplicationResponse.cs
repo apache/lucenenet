@@ -1,6 +1,10 @@
+using Lucene.Net.Replicator.Http.Abstractions;
 using System.IO;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace Lucene.Net.Replicator.Http.Abstractions
+namespace Lucene.Net.Replicator.Net
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,22 +24,21 @@ namespace Lucene.Net.Replicator.Http.Abstractions
      */
 
     /// <summary>
-    /// Abstraction for remote replication response, allows easy integration into any hosting frameworks.
+    /// A concrete implementation of <see cref="IReplicationResponse"/> for supporting
+    /// <see cref="HttpListener"/>.
     /// </summary>
-    /// <remarks>
-    /// .NET Specific Abstraction
-    /// </remarks>
-    //Note: LUCENENET specific
-    public interface IReplicationResponse
+    public class HttpListenerReplicationResponse : IReplicationResponse
     {
-        /// <summary>
-        /// Gets or sets the http status code of the response.
-        /// </summary>
-        int StatusCode { get; set; }
+        private readonly HttpListenerResponse _response;
 
-        /// <summary>
-        /// The response content.
-        /// </summary>
-        Stream Body { get; }
+        public HttpListenerReplicationResponse(HttpListenerResponse response) => _response = response;
+
+        public int StatusCode
+        {
+            get => _response.StatusCode;
+            set => _response.StatusCode = value;
+        }
+
+        public Stream Body => _response.OutputStream;
     }
 }
