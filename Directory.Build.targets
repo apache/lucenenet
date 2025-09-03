@@ -85,6 +85,7 @@
     <DefineConstants>$(DefineConstants);FEATURE_ARRAY_FILL</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ENCODING_GETSTRING_READONLYSPAN</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_NUMBER_PARSE_READONLYSPAN</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STREAM_READ_SPAN</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STRINGBUILDER_APPEND_READONLYSPAN</DefineConstants>

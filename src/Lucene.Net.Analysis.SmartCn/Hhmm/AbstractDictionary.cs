@@ -2,6 +2,10 @@
 using System;
 using System.Text;
 
+#if !FEATURE_ENCODING_GETSTRING_READONLYSPAN
+using Lucene.Net.Support.Text;
+#endif
+
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 {
     /*
@@ -95,7 +99,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 return "";
             int cc1 = ccid / 94 + 161;
             int cc2 = ccid % 94 + 161;
-            byte[] buffer = new byte[2];
+            Span<byte> buffer = stackalloc byte[2];
             buffer[0] = (byte)cc1;
             buffer[1] = (byte)cc2;
             try
