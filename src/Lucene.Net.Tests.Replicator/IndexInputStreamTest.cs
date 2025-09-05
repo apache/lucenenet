@@ -1,6 +1,7 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Index;
 using Lucene.Net.Replicator;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -63,6 +64,112 @@ namespace Lucene.Net.Tests.Replicator
             Assert.AreEqual(readBuffer, buffer.Skip((section - 1) * readBytes).Take(readBytes).ToArray());
         }
 
+        /// <summary>
+        /// Test for GitHub issue #1158: Integer overflow in IndexInputStream.Read()
+        /// https://github.com/apache/lucenenet/issues/1158
+        /// </summary>
+        [Test]
+        [LuceneNetSpecific]
+        public void TestGitHubIssue1158_IndexInputStream_Read_IntegerOverflow()
+        {
+            // This test verifies the fix for the integer overflow bug in IndexInputStream.Read()
+            // Bug: When input.Length - input.Position > int.MaxValue, casting to int causes overflow
+            // Previously on line 68: int remaining = (int)(input.Length - input.Position);
+
+            // Arrange: Create a mock IndexInput that simulates a very large file
+            var largeIndexInput = new LargeFileMockIndexInput();
+            var stream = new IndexInputStream(largeIndexInput);
+
+            // Position the stream at the beginning (position = 0)
+            // Length is int.MaxValue + 1000L, so (Length - Position) = int.MaxValue + 1000L
+            // When cast to int, this overflows and becomes negative: -2147482649
+            largeIndexInput.Seek(0);
+
+            // Act: Try to read from the stream
+            byte[] buffer = new byte[50];
+
+            // The bug manifests here:
+            // remaining = (int)(int.MaxValue + 1000L) = -2147482649 (negative due to overflow)
+            // readCount = Math.Min(-2147482649, 50) = -2147482649 (negative)
+            // This would cause ReadBytes to be called with negative length
+
+            try
+            {
+                int bytesRead = stream.Read(buffer, 0, buffer.Length);
+
+                // If we get here without exception, check if the read was successful
+                // With the bug, bytesRead might be negative or cause other issues
+                Assert.IsTrue(bytesRead >= 0, $"BytesRead should not be negative, but was {bytesRead}");
+                Assert.AreEqual(50, bytesRead, "Should read exactly 50 bytes");
+            }
+            catch (ArgumentException ex)
+            {
+                // The bug may cause an ArgumentException when ReadBytes is called with negative length
+                Assert.Fail($"Integer overflow caused ArgumentException: {ex.Message}");
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// Mock IndexInput that simulates a file larger than int.MaxValue
+    /// to test for integer overflow issues
+    /// </summary>
+    internal class LargeFileMockIndexInput : IndexInput
+    {
+        private long position = 0;
+        private readonly long length = (long)int.MaxValue + 1000L;
+
+        public LargeFileMockIndexInput() : base("LargeFileMockIndexInput")
+        {
+        }
+
+        public override long Length => length;
+
+        public override long Position => position;
+
+        public override byte ReadByte()
+        {
+            if (position >= length)
+                throw new System.IO.EndOfStreamException();
+            position++;
+            return 0;
+        }
+
+        public override void ReadBytes(byte[] b, int offset, int len)
+        {
+            long available = length - position;
+            if (available < len)
+            {
+                throw new System.IO.EndOfStreamException();
+            }
+            // Simulate reading by advancing position
+            position += len;
+            // Fill buffer with dummy data
+            for (int i = 0; i < len; i++)
+            {
+                b[offset + i] = 0;
+            }
+        }
+
+        public override void Seek(long pos)
+        {
+            if (pos < 0 || pos > length)
+                throw new ArgumentOutOfRangeException(nameof(pos));
+            position = pos;
+        }
+
+        public override object Clone()
+        {
+            var clone = new LargeFileMockIndexInput();
+            clone.position = this.position;
+            return clone;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            // No resources to dispose
+        }
     }
 
     //Note: LUCENENET specific
