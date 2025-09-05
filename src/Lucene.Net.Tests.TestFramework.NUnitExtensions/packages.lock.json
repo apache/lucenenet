@@ -311,13 +311,6 @@
           "System.Memory": "[4.5.5, )"
         }
       },
-      "lucene.net.analysis.phonetic": {
-        "type": "Project",
-        "dependencies": {
-          "Lucene.Net": "[4.8.0, )",
-          "Lucene.Net.Analysis.Common": "[4.8.0, )"
-        }
-      },
       "lucene.net.codecs": {
         "type": "Project",
         "dependencies": {
@@ -337,6 +330,16 @@
           "Microsoft.Extensions.Configuration.Xml": "[8.0.1, )",
           "NUnit": "[3.14.0, )",
           "RandomizedTesting.Generators": "[2.7.8, )"
+        }
+      },
+      "lucene.net.testframework.testdata.nunit": {
+        "type": "Project",
+        "dependencies": {
+          "Lucene.Net": "[4.8.0, )",
+          "Lucene.Net.Analysis.Common": "[4.8.0, )",
+          "Lucene.Net.Codecs": "[4.8.0, )",
+          "Lucene.Net.TestFramework": "[4.8.0, )",
+          "NUnit": "[3.14.0, )"
         }
       }
     },
@@ -650,13 +653,6 @@
           "System.Memory": "[4.5.5, )"
         }
       },
-      "lucene.net.analysis.phonetic": {
-        "type": "Project",
-        "dependencies": {
-          "Lucene.Net": "[4.8.0, )",
-          "Lucene.Net.Analysis.Common": "[4.8.0, )"
-        }
-      },
       "lucene.net.codecs": {
         "type": "Project",
         "dependencies": {
@@ -676,6 +672,16 @@
           "Microsoft.Extensions.Configuration.Xml": "[8.0.1, )",
           "NUnit": "[3.14.0, )",
           "RandomizedTesting.Generators": "[2.7.8, )"
+        }
+      },
+      "lucene.net.testframework.testdata.nunit": {
+        "type": "Project",
+        "dependencies": {
+          "Lucene.Net": "[4.8.0, )",
+          "Lucene.Net.Analysis.Common": "[4.8.0, )",
+          "Lucene.Net.Codecs": "[4.8.0, )",
+          "Lucene.Net.TestFramework": "[4.8.0, )",
+          "NUnit": "[3.14.0, )"
         }
       }
     },
@@ -965,13 +971,6 @@
           "Lucene.Net": "[4.8.0, )"
         }
       },
-      "lucene.net.analysis.phonetic": {
-        "type": "Project",
-        "dependencies": {
-          "Lucene.Net": "[4.8.0, )",
-          "Lucene.Net.Analysis.Common": "[4.8.0, )"
-        }
-      },
       "lucene.net.codecs": {
         "type": "Project",
         "dependencies": {
@@ -991,6 +990,16 @@
           "Microsoft.Extensions.Configuration.Xml": "[8.0.1, )",
           "NUnit": "[3.14.0, )",
           "RandomizedTesting.Generators": "[2.7.8, )"
+        }
+      },
+      "lucene.net.testframework.testdata.nunit": {
+        "type": "Project",
+        "dependencies": {
+          "Lucene.Net": "[4.8.0, )",
+          "Lucene.Net.Analysis.Common": "[4.8.0, )",
+          "Lucene.Net.Codecs": "[4.8.0, )",
+          "Lucene.Net.TestFramework": "[4.8.0, )",
+          "NUnit": "[3.14.0, )"
         }
       }
     },
@@ -1246,13 +1255,6 @@
           "Lucene.Net": "[4.8.0, )"
         }
       },
-      "lucene.net.analysis.phonetic": {
-        "type": "Project",
-        "dependencies": {
-          "Lucene.Net": "[4.8.0, )",
-          "Lucene.Net.Analysis.Common": "[4.8.0, )"
-        }
-      },
       "lucene.net.codecs": {
         "type": "Project",
         "dependencies": {
@@ -1272,6 +1274,16 @@
           "Microsoft.Extensions.Configuration.Xml": "[8.0.1, )",
           "NUnit": "[3.14.0, )",
           "RandomizedTesting.Generators": "[2.7.8, )"
+        }
+      },
+      "lucene.net.testframework.testdata.nunit": {
+        "type": "Project",
+        "dependencies": {
+          "Lucene.Net": "[4.8.0, )",
+          "Lucene.Net.Analysis.Common": "[4.8.0, )",
+          "Lucene.Net.Codecs": "[4.8.0, )",
+          "Lucene.Net.TestFramework": "[4.8.0, )",
+          "NUnit": "[3.14.0, )"
         }
       }
     },
@@ -1527,13 +1539,6 @@
           "Lucene.Net": "[4.8.0, )"
         }
       },
-      "lucene.net.analysis.phonetic": {
-        "type": "Project",
-        "dependencies": {
-          "Lucene.Net": "[4.8.0, )",
-          "Lucene.Net.Analysis.Common": "[4.8.0, )"
-        }
-      },
       "lucene.net.codecs": {
         "type": "Project",
         "dependencies": {
@@ -1553,6 +1558,16 @@
           "Microsoft.Extensions.Configuration.Xml": "[8.0.1, )",
           "NUnit": "[3.14.0, )",
           "RandomizedTesting.Generators": "[2.7.8, )"
+        }
+      },
+      "lucene.net.testframework.testdata.nunit": {
+        "type": "Project",
+        "dependencies": {
+          "Lucene.Net": "[4.8.0, )",
+          "Lucene.Net.Analysis.Common": "[4.8.0, )",
+          "Lucene.Net.Codecs": "[4.8.0, )",
+          "Lucene.Net.TestFramework": "[4.8.0, )",
+          "NUnit": "[3.14.0, )"
         }
       }
     }
