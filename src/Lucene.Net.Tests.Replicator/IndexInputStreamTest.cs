@@ -138,6 +138,27 @@ namespace Lucene.Net.Tests.Replicator
 
         public override void ReadBytes(byte[] b, int offset, int len)
         {
+            // Validate parameters to prevent unexpected behavior
+            if (b == null)
+            {
+                throw new ArgumentNullException(nameof(b));
+            }
+
+            if (offset < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset), "Offset cannot be negative");
+            }
+
+            if (len < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(len), "Length cannot be negative");
+            }
+
+            if (offset + len > b.Length)
+            {
+                throw new ArgumentException("The sum of offset and length exceeds the buffer length");
+            }
+
             long available = length - position;
             if (available < len)
             {
