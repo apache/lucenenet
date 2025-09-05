@@ -1,6 +1,14 @@
 # Apache YAML Features for Git Repositories
 # See the documentation at: https://cwiki.apache.org/confluence/display/INFRA/git+-+.asf.yaml+features
 
+# See our mailing lists here: https://lucenenet.apache.org/contributing/mailing-lists.html
+notifications:
+  commits: commits@lucenenet.apache.org
+  issues: dev@lucenenet.apache.org
+  pullrequests: dev@lucenenet.apache.org
+  discussions: dev@lucenenet.apache.org
+  # jobs: builds@lucenenet.apache.org # This is probably too noisy to enable
+
 github:
   description: "Apache Lucene.NET"
   homepage: https://lucenenet.apache.org/
@@ -24,6 +32,8 @@ github:
     issues: true
     # Enable projects for project management boards
     projects: false
+    # Enable discussions
+    discussions: true
 
   # Disallow forced pushes
   protected_branches:
