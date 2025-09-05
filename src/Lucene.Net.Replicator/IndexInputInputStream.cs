@@ -65,7 +65,8 @@ namespace Lucene.Net.Replicator
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            long remaining = input.Length - input.Position; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
+            // LUCENENET specific: This method is quite different than the Java version, to match the Stream semantics.
+            long remaining = input.Length - input.Position; // LUCENENET NOTE: using 64-bit math to avoid overflow. Be careful when porting changes.
             int readCount = (int)Math.Min(remaining, count);
             input.ReadBytes(buffer, offset, readCount);
             return readCount;
