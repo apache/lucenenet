@@ -104,7 +104,7 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nuget-lucene
- 
+
       - name: Restore dependencies
         run: dotnet restore
 
@@ -133,3 +133,4 @@ jobs:
         with:
           name: '${{env.test_results_artifact_name}}'
           path: '${{github.workspace}}/${{env.test_results_artifact_name}}'
+
