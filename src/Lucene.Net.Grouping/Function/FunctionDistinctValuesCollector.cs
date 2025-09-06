@@ -29,7 +29,7 @@ namespace Lucene.Net.Search.Grouping.Function
     ///
     /// @lucene.experimental
     /// </summary>
-    public class FunctionDistinctValuesCollector : AbstractDistinctValuesCollector<FunctionDistinctValuesCollector.GroupCount>
+    public class FunctionDistinctValuesCollector : AbstractDistinctValuesCollector<FunctionDistinctValuesCollector.GroupCount, MutableValue>
     {
         private readonly IDictionary /* Map<?, ?> */ vsContext;
         private readonly ValueSource groupSource;
@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Grouping.Function
         private MutableValue groupMval;
         private MutableValue countMval;
 
-        public FunctionDistinctValuesCollector(IDictionary /*Map<?, ?>*/ vsContext, ValueSource groupSource, ValueSource countSource, IEnumerable<ISearchGroup<MutableValue>> groups)
+        public FunctionDistinctValuesCollector(IDictionary /*Map<?, ?>*/ vsContext, ValueSource groupSource, ValueSource countSource, ICollection<SearchGroup<MutableValue>> groups)
         {
             this.vsContext = vsContext;
             this.groupSource = groupSource;
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search.Grouping.Function
             }
         }
 
-        public override IEnumerable<GroupCount> Groups => new JCG.List<GroupCount>(groupMap.Values);
+        public override IList<GroupCount> Groups => new JCG.List<GroupCount>(groupMap.Values);
 
         public override void Collect(int doc)
         {
