@@ -10,7 +10,7 @@ Apache Lucene.NET is an open-source full-text search library written in C#. It i
 
 Apache Lucene.NET is a .NET library providing powerful indexing and search features, as well as spellchecking, hit highlighting and advanced analysis/tokenization capabilities.
 
-Lucene.NET version 4.8 (still in Beta) runs everywhere .NET runs, including Windows, Unix, MacOS, Android and iOS.
+Lucene.NET version 4.8 (still in Beta) runs everywhere .NET runs, including Windows, Unix, macOS, Android and iOS.
 
 The Apache Lucene.NET website is at:
   http://lucenenet.apache.org
