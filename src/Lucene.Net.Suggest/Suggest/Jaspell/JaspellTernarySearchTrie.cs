@@ -209,7 +209,6 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             get => rootNode;
         }
 
-
         /// <summary>
         /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
         /// into the Trie. The file is a normal text document, where each line is of
@@ -222,7 +221,26 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file)
-            : this(file, false, CultureInfo.CurrentCulture)
+            : this(file.FullName, false, CultureInfo.CurrentCulture)
+        {
+        }
+
+        /// <summary>
+        /// Constructs a Ternary Search Trie and loads data from a given <paramref name="fileName"/>
+        /// into the Trie. The file is a normal text document, where each line is of
+        /// the form word TAB float.
+        ///
+        /// <para>Uses the culture of the current thread to lowercase words before comparing.</para>
+        /// </summary>
+        /// <param name="fileName">
+        ///          The file name with the data to load into the Trie. The path is not normalized by this method. </param>
+        /// <exception cref="IOException">
+        ///              A problem occured while reading the data. </exception>
+        /// <remarks>
+        /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public JaspellTernarySearchTrie(string fileName)
+            : this(fileName, false, CultureInfo.CurrentCulture)
         {
         }
 
@@ -239,9 +257,27 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, CultureInfo culture)
-            : this(file, false, culture)
-        {
-        }
+            : this(file.FullName, false, culture)
+        { }
+
+        /// <summary>
+        /// Constructs a Ternary Search Trie and loads data from a given <paramref name="fileName"/>
+        /// into the Trie. The file is a normal text document, where each line is of
+        /// the form word TAB float.
+        ///
+        /// <para>Uses the supplied culture to lowercase words before comparing.</para>
+        /// </summary>
+        /// <param name="fileName">
+        ///          The file name with the data to load into the Trie. The path is not normalized by this method. </param>
+        /// <param name="culture">The culture used for lowercasing.</param>
+        /// <exception cref="IOException">
+        ///              A problem occured while reading the data. </exception>
+        /// <remarks>
+        /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public JaspellTernarySearchTrie(string fileName, CultureInfo culture)
+            : this(fileName, false, culture)
+        { }
 
         /// <summary>
         /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
@@ -258,7 +294,28 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, bool compression)
-            : this(file, compression, CultureInfo.CurrentCulture)
+            : this(file.FullName, compression, CultureInfo.CurrentCulture)
+        { }
+
+        /// <summary>
+        /// Constructs a Ternary Search Trie and loads data from a given <paramref name="fileName"/>
+        /// into the Trie. The file is a normal text document, where each line is of
+        /// the form "word TAB float".
+        ///
+        /// <para>Uses the culture of the current thread to lowercase words before comparing.</para>
+        /// </summary>
+        /// <param name="fileName">
+        ///          The file name with the data to load into the Trie. The path is not normalized by this method. </param>
+        /// <param name="compression">
+        ///          If true, the file is compressed with the GZIP algorithm, and if
+        ///          false, the file is a normal text document. </param>
+        /// <exception cref="IOException">
+        ///              A problem occured while reading the data. </exception>
+        /// <remarks>
+        /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public JaspellTernarySearchTrie(string fileName, bool compression)
+            : this(fileName, compression, CultureInfo.CurrentCulture)
         { }
 
         /// <summary>
@@ -281,14 +338,42 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="culture">The culture used for lowercasing.</param>
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
+        public JaspellTernarySearchTrie(FileInfo file, bool compression, CultureInfo culture)
+            : this(file.FullName, compression, culture)
+        {
+        }
+
+        /// <summary>
+        /// Constructs a Ternary Search Trie and loads data from a given <paramref name="fileName"/>
+        /// into the Trie. The file is a normal text document, where each line is of
+        /// the form "word TAB float".
+        ///
+        /// <para>Uses the supplied culture to lowercase words before comparing.</para>
+        /// <para>NOTE for subclasses: this constructor calls a virtual method, which could
+        /// result in your override of it being called before the class is properly initialized.
+        /// To overcome the issue, you could override <see cref="JaspellTernarySearchTrie(CultureInfo)"/>
+        /// constructor and then call the logic in a way that suits your needs.
+        /// </para>
+        /// </summary>
+        /// <param name="fileName">
+        ///          The file name with the data to load into the Trie. The path is not normalized by this method. </param>
+        /// <param name="compression">
+        ///          If true, the file is compressed with the GZIP algorithm, and if
+        ///          false, the file is a normal text document. </param>
+        /// <param name="culture">The culture used for lowercasing.</param>
+        /// <exception cref="IOException">
+        ///              A problem occured while reading the data. </exception>
+        /// <remarks>
+        /// LUCENENET: This constructor overload takes a string <paramref name="fileName"/> to avoid having to allocate a <see cref="FileInfo"/> object.
+        /// </remarks>
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "This is a SonarCloud issue")]
         [SuppressMessage("CodeQuality", "S1699:Constructors should only call non-overridable methods", Justification = "This class gets deprecated and removed in later versions")]
-        public JaspellTernarySearchTrie(FileInfo file, bool compression, CultureInfo culture)
+        public JaspellTernarySearchTrie(string fileName, bool compression, CultureInfo culture)
             : this(culture)
         {
-            using TextReader @in = (compression) ?
-                IOUtils.GetDecodingReader(new GZipStream(new FileStream(file.FullName, FileMode.Open), CompressionMode.Decompress), Encoding.UTF8) :
-                IOUtils.GetDecodingReader(new FileStream(file.FullName, FileMode.Open), Encoding.UTF8);
+            using TextReader @in = compression ?
+                IOUtils.GetDecodingReader(new GZipStream(new FileStream(fileName, FileMode.Open), CompressionMode.Decompress), Encoding.UTF8) :
+                IOUtils.GetDecodingReader(new FileStream(fileName, FileMode.Open), Encoding.UTF8);
             string word;
             int pos;
             float occur, one = 1f;
