@@ -296,7 +296,7 @@ jobs:
           dotnet-version: '$DotNet9SDKVersion'
 
       - name: Restore dependencies
-        run: dotnet restore --no-cache --force
+        run: dotnet restore /p:TestFrameworks=true
 
       - name: Setup Environment Variables
         run: |
