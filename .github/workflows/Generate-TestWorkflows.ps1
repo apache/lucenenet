@@ -278,21 +278,21 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: Setup .NET 6 SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '$DotNet6SDKVersion'
         if: `${{ startswith(matrix.framework, 'net6.') }}
 
       - name: Setup .NET 8 SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '$DotNet8SDKVersion'
 
       - name: Setup .NET 9 SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '$DotNet9SDKVersion'
 
