@@ -258,7 +258,9 @@ jobs:
           - os: macos-latest
             framework: net472
     env:
-      project_path: '$projectRelativePath'"
+      project_path: '$projectRelativePath'
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: 1"
 
     if ($isCLI) {
         $fileText += "
@@ -276,12 +278,6 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v3
-
-      - name: Disable .NET SDK Telemetry and Logo
-        run: |
-          echo `"DOTNET_NOLOGO=1`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
-          echo `"DOTNET_CLI_TELEMETRY_OPTOUT=1`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
-        shell: pwsh
 
       - name: Setup .NET 6 SDK
         uses: actions/setup-dotnet@v3
