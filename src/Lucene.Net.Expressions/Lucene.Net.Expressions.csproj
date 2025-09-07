@@ -43,7 +43,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Antlr4.CodeGenerator" Version="$(Antlr4CodeGeneratorPackageVersion)" PrivateAssets="all" />
+    <!-- Required for Antlr4BuildTasks to find the antlr4 .jar file. When missing,
+        it causes an error on the SonarCloud workflow. -->
+    <PackageReference Include="Antlr4.CodeGenerator" Version="$(Antlr4CodeGeneratorPackageVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime;compile;build;native;contentfiles;analyzers</ExcludeAssets>
+    </PackageReference>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="$(Antlr4RuntimeStandardPackageVersion)" />
     <PackageReference Include="Antlr4BuildTasks" Version="$(Antlr4BuildTasksPackageVersion)" PrivateAssets="all" IncludeAssets="build" />
   </ItemGroup>
