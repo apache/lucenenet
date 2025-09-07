@@ -97,9 +97,11 @@ namespace Lucene.Net.Index
 
             try
             {
-                // LUCENENET specific: changed to use string filename instead of allocating a FileInfo (#832)
-                string dirname = Path.GetDirectoryName(filename)
+                // LUCENENET NOTE: We need the FileInfo instance here to resolve relative paths, so there's no benefit to using a string. (#832)
+                FileInfo file = new FileInfo(filename);
+                string dirname = file.DirectoryName
                                  ?? throw new InvalidOperationException($"Could not determine directory name from filename: {filename}");
+                filename = file.Name;
 
                 if (dirImpl is null)
                 {
