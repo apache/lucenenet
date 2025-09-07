@@ -112,7 +112,7 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore --no-cache --force
+        run: dotnet restore /p:TestFrameworks=true
 
       - name: Setup Environment Variables
         run: |
