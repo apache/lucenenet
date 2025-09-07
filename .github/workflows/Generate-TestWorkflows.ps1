@@ -258,10 +258,10 @@ jobs:
           - os: macos-latest
             framework: net472
     env:
-      project_path: '$projectRelativePath'
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      DOTNET_NOLOGO: 1"
-
+      DOTNET_NOLOGO: 1
+      NUGET_PACKAGES: `${{ github.workspace }}/.nuget/packages
+      project_path: '$projectRelativePath'"
     if ($isCLI) {
         $fileText += "
       project_under_test_path: '$luceneCliProjectPath'
