@@ -92,4 +92,3 @@
       passed into build.ps1 is 'false'. -->
   <Import Project="version.props" Condition="Exists('version.props')" />
 </Project>
-
