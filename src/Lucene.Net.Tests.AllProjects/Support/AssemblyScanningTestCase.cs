@@ -89,3 +89,4 @@ namespace Lucene.Net.Support
         }
     }
 }
+
