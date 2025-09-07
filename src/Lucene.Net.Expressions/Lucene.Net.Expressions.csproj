@@ -79,5 +79,5 @@
       <Package>Lucene.Net.Expressions.JS</Package>
     </Antlr4>
   </ItemGroup>
-  
+
 </Project>
