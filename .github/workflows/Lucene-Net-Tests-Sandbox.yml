@@ -65,9 +65,10 @@ jobs:
           - os: macos-latest
             framework: net472
     env:
-      project_path: './src/Lucene.Net.Tests.Sandbox/Lucene.Net.Tests.Sandbox.csproj'
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+      project_path: './src/Lucene.Net.Tests.Sandbox/Lucene.Net.Tests.Sandbox.csproj'
       run_slow_tests: 'false'
       trx_file_name: 'TestResults.trx'
       md_file_name: 'TestResults.md' # Report file name for LiquidTestReports.Markdown

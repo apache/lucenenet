@@ -84,9 +84,10 @@ jobs:
           - os: macos-latest
             framework: net472
     env:
-      project_path: './src/dotnet/tools/Lucene.Net.Tests.Cli/Lucene.Net.Tests.Cli.csproj'
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+      project_path: './src/dotnet/tools/Lucene.Net.Tests.Cli/Lucene.Net.Tests.Cli.csproj'
       project_under_test_path: './src/dotnet/tools/lucene-cli/lucene-cli.csproj'
       run_slow_tests: 'true'
       trx_file_name: 'TestResults.trx'
