@@ -295,16 +295,6 @@ jobs:
         with:
           dotnet-version: '$DotNet9SDKVersion'
 
-      - name: Cache NuGet Packages
-        uses: actions/cache@v3
-        id: lucene-nuget-cache
-        with:
-          path: |
-            ~/.nuget/packages
-          key: `${{ runner.os }}-nuget-`${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            `${{ runner.os }}-nuget-lucene
-
       - name: Restore dependencies
         run: dotnet restore
 
