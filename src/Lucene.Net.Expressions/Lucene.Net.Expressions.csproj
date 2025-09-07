@@ -42,13 +42,16 @@
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <PropertyGroup>
+    <Antlr4CodeGeneratorVersion>$([System.IO.Path]::GetFileName('$(PkgAntlr4_CodeGenerator)'))</Antlr4CodeGeneratorVersion>
     <!-- Required for Antlr4BuildTasks to find the antlr4 .jar file. When missing,
         it causes an error on the SonarCloud workflow. -->
-    <PackageReference Include="Antlr4.CodeGenerator" Version="$(Antlr4CodeGeneratorPackageVersion)">
-      <PrivateAssets>all</PrivateAssets>
-      <ExcludeAssets>runtime;compile;build;native;contentfiles;analyzers</ExcludeAssets>
-    </PackageReference>
+    <Antlr4ToolPath>$(PkgAntlr4_CodeGenerator)\tools\antlr4-csharp-$(Antlr4CodeGeneratorVersion)-complete.jar</Antlr4ToolPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Required to supply the antlr4 .jar file to Antlr4BuildTasks. -->
+    <PackageReference Include="Antlr4.CodeGenerator" Version="$(Antlr4CodeGeneratorPackageVersion)" PrivateAssets="all" ExcludeAssets="all" GeneratePathProperty="true" />
     <PackageReference Include="Antlr4.Runtime.Standard" Version="$(Antlr4RuntimeStandardPackageVersion)" />
     <PackageReference Include="Antlr4BuildTasks" Version="$(Antlr4BuildTasksPackageVersion)" PrivateAssets="all" IncludeAssets="build" />
   </ItemGroup>
@@ -76,5 +79,5 @@
       <Package>Lucene.Net.Expressions.JS</Package>
     </Antlr4>
   </ItemGroup>
-
+  
 </Project>
