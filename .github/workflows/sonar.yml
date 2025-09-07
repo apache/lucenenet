@@ -39,12 +39,11 @@ jobs:
     if: github.repository == 'apache/lucenenet' # Don't run on forks
     name: Build and analyze
     runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
-      - name: Disable .NET SDK Telemetry and Logo
-        run: |
-          echo "DOTNET_NOLOGO=1" | Out-File -FilePath  $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "DOTNET_CLI_TELEMETRY_OPTOUT=1" | Out-File -FilePath  $env:GITHUB_ENV -Encoding utf8 -Append
-        shell: pwsh
       - name: Setup .NET 8 SDK
         uses: actions/setup-dotnet@v3
         with:
@@ -78,14 +77,15 @@ jobs:
           if (!(Test-Path $dir)) { New-Item -Path $dir -ItemType Directory }
           dotnet tool update dotnet-sonarscanner --tool-path $dir
       - name: Cache NuGet Packages
-        uses: actions/cache@v3
-        id: lucene-nuget-cache
+        uses: actions/cache@v4
         with:
-          path: |
-            ~/.nuget/packages
-          key: `${{ runner.os }}-nuget-`${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            `${{ runner.os }}-nuget-lucene
+          # '**/*.*proj' includes .csproj, .vbproj, .fsproj, msbuildproj, etc.
+          # '**/*.props' includes Directory.Packages.props, Directory.Build.props and Dependencies.props
+          # '**/*.targets' includes Directory.Build.targets
+          # '**/*.sln' and '*.sln' ensure root solution files are included (minimatch glitch for file extension .sln)
+          # 'global.json' included for SDK version changes
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.*proj', '**/*.props', '**/*.targets', '**/*.sln', '*.sln', 'global.json') }}
+          path: ${{ env.NUGET_PACKAGES }}
       - name: Restore dependencies
         run: dotnet restore
       - name: Build and analyze
