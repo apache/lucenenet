@@ -323,7 +323,7 @@ jobs:
           # Set the Azure DevOps default working directory env variable, so our tests only need to deal with a single env variable
           echo `"SYSTEM_DEFAULTWORKINGDIRECTORY=`$working_directory`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
           # Title for LiquidTestReports.Markdown
-          echo `"title=Test Run for `$project_name - `${{matrix.framework}} - `${{matrix.platform}} - `${{matrix.os}}`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
+          echo `"title=Test Results for `$project_name - `${{matrix.framework}} - `${{matrix.platform}} - `${{matrix.os}}`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh"
 
     if ($isCLI) {
@@ -343,6 +343,14 @@ jobs:
         with:
           name: '`${{env.test_results_artifact_name}}'
           path: '`${{github.workspace}}/`${{env.test_results_artifact_name}}'
+      - name: Output Test Summary
+        if: `${{always()}}
+        shell: pwsh
+        run: |
+          `$md_file = Join-Path `${{github.workspace}} `${{env.test_results_artifact_name}} `${{env.project_name}} `${{env.md_file_name}}
+          if (Test-Path `$md_file) {
+              Get-Content `$md_file | Add-Content `$env:GITHUB_STEP_SUMMARY
+          }
 "
 
     # GitHub Actions does not support filenames with "." in them, so replace
