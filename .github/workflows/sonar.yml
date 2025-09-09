@@ -1,4 +1,4 @@
-﻿# Licensed to the Apache Software Foundation (ASF) under one
+# Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -39,49 +39,61 @@ jobs:
     if: github.repository == 'apache/lucenenet' # Don't run on forks
     name: Build and analyze
     runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+      BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS: 'true'
     steps:
-      - name: Disable .NET SDK Telemetry and Logo
-        run: |
-          echo "DOTNET_NOLOGO=1" | Out-File -FilePath  $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "DOTNET_CLI_TELEMETRY_OPTOUT=1" | Out-File -FilePath  $env:GITHUB_ENV -Encoding utf8 -Append
-        shell: pwsh
       - name: Setup .NET 8 SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '8.0.x'
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '21'
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Cache SonarCloud packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~\.sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
       - name: Install SonarCloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: powershell
+        shell: pwsh
         run: |
           $dir = '.\.sonar\scanner'
           if (!(Test-Path $dir)) { New-Item -Path $dir -ItemType Directory }
           dotnet tool update dotnet-sonarscanner --tool-path $dir
+      - name: Cache NuGet Packages
+        uses: actions/cache@v4
+        with:
+          # '**/*.*proj' includes .csproj, .vbproj, .fsproj, msbuildproj, etc.
+          # '**/*.props' includes Directory.Packages.props, Directory.Build.props and Dependencies.props
+          # '**/*.targets' includes Directory.Build.targets
+          # '**/*.sln' and '*.sln' ensure root solution files are included (minimatch glitch for file extension .sln)
+          # 'global.json' included for SDK version changes
+          key: nuget-${{ runner.os }}-${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }}-${{ hashFiles('**/*.*proj', '**/*.props', '**/*.targets', '**/*.sln', '*.sln', 'global.json') }}
+          path: ${{ env.NUGET_PACKAGES }}
+      - name: Restore dependencies
+        run: dotnet restore /p:TestFrameworks=${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }}
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        shell: powershell
+        shell: pwsh
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"apache_lucenenet" /o:"apache" /d:sonar.token="${{ secrets.SONARCLOUD_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build
+          dotnet build --no-restore /p:TestFrameworks=${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }}
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONARCLOUD_TOKEN }}"

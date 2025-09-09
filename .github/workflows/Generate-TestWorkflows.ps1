@@ -1,4 +1,4 @@
-﻿# -----------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -258,8 +258,11 @@ jobs:
           - os: macos-latest
             framework: net472
     env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: 1
+      NUGET_PACKAGES: `${{ github.workspace }}/.nuget/packages
+      BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS: 'true'
       project_path: '$projectRelativePath'"
-
     if ($isCLI) {
         $fileText += "
       project_under_test_path: '$luceneCliProjectPath'
@@ -275,29 +278,37 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v3
-
-      - name: Disable .NET SDK Telemetry and Logo
-        run: |
-          echo `"DOTNET_NOLOGO=1`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
-          echo `"DOTNET_CLI_TELEMETRY_OPTOUT=1`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
-        shell: pwsh
+        uses: actions/checkout@v5
 
       - name: Setup .NET 6 SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '$DotNet6SDKVersion'
         if: `${{ startswith(matrix.framework, 'net6.') }}
 
       - name: Setup .NET 8 SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '$DotNet8SDKVersion'
 
       - name: Setup .NET 9 SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '$DotNet9SDKVersion'
+
+      - name: Cache NuGet Packages
+        uses: actions/cache@v4
+        with:
+          # '**/*.*proj' includes .csproj, .vbproj, .fsproj, msbuildproj, etc.
+          # '**/*.props' includes Directory.Packages.props, Directory.Build.props and Dependencies.props
+          # '**/*.targets' includes Directory.Build.targets
+          # '**/*.sln' and '*.sln' ensure root solution files are included (minimatch glitch for file extension .sln)
+          # 'global.json' included for SDK version changes
+          key: nuget-`${{ runner.os }}-`${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }}-`${{ hashFiles('**/*.*proj', '**/*.props', '**/*.targets', '**/*.sln', '*.sln', 'global.json') }}
+          path: `${{ env.NUGET_PACKAGES }}
+
+      - name: Restore
+        run: dotnet restore /p:TestFrameworks=`${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }}
 
       - name: Setup Environment Variables
         run: |
@@ -312,17 +323,17 @@ jobs:
           # Set the Azure DevOps default working directory env variable, so our tests only need to deal with a single env variable
           echo `"SYSTEM_DEFAULTWORKINGDIRECTORY=`$working_directory`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
           # Title for LiquidTestReports.Markdown
-          echo `"title=Test Run for `$project_name - `${{matrix.framework}} - `${{matrix.platform}} - `${{matrix.os}}`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
+          echo `"title=Test Results for `$project_name - `${{matrix.framework}} - `${{matrix.platform}} - `${{matrix.os}}`" | Out-File -FilePath  `$env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh"
 
     if ($isCLI) {
         # Special case: Generate lucene-cli.nupkg for installation test so the test runner doesn't have to do it
         $fileText += "
-      - run: dotnet pack `${{env.project_under_test_path}} --configuration `${{matrix.configuration}} /p:TestFrameworks=true /p:PortableDebugTypeOnly=true"
+      - run: dotnet pack `${{env.project_under_test_path}} --configuration `${{matrix.configuration}} --no-restore /p:TestFrameworks=`${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }} /p:PortableDebugTypeOnly=true"
     }
 
     $fileText += "
-      - run: dotnet build `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} /p:TestFrameworks=true
+      - run: dotnet build `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} --no-restore /p:TestFrameworks=`${{ env.BUILD_FOR_ALL_TEST_TARGET_FRAMEWORKS }}
       - run: dotnet test `${{env.project_path}} --configuration `${{matrix.configuration}} --framework `${{matrix.framework}} --no-build --no-restore --blame-hang --blame-hang-dump-type mini --blame-hang-timeout 20minutes --logger:`"console;verbosity=normal`" --logger:`"trx;LogFileName=`${{env.trx_file_name}}`" --logger:`"liquid.md;LogFileName=`${{env.md_file_name}};Title=`${{env.title}};`" --results-directory:`"`${{github.workspace}}/`${{env.test_results_artifact_name}}/`${{env.project_name}}`" -- RunConfiguration.TargetPlatform=`${{matrix.platform}} NUnit.DisplayName=FullName TestRunParameters.Parameter\(name=\`"tests:slow\`",\ value=\`"\`${{env.run_slow_tests}}\`"\)
         shell: bash
       # upload reports as build artifacts
@@ -332,6 +343,14 @@ jobs:
         with:
           name: '`${{env.test_results_artifact_name}}'
           path: '`${{github.workspace}}/`${{env.test_results_artifact_name}}'
+      - name: Output Test Summary
+        if: `${{always()}}
+        shell: pwsh
+        run: |
+          `$md_file = Join-Path `${{github.workspace}} `${{env.test_results_artifact_name}} `${{env.project_name}} `${{env.md_file_name}}
+          if (Test-Path `$md_file) {
+              Get-Content `$md_file | Add-Content `$env:GITHUB_STEP_SUMMARY
+          }
 "
 
     # GitHub Actions does not support filenames with "." in them, so replace
