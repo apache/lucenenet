@@ -1,4 +1,7 @@
 // Lucene version compatibility level 4.8.1
+
+using System;
+
 namespace Lucene.Net.Analysis.Payloads
 {
     /*
@@ -62,10 +65,10 @@ namespace Lucene.Net.Analysis.Payloads
         /// <summary>
         /// NOTE: This was decodeFloat() in Lucene
         /// </summary>
-        /// <seealso cref="DecodeSingle(byte[], int)"/>
+        /// <seealso cref="DecodeSingle(ReadOnlySpan{byte}, int)"/>
         /// <seealso cref="EncodeSingle(float)"/>
         /// <returns> the decoded float </returns>
-        public static float DecodeSingle(byte[] bytes)
+        public static float DecodeSingle(ReadOnlySpan<byte> bytes)
         {
             return DecodeSingle(bytes, 0);
         }
@@ -81,16 +84,15 @@ namespace Lucene.Net.Analysis.Payloads
         /// <returns> The float that was encoded
         /// </returns>
         /// <seealso cref="EncodeSingle(float)"/>
-        public static float DecodeSingle(byte[] bytes, int offset)
+        public static float DecodeSingle(ReadOnlySpan<byte> bytes, int offset)
         {
-
             return J2N.BitConversion.Int32BitsToSingle(DecodeInt32(bytes, offset));
         }
 
         /// <summary>
         /// NOTE: This was decodeInt() in Lucene
         /// </summary>
-        public static int DecodeInt32(byte[] bytes, int offset)
+        public static int DecodeInt32(ReadOnlySpan<byte> bytes, int offset)
         {
             return ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
         }

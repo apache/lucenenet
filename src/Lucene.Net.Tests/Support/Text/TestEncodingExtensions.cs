@@ -3,6 +3,10 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Text;
 
+#if !FEATURE_ENCODING_GETSTRING_READONLYSPAN
+using System;
+#endif
+
 namespace Lucene.Net.Support.Text
 {
     /*
@@ -38,5 +42,16 @@ namespace Lucene.Net.Support.Text
                 _ = newEncoding.GetString(new byte[] { 0xF0 });
             });
         }
+
+#if !FEATURE_ENCODING_GETSTRING_READONLYSPAN
+        [Test, LuceneNetSpecific]
+        public void TestGetString_ReadOnlySpan()
+        {
+            Encoding encoding = Encoding.UTF8;
+            Span<byte> bytes = stackalloc byte[] { 0x40 };
+            string s = encoding.GetString(bytes);
+            Assert.AreEqual("@", s);
+        }
+#endif
     }
 }
