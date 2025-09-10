@@ -2,7 +2,6 @@ using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -37,24 +36,24 @@ namespace Lucene.Net.Search.Grouping
     /// @lucene.experimental
     /// </summary>
     /// <typeparam name="TGroupValue"></typeparam>
-    public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : IAbstractSecondPassGroupingCollector<TGroupValue>
+    public abstract class AbstractSecondPassGroupingCollector<TGroupValue> : IAbstractSecondPassGroupingCollector
     {
         protected readonly IDictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>> m_groupMap;
         private readonly int maxDocsPerGroup;
         protected AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>[] m_groupDocs;
-        private readonly IEnumerable<ISearchGroup<TGroupValue>> groups;
+        private readonly ICollection<SearchGroup<TGroupValue>> groups;
         private readonly Sort withinGroupSort;
         private readonly Sort groupSort;
 
         private int totalHitCount;
         private int totalGroupedHitCount;
 
-        protected AbstractSecondPassGroupingCollector(IEnumerable<ISearchGroup<TGroupValue>> groups, Sort groupSort, Sort withinGroupSort,
+        protected AbstractSecondPassGroupingCollector(ICollection<SearchGroup<TGroupValue>> groups, Sort groupSort, Sort withinGroupSort,
                                                    int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
 
             //System.out.println("SP init");
-            if (!groups.Any()) // LUCENENET TODO: Change back to .Count if/when IEnumerable<T> is changed to ICollection<T> or IReadOnlyCollection<T>
+            if (groups.Count == 0)
             {
                 throw new ArgumentException("no groups to collect (groups.Count is 0)");
             }
@@ -63,7 +62,7 @@ namespace Lucene.Net.Search.Grouping
             this.withinGroupSort = withinGroupSort;
             this.groups = groups;
             this.maxDocsPerGroup = maxDocsPerGroup;
-            m_groupMap = new JCG.Dictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>>(groups.Count());
+            m_groupMap = new JCG.Dictionary<TGroupValue, AbstractSecondPassGroupingCollector.SearchGroupDocs<TGroupValue>>(groups.Count);
 
             foreach (SearchGroup<TGroupValue> group in groups)
             {
@@ -121,9 +120,9 @@ namespace Lucene.Net.Search.Grouping
 
         public virtual bool AcceptsDocsOutOfOrder => false;
 
-        public virtual ITopGroups<TGroupValue> GetTopGroups(int withinGroupOffset)
+        public virtual TopGroups<TGroupValue> GetTopGroups(int withinGroupOffset)
         {
-            GroupDocs<TGroupValue>[] groupDocsResult = new GroupDocs<TGroupValue>[groups.Count()];
+            GroupDocs<TGroupValue>[] groupDocsResult = new GroupDocs<TGroupValue>[groups.Count];
 
             int groupIDX = 0;
             float maxScore = float.Epsilon; // LUCENENET: Epsilon in .NET is the same as MIN_VALUE in Java
@@ -147,7 +146,17 @@ namespace Lucene.Net.Search.Grouping
         }
 
 
+        #region Explicit interface implementations
 
+        /// <summary>
+        /// LUCENENET specific method to provide an <see cref="ITopGroups"/>-based implementation of <see cref="GetTopGroups(int)"/>.
+        /// </summary>
+        /// <param name="withinGroupOffset">The offset within each group</param>
+        /// <returns>The top groups</returns>
+        ITopGroups IAbstractSecondPassGroupingCollector.GetTopGroups(int withinGroupOffset)
+            => GetTopGroups(withinGroupOffset);
+
+        #endregion
     }
 
     /// <summary>
@@ -176,12 +185,11 @@ namespace Lucene.Net.Search.Grouping
     }
 
     /// <summary>
-    /// LUCENENET specific interface used to apply covariance to TGroupValue
-    /// to simulate Java's wildcard generics.
+    /// LUCENENET specific interface to provide a non-generic abstraction
+    /// for <see cref="AbstractSecondPassGroupingCollector{TGroupValue}"/>.
     /// </summary>
-    /// <typeparam name="TGroupValue"></typeparam>
-    public interface IAbstractSecondPassGroupingCollector<out TGroupValue> : ICollector
+    public interface IAbstractSecondPassGroupingCollector : ICollector
     {
-        ITopGroups<TGroupValue> GetTopGroups(int withinGroupOffset);
+        ITopGroups GetTopGroups(int withinGroupOffset);
     }
 }
