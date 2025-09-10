@@ -2,6 +2,9 @@ using J2N.IO;
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+
 #nullable enable
 
 namespace Lucene.Net.Replicator.Http
@@ -29,7 +32,7 @@ namespace Lucene.Net.Replicator.Http
     /// <remarks>
     /// @lucene.experimental
     /// </remarks>
-    public class HttpReplicator : HttpClientBase, IReplicator
+    public class HttpReplicator : HttpClientBase, IReplicator, IAsyncReplicator
     {
         /// <summary>
         /// Creates a new <see cref="HttpReplicator"/> with the given host, port and path.
@@ -109,5 +112,95 @@ namespace Lucene.Net.Replicator.Http
             // do not remove this call: as it is still validating for us!
             DoAction<object?>(response, () => null);
         }
+
+        #region Async methods (IAsyncReplicator)
+
+        /// <summary>
+        /// Checks for updates at the remote host asynchronously.
+        /// </summary>
+        /// <param name="currentVersion">The current index version.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>
+        /// A <see cref="SessionToken"/> if updates are available; otherwise, <c>null</c>.
+        /// </returns>
+        public async Task<SessionToken?> CheckForUpdateAsync(string currentVersion, CancellationToken cancellationToken = default)
+        {
+            string[] parameters = currentVersion != null
+                ? new[] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion }
+                : null;
+
+            using var response = await ExecuteGetAsync(
+                ReplicationService.ReplicationAction.UPDATE.ToString(),
+                parameters,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+
+            return await DoActionAsync(response, async () =>
+            {
+                using var inputStream = new DataInputStream(
+                    await GetResponseStreamAsync(response, cancellationToken).ConfigureAwait(false));
+
+                return inputStream.ReadByte() == 0 ? null : new SessionToken(inputStream);
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Obtains the given file from the remote host asynchronously.
+        /// </summary>
+        /// <param name="sessionId">The session ID.</param>
+        /// <param name="source">The source of the file.</param>
+        /// <param name="fileName">The file name.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>A <see cref="Stream"/> of the requested file.</returns>
+        public async Task<Stream> ObtainFileAsync(string sessionId, string source, string fileName, CancellationToken cancellationToken = default)
+        {
+            using var response = await ExecuteGetAsync(
+                ReplicationService.ReplicationAction.OBTAIN.ToString(),
+                ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
+                ReplicationService.REPLICATE_SOURCE_PARAM, source,
+                ReplicationService.REPLICATE_FILENAME_PARAM, fileName,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+
+            return await DoActionAsync(response, async () =>
+            {
+                return await GetResponseStreamAsync(response, cancellationToken).ConfigureAwait(false);
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Publishes a new <see cref="IRevision"/> asynchronously.
+        /// Not supported in this implementation.
+        /// </summary>
+        /// <param name="revision">The revision to publish.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>A <see cref="Task"/> representing the operation.</returns>
+        /// <exception cref="NotSupportedException">Always thrown.</exception>
+        public Task PublishAsync(IRevision revision, CancellationToken cancellationToken = default)
+        {
+            throw UnsupportedOperationException.Create(
+                "this replicator implementation does not support remote publishing of revisions");
+        }
+
+        /// <summary>
+        /// Releases the session at the remote host asynchronously.
+        /// </summary>
+        /// <param name="sessionId">The session ID to release.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>A <see cref="Task"/> representing the operation.</returns>
+        public async Task ReleaseAsync(string sessionId, CancellationToken cancellationToken = default)
+        {
+            using var response = await ExecuteGetAsync(
+                ReplicationService.ReplicationAction.RELEASE.ToString(),
+                ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+
+            await DoActionAsync(response, () =>
+            {
+                // No actual response content needed — just verification
+                return Task.FromResult<object?>(null);
+            }).ConfigureAwait(false);
+        }
+
+        #endregion
+
     }
 }
