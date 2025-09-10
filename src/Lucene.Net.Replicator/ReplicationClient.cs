@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
 
@@ -127,6 +128,7 @@ namespace Lucene.Net.Replicator
         public const string INFO_STREAM_COMPONENT = "ReplicationThread";
 
         private readonly IReplicator replicator;
+        private readonly IAsyncReplicator asyncReplicator;
         private readonly IReplicationHandler handler;
         private readonly ISourceDirectoryFactory factory;
 
@@ -135,6 +137,8 @@ namespace Lucene.Net.Replicator
         private readonly object syncLock = new object(); // LUCENENET specific to avoid lock (this)
 
         private ReplicationThread updateThread;
+        private CancellationTokenSource asyncUpdateCts;
+        private Task asyncUpdateTask;
         private bool disposed = false;
         private InfoStream infoStream = InfoStream.Default;
 
@@ -149,6 +153,20 @@ namespace Lucene.Net.Replicator
             this.replicator = replicator;
             this.handler = handler;
             this.factory = factory;
+        }
+
+        /// <summary>
+        /// Constructor for async replicators.
+        /// </summary>
+        /// <param name="asyncReplicator"></param>
+        /// <param name="handler"></param>
+        /// <param name="factory"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public ReplicationClient(IAsyncReplicator asyncReplicator, IReplicationHandler handler, ISourceDirectoryFactory factory)
+        {
+            this.asyncReplicator = asyncReplicator ?? throw new ArgumentNullException(nameof(asyncReplicator));
+            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         /// <exception cref="IOException"></exception>
@@ -258,6 +276,101 @@ namespace Lucene.Net.Replicator
                 {
                     factory.CleanupSession(session.Id);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Performs the async update logic, mirrors DoUpdate but uses IAsyncReplicator.
+        /// </summary>
+        private async Task DoUpdateAsync(CancellationToken cancellationToken)
+        {
+            if (asyncReplicator is null)
+                throw new InvalidOperationException("AsyncReplicator not initialized.");
+
+            SessionToken? session = null;
+            var sourceDirectory = new Dictionary<string, Directory>();
+            var copiedFiles = new Dictionary<string, IList<string>>();
+            bool notify = false;
+
+            try
+            {
+                string version = handler.CurrentVersion;
+                session = await asyncReplicator.CheckForUpdateAsync(version, cancellationToken).ConfigureAwait(false);
+
+                WriteToInfoStream($"DoUpdateAsync(): handlerVersion={version} session={session}");
+
+                if (session is null)
+                    return;
+
+                IDictionary<string, IList<RevisionFile>> requiredFiles = RequiredFiles(session.SourceFiles);
+                WriteToInfoStream($"DoUpdateAsync(): handlerVersion={version} session={session}");
+
+                foreach (var pair in requiredFiles)
+                {
+                    string source = pair.Key;
+                    Directory directory = factory.GetDirectory(session.Id, source);
+
+                    sourceDirectory.Add(source, directory);
+                    IList<string> cpFiles = new J2N.Collections.Generic.List<string>();
+                    copiedFiles.Add(source, cpFiles);
+
+                    foreach (var file in pair.Value)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        Stream input = null;
+                        IndexOutput output = null;
+                        try
+                        {
+                            input = await asyncReplicator.ObtainFileAsync(session.Id, source, file.FileName, cancellationToken).ConfigureAwait(false);
+                            output = directory.CreateOutput(file.FileName, IOContext.DEFAULT);
+
+                            int numBytes;
+                            byte[] buffer = new byte[16384];
+                            while ((numBytes = await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+                            {
+                                output.WriteBytes(buffer, 0, numBytes);
+                            }
+
+                            cpFiles.Add(file.FileName);
+                        }
+                        finally
+                        {
+                            IOUtils.Dispose(input, output);
+                        }
+                    }
+                }
+
+                notify = true;
+            }
+            finally
+            {
+                if (session != null)
+                {
+                    try
+                    {
+                        await asyncReplicator.ReleaseAsync(session.Id, cancellationToken).ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        if (!notify)
+                        {
+                            IOUtils.Dispose(sourceDirectory.Values);
+                            factory.CleanupSession(session.Id);
+                        }
+                    }
+                }
+            }
+
+            if (notify && !disposed)
+            {
+                handler.RevisionReady(session!.Version, session.SourceFiles, Collections.AsReadOnly(copiedFiles), sourceDirectory);
+            }
+
+            IOUtils.Dispose(sourceDirectory.Values);
+            if (session != null)
+            {
+                factory.CleanupSession(session.Id);
             }
         }
 
@@ -440,6 +553,120 @@ namespace Lucene.Net.Replicator
             }
         }
 
+        /// <summary>
+        /// Start a periodic async update loop with the specified interval in milliseconds.
+        /// </summary>
+        /// <param name="intervalInMilliseconds">Interval between updates.</param>
+        /// <param name="threadName">Optional name for logging purposes.</param>
+        public virtual void StartAsyncUpdateLoop(long intervalInMilliseconds, string threadName = null)
+        {
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
+                EnsureOpen();
+
+                if (asyncUpdateTask != null && !asyncUpdateTask.IsCompleted)
+                    throw IllegalStateException.Create("Async update loop is already running. Stop it first.");
+
+                threadName ??= "ReplicationAsyncLoop";
+
+                asyncUpdateCts = new CancellationTokenSource();
+                CancellationToken ct = asyncUpdateCts.Token;
+
+                asyncUpdateTask = Task.Run(async () =>
+                {
+                    while (!ct.IsCancellationRequested)
+                    {
+                        try
+                        {
+                            updateLock.Lock();
+                            try
+                            {
+                                await DoUpdateAsync(ct).ConfigureAwait(false);
+                            }
+                            finally
+                            {
+                                updateLock.Unlock();
+                            }
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            // Cancellation requested, exit loop gracefully
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            HandleUpdateException(ex);
+                        }
+
+                        try
+                        {
+                            await Task.Delay(TimeSpan.FromMilliseconds(intervalInMilliseconds), ct).ConfigureAwait(false);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            break; // exit loop if cancelled during delay
+                        }
+                    }
+                }, ct);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
+        }
+
+        /// <summary>
+        /// Stops the async update loop, if it is running.
+        /// </summary>
+        public virtual async Task StopAsyncUpdateLoop()
+        {
+            UninterruptableMonitor.Enter(syncLock);
+            try
+            {
+                if (asyncUpdateCts != null)
+                {
+                    asyncUpdateCts.Cancel();
+                    try
+                    {
+                        if (asyncUpdateTask != null)
+                            await asyncUpdateTask.ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException) { }
+                    finally
+                    {
+                        asyncUpdateTask = null;
+                        asyncUpdateCts.Dispose();
+                        asyncUpdateCts = null;
+                    }
+                }
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(syncLock);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the async update loop is running.
+        /// </summary>
+        public virtual bool IsAsyncUpdateLoopAlive
+        {
+            get
+            {
+                UninterruptableMonitor.Enter(syncLock);
+                try
+                {
+                    return asyncUpdateTask != null && !asyncUpdateTask.IsCompleted;
+                }
+                finally
+                {
+                    UninterruptableMonitor.Exit(syncLock);
+                }
+            }
+        }
+
+
         public override string ToString()
         {
             if (updateThread is null)
@@ -461,6 +688,25 @@ namespace Lucene.Net.Replicator
             try
             {
                 DoUpdate();
+            }
+            finally
+            {
+                updateLock.Unlock();
+            }
+        }
+
+        /// <summary>
+        /// Executes the update operation asynchronously immediately, regardless if an update thread is running or not.
+        /// </summary>
+        public virtual async Task UpdateNowAsync(CancellationToken cancellationToken = default)
+        {
+            EnsureOpen();
+
+            // Acquire the same update lock to prevent concurrent updates
+            updateLock.Lock();
+            try
+            {
+                await DoUpdateAsync(cancellationToken).ConfigureAwait(false);
             }
             finally
             {
