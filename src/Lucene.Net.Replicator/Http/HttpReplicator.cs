@@ -39,7 +39,7 @@ namespace Lucene.Net.Replicator.Http
         /// <see cref="HttpClientBase(string, int, string, HttpMessageHandler)"/> for more details.
         /// </summary>
         public HttpReplicator(string host, int port, string path, HttpMessageHandler? messageHandler = null)
-            : base(host, port, path, messageHandler)
+            : base(host, port, path, messageHandler ?? new HttpClientHandler())
         {
         }
 
@@ -69,12 +69,14 @@ namespace Lucene.Net.Replicator.Http
         public virtual SessionToken? CheckForUpdate(string? currentVersion)
         {
             string[]? parameters = null;
-            if (currentVersion != null)
+
+            if (!string.IsNullOrEmpty(currentVersion))
             {
-                parameters = new[] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion };
+                parameters = new[] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion! }; // [!]: verified above
             }
 
             var response = base.ExecuteGet(nameof(ReplicationService.ReplicationAction.UPDATE), parameters);
+
             return DoAction(response, () =>
             {
                 using var inputStream = new DataInputStream(GetResponseStream(response));
@@ -123,15 +125,15 @@ namespace Lucene.Net.Replicator.Http
         /// <returns>
         /// A <see cref="SessionToken"/> if updates are available; otherwise, <c>null</c>.
         /// </returns>
-        public async Task<SessionToken?> CheckForUpdateAsync(string currentVersion, CancellationToken cancellationToken = default)
+        public async Task<SessionToken?> CheckForUpdateAsync(string? currentVersion, CancellationToken cancellationToken = default)
         {
-            string[] parameters = currentVersion != null
-                ? new[] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion }
+            string[]? parameters = !string.IsNullOrEmpty(currentVersion)
+                ? new[] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion! }
                 : null;
 
             using var response = await ExecuteGetAsync(
                 ReplicationService.ReplicationAction.UPDATE.ToString(),
-                parameters,
+                parameters ?? Array.Empty<string>(),
                 cancellationToken: cancellationToken).ConfigureAwait(false);
 
             return await DoActionAsync(response, async () =>
@@ -204,3 +206,4 @@ namespace Lucene.Net.Replicator.Http
 
     }
 }
+#nullable restore
