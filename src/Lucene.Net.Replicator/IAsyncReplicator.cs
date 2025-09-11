@@ -2,6 +2,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace Lucene.Net.Replicator
 {
     /// <summary>
@@ -15,6 +17,7 @@ namespace Lucene.Net.Replicator
         /// </summary>
         /// <param name="currentVersion">Current version of the index.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>A <see cref="SessionToken"/> if an update exists; otherwise, <c>null</c>.</returns>
         Task<SessionToken?> CheckForUpdateAsync(string currentVersion, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -33,3 +36,4 @@ namespace Lucene.Net.Replicator
         Task PublishAsync(IRevision revision, CancellationToken cancellationToken = default);
     }
 }
+#nullable restore
