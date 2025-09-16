@@ -188,9 +188,6 @@ namespace Lucene.Net.Analysis.Core
         [LuceneNetSpecific] // Issue #832
         public virtual void TestStopAnalyzerWithRelativePath()
         {
-            // Save current directory to restore later
-            string originalDir = Environment.CurrentDirectory;
-
             // Create a temp directory structure
             var tempDir = LuceneTestCase.CreateTempDir("stopAnalyzerRelative");
             var stopwordsDir = new DirectoryInfo(System.IO.Path.Combine(tempDir.FullName, "config"));
@@ -209,72 +206,70 @@ namespace Lucene.Net.Analysis.Core
                     writer.WriteLine("words");
                 }
 
-                // Change to temp directory and use relative path
-                Environment.CurrentDirectory = tempDir.FullName;
-
-                // Test with relative path
-                StopAnalyzer analyzer = new StopAnalyzer(TEST_VERSION_CURRENT, "config/stops.txt");
-
-                string input = "this is relative path with stop words testing";
-                TokenStream stream = analyzer.GetTokenStream("test", input);
-                try
+                // Use SystemEnvironment to safely change current directory
+                SystemEnvironment.WithCurrentDirectory(tempDir.FullName, () =>
                 {
-                    assertNotNull(stream);
-                    ICharTermAttribute termAtt = stream.GetAttribute<ICharTermAttribute>();
+                    // Test with relative path
+                    StopAnalyzer analyzer = new StopAnalyzer(TEST_VERSION_CURRENT, "config/stops.txt");
 
-                    var tokens = new List<string>();
-                    stream.Reset();
-                    while (stream.IncrementToken())
+                    string input = "this is relative path with stop words testing";
+                    TokenStream stream = analyzer.GetTokenStream("test", input);
+                    try
                     {
-                        tokens.Add(termAtt.ToString());
+                        assertNotNull(stream);
+                        ICharTermAttribute termAtt = stream.GetAttribute<ICharTermAttribute>();
+
+                        var tokens = new List<string>();
+                        stream.Reset();
+                        while (stream.IncrementToken())
+                        {
+                            tokens.Add(termAtt.ToString());
+                        }
+                        stream.End();
+
+                        // Verify that stop words from relative path file were filtered out
+                        assertFalse(tokens.Contains("relative"));
+                        assertFalse(tokens.Contains("path"));
+                        assertFalse(tokens.Contains("stop"));
+                        assertFalse(tokens.Contains("words"));
+
+                        // Verify that non-stop words remain
+                        assertTrue(tokens.Contains("testing"));
                     }
-                    stream.End();
-
-                    // Verify that stop words from relative path file were filtered out
-                    assertFalse(tokens.Contains("relative"));
-                    assertFalse(tokens.Contains("path"));
-                    assertFalse(tokens.Contains("stop"));
-                    assertFalse(tokens.Contains("words"));
-
-                    // Verify that non-stop words remain
-                    assertTrue(tokens.Contains("testing"));
-                }
-                finally
-                {
-                    IOUtils.CloseWhileHandlingException(stream);
-                }
-
-                // Also test with "./" prefix
-                analyzer = new StopAnalyzer(TEST_VERSION_CURRENT, "./config/stops.txt");
-                stream = analyzer.GetTokenStream("test", input);
-                try
-                {
-                    assertNotNull(stream);
-                    ICharTermAttribute termAtt = stream.GetAttribute<ICharTermAttribute>();
-
-                    var tokens = new List<string>();
-                    stream.Reset();
-                    while (stream.IncrementToken())
+                    finally
                     {
-                        tokens.Add(termAtt.ToString());
+                        IOUtils.CloseWhileHandlingException(stream);
                     }
-                    stream.End();
 
-                    // Verify same behavior with ./ prefix
-                    assertFalse(tokens.Contains("relative"));
-                    assertFalse(tokens.Contains("path"));
-                    assertTrue(tokens.Contains("testing"));
-                }
-                finally
-                {
-                    IOUtils.CloseWhileHandlingException(stream);
-                }
+                    // Also test with "./" prefix
+                    analyzer = new StopAnalyzer(TEST_VERSION_CURRENT, "./config/stops.txt");
+                    stream = analyzer.GetTokenStream("test", input);
+                    try
+                    {
+                        assertNotNull(stream);
+                        ICharTermAttribute termAtt = stream.GetAttribute<ICharTermAttribute>();
+
+                        var tokens = new List<string>();
+                        stream.Reset();
+                        while (stream.IncrementToken())
+                        {
+                            tokens.Add(termAtt.ToString());
+                        }
+                        stream.End();
+
+                        // Verify same behavior with ./ prefix
+                        assertFalse(tokens.Contains("relative"));
+                        assertFalse(tokens.Contains("path"));
+                        assertTrue(tokens.Contains("testing"));
+                    }
+                    finally
+                    {
+                        IOUtils.CloseWhileHandlingException(stream);
+                    }
+                });
             }
             finally
             {
-                // Restore original directory
-                Environment.CurrentDirectory = originalDir;
-
                 // Clean up temp files
                 if (Directory.Exists(tempDir.FullName))
                 {

@@ -229,33 +229,30 @@ namespace Lucene.Net.Analysis.Util
                 assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("subdir/file.txt"), Encoding.UTF8).First());
 
                 // Test with relative path from current directory
-                string originalDir = Environment.CurrentDirectory;
-                try
+                SystemEnvironment.WithCurrentDirectory(@base.FullName, () =>
                 {
-                    Environment.CurrentDirectory = @base.FullName;
-
                     // Test with relative path "." as base
-                    rl = new FilesystemResourceLoader(".");
+                    IResourceLoader rl = new FilesystemResourceLoader(".");
                     assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("subdir/file.txt"), Encoding.UTF8).First());
 
                     // Test with relative path "subdir" as base
                     rl = new FilesystemResourceLoader("subdir");
                     assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("file.txt"), Encoding.UTF8).First());
+                });
 
-                    // Change to parent directory and use relative path to base
-                    Environment.CurrentDirectory = @base.Parent?.FullName ?? throw new InvalidOperationException("Base directory has no parent");
-                    rl = new FilesystemResourceLoader(@base.Name);
-                    assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("subdir/file.txt"), Encoding.UTF8).First());
-
-                    // Test with relative path containing ".."
-                    Environment.CurrentDirectory = subdir.FullName;
-                    rl = new FilesystemResourceLoader("..");
-                    assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("subdir/file.txt"), Encoding.UTF8).First());
-                }
-                finally
+                // Test from parent directory
+                SystemEnvironment.WithCurrentDirectory(@base.Parent?.FullName ?? throw new InvalidOperationException("Base directory has no parent"), () =>
                 {
-                    Environment.CurrentDirectory = originalDir;
-                }
+                    IResourceLoader rl = new FilesystemResourceLoader(@base.Name);
+                    assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("subdir/file.txt"), Encoding.UTF8).First());
+                });
+
+                // Test with relative path containing ".."
+                SystemEnvironment.WithCurrentDirectory(subdir.FullName, () =>
+                {
+                    IResourceLoader rl = new FilesystemResourceLoader("..");
+                    assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("subdir/file.txt"), Encoding.UTF8).First());
+                });
             }
             finally
             {
@@ -301,12 +298,9 @@ namespace Lucene.Net.Analysis.Util
                     writer.Write("level2 content\n");
                 }
 
-                string originalDir = Environment.CurrentDirectory;
-                try
+                // Test from base directory with nested relative paths
+                SystemEnvironment.WithCurrentDirectory(@base.FullName, () =>
                 {
-                    // Test from base directory with nested relative paths
-                    Environment.CurrentDirectory = @base.FullName;
-
                     IResourceLoader rl = new FilesystemResourceLoader((string)null);
                     assertEquals("root content", WordlistLoader.GetLines(rl.OpenResource("root.txt"), Encoding.UTF8).First());
                     assertEquals("level1 content", WordlistLoader.GetLines(rl.OpenResource("level1/level1.txt"), Encoding.UTF8).First());
@@ -320,17 +314,15 @@ namespace Lucene.Net.Analysis.Util
                     // Test with nested relative base path
                     rl = new FilesystemResourceLoader("level1/level2");
                     assertEquals("level2 content", WordlistLoader.GetLines(rl.OpenResource("level2.txt"), Encoding.UTF8).First());
+                });
 
-                    // Test with ".." in resource path
-                    Environment.CurrentDirectory = level2.FullName;
-                    rl = new FilesystemResourceLoader((string)null);
+                // Test with ".." in resource path from level2 directory
+                SystemEnvironment.WithCurrentDirectory(level2.FullName, () =>
+                {
+                    IResourceLoader rl = new FilesystemResourceLoader((string)null);
                     assertEquals("level1 content", WordlistLoader.GetLines(rl.OpenResource("../level1.txt"), Encoding.UTF8).First());
                     assertEquals("root content", WordlistLoader.GetLines(rl.OpenResource("../../root.txt"), Encoding.UTF8).First());
-                }
-                finally
-                {
-                    Environment.CurrentDirectory = originalDir;
-                }
+                });
             }
             finally
             {
@@ -375,11 +367,8 @@ namespace Lucene.Net.Analysis.Util
                     IOUtils.DisposeWhileHandlingException(os);
                 }
 
-                string originalDir = Environment.CurrentDirectory;
-                try
+                SystemEnvironment.WithCurrentDirectory(@base.FullName, () =>
                 {
-                    Environment.CurrentDirectory = @base.FullName;
-
                     // Test with relative path and delegation
                     IResourceLoader rl = new FilesystemResourceLoader("subdir", new StringMockResourceLoader("delegated\n"));
 
@@ -388,17 +377,15 @@ namespace Lucene.Net.Analysis.Util
 
                     // File doesn't exist, should delegate
                     assertEquals("delegated", WordlistLoader.GetLines(rl.OpenResource("missing.txt"), Encoding.UTF8).First());
+                });
 
-                    // Test with ".." in relative base path
-                    Environment.CurrentDirectory = subdir.FullName;
-                    rl = new FilesystemResourceLoader("..", new StringMockResourceLoader("parent-delegated\n"));
+                // Test with ".." in relative base path
+                SystemEnvironment.WithCurrentDirectory(subdir.FullName, () =>
+                {
+                    IResourceLoader rl = new FilesystemResourceLoader("..", new StringMockResourceLoader("parent-delegated\n"));
                     assertEquals("found", WordlistLoader.GetLines(rl.OpenResource("subdir/existing.txt"), Encoding.UTF8).First());
                     assertEquals("parent-delegated", WordlistLoader.GetLines(rl.OpenResource("nonexistent.txt"), Encoding.UTF8).First());
-                }
-                finally
-                {
-                    Environment.CurrentDirectory = originalDir;
-                }
+                });
             }
             finally
             {
