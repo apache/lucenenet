@@ -1,5 +1,6 @@
 // Lucene version compatibility level 4.8.1
 using J2N;
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -119,6 +120,212 @@ namespace Lucene.Net.Analysis.Util
         {
             IResourceLoader rl = new FilesystemResourceLoader((string)null, new StringMockResourceLoader("foobar\n"));
             assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource("template.txt"), Encoding.UTF8).First());
+        }
+
+        [Test]
+        [LuceneNetSpecific] // Issue #832
+        public virtual void TestBaseDirWithString()
+        {
+            DirectoryInfo @base = CreateTempDir("fsResourceLoaderBaseString");
+            try
+            {
+                TextWriter os = new StreamWriter(new FileStream(System.IO.Path.Combine(@base.FullName, "template.txt"), FileMode.Create, FileAccess.Write), StandardCharsets.UTF_8);
+                try
+                {
+                    os.Write("foobar\n");
+                }
+                finally
+                {
+                    IOUtils.DisposeWhileHandlingException(os);
+                }
+
+                // Test with string path instead of DirectoryInfo
+                IResourceLoader rl = new FilesystemResourceLoader(@base.FullName);
+                assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource("template.txt"), Encoding.UTF8).First());
+                // Same with full path name:
+                string fullPath = (new FileInfo(System.IO.Path.Combine(@base.FullName, "template.txt"))).ToString();
+                assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource(fullPath), Encoding.UTF8).First());
+                assertClasspathDelegation(rl);
+                assertNotFound(rl);
+
+                // now use RL without base dir:
+                rl = new FilesystemResourceLoader((string)null);
+                assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource(new FileInfo(System.IO.Path.Combine(@base.FullName, "template.txt")).FullName), Encoding.UTF8).First());
+                assertClasspathDelegation(rl);
+                assertNotFound(rl);
+            }
+            finally
+            {
+                // clean up
+                foreach (var file in @base.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                @base.Delete();
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific] // Issue #832
+        public virtual void TestDelegationWithString()
+        {
+            IResourceLoader rl = new FilesystemResourceLoader((string)null, new StringMockResourceLoader("foobar\n"));
+            assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource("template.txt"), Encoding.UTF8).First());
+
+            // Test with string base directory and delegation
+            DirectoryInfo @base = CreateTempDir("fsResourceLoaderDelegationString");
+            try
+            {
+                TextWriter os = new StreamWriter(new FileStream(System.IO.Path.Combine(@base.FullName, "template2.txt"), FileMode.Create, FileAccess.Write), StandardCharsets.UTF_8);
+                try
+                {
+                    os.Write("baz\n");
+                }
+                finally
+                {
+                    IOUtils.DisposeWhileHandlingException(os);
+                }
+
+                rl = new FilesystemResourceLoader(@base.FullName, new StringMockResourceLoader("fallback\n"));
+                assertEquals("baz", WordlistLoader.GetLines(rl.OpenResource("template2.txt"), Encoding.UTF8).First());
+                // Test delegation when file doesn't exist in base dir
+                assertEquals("fallback", WordlistLoader.GetLines(rl.OpenResource("nonexistent.txt"), Encoding.UTF8).First());
+            }
+            finally
+            {
+                // clean up
+                foreach (var file in @base.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                @base.Delete();
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific] // Issue #832
+        public virtual void TestRelativePathsWithString()
+        {
+            // Create a directory structure: base/subdir/file.txt
+            DirectoryInfo @base = CreateTempDir("fsResourceLoaderRelativePath");
+            DirectoryInfo subdir = new DirectoryInfo(System.IO.Path.Combine(@base.FullName, "subdir"));
+            subdir.Create();
+
+            try
+            {
+                // Create a file in the subdirectory
+                TextWriter os = new StreamWriter(new FileStream(System.IO.Path.Combine(subdir.FullName, "file.txt"), FileMode.Create, FileAccess.Write), StandardCharsets.UTF_8);
+                try
+                {
+                    os.Write("content\n");
+                }
+                finally
+                {
+                    IOUtils.DisposeWhileHandlingException(os);
+                }
+
+                // Test with base directory using absolute path
+                IResourceLoader rl = new FilesystemResourceLoader(@base.FullName);
+                assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("subdir/file.txt"), Encoding.UTF8).First());
+
+                // Test with relative path from current directory
+                string originalDir = Environment.CurrentDirectory;
+                try
+                {
+                    Environment.CurrentDirectory = @base.FullName;
+
+                    // Test with relative path "." as base
+                    rl = new FilesystemResourceLoader(".");
+                    assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("subdir/file.txt"), Encoding.UTF8).First());
+
+                    // Test with relative path "subdir" as base
+                    rl = new FilesystemResourceLoader("subdir");
+                    assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("file.txt"), Encoding.UTF8).First());
+
+                    // Change to parent directory and use relative path to base
+                    Environment.CurrentDirectory = @base.Parent?.FullName ?? throw new InvalidOperationException("Base directory has no parent");
+                    rl = new FilesystemResourceLoader(@base.Name);
+                    assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("subdir/file.txt"), Encoding.UTF8).First());
+
+                    // Test with relative path containing ".."
+                    Environment.CurrentDirectory = subdir.FullName;
+                    rl = new FilesystemResourceLoader("..");
+                    assertEquals("content", WordlistLoader.GetLines(rl.OpenResource("subdir/file.txt"), Encoding.UTF8).First());
+                }
+                finally
+                {
+                    Environment.CurrentDirectory = originalDir;
+                }
+            }
+            finally
+            {
+                // clean up
+                foreach (var file in subdir.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                subdir.Delete();
+                @base.Delete();
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific] // Issue #832
+        public virtual void TestRelativePathsWithStringAndDelegation()
+        {
+            // Create a directory structure
+            DirectoryInfo @base = CreateTempDir("fsResourceLoaderRelativePathDelegation");
+            DirectoryInfo subdir = new DirectoryInfo(System.IO.Path.Combine(@base.FullName, "subdir"));
+            subdir.Create();
+
+            try
+            {
+                // Create a file in the subdirectory
+                TextWriter os = new StreamWriter(new FileStream(System.IO.Path.Combine(subdir.FullName, "existing.txt"), FileMode.Create, FileAccess.Write), StandardCharsets.UTF_8);
+                try
+                {
+                    os.Write("found\n");
+                }
+                finally
+                {
+                    IOUtils.DisposeWhileHandlingException(os);
+                }
+
+                string originalDir = Environment.CurrentDirectory;
+                try
+                {
+                    Environment.CurrentDirectory = @base.FullName;
+
+                    // Test with relative path and delegation
+                    IResourceLoader rl = new FilesystemResourceLoader("subdir", new StringMockResourceLoader("delegated\n"));
+
+                    // File exists in relative path
+                    assertEquals("found", WordlistLoader.GetLines(rl.OpenResource("existing.txt"), Encoding.UTF8).First());
+
+                    // File doesn't exist, should delegate
+                    assertEquals("delegated", WordlistLoader.GetLines(rl.OpenResource("missing.txt"), Encoding.UTF8).First());
+
+                    // Test with ".." in relative base path
+                    Environment.CurrentDirectory = subdir.FullName;
+                    rl = new FilesystemResourceLoader("..", new StringMockResourceLoader("parent-delegated\n"));
+                    assertEquals("found", WordlistLoader.GetLines(rl.OpenResource("subdir/existing.txt"), Encoding.UTF8).First());
+                    assertEquals("parent-delegated", WordlistLoader.GetLines(rl.OpenResource("nonexistent.txt"), Encoding.UTF8).First());
+                }
+                finally
+                {
+                    Environment.CurrentDirectory = originalDir;
+                }
+            }
+            finally
+            {
+                // clean up
+                foreach (var file in subdir.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                subdir.Delete();
+                @base.Delete();
+            }
         }
     }
 }
