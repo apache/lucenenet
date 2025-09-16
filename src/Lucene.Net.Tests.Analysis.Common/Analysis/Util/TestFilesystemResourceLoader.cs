@@ -271,6 +271,90 @@ namespace Lucene.Net.Analysis.Util
 
         [Test]
         [LuceneNetSpecific] // Issue #832
+        public virtual void TestNestedRelativePathsWithString()
+        {
+            // Create a nested directory structure: base/level1/level2/file.txt
+            DirectoryInfo @base = CreateTempDir("fsResourceLoaderNestedRelative");
+            DirectoryInfo level1 = new DirectoryInfo(System.IO.Path.Combine(@base.FullName, "level1"));
+            DirectoryInfo level2 = new DirectoryInfo(System.IO.Path.Combine(level1.FullName, "level2"));
+            level1.Create();
+            level2.Create();
+
+            try
+            {
+                // Create files at different levels
+                using (var fs = new FileStream(System.IO.Path.Combine(@base.FullName, "root.txt"), FileMode.Create, FileAccess.Write))
+                using (var writer = new StreamWriter(fs, StandardCharsets.UTF_8))
+                {
+                    writer.Write("root content\n");
+                }
+
+                using (var fs = new FileStream(System.IO.Path.Combine(level1.FullName, "level1.txt"), FileMode.Create, FileAccess.Write))
+                using (var writer = new StreamWriter(fs, StandardCharsets.UTF_8))
+                {
+                    writer.Write("level1 content\n");
+                }
+
+                using (var fs = new FileStream(System.IO.Path.Combine(level2.FullName, "level2.txt"), FileMode.Create, FileAccess.Write))
+                using (var writer = new StreamWriter(fs, StandardCharsets.UTF_8))
+                {
+                    writer.Write("level2 content\n");
+                }
+
+                string originalDir = Environment.CurrentDirectory;
+                try
+                {
+                    // Test from base directory with nested relative paths
+                    Environment.CurrentDirectory = @base.FullName;
+
+                    IResourceLoader rl = new FilesystemResourceLoader((string)null);
+                    assertEquals("root content", WordlistLoader.GetLines(rl.OpenResource("root.txt"), Encoding.UTF8).First());
+                    assertEquals("level1 content", WordlistLoader.GetLines(rl.OpenResource("level1/level1.txt"), Encoding.UTF8).First());
+                    assertEquals("level2 content", WordlistLoader.GetLines(rl.OpenResource("level1/level2/level2.txt"), Encoding.UTF8).First());
+
+                    // Test with relative base path "level1"
+                    rl = new FilesystemResourceLoader("level1");
+                    assertEquals("level1 content", WordlistLoader.GetLines(rl.OpenResource("level1.txt"), Encoding.UTF8).First());
+                    assertEquals("level2 content", WordlistLoader.GetLines(rl.OpenResource("level2/level2.txt"), Encoding.UTF8).First());
+
+                    // Test with nested relative base path
+                    rl = new FilesystemResourceLoader("level1/level2");
+                    assertEquals("level2 content", WordlistLoader.GetLines(rl.OpenResource("level2.txt"), Encoding.UTF8).First());
+
+                    // Test with ".." in resource path
+                    Environment.CurrentDirectory = level2.FullName;
+                    rl = new FilesystemResourceLoader((string)null);
+                    assertEquals("level1 content", WordlistLoader.GetLines(rl.OpenResource("../level1.txt"), Encoding.UTF8).First());
+                    assertEquals("root content", WordlistLoader.GetLines(rl.OpenResource("../../root.txt"), Encoding.UTF8).First());
+                }
+                finally
+                {
+                    Environment.CurrentDirectory = originalDir;
+                }
+            }
+            finally
+            {
+                // clean up
+                foreach (var file in level2.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                level2.Delete();
+                foreach (var file in level1.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                level1.Delete();
+                foreach (var file in @base.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+                @base.Delete();
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific] // Issue #832
         public virtual void TestRelativePathsWithStringAndDelegation()
         {
             // Create a directory structure
