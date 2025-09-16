@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public virtual void TestCategoriesLineFileWithStringPath()
         {
             // Test with relative path
-            string fileName = "data/document.txt";
+            string fileName = Path.Combine("data", "document.txt");
             string result = WriteEnwikiLineDocTask.CategoriesLineFile(fileName);
             assertEquals(Path.Combine("data", "categories-document.txt"), result);
 
@@ -40,9 +40,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             assertEquals("categories-document.txt", result);
 
             // Test with complex path
-            fileName = "../parent/subdir/document.txt";
+            fileName = Path.Combine("..", "parent", "subdir", "document.txt");
             result = WriteEnwikiLineDocTask.CategoriesLineFile(fileName);
-            assertEquals(Path.Combine("../parent/subdir", "categories-document.txt"), result);
+            assertEquals(Path.Combine("..", "parent", "subdir", "categories-document.txt"), result);
 
             // Test with Windows-style absolute path
             if (Path.DirectorySeparatorChar == '\\')
@@ -73,17 +73,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 SystemEnvironment.WithCurrentDirectory(tempDir.FullName, () =>
                 {
                     // Test with relative path from current directory
-                    string fileName = "subdir/document.txt";
+                    string fileName = Path.Combine("subdir", "document.txt");
                     string result = WriteEnwikiLineDocTask.CategoriesLineFile(fileName);
                     assertEquals(Path.Combine("subdir", "categories-document.txt"), result);
 
-                    // Test with "./" prefix
-                    fileName = "./document.txt";
+                    // Test with current directory prefix
+                    fileName = Path.Combine(".", "document.txt");
                     result = WriteEnwikiLineDocTask.CategoriesLineFile(fileName);
                     assertEquals(Path.Combine(".", "categories-document.txt"), result);
 
                     // Test with parent directory reference
-                    fileName = "../document.txt";
+                    fileName = Path.Combine("..", "document.txt");
                     result = WriteEnwikiLineDocTask.CategoriesLineFile(fileName);
                     assertEquals(Path.Combine("..", "categories-document.txt"), result);
                 });
@@ -105,8 +105,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             // Compare the string version with the FileInfo version
             string[] testPaths = {
                 "document.txt",
-                "data/document.txt",
-                "relative/path/document.txt"
+                Path.Combine("data", "document.txt"),
+                Path.Combine("relative", "path", "document.txt")
             };
 
             foreach (string path in testPaths)
