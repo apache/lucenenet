@@ -107,9 +107,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         [LuceneNetSpecific] // Issue #832
         public virtual void TestFullyDeleteWithRelativeStringPath()
         {
-            // Save current directory to restore later
-            string originalDir = Environment.CurrentDirectory;
-
             // Create a temp base directory
             DirectoryInfo tempBase = CreateTempDir("testFullyDeleteRelative");
 
@@ -121,39 +118,37 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 Directory.CreateDirectory(subDir2);
                 File.WriteAllText(Path.Combine(subDir2, "file.txt"), "content");
 
-                // Change to temp base directory
-                Environment.CurrentDirectory = tempBase.FullName;
+                // Use SystemEnvironment to safely change current directory
+                SystemEnvironment.WithCurrentDirectory(tempBase.FullName, () =>
+                {
+                    // Verify structure exists
+                    assertTrue(Directory.Exists("subdir1"));
+                    assertTrue(Directory.Exists("subdir1/subdir2"));
+                    assertTrue(File.Exists("subdir1/subdir2/file.txt"));
 
-                // Verify structure exists
-                assertTrue(Directory.Exists("subdir1"));
-                assertTrue(Directory.Exists("subdir1/subdir2"));
-                assertTrue(File.Exists("subdir1/subdir2/file.txt"));
+                    // Test FullyDelete with relative path
+                    bool result = FileUtils.FullyDelete("subdir1");
 
-                // Test FullyDelete with relative path
-                bool result = FileUtils.FullyDelete("subdir1");
+                    // Verify deletion was successful
+                    assertTrue(result);
+                    assertFalse(Directory.Exists("subdir1"));
+                    assertFalse(Directory.Exists(subDir1));
+                    assertFalse(Directory.Exists(subDir2));
 
-                // Verify deletion was successful
-                assertTrue(result);
-                assertFalse(Directory.Exists("subdir1"));
-                assertFalse(Directory.Exists(subDir1));
-                assertFalse(Directory.Exists(subDir2));
+                    // Test with "./" prefix
+                    string subDir3 = Path.Combine(tempBase.FullName, "subdir3");
+                    Directory.CreateDirectory(subDir3);
+                    File.WriteAllText(Path.Combine(subDir3, "file2.txt"), "content2");
 
-                // Test with "./" prefix
-                string subDir3 = Path.Combine(tempBase.FullName, "subdir3");
-                Directory.CreateDirectory(subDir3);
-                File.WriteAllText(Path.Combine(subDir3, "file2.txt"), "content2");
-
-                assertTrue(Directory.Exists("./subdir3"));
-                result = FileUtils.FullyDelete("./subdir3");
-                assertTrue(result);
-                assertFalse(Directory.Exists("./subdir3"));
-                assertFalse(Directory.Exists(subDir3));
+                    assertTrue(Directory.Exists("./subdir3"));
+                    result = FileUtils.FullyDelete("./subdir3");
+                    assertTrue(result);
+                    assertFalse(Directory.Exists("./subdir3"));
+                    assertFalse(Directory.Exists(subDir3));
+                });
             }
             finally
             {
-                // Restore original directory
-                Environment.CurrentDirectory = originalDir;
-
                 // Clean up base directory
                 if (Directory.Exists(tempBase.FullName))
                 {

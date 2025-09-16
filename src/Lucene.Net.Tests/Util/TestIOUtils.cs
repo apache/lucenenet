@@ -1,6 +1,9 @@
+using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -87,6 +90,112 @@ namespace Lucene.Net.Util
             catch (Exception)
             {
                 fail("Exception should not be thrown here");
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific] // Issue #832
+        public virtual void TestGetDecodingReaderWithStringPath()
+        {
+            // Test with UTF-8 encoding
+            var tempFile = CreateTempFile("ioutilsreader", ".txt");
+            string content = "Test content with special chars: ñ, ü, 中文";
+            File.WriteAllText(tempFile.FullName, content, Encoding.UTF8);
+
+            try
+            {
+                // Test GetDecodingReader with string path
+                using (var reader = IOUtils.GetDecodingReader(tempFile.FullName, StandardCharsets.UTF_8))
+                {
+                    string readContent = reader.ReadToEnd();
+                    assertEquals(content, readContent);
+                }
+            }
+            finally
+            {
+                // Clean up
+                if (File.Exists(tempFile.FullName))
+                {
+                    File.Delete(tempFile.FullName);
+                }
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific] // Issue #832
+        public virtual void TestGetDecodingReaderWithRelativePath()
+        {
+            // Create temp file
+            var tempDir = CreateTempDir("ioutilsreader_relative");
+            string fileName = "test.txt";
+            string filePath = System.IO.Path.Combine(tempDir.FullName, fileName);
+            string content = "Test content with relative path";
+            File.WriteAllText(filePath, content, Encoding.UTF8);
+
+            // Use SystemEnvironment to safely change current directory
+            SystemEnvironment.WithCurrentDirectory(tempDir.FullName, () =>
+            {
+                // Test with just the file name
+                using (var reader = IOUtils.GetDecodingReader(fileName, StandardCharsets.UTF_8))
+                {
+                    string readContent = reader.ReadToEnd();
+                    assertEquals(content, readContent);
+                }
+
+                // Test with "./" prefix
+                using (var reader = IOUtils.GetDecodingReader("./" + fileName, StandardCharsets.UTF_8))
+                {
+                    string readContent = reader.ReadToEnd();
+                    assertEquals(content, readContent);
+                }
+            });
+
+            // Clean up
+            if (Directory.Exists(tempDir.FullName))
+            {
+                Directory.Delete(tempDir.FullName, true);
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific] // Issue #832
+        public virtual void TestGetDecodingReaderWithDifferentEncodings()
+        {
+            var tempDir = CreateTempDir("ioutilsreader_encodings");
+
+            try
+            {
+                // Test with UTF-8 and Unicode encodings
+                string testString = "Text with accents: à, é, í, ó, ú";
+
+                // Test UTF-8
+                string filePathUtf8 = System.IO.Path.Combine(tempDir.FullName, "test_utf8.txt");
+                File.WriteAllText(filePathUtf8, testString, Encoding.UTF8);
+
+                using (var reader = IOUtils.GetDecodingReader(filePathUtf8, StandardCharsets.UTF_8))
+                {
+                    string readContent = reader.ReadToEnd();
+                    assertEquals(testString, readContent);
+                }
+
+                // Test with ASCII (simple content)
+                string asciiString = "Simple ASCII text";
+                string filePathAscii = System.IO.Path.Combine(tempDir.FullName, "test_ascii.txt");
+                File.WriteAllText(filePathAscii, asciiString, Encoding.ASCII);
+
+                using (var reader = IOUtils.GetDecodingReader(filePathAscii, Encoding.ASCII))
+                {
+                    string readContent = reader.ReadToEnd();
+                    assertEquals(asciiString, readContent);
+                }
+            }
+            finally
+            {
+                // Clean up
+                if (Directory.Exists(tempDir.FullName))
+                {
+                    Directory.Delete(tempDir.FullName, true);
+                }
             }
         }
     }
