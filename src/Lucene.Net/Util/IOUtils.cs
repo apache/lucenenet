@@ -485,6 +485,40 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        /// Opens a <see cref="TextReader"/> for the given <paramref name="fileName"/> using a <see cref="Encoding"/>.
+        /// Unlike Java's defaults this reader will throw an exception if your it detects
+        /// the read charset doesn't match the expected <see cref="Encoding"/>.
+        /// <para/>
+        /// Decoding readers are useful to load configuration files, stopword lists or synonym files
+        /// to detect character set problems. However, its not recommended to use as a common purpose
+        /// reader. </summary>
+        /// <param name="fileName"> The file name to open a reader on. The path is not normalized by this method. </param>
+        /// <param name="charSet"> The expected charset </param>
+        /// <returns> A reader to read the given file </returns>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
+        /// </remarks>
+        public static TextReader GetDecodingReader(string fileName, Encoding charSet)
+        {
+            FileStream stream = null;
+            bool success = false;
+            try
+            {
+                stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                TextReader reader = GetDecodingReader(stream, charSet);
+                success = true;
+                return reader;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.Dispose(stream);
+                }
+            }
+        }
+
+        /// <summary>
         /// Opens a <see cref="TextReader"/> for the given <see cref="FileInfo"/> using a <see cref="Encoding"/>.
         /// Unlike Java's defaults this reader will throw an exception if your it detects
         /// the read charset doesn't match the expected <see cref="Encoding"/>.

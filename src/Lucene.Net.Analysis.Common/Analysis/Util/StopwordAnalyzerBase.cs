@@ -6,6 +6,8 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
+#nullable enable
+
 namespace Lucene.Net.Analysis.Util
 {
     /*
@@ -52,7 +54,7 @@ namespace Lucene.Net.Analysis.Util
         ///          the Lucene version for cross version compatibility </param>
         /// <param name="stopwords">
         ///          the analyzer's stopword set </param>
-        protected StopwordAnalyzerBase(LuceneVersion version, CharArraySet stopwords)
+        protected StopwordAnalyzerBase(LuceneVersion version, CharArraySet? stopwords)
         {
             m_matchVersion = version;
             // analyzers should use char array set for stopwords!
@@ -88,7 +90,7 @@ namespace Lucene.Net.Analysis.Util
         ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
         protected static CharArraySet LoadStopwordSet(bool ignoreCase, Type aClass, string resource, string comment)
         {
-            TextReader reader = null;
+            TextReader? reader = null;
             try
             {
                 var resourceStream = aClass.FindAndGetManifestResourceStream(resource);
@@ -97,6 +99,33 @@ namespace Lucene.Net.Analysis.Util
 #pragma warning disable 612, 618
                     LuceneVersion.LUCENE_CURRENT, 16, ignoreCase));
 #pragma warning restore 612, 618
+            }
+            finally
+            {
+                IOUtils.Dispose(reader);
+            }
+        }
+
+        /// <summary>
+        /// Creates a <see cref="CharArraySet"/> from a file.
+        /// </summary>
+        /// <param name="stopwordsFileName">The file name to load stopwords from. The path is not normalized by this method.</param>
+        /// <param name="matchVersion">
+        ///          the Lucene version for cross version compatibility </param>
+        /// <returns> a <see cref="CharArraySet"/> containing the distinct stopwords from the given
+        ///         file </returns>
+        /// <exception cref="IOException">
+        ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
+        /// <remarks>
+        /// LUCENENET: This overload takes a string file name to avoid allocating a <see cref="FileInfo"/> object.
+        /// </remarks>
+        protected static CharArraySet LoadStopwordSet(string stopwordsFileName, LuceneVersion matchVersion)
+        {
+            TextReader? reader = null;
+            try
+            {
+                reader = IOUtils.GetDecodingReader(stopwordsFileName, Encoding.UTF8);
+                return WordlistLoader.GetWordSet(reader, matchVersion);
             }
             finally
             {
@@ -118,7 +147,7 @@ namespace Lucene.Net.Analysis.Util
         ///           if loading the stopwords throws an <see cref="IOException"/> </exception>
         protected static CharArraySet LoadStopwordSet(FileInfo stopwords, LuceneVersion matchVersion)
         {
-            TextReader reader = null;
+            TextReader? reader = null;
             try
             {
                 reader = IOUtils.GetDecodingReader(stopwords, Encoding.UTF8);
