@@ -35,7 +35,9 @@ namespace Lucene.Net.Support
             this.set = set;
         }
 
-        public IEnumerator<U> GetEnumerator() => new CastingEnumeratorAdapter<T, U>(set.GetEnumerator());
+        public CastingEnumeratorAdapter<T, U> GetEnumerator() => new CastingEnumeratorAdapter<T, U>(set.GetEnumerator());
+
+        IEnumerator<U> IEnumerable<U>.GetEnumerator() => GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

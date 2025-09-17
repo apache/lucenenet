@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Support
 {
@@ -60,7 +60,11 @@ namespace Lucene.Net.Support
             }
         }
 
-        public IEnumerator<U> GetEnumerator() => list.Cast<U>().GetEnumerator();
+        public CastingEnumeratorAdapter<T, U> GetEnumerator() => new CastingEnumeratorAdapter<T, U>(list.GetEnumerator());
+
+        IEnumerator<U> IEnumerable<U>.GetEnumerator() => GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public int IndexOf(U item) => list.IndexOf((T)item);
 
@@ -69,7 +73,5 @@ namespace Lucene.Net.Support
         public bool Remove(U item) => list.Remove((T)item);
 
         public void RemoveAt(int index) => list.RemoveAt(index);
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

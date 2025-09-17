@@ -56,10 +56,12 @@ namespace Lucene.Net.Support
             }
         }
 
-        public IEnumerator<U> GetEnumerator() => new CastingEnumeratorAdapter<T, U>(collection.GetEnumerator());
+        public CastingEnumeratorAdapter<T, U> GetEnumerator() => new CastingEnumeratorAdapter<T, U>(collection.GetEnumerator());
 
-        public bool Remove(U item) => collection.Remove((T)item);
+        IEnumerator<U> IEnumerable<U>.GetEnumerator() => GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public bool Remove(U item) => collection.Remove((T)item);
     }
 }
