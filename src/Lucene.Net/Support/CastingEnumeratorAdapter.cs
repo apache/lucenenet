@@ -21,11 +21,11 @@ namespace Lucene.Net.Support
      */
 
     /// <summary>
-    /// LUCENENET specific class used to adapt an <see cref="IEnumerator{T}"/> to one with a different type parameter.
+    /// LUCENENET specific struct used to adapt an <see cref="IEnumerator{T}"/> to one with a different type parameter.
     /// </summary>
     /// <typeparam name="T">The type of elements in the original enumerator.</typeparam>
     /// <typeparam name="U">The type of elements in the adapted enumerator.</typeparam>
-    internal class CastingEnumeratorAdapter<T, U> : IEnumerator<U>
+    internal readonly struct CastingEnumeratorAdapter<T, U> : IEnumerator<U>
         where T : U
     {
         private readonly IEnumerator<T> enumerator;
