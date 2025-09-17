@@ -395,7 +395,7 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         internal sealed class DelegatingAtomicReader : FilterAtomicReader
         {
-            public static string FIELD_NAME = "shadowed_field";
+            public const string FIELD_NAME = "shadowed_field";
 
             internal DelegatingAtomicReader(AtomicReader reader) : base(reader) { }
 

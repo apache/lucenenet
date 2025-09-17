@@ -702,7 +702,8 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Expert: The cache used internally by sorting and range query classes.
         /// </summary>
-        public static IFieldCache DEFAULT = new FieldCacheImpl();
+        // LUCENENET specific - changed mutable static field into a property
+        public static IFieldCache DEFAULT { get; set; } = new FieldCacheImpl();
 
         /// <summary>
         /// The default parser for byte values, which are encoded by <see cref="sbyte.ToString(string, IFormatProvider)"/>

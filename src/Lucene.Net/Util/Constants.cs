@@ -33,7 +33,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// The maximum stack allocation size before switching to making allocations on the heap.
         /// </summary>
-        internal static int MaxStackByteLimit = SystemProperties.GetPropertyAsInt32("maxStackByteLimit", defaultValue: 2048); // LUCENENET specific
+        internal static readonly int MaxStackByteLimit = SystemProperties.GetPropertyAsInt32("maxStackByteLimit", defaultValue: 2048); // LUCENENET specific
 
         // LUCENENET NOTE: IMPORTANT - this line must be placed before RUNTIME_VERSION so it can be parsed.
         private static readonly Regex VERSION = new Regex(@"(\d+\.\d+(?:\.\d+)?(?:\.\d+)?)", RegexOptions.Compiled);
@@ -44,6 +44,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// NOTE: This was JAVA_VENDOR in Lucene
         /// </summary>
+        // ReSharper disable once ConvertToConstant.Global - matches other fields in this file, and might be computed in the future
         public static readonly string RUNTIME_VENDOR = "Microsoft"; // AppSettings.Get("java.vendor", "");
                                                                     //public static readonly string JVM_VENDOR = GetEnvironmentVariable("java.vm.vendor", "");
                                                                     //public static readonly string JVM_VERSION = GetEnvironmentVariable("java.vm.version", "");
@@ -150,6 +151,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// This is the Lucene version for display purposes.
         /// </summary>
+        // ReSharper disable once ConvertToConstant.Global - should always be evaluated, not inlined
         public static readonly string LUCENE_VERSION = "4.8.0";
 
         /// <summary>

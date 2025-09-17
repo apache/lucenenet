@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// NOTE: This was MAX_INT in Lucene
         /// </summary>
-        internal static readonly int MAX_INT32 = int.MaxValue; // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
+        internal const int MAX_INT32 = int.MaxValue; // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
 
         internal readonly AtomicInt64 bytesUsed;
 

@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
         /// the index, then we disable compound file for it.
         /// </summary>
         /// <seealso cref="MergePolicy.NoCFSRatio"/>
-        public new static readonly double DEFAULT_NO_CFS_RATIO = 0.1;
+        public new const double DEFAULT_NO_CFS_RATIO = 0.1;
 
         private int maxMergeAtOnce = 10;
         private long maxMergedSegmentBytes = 5 * 1024 * 1024 * 1024L;

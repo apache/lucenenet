@@ -471,7 +471,7 @@ namespace Lucene.Net.Util
 #endif
     internal class Utf8SortedAsUnicodeComparer : IComparer<BytesRef>
     {
-        public static Utf8SortedAsUnicodeComparer Instance = new Utf8SortedAsUnicodeComparer();
+        public static readonly Utf8SortedAsUnicodeComparer Instance = new Utf8SortedAsUnicodeComparer();
 
         // Only singleton
         private Utf8SortedAsUnicodeComparer()

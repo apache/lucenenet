@@ -44,7 +44,8 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// <summary>
         /// Global indicating the configured analysis data directory
         /// </summary>
-        public static string ANALYSIS_DATA_DIR = "";
+        // LUCENENET specific - changed from a mutable static field to a property.
+        public static string ANALYSIS_DATA_DIR { get; set; } = "";
 
         static AnalyzerProfile()
         {
@@ -79,7 +80,6 @@ namespace Lucene.Net.Analysis.Cn.Smart
                 ANALYSIS_DATA_DIR = candidatePath;
                 return;
             }
-
 
             try
             {
