@@ -1,7 +1,6 @@
 using J2N;
 using J2N.Collections.Generic.Extensions;
 using J2N.Collections.ObjectModel;
-using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -210,8 +209,7 @@ namespace Lucene.Net.Support
 
         #region ReverseComparer2
 
-        private class ReverseComparer2<T> : IComparer<T?>
-
+        private class ReverseComparer2<T> : IComparer<T>
         {
             /**
              * The comparer specified in the static factory.  This will never
@@ -220,18 +218,19 @@ namespace Lucene.Net.Support
              *
              * @serial
              */
-            internal readonly IComparer<T?> cmp;
+            internal readonly IComparer<T> cmp;
 
             public ReverseComparer2(IComparer<T> cmp)
             {
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-                if (Debugging.AssertsEnabled) Debugging.Assert(cmp != null);
-                this.cmp = cmp!;
+                this.cmp = cmp;
             }
 
             public int Compare(T? t1, T? t2)
             {
-                return cmp.Compare(t2, t1);
+                // [!]: In .NET Framework and Standard, it thinks that IComparer<T>.Compare cannot take nulls.
+                // In .NET 8, it is typed to allow nulls.  We will assume that the passed comparer can handle nulls
+                // if used with a nullable type.
+                return cmp.Compare(t2!, t1!);
             }
 
             public override bool Equals(object? o)

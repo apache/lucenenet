@@ -158,6 +158,72 @@ namespace Lucene.Net.Support
         }
 
         [Test, LuceneNetSpecific]
+        public void TestReverseOrder_NullableValueTypes()
+        {
+            IComparer<int?> comp = Collections.ReverseOrder<int?>();
+            var list = new List<int?> { 5, null, 2, 8, null, 1, 3 };
+            list.Sort(comp);
+
+            Assert.AreEqual(7, list.Count);
+            Assert.AreEqual(8, list[0]);
+            Assert.AreEqual(5, list[1]);
+            Assert.AreEqual(3, list[2]);
+            Assert.AreEqual(2, list[3]);
+            Assert.AreEqual(1, list[4]);
+            Assert.IsNull(list[5]);
+            Assert.IsNull(list[6]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestReverseOrder_NullableValueTypes_WithComparer()
+        {
+            IComparer<double?> baseComparer = Comparer<double?>.Default;
+            IComparer<double?> comp = Collections.ReverseOrder(baseComparer);
+            var list = new List<double?> { 3.14, null, 2.71, null, 1.41, 0.0 };
+            list.Sort(comp);
+
+            Assert.AreEqual(6, list.Count);
+            Assert.AreEqual(3.14, list[0]);
+            Assert.AreEqual(2.71, list[1]);
+            Assert.AreEqual(1.41, list[2]);
+            Assert.AreEqual(0.0, list[3]);
+            Assert.IsNull(list[4]);
+            Assert.IsNull(list[5]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestReverseOrder_NullableReferenceTypes()
+        {
+            IComparer<string?> comp = Collections.ReverseOrder<string?>();
+            var list = new List<string?> { "zebra", null, "apple", "mango", null, "banana" };
+            list.Sort(comp);
+
+            Assert.AreEqual(6, list.Count);
+            Assert.AreEqual("zebra", list[0]);
+            Assert.AreEqual("mango", list[1]);
+            Assert.AreEqual("banana", list[2]);
+            Assert.AreEqual("apple", list[3]);
+            Assert.IsNull(list[4]);
+            Assert.IsNull(list[5]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TestReverseOrder_NullableReferenceTypes_WithComparer()
+        {
+            IComparer<string?> comp = Collections.ReverseOrder(StringComparer.OrdinalIgnoreCase);
+            var list = new List<string?> { "Zebra", null, "apple", "Mango", null, "BANANA" };
+            list.Sort(comp);
+
+            Assert.AreEqual(6, list.Count);
+            Assert.AreEqual("Zebra", list[0]);
+            Assert.AreEqual("Mango", list[1]);
+            Assert.AreEqual("BANANA", list[2]);
+            Assert.AreEqual("apple", list[3]);
+            Assert.IsNull(list[4]);
+            Assert.IsNull(list[5]);
+        }
+
+        [Test, LuceneNetSpecific]
         public void TestSingletonMap()
         {
             IDictionary<string, string> map = Collections.SingletonMap("key", "value");
