@@ -194,14 +194,17 @@ namespace Lucene.Net.Support
 
         #region ReverseComparer
 
-        private class ReverseComparer<T> : IComparer<T?>
+        private class ReverseComparer<T> : IComparer<T>
         {
             internal static readonly ReverseComparer<T> REVERSE_ORDER = new ReverseComparer<T>();
 
             public int Compare(T? x, T? y)
             {
+                // [!]: In .NET Framework and Standard, it thinks that IComparer<T>.Compare cannot take nulls.
+                // In .NET 8, it is typed to allow nulls.  We will assume that the passed comparer can handle nulls
+                // if used with a nullable type.
                 // LUCENENET specific: Use J2N's Comparer<T> to mimic Java comparison behavior
-                return JCG.Comparer<T?>.Default.Compare(y, x);
+                return JCG.Comparer<T>.Default.Compare(y!, x!);
             }
         }
 
