@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Grouping.Function
             if (groupMap.TryGetValue(groupMval, out GroupCount groupCount))
             {
                 countFiller.FillValue(doc);
-                ((ISet<MutableValue>)groupCount.UniqueValues).Add(countMval.Duplicate());
+                groupCount.UniqueValues.Add(countMval.Duplicate());
             }
         }
 
