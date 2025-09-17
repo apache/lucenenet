@@ -3,7 +3,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -327,39 +326,6 @@ namespace Lucene.Net.Search.Grouping
         /// FieldCache, etc.)
         /// </para>
         /// </summary>
-        /// <param name="withinGroupSort">
-        /// The <see cref="Sort"/> used to sort
-        /// documents within each group.  Passing null is
-        /// allowed, to sort by relevance.
-        /// </param>
-        /// <param name="groupOffset">Which group to start from</param>
-        /// <param name="withinGroupOffset">
-        /// Which document to start from within each group
-        /// </param>
-        /// <param name="maxDocsPerGroup">
-        /// How many top documents to keep within each group.
-        /// </param>
-        /// <param name="fillSortFields">
-        /// If true then the Comparable values for the sort fields will be set
-        /// </param>
-        public virtual ITopGroups<object> GetTopGroups(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
-        {
-            return GetTopGroups<object>(withinGroupSort, groupOffset, withinGroupOffset, maxDocsPerGroup, fillSortFields);
-        }
-
-        /// <summary>
-        /// Returns the grouped results.  Returns null if the
-        /// number of groups collected is &lt;= groupOffset.
-        ///
-        /// <para>
-        /// <b>NOTE</b>: This collector is unable to compute
-        /// the groupValue per group so it will always be null.
-        /// This is normally not a problem, as you can obtain the
-        /// value just like you obtain other values for each
-        /// matching document (eg, via stored fields, via
-        /// FieldCache, etc.)
-        /// </para>
-        /// </summary>
         /// <typeparam name="TGroupValue">The expected return type for group value</typeparam>
         /// <param name="withinGroupSort">
         /// The <see cref="Sort"/> used to sort
@@ -376,7 +342,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="fillSortFields">
         /// If true then the Comparable values for the sort fields will be set
         /// </param>
-        public virtual ITopGroups<TGroupValue> GetTopGroups<TGroupValue>(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
+        public virtual TopGroups<TGroupValue> GetTopGroups<TGroupValue>(Sort withinGroupSort, int groupOffset, int withinGroupOffset, int maxDocsPerGroup, bool fillSortFields)
         {
 
             //if (queueFull) {
