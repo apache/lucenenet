@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         private readonly SrndQuery q; // LUCENENET: marked readonly
         private readonly IList<string> fieldNames; // LUCENENET: marked readonly
         private readonly char fieldOp;
-        private readonly string orOperatorName = "OR"; /* for expanded queries, not normally visible */
+        private const string orOperatorName = "OR"; /* for expanded queries, not normally visible */
 
         public FieldsQuery(SrndQuery q, IList<string> fieldNames, char fieldOp)
         {

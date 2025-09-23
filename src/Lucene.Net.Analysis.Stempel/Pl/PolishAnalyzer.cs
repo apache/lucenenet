@@ -40,12 +40,12 @@ namespace Lucene.Net.Analysis.Pl
         /// <summary>
         /// File containing default Polish stopwords.
         /// </summary>
-        public readonly static string DEFAULT_STOPWORD_FILE = "stopwords.txt";
+        public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
 
         /// <summary>
         /// File containing default Polish stemmer table.
         /// </summary>
-        public readonly static string DEFAULT_STEMMER_FILE = "stemmer_20000.tbl";
+        public const string DEFAULT_STEMMER_FILE = "stemmer_20000.tbl";
 
         /// <summary>
         /// Returns an unmodifiable instance of the default stop words set.

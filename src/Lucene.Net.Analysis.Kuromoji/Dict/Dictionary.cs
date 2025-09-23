@@ -98,9 +98,9 @@ namespace Lucene.Net.Analysis.Ja.Dict
         // 'getAdditionalData' if other dictionaries like unidic have additional data
     }
 
-    // LUCENENT TODO: Make this whole thing into an abstact class??
+    // LUCENENET TODO: Make this whole thing into an abstract class??
     public static class Dictionary // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        public static readonly string INTERNAL_SEPARATOR = "\u0000";
+        public const string INTERNAL_SEPARATOR = "\0";
     }
 }

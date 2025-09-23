@@ -32,8 +32,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
     public class JaspellLookup : Lookup
     {
         private JaspellTernarySearchTrie trie = new JaspellTernarySearchTrie();
-        private readonly bool usePrefix = true;
-        private readonly int editDistance = 2;
+        private const bool usePrefix = true;
+        private const int editDistance = 2;
 
         /// <summary>
         /// Number of entries the lookup was built with </summary>
@@ -126,10 +126,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 list = trie.MatchPrefix(key, count);
             }
-            else
-            {
-                list = trie.MatchAlmost(key, count);
-            }
+            // LUCENENET NOTE: commented out because usePrefix is always true, unreachable code
+            // else
+            // {
+            //     list = trie.MatchAlmost(key, count);
+            // }
             if (list is null || list.Count == 0)
             {
                 return res;

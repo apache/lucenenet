@@ -34,7 +34,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </summary>
     public class AddIndexesTask : PerfTask
     {
-        public static readonly string ADDINDEXES_INPUT_DIR = "addindexes.input.dir";
+        public const string ADDINDEXES_INPUT_DIR = "addindexes.input.dir";
 
         public AddIndexesTask(PerfRunData runData)
             : base(runData)

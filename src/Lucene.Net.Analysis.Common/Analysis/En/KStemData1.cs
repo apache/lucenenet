@@ -48,8 +48,10 @@ namespace Lucene.Net.Analysis.En
         private KStemData1()
         {
         }
+
+        // LUCENENET specific - made readonly
         // KStemData1 ... KStemData8 are created from "head_word_list.txt"
-        internal static string[] data = new string[] {
+        internal static readonly string[] data = {
             "aback","abacus","abandon","abandoned","abase",
             "abash","abate","abattoir","abbess","abbey",
             "abbot","abbreviate","abbreviation","abc","abdicate",
