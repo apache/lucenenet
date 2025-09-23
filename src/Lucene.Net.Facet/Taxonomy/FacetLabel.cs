@@ -36,7 +36,8 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class FacetLabel : IComparable<FacetLabel>
     {
-        private static readonly int BYTE_BLOCK_SIZE = Lucene.Net.Util.ByteBlockPool.BYTE_BLOCK_SIZE;
+        private const int BYTE_BLOCK_SIZE = Lucene.Net.Util.ByteBlockPool.BYTE_BLOCK_SIZE;
+
         /*
          * copied from DocumentWriterPerThread -- if a FacetLabel is resolved to a
          * drill-down term which is encoded to a larger term than that length, it is
@@ -46,7 +47,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// The maximum number of characters a <see cref="FacetLabel"/> can have.
         /// </summary>
-        public static readonly int MAX_CATEGORY_PATH_LENGTH = (BYTE_BLOCK_SIZE - 2) / 4;
+        public const int MAX_CATEGORY_PATH_LENGTH = (BYTE_BLOCK_SIZE - 2) / 4;
 
         /// <summary>
         /// The components of this <see cref="FacetLabel"/>. Note that this array may be

@@ -97,7 +97,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public string Namespace
         {
-            get { return null; } // LUCENENET: Force this type to be the
+            get { return null; } // LUCENENET: Force this type to be the default
         }
 
         /// <summary>
@@ -291,6 +291,6 @@ namespace Lucene.Net.Util
 
         // From NUnit's Reflect class
 
-        internal static readonly BindingFlags AllMembers = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+        internal const BindingFlags AllMembers = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
     }
 }

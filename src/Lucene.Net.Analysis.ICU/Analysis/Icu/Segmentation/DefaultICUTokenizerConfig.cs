@@ -54,6 +54,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         /// <summary>Token type for words that appear to be numbers</summary>
         public static readonly string WORD_NUMBER = StandardTokenizer.TOKEN_TYPES[StandardTokenizer.NUM];
         /// <summary>Token type for words that appear to be emoji sequences</summary>
+        // ReSharper disable once ConvertToConstant.Global - matches the fields above to keep it static readonly
         public static readonly string WORD_EMOJI = "<EMOJI>"; //StandardTokenizer.TOKEN_TYPES[StandardTokenizer.EMOJI]; // LUCENENET: 4.8.1 StandardTokenizer doesn't contain EMOJI
 
         /// <summary>

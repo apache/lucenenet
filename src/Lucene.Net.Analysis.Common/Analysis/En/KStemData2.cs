@@ -47,7 +47,9 @@ namespace Lucene.Net.Analysis.En
         private KStemData2()
         {
         }
-        internal static string[] data = new string[] {
+
+        // LUCENENET specific - made readonly
+        internal static readonly string[] data = {
             "cash","cashew","cashier","cashmere","casing",
             "casino","cask","casket","casque","cassava",
             "casserole","cassette","cassock","cassowary","cast",

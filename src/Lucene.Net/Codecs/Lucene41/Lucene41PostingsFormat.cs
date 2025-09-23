@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// a single packed block.
         /// </summary>
         // NOTE: must be multiple of 64 because of PackedInts long-aligned encoding/decoding
-        public static int BLOCK_SIZE = 128;
+        public const int BLOCK_SIZE = 128;
 
         /// <summary>
         /// Creates <see cref="Lucene41PostingsFormat"/> with default

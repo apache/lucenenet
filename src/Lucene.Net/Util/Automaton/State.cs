@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 
 /*
  * dk.brics.automaton
@@ -58,7 +59,7 @@ namespace Lucene.Net.Util.Automaton
         internal int number;
 
         internal readonly int id; // LUCENENET: marked readonly
-        internal static int next_id;
+        private static int next_id; // LUCENENET specific - made private
 
         /// <summary>
         /// Constructs a new state. Initially, the new state is a reject state.
@@ -66,7 +67,7 @@ namespace Lucene.Net.Util.Automaton
         public State()
         {
             //ResetTransitions(); // LUCENENET: Let class initializer set these
-            id = next_id++;
+            id = Interlocked.Increment(ref next_id); // LUCENENET specific - made atomic
         }
 
         /// <summary>

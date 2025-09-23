@@ -41,9 +41,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </remarks>
     public class OpenIndexTask : PerfTask
     {
-        public static readonly int DEFAULT_MAX_BUFFERED = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DOCS;
-        public static readonly int DEFAULT_MERGE_PFACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
-        public static readonly double DEFAULT_RAM_FLUSH_MB = (int)IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB;
+        public const int DEFAULT_MAX_BUFFERED = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DOCS;
+        public const int DEFAULT_MERGE_PFACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
+        public const double DEFAULT_RAM_FLUSH_MB = (int)IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB;
         private string commitUserData;
 
         public OpenIndexTask(PerfRunData runData)

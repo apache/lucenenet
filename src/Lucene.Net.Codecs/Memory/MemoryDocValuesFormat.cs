@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Memory
     public class MemoryDocValuesFormat : DocValuesFormat
     {
         /// <summary>Maximum length for each binary doc values field. </summary>
-        public static readonly int MAX_BINARY_FIELD_LENGTH = (1 << 15) - 2;
+        public const int MAX_BINARY_FIELD_LENGTH = (1 << 15) - 2;
 
         internal readonly float acceptableOverheadRatio;
 

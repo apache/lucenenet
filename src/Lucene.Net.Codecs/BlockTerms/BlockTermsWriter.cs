@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public readonly static int VERSION_CURRENT = VERSION_CHECKSUM;
 
         /// <summary>Extension of terms file</summary>
-        public readonly static string TERMS_EXTENSION = "tib";
+        public const string TERMS_EXTENSION = "tib";
 
 #pragma warning disable CA2213 // Disposable fields should be disposed
         protected IndexOutput m_output;

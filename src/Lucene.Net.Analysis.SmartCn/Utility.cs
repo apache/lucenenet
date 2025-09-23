@@ -41,12 +41,12 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// <summary>
         /// Space-like characters that need to be skipped: such as space, tab, newline, carriage return.
         /// </summary>
-        public static readonly string SPACES = " \u3000\t\r\n"; // LUCENENET specific - made the U+3000 character explicitly visible: https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS2479&id=nikcio_lucenenet
+        public const string SPACES = " \u3000\t\r\n"; // LUCENENET specific - made the U+3000 character explicitly visible: https://sonarcloud.io/project/issues?resolved=false&rules=csharpsquid%3AS2479&id=nikcio_lucenenet
 
         /// <summary>
         /// Maximum bigram frequency (used in the smoothing function).
         /// </summary>
-        public static readonly int MAX_FREQUENCE = 2079997 + 80000;
+        public const int MAX_FREQUENCE = 2079997 + 80000;
 
         /// <summary>
         /// Compare two arrays starting at the specified offsets.

@@ -31,7 +31,7 @@ namespace Lucene.Net.Benchmarks.Quality
     public class QualityStats
     {
         /// <summary>Number of points for which precision is computed.</summary>
-        public static readonly int MAX_POINTS = 20;
+        public const int MAX_POINTS = 20;
 
         private double maxGoodPoints;
         private double recall;

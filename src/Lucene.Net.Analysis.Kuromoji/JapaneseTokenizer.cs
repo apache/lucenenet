@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Ja
         /// <summary>
         /// Default tokenization mode. Currently this is <see cref="JapaneseTokenizerMode.SEARCH"/>.
         /// </summary>
-        public static readonly JapaneseTokenizerMode DEFAULT_MODE = JapaneseTokenizerMode.SEARCH;
+        public const JapaneseTokenizerMode DEFAULT_MODE = JapaneseTokenizerMode.SEARCH;
 
         // LUCENENET specific: de-nested Type and renamed JapaneseTokenizerType
 

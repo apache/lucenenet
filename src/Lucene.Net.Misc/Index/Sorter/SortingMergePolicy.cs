@@ -51,7 +51,7 @@ namespace Lucene.Net.Index.Sorter
         /// Put in the <see cref="SegmentInfo.Diagnostics">diagnostics</see> to denote that
         /// this segment is sorted.
         /// </summary>
-        public static readonly string SORTER_ID_PROP = "sorter";
+        public const string SORTER_ID_PROP = "sorter";
 
         internal class SortingOneMerge : OneMerge
         {

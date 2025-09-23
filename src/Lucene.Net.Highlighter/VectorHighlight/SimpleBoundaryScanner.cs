@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public class SimpleBoundaryScanner : IBoundaryScanner
     {
-        public static readonly int DEFAULT_MAX_SCAN = 20;
+        public const int DEFAULT_MAX_SCAN = 20;
         public static readonly char[] DEFAULT_BOUNDARY_CHARS = { '.', ',', '!', '?', ' ', '\t', '\n' };
 
         protected int m_maxScan;

@@ -35,17 +35,17 @@ namespace Lucene.Net.Util
         /// <summary>
         /// NOTE: This was INT_BLOCK_SHIFT in Lucene
         /// </summary>
-        public static readonly int INT32_BLOCK_SHIFT = 13;
+        public const int INT32_BLOCK_SHIFT = 13;
 
         /// <summary>
         /// NOTE: This was INT_BLOCK_SIZE in Lucene
         /// </summary>
-        public static readonly int INT32_BLOCK_SIZE = 1 << INT32_BLOCK_SHIFT;
+        public const int INT32_BLOCK_SIZE = 1 << INT32_BLOCK_SHIFT;
 
         /// <summary>
         /// NOTE: This was INT_BLOCK_MASK in Lucene
         /// </summary>
-        public static readonly int INT32_BLOCK_MASK = INT32_BLOCK_SIZE - 1;
+        public const int INT32_BLOCK_MASK = INT32_BLOCK_SIZE - 1;
 
         /// <summary>
         /// Abstract class for allocating and freeing <see cref="int"/>

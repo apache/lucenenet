@@ -61,18 +61,18 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     [SuppressMessage("Style", "IDE0028:Collection initialization can be simplified", Justification = "This class is based on generated code")]
     public class QueryParser
     {
-        internal readonly int minimumPrefixLength = 3;
-        internal readonly int minimumCharsInTrunc = 3;
-        internal readonly string truncationErrorMessage = "Too unrestrictive truncation: ";
-        internal readonly string boostErrorMessage = "Cannot handle boost value: ";
+        internal const int minimumPrefixLength = 3;
+        internal const int minimumCharsInTrunc = 3;
+        internal const string truncationErrorMessage = "Too unrestrictive truncation: ";
+        internal const string boostErrorMessage = "Cannot handle boost value: ";
 
         /* CHECKME: These should be the same as for the tokenizer. How? */
-        internal readonly char truncator = '*';
-        internal readonly char anyChar = '?';
-        internal readonly char quote = '"';
-        internal readonly char fieldOperator = ':';
-        internal readonly char comma = ','; /* prefix list separator */
-        internal readonly char carat = '^'; /* weight operator */
+        internal const char truncator = '*';
+        internal const char anyChar = '?';
+        // internal const char quote = '"'; // LUCENENET: not used
+        internal const char fieldOperator = ':';
+        // internal const char comma = ','; /* prefix list separator */ // LUCENENET: not used
+        // internal const char carat = '^'; /* weight operator */ // LUCENENET: not used
 
         public static SrndQuery Parse(string query)
         {

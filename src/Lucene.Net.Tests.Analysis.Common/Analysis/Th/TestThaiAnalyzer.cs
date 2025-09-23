@@ -100,9 +100,10 @@ namespace Lucene.Net.Analysis.Th
         }
 
         // Ellision character
-        private static readonly char THAI_PAIYANNOI = (char)0x0E2F;
+        private const char THAI_PAIYANNOI = (char)0x0E2F;
+
         // Repeat character
-        private static readonly char THAI_MAIYAMOK = (char)0x0E46;
+        private const char THAI_MAIYAMOK = (char)0x0E46;
 
         [Test]
         [LuceneNetSpecific]

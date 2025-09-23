@@ -44,7 +44,8 @@ namespace Lucene.Net.Store
         /// How long <see cref="Obtain(long)"/> waits, in milliseconds,
         /// in between attempts to acquire the lock.
         /// </summary>
-        public static long LOCK_POLL_INTERVAL = 1000;
+        // LUCENENET specific - changed mutable static field into a property
+        public static long LOCK_POLL_INTERVAL { get; set; } = 1000;
 
         /// <summary>
         /// Pass this value to <see cref="Obtain(long)"/> to try

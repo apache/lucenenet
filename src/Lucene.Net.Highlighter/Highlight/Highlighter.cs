@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Highlight
     /// </summary>
     public class Highlighter
     {
-        public static readonly int DEFAULT_MAX_CHARS_TO_ANALYZE = 50 * 1024;
+        public const int DEFAULT_MAX_CHARS_TO_ANALYZE = 50 * 1024;
 
         private int _maxDocCharsToAnalyze = DEFAULT_MAX_CHARS_TO_ANALYZE;
         private readonly IFormatter _formatter; // LUCENENET: marked readonly

@@ -43,16 +43,17 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// </summary>
     public class BlendedInfixSuggester : AnalyzingInfixSuggester
     {
-
         /// <summary>
         /// Coefficient used for linear blending
         /// </summary>
-        protected internal static double LINEAR_COEF = 0.10;
+        // LUCENENET specific - changed from a mutable static field into a property.
+        protected internal static double LINEAR_COEF { get; set; } = 0.10;
 
         /// <summary>
         /// Default factor
         /// </summary>
-        public static int DEFAULT_NUM_FACTOR = 10;
+        // LUCENENET specific - changed from a mutable static field into a property.
+        public static int DEFAULT_NUM_FACTOR { get; set; } = 10;
 
         /// <summary>
         /// Factor to multiply the number of searched elements

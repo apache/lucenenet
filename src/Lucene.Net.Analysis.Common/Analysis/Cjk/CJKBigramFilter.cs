@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Cjk
         private static readonly string HANGUL_TYPE = StandardTokenizer.TOKEN_TYPES[StandardTokenizer.HANGUL];
 
         // sentinel value for ignoring a script
-        private static readonly string NO = "<NO>";
+        private const string NO = "<NO>";
 
         // these are set to either their type or NO if we want to pass them thru
         private readonly string doHan;

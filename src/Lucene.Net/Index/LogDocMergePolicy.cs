@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
     {
         /// <summary> Default minimum segment size. </summary>
         /// <seealso cref="MinMergeDocs"/>
-        public static readonly int DEFAULT_MIN_MERGE_DOCS = 1000;
+        public const int DEFAULT_MIN_MERGE_DOCS = 1000;
 
         /// <summary>
         /// Sole constructor, setting all settings to their
