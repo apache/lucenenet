@@ -24,6 +24,12 @@
 
   <PropertyGroup Label="Warnings to be Disabled in Solution">
     <NoWarn Label="Legacy serialization support APIs are obsolete">$(NoWarn);SYSLIB0051</NoWarn>
+
+    <!-- These are noisy, but may be helpful during Lucene upgrades or optimization -->
+    <NoWarn Label="Floating point types should not be compared for exact equality">$(NoWarn);LuceneDev1000</NoWarn>
+    <NoWarn Label="Floating point type arithmetic needs to be checked on x86 in .NET Framework and may require extra casting">$(NoWarn);LuceneDev1002</NoWarn>
+    <NoWarn Label="Java array parameters can sometimes be replaced with .NET out or ref parameters">$(NoWarn);LuceneDev1003</NoWarn>
+    <NoWarn Label="Return array may be able to be replaced with out values">$(NoWarn);LuceneDev1004</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Label="Solution-level Publish to Project-specific Directory">
@@ -220,6 +226,10 @@
 
   <ItemGroup Condition=" '$(BUILD_REPOSITORY_PROVIDER)' == 'GitHub' " Label="SourceLink Packages (main repo)">
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubPackageReferenceVersion)" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lucene.Net.CodeAnalysis.Dev" Version="$(LuceneNetCodeAnalysisDevPackageVersion)" PrivateAssets="All" />
   </ItemGroup>
 
   <Import Project=".build/release.targets" Condition="Exists('.build/release.targets')" />
