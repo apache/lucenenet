@@ -1127,7 +1127,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return Value.ToString();
+                return J2N.Numerics.Single.ToString(Value);
             }
         }
     }

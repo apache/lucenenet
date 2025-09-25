@@ -660,7 +660,7 @@ namespace Lucene.Net.Index
                 }
                 if (IsVerbose)
                 {
-                    Message("  level " + levelBottom.ToString("0.0") + " to " + maxLevel.ToString("0.0") + ": " + (1 + upto - start) + " segments");
+                    Message("  level " + J2N.Numerics.Single.ToString(levelBottom) + " to " + J2N.Numerics.Single.ToString(maxLevel) + ": " + (1 + upto - start) + " segments");
                 }
 
                 // Finally, record all merges that are viable at this level:

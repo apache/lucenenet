@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
         {
             if (targetMaxStaleSec < targetMinStaleSec)
             {
-                throw new ArgumentException("targetMaxScaleSec (= " + targetMaxStaleSec.ToString("0.0") + ") < targetMinStaleSec (=" + targetMinStaleSec.ToString("0.0") + ")");
+                throw new ArgumentException("targetMaxScaleSec (= " + J2N.Numerics.Double.ToString(targetMaxStaleSec) + ") < targetMinStaleSec (=" + J2N.Numerics.Double.ToString(targetMinStaleSec) + ")");
             }
 
             this.writer = writer;
