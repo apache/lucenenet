@@ -155,7 +155,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                     {
                                         case StreamTokenizer.TokenType_Number:
                                             {
-                                                argValue = stok.NumberValue.ToString(CultureInfo.InvariantCulture);
+                                                argValue = J2N.Numerics.Double.ToString(stok.NumberValue, CultureInfo.InvariantCulture);
                                                 // Drop the ".0" from numbers, for integer arguments
                                                 argValue = TRAILING_DOT_ZERO_PATTERN.Replace(argValue, "", 1);
                                                 // Intentional fallthrough
@@ -440,7 +440,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                 {
                                     case StreamTokenizer.TokenType_Number:
                                         {
-                                            argValue = stok.NumberValue.ToString(CultureInfo.InvariantCulture);
+                                            argValue = J2N.Numerics.Double.ToString(stok.NumberValue, CultureInfo.InvariantCulture);
                                             // Drop the ".0" from numbers, for integer arguments
                                             argValue = TRAILING_DOT_ZERO_PATTERN.Replace(argValue, "", 1);
                                             // Intentional fall-through

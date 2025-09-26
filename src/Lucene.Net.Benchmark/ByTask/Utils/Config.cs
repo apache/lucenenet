@@ -269,7 +269,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             // done if not by round
             if (!props.TryGetValue(name, out string sval))
             {
-                sval = dflt.ToString(CultureInfo.InvariantCulture);
+                sval = J2N.Numerics.Double.ToString(dflt, CultureInfo.InvariantCulture);
             }
             if (sval.IndexOf(':') < 0)
             {

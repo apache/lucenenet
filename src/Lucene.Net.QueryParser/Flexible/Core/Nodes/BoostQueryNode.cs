@@ -83,7 +83,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             if (f == (long)f)
                 return "" + (long)f;
             else
-                return "" + f.ToString("0.0#######"); // LUCENENET TODO: Culture
+                return "" + J2N.Numerics.Single.ToString(f, "0.0#######"); // LUCENENET TODO: Culture
         }
 
         public override string ToString()

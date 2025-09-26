@@ -116,7 +116,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                     {
                                         case StreamTokenizer.TokenType_Number:
                                             {
-                                                @params.Append(stok.NumberValue.ToString(CultureInfo.InvariantCulture));
+                                                @params.Append(J2N.Numerics.Double.ToString(stok.NumberValue, CultureInfo.InvariantCulture));
                                                 break;
                                             }
                                         case StreamTokenizer.TokenType_Word:

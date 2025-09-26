@@ -571,7 +571,7 @@ namespace Lucene.Net.Index
                 if (infoStream.IsEnabled("DWPT"))
                 {
                     double newSegmentSize = segmentInfoPerCommit.GetSizeInBytes() / 1024.0 / 1024.0;
-                    infoStream.Message("DWPT", "flushed: segment=" + segmentInfo.Name + " ramUsed=" + startMBUsed.ToString(nf) + " MB" + " newFlushedSize(includes docstores)=" + newSegmentSize.ToString(nf) + " MB" + " docs/MB=" + (flushState.SegmentInfo.DocCount / newSegmentSize).ToString(nf));
+                    infoStream.Message("DWPT", "flushed: segment=" + segmentInfo.Name + " ramUsed=" + J2N.Numerics.Double.ToString(startMBUsed, nf) + " MB" + " newFlushedSize(includes docstores)=" + J2N.Numerics.Double.ToString(newSegmentSize, nf) + " MB" + " docs/MB=" + J2N.Numerics.Double.ToString((flushState.SegmentInfo.DocCount / newSegmentSize), nf));
                 }
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(segmentInfo != null);
