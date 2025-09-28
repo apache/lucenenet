@@ -40,91 +40,9 @@ namespace Lucene.Net.Support.IO
     /// </summary>
     internal static class StreamExtensions
     {
+#if !FEATURE_RANDOMACCESS_READ
         private static readonly ConditionalWeakTable<Stream, object> lockCache = new ConditionalWeakTable<Stream, object>();
-
-        /// <summary>
-        /// Reads a sequence of bytes from a <see cref="Stream"/> to the given <see cref="ByteBuffer"/>, starting at the given position.
-        /// The <paramref name="stream"/> must be both seekable and readable.
-        /// </summary>
-        /// <param name="stream">The stream to read.</param>
-        /// <param name="destination">The <see cref="ByteBuffer"/> to write to.</param>
-        /// <param name="position">The file position at which the transfer is to begin; must be non-negative.</param>
-        /// <returns>The number of bytes read, possibly zero.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="stream"/> or <paramref name="destination"/> is <c>null</c></exception>
-        /// <exception cref="NotSupportedException">
-        /// <paramref name="stream"/> is not readable.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// <paramref name="stream"/> is not seekable.
-        /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="position"/> is less than 0.
-        /// <para/>
-        /// -or-
-        /// <para/>
-        /// <paramref name="position"/> is greater than the <see cref="Stream.Length"/> of the stream.
-        /// </exception>
-        /// <exception cref="IOException">An I/O error occurs.</exception>
-        /// <exception cref="ObjectDisposedException"><paramref name="stream"/> has already been disposed.</exception>
-        /// <remarks>
-        /// This method is atomic when used by itself, but does not synchronize with the rest of the stream methods.
-        /// </remarks>
-        public static int Read(this Stream stream, ByteBuffer destination, long position)
-        {
-            if (stream is null)
-                throw new ArgumentNullException(nameof(stream));
-            if (destination is null)
-                throw new ArgumentNullException(nameof(destination));
-            if (position < 0)
-                throw new ArgumentOutOfRangeException(nameof(position));
-            if (!stream.CanSeek)
-                throw new NotSupportedException("Stream does not support seeking.");
-            if (!stream.CanRead)
-                throw new NotSupportedException("Stream does not support reading.");
-            if (position > stream.Length)
-                return 0;
-
-            int read = 0;
-            object readLock = lockCache.GetOrCreateValue(stream);
-            UninterruptableMonitor.Enter(readLock);
-            try
-            {
-                long originalPosition = stream.Position;
-                stream.Seek(position, SeekOrigin.Begin);
-
-                if (destination.HasArray)
-                {
-                    // If the buffer has an array, we can write to it directly and save
-                    // an extra copy operation.
-
-                    // Read from the stream
-                    read = stream.Read(destination.Array, destination.Position, destination.Remaining);
-                    destination.Position += read;
-                }
-                else
-                {
-                    // If the buffer has no array, we must use a local buffer
-                    byte[] buffer = new byte[destination.Remaining];
-
-                    // Read from the stream
-                    read = stream.Read(buffer, 0, buffer.Length);
-
-                    // Write to the byte buffer
-                    destination.Put(buffer, 0, read);
-                }
-
-                // Per Java's FileChannel.Read(), we don't want to alter the position
-                // of the stream, so we return it as it was originally.
-                stream.Seek(originalPosition, SeekOrigin.Begin);
-            }
-            finally
-            {
-                UninterruptableMonitor.Exit(readLock);
-            }
-
-            return read;
-        }
+#endif
 
         /// <summary>
         /// Reads a sequence of bytes from a <see cref="Stream"/> to the given <see cref="Span{Byte}"/>,
