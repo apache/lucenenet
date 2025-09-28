@@ -29,7 +29,7 @@ namespace Lucene.Net.Support
      * limitations under the License.
      */
 
-    internal static class Arrays
+    internal static partial class Arrays
     {
         /// <summary>
         /// Compares the entire members of one array with the other one.
@@ -167,7 +167,7 @@ namespace Lucene.Net.Support
         /// <b>Usage Note:</b> This implementation uses the most efficient (known) method for copying the
         /// array based on the data type and platform.
         /// </summary>
-        /// <typeparam name="T">The array type.</typeparam>
+        /// <typeparam name="T">The array element type.</typeparam>
         /// <param name="sourceArray">The Array that contains the data to copy.</param>
         /// <param name="destinationArray">The Array that receives the data.</param>
         /// <param name="length">A 32-bit integer that represents the number of elements to copy.</param>
@@ -195,7 +195,7 @@ namespace Lucene.Net.Support
         /// <b>Usage Note:</b> This implementation uses the most efficient (known) method for copying the
         /// array based on the data type and platform.
         /// </summary>
-        /// <typeparam name="T">The array type.</typeparam>
+        /// <typeparam name="T">The array element type.</typeparam>
         /// <param name="sourceArray">The Array that contains the data to copy.</param>
         /// <param name="sourceIndex">A 32-bit integer that represents the index in the
         /// <paramref name="sourceArray"/> at which copying begins.</param>
