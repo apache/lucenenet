@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -39,8 +40,10 @@ namespace Lucene.Net.Index
             length = bytes.Length;
         }
 
-        protected override void ReadInternal(byte[] dest, int destOffset, int len)
+        protected override void ReadInternal(Span<byte> destination)
         {
+            int destOffset = 0;
+            int len = destination.Length;
             int remainder = len;
             int start = pointer;
             while (remainder != 0)
@@ -49,7 +52,7 @@ namespace Lucene.Net.Index
                 int bufferOffset = start % buffer.Length;
                 int bytesInBuffer = buffer.Length - bufferOffset;
                 int bytesToCopy = bytesInBuffer >= remainder ? remainder : bytesInBuffer;
-                Arrays.Copy(buffer, bufferOffset, dest, destOffset, bytesToCopy);
+                Arrays.Copy(buffer, bufferOffset, destination, destOffset, bytesToCopy);
                 destOffset += bytesToCopy;
                 start += bytesToCopy;
                 remainder -= bytesToCopy;

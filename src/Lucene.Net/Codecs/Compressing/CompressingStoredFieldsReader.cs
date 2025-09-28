@@ -415,16 +415,19 @@ namespace Lucene.Net.Codecs.Compressing
                 return (byte)outerInstance.bytes.Bytes[outerInstance.bytes.Offset++];
             }
 
-            public override void ReadBytes(byte[] b, int offset, int len)
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(Span<byte> destination)
             {
+                int offset = 0;
+                int len = destination.Length;
                 while (len > outerInstance.bytes.Length)
                 {
-                    Arrays.Copy(outerInstance.bytes.Bytes, outerInstance.bytes.Offset, b, offset, outerInstance.bytes.Length);
+                    Arrays.Copy(outerInstance.bytes.Bytes, outerInstance.bytes.Offset, destination, offset, outerInstance.bytes.Length);
                     len -= outerInstance.bytes.Length;
                     offset += outerInstance.bytes.Length;
                     FillBuffer();
                 }
-                Arrays.Copy(outerInstance.bytes.Bytes, outerInstance.bytes.Offset, b, offset, len);
+                Arrays.Copy(outerInstance.bytes.Bytes, outerInstance.bytes.Offset, destination, offset, len);
                 outerInstance.bytes.Offset += len;
                 outerInstance.bytes.Length -= len;
             }

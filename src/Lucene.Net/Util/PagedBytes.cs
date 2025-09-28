@@ -385,9 +385,13 @@ namespace Lucene.Net.Util
                 return (byte)currentBlock[currentBlockUpto++];
             }
 
-            public override void ReadBytes(byte[] b, int offset, int len)
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(Span<byte> destination)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(b.Length >= offset + len);
+                int offset = 0;
+                int len = destination.Length;
+
+                if (Debugging.AssertsEnabled) Debugging.Assert(destination.Length >= offset + len);
                 int offsetEnd = offset + len;
                 while (true)
                 {
@@ -395,14 +399,14 @@ namespace Lucene.Net.Util
                     int left = offsetEnd - offset;
                     if (blockLeft < left)
                     {
-                        Arrays.Copy(currentBlock, currentBlockUpto, b, offset, blockLeft);
+                        Arrays.Copy(currentBlock, currentBlockUpto, destination, offset, blockLeft);
                         NextBlock();
                         offset += blockLeft;
                     }
                     else
                     {
                         // Last block
-                        Arrays.Copy(currentBlock, currentBlockUpto, b, offset, left);
+                        Arrays.Copy(currentBlock, currentBlockUpto, destination, offset, left);
                         currentBlockUpto += left;
                         break;
                     }

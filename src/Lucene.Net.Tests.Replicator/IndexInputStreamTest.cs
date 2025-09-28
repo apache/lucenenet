@@ -159,6 +159,13 @@ namespace Lucene.Net.Tests.Replicator
                 throw new ArgumentException("The sum of offset and length exceeds the buffer length");
             }
 
+            ReadBytes(b.AsSpan(offset, len));
+        }
+
+        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        public override void ReadBytes(Span<byte> destination)
+        {
+            int len = destination.Length;
             long available = length - position;
             if (available < len)
             {
@@ -169,7 +176,7 @@ namespace Lucene.Net.Tests.Replicator
             // Fill buffer with dummy data
             for (int i = 0; i < len; i++)
             {
-                b[offset + i] = 0;
+                destination[/*offset +*/ i] = 0;
             }
         }
 
