@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Threading;
 using System;
 using System.IO;
@@ -224,8 +225,10 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// <see cref="IndexInput"/> methods </summary>
-            protected override void ReadInternal(byte[] b, int offset, int len)
+            protected override void ReadInternal(Span<byte> destination)
             {
+                int len = destination.Length;
+
                 UninterruptableMonitor.Enter(m_file);
                 try
                 {
@@ -255,7 +258,7 @@ namespace Lucene.Net.Store
                         // LUCENENET specific: FileStream is already optimized to read natively
                         // using the buffer size that is passed through its constructor. So,
                         // all we need to do is Read().
-                        total = m_file.Read(b, offset, len);
+                        total = m_file.Read(destination);
 
                         if (Debugging.AssertsEnabled) Debugging.Assert(total == len);
                     }

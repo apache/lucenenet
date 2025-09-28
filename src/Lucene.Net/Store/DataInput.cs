@@ -61,7 +61,10 @@ namespace Lucene.Net.Store
         /// <param name="offset"> the offset in the array to start storing bytes </param>
         /// <param name="len"> the number of bytes to read </param>
         /// <seealso cref="DataOutput.WriteBytes(byte[], int)"/>
-        public abstract void ReadBytes(byte[] b, int offset, int len);
+        public virtual void ReadBytes(byte[] b, int offset, int len)
+        {
+            ReadBytes(b.AsSpan(offset, len));
+        }
 
         /// <summary>
         /// Reads a specified number of bytes into an array at the
@@ -78,7 +81,34 @@ namespace Lucene.Net.Store
         public virtual void ReadBytes(byte[] b, int offset, int len, bool useBuffer)
         {
             // Default to ignoring useBuffer entirely
-            ReadBytes(b, offset, len);
+            ReadBytes(b.AsSpan(offset, len));
+        }
+
+        /// <summary>
+        /// Reads a sequence of bytes into a span. The number of bytes to read
+        /// is determined by the length of the specified <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="destination">A region of memory. When this method returns,
+        /// the contents of this region are replaced by the bytes read from the
+        /// current source.</param>
+        /// <seealso cref="DataOutput.WriteBytes(ReadOnlySpan{byte})"/>
+        // LUCENENET specific - Use Span<byte> instead of byte[] for better compatibility.
+        public abstract void ReadBytes(Span<byte> destination);
+
+        /// <summary>
+        /// Reads a sequence of bytes into a span. The number of bytes to read
+        /// is determined by the length of the specified <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="destination">A region of memory. When this method returns,
+        /// the contents of this region are replaced by the bytes read from the
+        /// current source.</param>
+        /// <param name="useBuffer">Set to <c>false</c> if the caller will handle
+        /// buffering.</param>
+        // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+        public virtual void ReadBytes(Span<byte> destination, bool useBuffer)
+        {
+            // Default to ignoring useBuffer entirely
+            ReadBytes(destination);
         }
 
         /// <summary>

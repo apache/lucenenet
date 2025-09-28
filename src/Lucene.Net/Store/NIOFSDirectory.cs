@@ -160,8 +160,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads bytes with the <see cref="StreamExtensions.Read(Stream, ByteBuffer, long)"/>
-        /// extension method for <see cref="Stream"/>.
+        /// Reads bytes with the <see cref="StreamExtensions.Read(FileStream, Span{Byte}, long)"/>
+        /// extension method for <see cref="FileStream"/>.
         /// </summary>
         protected class NIOFSIndexInput : BufferedIndexInput
         {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Store
             /// end offset (start+length) </summary>
             protected readonly long m_end;
 
-            private ByteBuffer byteBuf; // wraps the buffer for NIO
+            // LUCENENET: byteBuf not needed because we can use Span<byte> inline
 
             private int disposed = 0; // LUCENENET specific - allow double-dispose
 
@@ -226,32 +226,12 @@ namespace Lucene.Net.Store
 
             public override sealed long Length => m_end - m_off;
 
-            protected override void NewBuffer(byte[] newBuffer)
+            protected override void ReadInternal(Span<byte> destination)
             {
-                base.NewBuffer(newBuffer);
-                byteBuf = ByteBuffer.Wrap(newBuffer);
-            }
+                int len = destination.Length;
 
-            protected override void ReadInternal(byte[] b, int offset, int len)
-            {
-                ByteBuffer bb;
-
-                // Determine the ByteBuffer we should use
-                if (b == m_buffer && 0 == offset)
-                {
-                    // Use our own pre-wrapped byteBuf:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(byteBuf != null);
-                    byteBuf.Clear();
-                    byteBuf.Limit = len;
-                    bb = byteBuf;
-                }
-                else
-                {
-                    bb = ByteBuffer.Wrap(b, offset, len);
-                }
-
-                int readOffset = bb.Position;
-                int readLength = bb.Limit - readOffset;
+                int readOffset = 0;
+                int readLength = len;
                 long pos = Position + m_off; // LUCENENET specific: Renamed from getFilePointer() to match FileStream
 
                 if (pos + len > m_end)
@@ -264,12 +244,11 @@ namespace Lucene.Net.Store
                     while (readLength > 0)
                     {
                         int toRead = Math.Min(CHUNK_SIZE, readLength);
-                        bb.Limit = readOffset + toRead;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(bb.Remaining == toRead);
-                        int i = m_channel.Read(bb, pos);
+                        Span<byte> slice = destination.Slice(readOffset, toRead);
+                        int i = m_channel.Read(slice, pos);
                         if (i <= 0) // be defensive here, even though we checked before hand, something could have changed
                         {
-                            throw EOFException.Create("read past EOF: " + this + " off: " + offset + " len: " + len + " pos: " + pos + " chunkLen: " + readLength + " end: " + m_end);
+                            throw EOFException.Create("read past EOF: " + this + " off: " + readOffset + " len: " + len + " pos: " + pos + " chunkLen: " + readLength + " end: " + m_end);
                         }
                         pos += i;
                         readOffset += i;

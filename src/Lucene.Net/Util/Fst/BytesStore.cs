@@ -449,14 +449,18 @@ namespace Lucene.Net.Util.Fst
                 Position += count;
             }
 
-            public override void ReadBytes(byte[] b, int offset, int len)
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
+            public override void ReadBytes(Span<byte> destination)
             {
+                int offset = 0;
+                int len = destination.Length;
+
                 while (len > 0)
                 {
                     int chunkLeft = outerInstance.blockSize - nextRead;
                     if (len <= chunkLeft)
                     {
-                        Arrays.Copy(current, nextRead, b, offset, len);
+                        Arrays.Copy(current, nextRead, destination, offset, len);
                         nextRead += len;
                         break;
                     }
@@ -464,7 +468,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         if (chunkLeft > 0)
                         {
-                            Arrays.Copy(current, nextRead, b, offset, chunkLeft);
+                            Arrays.Copy(current, nextRead, destination, offset, chunkLeft);
                             offset += chunkLeft;
                             len -= chunkLeft;
                         }
@@ -539,12 +543,15 @@ namespace Lucene.Net.Util.Fst
                 Position -= count;
             }
 
+            // LUCENENET: Use Span<byte> instead of byte[] for better compatibility.
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public override void ReadBytes(byte[] b, int offset, int len)
+            public override void ReadBytes(Span<byte> destination)
             {
+                int len = destination.Length;
+
                 for (int i = 0; i < len; i++)
                 {
-                    b[offset + i] = ReadByte();
+                    destination[i] = ReadByte();
                 }
             }
 
