@@ -78,13 +78,20 @@ namespace Lucene.Net.Store
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
+            WriteBytes(b.AsSpan(offset, length));
+        }
+
+        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(ReadOnlySpan<byte> source)
+        {
+            int length = source.Length;
             if (buffer is null) buffer = new byte[bufferSize]; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
             int bytesLeft = bufferSize - bufferPosition;
             // is there enough space in the buffer?
             if (bytesLeft >= length)
             {
                 // we add the data to the end of the buffer
-                Arrays.Copy(b, offset, buffer, bufferPosition, length);
+                Arrays.Copy(source, /*offset*/ 0, buffer, bufferPosition, length);
                 bufferPosition += length;
                 // if the buffer is full, flush it
                 if (bufferSize - bufferPosition == 0)
@@ -103,8 +110,8 @@ namespace Lucene.Net.Store
                         Flush();
                     }
                     // and write data at once
-                    crc.Update(b, offset, length);
-                    FlushBuffer(b, offset, length);
+                    crc.Update(source);
+                    FlushBuffer(source);
                     bufferStart += length;
                 }
                 else
@@ -115,7 +122,7 @@ namespace Lucene.Net.Store
                     while (pos < length)
                     {
                         pieceLength = (length - pos < bytesLeft) ? length - pos : bytesLeft;
-                        Arrays.Copy(b, pos + offset, buffer, bufferPosition, pieceLength);
+                        Arrays.Copy(source, pos /*+ offset*/, buffer, bufferPosition, pieceLength);
                         pos += pieceLength;
                         bufferPosition += pieceLength;
                         // if the buffer is full, flush it
@@ -156,7 +163,17 @@ namespace Lucene.Net.Store
         /// <param name="b"> the bytes to write </param>
         /// <param name="offset"> the offset in the byte array </param>
         /// <param name="len"> the number of bytes to write </param>
-        protected internal abstract void FlushBuffer(byte[] b, int offset, int len);
+        protected internal virtual void FlushBuffer(byte[] b, int offset, int len)
+        {
+            FlushBuffer(b.AsSpan(offset, len));
+        }
+
+        /// <summary>
+        /// Expert: implements buffer write. Writes bytes at the current position in
+        /// the output.
+        /// </summary>
+        /// <param name="source">The bytes to write.</param>
+        protected internal abstract void FlushBuffer(ReadOnlySpan<byte> source);
 
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)

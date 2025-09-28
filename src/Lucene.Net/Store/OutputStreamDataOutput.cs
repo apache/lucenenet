@@ -1,3 +1,4 @@
+using Lucene.Net.Support.IO;
 using System;
 using System.IO;
 using System.Threading;
@@ -59,9 +60,10 @@ namespace Lucene.Net.Store
             _os.WriteByte(b);
         }
 
-        public override void WriteBytes(byte[] b, int offset, int length)
+        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(ReadOnlySpan<byte> source)
         {
-            _os.Write(b, offset, length);
+            _os.Write(source);
         }
 
         /// <summary>

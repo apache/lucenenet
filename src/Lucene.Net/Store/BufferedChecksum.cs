@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Store
 {
@@ -72,17 +73,13 @@ namespace Lucene.Net.Store
         }
 
         // LUCENENET specific overload for updating a whole byte[] array
-        public virtual void Update(byte[] b)
+        public virtual void Update(ReadOnlySpan<byte> bytes)
         {
-            Update(b, 0, b.Length);
-        }
-
-        public virtual void Update(byte[] b, int off, int len)
-        {
+            int len = bytes.Length;
             if (len >= buffer.Length)
             {
                 Flush();
-                @in.Update(b, off, len);
+                @in.Update(bytes);
             }
             else
             {
@@ -90,9 +87,14 @@ namespace Lucene.Net.Store
                 {
                     Flush();
                 }
-                Arrays.Copy(b, off, buffer, upto, len);
+                Arrays.Copy(bytes, /*off*/ 0, buffer, upto, len);
                 upto += len;
             }
+        }
+
+        public virtual void Update(byte[] b, int off, int len)
+        {
+            Update(b.AsSpan(off, len));
         }
 
         public virtual long Value

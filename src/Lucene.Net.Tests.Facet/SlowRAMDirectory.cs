@@ -220,15 +220,17 @@ namespace Lucene.Net.Facet
                 io.WriteByte(b);
             }
 
-            public override void WriteBytes(byte[] b, int offset, int length)
+            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            public override void WriteBytes(ReadOnlySpan<byte> source)
             {
+                int length = source.Length;
                 if (numWrote >= IO_SLEEP_THRESHOLD)
                 {
                     outerInstance.DoSleep(rand, length);
                     numWrote = 0;
                 }
                 numWrote += length;
-                io.WriteBytes(b, offset, length);
+                io.WriteBytes(source);
             }
 
             [Obsolete]

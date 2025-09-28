@@ -1444,9 +1444,10 @@ namespace Lucene.Net.Store
 
             public override long Length => io.Length;
 
-            protected internal override void FlushBuffer(byte[] b, int offset, int len)
+            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            protected internal override void FlushBuffer(ReadOnlySpan<byte> bytes)
             {
-                io.WriteBytes(b, offset, len);
+                io.WriteBytes(bytes);
             }
 
             [Obsolete("(4.1) this method will be removed in Lucene 5.0")]

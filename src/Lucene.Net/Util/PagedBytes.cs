@@ -442,9 +442,12 @@ namespace Lucene.Net.Util
                 outerInstance.currentBlock[outerInstance.upto++] = (byte)b;
             }
 
-            public override void WriteBytes(byte[] b, int offset, int length)
+            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            public override void WriteBytes(ReadOnlySpan<byte> source)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(b.Length >= offset + length);
+                int offset = 0;
+                int length = source.Length;
+                //if (Debugging.AssertsEnabled) Debugging.Assert(bytes.Length >= offset + length); // LUCENENET: Not needed
                 if (length == 0)
                 {
                     return;
@@ -468,7 +471,7 @@ namespace Lucene.Net.Util
                     int blockLeft = outerInstance.blockSize - outerInstance.upto;
                     if (blockLeft < left)
                     {
-                        Arrays.Copy(b, offset, outerInstance.currentBlock, outerInstance.upto, blockLeft);
+                        Arrays.Copy(source, offset, outerInstance.currentBlock, outerInstance.upto, blockLeft);
                         outerInstance.blocks.Add(outerInstance.currentBlock);
                         outerInstance.blockEnd.Add(outerInstance.blockSize);
                         outerInstance.currentBlock = new byte[outerInstance.blockSize];
@@ -478,7 +481,7 @@ namespace Lucene.Net.Util
                     else
                     {
                         // Last block
-                        Arrays.Copy(b, offset, outerInstance.currentBlock, outerInstance.upto, left);
+                        Arrays.Copy(source, offset, outerInstance.currentBlock, outerInstance.upto, left);
                         outerInstance.upto += left;
                         break;
                     }
