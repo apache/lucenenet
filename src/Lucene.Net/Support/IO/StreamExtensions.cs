@@ -127,6 +127,113 @@ namespace Lucene.Net.Support.IO
         }
 
         /// <summary>
+        /// Reads a sequence of bytes from a <see cref="Stream"/> to the given <see cref="Span{Byte}"/>,
+        /// starting at the given <paramref name="position"/>. Prior to .NET Core, the <paramref name="stream"/>
+        /// must be both seekable and readable.
+        /// </summary>
+        /// <param name="stream">The stream to read.</param>
+        /// <param name="destination">The span to write to.</param>
+        /// <param name="position">The file position at which the transfer is to begin; must be non-negative.</param>
+        /// <returns>The number of bytes read, possibly zero.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c></exception>
+        /// <exception cref="NotSupportedException">
+        /// <paramref name="stream"/> is not readable.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="stream"/> is not seekable.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="position"/> is less than 0.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="position"/> is greater than the <see cref="Stream.Length"/> of the stream.
+        /// </exception>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException"><paramref name="stream"/> has already been disposed.</exception>
+        /// <remarks>
+        /// On .NET 6+, this method uses the RandomAccess class to synchronize, so it is completely threadsafe
+        /// and does not require the stream to be seekable or readable.
+        /// <para/>
+        /// On older target frameworks, this method is atomic when used by itself, but does not synchronize with
+        /// the rest of the stream methods.
+        /// </remarks>
+        public static int Read(this FileStream stream, Span<byte> destination, long position)
+        {
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+            if (position < 0)
+                throw new ArgumentOutOfRangeException(nameof(position));
+            if (position > stream.Length)
+                return 0;
+
+#if FEATURE_RANDOMACCESS_READ
+            return RandomAccess.Read(stream.SafeFileHandle, destination, position);
+#else
+            if (!stream.CanSeek)
+                throw new NotSupportedException("Stream does not support seeking.");
+            if (!stream.CanRead)
+                throw new NotSupportedException("Stream does not support reading.");
+
+            int read;
+            object readLock = lockCache.GetOrCreateValue(stream);
+            UninterruptableMonitor.Enter(readLock);
+            try
+            {
+                long originalPosition = stream.Position;
+                stream.Seek(position, SeekOrigin.Begin);
+
+                read = stream.Read(destination);
+
+                // Per Java's FileChannel.Read(), we don't want to alter the position
+                // of the stream, so we return it as it was originally.
+                stream.Seek(originalPosition, SeekOrigin.Begin);
+            }
+            finally
+            {
+                UninterruptableMonitor.Exit(readLock);
+            }
+
+            return read;
+#endif
+        }
+
+        /// <summary>
+        /// Reads a sequence of bytes from the current stream and advances
+        /// the position within the stream by the number of bytes read.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="buffer">A region of memory. When this method returns,
+        /// the contents of this region are replaced by the bytes read from
+        /// the current source.</param>
+        /// <returns>The total number of bytes read into the buffer. This can be
+        /// less than the size of the buffer if that many bytes are not currently
+        /// available, or zero (0) if the buffer's length is zero or the end of
+        /// the stream has been reached.</returns>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <remarks>This is to patch .NET Standard and .NET Framework.</remarks>
+        public static int Read(this Stream stream, Span<byte> buffer)
+        {
+            byte[] sharedBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
+            try
+            {
+                int numRead = stream.Read(sharedBuffer, 0, buffer.Length);
+                if ((uint)numRead > (uint)buffer.Length)
+                {
+                    throw new IOException(SR.IO_StreamTooLong);
+                }
+
+                new ReadOnlySpan<byte>(sharedBuffer, 0, numRead).CopyTo(buffer);
+                return numRead;
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(sharedBuffer);
+            }
+        }
+
+        /// <summary>
         /// Writes a sequence of bytes to the current stream and advances the current
         /// position within this stream by the number of bytes written.
         /// </summary>
@@ -411,5 +518,11 @@ namespace Lucene.Net.Support.IO
             }
             return offset;
         }
+
+        private static class SR
+        {
+            public const string IO_StreamTooLong = "Stream was too long.";
+        }
+
     }
 }

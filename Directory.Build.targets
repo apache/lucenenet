@@ -54,6 +54,7 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net6.')) Or $(TargetFramework.StartsWith('net7.')) Or $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_RANDOM_NEXTINT64_NEXTSINGLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_RANDOMACCESS_READ</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SPANFORMATTABLE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SUPPORTEDOSPLATFORMATTRIBUTE</DefineConstants>
 

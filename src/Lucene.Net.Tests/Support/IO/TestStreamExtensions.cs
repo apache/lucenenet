@@ -56,6 +56,35 @@ namespace Lucene.Net.Support.IO
         }
 
         [Test]
+        // LUCENENET note: adapted from test_read$BII() for ByteBuffer-based Read extension method
+        public void TestRead_Span_Int64()
+        {
+            FileInfo file = LuceneTestCase.CreateTempFile("TestStreamExtensions", ".tmp");
+            using FileStream fileStream = file.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            byte[] bytes = Encoding.UTF8.GetBytes(fileString);
+            fileStream.Write(bytes, 0, bytes.Length);
+            fileStream.Flush(flushToDisk: true);
+
+            Span<byte> buffer = stackalloc byte[Encoding.UTF8.GetByteCount(fileString)];
+            Assert.Greater(fileStream.Read(buffer, 0L), 0);
+            Assert.IsTrue(Encoding.UTF8.GetString(buffer).Equals(fileString));
+        }
+
+        [Test]
+        // LUCENENET note: adapted from test_read$BII() for ByteBuffer-based Read extension method
+        public void TestRead_Span()
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(fileString);
+            stream.Write(bytes, 0, bytes.Length);
+            // stream.Dispose(); // LUCENENET - we will reuse stream
+            ResetStreamForReading();
+
+            Span<byte> buffer = stackalloc byte[Encoding.UTF8.GetByteCount(fileString)];
+            Assert.Greater(stream.Read(buffer), 0);
+            Assert.IsTrue(Encoding.UTF8.GetString(buffer).Equals(fileString));
+        }
+
+        [Test]
         public void TestWrite_Span()
         {
             byte[] bytes = Encoding.UTF8.GetBytes(fileString);
