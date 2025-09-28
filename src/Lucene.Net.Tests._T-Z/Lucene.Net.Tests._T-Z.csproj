@@ -26,11 +26,13 @@
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests._T-Z</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="..\Lucene.Net.Tests\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
     <Compile Include="..\Lucene.Net.Tests\Util\**\*.cs" LinkBase="Util" />
+    <Compile Include="..\Lucene.Net.Tests\Support\TestHelpers.cs" />
     <Compile Remove="..\Lucene.Net.Tests\Util\JunitCompat\**\*;..\Lucene.Net.Tests\Util\TestMaxFailuresRule.cs" />
   </ItemGroup>
 
