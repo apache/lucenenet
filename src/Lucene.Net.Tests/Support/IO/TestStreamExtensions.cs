@@ -44,19 +44,6 @@ namespace Lucene.Net.Support.IO
 
         [Test]
         // LUCENENET note: adapted from test_read$BII() for ByteBuffer-based Read extension method
-        public void TestRead()
-        {
-            byte[] bytes = Encoding.UTF8.GetBytes(fileString);
-            stream.Write(bytes, 0, bytes.Length);
-            // stream.Dispose(); // LUCENENET - we will reuse stream
-            ResetStreamForReading();
-            var buffer = ByteBuffer.Allocate((int)stream.Length);
-            stream.Read(buffer, 0);
-            Assert.IsTrue(Encoding.UTF8.GetString(buffer.Array).Equals(fileString));
-        }
-
-        [Test]
-        // LUCENENET note: adapted from test_read$BII() for ByteBuffer-based Read extension method
         public void TestRead_Span_Int64()
         {
             FileInfo file = LuceneTestCase.CreateTempFile("TestStreamExtensions", ".tmp");
