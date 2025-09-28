@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Threading;
+#nullable enable
 
 namespace Lucene.Net.Store
 {
@@ -56,7 +57,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private void CheckDiskFull(byte[] b, int offset, DataInput @in, long len)
+        private void CheckDiskFull(byte[]? b, int offset, DataInput? @in, long len)
         {
             long freeSpace = dir.maxSize == 0 ? 0 : dir.maxSize - dir.GetSizeInBytes();
             long realUsage = 0;
@@ -83,6 +84,48 @@ namespace Lucene.Net.Store
                     {
                         @delegate.CopyBytes(@in, len);
                     }
+                }
+                if (realUsage > dir.maxUsedSize)
+                {
+                    dir.maxUsedSize = realUsage;
+                }
+                string message = "fake disk full at " + dir.GetRecomputedActualSizeInBytes() + " bytes when writing " + name + " (file length=" + @delegate.Length;
+                if (freeSpace > 0)
+                {
+                    message += "; wrote " + freeSpace + " of " + len + " bytes";
+                }
+                message += ")";
+                if (LuceneTestCase.Verbose)
+                {
+                    Console.WriteLine(Thread.CurrentThread.Name + ": MDW: now throw fake disk full");
+                    StackTraceHelper.PrintCurrentStackTrace(Console.Out);
+                }
+                throw new IOException(message);
+            }
+        }
+
+        // LUCENENET specific overload
+        private void CheckDiskFull(ReadOnlySpan<byte> source)
+        {
+            long len = source.Length;
+            long freeSpace = dir.maxSize == 0 ? 0 : dir.maxSize - dir.GetSizeInBytes();
+            long realUsage = 0;
+
+            // Enforce disk full:
+            if (dir.maxSize != 0 && freeSpace <= len)
+            {
+                // Compute the real disk free.  this will greatly slow
+                // down our test but makes it more accurate:
+                realUsage = dir.GetRecomputedActualSizeInBytes();
+                freeSpace = dir.maxSize - realUsage;
+            }
+
+            if (dir.maxSize != 0 && freeSpace <= len)
+            {
+                if (freeSpace > 0)
+                {
+                    realUsage += freeSpace;
+                    @delegate.WriteBytes(source.Slice(/*offset*/ 0, (int)freeSpace));
                 }
                 if (realUsage > dir.maxUsedSize)
                 {
@@ -141,6 +184,9 @@ namespace Lucene.Net.Store
             WriteBytes(singleByte, 0, 1);
         }
 
+        // LUCENENET: For performance reasons, it is better to keep this duplication, for now.
+        // At least until we have migrated many of the callers to call the ReadOnlySpan<char> overload
+        // directly.
         public override void WriteBytes(byte[] b, int offset, int len)
         {
             CheckCrashed();
@@ -156,6 +202,39 @@ namespace Lucene.Net.Store
             else
             {
                 @delegate.WriteBytes(b, offset, len);
+            }
+
+            dir.MaybeThrowDeterministicException();
+
+            if (first)
+            {
+                // Maybe throw random exception; only do this on first
+                // write to a new file:
+                first = false;
+                dir.MaybeThrowIOException(name);
+            }
+        }
+
+        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(ReadOnlySpan<byte> source)
+        {
+            int len = source.Length;
+            CheckCrashed();
+            CheckDiskFull(source);
+
+            if (dir.randomState.Next(200) == 0)
+            {
+                int half = len / 2;
+                //@delegate.WriteBytes(b, offset, half);
+                @delegate.WriteBytes(source.Slice(/*offset*/ 0, half));
+                Thread.Yield();
+                //@delegate.WriteBytes(b, offset + half, len - half);
+                @delegate.WriteBytes(source.Slice(/*offset +*/ half, len - half));
+            }
+            else
+            {
+                //@delegate.WriteBytes(b, offset, len);
+                @delegate.WriteBytes(source);
             }
 
             dir.MaybeThrowDeterministicException();

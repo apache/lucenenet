@@ -97,14 +97,18 @@ namespace Lucene.Net.Util.Fst
             current[nextWrite++] = b;
         }
 
-        public override void WriteBytes(byte[] b, int offset, int len)
+        /// <inheritdoc/>
+        // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+        public override void WriteBytes(ReadOnlySpan<byte> source)
         {
+            int offset = 0;
+            int len = source.Length;
             while (len > 0)
             {
                 int chunk = blockSize - nextWrite;
                 if (len <= chunk)
                 {
-                    Arrays.Copy(b, offset, current, nextWrite, len);
+                    Arrays.Copy(source, offset, current, nextWrite, len);
                     nextWrite += len;
                     break;
                 }
@@ -112,7 +116,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     if (chunk > 0)
                     {
-                        Arrays.Copy(b, offset, current, nextWrite, chunk);
+                        Arrays.Copy(source, offset, current, nextWrite, chunk);
                         offset += chunk;
                         len -= chunk;
                     }

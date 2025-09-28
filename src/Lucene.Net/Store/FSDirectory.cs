@@ -538,25 +538,27 @@ namespace Lucene.Net.Store
             }
 
             /// <inheritdoc/>
-            public override void WriteBytes(byte[] b, int offset, int length)
+            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            public override void WriteBytes(ReadOnlySpan<byte> source)
             {
                 // LUCENENET specific: Guard to ensure we aren't disposed.
                 if (!isOpen)
                     throw AlreadyClosedException.Create(this.GetType().FullName, "This FSIndexOutput is disposed.");
 
-                crc.Update(b, offset, length);
-                file.Write(b, offset, length);
+                crc.Update(source);
+                file.Write(source);
             }
 
             /// <inheritdoc/>
-            protected internal override void FlushBuffer(byte[] b, int offset, int size)
+            // LUCENENET: Use ReadOnlySpan<byte> instead of byte[] for better compatibility.
+            protected internal override void FlushBuffer(ReadOnlySpan<byte> source)
             {
                 // LUCENENET specific: Guard to ensure we aren't disposed.
                 if (!isOpen)
                     throw AlreadyClosedException.Create(this.GetType().FullName, "This FSIndexOutput is disposed.");
 
-                crc.Update(b, offset, size);
-                file.Write(b, offset, size);
+                crc.Update(source);
+                file.Write(source);
             }
 
             /// <inheritdoc/>
