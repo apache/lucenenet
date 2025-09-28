@@ -3,8 +3,11 @@
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/io/DataOutputStreamTest.java
 
 using J2N.IO;
+using J2N.Text;
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
@@ -30,6 +33,7 @@ namespace Lucene.Net.Support.IO
      */
 
     [TestFixture]
+    [LuceneNetSpecific]
     public class TestStreamExtensions : LuceneTestCase
     {
         private Stream stream;
@@ -49,6 +53,21 @@ namespace Lucene.Net.Support.IO
             var buffer = ByteBuffer.Allocate((int)stream.Length);
             stream.Read(buffer, 0);
             Assert.IsTrue(Encoding.UTF8.GetString(buffer.Array).Equals(fileString));
+        }
+
+        [Test]
+        public void TestWrite_Span()
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(fileString);
+            stream.Write(bytes.AsSpan()); // Method under test
+
+            //stream.Write("Test String".ToCharArray());
+            // stream.Dispose(); // LUCENENET - we will reuse stream
+            ResetStreamForReading();
+
+            Span<byte> buffer = stackalloc byte[Encoding.UTF8.GetByteCount(fileString)];
+            Assert.Greater(stream.Read(buffer), 0);
+            Assert.IsTrue(Encoding.UTF8.GetString(buffer).Equals(fileString));
         }
 
         [Test]

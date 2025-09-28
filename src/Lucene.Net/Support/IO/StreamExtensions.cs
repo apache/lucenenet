@@ -126,6 +126,31 @@ namespace Lucene.Net.Support.IO
             return read;
         }
 
+        /// <summary>
+        /// Writes a sequence of bytes to the current stream and advances the current
+        /// position within this stream by the number of bytes written.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="buffer">A region of memory. This method copies the contents of this region to the current stream.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="buffer"/> is <c>null</c>.</exception>
+        /// <remarks>This is to patch .NET Standard and .NET Framework.</remarks>
+        public static void Write(this Stream stream, ReadOnlySpan<byte> buffer)
+        {
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            byte[] sharedBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
+            try
+            {
+                buffer.CopyTo(sharedBuffer);
+                stream.Write(sharedBuffer, 0, buffer.Length);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(sharedBuffer);
+            }
+        }
+
         public static void Write(this Stream stream, char[] chars)
         {
             if (stream is null)
