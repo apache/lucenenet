@@ -833,6 +833,229 @@ namespace Lucene.Net.Support
             Assert.AreEqual(4L, dest[4]);
         }
 
+        #region Copy (Array-Span overloads)
+
+        [Test, LuceneNetSpecific]
+        public void Copy_Int32Array_Span()
+        {
+            int[] source = { 1, 2, 3, 4, 5 };
+            Span<int> dest = new int[5];
+            Arrays.Copy(source, dest, source.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2, dest[1]);
+            Assert.AreEqual(3, dest[2]);
+            Assert.AreEqual(4, dest[3]);
+            Assert.AreEqual(5, dest[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_ObjectArray_Span()
+        {
+            object[] source = { 1, 2f, 3d, 4L, new object() };
+            Span<object> dest = new object[5];
+            Arrays.Copy(source, dest, source.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2f, dest[1]);
+            Assert.AreEqual(3d, dest[2]);
+            Assert.AreEqual(4L, dest[3]);
+            Assert.IsNotNull(dest[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_Int32Array_Span_Partial()
+        {
+            int[] source = { 1, 2, 3, 4, 5 };
+            Span<int> dest = new int[3];
+            Arrays.Copy(source, dest, dest.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2, dest[1]);
+            Assert.AreEqual(3, dest[2]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_ObjectArray_Span_Partial()
+        {
+            object[] source = { 1, 2f, 3d, 4L, new object() };
+            Span<object> dest = new object[3];
+            Arrays.Copy(source, dest, dest.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2f, dest[1]);
+            Assert.AreEqual(3d, dest[2]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_Int32Array_Span_WithIndices()
+        {
+            int[] source = { 1, 2, 3, 4, 5 };
+            Span<int> dest = new int[5];
+            Arrays.Copy(source, 1, dest, 2, 3);
+            Assert.AreEqual(2, dest[2]);
+            Assert.AreEqual(3, dest[3]);
+            Assert.AreEqual(4, dest[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_ObjectArray_Span_WithIndices()
+        {
+            object[] source = { 1, 2f, 3d, 4L, new object() };
+            Span<object> dest = new object[5];
+            Arrays.Copy(source, 1, dest, 2, 3);
+            Assert.AreEqual(2f, dest[2]);
+            Assert.AreEqual(3d, dest[3]);
+            Assert.AreEqual(4L, dest[4]);
+        }
+
+        #endregion Copy (Array-Span overloads)
+
+        #region Copy (ReadOnlySpan-Array overloads)
+
+        [Test, LuceneNetSpecific]
+        public void Copy_ReadOnlySpan_Int32Array()
+        {
+            ReadOnlySpan<int> source = stackalloc int[] { 1, 2, 3, 4, 5 };
+            int[] dest = new int[5];
+            Arrays.Copy(source, dest, source.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2, dest[1]);
+            Assert.AreEqual(3, dest[2]);
+            Assert.AreEqual(4, dest[3]);
+            Assert.AreEqual(5, dest[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_ReadOnlySpan_ObjectArray()
+        {
+            ReadOnlySpan<object> source = new object[] { 1, 2f, 3d, 4L, new object() };
+            object[] dest = new object[5];
+            Arrays.Copy(source, dest, source.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2f, dest[1]);
+            Assert.AreEqual(3d, dest[2]);
+            Assert.AreEqual(4L, dest[3]);
+            Assert.IsNotNull(dest[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_ReadOnlySpan_Int32Array_Partial()
+        {
+            ReadOnlySpan<int> source = stackalloc int[] { 1, 2, 3, 4, 5 };
+            int[] dest = new int[3];
+            Arrays.Copy(source, dest, dest.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2, dest[1]);
+            Assert.AreEqual(3, dest[2]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_ReadOnlySpan_ObjectArray_Partial()
+        {
+            ReadOnlySpan<object> source = new object[] { 1, 2f, 3d, 4L, new object() };
+            object[] dest = new object[3];
+            Arrays.Copy(source, dest, dest.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2f, dest[1]);
+            Assert.AreEqual(3d, dest[2]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_ReadOnlySpan_Int32Array_WithIndices()
+        {
+            ReadOnlySpan<int> source = stackalloc int[] { 1, 2, 3, 4, 5 };
+            int[] dest = new int[5];
+            Arrays.Copy(source, 1, dest, 2, 3);
+            Assert.AreEqual(2, dest[2]);
+            Assert.AreEqual(3, dest[3]);
+            Assert.AreEqual(4, dest[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_ReadOnlySpan_ObjectArray_WithIndices()
+        {
+            ReadOnlySpan<object> source = new object[] { 1, 2f, 3d, 4L, new object() };
+            object[] dest = new object[5];
+            Arrays.Copy(source, 1, dest, 2, 3);
+            Assert.AreEqual(2f, dest[2]);
+            Assert.AreEqual(3d, dest[3]);
+            Assert.AreEqual(4L, dest[4]);
+        }
+
+        #endregion Copy (ReadOnlySpan-Array overloads)
+
+        #region Copy (ReadOnlySpan-Span overloads)
+
+
+        [Test, LuceneNetSpecific]
+        public void Copy_Int32_ReadOnlySpan_Span()
+        {
+            ReadOnlySpan<int> source = stackalloc int[] { 1, 2, 3, 4, 5 };
+            Span<int> dest = stackalloc int[5];
+            Arrays.Copy(source, dest, source.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2, dest[1]);
+            Assert.AreEqual(3, dest[2]);
+            Assert.AreEqual(4, dest[3]);
+            Assert.AreEqual(5, dest[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_Object_ReadOnlySpan_Span()
+        {
+            ReadOnlySpan<object> source = new object[] { 1, 2f, 3d, 4L, new object() };
+            Span<object> dest = new object[5];
+            Arrays.Copy(source, dest, source.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2f, dest[1]);
+            Assert.AreEqual(3d, dest[2]);
+            Assert.AreEqual(4L, dest[3]);
+            Assert.IsNotNull(dest[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_Int32_ReadOnlySpan_Span_Partial()
+        {
+            ReadOnlySpan<int> source = stackalloc int[] { 1, 2, 3, 4, 5 };
+            Span<int> dest = stackalloc int[3];
+            Arrays.Copy(source, dest, dest.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2, dest[1]);
+            Assert.AreEqual(3, dest[2]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_Object_ReadOnlySpan_Span_Partial()
+        {
+            ReadOnlySpan<object> source = new object[] { 1, 2f, 3d, 4L, new object() };
+            Span<object> dest = new object[3];
+            Arrays.Copy(source, dest, dest.Length);
+            Assert.AreEqual(1, dest[0]);
+            Assert.AreEqual(2f, dest[1]);
+            Assert.AreEqual(3d, dest[2]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_Int32_ReadOnlySpan_Span_WithIndices()
+        {
+            ReadOnlySpan<int> source = stackalloc int[] { 1, 2, 3, 4, 5 };
+            Span<int> dest = stackalloc int[5];
+            Arrays.Copy(source, 1, dest, 2, 3);
+            Assert.AreEqual(2, dest[2]);
+            Assert.AreEqual(3, dest[3]);
+            Assert.AreEqual(4, dest[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Copy_Object_ReadOnlySpan_Span_WithIndices()
+        {
+            ReadOnlySpan<object> source = new object[] { 1, 2f, 3d, 4L, new object() };
+            Span<object> dest = new object[5];
+            Arrays.Copy(source, 1, dest, 2, 3);
+            Assert.AreEqual(2f, dest[2]);
+            Assert.AreEqual(3d, dest[3]);
+            Assert.AreEqual(4L, dest[4]);
+        }
+
+        #endregion Copy (ReadOnlySpan-Span overloads)
+
         [Test, LuceneNetSpecific]
         public void CopyOf_Int32Array()
         {
