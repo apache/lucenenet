@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
 namespace Lucene.Net.Util
@@ -62,7 +63,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Offset of first valid character. </summary>
-        public int Offset { get; internal set; }
+        public int Offset { get; set; }
 
         /// <summary>
         /// Length of used characters. </summary>
@@ -104,6 +105,18 @@ namespace Lucene.Net.Util
         public CharsRef(string @string)
         {
             this.chars = @string.ToCharArray();
+            this.Offset = 0;
+            this.Length = chars.Length;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="CharsRef"/> initialized with the given <see cref="ReadOnlySpan{T}"/> character
+        /// array.
+        /// </summary>
+        public CharsRef(ReadOnlySpan<char> value) // LUCENENET specific
+        {
+            this.chars = new char[value.Length];
+            value.CopyTo(chars);
             this.Offset = 0;
             this.Length = chars.Length;
         }
@@ -250,6 +263,21 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        /// Copies the given span into this <see cref="CharsRef"/>.
+        /// </summary>
+        public void CopyChars(ReadOnlySpan<char> otherChars) // LUCENENET specific
+        {
+            int otherLength = otherChars.Length;
+            if (Chars.Length - Offset < otherLength)
+            {
+                chars = new char[otherLength];
+                Offset = 0;
+            }
+            otherChars.CopyTo(chars.AsSpan(Offset, otherLength));
+            Length = otherLength;
+        }
+
+        /// <summary>
         /// Appends the given array to this <see cref="CharsRef"/>.
         /// </summary>
         public void Append(char[] otherChars, int otherOffset, int otherLength)
@@ -263,6 +291,24 @@ namespace Lucene.Net.Util
                 chars = newChars;
             }
             Arrays.Copy(otherChars, otherOffset, chars, Length + Offset, otherLength);
+            Length = newLen;
+        }
+
+        /// <summary>
+        /// Appends the given span to this <see cref="CharsRef"/>.
+        /// </summary>
+        public void Append(ReadOnlySpan<char> otherChars) // LUCENENET specific
+        {
+            int otherLength = otherChars.Length;
+            int newLen = Length + otherLength;
+            if (chars.Length - Offset < newLen)
+            {
+                var newChars = new char[newLen];
+                Arrays.Copy(chars, Offset, newChars, 0, Length);
+                Offset = 0;
+                chars = newChars;
+            }
+            otherChars.CopyTo(chars.AsSpan(Length + Offset, otherLength));
             Length = newLen;
         }
 
@@ -471,5 +517,266 @@ namespace Lucene.Net.Util
 
 #nullable restore
         #endregion
+
+        #region AsSpan
+
+        /// <summary>
+        /// Creates a new readonly span over the portion of the target string.
+        /// </summary>
+        /// <returns>The read-only span representation of the string.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlySpan<char> AsSpan() // LUCENENET specific
+        {
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<char>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(chars), Offset), Length);
+#else
+            return new ReadOnlySpan<char>(chars, Offset, Length);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of the target string from
+        /// a specified position to the end of the string.
+        /// </summary>
+        /// <param name="start">The index at which to begin this slice.</param>
+        /// <returns>The read-only span representation of the string.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="start"/> is less than 0 or greater than <c>text.Length</c>.
+        /// </exception>
+        public ReadOnlySpan<char> AsSpan(int start) // LUCENENET specific
+        {
+            if ((uint)start > (uint)Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            // Prevent overflow and ensure we stay within the backing array
+            uint totalOffset = (uint)Offset + (uint)start;
+            if (totalOffset > chars.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<char>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(chars),
+                (nint)totalOffset /* force zero-extension */), Length - start);
+#else
+            return new ReadOnlySpan<char>(chars, checked((int)totalOffset), Length - start);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of the target string from a
+        /// specified position for a specified number of characters.
+        /// </summary>
+        /// <param name="start">The index at which to begin this slice.</param>
+        /// <param name="length">The desired length for the slice.</param>
+        /// <returns>The read-only span representation of the string.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="start"/>, <paramref name="length"/>, or
+        /// <paramref name="start"/> + <paramref name="length"/> is not
+        /// in the range of <see cref="Length"/>.
+        /// </exception>
+        public ReadOnlySpan<char> AsSpan(int start, int length) // LUCENENET specific
+        {
+            if (IntPtr.Size == 8) // 64-bit process
+            {
+                // See comment in Span<T>.Slice for how this works.
+                if ((ulong)(uint)start + (ulong)(uint)length > (ulong)(uint)Length)
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+            else
+            {
+                if ((uint)start > (uint)Length || (uint)length > (uint)(Length - start))
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
+            // Compute offset in uint to prevent overflow
+            uint totalOffset = (uint)Offset + (uint)start;
+
+            // Ensure we stay within the backing array bounds
+            if (totalOffset + (uint)length > (uint)chars.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<char>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(chars),
+                (nint)totalOffset /* force zero-extension */), length);
+#else
+            return new ReadOnlySpan<char>(chars, checked((int)totalOffset), length);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of the
+        /// target string from a specified position to the end of the string.
+        /// </summary>
+        /// <param name="startIndex">The index at which to begin this slice.</param>
+        /// <returns>The read-only span representation of the string.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> is less
+        /// than 0 or greater than <c>text.Length</c>.</exception>
+        public ReadOnlySpan<char> AsSpan(System.Index startIndex) // LUCENENET specific
+        {
+            int actualIndex = startIndex.GetOffset(Length);
+            if ((uint)actualIndex > (uint)Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            // Prevent overflow and ensure we stay within the backing array
+            uint totalOffset = (uint)Offset + (uint)actualIndex;
+            if (totalOffset > chars.Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<char>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(chars),
+                (nint)totalOffset /* force zero-extension */), Length - actualIndex);
+#else
+            return new ReadOnlySpan<char>(chars, checked((int)totalOffset), Length - actualIndex);
+#endif
+        }
+
+        /// <summary>
+        /// Creates a new read-only span over a portion of a target string
+        /// using the range start and end indexes.
+        /// </summary>
+        /// <param name="range">The range that has start and end indexes to use for slicing the string.</param>
+        /// <returns>The read-only span representation of the string.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="range"/>'s start or end index is not within the bounds of the string.
+        /// -or-
+        /// <paramref name="range"/>'s start index is greater than its end index.
+        /// </exception>
+        public ReadOnlySpan<char> AsSpan(Range range) // LUCENENET specific
+        {
+            (int start, int length) = range.GetOffsetAndLength(Length);
+
+            // Compute offset in uint to prevent overflow
+            uint totalOffset = (uint)Offset + (uint)start;
+
+            // Ensure we stay within the backing array bounds
+            if (totalOffset + (uint)length > (uint)chars.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+#if FEATURE_MEMORYMARSHAL_CREATEREADONLYSPAN && FEATURE_MEMORYMARSHAL_GETARRAYDATAREFERENCE
+            return MemoryMarshal.CreateReadOnlySpan<char>(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(chars),
+                (nint)totalOffset /* force zero-extension */), length);
+#else
+            return new ReadOnlySpan<char>(chars, checked((int)totalOffset), length);
+#endif
+        }
+
+        #endregion AsSpan
+
+        #region AsMemory
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the portion of <see cref="Chars"/>
+        /// between <see cref="Offset"/> and <see cref="Length"/>.
+        /// </summary>
+        /// <returns>The read-only char memory representation of the backing array.</returns>
+        public ReadOnlyMemory<char> AsMemory() // LUCENENET specific
+        {
+            return new ReadOnlyMemory<char>(chars, Offset, Length);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the portion of <see cref="Chars"/>
+        /// between <see cref="Offset"/> + <paramref name="start"/> and
+        /// <see cref="Length"/> - <paramref name="start"/>.
+        /// </summary>
+        /// <param name="start">The index into the usable portion of this instance at which to begin this slice.</param>
+        /// <returns>The read-only char memory representation of the backing array.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="start"/> is not in range of this instance
+        /// (<paramref name="start"/> is &lt;0 or &gt;<see cref="Length"/>).
+        /// </exception>
+        public ReadOnlyMemory<char> AsMemory(int start) // LUCENENET specific
+        {
+            if ((uint)start > (uint)Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            // Prevent overflow and ensure we stay within the backing array
+            uint totalOffset = (uint)Offset + (uint)start;
+            if (totalOffset > chars.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            return new ReadOnlyMemory<char>(chars, checked(Offset + start), Length - start);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the portion of <see cref="Chars"/>
+        /// between <see cref="Offset"/> + <paramref name="start"/> and <paramref name="length"/>.
+        /// </summary>
+        /// <param name="start">The index into the usable portion of this instance at which to begin this slice.</param>
+        /// <param name="length">The desired length for the slice (exclusive).</param>
+        /// <returns>The read-only char memory representation of the backing array.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="start"/>, <paramref name="length"/>,
+        /// or <paramref name="start"/> + <paramref name="length"/> is not in the range of this instance.</exception>
+        public ReadOnlyMemory<char> AsMemory(int start, int length) // LUCENENET specific
+        {
+            if (IntPtr.Size == 8) // 64-bit process
+            {
+                // See comment in Span<T>.Slice for how this works.
+                if ((ulong)(uint)start + (ulong)(uint)length > (ulong)(uint)Length)
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+            else
+            {
+                if ((uint)start > (uint)Length || (uint)length > (uint)(Length - start))
+                    throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
+            // Compute offset in uint to prevent overflow
+            uint totalOffset = (uint)Offset + (uint)start;
+
+            // Ensure we stay within the backing array bounds
+            if (totalOffset + (uint)length > (uint)chars.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            return new ReadOnlyMemory<char>(chars, checked((int)totalOffset), length);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the portion of <see cref="Chars"/>
+        /// between <see cref="Offset"/> + <paramref name="startIndex"/> and <see cref="Length"/>.
+        /// </summary>
+        /// <param name="startIndex">The index into the usable portion of this instance at which to begin this slice.</param>
+        /// <returns>The read-only char memory representation of the backing array.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="startIndex"/> is less
+        /// than 0 or greater than <see cref="Length"/>.</exception>
+        public ReadOnlyMemory<char> AsMemory(System.Index startIndex) // LUCENENET specific
+        {
+            int actualIndex = startIndex.GetOffset(Length);
+            if ((uint)actualIndex > (uint)Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            // Prevent overflow and ensure we stay within the backing array
+            uint totalOffset = (uint)Offset + (uint)actualIndex;
+            if (totalOffset > chars.Length)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            return new ReadOnlyMemory<char>(chars, checked((int)totalOffset), Length - actualIndex);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> over the portion of <see cref="Chars"/>
+        /// between <see cref="Offset"/> + <paramref name="range"/>.Start and <paramref name="range"/>.Length.
+        /// </summary>
+        /// <param name="range">The range used to indicate the start and length of the sliced string.</param>
+        /// <returns>The read-only char memory representation of the backing array.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="range"/>'s start or end index is not within the bounds of the array.
+        /// -or-
+        /// <paramref name="range"/>'s start index is greater than its end index.
+        /// </exception>
+        public ReadOnlyMemory<char> AsMemory(Range range) // LUCENENET specific
+        {
+            (int start, int length) = range.GetOffsetAndLength(Length);
+
+            // Compute offset in uint to prevent overflow
+            uint totalOffset = (uint)Offset + (uint)start;
+
+            // Ensure we stay within the backing array bounds
+            if (totalOffset + (uint)length > (uint)chars.Length)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            return new ReadOnlyMemory<char>(chars, checked((int)totalOffset), length);
+        }
+
+        #endregion AsMemory
     }
 }

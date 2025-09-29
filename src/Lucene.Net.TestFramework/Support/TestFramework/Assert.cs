@@ -1165,6 +1165,18 @@ namespace Lucene.Net.TestFramework
         }
 
         [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T Throws<T>(string expectedParamName, Action action)
+            where T : ArgumentException
+        {
+            T exception = _NUnit.Assert.Throws<T>(() => action());
+
+            _NUnit.Assert.AreEqual(expectedParamName, exception.ParamName);
+
+            return exception;
+        }
+
+        [DebuggerStepThrough]
         public static Exception ThrowsFileAlreadyExistsException(string filePath, Action action)
         {
             var messagePrefix = $"Expected: IOException indicating file not found\nBut was:";
