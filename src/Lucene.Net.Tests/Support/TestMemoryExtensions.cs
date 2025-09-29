@@ -1,8 +1,12 @@
+// Based on:
+// https://github.com/dotnet/runtime/blob/v9.0.1/src/libraries/System.Memory/tests/ReadOnlySpan/AsSpan.cs
+// https://github.com/dotnet/runtime/blob/v9.0.1/src/libraries/System.Memory/tests/Memory/AsMemory.cs
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -13,6 +17,7 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net
 {
     [TestFixture]
+    [LuceneNetSpecific]
     public class TestMemoryExtensions : LuceneTestCase
     {
         #region AsSpan (ICharTermAttribute)
