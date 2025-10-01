@@ -22,7 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
+    <TargetFrameworks>net8.0;netstandard2.0;net462</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.TestFramework.TestData.NUnit</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
@@ -50,4 +50,3 @@
   </ItemGroup>
 
 </Project>
-

@@ -59,16 +59,13 @@
     The SDK version of .NET 8.x to install on the build agent to be used for building and
     testing. This SDK is always installed on the build agent. The default is 8.0.x.
 
- .PARAMETER DotNet6SDKVersion
-    The SDK version of .NET 6.x to install on the build agent to be used for building and
-    testing. This SDK is always installed on the build agent. The default is 6.0.x.
 #>
 param(
     [string]$OutputDirectory =  $PSScriptRoot,
 
     [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot)),
 
-    [string[]]$TestFrameworks = @('net9.0','net8.0','net6.0','net472','net48'), # targets under test: net8.0, net8.0, netstandard2.1, netstandard2.0, net462
+    [string[]]$TestFrameworks = @('net9.0','net8.0','net472','net48'), # targets under test: net8.0, net8.0, netstandard2.0, net462
 
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest'),
 
@@ -78,9 +75,7 @@ param(
 
     [string]$DotNet9SDKVersion = '9.0.x',
 
-    [string]$DotNet8SDKVersion = '8.0.x',
-
-    [string]$DotNet6SDKVersion = '6.0.x'
+    [string]$DotNet8SDKVersion = '8.0.x'
 )
 
 
@@ -161,8 +156,7 @@ function Write-TestWorkflow(
     [string[]]$TestPlatforms = @('x64'),
     [string[]]$OperatingSystems = @('windows-latest', 'ubuntu-latest', 'macos-latest'),
     [string]$DotNet9SDKVersion = $DotNet9SDKVersion,
-    [string]$DotNet8SDKVersion = $DotNet8SDKVersion,
-    [string]$DotNet6SDKVersion = $DotNet6SDKVersion) {
+    [string]$DotNet8SDKVersion = $DotNet8SDKVersion) {
 
     $dependencies = New-Object System.Collections.Generic.HashSet[string]
     Get-ProjectDependencies $ProjectPath $RelativeRoot $dependencies
@@ -280,12 +274,6 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v5
 
-      - name: Setup .NET 6 SDK
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '$DotNet6SDKVersion'
-        if: `${{ startswith(matrix.framework, 'net6.') }}
-
       - name: Setup .NET 8 SDK
         uses: actions/setup-dotnet@v5
         with:
@@ -375,7 +363,7 @@ try {
     Pop-Location
 }
 
-#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net6.0') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion -DotNet6SDKVersion $DotNet6SDKVersion
+#Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $projectPath -RelativeRoot $repoRoot -TestFrameworks @('net6.0') -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion
 
 #Write-Host $TestProjects
 
@@ -402,5 +390,5 @@ foreach ($testProject in $TestProjects) {
     Write-Host "Frameworks To Test for ${projectName}: $($frameworks -join ';')" -ForegroundColor Cyan
 
     #Write-Host "Project: $projectName"
-    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion -DotNet6SDKVersion $DotNet6SDKVersion
+    Write-TestWorkflow -OutputDirectory $OutputDirectory -ProjectPath $testProject -RelativeRoot $RepoRoot -TestFrameworks $frameworks -OperatingSystems $OperatingSystems -TestPlatforms $TestPlatforms -Configurations $Configurations -DotNet8SDKVersion $DotNet8SDKVersion
 }
