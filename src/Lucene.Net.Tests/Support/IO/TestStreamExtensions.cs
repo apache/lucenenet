@@ -2,16 +2,15 @@
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/io/DataInputStreamTest.java
 // https://github.com/apache/harmony/blob/02970cb7227a335edd2c8457ebdde0195a735733/classlib/modules/luni/src/test/api/common/org/apache/harmony/luni/tests/java/io/DataOutputStreamTest.java
 
-using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support.IO
 {
@@ -53,8 +52,16 @@ namespace Lucene.Net.Support.IO
             fileStream.Flush(flushToDisk: true);
 
             Span<byte> buffer = stackalloc byte[Encoding.UTF8.GetByteCount(fileString)];
+            // Test1: Original
             Assert.Greater(fileStream.Read(buffer, 0L), 0);
             Assert.IsTrue(Encoding.UTF8.GetString(buffer).Equals(fileString));
+            // Test2: Repeat
+            buffer.Clear();
+            Assert.Greater(fileStream.Read(buffer, 0L), 0);
+            Assert.IsTrue(Encoding.UTF8.GetString(buffer).Equals(fileString));
+            // Test3: Ensure reading past end returns 0
+            buffer.Clear();
+            Assert.AreEqual(expected: 0, fileStream.Read(buffer, buffer.Length + 1));
         }
 
         [Test]
