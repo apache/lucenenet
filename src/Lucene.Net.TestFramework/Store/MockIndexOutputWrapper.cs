@@ -57,7 +57,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private void CheckDiskFull(byte[]? b, int offset, DataInput? @in, long len)
+        private void CheckDiskFull(ReadOnlySpan<byte> b, int offset, DataInput? @in, long len)
         {
             long freeSpace = dir.maxSize == 0 ? 0 : dir.maxSize - dir.GetSizeInBytes();
             long realUsage = 0;
@@ -76,56 +76,14 @@ namespace Lucene.Net.Store
                 if (freeSpace > 0)
                 {
                     realUsage += freeSpace;
-                    if (b != null)
+                    if (@in is null) // LUCENENET: Inverted condition to use @in, since ReadOnlySpan cannot be null and Empty would not be a reliable check
                     {
-                        @delegate.WriteBytes(b, offset, (int)freeSpace);
+                        @delegate.WriteBytes(b.Slice(offset, (int)freeSpace));
                     }
                     else
                     {
                         @delegate.CopyBytes(@in, len);
                     }
-                }
-                if (realUsage > dir.maxUsedSize)
-                {
-                    dir.maxUsedSize = realUsage;
-                }
-                string message = "fake disk full at " + dir.GetRecomputedActualSizeInBytes() + " bytes when writing " + name + " (file length=" + @delegate.Length;
-                if (freeSpace > 0)
-                {
-                    message += "; wrote " + freeSpace + " of " + len + " bytes";
-                }
-                message += ")";
-                if (LuceneTestCase.Verbose)
-                {
-                    Console.WriteLine(Thread.CurrentThread.Name + ": MDW: now throw fake disk full");
-                    StackTraceHelper.PrintCurrentStackTrace(Console.Out);
-                }
-                throw new IOException(message);
-            }
-        }
-
-        // LUCENENET specific overload
-        private void CheckDiskFull(ReadOnlySpan<byte> source)
-        {
-            long len = source.Length;
-            long freeSpace = dir.maxSize == 0 ? 0 : dir.maxSize - dir.GetSizeInBytes();
-            long realUsage = 0;
-
-            // Enforce disk full:
-            if (dir.maxSize != 0 && freeSpace <= len)
-            {
-                // Compute the real disk free.  this will greatly slow
-                // down our test but makes it more accurate:
-                realUsage = dir.GetRecomputedActualSizeInBytes();
-                freeSpace = dir.maxSize - realUsage;
-            }
-
-            if (dir.maxSize != 0 && freeSpace <= len)
-            {
-                if (freeSpace > 0)
-                {
-                    realUsage += freeSpace;
-                    @delegate.WriteBytes(source.Slice(/*offset*/ 0, (int)freeSpace));
                 }
                 if (realUsage > dir.maxUsedSize)
                 {
@@ -220,7 +178,7 @@ namespace Lucene.Net.Store
         {
             int len = source.Length;
             CheckCrashed();
-            CheckDiskFull(source);
+            CheckDiskFull(source, 0, null, len);
 
             if (dir.randomState.Next(200) == 0)
             {
