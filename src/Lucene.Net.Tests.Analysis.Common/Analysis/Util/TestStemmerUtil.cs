@@ -37,7 +37,11 @@ namespace Lucene.Net.Analysis.Util
         [TestCase("foobar", 2, "foo", false)]
         public void TestStartsWith(string input, int len, string prefix, bool expected)
         {
+            // test len overload
             Assert.AreEqual(expected, StemmerUtil.StartsWith(input.AsSpan(), len, prefix));
+
+            // test no len overload
+            Assert.AreEqual(expected, StemmerUtil.StartsWith(input.AsSpan(0, len), prefix));
         }
 
         [Test]
@@ -48,7 +52,11 @@ namespace Lucene.Net.Analysis.Util
         [TestCase("foobar", 3, "foo", true)]
         public void TestEndsWith(string input, int len, string prefix, bool expected)
         {
+            // test len overload
             Assert.AreEqual(expected, StemmerUtil.EndsWith(input.AsSpan(), len, prefix));
+
+            // test no len overload
+            Assert.AreEqual(expected, StemmerUtil.EndsWith(input.AsSpan(0, len), prefix));
         }
 
         [Test]
@@ -58,8 +66,14 @@ namespace Lucene.Net.Analysis.Util
         [TestCase("foobar", 5, 6, "fooba", 5)]
         public void TestDelete(string input, int pos, int len, string expected, int expectedLen)
         {
+            // test len overload
             char[] buffer = input.ToCharArray();
             Assert.AreEqual(expectedLen, StemmerUtil.Delete(buffer, pos, len));
+            Assert.AreEqual(expected, new string(buffer, 0, expectedLen));
+
+            // test no len overload
+            buffer = input.ToCharArray();
+            Assert.AreEqual(expectedLen, StemmerUtil.Delete(buffer.AsSpan(0, len), pos));
             Assert.AreEqual(expected, new string(buffer, 0, expectedLen));
         }
 
@@ -70,8 +84,14 @@ namespace Lucene.Net.Analysis.Util
         [TestCase("foobar", 4, 6, 2, "foob", 4)]
         public void TestDeleteN(string input, int pos, int len, int nChars, string expected, int expectedLen)
         {
+            // test len overload
             char[] buffer = input.ToCharArray();
             Assert.AreEqual(expectedLen, StemmerUtil.DeleteN(buffer, pos, len, nChars));
+            Assert.AreEqual(expected, new string(buffer, 0, expectedLen));
+
+            // test no len overload
+            buffer = input.ToCharArray();
+            Assert.AreEqual(expectedLen, StemmerUtil.DeleteN(buffer.AsSpan(0, len), pos, nChars));
             Assert.AreEqual(expected, new string(buffer, 0, expectedLen));
         }
     }
