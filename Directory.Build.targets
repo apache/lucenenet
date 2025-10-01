@@ -47,7 +47,6 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net8.')) Or $(TargetFramework.StartsWith('net9.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ASPNETCORE_TESTHOST</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_UTF8_TOUTF16</DefineConstants>
 
   </PropertyGroup>
 
