@@ -1,4 +1,3 @@
-using J2N.IO;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Buffers;
@@ -81,18 +80,18 @@ namespace Lucene.Net.Support.IO
         {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
-            if (position < 0)
-                throw new ArgumentOutOfRangeException(nameof(position));
-            if (position > stream.Length)
-                return 0;
 
 #if FEATURE_RANDOMACCESS_READ
             return RandomAccess.Read(stream.SafeFileHandle, destination, position);
 #else
+            if (position < 0)
+                throw new ArgumentOutOfRangeException(nameof(position));
             if (!stream.CanSeek)
                 throw new NotSupportedException("Stream does not support seeking.");
             if (!stream.CanRead)
                 throw new NotSupportedException("Stream does not support reading.");
+            if (position > stream.Length)
+                return 0;
 
             int read;
             object readLock = lockCache.GetOrCreateValue(stream);
@@ -130,9 +129,13 @@ namespace Lucene.Net.Support.IO
         /// available, or zero (0) if the buffer's length is zero or the end of
         /// the stream has been reached.</returns>
         /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
         /// <remarks>This is to patch .NET Standard and .NET Framework.</remarks>
         public static int Read(this Stream stream, Span<byte> buffer)
         {
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
             byte[] sharedBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
             try
             {
@@ -157,7 +160,7 @@ namespace Lucene.Net.Support.IO
         /// </summary>
         /// <param name="stream">The stream to write to.</param>
         /// <param name="buffer">A region of memory. This method copies the contents of this region to the current stream.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="buffer"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <c>null</c>.</exception>
         /// <remarks>This is to patch .NET Standard and .NET Framework.</remarks>
         public static void Write(this Stream stream, ReadOnlySpan<byte> buffer)
         {
