@@ -173,7 +173,6 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="s"> Input Buffer </param>
         /// <param name="pos"> Position of character to delete </param>
-        /// <param name="len"> length of input buffer </param>
         /// <returns> length of input buffer after deletion </returns>
         /// <remarks>
         /// LUCENENET NOTE: This method has been converted to use <see cref="Span{T}"/>.
@@ -211,7 +210,6 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="s"> Input Buffer </param>
         /// <param name="pos"> Position of character to delete </param>
-        /// <param name="len"> Length of input buffer </param>
         /// <param name="nChars"> number of characters to delete </param>
         /// <returns> length of input buffer after deletion </returns>
         /// <remarks>
