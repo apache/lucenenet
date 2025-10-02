@@ -41,7 +41,7 @@
       "_appFaviconPath": "logo/favicon.ico",
       "_enableSearch": false,
       "_appLogoPath": "logo/lucene-net-color.png",
-      "_appFooter": "Copyright &copy; 2024 The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>",
+      "_appFooter": "Copyright &copy; 2024 The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.<br/><a href='https://www.apache.org/' target='_blank'>Foundation</a> | <a href='https://www.apache.org/events/' target='_blank'>Events</a> | <a href='https://www.apache.org/licenses/' target='_blank'>License</a> | <a href='https://www.apache.org/foundation/thanks.html' target='_blank'>Thanks</a> | <a href='https://www.apache.org/security/' target='_blank'>Security</a> | <a href='https://www.apache.org/foundation/sponsorship.html' target='_blank'>Sponsorship</a> | <a href='https://privacy.apache.org/policies/privacy-policy-public.html' target='_blank'>Privacy</a></small>",
       "_gitContribute": {
         "repo": "https://github.com/apache/lucenenet",
         "branch": "master"
