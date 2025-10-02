@@ -21,7 +21,6 @@
   <link rel="stylesheet" href="{{_rel}}styles/academicons.min.css">
   <link rel="stylesheet" href="{{_rel}}styles/font-awesome.min.css">
 
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather%7CRoboto+Mono">
   <link rel="stylesheet" href="/styles/site.css">
 
 </head>
