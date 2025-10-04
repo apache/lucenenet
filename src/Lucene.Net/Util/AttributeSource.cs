@@ -245,8 +245,10 @@ namespace Lucene.Net.Util
         /// </summary>
         public AttributeSource(AttributeFactory factory)
         {
-            this.attributes = new JCG.LinkedDictionary<Type, Util.Attribute>();
-            this.attributeImpls = new JCG.LinkedDictionary<Type, Util.Attribute>();
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            this.attributes = new JCG.OrderedDictionary<Type, Util.Attribute>();
+            // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+            this.attributeImpls = new JCG.OrderedDictionary<Type, Util.Attribute>();
             this.currentState = new State[1];
             this.factory = factory;
         }
