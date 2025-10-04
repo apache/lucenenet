@@ -18,35 +18,6 @@
  */
 
 /* START From hugo academic css */
-
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/lato-regular.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 700;
-  src: url('/fonts/lato-bold.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Merriweather';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/merriweather-regular.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Roboto Mono';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/roboto-mono-regular.woff2') format('woff2');
-}
-
 #homepage section {
   font-family: "Merriweather", serif;
   font-size: 16px;

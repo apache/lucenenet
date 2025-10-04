@@ -18,9 +18,10 @@
   {{#_enableSearch}}<meta property="docfx:rel" content="{{_rel}}">{{/_enableSearch}}
   {{#_enableNewTab}}<meta property="docfx:newtab" content="true">{{/_enableNewTab}}
 
-  <link rel="stylesheet" href="{{_rel}}styles/academicons.min.css">
-  <link rel="stylesheet" href="{{_rel}}styles/font-awesome.min.css">
+  <link rel="stylesheet" href="{{_rel}}styles/academicons-1.8.0.min.css">
+  <link rel="stylesheet" href="{{_rel}}styles/font-awesome-4.7.0.min.css">
 
+  <link rel="stylesheet" href="/styles/fonts.css">
   <link rel="stylesheet" href="/styles/site.css">
 
 </head>
