@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///         <description>Use when sorted keys are required. <c>null</c> keys are supported.</description>
         ///     </item>
         ///     <item>
-        ///         <term><see cref="JCG.LinkedDictionary{TKey, TValue}"/></term>
+        ///         <term><see cref="JCG.OrderedDictionary{TKey, TValue}"/></term>
         ///         <description>Use when insertion order must be preserved (<see cref="Dictionary{TKey, TValue}"/> preserves insertion
         ///             order only until items are removed). <c>null</c> keys are supported.</description>
         ///     </item>

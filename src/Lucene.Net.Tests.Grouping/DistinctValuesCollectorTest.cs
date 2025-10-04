@@ -537,7 +537,8 @@ namespace Lucene.Net.Search.Grouping
                 if (!searchTermToGroupCounts.TryGetValue(content, out var groupToCounts))
                 {
                     // Groups sort always DOCID asc...
-                    searchTermToGroupCounts.Add(content, groupToCounts = new JCG.LinkedDictionary<string, ISet<string>>());
+                    // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+                    searchTermToGroupCounts.Add(content, groupToCounts = new JCG.OrderedDictionary<string, ISet<string>>());
                     contentStrings.Add(content);
                 }
 

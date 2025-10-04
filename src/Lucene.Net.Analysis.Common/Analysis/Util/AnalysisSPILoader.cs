@@ -63,7 +63,8 @@ namespace Lucene.Net.Analysis.Util
             UninterruptableMonitor.Enter(this);
             try
             {
-                IDictionary<string, Type> services = new JCG.LinkedDictionary<string, Type>(this.services);
+                // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+                IDictionary<string, Type> services = new JCG.OrderedDictionary<string, Type>(this.services);
                 SPIClassIterator<S> loader = SPIClassIterator<S>.Get();
 
                 foreach (var service in loader)

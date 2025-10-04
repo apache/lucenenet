@@ -130,7 +130,8 @@ namespace Lucene.Net.Index
         // one that came in wins), and helps us detect faster if the same Term is
         // used to update the same field multiple times (so we later traverse it
         // only once).
-        internal readonly SCG.IDictionary<string, LinkedDictionary<Term, NumericDocValuesUpdate>> numericUpdates = new Dictionary<string, LinkedDictionary<Term, NumericDocValuesUpdate>>();
+        // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+        internal readonly SCG.IDictionary<string, OrderedDictionary<Term, NumericDocValuesUpdate>> numericUpdates = new Dictionary<string, OrderedDictionary<Term, NumericDocValuesUpdate>>();
 
         // Map<dvField,Map<updateTerm,BinaryUpdate>>
         // For each field we keep an ordered list of BinaryUpdates, key'd by the
@@ -139,7 +140,8 @@ namespace Lucene.Net.Index
         // one that came in wins), and helps us detect faster if the same Term is
         // used to update the same field multiple times (so we later traverse it
         // only once).
-        internal readonly SCG.IDictionary<string, LinkedDictionary<Term, BinaryDocValuesUpdate>> binaryUpdates = new Dictionary<string, LinkedDictionary<Term, BinaryDocValuesUpdate>>();
+        // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+        internal readonly SCG.IDictionary<string, OrderedDictionary<Term, BinaryDocValuesUpdate>> binaryUpdates = new Dictionary<string, OrderedDictionary<Term, BinaryDocValuesUpdate>>();
 
         /// <summary>
         /// NOTE: This was MAX_INT in Lucene
@@ -245,9 +247,10 @@ namespace Lucene.Net.Index
 
         internal virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto) // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
-            if (!numericUpdates.TryGetValue(update.field, out LinkedDictionary<Term, NumericDocValuesUpdate> fieldUpdates))
+            if (!numericUpdates.TryGetValue(update.field, out OrderedDictionary<Term, NumericDocValuesUpdate> fieldUpdates))
             {
-                fieldUpdates = new LinkedDictionary<Term, NumericDocValuesUpdate>();
+                // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+                fieldUpdates = new OrderedDictionary<Term, NumericDocValuesUpdate>();
                 numericUpdates[update.field] = fieldUpdates;
                 bytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
             }
@@ -278,9 +281,10 @@ namespace Lucene.Net.Index
 
         internal virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto) // LUCENENET specific - Made internal rather than public, since this class is intended to be internal but couldn't be because it is exposed through a public API
         {
-            if (!binaryUpdates.TryGetValue(update.field, out LinkedDictionary<Term, BinaryDocValuesUpdate> fieldUpdates))
+            if (!binaryUpdates.TryGetValue(update.field, out OrderedDictionary<Term, BinaryDocValuesUpdate> fieldUpdates))
             {
-                fieldUpdates = new LinkedDictionary<Term, BinaryDocValuesUpdate>();
+                // LUCENENET specific: OrderedDictioary<TKey, TValue> is a replacement for LinkedHashMap<K, V> in the JDK
+                fieldUpdates = new OrderedDictionary<Term, BinaryDocValuesUpdate>();
                 binaryUpdates[update.field] = fieldUpdates;
                 bytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
             }
