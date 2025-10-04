@@ -83,15 +83,15 @@ namespace Lucene.Net.Analysis.Cn.Smart
 
             try
             {
-                while (new DirectoryInfo(currentPath).Parent != null)
+                while (Directory.GetParent(currentPath) is { } parent) // LUCENENET: Reduce DirectoryInfo allocations by only getting parent once per iteration (#832)
                 {
-                    candidatePath = System.IO.Path.Combine(new DirectoryInfo(currentPath).Parent.FullName, dirName);
+                    candidatePath = System.IO.Path.Combine(parent.FullName, dirName);
                     if (Directory.Exists(candidatePath))
                     {
                         ANALYSIS_DATA_DIR = candidatePath;
                         return;
                     }
-                    currentPath = new DirectoryInfo(currentPath).Parent.FullName;
+                    currentPath = parent.FullName;
                 }
             }
             catch (SecurityException)
