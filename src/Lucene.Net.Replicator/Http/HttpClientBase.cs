@@ -1,3 +1,4 @@
+#nullable enable
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Newtonsoft.Json;
@@ -73,7 +74,7 @@ namespace Lucene.Net.Replicator.Http
         /// <param name="port">The port to be used to connect on.</param>
         /// <param name="path">The path to the replicator on the host.</param>
         /// <param name="messageHandler">Optional, The HTTP handler stack to use for sending requests, defaults to <c>null</c>.</param>
-        protected HttpClientBase(string host, int port, string path, HttpMessageHandler messageHandler = null)
+        protected HttpClientBase(string host, int port, string path, HttpMessageHandler? messageHandler = null)
             : this(NormalizedUrl(host, port, path), messageHandler)
         {
         }
@@ -88,7 +89,7 @@ namespace Lucene.Net.Replicator.Http
         /// <param name="url">The full url, including with host, port and path.</param>
         /// <param name="messageHandler">Optional, The HTTP handler stack to use for sending requests.</param>
         //Note: LUCENENET Specific
-        protected HttpClientBase(string url, HttpMessageHandler messageHandler = null)
+        protected HttpClientBase(string url, HttpMessageHandler? messageHandler = null)
             : this(url, new HttpClient(messageHandler ?? new HttpClientHandler()) { Timeout = DEFAULT_TIMEOUT })
         {
         }
@@ -171,33 +172,87 @@ namespace Lucene.Net.Replicator.Http
         }
 
         /// <summary>
-        /// <b>Internal:</b> Execute a request and return its result.
+        /// <b>Internal:</b> Execute a POST request with custom HttpContent and return its result.
         /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
         /// </summary>
-        protected virtual HttpResponseMessage ExecutePost(string request, object entity, params string[] parameters)
+        protected virtual HttpResponseMessage ExecutePost(string request, HttpContent content, params string[]? parameters)
         {
             EnsureOpen();
 
-            //.NET Note: No headers? No ContentType?... Bad use of Http?
-            HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, QueryString(request, parameters));
+            var req = new HttpRequestMessage(HttpMethod.Post, QueryString(request, parameters))
+            {
+                Content = content
+            };
 
-            req.Content = new StringContent(JToken.FromObject(entity, JsonSerializer.Create())
-                .ToString(Formatting.None), Encoding.UTF8, "application/json");
-
-            return Execute(req);
+            // Use SendAsync + GetAwaiter().GetResult() to bridge sync call
+            var resp = httpc.SendAsync(req, HttpCompletionOption.ResponseHeadersRead)
+                   .ConfigureAwait(false)
+                   .GetAwaiter()
+                   .GetResult();
+            VerifyStatus(resp);
+            return resp;
         }
+
+        /// <summary>
+        /// <b>Internal:</b> Execute a POST request asynchronously with custom HttpContent.
+        /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
+        /// </summary>
+        protected virtual async Task<HttpResponseMessage> ExecutePostAsync(string request, HttpContent content, params string[]? parameters)
+        {
+            EnsureOpen();
+
+            var req = new HttpRequestMessage(HttpMethod.Post, QueryString(request, parameters))
+            {
+                Content = content
+            };
+
+            var resp = await httpc.SendAsync(req).ConfigureAwait(false); // Async call
+            VerifyStatus(resp);
+            return resp;
+        }
+
 
         /// <summary>
         /// <b>Internal:</b> Execute a request and return its result.
         /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
         /// </summary>
-        protected virtual HttpResponseMessage ExecuteGet(string request, params string[] parameters)
+        protected virtual HttpResponseMessage ExecuteGet(string request, params string[]? parameters)
         {
             EnsureOpen();
 
             //Note: No headers? No ContentType?... Bad use of Http?
             HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Get, QueryString(request, parameters));
             return Execute(req);
+        }
+
+        /// <summary>
+        /// Execute a GET request asynchronously with an array of parameters.
+        /// </summary>
+        protected Task<HttpResponseMessage> ExecuteGetAsync(string action, string[]? parameters, CancellationToken cancellationToken)
+        {
+            EnsureOpen();
+            var url = QueryString(action, parameters);
+            return httpc.GetAsync(url, cancellationToken);
+        }
+
+        /// <summary>
+        /// Execute a GET request asynchronously with up to 3 name/value parameters.
+        /// </summary>
+        protected Task<HttpResponseMessage> ExecuteGetAsync(
+            string action,
+            string param1, string value1,
+            string? param2 = null, string? value2 = null,
+            string? param3 = null, string? value3 = null,
+            CancellationToken cancellationToken = default)
+        {
+            EnsureOpen();
+            var url = (param2 == null && param3 == null)
+                ? QueryString(action, param1, value1)
+                : QueryString(action,
+                    param1, value1,
+                    param2 ?? string.Empty, value2 ?? string.Empty,
+                    param3 ?? string.Empty, value3 ?? string.Empty);
+            return httpc.GetAsync(url, cancellationToken);
         }
 
         private HttpResponseMessage Execute(HttpRequestMessage request)
@@ -209,7 +264,7 @@ namespace Lucene.Net.Replicator.Http
             return response;
         }
 
-        private string QueryString(string request, params string[] parameters)
+        private string QueryString(string request, params string[]? parameters)
         {
             return parameters is null
                 ? string.Format("{0}/{1}", Url, request)
@@ -256,7 +311,43 @@ namespace Lucene.Net.Replicator.Http
         /// <exception cref="IOException"></exception>
         public virtual Stream GetResponseStream(HttpResponseMessage response, bool consume) // LUCENENET: This was ResponseInputStream in Lucene
         {
+#if FEATURE_HTTPCONTENT_READASSTREAM
+            Stream result = response.Content.ReadAsStream();
+#else
             Stream result = response.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+#endif
+
+            if (consume)
+                result = new ConsumingStream(result);
+            return result;
+        }
+
+        /// <summary>
+        /// Internal utility: input stream of the provided response asynchronously.
+        /// </summary>
+        /// <exception cref="IOException"></exception>
+        public virtual async Task<Stream> GetResponseStreamAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
+        {
+#if FEATURE_HTTPCONTENT_READASSTREAM_CANCELLATIONTOKEN
+            Stream result = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+#else
+            Stream result = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#endif
+            return result;
+        }
+
+        /// <summary>
+        /// Internal utility: input stream of the provided response asynchronously, which optionally
+        /// consumes the response's resources when the input stream is exhausted.
+        /// </summary>
+        /// <exception cref="IOException"></exception>
+        public virtual async Task<Stream> GetResponseStreamAsync(HttpResponseMessage response, bool consume, CancellationToken cancellationToken = default)
+        {
+#if FEATURE_HTTPCONTENT_READASSTREAM_CANCELLATIONTOKEN
+            Stream result = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+#else
+            Stream result = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#endif
             if (consume)
                 result = new ConsumingStream(result);
             return result;
@@ -284,7 +375,7 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         protected virtual T DoAction<T>(HttpResponseMessage response, bool consume, Func<T> call)
         {
-            Exception th = null;
+            Exception? th = null;
             try
             {
                 return call();
@@ -315,9 +406,62 @@ namespace Lucene.Net.Replicator.Http
                 }
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(th != null); // extra safety - if we get here, it means the Func<T> failed
-            Util.IOUtils.ReThrow(th);
-            return default; // silly, if we're here, IOUtils.reThrow always throws an exception
+            Util.IOUtils.ReThrow(th!);
+            return default!; // silly, if we're here, IOUtils.reThrow always throws an exception
         }
+
+        /// <summary>
+        /// Do a specific async action and validate after the action that the status is still OK,
+        /// and if not, attempt to extract the actual server side exception. Optionally
+        /// release the response at exit, depending on <paramref name="consume"/> parameter.
+        /// </summary>
+        protected virtual async Task<T> DoActionAsync<T>(HttpResponseMessage response, bool consume, Func<Task<T>> call)
+        {
+            Exception? th = null;
+            try
+            {
+                VerifyStatus(response);
+                return await call().ConfigureAwait(false);
+            }
+            catch (Exception t) when (t.IsThrowable())
+            {
+                th = t;
+            }
+            finally
+            {
+                try
+                {
+                    VerifyStatus(response);
+                }
+                finally
+                {
+                    if (consume)
+                    {
+                        try
+                        {
+                            ConsumeQuietly(response);
+                        }
+                        catch
+                        {
+                            // ignore on purpose
+                        }
+                    }
+                }
+            }
+
+            if (Debugging.AssertsEnabled) Debugging.Assert(th != null);
+            Util.IOUtils.ReThrow(th!);
+            return default!; // never reached, rethrow above always throws
+        }
+
+        /// <summary>
+        /// Calls the overload <see cref="DoActionAsync{T}(HttpResponseMessage, bool, Func{Task{T}})"/> passing <c>true</c> to consume.
+        /// </summary>
+        protected virtual Task<T> DoActionAsync<T>(HttpResponseMessage response, Func<Task<T>> call)
+        {
+            return DoActionAsync(response, true, call);
+        }
+
 
         /// <summary>
         /// Disposes this <see cref="HttpClientBase"/>.
