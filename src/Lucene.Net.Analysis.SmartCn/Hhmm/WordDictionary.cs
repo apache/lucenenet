@@ -385,7 +385,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         // LUCENENET: Use BinaryReader to decode little endian instead of ByteBuffer, since this is the default in .NET
                         buffer[0] = reader.ReadInt32(); // frequency
                         buffer[1] = reader.ReadInt32(); // length
-                        buffer[2] = reader.ReadInt32(); // handle
+                        reader.BaseStream.Seek(4, SeekOrigin.Current); // Skip handle value (unused)
 
                         // wordItemTable[i][j].frequency = buffer[0];
 
