@@ -128,6 +128,84 @@ namespace Lucene.Net.Util
                                              (UNI_SUR_HIGH_START << (int)HALF_SHIFT) - UNI_SUR_LOW_START;
 
         /// <summary>
+        /// Encodes into a span of bytes a set of characters from the specified read-only span if the
+        /// <paramref name="destination"/> is large enough.
+        /// </summary>
+        /// <param name="source">The span containing the set of characters to encode.</param>
+        /// <param name="destination">The byte span to hold the encoded bytes.</param>
+        /// <param name="bytesWritten">Upon successful completion of the operation, the number of bytes
+        /// encoded into <paramref name="destination"/>.</param>
+        /// <returns><c>true</c> if all of the characters were encoded into the destination;
+        /// <c>false</c> if the destination was too small to contain all the encoded bytes.</returns>
+        /// <remarks>To estimate the number of bytes to allocate, use <see cref="GetMaxByteCount(int)"/>.
+        /// <para/>
+        /// This is similar to <c>Encoding.UTF8.TryGetBytes()</c>.</remarks>
+        // LUCENENET specific overload
+        public static bool TryUTF16toUTF8(ReadOnlySpan<char> source, Span<byte> destination, out int bytesWritten)
+        {
+            bytesWritten = 0;
+            int offset = 0;
+            int length = source.Length;
+            int end = offset + length;
+
+            int upto = 0;
+            for (int i = offset; i < end; i++)
+            {
+                var code = (int)source[i];
+
+                if (code < 0x80)
+                {
+                    if (upto + 1 >= destination.Length) return false;
+                    destination[upto++] = (byte)code;
+                }
+                else if (code < 0x800)
+                {
+                    if (upto + 2 >= destination.Length) return false;
+                    destination[upto++] = (byte)(0xC0 | (code >> 6));
+                    destination[upto++] = (byte)(0x80 | (code & 0x3F));
+                }
+                else if (code < 0xD800 || code > 0xDFFF)
+                {
+                    if (upto + 3 >= destination.Length) return false;
+                    destination[upto++] = (byte)(0xE0 | (code >> 12));
+                    destination[upto++] = (byte)(0x80 | ((code >> 6) & 0x3F));
+                    destination[upto++] = (byte)(0x80 | (code & 0x3F));
+                }
+                else
+                {
+                    // surrogate pair
+                    // confirm valid high surrogate
+                    if (code < 0xDC00 && (i < end - 1))
+                    {
+                        var utf32 = (int)source[i + 1];
+                        // confirm valid low surrogate and write pair
+                        if (utf32 >= 0xDC00 && utf32 <= 0xDFFF)
+                        {
+                            utf32 = (code << 10) + utf32 + SURROGATE_OFFSET;
+                            i++;
+                            if (upto + 4 >= destination.Length) return false;
+                            destination[upto++] = (byte)(0xF0 | (utf32 >> 18));
+                            destination[upto++] = (byte)(0x80 | ((utf32 >> 12) & 0x3F));
+                            destination[upto++] = (byte)(0x80 | ((utf32 >> 6) & 0x3F));
+                            destination[upto++] = (byte)(0x80 | (utf32 & 0x3F));
+                            continue;
+                        }
+                    }
+
+                    // replace unpaired surrogate or out-of-order low surrogate
+                    // with substitution character
+                    if (upto + 3 >= destination.Length) return false;
+                    destination[upto++] = 0xEF;
+                    destination[upto++] = 0xBF;
+                    destination[upto++] = 0xBD;
+                }
+            }
+
+            bytesWritten = upto;
+            return true;
+        }
+
+        /// <summary>
         /// Encode characters from a <see cref="ReadOnlySpan{T}"/> (with generic type argument <see cref="char"/>) <paramref name="source"/>, starting at
         /// and ending at <paramref name="result"/>. After encoding, <c>result.Offset</c> will always be 0.
         /// </summary>
@@ -619,6 +697,17 @@ namespace Lucene.Net.Util
 
             return true;
         }
+
+        /// <summary>
+        /// Calculates the maximum number of bytes produced by UTF8 encoding the
+        /// specified number of characters.
+        /// </summary>
+        /// <param name="charCount">The number of characters to encode.</param>
+        /// <returns>The maximum number of bytes produced by encoding the specified
+        /// number of characters to UTF8.</returns>
+        /// <remarks>The return value will always be a power of 2.</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int GetMaxByteCount(int charCount) => charCount * 4;
 
         // Borrowed from Python's 3.1.2 sources,
         // Objects/unicodeobject.c, and modified (see commented
