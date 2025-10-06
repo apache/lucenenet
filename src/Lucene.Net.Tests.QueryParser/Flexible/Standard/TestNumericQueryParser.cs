@@ -1,5 +1,6 @@
 using J2N.Numerics;
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -251,10 +252,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 )), LOCALE))
                 ;
 
-            randomNumberMap[NumericType.INT64.ToString()] = (J2N.Numerics.Int64)randomLong;
-            randomNumberMap[NumericType.INT32.ToString()] = (J2N.Numerics.Int32)randomInt;
-            randomNumberMap[NumericType.SINGLE.ToString()] = (J2N.Numerics.Single)randomFloat;
-            randomNumberMap[NumericType.DOUBLE.ToString()] = (J2N.Numerics.Double)randomDouble;
+            randomNumberMap[nameof(NumericType.INT64)] = (J2N.Numerics.Int64)randomLong;
+            randomNumberMap[nameof(NumericType.INT32)] = (J2N.Numerics.Int32)randomInt;
+            randomNumberMap[nameof(NumericType.SINGLE)] = (J2N.Numerics.Single)randomFloat;
+            randomNumberMap[nameof(NumericType.DOUBLE)] = (J2N.Numerics.Double)randomDouble;
             randomNumberMap[DATE_FIELD_NAME] = (J2N.Numerics.Int64)randomDate;
 
             RANDOM_NUMBER_MAP = JCG.Extensions.DictionaryExtensions.AsReadOnly(randomNumberMap);
@@ -508,6 +509,40 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             AssertSimpleQuery(NumberType.ZERO, 1);
             AssertSimpleQuery(NumberType.POSITIVE, 1);
             AssertSimpleQuery(NumberType.NEGATIVE, 1);
+        }
+
+        /// <summary>
+        /// Tests the fix for Lucene.NET GitHub issue #846.
+        /// Numeric values were failing for cultures that use a Unicode minus sign
+        /// (U+2212) rather than a hyphen-minus (U+002D) in exponential notation.
+        /// This was due to a bug in J2N (#128) that has since been fixed.
+        /// </summary>
+        /// <remarks>
+        /// https://github.com/NightOwl888/J2N/issues/128
+        /// </remarks>
+        [Test]
+        [LuceneNetSpecific]
+        public void TestInclusiveNumericRange_UnicodeMinus()
+        {
+            // Use a culture that uses a Unicode minus sign rather than a hyphen-minus
+            // in exponential notation.
+            LOCALE = new CultureInfo("sv-FI");
+            CultureInfo.CurrentCulture = LOCALE;
+
+            NUMBER_FORMAT = new MockNumberFormat(LOCALE);
+
+            var randomNumberMap = new JCG.Dictionary<string, Number>(RANDOM_NUMBER_MAP!)
+            {
+                [nameof(NumericType.DOUBLE)] = J2N.Numerics.Double.GetInstance(1.0E-20),
+                [nameof(NumericType.SINGLE)] = J2N.Numerics.Single.GetInstance(1.0E-20f)
+            };
+
+            RANDOM_NUMBER_MAP = JCG.Extensions.DictionaryExtensions.AsReadOnly(randomNumberMap);
+
+            qp!.NumericConfigMap[nameof(NumericType.DOUBLE)] = new NumericConfig(PRECISION_STEP, NUMBER_FORMAT, NumericType.DOUBLE);
+            qp.NumericConfigMap[nameof(NumericType.SINGLE)] = new NumericConfig(PRECISION_STEP, NUMBER_FORMAT, NumericType.SINGLE);
+
+            AssertRangeQuery(NumberType.ZERO, NumberType.POSITIVE, true, true, 1);
         }
 
         public void AssertRangeQuery(NumberType? lowerType, NumberType? upperType,
