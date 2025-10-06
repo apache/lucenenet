@@ -30,6 +30,8 @@
     <NoWarn Label="Floating point type arithmetic needs to be checked on x86 in .NET Framework and may require extra casting">$(NoWarn);LuceneDev1002</NoWarn>
     <NoWarn Label="Java array parameters can sometimes be replaced with .NET out or ref parameters">$(NoWarn);LuceneDev1003</NoWarn>
     <NoWarn Label="Return array may be able to be replaced with out values">$(NoWarn);LuceneDev1004</NoWarn>
+    <NoWarn Label="Floating point values embedded in strings should be formatted with J2N.Numerics Single or Double ToString methods">$(NoWarn);LuceneDev1006</NoWarn>
+
   </PropertyGroup>
 
   <PropertyGroup Label="Solution-level Publish to Project-specific Directory">
