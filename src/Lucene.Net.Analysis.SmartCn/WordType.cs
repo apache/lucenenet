@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         SENTENCE_END = 1,
 
         /// <summary>
-        /// Chinese Word 
+        /// Chinese Word
         /// </summary>
         CHINESE_WORD = 2,
 

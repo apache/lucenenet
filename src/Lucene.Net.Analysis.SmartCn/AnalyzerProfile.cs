@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// To place the files in an alternate location, set an environment variable named "smartcn.data.dir"
     /// with the name of the directory the "bigramdict.dct" and "coredict.dct" files can be located within.
     /// <para/>
-    /// The default "bigramdict.dct" and "coredict.dct" files can be found at: 
+    /// The default "bigramdict.dct" and "coredict.dct" files can be found at:
     /// <a href="https://issues.apache.org/jira/browse/LUCENE-1629">https://issues.apache.org/jira/browse/LUCENE-1629</a>.
     /// <para/>
     /// @lucene.experimental
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             Init();
         }
 
-        // LUCENENET specific - changed the logic here to leave the 
+        // LUCENENET specific - changed the logic here to leave the
         // ANALYSIS_DATA_DIR an empty string if it is not found. This
         // allows us to skip loading files from disk if there are no files
         // to load (and fixes LUCENE-1817 that prevents the on-disk files
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
                 ANALYSIS_DATA_DIR = candidatePath;
                 return;
             }
-            
+
 
             try
             {
