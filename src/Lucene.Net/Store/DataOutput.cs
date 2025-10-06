@@ -260,11 +260,51 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadString()"/>
         public virtual void WriteString(string s)
         {
-            var utf8Result = new BytesRef(10);
-            UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
-            WriteVInt32(utf8Result.Length);
-            WriteBytes(utf8Result.Bytes, 0, utf8Result.Length);
+            if (s is null)
+                throw new ArgumentNullException(nameof(s));
+            WriteChars(s.AsSpan());
         }
+
+#nullable enable
+
+        /// <summary>
+        /// Writes a character span.
+        /// <para/>
+        /// Writes chars as UTF-8 encoded bytes. First the length, in bytes, is
+        /// written as a <see cref="WriteVInt32"/>, followed by the bytes.
+        /// </summary>
+        /// <param name="chars">The chars to write.</param>
+        // LUCENENET specific
+        public virtual void WriteChars(ReadOnlySpan<char> chars)
+        {
+            if (chars.IsEmpty)
+            {
+                // Fast path - don't allocate if we don't need to
+                WriteVInt32(0);
+                WriteBytes(Array.Empty<byte>());
+                return;
+            }
+
+            int bufferLength = UnicodeUtil.GetMaxByteCount(chars.Length);
+            byte[]? arrayToReturnToPool = null;
+            Span<byte> utf8Result = bufferLength > Constants.MaxStackByteLimit
+                ? (arrayToReturnToPool = ArrayPool<byte>.Shared.Rent(bufferLength))
+                : stackalloc byte[bufferLength];
+            try
+            {
+                // We are calculating the size up front, so this will always succeed.
+                bool success = UnicodeUtil.TryUTF16toUTF8(chars, utf8Result, out int bytesLength);
+                Debug.Assert(success, "There wasn't enough memory allocated for all of the bytes.");
+                WriteVInt32(bytesLength);
+                WriteBytes(utf8Result.Slice(0, bytesLength));
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.ReturnIfNotNull(arrayToReturnToPool);
+            }
+        }
+
+#nullable restore
 
         private const int COPY_BUFFER_SIZE = 16384;
         private byte[] copyBuffer;
