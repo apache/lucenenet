@@ -40,7 +40,7 @@
     <!-- J2N will break binary compatibility in 3.0.0 to fix the APIs of collection types -->
     <J2NPackageVersion>[2.2.0-alpha-0021, 3.0.0)</J2NPackageVersion>
     <LiquidTestReportsMarkdownPackageVersion>1.0.9</LiquidTestReportsMarkdownPackageVersion>
-    <LuceneNetCodeAnalysisDevPackageVersion>1.0.0-alpha.6</LuceneNetCodeAnalysisDevPackageVersion>
+    <LuceneNetCodeAnalysisDevPackageVersion>1.0.0-alpha.18</LuceneNetCodeAnalysisDevPackageVersion>
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.3.0</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>8.0.19</MicrosoftAspNetCoreTestHostPackageVersion>
     <MicrosoftBclMemoryPackageVersion>10.0.0-rc.1.25451.107</MicrosoftBclMemoryPackageVersion>
